@@ -34,7 +34,11 @@ __stack_chk_fail (
 {
   UINT8  DebugPropertyMask;
 
-  DEBUG ((DEBUG_ERROR, "STACK FAULT: Buffer Overflow in function %a.\n", __builtin_return_address (0)));
+  DEBUG ((
+    DEBUG_ERROR,
+    "STACK FAULT: Buffer Overflow in function %a.\n",
+    __builtin_return_address (0)
+    ));
 
   //
   // Generate a Breakpoint, DeadLoop, or NOP based on PCD settings even if
@@ -43,7 +47,9 @@ __stack_chk_fail (
   DebugPropertyMask = PcdGet8 (PcdDebugPropertyMask);
   if ((DebugPropertyMask & DEBUG_PROPERTY_ASSERT_BREAKPOINT_ENABLED) != 0) {
     CpuBreakpoint ();
-  } else if ((DebugPropertyMask & DEBUG_PROPERTY_ASSERT_DEADLOOP_ENABLED) != 0) {
+  } else if ((DebugPropertyMask & DEBUG_PROPERTY_ASSERT_DEADLOOP_ENABLED) !=
+             0)
+  {
     CpuDeadLoop ();
   }
 }

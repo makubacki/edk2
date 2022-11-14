@@ -147,7 +147,11 @@ GetNextGuidHob (
   EFI_PEI_HOB_POINTERS  GuidHob;
 
   GuidHob.Raw = (UINT8 *)HobStart;
-  while ((GuidHob.Raw = GetNextHob (EFI_HOB_TYPE_GUID_EXTENSION, GuidHob.Raw)) != NULL) {
+  while ((GuidHob.Raw = GetNextHob (
+                          EFI_HOB_TYPE_GUID_EXTENSION,
+                          GuidHob.Raw
+                          )) != NULL)
+  {
     if (CompareGuid (Guid, &GuidHob.Guid->Name)) {
       break;
     }
@@ -282,7 +286,10 @@ BuildModuleHob (
     ((ModuleLength & (EFI_PAGE_SIZE - 1)) == 0)
     );
 
-  Hob = InternalPeiCreateHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, (UINT16)sizeof (EFI_HOB_MEMORY_ALLOCATION_MODULE));
+  Hob = InternalPeiCreateHob (
+          EFI_HOB_TYPE_MEMORY_ALLOCATION,
+          (UINT16)sizeof (EFI_HOB_MEMORY_ALLOCATION_MODULE)
+          );
   if (Hob == NULL) {
     return;
   }
@@ -295,7 +302,10 @@ BuildModuleHob (
   //
   // Zero the reserved space to match HOB spec
   //
-  ZeroMem (Hob->MemoryAllocationHeader.Reserved, sizeof (Hob->MemoryAllocationHeader.Reserved));
+  ZeroMem (
+    Hob->MemoryAllocationHeader.Reserved,
+    sizeof (Hob->MemoryAllocationHeader.Reserved)
+    );
 
   CopyGuid (&Hob->ModuleName, ModuleName);
   Hob->EntryPoint = EntryPoint;
@@ -329,7 +339,10 @@ BuildResourceDescriptorWithOwnerHob (
 {
   EFI_HOB_RESOURCE_DESCRIPTOR  *Hob;
 
-  Hob = InternalPeiCreateHob (EFI_HOB_TYPE_RESOURCE_DESCRIPTOR, (UINT16)sizeof (EFI_HOB_RESOURCE_DESCRIPTOR));
+  Hob = InternalPeiCreateHob (
+          EFI_HOB_TYPE_RESOURCE_DESCRIPTOR,
+          (UINT16)sizeof (EFI_HOB_RESOURCE_DESCRIPTOR)
+          );
   if (Hob == NULL) {
     return;
   }
@@ -368,7 +381,10 @@ BuildResourceDescriptorHob (
 {
   EFI_HOB_RESOURCE_DESCRIPTOR  *Hob;
 
-  Hob = InternalPeiCreateHob (EFI_HOB_TYPE_RESOURCE_DESCRIPTOR, (UINT16)sizeof (EFI_HOB_RESOURCE_DESCRIPTOR));
+  Hob = InternalPeiCreateHob (
+          EFI_HOB_TYPE_RESOURCE_DESCRIPTOR,
+          (UINT16)sizeof (EFI_HOB_RESOURCE_DESCRIPTOR)
+          );
   if (Hob == NULL) {
     return;
   }
@@ -421,7 +437,10 @@ BuildGuidHob (
   //
   ASSERT (DataLength <= (0xFFF8 - sizeof (EFI_HOB_GUID_TYPE)));
 
-  Hob = InternalPeiCreateHob (EFI_HOB_TYPE_GUID_EXTENSION, (UINT16)(sizeof (EFI_HOB_GUID_TYPE) + DataLength));
+  Hob = InternalPeiCreateHob (
+          EFI_HOB_TYPE_GUID_EXTENSION,
+          (UINT16)(sizeof (EFI_HOB_GUID_TYPE) + DataLength)
+          );
   if (Hob == NULL) {
     return Hob;
   }
@@ -502,7 +521,9 @@ InternalCheckFvAlignment (
   // can be aligned on any power-of-two boundary. A weakly aligned volume can not be moved from
   // its initial linked location and maintain its alignment.
   //
-  if ((FwVolHeader->Attributes & EFI_FVB2_WEAK_ALIGNMENT) != EFI_FVB2_WEAK_ALIGNMENT) {
+  if ((FwVolHeader->Attributes & EFI_FVB2_WEAK_ALIGNMENT) !=
+      EFI_FVB2_WEAK_ALIGNMENT)
+  {
     //
     // Get FvHeader alignment
     //
@@ -560,7 +581,10 @@ BuildFvHob (
     return;
   }
 
-  Hob = InternalPeiCreateHob (EFI_HOB_TYPE_FV, (UINT16)sizeof (EFI_HOB_FIRMWARE_VOLUME));
+  Hob = InternalPeiCreateHob (
+          EFI_HOB_TYPE_FV,
+          (UINT16)sizeof (EFI_HOB_FIRMWARE_VOLUME)
+          );
   if (Hob == NULL) {
     return;
   }
@@ -601,7 +625,10 @@ BuildFv2Hob (
     return;
   }
 
-  Hob = InternalPeiCreateHob (EFI_HOB_TYPE_FV2, (UINT16)sizeof (EFI_HOB_FIRMWARE_VOLUME2));
+  Hob = InternalPeiCreateHob (
+          EFI_HOB_TYPE_FV2,
+          (UINT16)sizeof (EFI_HOB_FIRMWARE_VOLUME2)
+          );
   if (Hob == NULL) {
     return;
   }
@@ -651,7 +678,10 @@ BuildFv3Hob (
     return;
   }
 
-  Hob = InternalPeiCreateHob (EFI_HOB_TYPE_FV3, (UINT16)sizeof (EFI_HOB_FIRMWARE_VOLUME3));
+  Hob = InternalPeiCreateHob (
+          EFI_HOB_TYPE_FV3,
+          (UINT16)sizeof (EFI_HOB_FIRMWARE_VOLUME3)
+          );
   if (Hob == NULL) {
     return;
   }
@@ -689,7 +719,10 @@ BuildCvHob (
 {
   EFI_HOB_UEFI_CAPSULE  *Hob;
 
-  Hob = InternalPeiCreateHob (EFI_HOB_TYPE_UEFI_CAPSULE, (UINT16)sizeof (EFI_HOB_UEFI_CAPSULE));
+  Hob = InternalPeiCreateHob (
+          EFI_HOB_TYPE_UEFI_CAPSULE,
+          (UINT16)sizeof (EFI_HOB_UEFI_CAPSULE)
+          );
   if (Hob == NULL) {
     return;
   }
@@ -761,7 +794,10 @@ BuildStackHob (
     ((Length & (EFI_PAGE_SIZE - 1)) == 0)
     );
 
-  Hob = InternalPeiCreateHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, (UINT16)sizeof (EFI_HOB_MEMORY_ALLOCATION_STACK));
+  Hob = InternalPeiCreateHob (
+          EFI_HOB_TYPE_MEMORY_ALLOCATION,
+          (UINT16)sizeof (EFI_HOB_MEMORY_ALLOCATION_STACK)
+          );
   if (Hob == NULL) {
     return;
   }
@@ -774,7 +810,10 @@ BuildStackHob (
   //
   // Zero the reserved space to match HOB spec
   //
-  ZeroMem (Hob->AllocDescriptor.Reserved, sizeof (Hob->AllocDescriptor.Reserved));
+  ZeroMem (
+    Hob->AllocDescriptor.Reserved,
+    sizeof (Hob->AllocDescriptor.Reserved)
+    );
 }
 
 /**
@@ -806,7 +845,10 @@ BuildBspStoreHob (
     ((Length & (EFI_PAGE_SIZE - 1)) == 0)
     );
 
-  Hob = InternalPeiCreateHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, (UINT16)sizeof (EFI_HOB_MEMORY_ALLOCATION_BSP_STORE));
+  Hob = InternalPeiCreateHob (
+          EFI_HOB_TYPE_MEMORY_ALLOCATION,
+          (UINT16)sizeof (EFI_HOB_MEMORY_ALLOCATION_BSP_STORE)
+          );
   if (Hob == NULL) {
     return;
   }
@@ -819,7 +861,10 @@ BuildBspStoreHob (
   //
   // Zero the reserved space to match HOB spec
   //
-  ZeroMem (Hob->AllocDescriptor.Reserved, sizeof (Hob->AllocDescriptor.Reserved));
+  ZeroMem (
+    Hob->AllocDescriptor.Reserved,
+    sizeof (Hob->AllocDescriptor.Reserved)
+    );
 }
 
 /**
@@ -851,7 +896,10 @@ BuildMemoryAllocationHob (
     ((Length & (EFI_PAGE_SIZE - 1)) == 0)
     );
 
-  Hob = InternalPeiCreateHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, (UINT16)sizeof (EFI_HOB_MEMORY_ALLOCATION));
+  Hob = InternalPeiCreateHob (
+          EFI_HOB_TYPE_MEMORY_ALLOCATION,
+          (UINT16)sizeof (EFI_HOB_MEMORY_ALLOCATION)
+          );
   if (Hob == NULL) {
     return;
   }
@@ -863,5 +911,8 @@ BuildMemoryAllocationHob (
   //
   // Zero the reserved space to match HOB spec
   //
-  ZeroMem (Hob->AllocDescriptor.Reserved, sizeof (Hob->AllocDescriptor.Reserved));
+  ZeroMem (
+    Hob->AllocDescriptor.Reserved,
+    sizeof (Hob->AllocDescriptor.Reserved)
+    );
 }

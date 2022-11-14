@@ -77,13 +77,21 @@ InternalHstiFindAip (
                     &InfoTypesBuffer,
                     &InfoTypesBufferCount
                     );
-    if (EFI_ERROR (Status) || (InfoTypesBuffer == NULL) || (InfoTypesBufferCount == 0)) {
+    if (EFI_ERROR (Status) || (InfoTypesBuffer == NULL) ||
+        (InfoTypesBufferCount == 0))
+    {
       continue;
     }
 
     AipCandidate = NULL;
-    for (InfoTypesIndex = 0; InfoTypesIndex < InfoTypesBufferCount; InfoTypesIndex++) {
-      if (CompareGuid (&InfoTypesBuffer[InfoTypesIndex], &gAdapterInfoPlatformSecurityGuid)) {
+    for (InfoTypesIndex = 0; InfoTypesIndex < InfoTypesBufferCount;
+         InfoTypesIndex++)
+    {
+      if (CompareGuid (
+            &InfoTypesBuffer[InfoTypesIndex],
+            &gAdapterInfoPlatformSecurityGuid
+            ))
+      {
         AipCandidate = Aip;
         break;
       }
@@ -111,7 +119,10 @@ InternalHstiFindAip (
 
     Hsti = InformationBlock;
     if ((Hsti->Role == Role) &&
-        ((ImplementationID == NULL) || (StrCmp (ImplementationID, Hsti->ImplementationID) == 0)))
+        ((ImplementationID == NULL) || (StrCmp (
+                                          ImplementationID,
+                                          Hsti->ImplementationID
+                                          ) == 0)))
     {
       break;
     } else {
@@ -171,12 +182,20 @@ InternalHstiIsValidTable (
   }
 
   if (HstiSize < sizeof (ADAPTER_INFO_PLATFORM_SECURITY)) {
-    DEBUG ((DEBUG_ERROR, "HstiSize < sizeof(ADAPTER_INFO_PLATFORM_SECURITY)\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "HstiSize < sizeof(ADAPTER_INFO_PLATFORM_SECURITY)\n"
+      ));
     return FALSE;
   }
 
-  if (((HstiSize - sizeof (ADAPTER_INFO_PLATFORM_SECURITY)) / 3) < Hsti->SecurityFeaturesSize) {
-    DEBUG ((DEBUG_ERROR, "((HstiSize - sizeof(ADAPTER_INFO_PLATFORM_SECURITY)) / 3) < SecurityFeaturesSize\n"));
+  if (((HstiSize - sizeof (ADAPTER_INFO_PLATFORM_SECURITY)) / 3) <
+      Hsti->SecurityFeaturesSize)
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "((HstiSize - sizeof(ADAPTER_INFO_PLATFORM_SECURITY)) / 3) < SecurityFeaturesSize\n"
+      ));
     return FALSE;
   }
 
@@ -194,7 +213,10 @@ InternalHstiIsValidTable (
   if ((Hsti->Role < PLATFORM_SECURITY_ROLE_PLATFORM_REFERENCE) ||
       (Hsti->Role > PLATFORM_SECURITY_ROLE_IMPLEMENTOR_ODM))
   {
-    DEBUG ((DEBUG_ERROR, "Role < PLATFORM_SECURITY_ROLE_PLATFORM_REFERENCE ||\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Role < PLATFORM_SECURITY_ROLE_PLATFORM_REFERENCE ||\n"
+      ));
     DEBUG ((DEBUG_ERROR, "Role > PLATFORM_SECURITY_ROLE_IMPLEMENTOR_ODM\n"));
     return FALSE;
   }
@@ -202,19 +224,26 @@ InternalHstiIsValidTable (
   //
   // Check ImplementationID
   //
-  for (Index = 0; Index < sizeof (Hsti->ImplementationID)/sizeof (Hsti->ImplementationID[0]); Index++) {
+  for (Index = 0; Index < sizeof (Hsti->ImplementationID)/
+       sizeof (Hsti->ImplementationID[0]); Index++)
+  {
     if (Hsti->ImplementationID[Index] == 0) {
       break;
     }
   }
 
-  if (Index == sizeof (Hsti->ImplementationID)/sizeof (Hsti->ImplementationID[0])) {
+  if (Index == sizeof (Hsti->ImplementationID)/
+      sizeof (Hsti->ImplementationID[0]))
+  {
     DEBUG ((DEBUG_ERROR, "ImplementationID has no NUL CHAR\n"));
     return FALSE;
   }
 
-  ErrorStringSize = HstiSize - sizeof (ADAPTER_INFO_PLATFORM_SECURITY) - Hsti->SecurityFeaturesSize * 3;
-  ErrorString     = (CHAR16 *)((UINTN)Hsti + sizeof (ADAPTER_INFO_PLATFORM_SECURITY) + Hsti->SecurityFeaturesSize * 3);
+  ErrorStringSize = HstiSize - sizeof (ADAPTER_INFO_PLATFORM_SECURITY) -
+                    Hsti->SecurityFeaturesSize * 3;
+  ErrorString = (CHAR16 *)((UINTN)Hsti +
+                           sizeof (ADAPTER_INFO_PLATFORM_SECURITY) +
+                           Hsti->SecurityFeaturesSize * 3);
 
   //
   // basic check for ErrorString
@@ -233,7 +262,10 @@ InternalHstiIsValidTable (
   // ErrorString might not be CHAR16 aligned.
   //
   CopyMem (&ErrorChar, ErrorString, sizeof (ErrorChar));
-  for (ErrorStringLength = 0; (ErrorChar != 0) && (ErrorStringLength < (ErrorStringSize/2)); ErrorStringLength++) {
+  for (ErrorStringLength = 0; (ErrorChar != 0) && (ErrorStringLength <
+                                                   (ErrorStringSize/2));
+       ErrorStringLength++)
+  {
     ErrorString++;
     CopyMem (&ErrorChar, ErrorString, sizeof (ErrorChar));
   }
@@ -309,13 +341,19 @@ HstiLibSetTable (
   }
 
   if (Role != PLATFORM_SECURITY_ROLE_PLATFORM_REFERENCE) {
-    SecurityFeaturesRequired = (UINT8 *)HstiAip->Hsti + sizeof (ADAPTER_INFO_PLATFORM_SECURITY);
-    SecurityFeaturesSize     = ((ADAPTER_INFO_PLATFORM_SECURITY *)Hsti)->SecurityFeaturesSize;
+    SecurityFeaturesRequired = (UINT8 *)HstiAip->Hsti +
+                               sizeof (ADAPTER_INFO_PLATFORM_SECURITY);
+    SecurityFeaturesSize =
+      ((ADAPTER_INFO_PLATFORM_SECURITY *)Hsti)->SecurityFeaturesSize;
     ZeroMem (SecurityFeaturesRequired, SecurityFeaturesSize);
   }
 
   HstiAip->Signature = HSTI_AIP_PRIVATE_SIGNATURE;
-  CopyMem (&HstiAip->Aip, &mAdapterInformationProtocol, sizeof (EFI_ADAPTER_INFORMATION_PROTOCOL));
+  CopyMem (
+    &HstiAip->Aip,
+    &mAdapterInformationProtocol,
+    sizeof (EFI_ADAPTER_INFORMATION_PROTOCOL)
+    );
   HstiAip->HstiSize    = HstiSize;
   HstiAip->HstiMaxSize = HstiSize;
 
@@ -410,12 +448,16 @@ InternalHstiRecordFeaturesVerified (
     return EFI_UNSUPPORTED;
   }
 
-  SecurityFeaturesVerified = (UINT8 *)((UINTN)Hsti + sizeof (ADAPTER_INFO_PLATFORM_SECURITY) + Hsti->SecurityFeaturesSize * 2);
+  SecurityFeaturesVerified = (UINT8 *)((UINTN)Hsti +
+                                       sizeof (ADAPTER_INFO_PLATFORM_SECURITY) +
+                                       Hsti->SecurityFeaturesSize * 2);
 
   if (Set) {
-    SecurityFeaturesVerified[ByteIndex] = (UINT8)(SecurityFeaturesVerified[ByteIndex] | (Bit));
+    SecurityFeaturesVerified[ByteIndex] =
+      (UINT8)(SecurityFeaturesVerified[ByteIndex] | (Bit));
   } else {
-    SecurityFeaturesVerified[ByteIndex] = (UINT8)(SecurityFeaturesVerified[ByteIndex] & (~Bit));
+    SecurityFeaturesVerified[ByteIndex] =
+      (UINT8)(SecurityFeaturesVerified[ByteIndex] & (~Bit));
   }
 
   Status = Aip->SetInformation (
@@ -535,7 +577,8 @@ InternalHstiRecordErrorString (
   if (Append) {
     Offset = HstiSize - sizeof (CHAR16);
   } else {
-    Offset = sizeof (ADAPTER_INFO_PLATFORM_SECURITY) + Hsti->SecurityFeaturesSize * 3;
+    Offset = sizeof (ADAPTER_INFO_PLATFORM_SECURITY) +
+             Hsti->SecurityFeaturesSize * 3;
   }
 
   StringSize = StrSize (ErrorString);

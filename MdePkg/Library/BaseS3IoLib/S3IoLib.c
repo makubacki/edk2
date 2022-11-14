@@ -208,7 +208,14 @@ S3IoAndThenOr8 (
   IN UINT8  OrData
   )
 {
-  return InternalSaveIoWrite8ValueToBootScript (Port, IoAndThenOr8 (Port, AndData, OrData));
+  return InternalSaveIoWrite8ValueToBootScript (
+           Port,
+           IoAndThenOr8 (
+             Port,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -240,7 +247,14 @@ S3IoBitFieldRead8 (
   IN UINTN  EndBit
   )
 {
-  return InternalSaveIoWrite8ValueToBootScript (Port, IoBitFieldRead8 (Port, StartBit, EndBit));
+  return InternalSaveIoWrite8ValueToBootScript (
+           Port,
+           IoBitFieldRead8 (
+             Port,
+             StartBit,
+             EndBit
+             )
+           );
 }
 
 /**
@@ -277,7 +291,15 @@ S3IoBitFieldWrite8 (
   IN UINT8  Value
   )
 {
-  return InternalSaveIoWrite8ValueToBootScript (Port, IoBitFieldWrite8 (Port, StartBit, EndBit, Value));
+  return InternalSaveIoWrite8ValueToBootScript (
+           Port,
+           IoBitFieldWrite8 (
+             Port,
+             StartBit,
+             EndBit,
+             Value
+             )
+           );
 }
 
 /**
@@ -316,7 +338,15 @@ S3IoBitFieldOr8 (
   IN UINT8  OrData
   )
 {
-  return InternalSaveIoWrite8ValueToBootScript (Port, IoBitFieldOr8 (Port, StartBit, EndBit, OrData));
+  return InternalSaveIoWrite8ValueToBootScript (
+           Port,
+           IoBitFieldOr8 (
+             Port,
+             StartBit,
+             EndBit,
+             OrData
+             )
+           );
 }
 
 /**
@@ -355,7 +385,15 @@ S3IoBitFieldAnd8 (
   IN UINT8  AndData
   )
 {
-  return InternalSaveIoWrite8ValueToBootScript (Port, IoBitFieldAnd8 (Port, StartBit, EndBit, AndData));
+  return InternalSaveIoWrite8ValueToBootScript (
+           Port,
+           IoBitFieldAnd8 (
+             Port,
+             StartBit,
+             EndBit,
+             AndData
+             )
+           );
 }
 
 /**
@@ -398,7 +436,16 @@ S3IoBitFieldAndThenOr8 (
   IN UINT8  OrData
   )
 {
-  return InternalSaveIoWrite8ValueToBootScript (Port, IoBitFieldAndThenOr8 (Port, StartBit, EndBit, AndData, OrData));
+  return InternalSaveIoWrite8ValueToBootScript (
+           Port,
+           IoBitFieldAndThenOr8 (
+             Port,
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -563,7 +610,14 @@ S3IoAndThenOr16 (
   IN UINT16  OrData
   )
 {
-  return InternalSaveIoWrite16ValueToBootScript (Port, IoAndThenOr16 (Port, AndData, OrData));
+  return InternalSaveIoWrite16ValueToBootScript (
+           Port,
+           IoAndThenOr16 (
+             Port,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -595,7 +649,14 @@ S3IoBitFieldRead16 (
   IN UINTN  EndBit
   )
 {
-  return InternalSaveIoWrite16ValueToBootScript (Port, IoBitFieldRead16 (Port, StartBit, EndBit));
+  return InternalSaveIoWrite16ValueToBootScript (
+           Port,
+           IoBitFieldRead16 (
+             Port,
+             StartBit,
+             EndBit
+             )
+           );
 }
 
 /**
@@ -632,7 +693,15 @@ S3IoBitFieldWrite16 (
   IN UINT16  Value
   )
 {
-  return InternalSaveIoWrite16ValueToBootScript (Port, IoBitFieldWrite16 (Port, StartBit, EndBit, Value));
+  return InternalSaveIoWrite16ValueToBootScript (
+           Port,
+           IoBitFieldWrite16 (
+             Port,
+             StartBit,
+             EndBit,
+             Value
+             )
+           );
 }
 
 /**
@@ -671,7 +740,15 @@ S3IoBitFieldOr16 (
   IN UINT16  OrData
   )
 {
-  return InternalSaveIoWrite16ValueToBootScript (Port, IoBitFieldOr16 (Port, StartBit, EndBit, OrData));
+  return InternalSaveIoWrite16ValueToBootScript (
+           Port,
+           IoBitFieldOr16 (
+             Port,
+             StartBit,
+             EndBit,
+             OrData
+             )
+           );
 }
 
 /**
@@ -710,7 +787,15 @@ S3IoBitFieldAnd16 (
   IN UINT16  AndData
   )
 {
-  return InternalSaveIoWrite16ValueToBootScript (Port, IoBitFieldAnd16 (Port, StartBit, EndBit, AndData));
+  return InternalSaveIoWrite16ValueToBootScript (
+           Port,
+           IoBitFieldAnd16 (
+             Port,
+             StartBit,
+             EndBit,
+             AndData
+             )
+           );
 }
 
 /**
@@ -754,7 +839,16 @@ S3IoBitFieldAndThenOr16 (
   IN UINT16  OrData
   )
 {
-  return InternalSaveIoWrite16ValueToBootScript (Port, IoBitFieldAndThenOr16 (Port, StartBit, EndBit, AndData, OrData));
+  return InternalSaveIoWrite16ValueToBootScript (
+           Port,
+           IoBitFieldAndThenOr16 (
+             Port,
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -919,7 +1013,14 @@ S3IoAndThenOr32 (
   IN UINT32  OrData
   )
 {
-  return InternalSaveIoWrite32ValueToBootScript (Port, IoAndThenOr32 (Port, AndData, OrData));
+  return InternalSaveIoWrite32ValueToBootScript (
+           Port,
+           IoAndThenOr32 (
+             Port,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -951,7 +1052,14 @@ S3IoBitFieldRead32 (
   IN UINTN  EndBit
   )
 {
-  return InternalSaveIoWrite32ValueToBootScript (Port, IoBitFieldRead32 (Port, StartBit, EndBit));
+  return InternalSaveIoWrite32ValueToBootScript (
+           Port,
+           IoBitFieldRead32 (
+             Port,
+             StartBit,
+             EndBit
+             )
+           );
 }
 
 /**
@@ -988,7 +1096,15 @@ S3IoBitFieldWrite32 (
   IN UINT32  Value
   )
 {
-  return InternalSaveIoWrite32ValueToBootScript (Port, IoBitFieldWrite32 (Port, StartBit, EndBit, Value));
+  return InternalSaveIoWrite32ValueToBootScript (
+           Port,
+           IoBitFieldWrite32 (
+             Port,
+             StartBit,
+             EndBit,
+             Value
+             )
+           );
 }
 
 /**
@@ -1027,7 +1143,15 @@ S3IoBitFieldOr32 (
   IN UINT32  OrData
   )
 {
-  return InternalSaveIoWrite32ValueToBootScript (Port, IoBitFieldOr32 (Port, StartBit, EndBit, OrData));
+  return InternalSaveIoWrite32ValueToBootScript (
+           Port,
+           IoBitFieldOr32 (
+             Port,
+             StartBit,
+             EndBit,
+             OrData
+             )
+           );
 }
 
 /**
@@ -1066,7 +1190,15 @@ S3IoBitFieldAnd32 (
   IN UINT32  AndData
   )
 {
-  return InternalSaveIoWrite32ValueToBootScript (Port, IoBitFieldAnd32 (Port, StartBit, EndBit, AndData));
+  return InternalSaveIoWrite32ValueToBootScript (
+           Port,
+           IoBitFieldAnd32 (
+             Port,
+             StartBit,
+             EndBit,
+             AndData
+             )
+           );
 }
 
 /**
@@ -1110,7 +1242,16 @@ S3IoBitFieldAndThenOr32 (
   IN UINT32  OrData
   )
 {
-  return InternalSaveIoWrite32ValueToBootScript (Port, IoBitFieldAndThenOr32 (Port, StartBit, EndBit, AndData, OrData));
+  return InternalSaveIoWrite32ValueToBootScript (
+           Port,
+           IoBitFieldAndThenOr32 (
+             Port,
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -1275,7 +1416,14 @@ S3IoAndThenOr64 (
   IN UINT64  OrData
   )
 {
-  return InternalSaveIoWrite64ValueToBootScript (Port, IoAndThenOr64 (Port, AndData, OrData));
+  return InternalSaveIoWrite64ValueToBootScript (
+           Port,
+           IoAndThenOr64 (
+             Port,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -1307,7 +1455,14 @@ S3IoBitFieldRead64 (
   IN UINTN  EndBit
   )
 {
-  return InternalSaveIoWrite64ValueToBootScript (Port, IoBitFieldRead64 (Port, StartBit, EndBit));
+  return InternalSaveIoWrite64ValueToBootScript (
+           Port,
+           IoBitFieldRead64 (
+             Port,
+             StartBit,
+             EndBit
+             )
+           );
 }
 
 /**
@@ -1344,7 +1499,15 @@ S3IoBitFieldWrite64 (
   IN UINT64  Value
   )
 {
-  return InternalSaveIoWrite64ValueToBootScript (Port, IoBitFieldWrite64 (Port, StartBit, EndBit, Value));
+  return InternalSaveIoWrite64ValueToBootScript (
+           Port,
+           IoBitFieldWrite64 (
+             Port,
+             StartBit,
+             EndBit,
+             Value
+             )
+           );
 }
 
 /**
@@ -1383,7 +1546,15 @@ S3IoBitFieldOr64 (
   IN UINT64  OrData
   )
 {
-  return InternalSaveIoWrite64ValueToBootScript (Port, IoBitFieldOr64 (Port, StartBit, EndBit, OrData));
+  return InternalSaveIoWrite64ValueToBootScript (
+           Port,
+           IoBitFieldOr64 (
+             Port,
+             StartBit,
+             EndBit,
+             OrData
+             )
+           );
 }
 
 /**
@@ -1422,7 +1593,15 @@ S3IoBitFieldAnd64 (
   IN UINT64  AndData
   )
 {
-  return InternalSaveIoWrite64ValueToBootScript (Port, IoBitFieldAnd64 (Port, StartBit, EndBit, AndData));
+  return InternalSaveIoWrite64ValueToBootScript (
+           Port,
+           IoBitFieldAnd64 (
+             Port,
+             StartBit,
+             EndBit,
+             AndData
+             )
+           );
 }
 
 /**
@@ -1466,7 +1645,16 @@ S3IoBitFieldAndThenOr64 (
   IN UINT64  OrData
   )
 {
-  return InternalSaveIoWrite64ValueToBootScript (Port, IoBitFieldAndThenOr64 (Port, StartBit, EndBit, AndData, OrData));
+  return InternalSaveIoWrite64ValueToBootScript (
+           Port,
+           IoBitFieldAndThenOr64 (
+             Port,
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -1520,7 +1708,11 @@ InternalSaveMmioWrite8ValueToBootScript (
   IN UINT8  Value
   )
 {
-  InternalSaveMmioWriteValueToBootScript (S3BootScriptWidthUint8, Address, &Value);
+  InternalSaveMmioWriteValueToBootScript (
+    S3BootScriptWidthUint8,
+    Address,
+    &Value
+    );
 
   return Value;
 }
@@ -1572,7 +1764,13 @@ S3MmioWrite8 (
   IN UINT8  Value
   )
 {
-  return InternalSaveMmioWrite8ValueToBootScript (Address, MmioWrite8 (Address, Value));
+  return InternalSaveMmioWrite8ValueToBootScript (
+           Address,
+           MmioWrite8 (
+             Address,
+             Value
+             )
+           );
 }
 
 /**
@@ -1601,7 +1799,13 @@ S3MmioOr8 (
   IN UINT8  OrData
   )
 {
-  return InternalSaveMmioWrite8ValueToBootScript (Address, MmioOr8 (Address, OrData));
+  return InternalSaveMmioWrite8ValueToBootScript (
+           Address,
+           MmioOr8 (
+             Address,
+             OrData
+             )
+           );
 }
 
 /**
@@ -1630,7 +1834,13 @@ S3MmioAnd8 (
   IN UINT8  AndData
   )
 {
-  return InternalSaveMmioWrite8ValueToBootScript (Address, MmioAnd8 (Address, AndData));
+  return InternalSaveMmioWrite8ValueToBootScript (
+           Address,
+           MmioAnd8 (
+             Address,
+             AndData
+             )
+           );
 }
 
 /**
@@ -1662,7 +1872,14 @@ S3MmioAndThenOr8 (
   IN UINT8  OrData
   )
 {
-  return InternalSaveMmioWrite8ValueToBootScript (Address, MmioAndThenOr8 (Address, AndData, OrData));
+  return InternalSaveMmioWrite8ValueToBootScript (
+           Address,
+           MmioAndThenOr8 (
+             Address,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -1694,7 +1911,14 @@ S3MmioBitFieldRead8 (
   IN UINTN  EndBit
   )
 {
-  return InternalSaveMmioWrite8ValueToBootScript (Address, MmioBitFieldRead8 (Address, StartBit, EndBit));
+  return InternalSaveMmioWrite8ValueToBootScript (
+           Address,
+           MmioBitFieldRead8 (
+             Address,
+             StartBit,
+             EndBit
+             )
+           );
 }
 
 /**
@@ -1730,7 +1954,15 @@ S3MmioBitFieldWrite8 (
   IN UINT8  Value
   )
 {
-  return InternalSaveMmioWrite8ValueToBootScript (Address, MmioBitFieldWrite8 (Address, StartBit, EndBit, Value));
+  return InternalSaveMmioWrite8ValueToBootScript (
+           Address,
+           MmioBitFieldWrite8 (
+             Address,
+             StartBit,
+             EndBit,
+             Value
+             )
+           );
 }
 
 /**
@@ -1770,7 +2002,15 @@ S3MmioBitFieldOr8 (
   IN UINT8  OrData
   )
 {
-  return InternalSaveMmioWrite8ValueToBootScript (Address, MmioBitFieldOr8 (Address, StartBit, EndBit, OrData));
+  return InternalSaveMmioWrite8ValueToBootScript (
+           Address,
+           MmioBitFieldOr8 (
+             Address,
+             StartBit,
+             EndBit,
+             OrData
+             )
+           );
 }
 
 /**
@@ -1810,7 +2050,15 @@ S3MmioBitFieldAnd8 (
   IN UINT8  AndData
   )
 {
-  return InternalSaveMmioWrite8ValueToBootScript (Address, MmioBitFieldAnd8 (Address, StartBit, EndBit, AndData));
+  return InternalSaveMmioWrite8ValueToBootScript (
+           Address,
+           MmioBitFieldAnd8 (
+             Address,
+             StartBit,
+             EndBit,
+             AndData
+             )
+           );
 }
 
 /**
@@ -1854,7 +2102,10 @@ S3MmioBitFieldAndThenOr8 (
   IN UINT8  OrData
   )
 {
-  return InternalSaveMmioWrite8ValueToBootScript (Address, MmioBitFieldAndThenOr8 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSaveMmioWrite8ValueToBootScript (
+           Address,
+           MmioBitFieldAndThenOr8 (Address, StartBit, EndBit, AndData, OrData)
+           );
 }
 
 /**
@@ -1877,7 +2128,11 @@ InternalSaveMmioWrite16ValueToBootScript (
   IN UINT16  Value
   )
 {
-  InternalSaveMmioWriteValueToBootScript (S3BootScriptWidthUint16, Address, &Value);
+  InternalSaveMmioWriteValueToBootScript (
+    S3BootScriptWidthUint16,
+    Address,
+    &Value
+    );
 
   return Value;
 }
@@ -1903,7 +2158,12 @@ S3MmioRead16 (
   IN UINTN  Address
   )
 {
-  return InternalSaveMmioWrite16ValueToBootScript (Address, MmioRead16 (Address));
+  return InternalSaveMmioWrite16ValueToBootScript (
+           Address,
+           MmioRead16 (
+             Address
+             )
+           );
 }
 
 /**
@@ -1930,7 +2190,13 @@ S3MmioWrite16 (
   IN UINT16  Value
   )
 {
-  return InternalSaveMmioWrite16ValueToBootScript (Address, MmioWrite16 (Address, Value));
+  return InternalSaveMmioWrite16ValueToBootScript (
+           Address,
+           MmioWrite16 (
+             Address,
+             Value
+             )
+           );
 }
 
 /**
@@ -1959,7 +2225,13 @@ S3MmioOr16 (
   IN UINT16  OrData
   )
 {
-  return InternalSaveMmioWrite16ValueToBootScript (Address, MmioOr16 (Address, OrData));
+  return InternalSaveMmioWrite16ValueToBootScript (
+           Address,
+           MmioOr16 (
+             Address,
+             OrData
+             )
+           );
 }
 
 /**
@@ -1988,7 +2260,13 @@ S3MmioAnd16 (
   IN UINT16  AndData
   )
 {
-  return InternalSaveMmioWrite16ValueToBootScript (Address, MmioAnd16 (Address, AndData));
+  return InternalSaveMmioWrite16ValueToBootScript (
+           Address,
+           MmioAnd16 (
+             Address,
+             AndData
+             )
+           );
 }
 
 /**
@@ -2020,7 +2298,14 @@ S3MmioAndThenOr16 (
   IN UINT16  OrData
   )
 {
-  return InternalSaveMmioWrite16ValueToBootScript (Address, MmioAndThenOr16 (Address, AndData, OrData));
+  return InternalSaveMmioWrite16ValueToBootScript (
+           Address,
+           MmioAndThenOr16 (
+             Address,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -2052,7 +2337,14 @@ S3MmioBitFieldRead16 (
   IN UINTN  EndBit
   )
 {
-  return InternalSaveMmioWrite16ValueToBootScript (Address, MmioBitFieldRead16 (Address, StartBit, EndBit));
+  return InternalSaveMmioWrite16ValueToBootScript (
+           Address,
+           MmioBitFieldRead16 (
+             Address,
+             StartBit,
+             EndBit
+             )
+           );
 }
 
 /**
@@ -2088,7 +2380,10 @@ S3MmioBitFieldWrite16 (
   IN UINT16  Value
   )
 {
-  return InternalSaveMmioWrite16ValueToBootScript (Address, MmioBitFieldWrite16 (Address, StartBit, EndBit, Value));
+  return InternalSaveMmioWrite16ValueToBootScript (
+           Address,
+           MmioBitFieldWrite16 (Address, StartBit, EndBit, Value)
+           );
 }
 
 /**
@@ -2128,7 +2423,15 @@ S3MmioBitFieldOr16 (
   IN UINT16  OrData
   )
 {
-  return InternalSaveMmioWrite16ValueToBootScript (Address, MmioBitFieldOr16 (Address, StartBit, EndBit, OrData));
+  return InternalSaveMmioWrite16ValueToBootScript (
+           Address,
+           MmioBitFieldOr16 (
+             Address,
+             StartBit,
+             EndBit,
+             OrData
+             )
+           );
 }
 
 /**
@@ -2168,7 +2471,15 @@ S3MmioBitFieldAnd16 (
   IN UINT16  AndData
   )
 {
-  return InternalSaveMmioWrite16ValueToBootScript (Address, MmioBitFieldAnd16 (Address, StartBit, EndBit, AndData));
+  return InternalSaveMmioWrite16ValueToBootScript (
+           Address,
+           MmioBitFieldAnd16 (
+             Address,
+             StartBit,
+             EndBit,
+             AndData
+             )
+           );
 }
 
 /**
@@ -2212,7 +2523,10 @@ S3MmioBitFieldAndThenOr16 (
   IN UINT16  OrData
   )
 {
-  return InternalSaveMmioWrite16ValueToBootScript (Address, MmioBitFieldAndThenOr16 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSaveMmioWrite16ValueToBootScript (
+           Address,
+           MmioBitFieldAndThenOr16 (Address, StartBit, EndBit, AndData, OrData)
+           );
 }
 
 /**
@@ -2235,7 +2549,11 @@ InternalSaveMmioWrite32ValueToBootScript (
   IN UINT32  Value
   )
 {
-  InternalSaveMmioWriteValueToBootScript (S3BootScriptWidthUint32, Address, &Value);
+  InternalSaveMmioWriteValueToBootScript (
+    S3BootScriptWidthUint32,
+    Address,
+    &Value
+    );
 
   return Value;
 }
@@ -2261,7 +2579,12 @@ S3MmioRead32 (
   IN UINTN  Address
   )
 {
-  return InternalSaveMmioWrite32ValueToBootScript (Address, MmioRead32 (Address));
+  return InternalSaveMmioWrite32ValueToBootScript (
+           Address,
+           MmioRead32 (
+             Address
+             )
+           );
 }
 
 /**
@@ -2287,7 +2610,13 @@ S3MmioWrite32 (
   IN UINT32  Value
   )
 {
-  return InternalSaveMmioWrite32ValueToBootScript (Address, MmioWrite32 (Address, Value));
+  return InternalSaveMmioWrite32ValueToBootScript (
+           Address,
+           MmioWrite32 (
+             Address,
+             Value
+             )
+           );
 }
 
 /**
@@ -2316,7 +2645,13 @@ S3MmioOr32 (
   IN UINT32  OrData
   )
 {
-  return InternalSaveMmioWrite32ValueToBootScript (Address, MmioOr32 (Address, OrData));
+  return InternalSaveMmioWrite32ValueToBootScript (
+           Address,
+           MmioOr32 (
+             Address,
+             OrData
+             )
+           );
 }
 
 /**
@@ -2345,7 +2680,13 @@ S3MmioAnd32 (
   IN UINT32  AndData
   )
 {
-  return InternalSaveMmioWrite32ValueToBootScript (Address, MmioAnd32 (Address, AndData));
+  return InternalSaveMmioWrite32ValueToBootScript (
+           Address,
+           MmioAnd32 (
+             Address,
+             AndData
+             )
+           );
 }
 
 /**
@@ -2377,7 +2718,14 @@ S3MmioAndThenOr32 (
   IN UINT32  OrData
   )
 {
-  return InternalSaveMmioWrite32ValueToBootScript (Address, MmioAndThenOr32 (Address, AndData, OrData));
+  return InternalSaveMmioWrite32ValueToBootScript (
+           Address,
+           MmioAndThenOr32 (
+             Address,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -2409,7 +2757,14 @@ S3MmioBitFieldRead32 (
   IN UINTN  EndBit
   )
 {
-  return InternalSaveMmioWrite32ValueToBootScript (Address, MmioBitFieldRead32 (Address, StartBit, EndBit));
+  return InternalSaveMmioWrite32ValueToBootScript (
+           Address,
+           MmioBitFieldRead32 (
+             Address,
+             StartBit,
+             EndBit
+             )
+           );
 }
 
 /**
@@ -2445,7 +2800,10 @@ S3MmioBitFieldWrite32 (
   IN UINT32  Value
   )
 {
-  return InternalSaveMmioWrite32ValueToBootScript (Address, MmioBitFieldWrite32 (Address, StartBit, EndBit, Value));
+  return InternalSaveMmioWrite32ValueToBootScript (
+           Address,
+           MmioBitFieldWrite32 (Address, StartBit, EndBit, Value)
+           );
 }
 
 /**
@@ -2485,7 +2843,15 @@ S3MmioBitFieldOr32 (
   IN UINT32  OrData
   )
 {
-  return InternalSaveMmioWrite32ValueToBootScript (Address, MmioBitFieldOr32 (Address, StartBit, EndBit, OrData));
+  return InternalSaveMmioWrite32ValueToBootScript (
+           Address,
+           MmioBitFieldOr32 (
+             Address,
+             StartBit,
+             EndBit,
+             OrData
+             )
+           );
 }
 
 /**
@@ -2525,7 +2891,15 @@ S3MmioBitFieldAnd32 (
   IN UINT32  AndData
   )
 {
-  return InternalSaveMmioWrite32ValueToBootScript (Address, MmioBitFieldAnd32 (Address, StartBit, EndBit, AndData));
+  return InternalSaveMmioWrite32ValueToBootScript (
+           Address,
+           MmioBitFieldAnd32 (
+             Address,
+             StartBit,
+             EndBit,
+             AndData
+             )
+           );
 }
 
 /**
@@ -2569,7 +2943,10 @@ S3MmioBitFieldAndThenOr32 (
   IN UINT32  OrData
   )
 {
-  return InternalSaveMmioWrite32ValueToBootScript (Address, MmioBitFieldAndThenOr32 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSaveMmioWrite32ValueToBootScript (
+           Address,
+           MmioBitFieldAndThenOr32 (Address, StartBit, EndBit, AndData, OrData)
+           );
 }
 
 /**
@@ -2592,7 +2969,11 @@ InternalSaveMmioWrite64ValueToBootScript (
   IN UINT64  Value
   )
 {
-  InternalSaveMmioWriteValueToBootScript (S3BootScriptWidthUint64, Address, &Value);
+  InternalSaveMmioWriteValueToBootScript (
+    S3BootScriptWidthUint64,
+    Address,
+    &Value
+    );
 
   return Value;
 }
@@ -2618,7 +2999,12 @@ S3MmioRead64 (
   IN UINTN  Address
   )
 {
-  return InternalSaveMmioWrite64ValueToBootScript (Address, MmioRead64 (Address));
+  return InternalSaveMmioWrite64ValueToBootScript (
+           Address,
+           MmioRead64 (
+             Address
+             )
+           );
 }
 
 /**
@@ -2644,7 +3030,13 @@ S3MmioWrite64 (
   IN UINT64  Value
   )
 {
-  return InternalSaveMmioWrite64ValueToBootScript (Address, MmioWrite64 (Address, Value));
+  return InternalSaveMmioWrite64ValueToBootScript (
+           Address,
+           MmioWrite64 (
+             Address,
+             Value
+             )
+           );
 }
 
 /**
@@ -2673,7 +3065,13 @@ S3MmioOr64 (
   IN UINT64  OrData
   )
 {
-  return InternalSaveMmioWrite64ValueToBootScript (Address, MmioOr64 (Address, OrData));
+  return InternalSaveMmioWrite64ValueToBootScript (
+           Address,
+           MmioOr64 (
+             Address,
+             OrData
+             )
+           );
 }
 
 /**
@@ -2702,7 +3100,13 @@ S3MmioAnd64 (
   IN UINT64  AndData
   )
 {
-  return InternalSaveMmioWrite64ValueToBootScript (Address, MmioAnd64 (Address, AndData));
+  return InternalSaveMmioWrite64ValueToBootScript (
+           Address,
+           MmioAnd64 (
+             Address,
+             AndData
+             )
+           );
 }
 
 /**
@@ -2734,7 +3138,14 @@ S3MmioAndThenOr64 (
   IN UINT64  OrData
   )
 {
-  return InternalSaveMmioWrite64ValueToBootScript (Address, MmioAndThenOr64 (Address, AndData, OrData));
+  return InternalSaveMmioWrite64ValueToBootScript (
+           Address,
+           MmioAndThenOr64 (
+             Address,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -2766,7 +3177,14 @@ S3MmioBitFieldRead64 (
   IN UINTN  EndBit
   )
 {
-  return InternalSaveMmioWrite64ValueToBootScript (Address, MmioBitFieldRead64 (Address, StartBit, EndBit));
+  return InternalSaveMmioWrite64ValueToBootScript (
+           Address,
+           MmioBitFieldRead64 (
+             Address,
+             StartBit,
+             EndBit
+             )
+           );
 }
 
 /**
@@ -2802,7 +3220,10 @@ S3MmioBitFieldWrite64 (
   IN UINT64  Value
   )
 {
-  return InternalSaveMmioWrite64ValueToBootScript (Address, MmioBitFieldWrite64 (Address, StartBit, EndBit, Value));
+  return InternalSaveMmioWrite64ValueToBootScript (
+           Address,
+           MmioBitFieldWrite64 (Address, StartBit, EndBit, Value)
+           );
 }
 
 /**
@@ -2842,7 +3263,15 @@ S3MmioBitFieldOr64 (
   IN UINT64  OrData
   )
 {
-  return InternalSaveMmioWrite64ValueToBootScript (Address, MmioBitFieldOr64 (Address, StartBit, EndBit, OrData));
+  return InternalSaveMmioWrite64ValueToBootScript (
+           Address,
+           MmioBitFieldOr64 (
+             Address,
+             StartBit,
+             EndBit,
+             OrData
+             )
+           );
 }
 
 /**
@@ -2882,7 +3311,15 @@ S3MmioBitFieldAnd64 (
   IN UINT64  AndData
   )
 {
-  return InternalSaveMmioWrite64ValueToBootScript (Address, MmioBitFieldAnd64 (Address, StartBit, EndBit, AndData));
+  return InternalSaveMmioWrite64ValueToBootScript (
+           Address,
+           MmioBitFieldAnd64 (
+             Address,
+             StartBit,
+             EndBit,
+             AndData
+             )
+           );
 }
 
 /**
@@ -2926,7 +3363,10 @@ S3MmioBitFieldAndThenOr64 (
   IN UINT64  OrData
   )
 {
-  return InternalSaveMmioWrite64ValueToBootScript (Address, MmioBitFieldAndThenOr64 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSaveMmioWrite64ValueToBootScript (
+           Address,
+           MmioBitFieldAndThenOr64 (Address, StartBit, EndBit, AndData, OrData)
+           );
 }
 
 /**

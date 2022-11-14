@@ -499,7 +499,11 @@ SafeUintnMult (
     return SafeUint64ToUintn (IntermediateResult, Result);
   }
 
-  return SafeUint64Mult ((UINT64)Multiplicand, (UINT64)Multiplier, (UINT64 *)Result);
+  return SafeUint64Mult (
+           (UINT64)Multiplicand,
+           (UINT64)Multiplier,
+           (UINT64 *)Result
+           );
 }
 
 /**
@@ -607,5 +611,9 @@ SafeIntnMult (
     return SafeInt64ToIntn (((INT64)Multiplicand) *((INT64)Multiplier), Result);
   }
 
-  return SafeInt64Mult ((INT64)Multiplicand, (INT64)Multiplier, (INT64 *)Result);
+  return SafeInt64Mult (
+           (INT64)Multiplicand,
+           (INT64)Multiplier,
+           (INT64 *)Result
+           );
 }

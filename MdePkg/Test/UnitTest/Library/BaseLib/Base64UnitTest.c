@@ -78,29 +78,71 @@ typedef struct {
 #define MAX_TEST_STRING_SIZE  (200)
 
 // ------------------------------------------------ Input----------Output-----------Result-------Free--Expected Output Size
-static BASIC_TEST_CONTEXT  mBasicEncodeTest1  = { BIN_TEST_1, B64_TEST_1, EFI_SUCCESS, NULL, sizeof (B64_TEST_1) };
-static BASIC_TEST_CONTEXT  mBasicEncodeTest2  = { BIN_TEST_2, B64_TEST_2, EFI_SUCCESS, NULL, sizeof (B64_TEST_2) };
-static BASIC_TEST_CONTEXT  mBasicEncodeTest3  = { BIN_TEST_3, B64_TEST_3, EFI_SUCCESS, NULL, sizeof (B64_TEST_3) };
-static BASIC_TEST_CONTEXT  mBasicEncodeTest4  = { BIN_TEST_4, B64_TEST_4, EFI_SUCCESS, NULL, sizeof (B64_TEST_4) };
-static BASIC_TEST_CONTEXT  mBasicEncodeTest5  = { BIN_TEST_5, B64_TEST_5, EFI_SUCCESS, NULL, sizeof (B64_TEST_5) };
-static BASIC_TEST_CONTEXT  mBasicEncodeTest6  = { BIN_TEST_6, B64_TEST_6, EFI_SUCCESS, NULL, sizeof (B64_TEST_6) };
-static BASIC_TEST_CONTEXT  mBasicEncodeTest7  = { BIN_TEST_7, B64_TEST_7, EFI_SUCCESS, NULL, sizeof (B64_TEST_7) };
-static BASIC_TEST_CONTEXT  mBasicEncodeError1 = { BIN_TEST_7, B64_TEST_1, EFI_BUFFER_TOO_SMALL, NULL, sizeof (B64_TEST_7) };
+static BASIC_TEST_CONTEXT  mBasicEncodeTest1 = {
+  BIN_TEST_1, B64_TEST_1, EFI_SUCCESS, NULL, sizeof (B64_TEST_1)
+};
+static BASIC_TEST_CONTEXT  mBasicEncodeTest2 = {
+  BIN_TEST_2, B64_TEST_2, EFI_SUCCESS, NULL, sizeof (B64_TEST_2)
+};
+static BASIC_TEST_CONTEXT  mBasicEncodeTest3 = {
+  BIN_TEST_3, B64_TEST_3, EFI_SUCCESS, NULL, sizeof (B64_TEST_3)
+};
+static BASIC_TEST_CONTEXT  mBasicEncodeTest4 = {
+  BIN_TEST_4, B64_TEST_4, EFI_SUCCESS, NULL, sizeof (B64_TEST_4)
+};
+static BASIC_TEST_CONTEXT  mBasicEncodeTest5 = {
+  BIN_TEST_5, B64_TEST_5, EFI_SUCCESS, NULL, sizeof (B64_TEST_5)
+};
+static BASIC_TEST_CONTEXT  mBasicEncodeTest6 = {
+  BIN_TEST_6, B64_TEST_6, EFI_SUCCESS, NULL, sizeof (B64_TEST_6)
+};
+static BASIC_TEST_CONTEXT  mBasicEncodeTest7 = {
+  BIN_TEST_7, B64_TEST_7, EFI_SUCCESS, NULL, sizeof (B64_TEST_7)
+};
+static BASIC_TEST_CONTEXT  mBasicEncodeError1 = {
+  BIN_TEST_7, B64_TEST_1, EFI_BUFFER_TOO_SMALL, NULL, sizeof (B64_TEST_7)
+};
 
-static BASIC_TEST_CONTEXT  mBasicDecodeTest1 = { B64_TEST_1, BIN_TEST_1, EFI_SUCCESS, NULL, sizeof (BIN_TEST_1)-1 };
-static BASIC_TEST_CONTEXT  mBasicDecodeTest2 = { B64_TEST_2, BIN_TEST_2, EFI_SUCCESS, NULL, sizeof (BIN_TEST_2)-1 };
-static BASIC_TEST_CONTEXT  mBasicDecodeTest3 = { B64_TEST_3, BIN_TEST_3, EFI_SUCCESS, NULL, sizeof (BIN_TEST_3)-1 };
-static BASIC_TEST_CONTEXT  mBasicDecodeTest4 = { B64_TEST_4, BIN_TEST_4, EFI_SUCCESS, NULL, sizeof (BIN_TEST_4)-1 };
-static BASIC_TEST_CONTEXT  mBasicDecodeTest5 = { B64_TEST_5, BIN_TEST_5, EFI_SUCCESS, NULL, sizeof (BIN_TEST_5)-1 };
-static BASIC_TEST_CONTEXT  mBasicDecodeTest6 = { B64_TEST_6, BIN_TEST_6, EFI_SUCCESS, NULL, sizeof (BIN_TEST_6)-1 };
-static BASIC_TEST_CONTEXT  mBasicDecodeTest7 = { B64_TEST_7, BIN_TEST_7, EFI_SUCCESS, NULL, sizeof (BIN_TEST_7)-1 };
-static BASIC_TEST_CONTEXT  mBasicDecodeTest8 = { B64_TEST_8_IN, BIN_TEST_8, EFI_SUCCESS, NULL, sizeof (BIN_TEST_8)-1 };
+static BASIC_TEST_CONTEXT  mBasicDecodeTest1 = {
+  B64_TEST_1, BIN_TEST_1, EFI_SUCCESS, NULL, sizeof (BIN_TEST_1)-1
+};
+static BASIC_TEST_CONTEXT  mBasicDecodeTest2 = {
+  B64_TEST_2, BIN_TEST_2, EFI_SUCCESS, NULL, sizeof (BIN_TEST_2)-1
+};
+static BASIC_TEST_CONTEXT  mBasicDecodeTest3 = {
+  B64_TEST_3, BIN_TEST_3, EFI_SUCCESS, NULL, sizeof (BIN_TEST_3)-1
+};
+static BASIC_TEST_CONTEXT  mBasicDecodeTest4 = {
+  B64_TEST_4, BIN_TEST_4, EFI_SUCCESS, NULL, sizeof (BIN_TEST_4)-1
+};
+static BASIC_TEST_CONTEXT  mBasicDecodeTest5 = {
+  B64_TEST_5, BIN_TEST_5, EFI_SUCCESS, NULL, sizeof (BIN_TEST_5)-1
+};
+static BASIC_TEST_CONTEXT  mBasicDecodeTest6 = {
+  B64_TEST_6, BIN_TEST_6, EFI_SUCCESS, NULL, sizeof (BIN_TEST_6)-1
+};
+static BASIC_TEST_CONTEXT  mBasicDecodeTest7 = {
+  B64_TEST_7, BIN_TEST_7, EFI_SUCCESS, NULL, sizeof (BIN_TEST_7)-1
+};
+static BASIC_TEST_CONTEXT  mBasicDecodeTest8 = {
+  B64_TEST_8_IN, BIN_TEST_8, EFI_SUCCESS, NULL, sizeof (BIN_TEST_8)-1
+};
 
-static BASIC_TEST_CONTEXT  mBasicDecodeError1 = { B64_ERROR_1, B64_ERROR_1, EFI_INVALID_PARAMETER, NULL, 0 };
-static BASIC_TEST_CONTEXT  mBasicDecodeError2 = { B64_ERROR_2, B64_ERROR_2, EFI_INVALID_PARAMETER, NULL, 0 };
-static BASIC_TEST_CONTEXT  mBasicDecodeError3 = { B64_ERROR_3, B64_ERROR_3, EFI_INVALID_PARAMETER, NULL, 0 };
-static BASIC_TEST_CONTEXT  mBasicDecodeError4 = { B64_ERROR_4, B64_ERROR_4, EFI_INVALID_PARAMETER, NULL, 0 };
-static BASIC_TEST_CONTEXT  mBasicDecodeError5 = { B64_TEST_7, BIN_TEST_1, EFI_BUFFER_TOO_SMALL, NULL, sizeof (BIN_TEST_7)-1 };
+static BASIC_TEST_CONTEXT  mBasicDecodeError1 = {
+  B64_ERROR_1, B64_ERROR_1, EFI_INVALID_PARAMETER, NULL, 0
+};
+static BASIC_TEST_CONTEXT  mBasicDecodeError2 = {
+  B64_ERROR_2, B64_ERROR_2, EFI_INVALID_PARAMETER, NULL, 0
+};
+static BASIC_TEST_CONTEXT  mBasicDecodeError3 = {
+  B64_ERROR_3, B64_ERROR_3, EFI_INVALID_PARAMETER, NULL, 0
+};
+static BASIC_TEST_CONTEXT  mBasicDecodeError4 = {
+  B64_ERROR_4, B64_ERROR_4, EFI_INVALID_PARAMETER, NULL, 0
+};
+static BASIC_TEST_CONTEXT  mBasicDecodeError5 = {
+  B64_TEST_7, BIN_TEST_1, EFI_BUFFER_TOO_SMALL, NULL, sizeof (BIN_TEST_7)-1
+};
 
 /**
   Simple clean up method to make sure tests clean up even if interrupted and fail
@@ -318,7 +360,8 @@ SafeStringContraintCheckTest (
   // Positive test case copy source unicode string to destination
   //
   ZeroMem (Destination, sizeof (Destination));
-  Status = StrCpyS (Destination, sizeof (Destination) / sizeof (CHAR16), SOURCE_STRING);
+  Status = StrCpyS (Destination, sizeof (Destination) / sizeof (CHAR16),
+             SOURCE_STRING);
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_MEM_EQUAL (Destination, SOURCE_STRING, sizeof (SOURCE_STRING));
 
@@ -326,7 +369,8 @@ SafeStringContraintCheckTest (
   // Positive test case with DestMax the same as Source size
   //
   ZeroMem (Destination, sizeof (Destination));
-  Status = StrCpyS (Destination, sizeof (SOURCE_STRING) / sizeof (CHAR16), SOURCE_STRING);
+  Status = StrCpyS (Destination, sizeof (SOURCE_STRING) / sizeof (CHAR16),
+             SOURCE_STRING);
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_MEM_EQUAL (Destination, SOURCE_STRING, sizeof (SOURCE_STRING));
 
@@ -334,7 +378,8 @@ SafeStringContraintCheckTest (
   // Negative test case with Destination NULL
   //
   ZeroMem (Destination, sizeof (Destination));
-  Status = StrCpyS (NULL, sizeof (Destination) / sizeof (CHAR16), SOURCE_STRING);
+  Status = StrCpyS (NULL, sizeof (Destination) / sizeof (CHAR16),
+             SOURCE_STRING);
   UT_ASSERT_STATUS_EQUAL (Status, RETURN_INVALID_PARAMETER);
   UT_ASSERT_MEM_EQUAL (Destination, AllZero, sizeof (AllZero));
 
@@ -374,7 +419,8 @@ SafeStringContraintCheckTest (
   // Negative test case with DestMax smaller than Source size by one character
   //
   ZeroMem (Destination, sizeof (Destination));
-  Status = StrCpyS (Destination, sizeof (SOURCE_STRING) / sizeof (CHAR16) - 1, SOURCE_STRING);
+  Status = StrCpyS (Destination, sizeof (SOURCE_STRING) / sizeof (CHAR16) - 1,
+             SOURCE_STRING);
   UT_ASSERT_STATUS_EQUAL (Status, RETURN_BUFFER_TOO_SMALL);
   UT_ASSERT_MEM_EQUAL (Destination, AllZero, sizeof (AllZero));
 
@@ -382,7 +428,8 @@ SafeStringContraintCheckTest (
   // Negative test case with overlapping Destination and Source
   //
   ZeroMem (Destination, sizeof (Destination));
-  Status = StrCpyS (Destination, sizeof (Destination) / sizeof (CHAR16), Destination);
+  Status = StrCpyS (Destination, sizeof (Destination) / sizeof (CHAR16),
+             Destination);
   UT_ASSERT_STATUS_EQUAL (Status, RETURN_ACCESS_DENIED);
   UT_ASSERT_MEM_EQUAL (Destination, AllZero, sizeof (AllZero));
 
@@ -417,16 +464,20 @@ UnitTestingEntry (
   //
   // Start setting up the test framework for running the tests.
   //
-  Status = InitUnitTestFramework (&Fw, UNIT_TEST_APP_NAME, gEfiCallerBaseName, UNIT_TEST_APP_VERSION);
+  Status = InitUnitTestFramework (&Fw, UNIT_TEST_APP_NAME, gEfiCallerBaseName,
+             UNIT_TEST_APP_VERSION);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n",
+      Status));
     goto EXIT;
   }
 
   //
   // Populate the B64 Encode Unit Test Suite.
   //
-  Status = CreateUnitTestSuite (&b64EncodeTests, Fw, "b64 Encode binary to Ascii string", "BaseLib.b64Encode", NULL, NULL);
+  Status = CreateUnitTestSuite (&b64EncodeTests, Fw,
+             "b64 Encode binary to Ascii string", "BaseLib.b64Encode", NULL,
+             NULL);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for b64EncodeTests\n"));
     Status = EFI_OUT_OF_RESOURCES;
@@ -434,51 +485,79 @@ UnitTestingEntry (
   }
 
   // --------------Suite-----------Description--------------Class Name----------Function--------Pre---Post-------------------Context-----------
-  AddTestCase (b64EncodeTests, "RFC 4686 Test Vector - Empty", "Test1", RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeTest1);
-  AddTestCase (b64EncodeTests, "RFC 4686 Test Vector - f", "Test2", RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeTest2);
-  AddTestCase (b64EncodeTests, "RFC 4686 Test Vector - fo", "Test3", RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeTest3);
-  AddTestCase (b64EncodeTests, "RFC 4686 Test Vector - foo", "Test4", RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeTest4);
-  AddTestCase (b64EncodeTests, "RFC 4686 Test Vector - foob", "Test5", RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeTest5);
-  AddTestCase (b64EncodeTests, "RFC 4686 Test Vector - fooba", "Test6", RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeTest6);
-  AddTestCase (b64EncodeTests, "RFC 4686 Test Vector - foobar", "Test7", RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeTest7);
-  AddTestCase (b64EncodeTests, "Too small of output buffer", "Error1", RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeError1);
+  AddTestCase (b64EncodeTests, "RFC 4686 Test Vector - Empty", "Test1",
+    RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeTest1);
+  AddTestCase (b64EncodeTests, "RFC 4686 Test Vector - f", "Test2",
+    RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeTest2);
+  AddTestCase (b64EncodeTests, "RFC 4686 Test Vector - fo", "Test3",
+    RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeTest3);
+  AddTestCase (b64EncodeTests, "RFC 4686 Test Vector - foo", "Test4",
+    RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeTest4);
+  AddTestCase (b64EncodeTests, "RFC 4686 Test Vector - foob", "Test5",
+    RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeTest5);
+  AddTestCase (b64EncodeTests, "RFC 4686 Test Vector - fooba", "Test6",
+    RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeTest6);
+  AddTestCase (b64EncodeTests, "RFC 4686 Test Vector - foobar", "Test7",
+    RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeTest7);
+  AddTestCase (b64EncodeTests, "Too small of output buffer", "Error1",
+    RfcEncodeTest, NULL, CleanUpB64TestContext, &mBasicEncodeError1);
   //
   // Populate the B64 Decode Unit Test Suite.
   //
-  Status = CreateUnitTestSuite (&b64DecodeTests, Fw, "b64 Decode Ascii string to binary", "BaseLib.b64Decode", NULL, NULL);
+  Status = CreateUnitTestSuite (&b64DecodeTests, Fw,
+             "b64 Decode Ascii string to binary", "BaseLib.b64Decode", NULL,
+             NULL);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for b64Decode Tests\n"));
+    DEBUG ((DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for b64Decode Tests\n"));
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
 
-  AddTestCase (b64DecodeTests, "RFC 4686 Test Vector - Empty", "Test1", RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest1);
-  AddTestCase (b64DecodeTests, "RFC 4686 Test Vector - f", "Test2", RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest2);
-  AddTestCase (b64DecodeTests, "RFC 4686 Test Vector - fo", "Test3", RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest3);
-  AddTestCase (b64DecodeTests, "RFC 4686 Test Vector - foo", "Test4", RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest4);
-  AddTestCase (b64DecodeTests, "RFC 4686 Test Vector - foob", "Test5", RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest5);
-  AddTestCase (b64DecodeTests, "RFC 4686 Test Vector - fooba", "Test6", RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest6);
-  AddTestCase (b64DecodeTests, "RFC 4686 Test Vector - foobar", "Test7", RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest7);
-  AddTestCase (b64DecodeTests, "Ignore Whitespace test", "Test8", RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest8);
+  AddTestCase (b64DecodeTests, "RFC 4686 Test Vector - Empty", "Test1",
+    RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest1);
+  AddTestCase (b64DecodeTests, "RFC 4686 Test Vector - f", "Test2",
+    RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest2);
+  AddTestCase (b64DecodeTests, "RFC 4686 Test Vector - fo", "Test3",
+    RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest3);
+  AddTestCase (b64DecodeTests, "RFC 4686 Test Vector - foo", "Test4",
+    RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest4);
+  AddTestCase (b64DecodeTests, "RFC 4686 Test Vector - foob", "Test5",
+    RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest5);
+  AddTestCase (b64DecodeTests, "RFC 4686 Test Vector - fooba", "Test6",
+    RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest6);
+  AddTestCase (b64DecodeTests, "RFC 4686 Test Vector - foobar", "Test7",
+    RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeTest7);
+  AddTestCase (b64DecodeTests, "Ignore Whitespace test", "Test8", RfcDecodeTest,
+    NULL, CleanUpB64TestContext, &mBasicDecodeTest8);
 
-  AddTestCase (b64DecodeTests, "Not a quantum multiple of 4", "Error1", RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeError1);
-  AddTestCase (b64DecodeTests, "Invalid characters in the string", "Error2", RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeError2);
-  AddTestCase (b64DecodeTests, "Too many padding characters", "Error3", RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeError3);
-  AddTestCase (b64DecodeTests, "Incorrectly placed padding character", "Error4", RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeError4);
-  AddTestCase (b64DecodeTests, "Too small of output buffer", "Error5", RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeError5);
+  AddTestCase (b64DecodeTests, "Not a quantum multiple of 4", "Error1",
+    RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeError1);
+  AddTestCase (b64DecodeTests, "Invalid characters in the string", "Error2",
+    RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeError2);
+  AddTestCase (b64DecodeTests, "Too many padding characters", "Error3",
+    RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeError3);
+  AddTestCase (b64DecodeTests, "Incorrectly placed padding character", "Error4",
+    RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeError4);
+  AddTestCase (b64DecodeTests, "Too small of output buffer", "Error5",
+    RfcDecodeTest, NULL, CleanUpB64TestContext, &mBasicDecodeError5);
 
   //
   // Populate the safe string Unit Test Suite.
   //
-  Status = CreateUnitTestSuite (&SafeStringTests, Fw, "Safe String", "BaseLib.SafeString", NULL, NULL);
+  Status = CreateUnitTestSuite (&SafeStringTests, Fw, "Safe String",
+             "BaseLib.SafeString", NULL, NULL);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for SafeStringTests\n"));
+    DEBUG ((DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for SafeStringTests\n"));
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
 
   // --------------Suite-----------Description--------------Class Name----------Function--------Pre---Post-------------------Context-----------
-  AddTestCase (SafeStringTests, "SAFE_STRING_CONSTRAINT_CHECK", "SafeStringContraintCheckTest", SafeStringContraintCheckTest, NULL, NULL, NULL);
+  AddTestCase (SafeStringTests, "SAFE_STRING_CONSTRAINT_CHECK",
+    "SafeStringContraintCheckTest", SafeStringContraintCheckTest, NULL, NULL,
+    NULL);
 
   //
   // Execute the tests.

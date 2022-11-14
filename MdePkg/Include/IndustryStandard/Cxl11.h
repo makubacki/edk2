@@ -215,42 +215,68 @@ typedef union {
 // Compute Express Link Specification Revision: 1.1 - Chapter 7.1.1, Figure 95
 //
 typedef struct {
-  PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER           Header;                                      // offset 0
-  PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_1    DesignatedVendorSpecificHeader1;             // offset 4
-  PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_2    DesignatedVendorSpecificHeader2;             // offset 8
-  CXL_DVSEC_FLEX_BUS_DEVICE_CAPABILITY               DeviceCapability;                            // offset 10
-  CXL_DVSEC_FLEX_BUS_DEVICE_CONTROL                  DeviceControl;                               // offset 12
-  CXL_DVSEC_FLEX_BUS_DEVICE_STATUS                   DeviceStatus;                                // offset 14
-  CXL_1_1_DVSEC_FLEX_BUS_DEVICE_CONTROL2             DeviceControl2;                              // offset 16
-  CXL_1_1_DVSEC_FLEX_BUS_DEVICE_STATUS2              DeviceStatus2;                               // offset 18
-  CXL_DVSEC_FLEX_BUS_DEVICE_LOCK                     DeviceLock;                                  // offset 20
-  UINT16                                             Reserved;                                    // offset 22
-  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE1_SIZE_HIGH         DeviceRange1SizeHigh;                        // offset 24
-  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE1_SIZE_LOW          DeviceRange1SizeLow;                         // offset 28
-  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE1_BASE_HIGH         DeviceRange1BaseHigh;                        // offset 32
-  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE1_BASE_LOW          DeviceRange1BaseLow;                         // offset 36
-  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE2_SIZE_HIGH         DeviceRange2SizeHigh;                        // offset 40
-  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE2_SIZE_LOW          DeviceRange2SizeLow;                         // offset 44
-  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE2_BASE_HIGH         DeviceRange2BaseHigh;                        // offset 48
-  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE2_BASE_LOW          DeviceRange2BaseLow;                         // offset 52
+  PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER      Header;                                           // offset 0
+  PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_1
+                                                DesignatedVendorSpecificHeader1;                  // offset 4
+  PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_2
+                                                DesignatedVendorSpecificHeader2;                  // offset 8
+  CXL_DVSEC_FLEX_BUS_DEVICE_CAPABILITY          DeviceCapability;                                 // offset 10
+  CXL_DVSEC_FLEX_BUS_DEVICE_CONTROL             DeviceControl;                                    // offset 12
+  CXL_DVSEC_FLEX_BUS_DEVICE_STATUS              DeviceStatus;                                     // offset 14
+  CXL_1_1_DVSEC_FLEX_BUS_DEVICE_CONTROL2        DeviceControl2;                                   // offset 16
+  CXL_1_1_DVSEC_FLEX_BUS_DEVICE_STATUS2         DeviceStatus2;                                    // offset 18
+  CXL_DVSEC_FLEX_BUS_DEVICE_LOCK                DeviceLock;                                       // offset 20
+  UINT16                                        Reserved;                                         // offset 22
+  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE1_SIZE_HIGH    DeviceRange1SizeHigh;                             // offset 24
+  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE1_SIZE_LOW     DeviceRange1SizeLow;                              // offset 28
+  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE1_BASE_HIGH    DeviceRange1BaseHigh;                             // offset 32
+  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE1_BASE_LOW     DeviceRange1BaseLow;                              // offset 36
+  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE2_SIZE_HIGH    DeviceRange2SizeHigh;                             // offset 40
+  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE2_SIZE_LOW     DeviceRange2SizeLow;                              // offset 44
+  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE2_BASE_HIGH    DeviceRange2BaseHigh;                             // offset 48
+  CXL_DVSEC_FLEX_BUS_DEVICE_RANGE2_BASE_LOW     DeviceRange2BaseLow;                              // offset 52
 } CXL_1_1_DVSEC_FLEX_BUS_DEVICE;
 
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, Header, 0x00);
-CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DesignatedVendorSpecificHeader1, 0x04);
-CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DesignatedVendorSpecificHeader2, 0x08);
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_DVSEC_FLEX_BUS_DEVICE,
+  DesignatedVendorSpecificHeader1,
+  0x04
+  );
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_DVSEC_FLEX_BUS_DEVICE,
+  DesignatedVendorSpecificHeader2,
+  0x08
+  );
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DeviceCapability, 0x0A);
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DeviceControl, 0x0C);
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DeviceStatus, 0x0E);
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DeviceControl2, 0x10);
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DeviceStatus2, 0x12);
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DeviceLock, 0x14);
-CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DeviceRange1SizeHigh, 0x18);
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_DVSEC_FLEX_BUS_DEVICE,
+  DeviceRange1SizeHigh,
+  0x18
+  );
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DeviceRange1SizeLow, 0x1C);
-CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DeviceRange1BaseHigh, 0x20);
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_DVSEC_FLEX_BUS_DEVICE,
+  DeviceRange1BaseHigh,
+  0x20
+  );
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DeviceRange1BaseLow, 0x24);
-CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DeviceRange2SizeHigh, 0x28);
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_DVSEC_FLEX_BUS_DEVICE,
+  DeviceRange2SizeHigh,
+  0x28
+  );
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DeviceRange2SizeLow, 0x2C);
-CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DeviceRange2BaseHigh, 0x30);
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_DVSEC_FLEX_BUS_DEVICE,
+  DeviceRange2BaseHigh,
+  0x30
+  );
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, DeviceRange2BaseLow, 0x34);
 CXL_11_SIZE_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_DEVICE, 0x38);
 ///@}
@@ -310,17 +336,27 @@ typedef union {
 // Compute Express Link Specification Revision: 1.1 - Chapter 7.2.1.3, Figure 99
 //
 typedef struct {
-  PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER           Header;                                      // offset 0
-  PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_1    DesignatedVendorSpecificHeader1;             // offset 4
-  PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_2    DesignatedVendorSpecificHeader2;             // offset 8
-  CXL_1_1_DVSEC_FLEX_BUS_PORT_CAPABILITY             PortCapability;                              // offset 10
-  CXL_1_1_DVSEC_FLEX_BUS_PORT_CONTROL                PortControl;                                 // offset 12
-  CXL_1_1_DVSEC_FLEX_BUS_PORT_STATUS                 PortStatus;                                  // offset 14
+  PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER    Header;                                             // offset 0
+  PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_1
+                                              DesignatedVendorSpecificHeader1;                    // offset 4
+  PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_2
+                                              DesignatedVendorSpecificHeader2;                    // offset 8
+  CXL_1_1_DVSEC_FLEX_BUS_PORT_CAPABILITY      PortCapability;                                     // offset 10
+  CXL_1_1_DVSEC_FLEX_BUS_PORT_CONTROL         PortControl;                                        // offset 12
+  CXL_1_1_DVSEC_FLEX_BUS_PORT_STATUS          PortStatus;                                         // offset 14
 } CXL_1_1_DVSEC_FLEX_BUS_PORT;
 
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_PORT, Header, 0x00);
-CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_PORT, DesignatedVendorSpecificHeader1, 0x04);
-CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_PORT, DesignatedVendorSpecificHeader2, 0x08);
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_DVSEC_FLEX_BUS_PORT,
+  DesignatedVendorSpecificHeader1,
+  0x04
+  );
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_DVSEC_FLEX_BUS_PORT,
+  DesignatedVendorSpecificHeader2,
+  0x08
+  );
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_PORT, PortCapability, 0x0A);
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_PORT, PortControl, 0x0C);
 CXL_11_OFFSET_ASSERT (CXL_1_1_DVSEC_FLEX_BUS_PORT, PortStatus, 0x0E);
@@ -483,12 +519,36 @@ typedef struct {
   UINT32                                  HeaderLog[16];
 } CXL_1_1_RAS_CAPABILITY_STRUCTURE;
 
-CXL_11_OFFSET_ASSERT (CXL_1_1_RAS_CAPABILITY_STRUCTURE, UncorrectableErrorStatus, 0x00);
-CXL_11_OFFSET_ASSERT (CXL_1_1_RAS_CAPABILITY_STRUCTURE, UncorrectableErrorMask, 0x04);
-CXL_11_OFFSET_ASSERT (CXL_1_1_RAS_CAPABILITY_STRUCTURE, UncorrectableErrorSeverity, 0x08);
-CXL_11_OFFSET_ASSERT (CXL_1_1_RAS_CAPABILITY_STRUCTURE, CorrectableErrorStatus, 0x0C);
-CXL_11_OFFSET_ASSERT (CXL_1_1_RAS_CAPABILITY_STRUCTURE, CorrectableErrorMask, 0x10);
-CXL_11_OFFSET_ASSERT (CXL_1_1_RAS_CAPABILITY_STRUCTURE, ErrorCapabilitiesAndControl, 0x14);
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_RAS_CAPABILITY_STRUCTURE,
+  UncorrectableErrorStatus,
+  0x00
+  );
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_RAS_CAPABILITY_STRUCTURE,
+  UncorrectableErrorMask,
+  0x04
+  );
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_RAS_CAPABILITY_STRUCTURE,
+  UncorrectableErrorSeverity,
+  0x08
+  );
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_RAS_CAPABILITY_STRUCTURE,
+  CorrectableErrorStatus,
+  0x0C
+  );
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_RAS_CAPABILITY_STRUCTURE,
+  CorrectableErrorMask,
+  0x10
+  );
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_RAS_CAPABILITY_STRUCTURE,
+  ErrorCapabilitiesAndControl,
+  0x14
+  );
 CXL_11_OFFSET_ASSERT (CXL_1_1_RAS_CAPABILITY_STRUCTURE, HeaderLog, 0x18);
 CXL_11_SIZE_ASSERT (CXL_1_1_RAS_CAPABILITY_STRUCTURE, 0x58);
 
@@ -504,7 +564,11 @@ typedef struct {
   CXL_1_1_SECURITY_POLICY    SecurityPolicy;
 } CXL_1_1_SECURITY_CAPABILITY_STRUCTURE;
 
-CXL_11_OFFSET_ASSERT (CXL_1_1_SECURITY_CAPABILITY_STRUCTURE, SecurityPolicy, 0x0);
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_SECURITY_CAPABILITY_STRUCTURE,
+  SecurityPolicy,
+  0x0
+  );
 CXL_11_SIZE_ASSERT (CXL_1_1_SECURITY_CAPABILITY_STRUCTURE, 0x4);
 
 typedef union {
@@ -594,13 +658,41 @@ typedef struct {
   CXL_LINK_LAYER_DEFEATURE                  LinkLayerDefeature;
 } CXL_1_1_LINK_CAPABILITY_STRUCTURE;
 
-CXL_11_OFFSET_ASSERT (CXL_1_1_LINK_CAPABILITY_STRUCTURE, LinkLayerCapability, 0x00);
-CXL_11_OFFSET_ASSERT (CXL_1_1_LINK_CAPABILITY_STRUCTURE, LinkLayerControlStatus, 0x08);
-CXL_11_OFFSET_ASSERT (CXL_1_1_LINK_CAPABILITY_STRUCTURE, LinkLayerRxCreditControl, 0x10);
-CXL_11_OFFSET_ASSERT (CXL_1_1_LINK_CAPABILITY_STRUCTURE, LinkLayerRxCreditReturnStatus, 0x18);
-CXL_11_OFFSET_ASSERT (CXL_1_1_LINK_CAPABILITY_STRUCTURE, LinkLayerTxCreditStatus, 0x20);
-CXL_11_OFFSET_ASSERT (CXL_1_1_LINK_CAPABILITY_STRUCTURE, LinkLayerAckTimerControl, 0x28);
-CXL_11_OFFSET_ASSERT (CXL_1_1_LINK_CAPABILITY_STRUCTURE, LinkLayerDefeature, 0x30);
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_LINK_CAPABILITY_STRUCTURE,
+  LinkLayerCapability,
+  0x00
+  );
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_LINK_CAPABILITY_STRUCTURE,
+  LinkLayerControlStatus,
+  0x08
+  );
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_LINK_CAPABILITY_STRUCTURE,
+  LinkLayerRxCreditControl,
+  0x10
+  );
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_LINK_CAPABILITY_STRUCTURE,
+  LinkLayerRxCreditReturnStatus,
+  0x18
+  );
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_LINK_CAPABILITY_STRUCTURE,
+  LinkLayerTxCreditStatus,
+  0x20
+  );
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_LINK_CAPABILITY_STRUCTURE,
+  LinkLayerAckTimerControl,
+  0x28
+  );
+CXL_11_OFFSET_ASSERT (
+  CXL_1_1_LINK_CAPABILITY_STRUCTURE,
+  LinkLayerDefeature,
+  0x30
+  );
 CXL_11_SIZE_ASSERT (CXL_1_1_LINK_CAPABILITY_STRUCTURE, 0x38);
 
 #define CXL_IO_ARBITRATION_CONTROL_OFFSET  0x180

@@ -31,11 +31,18 @@ typedef struct {
   // UINT64                      Lasa;                          // Optional
 } EFI_TPM2_ACPI_TABLE;
 
-#define EFI_TPM2_ACPI_TABLE_START_METHOD_ACPI                                         2
-#define EFI_TPM2_ACPI_TABLE_START_METHOD_TIS                                          6
-#define EFI_TPM2_ACPI_TABLE_START_METHOD_COMMAND_RESPONSE_BUFFER_INTERFACE            7
-#define EFI_TPM2_ACPI_TABLE_START_METHOD_COMMAND_RESPONSE_BUFFER_INTERFACE_WITH_ACPI  8
-#define EFI_TPM2_ACPI_TABLE_START_METHOD_COMMAND_RESPONSE_BUFFER_INTERFACE_WITH_SMC   11
+#define EFI_TPM2_ACPI_TABLE_START_METHOD_ACPI                                         \
+      2
+#define EFI_TPM2_ACPI_TABLE_START_METHOD_TIS                                          \
+      6
+#define EFI_TPM2_ACPI_TABLE_START_METHOD_COMMAND_RESPONSE_BUFFER_INTERFACE            \
+      7
+#define \
+  EFI_TPM2_ACPI_TABLE_START_METHOD_COMMAND_RESPONSE_BUFFER_INTERFACE_WITH_ACPI        \
+      8
+#define \
+  EFI_TPM2_ACPI_TABLE_START_METHOD_COMMAND_RESPONSE_BUFFER_INTERFACE_WITH_SMC         \
+      11
 
 typedef struct {
   UINT32    Reserved;

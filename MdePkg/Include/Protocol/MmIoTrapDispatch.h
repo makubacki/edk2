@@ -49,7 +49,8 @@ typedef struct {
   UINT32    WriteData;
 } EFI_MM_IO_TRAP_CONTEXT;
 
-typedef struct _EFI_MM_IO_TRAP_DISPATCH_PROTOCOL EFI_MM_IO_TRAP_DISPATCH_PROTOCOL;
+typedef struct _EFI_MM_IO_TRAP_DISPATCH_PROTOCOL
+EFI_MM_IO_TRAP_DISPATCH_PROTOCOL;
 
 /**
   Register an IO trap MMI child handler for a specified MMI.

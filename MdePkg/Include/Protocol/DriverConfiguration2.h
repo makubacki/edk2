@@ -17,7 +17,8 @@
     0xbfd7dc1d, 0x24f1, 0x40d9, {0x82, 0xe7, 0x2e, 0x09, 0xbb, 0x6b, 0x4e, 0xbe } \
   }
 
-typedef struct _EFI_DRIVER_CONFIGURATION2_PROTOCOL EFI_DRIVER_CONFIGURATION2_PROTOCOL;
+typedef struct _EFI_DRIVER_CONFIGURATION2_PROTOCOL
+EFI_DRIVER_CONFIGURATION2_PROTOCOL;
 
 typedef enum {
   ///
@@ -94,7 +95,8 @@ EFI_STATUS
 (EFIAPI *EFI_DRIVER_CONFIGURATION2_SET_OPTIONS)(
   IN EFI_DRIVER_CONFIGURATION2_PROTOCOL                       *This,
   IN  EFI_HANDLE                                              ControllerHandle,
-  IN  EFI_HANDLE                                              ChildHandle  OPTIONAL,
+  IN  EFI_HANDLE
+  ChildHandle  OPTIONAL,
   IN  CHAR8                                                   *Language,
   OUT EFI_DRIVER_CONFIGURATION_ACTION_REQUIRED                *ActionRequired
   );
@@ -133,7 +135,8 @@ EFI_STATUS
 (EFIAPI *EFI_DRIVER_CONFIGURATION2_OPTIONS_VALID)(
   IN EFI_DRIVER_CONFIGURATION2_PROTOCOL                       *This,
   IN  EFI_HANDLE                                              ControllerHandle,
-  IN  EFI_HANDLE                                              ChildHandle  OPTIONAL
+  IN  EFI_HANDLE
+  ChildHandle  OPTIONAL
   );
 
 /**
@@ -160,7 +163,8 @@ EFI_STATUS
 (EFIAPI *EFI_DRIVER_CONFIGURATION2_FORCE_DEFAULTS)(
   IN EFI_DRIVER_CONFIGURATION2_PROTOCOL                        *This,
   IN  EFI_HANDLE                                              ControllerHandle,
-  IN  EFI_HANDLE                                              ChildHandle  OPTIONAL,
+  IN  EFI_HANDLE
+  ChildHandle  OPTIONAL,
   IN  UINT32                                                  DefaultType,
   OUT EFI_DRIVER_CONFIGURATION_ACTION_REQUIRED                *ActionRequired
   );

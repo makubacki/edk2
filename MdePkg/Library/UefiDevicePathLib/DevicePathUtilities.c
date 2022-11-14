@@ -18,7 +18,8 @@
 //
 // Template for an end-of-device path node.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED CONST EFI_DEVICE_PATH_PROTOCOL  mUefiDevicePathLibEndDevicePath = {
+GLOBAL_REMOVE_IF_UNREFERENCED CONST EFI_DEVICE_PATH_PROTOCOL
+  mUefiDevicePathLibEndDevicePath = {
   END_DEVICE_PATH_TYPE,
   END_ENTIRE_DEVICE_PATH_SUBTYPE,
   {
@@ -57,7 +58,9 @@ IsDevicePathValid (
   //
   // Validate the input whether exists and its size big enough to touch the first node
   //
-  if ((DevicePath == NULL) || ((MaxSize > 0) && (MaxSize < END_DEVICE_PATH_LENGTH))) {
+  if ((DevicePath == NULL) || ((MaxSize > 0) && (MaxSize <
+                                                 END_DEVICE_PATH_LENGTH)))
+  {
     return FALSE;
   }
 
@@ -65,7 +68,9 @@ IsDevicePathValid (
     MaxSize = MAX_UINTN;
   }
 
-  for (Count = 0, Size = 0; !IsDevicePathEnd (DevicePath); DevicePath = NextDevicePathNode (DevicePath)) {
+  for (Count = 0, Size = 0; !IsDevicePathEnd (DevicePath); DevicePath =
+         NextDevicePathNode (DevicePath))
+  {
     NodeLength = DevicePathNodeLength (DevicePath);
     if (NodeLength < sizeof (EFI_DEVICE_PATH_PROTOCOL)) {
       return FALSE;
@@ -174,7 +179,9 @@ DevicePathNodeLength (
   )
 {
   ASSERT (Node != NULL);
-  return ReadUnaligned16 ((UINT16 *)&((EFI_DEVICE_PATH_PROTOCOL *)(Node))->Length[0]);
+  return ReadUnaligned16 (
+           (UINT16 *)&((EFI_DEVICE_PATH_PROTOCOL *)(Node))->Length[0]
+           );
 }
 
 /**
@@ -198,7 +205,9 @@ NextDevicePathNode (
   )
 {
   ASSERT (Node != NULL);
-  return (EFI_DEVICE_PATH_PROTOCOL *)((UINT8 *)(Node) + DevicePathNodeLength (Node));
+  return (EFI_DEVICE_PATH_PROTOCOL *)((UINT8 *)(Node) + DevicePathNodeLength (
+                                                          Node
+                                                          ));
 }
 
 /**
@@ -255,7 +264,8 @@ IsDevicePathEnd (
   )
 {
   ASSERT (Node != NULL);
-  return (BOOLEAN)(IsDevicePathEndType (Node) && DevicePathSubType (Node) == END_ENTIRE_DEVICE_PATH_SUBTYPE);
+  return (BOOLEAN)(IsDevicePathEndType (Node) && DevicePathSubType (Node) ==
+                   END_ENTIRE_DEVICE_PATH_SUBTYPE);
 }
 
 /**
@@ -282,7 +292,8 @@ IsDevicePathEndInstance (
   )
 {
   ASSERT (Node != NULL);
-  return (BOOLEAN)(IsDevicePathEndType (Node) && DevicePathSubType (Node) == END_INSTANCE_DEVICE_PATH_SUBTYPE);
+  return (BOOLEAN)(IsDevicePathEndType (Node) && DevicePathSubType (Node) ==
+                   END_INSTANCE_DEVICE_PATH_SUBTYPE);
 }
 
 /**
@@ -311,8 +322,14 @@ SetDevicePathNodeLength (
   )
 {
   ASSERT (Node != NULL);
-  ASSERT ((Length >= sizeof (EFI_DEVICE_PATH_PROTOCOL)) && (Length < SIZE_64KB));
-  return WriteUnaligned16 ((UINT16 *)&((EFI_DEVICE_PATH_PROTOCOL *)(Node))->Length[0], (UINT16)(Length));
+  ASSERT (
+    (Length >= sizeof (EFI_DEVICE_PATH_PROTOCOL)) && (Length <
+                                                      SIZE_64KB)
+    );
+  return WriteUnaligned16 (
+           (UINT16 *)&((EFI_DEVICE_PATH_PROTOCOL *)(Node))->Length[0],
+           (UINT16)(Length)
+           );
 }
 
 /**
@@ -338,7 +355,11 @@ SetDevicePathEndNode (
   )
 {
   ASSERT (Node != NULL);
-  CopyMem (Node, &mUefiDevicePathLibEndDevicePath, sizeof (mUefiDevicePathLibEndDevicePath));
+  CopyMem (
+    Node,
+    &mUefiDevicePathLibEndDevicePath,
+    sizeof (mUefiDevicePathLibEndDevicePath)
+    );
 }
 
 /**
@@ -464,14 +485,21 @@ UefiDevicePathLibAppendDevicePath (
   // If there's only 1 path, just duplicate it.
   //
   if (FirstDevicePath == NULL) {
-    return DuplicateDevicePath ((SecondDevicePath != NULL) ? SecondDevicePath : &mUefiDevicePathLibEndDevicePath);
+    return DuplicateDevicePath (
+             (SecondDevicePath != NULL) ? SecondDevicePath :
+             &mUefiDevicePathLibEndDevicePath
+             );
   }
 
   if (SecondDevicePath == NULL) {
     return DuplicateDevicePath (FirstDevicePath);
   }
 
-  if (!IsDevicePathValid (FirstDevicePath, 0) || !IsDevicePathValid (SecondDevicePath, 0)) {
+  if (!IsDevicePathValid (FirstDevicePath, 0) || !IsDevicePathValid (
+                                                    SecondDevicePath,
+                                                    0
+                                                    ))
+  {
     return NULL;
   }
 
@@ -491,7 +519,8 @@ UefiDevicePathLibAppendDevicePath (
     // Over write FirstDevicePath EndNode and do the copy
     //
     DevicePath2 = (EFI_DEVICE_PATH_PROTOCOL *)((CHAR8 *)NewDevicePath +
-                                               (Size1 - END_DEVICE_PATH_LENGTH));
+                                               (Size1 -
+                                                END_DEVICE_PATH_LENGTH));
     CopyMem (DevicePath2, SecondDevicePath, Size2);
   }
 
@@ -539,7 +568,10 @@ UefiDevicePathLibAppendDevicePathNode (
   UINTN                     NodeLength;
 
   if (DevicePathNode == NULL) {
-    return DuplicateDevicePath ((DevicePath != NULL) ? DevicePath : &mUefiDevicePathLibEndDevicePath);
+    return DuplicateDevicePath (
+             (DevicePath != NULL) ? DevicePath :
+             &mUefiDevicePathLibEndDevicePath
+             );
   }
 
   //
@@ -611,7 +643,11 @@ UefiDevicePathLibAppendDevicePathInstance (
     return NULL;
   }
 
-  if (!IsDevicePathValid (DevicePath, 0) || !IsDevicePathValid (DevicePathInstance, 0)) {
+  if (!IsDevicePathValid (DevicePath, 0) || !IsDevicePathValid (
+                                               DevicePathInstance,
+                                               0
+                                               ))
+  {
     return NULL;
   }
 
@@ -695,7 +731,8 @@ UefiDevicePathLibGetNextDevicePathInstance (
   //
   // Compute the size of the device path instance
   //
-  *Size = ((UINTN)DevPath - (UINTN)(*DevicePath)) + sizeof (EFI_DEVICE_PATH_PROTOCOL);
+  *Size = ((UINTN)DevPath - (UINTN)(*DevicePath)) +
+          sizeof (EFI_DEVICE_PATH_PROTOCOL);
 
   //
   // Make a copy and return the device path instance
@@ -843,13 +880,20 @@ FileDevicePath (
   DevicePath = NULL;
 
   Size           = StrSize (FileName);
-  FileDevicePath = AllocatePool (Size + SIZE_OF_FILEPATH_DEVICE_PATH + END_DEVICE_PATH_LENGTH);
+  FileDevicePath = AllocatePool (
+                     Size + SIZE_OF_FILEPATH_DEVICE_PATH +
+                     END_DEVICE_PATH_LENGTH
+                     );
   if (FileDevicePath != NULL) {
     FilePath                 = (FILEPATH_DEVICE_PATH *)FileDevicePath;
     FilePath->Header.Type    = MEDIA_DEVICE_PATH;
     FilePath->Header.SubType = MEDIA_FILEPATH_DP;
     CopyMem (&FilePath->PathName, FileName, Size);
-    SetDevicePathNodeLength (&FilePath->Header, Size + SIZE_OF_FILEPATH_DEVICE_PATH);
+    SetDevicePathNodeLength (
+      &FilePath->Header,
+      Size +
+      SIZE_OF_FILEPATH_DEVICE_PATH
+      );
     SetDevicePathEndNode (NextDevicePathNode (&FilePath->Header));
 
     if (Device != NULL) {

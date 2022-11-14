@@ -35,7 +35,8 @@
 ///
 /// Revision defined in EFI1.1.
 ///
-#define EFI_LOADED_IMAGE_INFORMATION_REVISION  EFI_LOADED_IMAGE_PROTOCOL_REVISION
+#define EFI_LOADED_IMAGE_INFORMATION_REVISION  \
+  EFI_LOADED_IMAGE_PROTOCOL_REVISION
 
 ///
 /// Can be used on any image handle to obtain information about the loaded image.

@@ -697,19 +697,22 @@ typedef struct {
   SPD3_LRDIMM_EXTENDED_DELAY                    ExtendedDelay;                           ///< 69    F1RC11 / F1RC8 - Extended Delay for Y, CS and ODT & CKE
   SPD3_LRDIMM_ADDITIVE_DELAY_FOR_QXCS_N_QXCA    AdditiveDelayForCsCa;                    ///< 70    F1RC13 / F1RC12 - Additive Delay for CS and CA
   SPD3_LRDIMM_ADDITIVE_DELAY_FOR_QXODT_QXCKE    AdditiveDelayForOdtCke;                  ///< 71    F1RC15 / F1RC14 - Additive Delay for ODT & CKE
-  SPD3_LRDIMM_MDQ_TERMINATION_DRIVE_STRENGTH    MdqTerminationDriveStrengthFor800_1066;  ///< 72    F1RC15 / F1RC14 - Additive Delay for ODT & CKE
+  SPD3_LRDIMM_MDQ_TERMINATION_DRIVE_STRENGTH
+                                                MdqTerminationDriveStrengthFor800_1066;  ///< 72    F1RC15 / F1RC14 - Additive Delay for ODT & CKE
   SPD3_LRDIMM_RANK_READ_WRITE_QXODT_CONTROL     Rank_0_1QxOdtControlFor800_1066;         ///< 73    F[3,4]RC11 / F[3,4]RC10 - Rank 0 & 1 RD & WR QxODT Control for 800 & 1066
   SPD3_LRDIMM_RANK_READ_WRITE_QXODT_CONTROL     Rank_2_3QxOdtControlFor800_1066;         ///< 74    F[5,6]RC11 / F[5,6]RC10 - Rank 2 & 3 RD & WR QxODT Control for 800 & 1066
   SPD3_LRDIMM_RANK_READ_WRITE_QXODT_CONTROL     Rank_4_5QxOdtControlFor800_1066;         ///< 75    F[7,8]RC11 / F[7,8]RC10 - Rank 4 & 5 RD & WR QxODT Control for 800 & 1066
   SPD3_LRDIMM_RANK_READ_WRITE_QXODT_CONTROL     Rank_6_7QxOdtControlFor800_1066;         ///< 76    F[9,10]RC11 / F[9,10]RC10 - Rank 6 & 7 RD & WR QxODT Control for 800 & 1066
   SPD3_LRDIMM_MR_1_2                            MR_1_2RegistersFor800_1066;              ///< 77    MR1,2 Registers for 800 & 1066
-  SPD3_LRDIMM_MDQ_TERMINATION_DRIVE_STRENGTH    MdqTerminationDriveStrengthFor1333_1600; ///< 78    F1RC15 / F1RC14 - Additive Delay for ODT & CKE
+  SPD3_LRDIMM_MDQ_TERMINATION_DRIVE_STRENGTH
+                                                MdqTerminationDriveStrengthFor1333_1600; ///< 78    F1RC15 / F1RC14 - Additive Delay for ODT & CKE
   SPD3_LRDIMM_RANK_READ_WRITE_QXODT_CONTROL     Rank_0_1QxOdtControlFor1333_1600;        ///< 79    F[3,4]RC11 / F[3,4]RC10 - Rank 0 & 1 RD & WR QxODT Control for 800 & 1066
   SPD3_LRDIMM_RANK_READ_WRITE_QXODT_CONTROL     Rank_2_3QxOdtControlFor1333_1600;        ///< 80    F[5,6]RC11 / F[5,6]RC10 - Rank 2 & 3 RD & WR QxODT Control for 800 & 1066
   SPD3_LRDIMM_RANK_READ_WRITE_QXODT_CONTROL     Rank_4_5QxOdtControlFor1333_1600;        ///< 81    F[7,8]RC11 / F[7,8]RC10 - Rank 4 & 5 RD & WR QxODT Control for 800 & 1066
   SPD3_LRDIMM_RANK_READ_WRITE_QXODT_CONTROL     Rank_6_7QxOdtControlFor1333_1600;        ///< 82    F[9,10]RC11 / F[9,10]RC10 - Rank 6 & 7 RD & WR QxODT Control for 800 & 1066
   SPD3_LRDIMM_MR_1_2                            MR_1_2RegistersFor1333_1600;             ///< 83    MR1,2 Registers for 800 & 1066
-  SPD3_LRDIMM_MDQ_TERMINATION_DRIVE_STRENGTH    MdqTerminationDriveStrengthFor1866_2133; ///< 84    F1RC15 / F1RC14 - Additive Delay for ODT & CKE
+  SPD3_LRDIMM_MDQ_TERMINATION_DRIVE_STRENGTH
+                                                MdqTerminationDriveStrengthFor1866_2133; ///< 84    F1RC15 / F1RC14 - Additive Delay for ODT & CKE
   SPD3_LRDIMM_RANK_READ_WRITE_QXODT_CONTROL     Rank_0_1QxOdtControlFor1866_2133;        ///< 85    F[3,4]RC11 / F[3,4]RC10 - Rank 0 & 1 RD & WR QxODT Control for 800 & 1066
   SPD3_LRDIMM_RANK_READ_WRITE_QXODT_CONTROL     Rank_2_3QxOdtControlFor1866_2133;        ///< 86    F[5,6]RC11 / F[5,6]RC10 - Rank 2 & 3 RD & WR QxODT Control for 800 & 1066
   SPD3_LRDIMM_RANK_READ_WRITE_QXODT_CONTROL     Rank_4_5QxOdtControlFor1866_2133;        ///< 87    F[7,8]RC11 / F[7,8]RC10 - Rank 4 & 5 RD & WR QxODT Control for 800 & 1066

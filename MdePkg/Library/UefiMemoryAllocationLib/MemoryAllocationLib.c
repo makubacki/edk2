@@ -197,7 +197,12 @@ InternalAllocateAlignedPages (
     //
     ASSERT (RealPages > Pages);
 
-    Status = gBS->AllocatePages (AllocateAnyPages, MemoryType, RealPages, &Memory);
+    Status = gBS->AllocatePages (
+                    AllocateAnyPages,
+                    MemoryType,
+                    RealPages,
+                    &Memory
+                    );
     if (EFI_ERROR (Status)) {
       return NULL;
     }
@@ -289,7 +294,11 @@ AllocateAlignedRuntimePages (
   IN UINTN  Alignment
   )
 {
-  return InternalAllocateAlignedPages (EfiRuntimeServicesData, Pages, Alignment);
+  return InternalAllocateAlignedPages (
+           EfiRuntimeServicesData,
+           Pages,
+           Alignment
+           );
 }
 
 /**
@@ -628,7 +637,11 @@ AllocateRuntimeCopyPool (
   IN CONST VOID  *Buffer
   )
 {
-  return InternalAllocateCopyPool (EfiRuntimeServicesData, AllocationSize, Buffer);
+  return InternalAllocateCopyPool (
+           EfiRuntimeServicesData,
+           AllocationSize,
+           Buffer
+           );
 }
 
 /**
@@ -655,7 +668,11 @@ AllocateReservedCopyPool (
   IN CONST VOID  *Buffer
   )
 {
-  return InternalAllocateCopyPool (EfiReservedMemoryType, AllocationSize, Buffer);
+  return InternalAllocateCopyPool (
+           EfiReservedMemoryType,
+           AllocationSize,
+           Buffer
+           );
 }
 
 /**
@@ -728,7 +745,12 @@ ReallocatePool (
   IN VOID   *OldBuffer  OPTIONAL
   )
 {
-  return InternalReallocatePool (EfiBootServicesData, OldSize, NewSize, OldBuffer);
+  return InternalReallocatePool (
+           EfiBootServicesData,
+           OldSize,
+           NewSize,
+           OldBuffer
+           );
 }
 
 /**
@@ -760,7 +782,12 @@ ReallocateRuntimePool (
   IN VOID   *OldBuffer  OPTIONAL
   )
 {
-  return InternalReallocatePool (EfiRuntimeServicesData, OldSize, NewSize, OldBuffer);
+  return InternalReallocatePool (
+           EfiRuntimeServicesData,
+           OldSize,
+           NewSize,
+           OldBuffer
+           );
 }
 
 /**
@@ -792,7 +819,12 @@ ReallocateReservedPool (
   IN VOID   *OldBuffer  OPTIONAL
   )
 {
-  return InternalReallocatePool (EfiReservedMemoryType, OldSize, NewSize, OldBuffer);
+  return InternalReallocatePool (
+           EfiReservedMemoryType,
+           OldSize,
+           NewSize,
+           OldBuffer
+           );
 }
 
 /**

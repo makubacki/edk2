@@ -29,7 +29,8 @@
 ///
 /// Signature for a PERIODIC_SMI_LIBRARY_HANDLER_CONTEXT structure
 ///
-#define PERIODIC_SMI_LIBRARY_HANDLER_CONTEXT_SIGNATURE  SIGNATURE_32 ('P', 'S', 'M', 'I')
+#define PERIODIC_SMI_LIBRARY_HANDLER_CONTEXT_SIGNATURE  \
+  SIGNATURE_32 ('P', 'S', 'M', 'I')
 
 ///
 /// Structure that contains state information for an enabled periodic SMI handler
@@ -247,7 +248,9 @@ LookupPeriodicSmiLibraryHandler (
         ; Link = GetNextNode (&gPeriodicSmiLibraryHandlers, Link)
         )
   {
-    PeriodicSmiLibraryHandler = PERIODIC_SMI_LIBRARY_HANDLER_CONTEXT_FROM_LINK (Link);
+    PeriodicSmiLibraryHandler = PERIODIC_SMI_LIBRARY_HANDLER_CONTEXT_FROM_LINK (
+                                  Link
+                                  );
 
     if (PeriodicSmiLibraryHandler->DispatchHandle == DispatchHandle) {
       return PeriodicSmiLibraryHandler;
@@ -286,7 +289,9 @@ SetActivePeriodicSmiLibraryHandler (
   if (DispatchHandle == NULL) {
     gActivePeriodicSmiLibraryHandler = NULL;
   } else {
-    gActivePeriodicSmiLibraryHandler = LookupPeriodicSmiLibraryHandler (DispatchHandle);
+    gActivePeriodicSmiLibraryHandler = LookupPeriodicSmiLibraryHandler (
+                                         DispatchHandle
+                                         );
   }
 
   return gActivePeriodicSmiLibraryHandler;
@@ -313,7 +318,10 @@ ReclaimPeriodicSmiLibraryHandler (
   }
 
   RemoveEntryList (&PeriodicSmiLibraryHandler->Link);
-  InsertHeadList (&gFreePeriodicSmiLibraryHandlers, &PeriodicSmiLibraryHandler->Link);
+  InsertHeadList (
+    &gFreePeriodicSmiLibraryHandlers,
+    &PeriodicSmiLibraryHandler->Link
+    );
 }
 
 /**
@@ -336,13 +344,19 @@ EnlargeFreePeriodicSmiLibraryHandlerList (
   // Add the entries to the list
   //
   for (Index = 0; Index < PERIODIC_SMI_LIBRARY_ALLOCATE_SIZE; Index++) {
-    PeriodicSmiLibraryHandler = AllocatePool (sizeof (PERIODIC_SMI_LIBRARY_HANDLER_CONTEXT));
+    PeriodicSmiLibraryHandler = AllocatePool (
+                                  sizeof (PERIODIC_SMI_LIBRARY_HANDLER_CONTEXT)
+                                  );
     if (PeriodicSmiLibraryHandler == NULL) {
       break;
     }
 
-    PeriodicSmiLibraryHandler->Signature = PERIODIC_SMI_LIBRARY_HANDLER_CONTEXT_SIGNATURE;
-    InsertHeadList (&gFreePeriodicSmiLibraryHandlers, &PeriodicSmiLibraryHandler->Link);
+    PeriodicSmiLibraryHandler->Signature =
+      PERIODIC_SMI_LIBRARY_HANDLER_CONTEXT_SIGNATURE;
+    InsertHeadList (
+      &gFreePeriodicSmiLibraryHandlers,
+      &PeriodicSmiLibraryHandler->Link
+      );
   }
 
   return (BOOLEAN)(Index > 0);
@@ -377,7 +391,10 @@ FindFreePeriodicSmiLibraryHandler (
                                 GetFirstNode (&gFreePeriodicSmiLibraryHandlers)
                                 );
   RemoveEntryList (&PeriodicSmiLibraryHandler->Link);
-  InsertTailList (&gPeriodicSmiLibraryHandlers, &PeriodicSmiLibraryHandler->Link);
+  InsertTailList (
+    &gPeriodicSmiLibraryHandlers,
+    &PeriodicSmiLibraryHandler->Link
+    );
 
   return PeriodicSmiLibraryHandler;
 }
@@ -444,14 +461,19 @@ PeriodicSmiExecutionTime (
   // Count the number of performance counter ticks since the periodic SMI handler
   // was dispatched or the last time this function was called.
   //
-  if (PeriodicSmiLibraryHandler->PerfomanceCounterEndValue > PeriodicSmiLibraryHandler->PerfomanceCounterStartValue) {
+  if (PeriodicSmiLibraryHandler->PerfomanceCounterEndValue >
+      PeriodicSmiLibraryHandler->PerfomanceCounterStartValue)
+  {
     //
     // The performance counter counts up.  Check for roll over condition.
     //
     if (Current > PeriodicSmiLibraryHandler->DispatchCheckPointTime) {
       Count = Current - PeriodicSmiLibraryHandler->DispatchCheckPointTime;
     } else {
-      Count = (Current - PeriodicSmiLibraryHandler->PerfomanceCounterStartValue) + (PeriodicSmiLibraryHandler->PerfomanceCounterEndValue - PeriodicSmiLibraryHandler->DispatchCheckPointTime);
+      Count = (Current -
+               PeriodicSmiLibraryHandler->PerfomanceCounterStartValue) +
+              (PeriodicSmiLibraryHandler->PerfomanceCounterEndValue -
+               PeriodicSmiLibraryHandler->DispatchCheckPointTime);
     }
   } else {
     //
@@ -460,7 +482,10 @@ PeriodicSmiExecutionTime (
     if (PeriodicSmiLibraryHandler->DispatchCheckPointTime > Current) {
       Count = PeriodicSmiLibraryHandler->DispatchCheckPointTime - Current;
     } else {
-      Count = (PeriodicSmiLibraryHandler->DispatchCheckPointTime - PeriodicSmiLibraryHandler->PerfomanceCounterEndValue) + (PeriodicSmiLibraryHandler->PerfomanceCounterStartValue - Current);
+      Count = (PeriodicSmiLibraryHandler->DispatchCheckPointTime -
+               PeriodicSmiLibraryHandler->PerfomanceCounterEndValue) +
+              (PeriodicSmiLibraryHandler->PerfomanceCounterStartValue -
+               Current);
     }
   }
 
@@ -703,7 +728,8 @@ PeriodicSmiDispatchFunctionOnCpu (
       PeriodicSmiDispatchFunctionSwitchStack,
       PeriodicSmiLibraryHandler,
       NULL,
-      (UINT8 *)PeriodicSmiLibraryHandler->Stack + PeriodicSmiLibraryHandler->StackSize
+      (UINT8 *)PeriodicSmiLibraryHandler->Stack +
+      PeriodicSmiLibraryHandler->StackSize
       );
   }
 
@@ -788,7 +814,9 @@ PeriodicSmiDispatchFunction (
   //
   // Set the active periodic SMI handler
   //
-  PeriodicSmiLibraryHandler = SetActivePeriodicSmiLibraryHandler (DispatchHandle);
+  PeriodicSmiLibraryHandler = SetActivePeriodicSmiLibraryHandler (
+                                DispatchHandle
+                                );
   if (PeriodicSmiLibraryHandler == NULL) {
     return EFI_NOT_FOUND;
   }
@@ -798,7 +826,8 @@ PeriodicSmiDispatchFunction (
   //
   PeriodicSmiLibraryHandler->ElapsedTime = 0;
   if (CommBuffer != NULL) {
-    TimerContext                           = (EFI_SMM_PERIODIC_TIMER_CONTEXT  *)CommBuffer;
+    TimerContext =
+      (EFI_SMM_PERIODIC_TIMER_CONTEXT  *)CommBuffer;
     PeriodicSmiLibraryHandler->ElapsedTime = TimerContext->ElapsedTime;
   }
 
@@ -834,7 +863,10 @@ PeriodicSmiDispatchFunction (
       //
       // Wait for the AP to release the spin lock.
       //
-      while (!AcquireSpinLockOrFail (&PeriodicSmiLibraryHandler->DispatchLock)) {
+      while (!AcquireSpinLockOrFail (
+                &PeriodicSmiLibraryHandler->DispatchLock
+                ))
+      {
         CpuPause ();
       }
     }
@@ -952,31 +984,47 @@ PeriodicSmiEnable (
   PeriodicSmiLibraryHandler->DispatchFunction = DispatchFunction;
   PeriodicSmiLibraryHandler->Context          = (VOID *)Context;
   PeriodicSmiLibraryHandler->Cpu              = Cpu;
-  PeriodicSmiLibraryHandler->StackSize        = ALIGN_VALUE (StackSize, EFI_PAGE_SIZE);
+  PeriodicSmiLibraryHandler->StackSize        = ALIGN_VALUE (
+                                                  StackSize,
+                                                  EFI_PAGE_SIZE
+                                                  );
   if (PeriodicSmiLibraryHandler->StackSize > 0) {
-    PeriodicSmiLibraryHandler->Stack = AllocatePages (EFI_SIZE_TO_PAGES (PeriodicSmiLibraryHandler->StackSize));
+    PeriodicSmiLibraryHandler->Stack = AllocatePages (
+                                         EFI_SIZE_TO_PAGES (
+                                           PeriodicSmiLibraryHandler->StackSize
+                                           )
+                                         );
     if (PeriodicSmiLibraryHandler->Stack == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
-    ZeroMem (PeriodicSmiLibraryHandler->Stack, PeriodicSmiLibraryHandler->StackSize);
+    ZeroMem (
+      PeriodicSmiLibraryHandler->Stack,
+      PeriodicSmiLibraryHandler->StackSize
+      );
   } else {
     PeriodicSmiLibraryHandler->Stack = NULL;
   }
 
   InitializeSpinLock (&PeriodicSmiLibraryHandler->DispatchLock);
-  PeriodicSmiLibraryHandler->PerfomanceCounterRate = GetPerformanceCounterProperties (
-                                                       &PeriodicSmiLibraryHandler->PerfomanceCounterStartValue,
-                                                       &PeriodicSmiLibraryHandler->PerfomanceCounterEndValue
-                                                       );
+  PeriodicSmiLibraryHandler->PerfomanceCounterRate =
+    GetPerformanceCounterProperties (
+      &
+      PeriodicSmiLibraryHandler->PerfomanceCounterStartValue,
+      &
+      PeriodicSmiLibraryHandler->PerfomanceCounterEndValue
+      );
   PeriodicSmiLibraryHandler->RegisterContext.Period          = TickPeriod;
   PeriodicSmiLibraryHandler->RegisterContext.SmiTickInterval = TickPeriod;
-  Status                                                     = gSmmPeriodicTimerDispatch2->Register (
-                                                                                             gSmmPeriodicTimerDispatch2,
-                                                                                             PeriodicSmiDispatchFunction,
-                                                                                             &PeriodicSmiLibraryHandler->RegisterContext,
-                                                                                             &PeriodicSmiLibraryHandler->DispatchHandle
-                                                                                             );
+  Status                                                     =
+    gSmmPeriodicTimerDispatch2->Register (
+                                  gSmmPeriodicTimerDispatch2,
+                                  PeriodicSmiDispatchFunction,
+                                  &
+                                  PeriodicSmiLibraryHandler->RegisterContext,
+                                  &
+                                  PeriodicSmiLibraryHandler->DispatchHandle
+                                  );
   if (EFI_ERROR (Status)) {
     PeriodicSmiLibraryHandler->DispatchHandle = NULL;
     ReclaimPeriodicSmiLibraryHandler (PeriodicSmiLibraryHandler);
@@ -1032,7 +1080,8 @@ PeriodicSmiDisable (
   //
   Status = gSmmPeriodicTimerDispatch2->UnRegister (
                                          gSmmPeriodicTimerDispatch2,
-                                         PeriodicSmiLibraryHandler->DispatchHandle
+                                         PeriodicSmiLibraryHandler->
+                                           DispatchHandle
                                          );
   if (EFI_ERROR (Status)) {
     return FALSE;
@@ -1111,10 +1160,11 @@ SmmPeriodicSmiLibConstructor (
   Count           = 0;
   do {
     gSmiTickPeriodTable[Count] = 0;
-    Status                     = gSmmPeriodicTimerDispatch2->GetNextShorterInterval (
-                                                               gSmmPeriodicTimerDispatch2,
-                                                               &SmiTickInterval
-                                                               );
+    Status                     =
+      gSmmPeriodicTimerDispatch2->GetNextShorterInterval (
+                                    gSmmPeriodicTimerDispatch2,
+                                    &SmiTickInterval
+                                    );
     if (SmiTickInterval != NULL) {
       gSmiTickPeriodTable[Count] = *SmiTickInterval;
     }
@@ -1160,18 +1210,35 @@ SmmPeriodicSmiLibDestructor (
   //
   // Disable all periodic SMI handlers
   //
-  for (Link = GetFirstNode (&gPeriodicSmiLibraryHandlers); !IsNull (&gPeriodicSmiLibraryHandlers, Link);) {
-    PeriodicSmiLibraryHandler = PERIODIC_SMI_LIBRARY_HANDLER_CONTEXT_FROM_LINK (Link);
-    Link                      = GetNextNode (&gPeriodicSmiLibraryHandlers, Link);
+  for (Link = GetFirstNode (&gPeriodicSmiLibraryHandlers); !IsNull (
+                                                              &
+                                                              gPeriodicSmiLibraryHandlers,
+                                                              Link
+                                                              );)
+  {
+    PeriodicSmiLibraryHandler = PERIODIC_SMI_LIBRARY_HANDLER_CONTEXT_FROM_LINK (
+                                  Link
+                                  );
+    Link = GetNextNode (
+             &gPeriodicSmiLibraryHandlers,
+             Link
+             );
     PeriodicSmiDisable (PeriodicSmiLibraryHandler->DispatchHandle);
   }
 
   //
   // Free all the periodic SMI handler entries
   //
-  for (Link = GetFirstNode (&gFreePeriodicSmiLibraryHandlers); !IsNull (&gFreePeriodicSmiLibraryHandlers, Link);) {
-    PeriodicSmiLibraryHandler = PERIODIC_SMI_LIBRARY_HANDLER_CONTEXT_FROM_LINK (Link);
-    Link                      = RemoveEntryList (Link);
+  for (Link = GetFirstNode (&gFreePeriodicSmiLibraryHandlers); !IsNull (
+                                                                  &
+                                                                  gFreePeriodicSmiLibraryHandlers,
+                                                                  Link
+                                                                  );)
+  {
+    PeriodicSmiLibraryHandler = PERIODIC_SMI_LIBRARY_HANDLER_CONTEXT_FROM_LINK (
+                                  Link
+                                  );
+    Link = RemoveEntryList (Link);
     FreePool (PeriodicSmiLibraryHandler);
   }
 

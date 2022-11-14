@@ -311,10 +311,14 @@ typedef struct {
 //
 // Bit [2:1]  : Memory Attributes, _MEM
 //
-#define EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_NON_CACHEABLE              (0 << 1)
-#define EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE                  (1 << 1)
-#define EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_WRITE_COMBINING  (2 << 1)
-#define EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE     (3 << 1)
+#define EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_NON_CACHEABLE              \
+      (0 << 1)
+#define EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE                  \
+      (1 << 1)
+#define EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_WRITE_COMBINING  \
+      (2 << 1)
+#define EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE     \
+      (3 << 1)
 //
 // Bit [4:3]  : Memory Attributes, _MTP
 //
@@ -619,7 +623,8 @@ typedef struct {
 ///
 /// "RSD PTR " Root System Description Pointer.
 ///
-#define EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE  SIGNATURE_64('R', 'S', 'D', ' ', 'P', 'T', 'R', ' ')
+#define EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE  \
+  SIGNATURE_64('R', 'S', 'D', ' ', 'P', 'T', 'R', ' ')
 
 ///
 /// "APIC" Multiple APIC Description Table.
@@ -629,37 +634,44 @@ typedef struct {
 ///
 /// "DSDT" Differentiated System Description Table.
 ///
-#define EFI_ACPI_1_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('D', 'S', 'D', 'T')
+#define EFI_ACPI_1_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('D', 'S', 'D', 'T')
 
 ///
 /// "FACS" Firmware ACPI Control Structure.
 ///
-#define EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE  SIGNATURE_32('F', 'A', 'C', 'S')
+#define EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE  \
+  SIGNATURE_32('F', 'A', 'C', 'S')
 
 ///
 /// "FACP" Fixed ACPI Description Table.
 ///
-#define EFI_ACPI_1_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('F', 'A', 'C', 'P')
+#define EFI_ACPI_1_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('F', 'A', 'C', 'P')
 
 ///
 /// "PSDT" Persistent System Description Table.
 ///
-#define EFI_ACPI_1_0_PERSISTENT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('P', 'S', 'D', 'T')
+#define EFI_ACPI_1_0_PERSISTENT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('P', 'S', 'D', 'T')
 
 ///
 /// "RSDT" Root System Description Table.
 ///
-#define EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('R', 'S', 'D', 'T')
+#define EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('R', 'S', 'D', 'T')
 
 ///
 /// "SBST" Smart Battery Specification Table.
 ///
-#define EFI_ACPI_1_0_SMART_BATTERY_SPECIFICATION_TABLE_SIGNATURE  SIGNATURE_32('S', 'B', 'S', 'T')
+#define EFI_ACPI_1_0_SMART_BATTERY_SPECIFICATION_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'B', 'S', 'T')
 
 ///
 /// "SSDT" Secondary System Description Table.
 ///
-#define EFI_ACPI_1_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('S', 'S', 'D', 'T')
+#define EFI_ACPI_1_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'S', 'D', 'T')
 
 #pragma pack()
 

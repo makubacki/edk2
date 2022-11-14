@@ -84,43 +84,80 @@ typedef UINT16 BSIZE;
 #define MAX_ACTIVE_SESSIONS  64
 typedef UINT16 CONTEXT_SLOT;
 typedef UINT64 CONTEXT_COUNTER;
-#define MAX_LOADED_SESSIONS            3
-#define MAX_SESSION_NUM                3
-#define MAX_LOADED_OBJECTS             3
-#define MIN_EVICT_OBJECTS              2
-#define PCR_SELECT_MIN                 ((PLATFORM_PCR + 7) / 8)
-#define PCR_SELECT_MAX                 ((IMPLEMENTATION_PCR + 7) / 8)
-#define NUM_POLICY_PCR_GROUP           1
-#define NUM_AUTHVALUE_PCR_GROUP        1
-#define MAX_CONTEXT_SIZE               4000
-#define MAX_DIGEST_BUFFER              1024
-#define MAX_NV_INDEX_SIZE              1024
-#define MAX_CAP_BUFFER                 1024
-#define NV_MEMORY_SIZE                 16384
-#define NUM_STATIC_PCR                 16
-#define MAX_ALG_LIST_SIZE              64
-#define TIMER_PRESCALE                 100000
-#define PRIMARY_SEED_SIZE              32
-#define CONTEXT_ENCRYPT_ALG            TPM_ALG_AES
-#define CONTEXT_ENCRYPT_KEY_BITS       MAX_SYM_KEY_BITS
-#define CONTEXT_ENCRYPT_KEY_BYTES      ((CONTEXT_ENCRYPT_KEY_BITS + 7) / 8)
-#define CONTEXT_INTEGRITY_HASH_ALG     TPM_ALG_SHA256
-#define CONTEXT_INTEGRITY_HASH_SIZE    SHA256_DIGEST_SIZE
-#define PROOF_SIZE                     CONTEXT_INTEGRITY_HASH_SIZE
-#define NV_CLOCK_UPDATE_INTERVAL       12
-#define NUM_POLICY_PCR                 1
-#define MAX_COMMAND_SIZE               4096
-#define MAX_RESPONSE_SIZE              4096
-#define ORDERLY_BITS                   8
-#define MAX_ORDERLY_COUNT              ((1 << ORDERLY_BITS) - 1)
-#define ALG_ID_FIRST                   TPM_ALG_FIRST
-#define ALG_ID_LAST                    TPM_ALG_LAST
-#define MAX_SYM_DATA                   128
-#define MAX_RNG_ENTROPY_SIZE           64
-#define RAM_INDEX_SPACE                512
-#define RSA_DEFAULT_PUBLIC_EXPONENT    0x00010001
-#define CRT_FORMAT_RSA                 YES
-#define PRIVATE_VENDOR_SPECIFIC_BYTES  ((MAX_RSA_KEY_BYTES / 2) * ( 3 + CRT_FORMAT_RSA * 2))
+#define MAX_LOADED_SESSIONS            \
+                                                                                       3
+#define MAX_SESSION_NUM                \
+                                                                                       3
+#define MAX_LOADED_OBJECTS             \
+                                                                                       3
+#define MIN_EVICT_OBJECTS              \
+                                                                                       2
+#define PCR_SELECT_MIN                 \
+                                                                                       ((PLATFORM_PCR + 7) / 8)
+#define PCR_SELECT_MAX                 \
+                                                                                       ((IMPLEMENTATION_PCR + 7) / 8)
+#define NUM_POLICY_PCR_GROUP           \
+                                                                                       1
+#define NUM_AUTHVALUE_PCR_GROUP        \
+                                                                                       1
+#define MAX_CONTEXT_SIZE               \
+                                                                                       4000
+#define MAX_DIGEST_BUFFER              \
+                                                                                       1024
+#define MAX_NV_INDEX_SIZE              \
+                                                                                       1024
+#define MAX_CAP_BUFFER                 \
+                                                                                       1024
+#define NV_MEMORY_SIZE                 \
+                                                                                       16384
+#define NUM_STATIC_PCR                 \
+                                                                                       16
+#define MAX_ALG_LIST_SIZE              \
+                                                                                       64
+#define TIMER_PRESCALE                 \
+                                                                                       100000
+#define PRIMARY_SEED_SIZE              \
+                                                                                       32
+#define CONTEXT_ENCRYPT_ALG            \
+                                                                                       TPM_ALG_AES
+#define CONTEXT_ENCRYPT_KEY_BITS       \
+                                                                                       MAX_SYM_KEY_BITS
+#define CONTEXT_ENCRYPT_KEY_BYTES      \
+                                                                                       ((CONTEXT_ENCRYPT_KEY_BITS + 7) / 8)
+#define CONTEXT_INTEGRITY_HASH_ALG     \
+                                                                                       TPM_ALG_SHA256
+#define CONTEXT_INTEGRITY_HASH_SIZE    \
+                                                                                       SHA256_DIGEST_SIZE
+#define PROOF_SIZE                     \
+                                                                                       CONTEXT_INTEGRITY_HASH_SIZE
+#define NV_CLOCK_UPDATE_INTERVAL       \
+                                                                                       12
+#define NUM_POLICY_PCR                 \
+                                                                                       1
+#define MAX_COMMAND_SIZE               \
+                                                                                       4096
+#define MAX_RESPONSE_SIZE              \
+                                                                                       4096
+#define ORDERLY_BITS                   \
+                                                                                       8
+#define MAX_ORDERLY_COUNT              \
+                                                                                       ((1 << ORDERLY_BITS) - 1)
+#define ALG_ID_FIRST                   \
+                                                                                       TPM_ALG_FIRST
+#define ALG_ID_LAST                    \
+                                                                                       TPM_ALG_LAST
+#define MAX_SYM_DATA                   \
+                                                                                       128
+#define MAX_RNG_ENTROPY_SIZE           \
+                                                                                       64
+#define RAM_INDEX_SPACE                \
+                                                                                       512
+#define RSA_DEFAULT_PUBLIC_EXPONENT    \
+                                                                                       0x00010001
+#define CRT_FORMAT_RSA                 \
+                                                                                       YES
+#define PRIVATE_VENDOR_SPECIFIC_BYTES  \
+                                                                                       ((MAX_RSA_KEY_BYTES / 2) * ( 3 + CRT_FORMAT_RSA * 2))
 
 // Capability related MAX_ value
 #define MAX_CAP_DATA        (MAX_CAP_BUFFER - sizeof(TPM_CAP) - sizeof(UINT32))
@@ -675,35 +712,64 @@ typedef UINT32 TPM_RH;
 
 // Table 28 - TPM_HC Constants
 typedef TPM_HANDLE TPM_HC;
-#define HR_HANDLE_MASK        (TPM_HC)(0x00FFFFFF)
-#define HR_RANGE_MASK         (TPM_HC)(0xFF000000)
-#define HR_SHIFT              (TPM_HC)(24)
-#define HR_PCR                (TPM_HC)((TPM_HC)TPM_HT_PCR << HR_SHIFT)
-#define HR_HMAC_SESSION       (TPM_HC)((TPM_HC)TPM_HT_HMAC_SESSION << HR_SHIFT)
-#define HR_POLICY_SESSION     (TPM_HC)((TPM_HC)TPM_HT_POLICY_SESSION << HR_SHIFT)
-#define HR_TRANSIENT          (TPM_HC)((TPM_HC)TPM_HT_TRANSIENT << HR_SHIFT)
-#define HR_PERSISTENT         (TPM_HC)((TPM_HC)TPM_HT_PERSISTENT << HR_SHIFT)
-#define HR_NV_INDEX           (TPM_HC)((TPM_HC)TPM_HT_NV_INDEX << HR_SHIFT)
-#define HR_PERMANENT          (TPM_HC)((TPM_HC)TPM_HT_PERMANENT << HR_SHIFT)
-#define PCR_FIRST             (TPM_HC)(HR_PCR + 0)
-#define PCR_LAST              (TPM_HC)(PCR_FIRST + IMPLEMENTATION_PCR - 1)
-#define HMAC_SESSION_FIRST    (TPM_HC)(HR_HMAC_SESSION + 0)
-#define HMAC_SESSION_LAST     (TPM_HC)(HMAC_SESSION_FIRST + MAX_ACTIVE_SESSIONS - 1)
-#define LOADED_SESSION_FIRST  (TPM_HC)(HMAC_SESSION_FIRST)
-#define LOADED_SESSION_LAST   (TPM_HC)(HMAC_SESSION_LAST)
-#define POLICY_SESSION_FIRST  (TPM_HC)(HR_POLICY_SESSION + 0)
-#define POLICY_SESSION_LAST   (TPM_HC)(POLICY_SESSION_FIRST + MAX_ACTIVE_SESSIONS - 1)
-#define TRANSIENT_FIRST       (TPM_HC)(HR_TRANSIENT + 0)
-#define ACTIVE_SESSION_FIRST  (TPM_HC)(POLICY_SESSION_FIRST)
-#define ACTIVE_SESSION_LAST   (TPM_HC)(POLICY_SESSION_LAST)
-#define TRANSIENT_LAST        (TPM_HC)(TRANSIENT_FIRST+MAX_LOADED_OBJECTS - 1)
-#define PERSISTENT_FIRST      (TPM_HC)(HR_PERSISTENT + 0)
-#define PERSISTENT_LAST       (TPM_HC)(PERSISTENT_FIRST + 0x00FFFFFF)
-#define PLATFORM_PERSISTENT   (TPM_HC)(PERSISTENT_FIRST + 0x00800000)
-#define NV_INDEX_FIRST        (TPM_HC)(HR_NV_INDEX + 0)
-#define NV_INDEX_LAST         (TPM_HC)(NV_INDEX_FIRST + 0x00FFFFFF)
-#define PERMANENT_FIRST       (TPM_HC)(TPM_RH_FIRST)
-#define PERMANENT_LAST        (TPM_HC)(TPM_RH_LAST)
+#define HR_HANDLE_MASK        \
+                                                                                (TPM_HC)(0x00FFFFFF)
+#define HR_RANGE_MASK         \
+                                                                                (TPM_HC)(0xFF000000)
+#define HR_SHIFT              \
+                                                                                (TPM_HC)(24)
+#define HR_PCR                \
+                                                                                (TPM_HC)((TPM_HC)TPM_HT_PCR << HR_SHIFT)
+#define HR_HMAC_SESSION       \
+                                                                                (TPM_HC)((TPM_HC)TPM_HT_HMAC_SESSION << HR_SHIFT)
+#define HR_POLICY_SESSION     \
+                                                                                (TPM_HC)((TPM_HC)TPM_HT_POLICY_SESSION << HR_SHIFT)
+#define HR_TRANSIENT          \
+                                                                                (TPM_HC)((TPM_HC)TPM_HT_TRANSIENT << HR_SHIFT)
+#define HR_PERSISTENT         \
+                                                                                (TPM_HC)((TPM_HC)TPM_HT_PERSISTENT << HR_SHIFT)
+#define HR_NV_INDEX           \
+                                                                                (TPM_HC)((TPM_HC)TPM_HT_NV_INDEX << HR_SHIFT)
+#define HR_PERMANENT          \
+                                                                                (TPM_HC)((TPM_HC)TPM_HT_PERMANENT << HR_SHIFT)
+#define PCR_FIRST             \
+                                                                                (TPM_HC)(HR_PCR + 0)
+#define PCR_LAST              \
+                                                                                (TPM_HC)(PCR_FIRST + IMPLEMENTATION_PCR - 1)
+#define HMAC_SESSION_FIRST    \
+                                                                                (TPM_HC)(HR_HMAC_SESSION + 0)
+#define HMAC_SESSION_LAST     \
+                                                                                (TPM_HC)(HMAC_SESSION_FIRST + MAX_ACTIVE_SESSIONS - 1)
+#define LOADED_SESSION_FIRST  \
+                                                                                (TPM_HC)(HMAC_SESSION_FIRST)
+#define LOADED_SESSION_LAST   \
+                                                                                (TPM_HC)(HMAC_SESSION_LAST)
+#define POLICY_SESSION_FIRST  \
+                                                                                (TPM_HC)(HR_POLICY_SESSION + 0)
+#define POLICY_SESSION_LAST   \
+                                                                                (TPM_HC)(POLICY_SESSION_FIRST + MAX_ACTIVE_SESSIONS - 1)
+#define TRANSIENT_FIRST       \
+                                                                                (TPM_HC)(HR_TRANSIENT + 0)
+#define ACTIVE_SESSION_FIRST  \
+                                                                                (TPM_HC)(POLICY_SESSION_FIRST)
+#define ACTIVE_SESSION_LAST   \
+                                                                                (TPM_HC)(POLICY_SESSION_LAST)
+#define TRANSIENT_LAST        \
+                                                                                (TPM_HC)(TRANSIENT_FIRST+MAX_LOADED_OBJECTS - 1)
+#define PERSISTENT_FIRST      \
+                                                                                (TPM_HC)(HR_PERSISTENT + 0)
+#define PERSISTENT_LAST       \
+                                                                                (TPM_HC)(PERSISTENT_FIRST + 0x00FFFFFF)
+#define PLATFORM_PERSISTENT   \
+                                                                                (TPM_HC)(PERSISTENT_FIRST + 0x00800000)
+#define NV_INDEX_FIRST        \
+                                                                                (TPM_HC)(HR_NV_INDEX + 0)
+#define NV_INDEX_LAST         \
+                                                                                (TPM_HC)(NV_INDEX_FIRST + 0x00FFFFFF)
+#define PERMANENT_FIRST       \
+                                                                                (TPM_HC)(TPM_RH_FIRST)
+#define PERMANENT_LAST        \
+                                                                                (TPM_HC)(TPM_RH_LAST)
 
 // 8 Attribute Structures
 

@@ -36,7 +36,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define PXE_BUSTYPE_USB      PXE_BUSTYPE ('U', 'S', 'B', 'R')
 #define PXE_BUSTYPE_1394     PXE_BUSTYPE ('1', '3', '9', '4')
 
-#define PXE_SWAP_UINT16(n)  ((((PXE_UINT16) (n) & 0x00FF) << 8) | (((PXE_UINT16) (n) & 0xFF00) >> 8))
+#define PXE_SWAP_UINT16( \
+                       n)  \
+  ((((PXE_UINT16) (n) & 0x00FF) << 8) | (((PXE_UINT16) (n) & 0xFF00) >> 8))
 
 #define PXE_SWAP_UINT32(n) \
   ((((PXE_UINT32)(n) & 0x000000FF) << 24) | \

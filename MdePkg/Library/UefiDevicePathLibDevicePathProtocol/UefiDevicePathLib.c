@@ -21,14 +21,18 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/PcdLib.h>
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_UTILITIES_PROTOCOL  *mDevicePathLibDevicePathUtilities = NULL;
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_TO_TEXT_PROTOCOL    *mDevicePathLibDevicePathToText    = NULL;
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_FROM_TEXT_PROTOCOL  *mDevicePathLibDevicePathFromText  = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_UTILITIES_PROTOCOL  *
+      mDevicePathLibDevicePathUtilities = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_TO_TEXT_PROTOCOL    *
+        mDevicePathLibDevicePathToText = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_FROM_TEXT_PROTOCOL  *
+        mDevicePathLibDevicePathFromText = NULL;
 
 //
 // Template for an end-of-device path node.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED CONST EFI_DEVICE_PATH_PROTOCOL  mUefiDevicePathLibEndDevicePath = {
+GLOBAL_REMOVE_IF_UNREFERENCED CONST EFI_DEVICE_PATH_PROTOCOL
+  mUefiDevicePathLibEndDevicePath = {
   END_DEVICE_PATH_TYPE,
   END_ENTIRE_DEVICE_PATH_SUBTYPE,
   {
@@ -107,7 +111,9 @@ IsDevicePathValid (
     return FALSE;
   }
 
-  for (Count = 0, Size = 0; !IsDevicePathEnd (DevicePath); DevicePath = NextDevicePathNode (DevicePath)) {
+  for (Count = 0, Size = 0; !IsDevicePathEnd (DevicePath); DevicePath =
+         NextDevicePathNode (DevicePath))
+  {
     NodeLength = DevicePathNodeLength (DevicePath);
     if (NodeLength < sizeof (EFI_DEVICE_PATH_PROTOCOL)) {
       return FALSE;
@@ -216,7 +222,9 @@ DevicePathNodeLength (
   )
 {
   ASSERT (Node != NULL);
-  return ReadUnaligned16 ((UINT16 *)&((EFI_DEVICE_PATH_PROTOCOL *)(Node))->Length[0]);
+  return ReadUnaligned16 (
+           (UINT16 *)&((EFI_DEVICE_PATH_PROTOCOL *)(Node))->Length[0]
+           );
 }
 
 /**
@@ -240,7 +248,9 @@ NextDevicePathNode (
   )
 {
   ASSERT (Node != NULL);
-  return (EFI_DEVICE_PATH_PROTOCOL *)((UINT8 *)(Node) + DevicePathNodeLength (Node));
+  return (EFI_DEVICE_PATH_PROTOCOL *)((UINT8 *)(Node) + DevicePathNodeLength (
+                                                          Node
+                                                          ));
 }
 
 /**
@@ -295,7 +305,8 @@ IsDevicePathEnd (
   )
 {
   ASSERT (Node != NULL);
-  return (BOOLEAN)(IsDevicePathEndType (Node) && DevicePathSubType (Node) == END_ENTIRE_DEVICE_PATH_SUBTYPE);
+  return (BOOLEAN)(IsDevicePathEndType (Node) && DevicePathSubType (Node) ==
+                   END_ENTIRE_DEVICE_PATH_SUBTYPE);
 }
 
 /**
@@ -323,7 +334,8 @@ IsDevicePathEndInstance (
   )
 {
   ASSERT (Node != NULL);
-  return (BOOLEAN)(IsDevicePathEndType (Node) && DevicePathSubType (Node) == END_INSTANCE_DEVICE_PATH_SUBTYPE);
+  return (BOOLEAN)(IsDevicePathEndType (Node) && DevicePathSubType (Node) ==
+                   END_INSTANCE_DEVICE_PATH_SUBTYPE);
 }
 
 /**
@@ -352,8 +364,14 @@ SetDevicePathNodeLength (
   )
 {
   ASSERT (Node != NULL);
-  ASSERT ((Length >= sizeof (EFI_DEVICE_PATH_PROTOCOL)) && (Length < SIZE_64KB));
-  return WriteUnaligned16 ((UINT16 *)&((EFI_DEVICE_PATH_PROTOCOL *)(Node))->Length[0], (UINT16)(Length));
+  ASSERT (
+    (Length >= sizeof (EFI_DEVICE_PATH_PROTOCOL)) && (Length <
+                                                      SIZE_64KB)
+    );
+  return WriteUnaligned16 (
+           (UINT16 *)&((EFI_DEVICE_PATH_PROTOCOL *)(Node))->Length[0],
+           (UINT16)(Length)
+           );
 }
 
 /**
@@ -379,7 +397,11 @@ SetDevicePathEndNode (
   )
 {
   ASSERT (Node != NULL);
-  CopyMem (Node, &mUefiDevicePathLibEndDevicePath, sizeof (mUefiDevicePathLibEndDevicePath));
+  CopyMem (
+    Node,
+    &mUefiDevicePathLibEndDevicePath,
+    sizeof (mUefiDevicePathLibEndDevicePath)
+    );
 }
 
 /**
@@ -461,7 +483,10 @@ AppendDevicePath (
   IN CONST EFI_DEVICE_PATH_PROTOCOL  *SecondDevicePath  OPTIONAL
   )
 {
-  return mDevicePathLibDevicePathUtilities->AppendDevicePath (FirstDevicePath, SecondDevicePath);
+  return mDevicePathLibDevicePathUtilities->AppendDevicePath (
+                                              FirstDevicePath,
+                                              SecondDevicePath
+                                              );
 }
 
 /**
@@ -499,7 +524,10 @@ AppendDevicePathNode (
   IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePathNode  OPTIONAL
   )
 {
-  return mDevicePathLibDevicePathUtilities->AppendDeviceNode (DevicePath, DevicePathNode);
+  return mDevicePathLibDevicePathUtilities->AppendDeviceNode (
+                                              DevicePath,
+                                              DevicePathNode
+                                              );
 }
 
 /**
@@ -532,7 +560,10 @@ AppendDevicePathInstance (
   IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePathInstance OPTIONAL
   )
 {
-  return mDevicePathLibDevicePathUtilities->AppendDevicePathInstance (DevicePath, DevicePathInstance);
+  return mDevicePathLibDevicePathUtilities->AppendDevicePathInstance (
+                                              DevicePath,
+                                              DevicePathInstance
+                                              );
 }
 
 /**
@@ -570,7 +601,10 @@ GetNextDevicePathInstance (
   )
 {
   ASSERT (Size != NULL);
-  return mDevicePathLibDevicePathUtilities->GetNextDevicePathInstance (DevicePath, Size);
+  return mDevicePathLibDevicePathUtilities->GetNextDevicePathInstance (
+                                              DevicePath,
+                                              Size
+                                              );
 }
 
 /**
@@ -600,7 +634,11 @@ CreateDeviceNode (
   IN UINT16  NodeLength
   )
 {
-  return mDevicePathLibDevicePathUtilities->CreateDeviceNode (NodeType, NodeSubType, NodeLength);
+  return mDevicePathLibDevicePathUtilities->CreateDeviceNode (
+                                              NodeType,
+                                              NodeSubType,
+                                              NodeLength
+                                              );
 }
 
 /**
@@ -624,7 +662,9 @@ IsDevicePathMultiInstance (
   IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePath
   )
 {
-  return mDevicePathLibDevicePathUtilities->IsDevicePathMultiInstance (DevicePath);
+  return mDevicePathLibDevicePathUtilities->IsDevicePathMultiInstance (
+                                              DevicePath
+                                              );
 }
 
 /**
@@ -698,13 +738,20 @@ FileDevicePath (
   DevicePath = NULL;
 
   Size           = StrSize (FileName);
-  FileDevicePath = AllocatePool (Size + SIZE_OF_FILEPATH_DEVICE_PATH + END_DEVICE_PATH_LENGTH);
+  FileDevicePath = AllocatePool (
+                     Size + SIZE_OF_FILEPATH_DEVICE_PATH +
+                     END_DEVICE_PATH_LENGTH
+                     );
   if (FileDevicePath != NULL) {
     FilePath                 = (FILEPATH_DEVICE_PATH *)FileDevicePath;
     FilePath->Header.Type    = MEDIA_DEVICE_PATH;
     FilePath->Header.SubType = MEDIA_FILEPATH_DP;
     CopyMem (&FilePath->PathName, FileName, Size);
-    SetDevicePathNodeLength (&FilePath->Header, Size + SIZE_OF_FILEPATH_DEVICE_PATH);
+    SetDevicePathNodeLength (
+      &FilePath->Header,
+      Size +
+      SIZE_OF_FILEPATH_DEVICE_PATH
+      );
     SetDevicePathEndNode (NextDevicePathNode (&FilePath->Header));
 
     if (Device != NULL) {
@@ -769,11 +816,17 @@ ConvertDeviceNodeToText (
   )
 {
   if (mDevicePathLibDevicePathToText == NULL) {
-    mDevicePathLibDevicePathToText = UefiDevicePathLibLocateProtocol (&gEfiDevicePathToTextProtocolGuid);
+    mDevicePathLibDevicePathToText = UefiDevicePathLibLocateProtocol (
+                                       &gEfiDevicePathToTextProtocolGuid
+                                       );
   }
 
   if (mDevicePathLibDevicePathToText != NULL) {
-    return mDevicePathLibDevicePathToText->ConvertDeviceNodeToText (DeviceNode, DisplayOnly, AllowShortcuts);
+    return mDevicePathLibDevicePathToText->ConvertDeviceNodeToText (
+                                             DeviceNode,
+                                             DisplayOnly,
+                                             AllowShortcuts
+                                             );
   } else {
     return NULL;
   }
@@ -803,11 +856,17 @@ ConvertDevicePathToText (
   )
 {
   if (mDevicePathLibDevicePathToText == NULL) {
-    mDevicePathLibDevicePathToText = UefiDevicePathLibLocateProtocol (&gEfiDevicePathToTextProtocolGuid);
+    mDevicePathLibDevicePathToText = UefiDevicePathLibLocateProtocol (
+                                       &gEfiDevicePathToTextProtocolGuid
+                                       );
   }
 
   if (mDevicePathLibDevicePathToText != NULL) {
-    return mDevicePathLibDevicePathToText->ConvertDevicePathToText (DevicePath, DisplayOnly, AllowShortcuts);
+    return mDevicePathLibDevicePathToText->ConvertDevicePathToText (
+                                             DevicePath,
+                                             DisplayOnly,
+                                             AllowShortcuts
+                                             );
   } else {
     return NULL;
   }
@@ -831,11 +890,15 @@ ConvertTextToDeviceNode (
   )
 {
   if (mDevicePathLibDevicePathFromText == NULL) {
-    mDevicePathLibDevicePathFromText = UefiDevicePathLibLocateProtocol (&gEfiDevicePathFromTextProtocolGuid);
+    mDevicePathLibDevicePathFromText = UefiDevicePathLibLocateProtocol (
+                                         &gEfiDevicePathFromTextProtocolGuid
+                                         );
   }
 
   if (mDevicePathLibDevicePathFromText != NULL) {
-    return mDevicePathLibDevicePathFromText->ConvertTextToDeviceNode (TextDeviceNode);
+    return mDevicePathLibDevicePathFromText->ConvertTextToDeviceNode (
+                                               TextDeviceNode
+                                               );
   } else {
     return NULL;
   }
@@ -860,11 +923,15 @@ ConvertTextToDevicePath (
   )
 {
   if (mDevicePathLibDevicePathFromText == NULL) {
-    mDevicePathLibDevicePathFromText = UefiDevicePathLibLocateProtocol (&gEfiDevicePathFromTextProtocolGuid);
+    mDevicePathLibDevicePathFromText = UefiDevicePathLibLocateProtocol (
+                                         &gEfiDevicePathFromTextProtocolGuid
+                                         );
   }
 
   if (mDevicePathLibDevicePathFromText != NULL) {
-    return mDevicePathLibDevicePathFromText->ConvertTextToDevicePath (TextDevicePath);
+    return mDevicePathLibDevicePathFromText->ConvertTextToDevicePath (
+                                               TextDevicePath
+                                               );
   } else {
     return NULL;
   }

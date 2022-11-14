@@ -149,7 +149,10 @@ EfiLibInstallAllDriverProtocols (
   DriverBinding->ImageHandle         = ImageHandle;
   DriverBinding->DriverBindingHandle = DriverBindingHandle;
 
-  if ((DriverDiagnostics == NULL) || FeaturePcdGet (PcdDriverDiagnosticsDisable)) {
+  if ((DriverDiagnostics == NULL) || FeaturePcdGet (
+                                       PcdDriverDiagnosticsDisable
+                                       ))
+  {
     if (DriverConfiguration == NULL) {
       if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
         Status = gBS->InstallMultipleProtocolInterfaces (
@@ -280,7 +283,10 @@ EfiLibUninstallAllDriverProtocols (
 
   ASSERT (DriverBinding != NULL);
 
-  if ((DriverDiagnostics == NULL) || FeaturePcdGet (PcdDriverDiagnosticsDisable)) {
+  if ((DriverDiagnostics == NULL) || FeaturePcdGet (
+                                       PcdDriverDiagnosticsDisable
+                                       ))
+  {
     if (DriverConfiguration == NULL) {
       if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
         Status = gBS->UninstallMultipleProtocolInterfaces (
@@ -608,10 +614,22 @@ EfiLibInstallAllDriverProtocols2 (
 
   if (DriverConfiguration2 == NULL) {
     if (DriverConfiguration == NULL) {
-      if ((DriverDiagnostics == NULL) || FeaturePcdGet (PcdDriverDiagnosticsDisable)) {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+      if ((DriverDiagnostics == NULL) || FeaturePcdGet (
+                                           PcdDriverDiagnosticsDisable
+                                           ))
+      {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -629,7 +647,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -652,8 +673,14 @@ EfiLibInstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -675,7 +702,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -703,9 +733,18 @@ EfiLibInstallAllDriverProtocols2 (
           }
         }
       } else {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -727,7 +766,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -754,8 +796,14 @@ EfiLibInstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -781,7 +829,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -814,10 +865,22 @@ EfiLibInstallAllDriverProtocols2 (
         }
       }
     } else {
-      if ((DriverDiagnostics == NULL) || FeaturePcdGet (PcdDriverDiagnosticsDisable)) {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+      if ((DriverDiagnostics == NULL) || FeaturePcdGet (
+                                           PcdDriverDiagnosticsDisable
+                                           ))
+      {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -839,7 +902,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -866,8 +932,14 @@ EfiLibInstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -893,7 +965,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -925,9 +1000,18 @@ EfiLibInstallAllDriverProtocols2 (
           }
         }
       } else {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -953,7 +1037,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -984,8 +1071,14 @@ EfiLibInstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1015,7 +1108,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1054,10 +1150,22 @@ EfiLibInstallAllDriverProtocols2 (
     }
   } else {
     if (DriverConfiguration == NULL) {
-      if ((DriverDiagnostics == NULL) || FeaturePcdGet (PcdDriverDiagnosticsDisable)) {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+      if ((DriverDiagnostics == NULL) || FeaturePcdGet (
+                                           PcdDriverDiagnosticsDisable
+                                           ))
+      {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1079,7 +1187,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1106,8 +1217,14 @@ EfiLibInstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1133,7 +1250,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1165,9 +1285,18 @@ EfiLibInstallAllDriverProtocols2 (
           }
         }
       } else {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1193,7 +1322,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1224,8 +1356,14 @@ EfiLibInstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1255,7 +1393,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1292,10 +1433,22 @@ EfiLibInstallAllDriverProtocols2 (
         }
       }
     } else {
-      if ((DriverDiagnostics == NULL) || FeaturePcdGet (PcdDriverDiagnosticsDisable)) {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+      if ((DriverDiagnostics == NULL) || FeaturePcdGet (
+                                           PcdDriverDiagnosticsDisable
+                                           ))
+      {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1321,7 +1474,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1352,8 +1508,14 @@ EfiLibInstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1383,7 +1545,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1419,9 +1584,18 @@ EfiLibInstallAllDriverProtocols2 (
           }
         }
       } else {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1451,7 +1625,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1486,8 +1663,14 @@ EfiLibInstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1521,7 +1704,10 @@ EfiLibInstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->InstallMultipleProtocolInterfaces (
                               &DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1610,10 +1796,22 @@ EfiLibUninstallAllDriverProtocols2 (
 
   if (DriverConfiguration2 == NULL) {
     if (DriverConfiguration == NULL) {
-      if ((DriverDiagnostics == NULL) || FeaturePcdGet (PcdDriverDiagnosticsDisable)) {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+      if ((DriverDiagnostics == NULL) || FeaturePcdGet (
+                                           PcdDriverDiagnosticsDisable
+                                           ))
+      {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1631,7 +1829,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1654,8 +1855,14 @@ EfiLibUninstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1677,7 +1884,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1705,9 +1915,18 @@ EfiLibUninstallAllDriverProtocols2 (
           }
         }
       } else {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1729,7 +1948,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1756,8 +1978,14 @@ EfiLibUninstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1783,7 +2011,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1816,10 +2047,22 @@ EfiLibUninstallAllDriverProtocols2 (
         }
       }
     } else {
-      if ((DriverDiagnostics == NULL) || FeaturePcdGet (PcdDriverDiagnosticsDisable)) {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+      if ((DriverDiagnostics == NULL) || FeaturePcdGet (
+                                           PcdDriverDiagnosticsDisable
+                                           ))
+      {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1841,7 +2084,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1868,8 +2114,14 @@ EfiLibUninstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1895,7 +2147,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1927,9 +2182,18 @@ EfiLibUninstallAllDriverProtocols2 (
           }
         }
       } else {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1955,7 +2219,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -1986,8 +2253,14 @@ EfiLibUninstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2017,7 +2290,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2056,10 +2332,22 @@ EfiLibUninstallAllDriverProtocols2 (
     }
   } else {
     if (DriverConfiguration == NULL) {
-      if ((DriverDiagnostics == NULL) || FeaturePcdGet (PcdDriverDiagnosticsDisable)) {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+      if ((DriverDiagnostics == NULL) || FeaturePcdGet (
+                                           PcdDriverDiagnosticsDisable
+                                           ))
+      {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2081,7 +2369,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2108,8 +2399,14 @@ EfiLibUninstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2135,7 +2432,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2167,9 +2467,18 @@ EfiLibUninstallAllDriverProtocols2 (
           }
         }
       } else {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2195,7 +2504,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2226,8 +2538,14 @@ EfiLibUninstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2257,7 +2575,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2294,10 +2615,22 @@ EfiLibUninstallAllDriverProtocols2 (
         }
       }
     } else {
-      if ((DriverDiagnostics == NULL) || FeaturePcdGet (PcdDriverDiagnosticsDisable)) {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+      if ((DriverDiagnostics == NULL) || FeaturePcdGet (
+                                           PcdDriverDiagnosticsDisable
+                                           ))
+      {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2323,7 +2656,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2354,8 +2690,14 @@ EfiLibUninstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2385,7 +2727,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2421,9 +2766,18 @@ EfiLibUninstallAllDriverProtocols2 (
           }
         }
       } else {
-        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (PcdDriverDiagnostics2Disable)) {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+        if ((DriverDiagnostics2 == NULL) || FeaturePcdGet (
+                                              PcdDriverDiagnostics2Disable
+                                              ))
+        {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2453,7 +2807,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2488,8 +2845,14 @@ EfiLibUninstallAllDriverProtocols2 (
             }
           }
         } else {
-          if ((ComponentName == NULL) || FeaturePcdGet (PcdComponentNameDisable)) {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+          if ((ComponentName == NULL) || FeaturePcdGet (
+                                           PcdComponentNameDisable
+                                           ))
+          {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,
@@ -2523,7 +2886,10 @@ EfiLibUninstallAllDriverProtocols2 (
                               );
             }
           } else {
-            if ((ComponentName2 == NULL) || FeaturePcdGet (PcdComponentName2Disable)) {
+            if ((ComponentName2 == NULL) || FeaturePcdGet (
+                                              PcdComponentName2Disable
+                                              ))
+            {
               Status = gBS->UninstallMultipleProtocolInterfaces (
                               DriverBinding->DriverBindingHandle,
                               &gEfiDriverBindingProtocolGuid,

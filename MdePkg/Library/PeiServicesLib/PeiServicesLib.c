@@ -95,7 +95,13 @@ PeiServicesLocatePpi (
   CONST EFI_PEI_SERVICES  **PeiServices;
 
   PeiServices = GetPeiServicesTablePointer ();
-  return (*PeiServices)->LocatePpi (PeiServices, Guid, Instance, PpiDescriptor, Ppi);
+  return (*PeiServices)->LocatePpi (
+                           PeiServices,
+                           Guid,
+                           Instance,
+                           PpiDescriptor,
+                           Ppi
+                           );
 }
 
 /**
@@ -237,7 +243,11 @@ PeiServicesFfsFindNextVolume (
   CONST EFI_PEI_SERVICES  **PeiServices;
 
   PeiServices = GetPeiServicesTablePointer ();
-  return (*PeiServices)->FfsFindNextVolume (PeiServices, Instance, VolumeHandle);
+  return (*PeiServices)->FfsFindNextVolume (
+                           PeiServices,
+                           Instance,
+                           VolumeHandle
+                           );
 }
 
 /**
@@ -265,7 +275,12 @@ PeiServicesFfsFindNextFile (
   CONST EFI_PEI_SERVICES  **PeiServices;
 
   PeiServices = GetPeiServicesTablePointer ();
-  return (*PeiServices)->FfsFindNextFile (PeiServices, SearchType, VolumeHandle, FileHandle);
+  return (*PeiServices)->FfsFindNextFile (
+                           PeiServices,
+                           SearchType,
+                           VolumeHandle,
+                           FileHandle
+                           );
 }
 
 /**
@@ -291,7 +306,12 @@ PeiServicesFfsFindSectionData (
   CONST EFI_PEI_SERVICES  **PeiServices;
 
   PeiServices = GetPeiServicesTablePointer ();
-  return (*PeiServices)->FfsFindSectionData (PeiServices, SectionType, FileHandle, SectionData);
+  return (*PeiServices)->FfsFindSectionData (
+                           PeiServices,
+                           SectionType,
+                           FileHandle,
+                           SectionData
+                           );
 }
 
 /**
@@ -321,7 +341,14 @@ PeiServicesFfsFindSectionData3 (
   CONST EFI_PEI_SERVICES  **PeiServices;
 
   PeiServices = GetPeiServicesTablePointer ();
-  return (*PeiServices)->FindSectionData3 (PeiServices, SectionType, SectionInstance, FileHandle, SectionData, AuthenticationStatus);
+  return (*PeiServices)->FindSectionData3 (
+                           PeiServices,
+                           SectionType,
+                           SectionInstance,
+                           FileHandle,
+                           SectionData,
+                           AuthenticationStatus
+                           );
 }
 
 /**
@@ -346,7 +373,11 @@ PeiServicesInstallPeiMemory (
   CONST EFI_PEI_SERVICES  **PeiServices;
 
   PeiServices = GetPeiServicesTablePointer ();
-  return (*PeiServices)->InstallPeiMemory (PeiServices, MemoryBegin, MemoryLength);
+  return (*PeiServices)->InstallPeiMemory (
+                           PeiServices,
+                           MemoryBegin,
+                           MemoryLength
+                           );
 }
 
 /**
@@ -496,7 +527,10 @@ PeiServicesFfsGetFileInfo (
   OUT EFI_FV_FILE_INFO           *FileInfo
   )
 {
-  return (*GetPeiServicesTablePointer ())->FfsGetFileInfo (FileHandle, FileInfo);
+  return (*GetPeiServicesTablePointer ())->FfsGetFileInfo (
+                                             FileHandle,
+                                             FileInfo
+                                             );
 }
 
 /**
@@ -521,7 +555,10 @@ PeiServicesFfsGetFileInfo2 (
   OUT EFI_FV_FILE_INFO2          *FileInfo
   )
 {
-  return (*GetPeiServicesTablePointer ())->FfsGetFileInfo2 (FileHandle, FileInfo);
+  return (*GetPeiServicesTablePointer ())->FfsGetFileInfo2 (
+                                             FileHandle,
+                                             FileInfo
+                                             );
 }
 
 /**
@@ -553,7 +590,11 @@ PeiServicesFfsFindFileByName (
   OUT       EFI_PEI_FILE_HANDLE  *FileHandle
   )
 {
-  return (*GetPeiServicesTablePointer ())->FfsFindFileByName (FileName, VolumeHandle, FileHandle);
+  return (*GetPeiServicesTablePointer ())->FfsFindFileByName (
+                                             FileName,
+                                             VolumeHandle,
+                                             FileHandle
+                                             );
 }
 
 /**
@@ -581,7 +622,10 @@ PeiServicesFfsGetVolumeInfo (
   OUT EFI_FV_INFO        *VolumeInfo
   )
 {
-  return (*GetPeiServicesTablePointer ())->FfsGetVolumeInfo (VolumeHandle, VolumeInfo);
+  return (*GetPeiServicesTablePointer ())->FfsGetVolumeInfo (
+                                             VolumeHandle,
+                                             VolumeInfo
+                                             );
 }
 
 /**
@@ -650,8 +694,10 @@ InternalPeiServicesInstallFvInfoPpi (
     //
     FvInfoPpi = AllocateZeroPool (sizeof (EFI_PEI_FIRMWARE_VOLUME_INFO2_PPI));
     ASSERT (FvInfoPpi != NULL);
-    ((EFI_PEI_FIRMWARE_VOLUME_INFO2_PPI *)FvInfoPpi)->AuthenticationStatus = AuthenticationStatus;
-    PpiGuid                                                                = &gEfiPeiFirmwareVolumeInfo2PpiGuid;
+    ((EFI_PEI_FIRMWARE_VOLUME_INFO2_PPI *)FvInfoPpi)->AuthenticationStatus =
+      AuthenticationStatus;
+    PpiGuid =
+      &gEfiPeiFirmwareVolumeInfo2PpiGuid;
   }
 
   if (FvFormat != NULL) {
@@ -667,7 +713,12 @@ InternalPeiServicesInstallFvInfoPpi (
     // ((EFI_FIRMWARE_VOLUME_HEADER *) FvInfo)->FileSystemGuid can be just used for both
     // firmware file system 2 and 3 format.
     //
-    ASSERT (CompareGuid (&(((EFI_FIRMWARE_VOLUME_HEADER *)FvInfo)->FileSystemGuid), &gEfiFirmwareFileSystem2Guid));
+    ASSERT (
+      CompareGuid (
+        &(((EFI_FIRMWARE_VOLUME_HEADER *)FvInfo)->FileSystemGuid),
+        &gEfiFirmwareFileSystem2Guid
+        )
+      );
   }
 
   FvInfoPpi->FvInfo     = (VOID *)FvInfo;
@@ -688,9 +739,10 @@ InternalPeiServicesInstallFvInfoPpi (
   ASSERT (FvInfoPpiDescriptor != NULL);
 
   FvInfoPpiDescriptor->Guid  = PpiGuid;
-  FvInfoPpiDescriptor->Flags = EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
-  FvInfoPpiDescriptor->Ppi   = (VOID *)FvInfoPpi;
-  Status                     = PeiServicesInstallPpi (FvInfoPpiDescriptor);
+  FvInfoPpiDescriptor->Flags = EFI_PEI_PPI_DESCRIPTOR_PPI |
+                               EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
+  FvInfoPpiDescriptor->Ppi = (VOID *)FvInfoPpi;
+  Status                   = PeiServicesInstallPpi (FvInfoPpiDescriptor);
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -734,7 +786,15 @@ PeiServicesInstallFvInfoPpi (
   IN CONST EFI_GUID  *ParentFileName OPTIONAL
   )
 {
-  InternalPeiServicesInstallFvInfoPpi (TRUE, FvFormat, FvInfo, FvInfoSize, ParentFvName, ParentFileName, 0);
+  InternalPeiServicesInstallFvInfoPpi (
+    TRUE,
+    FvFormat,
+    FvInfo,
+    FvInfoSize,
+    ParentFvName,
+    ParentFileName,
+    0
+    );
 }
 
 /**
@@ -779,7 +839,15 @@ PeiServicesInstallFvInfo2Ppi (
   IN       UINT32    AuthenticationStatus
   )
 {
-  InternalPeiServicesInstallFvInfoPpi (FALSE, FvFormat, FvInfo, FvInfoSize, ParentFvName, ParentFileName, AuthenticationStatus);
+  InternalPeiServicesInstallFvInfoPpi (
+    FALSE,
+    FvFormat,
+    FvInfo,
+    FvInfoSize,
+    ParentFvName,
+    ParentFileName,
+    AuthenticationStatus
+    );
 }
 
 /**
@@ -804,5 +872,10 @@ PeiServicesResetSystem2 (
   IN VOID            *ResetData OPTIONAL
   )
 {
-  (*GetPeiServicesTablePointer ())->ResetSystem2 (ResetType, ResetStatus, DataSize, ResetData);
+  (*GetPeiServicesTablePointer ())->ResetSystem2 (
+                                      ResetType,
+                                      ResetStatus,
+                                      DataSize,
+                                      ResetData
+                                      );
 }

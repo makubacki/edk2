@@ -62,7 +62,12 @@ PeiPciLibPciCfg2ReadWorker (
   CONST EFI_PEI_PCI_CFG2_PPI  *PciCfg2Ppi;
   UINT64                      PciCfg2Address;
 
-  Status = PeiServicesLocatePpi (&gEfiPciCfg2PpiGuid, 0, NULL, (VOID **)&PciCfg2Ppi);
+  Status = PeiServicesLocatePpi (
+             &gEfiPciCfg2PpiGuid,
+             0,
+             NULL,
+             (VOID **)&PciCfg2Ppi
+             );
   ASSERT_EFI_ERROR (Status);
   ASSERT (PciCfg2Ppi != NULL);
 
@@ -105,7 +110,12 @@ PeiPciLibPciCfg2WriteWorker (
   CONST EFI_PEI_PCI_CFG2_PPI  *PciCfg2Ppi;
   UINT64                      PciCfg2Address;
 
-  Status = PeiServicesLocatePpi (&gEfiPciCfg2PpiGuid, 0, NULL, (VOID **)&PciCfg2Ppi);
+  Status = PeiServicesLocatePpi (
+             &gEfiPciCfg2PpiGuid,
+             0,
+             NULL,
+             (VOID **)&PciCfg2Ppi
+             );
   ASSERT_EFI_ERROR (Status);
   ASSERT (PciCfg2Ppi != NULL);
 
@@ -203,7 +213,11 @@ PciWrite8 (
 {
   ASSERT_INVALID_PCI_ADDRESS (Address, 0);
 
-  return (UINT8)PeiPciLibPciCfg2WriteWorker (Address, EfiPeiPciCfgWidthUint8, Value);
+  return (UINT8)PeiPciLibPciCfg2WriteWorker (
+                  Address,
+                  EfiPeiPciCfgWidthUint8,
+                  Value
+                  );
 }
 
 /**
@@ -497,7 +511,13 @@ PciBitFieldAndThenOr8 (
 {
   return PciWrite8 (
            Address,
-           BitFieldAndThenOr8 (PciRead8 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr8 (
+             PciRead8 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 
@@ -554,7 +574,11 @@ PciWrite16 (
 {
   ASSERT_INVALID_PCI_ADDRESS (Address, 1);
 
-  return (UINT16)PeiPciLibPciCfg2WriteWorker (Address, EfiPeiPciCfgWidthUint16, Value);
+  return (UINT16)PeiPciLibPciCfg2WriteWorker (
+                   Address,
+                   EfiPeiPciCfgWidthUint16,
+                   Value
+                   );
 }
 
 /**
@@ -650,7 +674,11 @@ PciAndThenOr16 (
   IN      UINT16  OrData
   )
 {
-  return PciWrite16 (Address, (UINT16)((PciRead16 (Address) & AndData) | OrData));
+  return PciWrite16 (
+           Address,
+           (UINT16)((PciRead16 (Address) & AndData) |
+                    OrData)
+           );
 }
 
 /**
@@ -856,7 +884,13 @@ PciBitFieldAndThenOr16 (
 {
   return PciWrite16 (
            Address,
-           BitFieldAndThenOr16 (PciRead16 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr16 (
+             PciRead16 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 
@@ -1215,7 +1249,13 @@ PciBitFieldAndThenOr32 (
 {
   return PciWrite32 (
            Address,
-           BitFieldAndThenOr32 (PciRead32 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr32 (
+             PciRead32 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 

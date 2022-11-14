@@ -204,7 +204,10 @@ PciSegmentRead8 (
 {
   ASSERT_INVALID_PCI_SEGMENT_ADDRESS (Address, 0);
 
-  return (UINT8)PeiPciSegmentLibPciCfg2ReadWorker (Address, EfiPeiPciCfgWidthUint8);
+  return (UINT8)PeiPciSegmentLibPciCfg2ReadWorker (
+                  Address,
+                  EfiPeiPciCfgWidthUint8
+                  );
 }
 
 /**
@@ -230,7 +233,11 @@ PciSegmentWrite8 (
 {
   ASSERT_INVALID_PCI_SEGMENT_ADDRESS (Address, 0);
 
-  return (UINT8)PeiPciSegmentLibPciCfg2WriteWorker (Address, EfiPeiPciCfgWidthUint8, Value);
+  return (UINT8)PeiPciSegmentLibPciCfg2WriteWorker (
+                  Address,
+                  EfiPeiPciCfgWidthUint8,
+                  Value
+                  );
 }
 
 /**
@@ -257,7 +264,11 @@ PciSegmentOr8 (
   IN UINT8   OrData
   )
 {
-  return PciSegmentWrite8 (Address, (UINT8)(PciSegmentRead8 (Address) | OrData));
+  return PciSegmentWrite8 (
+           Address,
+           (UINT8)(PciSegmentRead8 (Address) |
+                   OrData)
+           );
 }
 
 /**
@@ -283,7 +294,11 @@ PciSegmentAnd8 (
   IN UINT8   AndData
   )
 {
-  return PciSegmentWrite8 (Address, (UINT8)(PciSegmentRead8 (Address) & AndData));
+  return PciSegmentWrite8 (
+           Address,
+           (UINT8)(PciSegmentRead8 (Address) &
+                   AndData)
+           );
 }
 
 /**
@@ -314,7 +329,11 @@ PciSegmentAndThenOr8 (
   IN UINT8   OrData
   )
 {
-  return PciSegmentWrite8 (Address, (UINT8)((PciSegmentRead8 (Address) & AndData) | OrData));
+  return PciSegmentWrite8 (
+           Address,
+           (UINT8)((PciSegmentRead8 (Address) &
+                    AndData) | OrData)
+           );
 }
 
 /**
@@ -514,7 +533,13 @@ PciSegmentBitFieldAndThenOr8 (
 {
   return PciSegmentWrite8 (
            Address,
-           BitFieldAndThenOr8 (PciSegmentRead8 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr8 (
+             PciSegmentRead8 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 
@@ -540,7 +565,10 @@ PciSegmentRead16 (
 {
   ASSERT_INVALID_PCI_SEGMENT_ADDRESS (Address, 1);
 
-  return (UINT16)PeiPciSegmentLibPciCfg2ReadWorker (Address, EfiPeiPciCfgWidthUint16);
+  return (UINT16)PeiPciSegmentLibPciCfg2ReadWorker (
+                   Address,
+                   EfiPeiPciCfgWidthUint16
+                   );
 }
 
 /**
@@ -567,7 +595,11 @@ PciSegmentWrite16 (
 {
   ASSERT_INVALID_PCI_SEGMENT_ADDRESS (Address, 1);
 
-  return (UINT16)PeiPciSegmentLibPciCfg2WriteWorker (Address, EfiPeiPciCfgWidthUint16, Value);
+  return (UINT16)PeiPciSegmentLibPciCfg2WriteWorker (
+                   Address,
+                   EfiPeiPciCfgWidthUint16,
+                   Value
+                   );
 }
 
 /**
@@ -597,7 +629,11 @@ PciSegmentOr16 (
   IN UINT16  OrData
   )
 {
-  return PciSegmentWrite16 (Address, (UINT16)(PciSegmentRead16 (Address) | OrData));
+  return PciSegmentWrite16 (
+           Address,
+           (UINT16)(PciSegmentRead16 (Address) |
+                    OrData)
+           );
 }
 
 /**
@@ -625,7 +661,11 @@ PciSegmentAnd16 (
   IN UINT16  AndData
   )
 {
-  return PciSegmentWrite16 (Address, (UINT16)(PciSegmentRead16 (Address) & AndData));
+  return PciSegmentWrite16 (
+           Address,
+           (UINT16)(PciSegmentRead16 (Address) &
+                    AndData)
+           );
 }
 
 /**
@@ -657,7 +697,11 @@ PciSegmentAndThenOr16 (
   IN UINT16  OrData
   )
 {
-  return PciSegmentWrite16 (Address, (UINT16)((PciSegmentRead16 (Address) & AndData) | OrData));
+  return PciSegmentWrite16 (
+           Address,
+           (UINT16)((PciSegmentRead16 (Address) &
+                     AndData) | OrData)
+           );
 }
 
 /**
@@ -862,7 +906,13 @@ PciSegmentBitFieldAndThenOr16 (
 {
   return PciSegmentWrite16 (
            Address,
-           BitFieldAndThenOr16 (PciSegmentRead16 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr16 (
+             PciSegmentRead16 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 
@@ -915,7 +965,11 @@ PciSegmentWrite32 (
 {
   ASSERT_INVALID_PCI_SEGMENT_ADDRESS (Address, 3);
 
-  return PeiPciSegmentLibPciCfg2WriteWorker (Address, EfiPeiPciCfgWidthUint32, Value);
+  return PeiPciSegmentLibPciCfg2WriteWorker (
+           Address,
+           EfiPeiPciCfgWidthUint32,
+           Value
+           );
 }
 
 /**
@@ -1003,7 +1057,11 @@ PciSegmentAndThenOr32 (
   IN UINT32  OrData
   )
 {
-  return PciSegmentWrite32 (Address, (PciSegmentRead32 (Address) & AndData) | OrData);
+  return PciSegmentWrite32 (
+           Address,
+           (PciSegmentRead32 (Address) & AndData) |
+           OrData
+           );
 }
 
 /**
@@ -1206,7 +1264,13 @@ PciSegmentBitFieldAndThenOr32 (
 {
   return PciSegmentWrite32 (
            Address,
-           BitFieldAndThenOr32 (PciSegmentRead32 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr32 (
+             PciSegmentRead32 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 

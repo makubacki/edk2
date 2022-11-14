@@ -406,14 +406,24 @@ InternalPrintGraphic (
     HorizontalResolution = GraphicsOutput->Mode->Info->HorizontalResolution;
     VerticalResolution   = GraphicsOutput->Mode->Info->VerticalResolution;
   } else if ((UgaDraw != NULL) && FeaturePcdGet (PcdUgaConsumeSupport)) {
-    UgaDraw->GetMode (UgaDraw, &HorizontalResolution, &VerticalResolution, &ColorDepth, &RefreshRate);
+    UgaDraw->GetMode (
+               UgaDraw,
+               &HorizontalResolution,
+               &VerticalResolution,
+               &ColorDepth,
+               &RefreshRate
+               );
   } else {
     goto Error;
   }
 
   ASSERT ((HorizontalResolution != 0) && (VerticalResolution != 0));
 
-  Status = gBS->LocateProtocol (&gEfiHiiFontProtocolGuid, NULL, (VOID **)&HiiFont);
+  Status = gBS->LocateProtocol (
+                  &gEfiHiiFontProtocolGuid,
+                  NULL,
+                  (VOID **)&HiiFont
+                  );
   if (EFI_ERROR (Status)) {
     goto Error;
   }
@@ -427,7 +437,11 @@ InternalPrintGraphic (
   ZeroMem (&FontInfo, sizeof (EFI_FONT_DISPLAY_INFO));
 
   if (Foreground != NULL) {
-    CopyMem (&FontInfo.ForegroundColor, Foreground, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+    CopyMem (
+      &FontInfo.ForegroundColor,
+      Foreground,
+      sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+      );
   } else {
     CopyMem (
       &FontInfo.ForegroundColor,
@@ -437,7 +451,11 @@ InternalPrintGraphic (
   }
 
   if (Background != NULL) {
-    CopyMem (&FontInfo.BackgroundColor, Background, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+    CopyMem (
+      &FontInfo.BackgroundColor,
+      Background,
+      sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+      );
   } else {
     CopyMem (
       &FontInfo.BackgroundColor,
@@ -452,7 +470,8 @@ InternalPrintGraphic (
     Status = HiiFont->StringToImage (
                         HiiFont,
                         EFI_HII_IGNORE_IF_NO_GLYPH | EFI_HII_OUT_FLAG_CLIP |
-                        EFI_HII_OUT_FLAG_CLIP_CLEAN_X | EFI_HII_OUT_FLAG_CLIP_CLEAN_Y |
+                        EFI_HII_OUT_FLAG_CLIP_CLEAN_X |
+                        EFI_HII_OUT_FLAG_CLIP_CLEAN_Y |
                         EFI_HII_IGNORE_LINE_BREAK | EFI_HII_DIRECT_TO_SCREEN,
                         Buffer,
                         &FontInfo,
@@ -472,11 +491,19 @@ InternalPrintGraphic (
     //
     // Ensure Width * Height * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL) doesn't overflow.
     //
-    if (Blt->Width > DivU64x32 (MAX_UINTN, Blt->Height * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL))) {
+    if (Blt->Width > DivU64x32 (
+                       MAX_UINTN,
+                       Blt->Height *
+                       sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+                       ))
+    {
       goto Error;
     }
 
-    Blt->Image.Bitmap = AllocateZeroPool ((UINT32)Blt->Width * Blt->Height * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+    Blt->Image.Bitmap = AllocateZeroPool (
+                          (UINT32)Blt->Width * Blt->Height *
+                          sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+                          );
     ASSERT (Blt->Image.Bitmap != NULL);
 
     //
@@ -486,7 +513,8 @@ InternalPrintGraphic (
     Status = HiiFont->StringToImage (
                         HiiFont,
                         EFI_HII_IGNORE_IF_NO_GLYPH | EFI_HII_OUT_FLAG_CLIP |
-                        EFI_HII_OUT_FLAG_CLIP_CLEAN_X | EFI_HII_OUT_FLAG_CLIP_CLEAN_Y |
+                        EFI_HII_OUT_FLAG_CLIP_CLEAN_X |
+                        EFI_HII_OUT_FLAG_CLIP_CLEAN_Y |
                         EFI_HII_IGNORE_LINE_BREAK,
                         Buffer,
                         &FontInfo,
@@ -631,7 +659,14 @@ PrintXY (
 
   VA_END (Marker);
 
-  ReturnNum = InternalPrintGraphic (PointX, PointY, ForeGround, BackGround, Buffer, PrintNum);
+  ReturnNum = InternalPrintGraphic (
+                PointX,
+                PointY,
+                ForeGround,
+                BackGround,
+                Buffer,
+                PrintNum
+                );
 
   FreePool (Buffer);
 
@@ -709,7 +744,14 @@ AsciiPrintXY (
 
   VA_END (Marker);
 
-  ReturnNum = InternalPrintGraphic (PointX, PointY, ForeGround, BackGround, Buffer, PrintNum);
+  ReturnNum = InternalPrintGraphic (
+                PointX,
+                PointY,
+                ForeGround,
+                BackGround,
+                Buffer,
+                PrintNum
+                );
 
   FreePool (Buffer);
 
@@ -772,7 +814,13 @@ CatVSPrint (
     StrCpyS (BufferToReturn, SizeRequired / sizeof (CHAR16), String);
   }
 
-  UnicodeVSPrint (BufferToReturn + StrLen (BufferToReturn), (CharactersRequired+1) * sizeof (CHAR16), FormatString, Marker);
+  UnicodeVSPrint (
+    BufferToReturn + StrLen (BufferToReturn),
+    (CharactersRequired+
+     1) * sizeof (CHAR16),
+    FormatString,
+    Marker
+    );
 
   ASSERT (StrSize (BufferToReturn) == SizeRequired);
 

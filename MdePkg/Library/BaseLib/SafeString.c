@@ -41,7 +41,8 @@ InternalSafeStringIsOverlap (
   IN UINTN  Size2
   )
 {
-  if ((((UINTN)Base1 >= (UINTN)Base2) && ((UINTN)Base1 < (UINTN)Base2 + Size2)) ||
+  if ((((UINTN)Base1 >= (UINTN)Base2) && ((UINTN)Base1 < (UINTN)Base2 +
+                                          Size2)) ||
       (((UINTN)Base2 >= (UINTN)Base1) && ((UINTN)Base2 < (UINTN)Base1 + Size1)))
   {
     return TRUE;
@@ -71,7 +72,12 @@ InternalSafeStringNoStrOverlap (
   IN UINTN   Size2
   )
 {
-  return !InternalSafeStringIsOverlap (Str1, Size1 * sizeof (CHAR16), Str2, Size2 * sizeof (CHAR16));
+  return !InternalSafeStringIsOverlap (
+            Str1,
+            Size1 * sizeof (CHAR16),
+            Str2,
+            Size2 * sizeof (CHAR16)
+            );
 }
 
 /**
@@ -237,14 +243,20 @@ StrCpyS (
   //
   // 1. Neither Destination nor Source shall be a null pointer.
   //
-  SAFE_STRING_CONSTRAINT_CHECK ((Destination != NULL), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (Destination != NULL),
+    RETURN_INVALID_PARAMETER
+    );
   SAFE_STRING_CONSTRAINT_CHECK ((Source != NULL), RETURN_INVALID_PARAMETER);
 
   //
   // 2. DestMax shall not be greater than RSIZE_MAX.
   //
   if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   //
@@ -261,7 +273,15 @@ StrCpyS (
   //
   // 5. Copying shall not take place between objects that overlap.
   //
-  SAFE_STRING_CONSTRAINT_CHECK (InternalSafeStringNoStrOverlap (Destination, DestMax, (CHAR16 *)Source, SourceLen + 1), RETURN_ACCESS_DENIED);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    InternalSafeStringNoStrOverlap (
+      Destination,
+      DestMax,
+      (CHAR16 *)Source,
+      SourceLen + 1
+      ),
+    RETURN_ACCESS_DENIED
+    );
 
   //
   // The StrCpyS function copies the string pointed to by Source (including the terminating
@@ -322,15 +342,24 @@ StrnCpyS (
   //
   // 1. Neither Destination nor Source shall be a null pointer.
   //
-  SAFE_STRING_CONSTRAINT_CHECK ((Destination != NULL), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (Destination != NULL),
+    RETURN_INVALID_PARAMETER
+    );
   SAFE_STRING_CONSTRAINT_CHECK ((Source != NULL), RETURN_INVALID_PARAMETER);
 
   //
   // 2. Neither DestMax nor Length shall be greater than RSIZE_MAX
   //
   if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
-    SAFE_STRING_CONSTRAINT_CHECK ((Length <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (Length <= RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   //
@@ -343,7 +372,10 @@ StrnCpyS (
   //
   SourceLen = StrnLenS (Source, MIN (DestMax, Length));
   if (Length >= DestMax) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax > SourceLen), RETURN_BUFFER_TOO_SMALL);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax > SourceLen),
+      RETURN_BUFFER_TOO_SMALL
+      );
   }
 
   //
@@ -353,7 +385,15 @@ StrnCpyS (
     SourceLen = Length;
   }
 
-  SAFE_STRING_CONSTRAINT_CHECK (InternalSafeStringNoStrOverlap (Destination, DestMax, (CHAR16 *)Source, SourceLen + 1), RETURN_ACCESS_DENIED);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    InternalSafeStringNoStrOverlap (
+      Destination,
+      DestMax,
+      (CHAR16 *)Source,
+      SourceLen + 1
+      ),
+    RETURN_ACCESS_DENIED
+    );
 
   //
   // The StrnCpyS function copies not more than Length successive characters (characters that
@@ -424,14 +464,20 @@ StrCatS (
   //
   // 1. Neither Destination nor Source shall be a null pointer.
   //
-  SAFE_STRING_CONSTRAINT_CHECK ((Destination != NULL), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (Destination != NULL),
+    RETURN_INVALID_PARAMETER
+    );
   SAFE_STRING_CONSTRAINT_CHECK ((Source != NULL), RETURN_INVALID_PARAMETER);
 
   //
   // 2. DestMax shall not be greater than RSIZE_MAX.
   //
   if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   //
@@ -453,7 +499,15 @@ StrCatS (
   //
   // 6. Copying shall not take place between objects that overlap.
   //
-  SAFE_STRING_CONSTRAINT_CHECK (InternalSafeStringNoStrOverlap (Destination, DestMax, (CHAR16 *)Source, SourceLen + 1), RETURN_ACCESS_DENIED);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    InternalSafeStringNoStrOverlap (
+      Destination,
+      DestMax,
+      (CHAR16 *)Source,
+      SourceLen + 1
+      ),
+    RETURN_ACCESS_DENIED
+    );
 
   //
   // The StrCatS function appends a copy of the string pointed to by Source (including the
@@ -527,15 +581,24 @@ StrnCatS (
   //
   // 1. Neither Destination nor Source shall be a null pointer.
   //
-  SAFE_STRING_CONSTRAINT_CHECK ((Destination != NULL), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (Destination != NULL),
+    RETURN_INVALID_PARAMETER
+    );
   SAFE_STRING_CONSTRAINT_CHECK ((Source != NULL), RETURN_INVALID_PARAMETER);
 
   //
   // 2. Neither DestMax nor Length shall be greater than RSIZE_MAX.
   //
   if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
-    SAFE_STRING_CONSTRAINT_CHECK ((Length <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (Length <= RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   //
@@ -553,7 +616,10 @@ StrnCatS (
   //
   SourceLen = StrnLenS (Source, MIN (CopyLen, Length));
   if (Length >= CopyLen) {
-    SAFE_STRING_CONSTRAINT_CHECK ((CopyLen > SourceLen), RETURN_BUFFER_TOO_SMALL);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (CopyLen > SourceLen),
+      RETURN_BUFFER_TOO_SMALL
+      );
   }
 
   //
@@ -563,7 +629,15 @@ StrnCatS (
     SourceLen = Length;
   }
 
-  SAFE_STRING_CONSTRAINT_CHECK (InternalSafeStringNoStrOverlap (Destination, DestMax, (CHAR16 *)Source, SourceLen + 1), RETURN_ACCESS_DENIED);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    InternalSafeStringNoStrOverlap (
+      Destination,
+      DestMax,
+      (CHAR16 *)Source,
+      SourceLen + 1
+      ),
+    RETURN_ACCESS_DENIED
+    );
 
   //
   // The StrnCatS function appends not more than Length successive characters (characters
@@ -646,7 +720,11 @@ StrDecimalToUintnS (
   // 2. The length of String shall not be greater than RSIZE_MAX.
   //
   if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((StrnLenS (String, RSIZE_MAX + 1) <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (StrnLenS (String, RSIZE_MAX + 1) <=
+       RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   if (EndPointer != NULL) {
@@ -758,7 +836,11 @@ StrDecimalToUint64S (
   // 2. The length of String shall not be greater than RSIZE_MAX.
   //
   if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((StrnLenS (String, RSIZE_MAX + 1) <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (StrnLenS (String, RSIZE_MAX + 1) <=
+       RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   if (EndPointer != NULL) {
@@ -878,7 +960,11 @@ StrHexToUintnS (
   // 2. The length of String shall not be greater than RSIZE_MAX.
   //
   if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((StrnLenS (String, RSIZE_MAX + 1) <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (StrnLenS (String, RSIZE_MAX + 1) <=
+       RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   if (EndPointer != NULL) {
@@ -1012,7 +1098,11 @@ StrHexToUint64S (
   // 2. The length of String shall not be greater than RSIZE_MAX.
   //
   if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((StrnLenS (String, RSIZE_MAX + 1) <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (StrnLenS (String, RSIZE_MAX + 1) <=
+       RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   if (EndPointer != NULL) {
@@ -1155,7 +1245,10 @@ StrToIpv6Address (
   SAFE_STRING_CONSTRAINT_CHECK ((String != NULL), RETURN_INVALID_PARAMETER);
   SAFE_STRING_CONSTRAINT_CHECK ((Address != NULL), RETURN_INVALID_PARAMETER);
 
-  for (Pointer = String, AddressIndex = 0; AddressIndex < ARRAY_SIZE (Address->Addr) + 1;) {
+  for (Pointer = String, AddressIndex = 0; AddressIndex < ARRAY_SIZE (
+                                                            Address->Addr
+                                                            ) + 1;)
+  {
     if (!InternalIsHexaDecimalDigitCharacter (*Pointer)) {
       if (*Pointer != L':') {
         //
@@ -1175,7 +1268,10 @@ StrToIpv6Address (
         return RETURN_UNSUPPORTED;
       }
 
-      if ((CompressStart != ARRAY_SIZE (Address->Addr)) || (AddressIndex == ARRAY_SIZE (Address->Addr))) {
+      if ((CompressStart != ARRAY_SIZE (Address->Addr)) || (AddressIndex ==
+                                                            ARRAY_SIZE (
+                                                              Address->Addr)))
+      {
         //
         // "::" can only appear once.
         // "::" can only appear when address is not full length.
@@ -1273,8 +1369,12 @@ StrToIpv6Address (
     Pointer++;
   }
 
-  if (((AddressIndex == ARRAY_SIZE (Address->Addr)) && (CompressStart != ARRAY_SIZE (Address->Addr))) ||
-      ((AddressIndex != ARRAY_SIZE (Address->Addr)) && (CompressStart == ARRAY_SIZE (Address->Addr)))
+  if (((AddressIndex == ARRAY_SIZE (Address->Addr)) && (CompressStart !=
+                                                        ARRAY_SIZE (
+                                                          Address->Addr))) ||
+      ((AddressIndex != ARRAY_SIZE (Address->Addr)) && (CompressStart ==
+                                                        ARRAY_SIZE (
+                                                          Address->Addr)))
       )
   {
     //
@@ -1285,7 +1385,11 @@ StrToIpv6Address (
   }
 
   CopyMem (&Address->Addr[0], &LocalAddress.Addr[0], CompressStart);
-  ZeroMem (&Address->Addr[CompressStart], ARRAY_SIZE (Address->Addr) - AddressIndex);
+  ZeroMem (
+    &Address->Addr[CompressStart],
+    ARRAY_SIZE (Address->Addr) -
+    AddressIndex
+    );
   if (AddressIndex > CompressStart) {
     CopyMem (
       &Address->Addr[CompressStart + ARRAY_SIZE (Address->Addr) - AddressIndex],
@@ -1372,7 +1476,11 @@ StrToIpv4Address (
   SAFE_STRING_CONSTRAINT_CHECK ((String != NULL), RETURN_INVALID_PARAMETER);
   SAFE_STRING_CONSTRAINT_CHECK ((Address != NULL), RETURN_INVALID_PARAMETER);
 
-  for (Pointer = (CHAR16 *)String, AddressIndex = 0; AddressIndex < ARRAY_SIZE (Address->Addr) + 1;) {
+  for (Pointer = (CHAR16 *)String, AddressIndex = 0; AddressIndex < ARRAY_SIZE (
+                                                                      Address->
+                                                                        Addr
+                                                                      ) + 1;)
+  {
     if (!InternalIsDecimalDigitCharacter (*Pointer)) {
       //
       // D or P contains invalid characters.
@@ -1516,7 +1624,12 @@ StrToGuid (
   //
   // Get aabbccdd in big-endian.
   //
-  Status = StrHexToBytes (String, 2 * sizeof (LocalGuid.Data1), (UINT8 *)&LocalGuid.Data1, sizeof (LocalGuid.Data1));
+  Status = StrHexToBytes (
+             String,
+             2 * sizeof (LocalGuid.Data1),
+             (UINT8 *)&LocalGuid.Data1,
+             sizeof (LocalGuid.Data1)
+             );
   if (RETURN_ERROR (Status) || (String[2 * sizeof (LocalGuid.Data1)] != L'-')) {
     return RETURN_UNSUPPORTED;
   }
@@ -1530,7 +1643,12 @@ StrToGuid (
   //
   // Get eeff in big-endian.
   //
-  Status = StrHexToBytes (String, 2 * sizeof (LocalGuid.Data2), (UINT8 *)&LocalGuid.Data2, sizeof (LocalGuid.Data2));
+  Status = StrHexToBytes (
+             String,
+             2 * sizeof (LocalGuid.Data2),
+             (UINT8 *)&LocalGuid.Data2,
+             sizeof (LocalGuid.Data2)
+             );
   if (RETURN_ERROR (Status) || (String[2 * sizeof (LocalGuid.Data2)] != L'-')) {
     return RETURN_UNSUPPORTED;
   }
@@ -1544,7 +1662,12 @@ StrToGuid (
   //
   // Get gghh in big-endian.
   //
-  Status = StrHexToBytes (String, 2 * sizeof (LocalGuid.Data3), (UINT8 *)&LocalGuid.Data3, sizeof (LocalGuid.Data3));
+  Status = StrHexToBytes (
+             String,
+             2 * sizeof (LocalGuid.Data3),
+             (UINT8 *)&LocalGuid.Data3,
+             sizeof (LocalGuid.Data3)
+             );
   if (RETURN_ERROR (Status) || (String[2 * sizeof (LocalGuid.Data3)] != L'-')) {
     return RETURN_UNSUPPORTED;
   }
@@ -1633,18 +1756,27 @@ StrHexToBytes (
   // 2. Length shall not be greater than RSIZE_MAX.
   //
   if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((Length <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (Length <= RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   //
   // 3. Length shall not be odd.
   //
-  SAFE_STRING_CONSTRAINT_CHECK (((Length & BIT0) == 0), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    ((Length & BIT0) == 0),
+    RETURN_INVALID_PARAMETER
+    );
 
   //
   // 4. MaxBufferSize shall equal to or greater than Length / 2.
   //
-  SAFE_STRING_CONSTRAINT_CHECK ((MaxBufferSize >= Length / 2), RETURN_BUFFER_TOO_SMALL);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (MaxBufferSize >= Length / 2),
+    RETURN_BUFFER_TOO_SMALL
+    );
 
   //
   // 5. String shall not contains invalid hexadecimal digits.
@@ -1805,14 +1937,20 @@ AsciiStrCpyS (
   //
   // 1. Neither Destination nor Source shall be a null pointer.
   //
-  SAFE_STRING_CONSTRAINT_CHECK ((Destination != NULL), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (Destination != NULL),
+    RETURN_INVALID_PARAMETER
+    );
   SAFE_STRING_CONSTRAINT_CHECK ((Source != NULL), RETURN_INVALID_PARAMETER);
 
   //
   // 2. DestMax shall not be greater than ASCII_RSIZE_MAX.
   //
   if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   //
@@ -1829,7 +1967,15 @@ AsciiStrCpyS (
   //
   // 5. Copying shall not take place between objects that overlap.
   //
-  SAFE_STRING_CONSTRAINT_CHECK (InternalSafeStringNoAsciiStrOverlap (Destination, DestMax, (CHAR8 *)Source, SourceLen + 1), RETURN_ACCESS_DENIED);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    InternalSafeStringNoAsciiStrOverlap (
+      Destination,
+      DestMax,
+      (CHAR8 *)Source,
+      SourceLen + 1
+      ),
+    RETURN_ACCESS_DENIED
+    );
 
   //
   // The AsciiStrCpyS function copies the string pointed to by Source (including the terminating
@@ -1884,15 +2030,24 @@ AsciiStrnCpyS (
   //
   // 1. Neither Destination nor Source shall be a null pointer.
   //
-  SAFE_STRING_CONSTRAINT_CHECK ((Destination != NULL), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (Destination != NULL),
+    RETURN_INVALID_PARAMETER
+    );
   SAFE_STRING_CONSTRAINT_CHECK ((Source != NULL), RETURN_INVALID_PARAMETER);
 
   //
   // 2. Neither DestMax nor Length shall be greater than ASCII_RSIZE_MAX
   //
   if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-    SAFE_STRING_CONSTRAINT_CHECK ((Length <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (Length <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   //
@@ -1905,7 +2060,10 @@ AsciiStrnCpyS (
   //
   SourceLen = AsciiStrnLenS (Source, MIN (DestMax, Length));
   if (Length >= DestMax) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax > SourceLen), RETURN_BUFFER_TOO_SMALL);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax > SourceLen),
+      RETURN_BUFFER_TOO_SMALL
+      );
   }
 
   //
@@ -1915,7 +2073,15 @@ AsciiStrnCpyS (
     SourceLen = Length;
   }
 
-  SAFE_STRING_CONSTRAINT_CHECK (InternalSafeStringNoAsciiStrOverlap (Destination, DestMax, (CHAR8 *)Source, SourceLen + 1), RETURN_ACCESS_DENIED);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    InternalSafeStringNoAsciiStrOverlap (
+      Destination,
+      DestMax,
+      (CHAR8 *)Source,
+      SourceLen + 1
+      ),
+    RETURN_ACCESS_DENIED
+    );
 
   //
   // The AsciiStrnCpyS function copies not more than Length successive characters (characters that
@@ -1980,14 +2146,20 @@ AsciiStrCatS (
   //
   // 1. Neither Destination nor Source shall be a null pointer.
   //
-  SAFE_STRING_CONSTRAINT_CHECK ((Destination != NULL), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (Destination != NULL),
+    RETURN_INVALID_PARAMETER
+    );
   SAFE_STRING_CONSTRAINT_CHECK ((Source != NULL), RETURN_INVALID_PARAMETER);
 
   //
   // 2. DestMax shall not be greater than ASCII_RSIZE_MAX.
   //
   if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   //
@@ -2009,7 +2181,15 @@ AsciiStrCatS (
   //
   // 6. Copying shall not take place between objects that overlap.
   //
-  SAFE_STRING_CONSTRAINT_CHECK (InternalSafeStringNoAsciiStrOverlap (Destination, DestMax, (CHAR8 *)Source, SourceLen + 1), RETURN_ACCESS_DENIED);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    InternalSafeStringNoAsciiStrOverlap (
+      Destination,
+      DestMax,
+      (CHAR8 *)Source,
+      SourceLen + 1
+      ),
+    RETURN_ACCESS_DENIED
+    );
 
   //
   // The AsciiStrCatS function appends a copy of the string pointed to by Source (including the
@@ -2077,15 +2257,24 @@ AsciiStrnCatS (
   //
   // 1. Neither Destination nor Source shall be a null pointer.
   //
-  SAFE_STRING_CONSTRAINT_CHECK ((Destination != NULL), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (Destination != NULL),
+    RETURN_INVALID_PARAMETER
+    );
   SAFE_STRING_CONSTRAINT_CHECK ((Source != NULL), RETURN_INVALID_PARAMETER);
 
   //
   // 2. Neither DestMax nor Length shall be greater than ASCII_RSIZE_MAX.
   //
   if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-    SAFE_STRING_CONSTRAINT_CHECK ((Length <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (Length <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   //
@@ -2103,7 +2292,10 @@ AsciiStrnCatS (
   //
   SourceLen = AsciiStrnLenS (Source, MIN (CopyLen, Length));
   if (Length >= CopyLen) {
-    SAFE_STRING_CONSTRAINT_CHECK ((CopyLen > SourceLen), RETURN_BUFFER_TOO_SMALL);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (CopyLen > SourceLen),
+      RETURN_BUFFER_TOO_SMALL
+      );
   }
 
   //
@@ -2113,7 +2305,15 @@ AsciiStrnCatS (
     SourceLen = Length;
   }
 
-  SAFE_STRING_CONSTRAINT_CHECK (InternalSafeStringNoAsciiStrOverlap (Destination, DestMax, (CHAR8 *)Source, SourceLen + 1), RETURN_ACCESS_DENIED);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    InternalSafeStringNoAsciiStrOverlap (
+      Destination,
+      DestMax,
+      (CHAR8 *)Source,
+      SourceLen + 1
+      ),
+    RETURN_ACCESS_DENIED
+    );
 
   //
   // The AsciiStrnCatS function appends not more than Length successive characters (characters
@@ -2192,7 +2392,14 @@ AsciiStrDecimalToUintnS (
   // 2. The length of String shall not be greater than ASCII_RSIZE_MAX.
   //
   if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((AsciiStrnLenS (String, ASCII_RSIZE_MAX + 1) <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (AsciiStrnLenS (
+         String,
+         ASCII_RSIZE_MAX +
+         1
+         ) <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   if (EndPointer != NULL) {
@@ -2300,7 +2507,14 @@ AsciiStrDecimalToUint64S (
   // 2. The length of String shall not be greater than ASCII_RSIZE_MAX.
   //
   if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((AsciiStrnLenS (String, ASCII_RSIZE_MAX + 1) <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (AsciiStrnLenS (
+         String,
+         ASCII_RSIZE_MAX +
+         1
+         ) <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   if (EndPointer != NULL) {
@@ -2415,7 +2629,14 @@ AsciiStrHexToUintnS (
   // 2. The length of String shall not be greater than ASCII_RSIZE_MAX.
   //
   if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((AsciiStrnLenS (String, ASCII_RSIZE_MAX + 1) <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (AsciiStrnLenS (
+         String,
+         ASCII_RSIZE_MAX +
+         1
+         ) <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   if (EndPointer != NULL) {
@@ -2543,7 +2764,14 @@ AsciiStrHexToUint64S (
   // 2. The length of String shall not be greater than ASCII_RSIZE_MAX.
   //
   if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((AsciiStrnLenS (String, ASCII_RSIZE_MAX + 1) <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (AsciiStrnLenS (
+         String,
+         ASCII_RSIZE_MAX +
+         1
+         ) <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   if (EndPointer != NULL) {
@@ -2585,7 +2813,11 @@ AsciiStrHexToUint64S (
     // defined by UINT64, then MAX_UINT64 is stored in *Data and
     // RETURN_UNSUPPORTED is returned.
     //
-    if (*Data > RShiftU64 (MAX_UINT64 - InternalAsciiHexCharToUintn (*String), 4)) {
+    if (*Data > RShiftU64 (
+                  MAX_UINT64 - InternalAsciiHexCharToUintn (*String),
+                  4
+                  ))
+    {
       *Data = MAX_UINT64;
       if (EndPointer != NULL) {
         *EndPointer = (CHAR8 *)String;
@@ -2660,18 +2892,27 @@ UnicodeStrToAsciiStrS (
   //
   // 1. Neither Destination nor Source shall be a null pointer.
   //
-  SAFE_STRING_CONSTRAINT_CHECK ((Destination != NULL), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (Destination != NULL),
+    RETURN_INVALID_PARAMETER
+    );
   SAFE_STRING_CONSTRAINT_CHECK ((Source != NULL), RETURN_INVALID_PARAMETER);
 
   //
   // 2. DestMax shall not be greater than ASCII_RSIZE_MAX or RSIZE_MAX.
   //
   if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   //
@@ -2688,7 +2929,15 @@ UnicodeStrToAsciiStrS (
   //
   // 5. Copying shall not take place between objects that overlap.
   //
-  SAFE_STRING_CONSTRAINT_CHECK (!InternalSafeStringIsOverlap (Destination, DestMax, (VOID *)Source, (SourceLen + 1) * sizeof (CHAR16)), RETURN_ACCESS_DENIED);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    !InternalSafeStringIsOverlap (
+       Destination,
+       DestMax,
+       (VOID *)Source,
+       (SourceLen + 1) * sizeof (CHAR16)
+       ),
+    RETURN_ACCESS_DENIED
+    );
 
   //
   // convert string
@@ -2770,22 +3019,40 @@ UnicodeStrnToAsciiStrS (
   // 1. None of Destination, Source or DestinationLength shall be a null
   // pointer.
   //
-  SAFE_STRING_CONSTRAINT_CHECK ((Destination != NULL), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (Destination != NULL),
+    RETURN_INVALID_PARAMETER
+    );
   SAFE_STRING_CONSTRAINT_CHECK ((Source != NULL), RETURN_INVALID_PARAMETER);
-  SAFE_STRING_CONSTRAINT_CHECK ((DestinationLength != NULL), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (DestinationLength != NULL),
+    RETURN_INVALID_PARAMETER
+    );
 
   //
   // 2. Neither Length nor DestMax shall be greater than ASCII_RSIZE_MAX or
   // RSIZE_MAX.
   //
   if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((Length <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (Length <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((Length <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (Length <= RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   //
@@ -2799,7 +3066,10 @@ UnicodeStrnToAsciiStrS (
   //
   SourceLen = StrnLenS (Source, DestMax);
   if (Length >= DestMax) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax > SourceLen), RETURN_BUFFER_TOO_SMALL);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax > SourceLen),
+      RETURN_BUFFER_TOO_SMALL
+      );
   }
 
   //
@@ -2809,7 +3079,15 @@ UnicodeStrnToAsciiStrS (
     SourceLen = Length;
   }
 
-  SAFE_STRING_CONSTRAINT_CHECK (!InternalSafeStringIsOverlap (Destination, DestMax, (VOID *)Source, (SourceLen + 1) * sizeof (CHAR16)), RETURN_ACCESS_DENIED);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    !InternalSafeStringIsOverlap (
+       Destination,
+       DestMax,
+       (VOID *)Source,
+       (SourceLen + 1) * sizeof (CHAR16)
+       ),
+    RETURN_ACCESS_DENIED
+    );
 
   *DestinationLength = 0;
 
@@ -2883,18 +3161,27 @@ AsciiStrToUnicodeStrS (
   //
   // 1. Neither Destination nor Source shall be a null pointer.
   //
-  SAFE_STRING_CONSTRAINT_CHECK ((Destination != NULL), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (Destination != NULL),
+    RETURN_INVALID_PARAMETER
+    );
   SAFE_STRING_CONSTRAINT_CHECK ((Source != NULL), RETURN_INVALID_PARAMETER);
 
   //
   // 2. DestMax shall not be greater than RSIZE_MAX or ASCII_RSIZE_MAX.
   //
   if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   //
@@ -2911,7 +3198,15 @@ AsciiStrToUnicodeStrS (
   //
   // 5. Copying shall not take place between objects that overlap.
   //
-  SAFE_STRING_CONSTRAINT_CHECK (!InternalSafeStringIsOverlap (Destination, DestMax * sizeof (CHAR16), (VOID *)Source, SourceLen + 1), RETURN_ACCESS_DENIED);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    !InternalSafeStringIsOverlap (
+       Destination,
+       DestMax * sizeof (CHAR16),
+       (VOID *)Source,
+       SourceLen + 1
+       ),
+    RETURN_ACCESS_DENIED
+    );
 
   //
   // Convert string
@@ -2985,22 +3280,40 @@ AsciiStrnToUnicodeStrS (
   // 1. None of Destination, Source or DestinationLength shall be a null
   // pointer.
   //
-  SAFE_STRING_CONSTRAINT_CHECK ((Destination != NULL), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (Destination != NULL),
+    RETURN_INVALID_PARAMETER
+    );
   SAFE_STRING_CONSTRAINT_CHECK ((Source != NULL), RETURN_INVALID_PARAMETER);
-  SAFE_STRING_CONSTRAINT_CHECK ((DestinationLength != NULL), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (DestinationLength != NULL),
+    RETURN_INVALID_PARAMETER
+    );
 
   //
   // 2. Neither Length nor DestMax shall be greater than ASCII_RSIZE_MAX or
   // RSIZE_MAX.
   //
   if (RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((Length <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (Length <= RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((Length <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (Length <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   //
@@ -3014,7 +3327,10 @@ AsciiStrnToUnicodeStrS (
   //
   SourceLen = AsciiStrnLenS (Source, DestMax);
   if (Length >= DestMax) {
-    SAFE_STRING_CONSTRAINT_CHECK ((DestMax > SourceLen), RETURN_BUFFER_TOO_SMALL);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (DestMax > SourceLen),
+      RETURN_BUFFER_TOO_SMALL
+      );
   }
 
   //
@@ -3024,7 +3340,15 @@ AsciiStrnToUnicodeStrS (
     SourceLen = Length;
   }
 
-  SAFE_STRING_CONSTRAINT_CHECK (!InternalSafeStringIsOverlap (Destination, DestMax * sizeof (CHAR16), (VOID *)Source, SourceLen + 1), RETURN_ACCESS_DENIED);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    !InternalSafeStringIsOverlap (
+       Destination,
+       DestMax * sizeof (CHAR16),
+       (VOID *)Source,
+       SourceLen + 1
+       ),
+    RETURN_ACCESS_DENIED
+    );
 
   *DestinationLength = 0;
 
@@ -3119,7 +3443,10 @@ AsciiStrToIpv6Address (
   SAFE_STRING_CONSTRAINT_CHECK ((String != NULL), RETURN_INVALID_PARAMETER);
   SAFE_STRING_CONSTRAINT_CHECK ((Address != NULL), RETURN_INVALID_PARAMETER);
 
-  for (Pointer = String, AddressIndex = 0; AddressIndex < ARRAY_SIZE (Address->Addr) + 1;) {
+  for (Pointer = String, AddressIndex = 0; AddressIndex < ARRAY_SIZE (
+                                                            Address->Addr
+                                                            ) + 1;)
+  {
     if (!InternalAsciiIsHexaDecimalDigitCharacter (*Pointer)) {
       if (*Pointer != ':') {
         //
@@ -3139,7 +3466,10 @@ AsciiStrToIpv6Address (
         return RETURN_UNSUPPORTED;
       }
 
-      if ((CompressStart != ARRAY_SIZE (Address->Addr)) || (AddressIndex == ARRAY_SIZE (Address->Addr))) {
+      if ((CompressStart != ARRAY_SIZE (Address->Addr)) || (AddressIndex ==
+                                                            ARRAY_SIZE (
+                                                              Address->Addr)))
+      {
         //
         // "::" can only appear once.
         // "::" can only appear when address is not full length.
@@ -3237,8 +3567,12 @@ AsciiStrToIpv6Address (
     Pointer++;
   }
 
-  if (((AddressIndex == ARRAY_SIZE (Address->Addr)) && (CompressStart != ARRAY_SIZE (Address->Addr))) ||
-      ((AddressIndex != ARRAY_SIZE (Address->Addr)) && (CompressStart == ARRAY_SIZE (Address->Addr)))
+  if (((AddressIndex == ARRAY_SIZE (Address->Addr)) && (CompressStart !=
+                                                        ARRAY_SIZE (
+                                                          Address->Addr))) ||
+      ((AddressIndex != ARRAY_SIZE (Address->Addr)) && (CompressStart ==
+                                                        ARRAY_SIZE (
+                                                          Address->Addr)))
       )
   {
     //
@@ -3249,7 +3583,11 @@ AsciiStrToIpv6Address (
   }
 
   CopyMem (&Address->Addr[0], &LocalAddress.Addr[0], CompressStart);
-  ZeroMem (&Address->Addr[CompressStart], ARRAY_SIZE (Address->Addr) - AddressIndex);
+  ZeroMem (
+    &Address->Addr[CompressStart],
+    ARRAY_SIZE (Address->Addr) -
+    AddressIndex
+    );
   if (AddressIndex > CompressStart) {
     CopyMem (
       &Address->Addr[CompressStart + ARRAY_SIZE (Address->Addr) - AddressIndex],
@@ -3332,7 +3670,11 @@ AsciiStrToIpv4Address (
   SAFE_STRING_CONSTRAINT_CHECK ((String != NULL), RETURN_INVALID_PARAMETER);
   SAFE_STRING_CONSTRAINT_CHECK ((Address != NULL), RETURN_INVALID_PARAMETER);
 
-  for (Pointer = (CHAR8 *)String, AddressIndex = 0; AddressIndex < ARRAY_SIZE (Address->Addr) + 1;) {
+  for (Pointer = (CHAR8 *)String, AddressIndex = 0; AddressIndex < ARRAY_SIZE (
+                                                                     Address->
+                                                                       Addr
+                                                                     ) + 1;)
+  {
     if (!InternalAsciiIsDecimalDigitCharacter (*Pointer)) {
       //
       // D or P contains invalid characters.
@@ -3472,7 +3814,12 @@ AsciiStrToGuid (
   //
   // Get aabbccdd in big-endian.
   //
-  Status = AsciiStrHexToBytes (String, 2 * sizeof (LocalGuid.Data1), (UINT8 *)&LocalGuid.Data1, sizeof (LocalGuid.Data1));
+  Status = AsciiStrHexToBytes (
+             String,
+             2 * sizeof (LocalGuid.Data1),
+             (UINT8 *)&LocalGuid.Data1,
+             sizeof (LocalGuid.Data1)
+             );
   if (RETURN_ERROR (Status) || (String[2 * sizeof (LocalGuid.Data1)] != '-')) {
     return RETURN_UNSUPPORTED;
   }
@@ -3486,7 +3833,12 @@ AsciiStrToGuid (
   //
   // Get eeff in big-endian.
   //
-  Status = AsciiStrHexToBytes (String, 2 * sizeof (LocalGuid.Data2), (UINT8 *)&LocalGuid.Data2, sizeof (LocalGuid.Data2));
+  Status = AsciiStrHexToBytes (
+             String,
+             2 * sizeof (LocalGuid.Data2),
+             (UINT8 *)&LocalGuid.Data2,
+             sizeof (LocalGuid.Data2)
+             );
   if (RETURN_ERROR (Status) || (String[2 * sizeof (LocalGuid.Data2)] != '-')) {
     return RETURN_UNSUPPORTED;
   }
@@ -3500,7 +3852,12 @@ AsciiStrToGuid (
   //
   // Get gghh in big-endian.
   //
-  Status = AsciiStrHexToBytes (String, 2 * sizeof (LocalGuid.Data3), (UINT8 *)&LocalGuid.Data3, sizeof (LocalGuid.Data3));
+  Status = AsciiStrHexToBytes (
+             String,
+             2 * sizeof (LocalGuid.Data3),
+             (UINT8 *)&LocalGuid.Data3,
+             sizeof (LocalGuid.Data3)
+             );
   if (RETURN_ERROR (Status) || (String[2 * sizeof (LocalGuid.Data3)] != '-')) {
     return RETURN_UNSUPPORTED;
   }
@@ -3585,18 +3942,27 @@ AsciiStrHexToBytes (
   // 2. Length shall not be greater than ASCII_RSIZE_MAX.
   //
   if (ASCII_RSIZE_MAX != 0) {
-    SAFE_STRING_CONSTRAINT_CHECK ((Length <= ASCII_RSIZE_MAX), RETURN_INVALID_PARAMETER);
+    SAFE_STRING_CONSTRAINT_CHECK (
+      (Length <= ASCII_RSIZE_MAX),
+      RETURN_INVALID_PARAMETER
+      );
   }
 
   //
   // 3. Length shall not be odd.
   //
-  SAFE_STRING_CONSTRAINT_CHECK (((Length & BIT0) == 0), RETURN_INVALID_PARAMETER);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    ((Length & BIT0) == 0),
+    RETURN_INVALID_PARAMETER
+    );
 
   //
   // 4. MaxBufferSize shall equal to or greater than Length / 2.
   //
-  SAFE_STRING_CONSTRAINT_CHECK ((MaxBufferSize >= Length / 2), RETURN_BUFFER_TOO_SMALL);
+  SAFE_STRING_CONSTRAINT_CHECK (
+    (MaxBufferSize >= Length / 2),
+    RETURN_BUFFER_TOO_SMALL
+    );
 
   //
   // 5. String shall not contains invalid hexadecimal digits.
@@ -3620,7 +3986,8 @@ AsciiStrHexToBytes (
     // and for even characters, the lower nibble.
     //
     if ((Index & BIT0) == 0) {
-      Buffer[Index / 2] = (UINT8)InternalAsciiHexCharToUintn (String[Index]) << 4;
+      Buffer[Index / 2] = (UINT8)InternalAsciiHexCharToUintn (String[Index]) <<
+                          4;
     } else {
       Buffer[Index / 2] |= (UINT8)InternalAsciiHexCharToUintn (String[Index]);
     }

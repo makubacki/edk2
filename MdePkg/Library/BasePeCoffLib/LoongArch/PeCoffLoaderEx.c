@@ -49,7 +49,8 @@ PeCoffLoaderRelocateImageEx (
       Value  = Value | (Tmp1 << 27) | (Tmp2 << 42);
       Value += Adjust;
 
-      *(UINT32 *)Fixup = (*(UINT32 *)Fixup & ~0x1ffffe0) | (((Value >> 12) & 0xfffff) << 5);
+      *(UINT32 *)Fixup = (*(UINT32 *)Fixup & ~0x1ffffe0) | (((Value >> 12) &
+                                                             0xfffff) << 5);
       if (*FixupData != NULL) {
         *FixupData              = ALIGN_POINTER (*FixupData, sizeof (UINT32));
         *(UINT32 *)(*FixupData) = *(UINT32 *)Fixup;
@@ -57,7 +58,8 @@ PeCoffLoaderRelocateImageEx (
       }
 
       Fixup           += sizeof (UINT32);
-      *(UINT32 *)Fixup = (*(UINT32 *)Fixup & ~0x3ffc00) | ((Value & 0xfff) << 10);
+      *(UINT32 *)Fixup = (*(UINT32 *)Fixup & ~0x3ffc00) | ((Value & 0xfff) <<
+                                                           10);
       if (*FixupData != NULL) {
         *FixupData              = ALIGN_POINTER (*FixupData, sizeof (UINT32));
         *(UINT32 *)(*FixupData) = *(UINT32 *)Fixup;
@@ -65,7 +67,8 @@ PeCoffLoaderRelocateImageEx (
       }
 
       Fixup           += sizeof (UINT32);
-      *(UINT32 *)Fixup = (*(UINT32 *)Fixup & ~0x1ffffe0) | (((Value >> 32) & 0xfffff) << 5);
+      *(UINT32 *)Fixup = (*(UINT32 *)Fixup & ~0x1ffffe0) | (((Value >> 32) &
+                                                             0xfffff) << 5);
       if (*FixupData != NULL) {
         *FixupData              = ALIGN_POINTER (*FixupData, sizeof (UINT32));
         *(UINT32 *)(*FixupData) = *(UINT32 *)Fixup;
@@ -73,7 +76,8 @@ PeCoffLoaderRelocateImageEx (
       }
 
       Fixup           += sizeof (UINT32);
-      *(UINT32 *)Fixup = (*(UINT32 *)Fixup & ~0x3ffc00) | (((Value >> 52) & 0xfff) << 10);
+      *(UINT32 *)Fixup = (*(UINT32 *)Fixup & ~0x3ffc00) | (((Value >> 52) &
+                                                            0xfff) << 10);
       if (*FixupData != NULL) {
         *FixupData              = ALIGN_POINTER (*FixupData, sizeof (UINT32));
         *(UINT32 *)(*FixupData) = *(UINT32 *)Fixup;

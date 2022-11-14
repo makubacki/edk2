@@ -71,7 +71,9 @@ typedef struct {
           by Microseconds.
 
 **/
-#define EFI_TIMER_PERIOD_MICROSECONDS(Microseconds)  MultU64x32((UINT64)(Microseconds), 10)
+#define EFI_TIMER_PERIOD_MICROSECONDS( \
+                                     Microseconds)  \
+  MultU64x32((UINT64)(Microseconds), 10)
 
 /**
   Macro that returns the number of 100 ns units for a specified number of milliseconds.
@@ -83,7 +85,9 @@ typedef struct {
           by Milliseconds.
 
 **/
-#define EFI_TIMER_PERIOD_MILLISECONDS(Milliseconds)  MultU64x32((UINT64)(Milliseconds), 10000)
+#define EFI_TIMER_PERIOD_MILLISECONDS( \
+                                     Milliseconds)  \
+  MultU64x32((UINT64)(Milliseconds), 10000)
 
 /**
   Macro that returns the number of 100 ns units for a specified number of seconds.
@@ -95,7 +99,9 @@ typedef struct {
           by Seconds.
 
 **/
-#define EFI_TIMER_PERIOD_SECONDS(Seconds)  MultU64x32((UINT64)(Seconds), 10000000)
+#define EFI_TIMER_PERIOD_SECONDS( \
+                                Seconds)  \
+  MultU64x32((UINT64)(Seconds), 10000000)
 
 /**
   Macro that returns the a pointer to the next EFI_MEMORY_DESCRIPTOR in an array

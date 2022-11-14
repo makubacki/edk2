@@ -113,7 +113,8 @@ AsmPrepareThunk16 (
   // RealModeGdt[3]: Call Gate
   //
   RealModeGdt = (IA32_SEGMENT_DESCRIPTOR *)(
-                                            (UINTN)ThunkContext->RealModeBuffer + m16Gdt);
+                                            (UINTN)ThunkContext->RealModeBuffer
+                                            + m16Gdt);
 
   //
   // Update Code & Data Segment Descriptor
@@ -220,8 +221,11 @@ AsmThunk16 (
   ASSERT (ThunkContext->RealModeBufferSize >= m16Size);
   ASSERT ((UINTN)ThunkContext->RealModeBuffer + m16Size <= 0x100000);
   ASSERT (
-    ((ThunkContext->ThunkAttributes & (THUNK_ATTRIBUTE_DISABLE_A20_MASK_INT_15 | THUNK_ATTRIBUTE_DISABLE_A20_MASK_KBD_CTRL)) != \
-     (THUNK_ATTRIBUTE_DISABLE_A20_MASK_INT_15 | THUNK_ATTRIBUTE_DISABLE_A20_MASK_KBD_CTRL))
+    ((ThunkContext->ThunkAttributes & (THUNK_ATTRIBUTE_DISABLE_A20_MASK_INT_15 |
+                                       THUNK_ATTRIBUTE_DISABLE_A20_MASK_KBD_CTRL))
+     != \
+     (THUNK_ATTRIBUTE_DISABLE_A20_MASK_INT_15 |
+      THUNK_ATTRIBUTE_DISABLE_A20_MASK_KBD_CTRL))
     );
 
   UpdatedRegs = InternalAsmThunk16 (

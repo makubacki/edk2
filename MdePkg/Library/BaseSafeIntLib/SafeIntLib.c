@@ -3393,13 +3393,27 @@ SafeUint64Mult (
           // now sum them all up checking for overflow.
           // shifting is safe because we already checked for overflow above
           //
-          if (!RETURN_ERROR (SafeUint64Add (LShiftU64 (ProductBC, 32), LShiftU64 (ProductAD, 32), &UnsignedResult))) {
+          if (!RETURN_ERROR (
+                 SafeUint64Add (
+                   LShiftU64 (ProductBC, 32),
+                   LShiftU64 (ProductAD, 32),
+                   &UnsignedResult
+                   )
+                 ))
+          {
             //
             // b * d
             //
             ProductBD = MultU64x64 ((UINT64)DwordB, (UINT64)DwordD);
 
-            if (!RETURN_ERROR (SafeUint64Add (UnsignedResult, ProductBD, &UnsignedResult))) {
+            if (!RETURN_ERROR (
+                   SafeUint64Add (
+                     UnsignedResult,
+                     ProductBD,
+                     &UnsignedResult
+                     )
+                   ))
+            {
               *Result = UnsignedResult;
               Status  = RETURN_SUCCESS;
             }
@@ -4127,7 +4141,11 @@ SafeInt64Mult (
     UnsignedMultiplier = (UINT64)Multiplier;
   }
 
-  Status = SafeUint64Mult (UnsignedMultiplicand, UnsignedMultiplier, &UnsignedResult);
+  Status = SafeUint64Mult (
+             UnsignedMultiplicand,
+             UnsignedMultiplier,
+             &UnsignedResult
+             );
   if (!RETURN_ERROR (Status)) {
     if ((Multiplicand < 0) != (Multiplier < 0)) {
       if (UnsignedResult > MIN_INT64_MAGNITUDE) {

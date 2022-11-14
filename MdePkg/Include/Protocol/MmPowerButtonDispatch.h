@@ -41,7 +41,8 @@ typedef struct {
   EFI_POWER_BUTTON_PHASE    Phase;
 } EFI_MM_POWER_BUTTON_REGISTER_CONTEXT;
 
-typedef struct _EFI_MM_POWER_BUTTON_DISPATCH_PROTOCOL EFI_MM_POWER_BUTTON_DISPATCH_PROTOCOL;
+typedef struct _EFI_MM_POWER_BUTTON_DISPATCH_PROTOCOL
+EFI_MM_POWER_BUTTON_DISPATCH_PROTOCOL;
 
 /**
   Provides the parent dispatch service for a power button event.

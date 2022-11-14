@@ -321,7 +321,8 @@ typedef struct {
   @retval FALSE   Base Class code and Sub-Class code don't match the specified device.
 
 **/
-#define IS_CLASS2(_p, c, s)  (IS_CLASS1 (_p, c) && ((_p)->Hdr.ClassCode[1] == (s)))
+#define IS_CLASS2(_p, c, \
+                  s)  (IS_CLASS1 (_p, c) && ((_p)->Hdr.ClassCode[1] == (s)))
 
 /**
   Macro that checks whether the Base Class code, Sub-Class code and Interface code of device matched.
@@ -335,7 +336,8 @@ typedef struct {
   @retval FALSE   Base Class code, Sub-Class code and Interface code don't match the specified device.
 
 **/
-#define IS_CLASS3(_p, c, s, p)  (IS_CLASS2 (_p, c, s) && ((_p)->Hdr.ClassCode[0] == (p)))
+#define IS_CLASS3(_p, c, s, \
+                  p)  (IS_CLASS2 (_p, c, s) && ((_p)->Hdr.ClassCode[0] == (p)))
 
 /**
   Macro that checks whether device is a display controller.
@@ -357,7 +359,9 @@ typedef struct {
   @retval FALSE   Device is not a VGA-compatible controller.
 
 **/
-#define IS_PCI_VGA(_p)  IS_CLASS3 (_p, PCI_CLASS_DISPLAY, PCI_CLASS_DISPLAY_VGA, PCI_IF_VGA_VGA)
+#define IS_PCI_VGA( \
+                  _p)  \
+  IS_CLASS3 (_p, PCI_CLASS_DISPLAY, PCI_CLASS_DISPLAY_VGA, PCI_IF_VGA_VGA)
 
 /**
   Macro that checks whether device is an 8514-compatible controller.
@@ -368,7 +372,9 @@ typedef struct {
   @retval FALSE   Device is not an 8514-compatible controller.
 
 **/
-#define IS_PCI_8514(_p)  IS_CLASS3 (_p, PCI_CLASS_DISPLAY, PCI_CLASS_DISPLAY_VGA, PCI_IF_VGA_8514)
+#define IS_PCI_8514( \
+                   _p)  \
+  IS_CLASS3 (_p, PCI_CLASS_DISPLAY, PCI_CLASS_DISPLAY_VGA, PCI_IF_VGA_8514)
 
 /**
   Macro that checks whether device is built before the Class Code field was defined.
@@ -401,7 +407,9 @@ typedef struct {
   @retval FALSE   Device is not an IDE controller.
 
 **/
-#define IS_PCI_IDE(_p)  IS_CLASS2 (_p, PCI_CLASS_MASS_STORAGE, PCI_CLASS_MASS_STORAGE_IDE)
+#define IS_PCI_IDE( \
+                  _p)  \
+  IS_CLASS2 (_p, PCI_CLASS_MASS_STORAGE, PCI_CLASS_MASS_STORAGE_IDE)
 
 /**
   Macro that checks whether device is a SCSI bus controller.
@@ -412,7 +420,9 @@ typedef struct {
   @retval FALSE   Device is not a SCSI bus controller.
 
 **/
-#define IS_PCI_SCSI(_p)  IS_CLASS2 (_p, PCI_CLASS_MASS_STORAGE, PCI_CLASS_MASS_STORAGE_SCSI)
+#define IS_PCI_SCSI( \
+                   _p)  \
+  IS_CLASS2 (_p, PCI_CLASS_MASS_STORAGE, PCI_CLASS_MASS_STORAGE_SCSI)
 
 /**
   Macro that checks whether device is a RAID controller.
@@ -423,7 +433,9 @@ typedef struct {
   @retval FALSE   Device is not a RAID controller.
 
 **/
-#define IS_PCI_RAID(_p)  IS_CLASS2 (_p, PCI_CLASS_MASS_STORAGE, PCI_CLASS_MASS_STORAGE_RAID)
+#define IS_PCI_RAID( \
+                   _p)  \
+  IS_CLASS2 (_p, PCI_CLASS_MASS_STORAGE, PCI_CLASS_MASS_STORAGE_RAID)
 
 /**
   Macro that checks whether device is an ISA bridge.
@@ -445,7 +457,9 @@ typedef struct {
   @retval FALSE   Device is not a PCI-to-PCI bridge.
 
 **/
-#define IS_PCI_P2P(_p)  IS_CLASS3 (_p, PCI_CLASS_BRIDGE, PCI_CLASS_BRIDGE_P2P, PCI_IF_BRIDGE_P2P)
+#define IS_PCI_P2P( \
+                  _p)  \
+  IS_CLASS3 (_p, PCI_CLASS_BRIDGE, PCI_CLASS_BRIDGE_P2P, PCI_IF_BRIDGE_P2P)
 
 /**
   Macro that checks whether device is a Subtractive Decode PCI-to-PCI bridge.
@@ -456,7 +470,9 @@ typedef struct {
   @retval FALSE   Device is not a Subtractive Decode PCI-to-PCI bridge.
 
 **/
-#define IS_PCI_P2P_SUB(_p)  IS_CLASS3 (_p, PCI_CLASS_BRIDGE, PCI_CLASS_BRIDGE_P2P, PCI_IF_BRIDGE_P2P_SUBTRACTIVE)
+#define IS_PCI_P2P_SUB( \
+                      _p)  \
+  IS_CLASS3 (_p, PCI_CLASS_BRIDGE, PCI_CLASS_BRIDGE_P2P, PCI_IF_BRIDGE_P2P_SUBTRACTIVE)
 
 /**
   Macro that checks whether device is a 16550-compatible serial controller.
@@ -467,7 +483,9 @@ typedef struct {
   @retval FALSE   Device is not a 16550-compatible serial controller.
 
 **/
-#define IS_PCI_16550_SERIAL(_p)  IS_CLASS3 (_p, PCI_CLASS_SCC, PCI_SUBCLASS_SERIAL, PCI_IF_16550)
+#define IS_PCI_16550_SERIAL( \
+                           _p)  \
+  IS_CLASS3 (_p, PCI_CLASS_SCC, PCI_SUBCLASS_SERIAL, PCI_IF_16550)
 
 /**
   Macro that checks whether device is a Universal Serial Bus controller.
@@ -501,7 +519,9 @@ typedef struct {
   @retval FALSE   Device is not a PCI-PCI bridge.
 
 **/
-#define IS_PCI_BRIDGE(_p)  (((_p)->Hdr.HeaderType & HEADER_LAYOUT_CODE) == (HEADER_TYPE_PCI_TO_PCI_BRIDGE))
+#define IS_PCI_BRIDGE( \
+                     _p)  \
+  (((_p)->Hdr.HeaderType & HEADER_LAYOUT_CODE) == (HEADER_TYPE_PCI_TO_PCI_BRIDGE))
 
 /**
   Macro that checks whether device is a CardBus bridge.
@@ -512,7 +532,9 @@ typedef struct {
   @retval FALSE   Device is not a CardBus bridge.
 
 **/
-#define IS_CARDBUS_BRIDGE(_p)  (((_p)->Hdr.HeaderType & HEADER_LAYOUT_CODE) == (HEADER_TYPE_CARDBUS_BRIDGE))
+#define IS_CARDBUS_BRIDGE( \
+                         _p)  \
+  (((_p)->Hdr.HeaderType & HEADER_LAYOUT_CODE) == (HEADER_TYPE_CARDBUS_BRIDGE))
 
 /**
   Macro that checks whether device is a multiple functions device.
@@ -523,7 +545,9 @@ typedef struct {
   @retval FALSE   Device is not a multiple functions device.
 
 **/
-#define IS_PCI_MULTI_FUNC(_p)  ((_p)->Hdr.HeaderType & HEADER_TYPE_MULTI_FUNCTION)
+#define IS_PCI_MULTI_FUNC( \
+                         _p)  \
+  ((_p)->Hdr.HeaderType & HEADER_TYPE_MULTI_FUNCTION)
 
 ///
 /// Rom Base Address in Bridge, defined in PCI-to-PCI Bridge Architecture Specification,
@@ -804,10 +828,11 @@ typedef struct {
 #define EFI_ROOT_BRIDGE_LIST                       'eprb'
 #define EFI_PCI_EXPANSION_ROM_HEADER_EFISIGNATURE  0x0EF1       ///< defined in UEFI Spec.
 
-#define PCI_EXPANSION_ROM_HEADER_SIGNATURE       0xaa55
-#define PCI_DATA_STRUCTURE_SIGNATURE             SIGNATURE_32 ('P', 'C', 'I', 'R')
-#define PCI_CODE_TYPE_PCAT_IMAGE                 0x00
-#define EFI_PCI_EXPANSION_ROM_HEADER_COMPRESSED  0x0001         ///< defined in UEFI spec.
+#define PCI_EXPANSION_ROM_HEADER_SIGNATURE             0xaa55
+#define PCI_DATA_STRUCTURE_SIGNATURE             \
+                                                       SIGNATURE_32 ('P', 'C', 'I', 'R')
+#define PCI_CODE_TYPE_PCAT_IMAGE                       0x00
+#define EFI_PCI_EXPANSION_ROM_HEADER_COMPRESSED        0x0001   ///< defined in UEFI spec.
 
 ///
 /// Standard PCI Expansion ROM Header

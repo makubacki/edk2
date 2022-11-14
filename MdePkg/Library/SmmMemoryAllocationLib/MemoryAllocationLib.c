@@ -121,7 +121,8 @@ BufferInSmram (
 
   for (Index = 0; Index < mSmramRangeCount; Index++) {
     if (((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer >= mSmramRanges[Index].CpuStart) &&
-        ((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer < (mSmramRanges[Index].CpuStart + mSmramRanges[Index].PhysicalSize)))
+        ((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer < (mSmramRanges[Index].CpuStart +
+                                                mSmramRanges[Index].PhysicalSize)))
     {
       return TRUE;
     }
@@ -157,7 +158,12 @@ InternalAllocatePages (
     return NULL;
   }
 
-  Status = gSmst->SmmAllocatePages (AllocateAnyPages, MemoryType, Pages, &Memory);
+  Status = gSmst->SmmAllocatePages (
+                    AllocateAnyPages,
+                    MemoryType,
+                    Pages,
+                    &Memory
+                    );
   if (EFI_ERROR (Status)) {
     return NULL;
   }
@@ -328,7 +334,12 @@ InternalAllocateAlignedPages (
     //
     ASSERT (RealPages > Pages);
 
-    Status = gSmst->SmmAllocatePages (AllocateAnyPages, MemoryType, RealPages, &Memory);
+    Status = gSmst->SmmAllocatePages (
+                      AllocateAnyPages,
+                      MemoryType,
+                      RealPages,
+                      &Memory
+                      );
     if (EFI_ERROR (Status)) {
       return NULL;
     }
@@ -356,7 +367,12 @@ InternalAllocateAlignedPages (
     //
     // Do not over-allocate pages in this case.
     //
-    Status = gSmst->SmmAllocatePages (AllocateAnyPages, MemoryType, Pages, &Memory);
+    Status = gSmst->SmmAllocatePages (
+                      AllocateAnyPages,
+                      MemoryType,
+                      Pages,
+                      &Memory
+                      );
     if (EFI_ERROR (Status)) {
       return NULL;
     }
@@ -393,7 +409,11 @@ AllocateAlignedPages (
   IN UINTN  Alignment
   )
 {
-  return InternalAllocateAlignedPages (EfiRuntimeServicesData, Pages, Alignment);
+  return InternalAllocateAlignedPages (
+           EfiRuntimeServicesData,
+           Pages,
+           Alignment
+           );
 }
 
 /**
@@ -422,7 +442,11 @@ AllocateAlignedRuntimePages (
   IN UINTN  Alignment
   )
 {
-  return InternalAllocateAlignedPages (EfiRuntimeServicesData, Pages, Alignment);
+  return InternalAllocateAlignedPages (
+           EfiRuntimeServicesData,
+           Pages,
+           Alignment
+           );
 }
 
 /**
@@ -753,7 +777,11 @@ AllocateCopyPool (
   IN CONST VOID  *Buffer
   )
 {
-  return InternalAllocateCopyPool (EfiRuntimeServicesData, AllocationSize, Buffer);
+  return InternalAllocateCopyPool (
+           EfiRuntimeServicesData,
+           AllocationSize,
+           Buffer
+           );
 }
 
 /**
@@ -781,7 +809,11 @@ AllocateRuntimeCopyPool (
   IN CONST VOID  *Buffer
   )
 {
-  return InternalAllocateCopyPool (EfiRuntimeServicesData, AllocationSize, Buffer);
+  return InternalAllocateCopyPool (
+           EfiRuntimeServicesData,
+           AllocationSize,
+           Buffer
+           );
 }
 
 /**
@@ -882,7 +914,12 @@ ReallocatePool (
   IN VOID   *OldBuffer  OPTIONAL
   )
 {
-  return InternalReallocatePool (EfiRuntimeServicesData, OldSize, NewSize, OldBuffer);
+  return InternalReallocatePool (
+           EfiRuntimeServicesData,
+           OldSize,
+           NewSize,
+           OldBuffer
+           );
 }
 
 /**
@@ -914,7 +951,12 @@ ReallocateRuntimePool (
   IN VOID   *OldBuffer  OPTIONAL
   )
 {
-  return InternalReallocatePool (EfiRuntimeServicesData, OldSize, NewSize, OldBuffer);
+  return InternalReallocatePool (
+           EfiRuntimeServicesData,
+           OldSize,
+           NewSize,
+           OldBuffer
+           );
 }
 
 /**

@@ -181,7 +181,9 @@ typedef struct {
   UINT32                      SizeOfHeapCommit;
   UINT32                      LoaderFlags;
   UINT32                      NumberOfRvaAndSizes;
-  EFI_IMAGE_DATA_DIRECTORY    DataDirectory[EFI_IMAGE_NUMBER_OF_DIRECTORY_ENTRIES];
+  EFI_IMAGE_DATA_DIRECTORY    DataDirectory[
+                                            EFI_IMAGE_NUMBER_OF_DIRECTORY_ENTRIES
+  ];
 } EFI_IMAGE_OPTIONAL_HEADER32;
 
 ///
@@ -231,7 +233,9 @@ typedef struct {
   UINT64                      SizeOfHeapCommit;
   UINT32                      LoaderFlags;
   UINT32                      NumberOfRvaAndSizes;
-  EFI_IMAGE_DATA_DIRECTORY    DataDirectory[EFI_IMAGE_NUMBER_OF_DIRECTORY_ENTRIES];
+  EFI_IMAGE_DATA_DIRECTORY    DataDirectory[
+                                            EFI_IMAGE_NUMBER_OF_DIRECTORY_ENTRIES
+  ];
 } EFI_IMAGE_OPTIONAL_HEADER64;
 
 ///
@@ -597,8 +601,10 @@ typedef struct {
 } EFI_IMAGE_THUNK_DATA;
 
 #define EFI_IMAGE_ORDINAL_FLAG  BIT31                ///< Flag for PE32.
-#define EFI_IMAGE_SNAP_BY_ORDINAL(Ordinal)  ((Ordinal & EFI_IMAGE_ORDINAL_FLAG) != 0)
-#define EFI_IMAGE_ORDINAL(Ordinal)          (Ordinal & 0xffff)
+#define EFI_IMAGE_SNAP_BY_ORDINAL( \
+                                 Ordinal)  \
+                                      ((Ordinal & EFI_IMAGE_ORDINAL_FLAG) != 0)
+#define EFI_IMAGE_ORDINAL(Ordinal)    (Ordinal & 0xffff)
 
 ///
 /// Import Directory Table

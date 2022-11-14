@@ -38,7 +38,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 /// Forward declaration for EFI_IDE_CONTROLLER_INIT_PROTOCOL.
 ///
-typedef struct _EFI_IDE_CONTROLLER_INIT_PROTOCOL EFI_IDE_CONTROLLER_INIT_PROTOCOL;
+typedef struct _EFI_IDE_CONTROLLER_INIT_PROTOCOL
+EFI_IDE_CONTROLLER_INIT_PROTOCOL;
 
 ///
 /// The phase of the IDE Controller enumeration.
@@ -201,8 +202,8 @@ typedef struct {
 /// definition because the ATA/ATAPI Specification controls the definition
 /// of all the fields. The ATA/ATAPI Specification can obsolete old fields
 /// or redefine existing fields.
-typedef ATA_IDENTIFY_DATA   EFI_ATA_IDENTIFY_DATA;
-typedef ATAPI_IDENTIFY_DATA EFI_ATAPI_IDENTIFY_DATA;
+typedef ATA_IDENTIFY_DATA    EFI_ATA_IDENTIFY_DATA;
+typedef ATAPI_IDENTIFY_DATA  EFI_ATAPI_IDENTIFY_DATA;
 
 ///
 /// This flag indicates whether the IDENTIFY data is a response from an ATA device

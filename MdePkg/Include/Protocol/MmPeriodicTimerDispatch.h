@@ -68,7 +68,8 @@ typedef struct {
   UINT64    ElapsedTime;
 } EFI_MM_PERIODIC_TIMER_CONTEXT;
 
-typedef struct _EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL;
+typedef struct _EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL
+EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL;
 
 /**
   Register a child MMI source dispatch function for MM periodic timer.

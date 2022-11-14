@@ -302,7 +302,8 @@ typedef struct {
 #define ACPI_ADR_DISPLAY_TYPE_EXTERNAL_DIGITAL  3
 #define ACPI_ADR_DISPLAY_TYPE_INTERNAL_DIGITAL  4
 
-#define ACPI_DISPLAY_ADR(_DeviceIdScheme, _HeadId, _NonVgaOutput, _BiosCanDetect, _VendorInfo, _Type, _Port, _Index) \
+#define ACPI_DISPLAY_ADR(_DeviceIdScheme, _HeadId, _NonVgaOutput, \
+                         _BiosCanDetect, _VendorInfo, _Type, _Port, _Index) \
           ((UINT32)(  ((UINT32)((_DeviceIdScheme) & 0x1) << 31) |  \
                       (((_HeadId)                 & 0x7) << 18) |  \
                       (((_NonVgaOutput)           & 0x1) << 17) |  \
@@ -1154,28 +1155,32 @@ typedef struct {
 ///
 /// This GUID defines a RAM Disk supporting a raw disk format in volatile memory.
 ///
-#define EFI_VIRTUAL_DISK_GUID  EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_DISK_REGION_VOLATILE
+#define EFI_VIRTUAL_DISK_GUID  \
+  EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_DISK_REGION_VOLATILE
 
 extern  EFI_GUID  gEfiVirtualDiskGuid;
 
 ///
 /// This GUID defines a RAM Disk supporting an ISO image in volatile memory.
 ///
-#define EFI_VIRTUAL_CD_GUID  EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_CD_REGION_VOLATILE
+#define EFI_VIRTUAL_CD_GUID  \
+  EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_CD_REGION_VOLATILE
 
 extern  EFI_GUID  gEfiVirtualCdGuid;
 
 ///
 /// This GUID defines a RAM Disk supporting a raw disk format in persistent memory.
 ///
-#define EFI_PERSISTENT_VIRTUAL_DISK_GUID  EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_DISK_REGION_PERSISTENT
+#define EFI_PERSISTENT_VIRTUAL_DISK_GUID  \
+  EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_DISK_REGION_PERSISTENT
 
 extern  EFI_GUID  gEfiPersistentVirtualDiskGuid;
 
 ///
 /// This GUID defines a RAM Disk supporting an ISO image in persistent memory.
 ///
-#define EFI_PERSISTENT_VIRTUAL_CD_GUID  EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_CD_REGION_PERSISTENT
+#define EFI_PERSISTENT_VIRTUAL_CD_GUID  \
+  EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_CD_REGION_PERSISTENT
 
 extern  EFI_GUID  gEfiPersistentVirtualCdGuid;
 

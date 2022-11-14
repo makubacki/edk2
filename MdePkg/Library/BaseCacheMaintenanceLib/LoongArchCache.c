@@ -100,7 +100,11 @@ WriteBackInvalidateDataCache (
   VOID
   )
 {
-  DEBUG ((DEBUG_ERROR, "%a: Not currently implemented on LoongArch.\n", __FUNCTION__));
+  DEBUG ((
+    DEBUG_ERROR,
+    "%a: Not currently implemented on LoongArch.\n",
+    __FUNCTION__
+    ));
 }
 
 /**
@@ -136,7 +140,11 @@ WriteBackInvalidateDataCacheRange (
   IN      UINTN  Length
   )
 {
-  DEBUG ((DEBUG_ERROR, "%a: Not currently implemented on LoongArch.\n", __FUNCTION__));
+  DEBUG ((
+    DEBUG_ERROR,
+    "%a: Not currently implemented on LoongArch.\n",
+    __FUNCTION__
+    ));
   return Address;
 }
 
@@ -191,7 +199,11 @@ WriteBackDataCacheRange (
   IN      UINTN  Length
   )
 {
-  DEBUG ((DEBUG_ERROR, "%a: Not currently implemented on LoongArch.\n", __FUNCTION__));
+  DEBUG ((
+    DEBUG_ERROR,
+    "%a: Not currently implemented on LoongArch.\n",
+    __FUNCTION__
+    ));
   return Address;
 }
 

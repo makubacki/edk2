@@ -15,7 +15,8 @@
   0x59324945, 0xec44, 0x4c0d, {0xb1, 0xcd, 0x9d, 0xb1, 0x39, 0xdf, 0x7, 0xc } \
 }
 
-typedef struct _EFI_ISCSI_INITIATOR_NAME_PROTOCOL EFI_ISCSI_INITIATOR_NAME_PROTOCOL;
+typedef struct _EFI_ISCSI_INITIATOR_NAME_PROTOCOL
+EFI_ISCSI_INITIATOR_NAME_PROTOCOL;
 
 /**
   Retrieves the current set value of iSCSI Initiator Name.

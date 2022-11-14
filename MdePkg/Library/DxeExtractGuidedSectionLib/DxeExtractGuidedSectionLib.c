@@ -40,7 +40,8 @@ ReallocateExtractHandlerTable (
   //
   mExtractHandlerGuidTable = ReallocatePool (
                                mMaxNumberOfExtractHandler * sizeof (GUID),
-                               (mMaxNumberOfExtractHandler + EXTRACT_HANDLER_TABLE_SIZE) * sizeof (GUID),
+                               (mMaxNumberOfExtractHandler +
+                                EXTRACT_HANDLER_TABLE_SIZE) * sizeof (GUID),
                                mExtractHandlerGuidTable
                                );
 
@@ -52,8 +53,11 @@ ReallocateExtractHandlerTable (
   // Reallocate memory for Decode handler Table
   //
   mExtractDecodeHandlerTable = ReallocatePool (
-                                 mMaxNumberOfExtractHandler * sizeof (EXTRACT_GUIDED_SECTION_DECODE_HANDLER),
-                                 (mMaxNumberOfExtractHandler + EXTRACT_HANDLER_TABLE_SIZE) * sizeof (EXTRACT_GUIDED_SECTION_DECODE_HANDLER),
+                                 mMaxNumberOfExtractHandler *
+                                 sizeof (EXTRACT_GUIDED_SECTION_DECODE_HANDLER),
+                                 (mMaxNumberOfExtractHandler +
+                                  EXTRACT_HANDLER_TABLE_SIZE) *
+                                 sizeof (EXTRACT_GUIDED_SECTION_DECODE_HANDLER),
                                  mExtractDecodeHandlerTable
                                  );
 
@@ -65,8 +69,13 @@ ReallocateExtractHandlerTable (
   // Reallocate memory for GetInfo handler Table
   //
   mExtractGetInfoHandlerTable = ReallocatePool (
-                                  mMaxNumberOfExtractHandler * sizeof (EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER),
-                                  (mMaxNumberOfExtractHandler + EXTRACT_HANDLER_TABLE_SIZE) * sizeof (EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER),
+                                  mMaxNumberOfExtractHandler *
+                                  sizeof (
+                                                                      EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER),
+                                  (mMaxNumberOfExtractHandler +
+                                   EXTRACT_HANDLER_TABLE_SIZE) *
+                                  sizeof (
+                                                                                                     EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER),
                                   mExtractGetInfoHandlerTable
                                   );
 
@@ -77,7 +86,8 @@ ReallocateExtractHandlerTable (
   //
   // Increase max handler number
   //
-  mMaxNumberOfExtractHandler = mMaxNumberOfExtractHandler + EXTRACT_HANDLER_TABLE_SIZE;
+  mMaxNumberOfExtractHandler = mMaxNumberOfExtractHandler +
+                               EXTRACT_HANDLER_TABLE_SIZE;
   return RETURN_SUCCESS;
 
 Done:
@@ -277,9 +287,11 @@ ExtractGuidedSectionGetInfo (
   ASSERT (SectionAttribute != NULL);
 
   if (IS_SECTION2 (InputSection)) {
-    SectionDefinitionGuid = &(((EFI_GUID_DEFINED_SECTION2 *)InputSection)->SectionDefinitionGuid);
+    SectionDefinitionGuid =
+      &(((EFI_GUID_DEFINED_SECTION2 *)InputSection)->SectionDefinitionGuid);
   } else {
-    SectionDefinitionGuid = &(((EFI_GUID_DEFINED_SECTION *)InputSection)->SectionDefinitionGuid);
+    SectionDefinitionGuid =
+      &(((EFI_GUID_DEFINED_SECTION *)InputSection)->SectionDefinitionGuid);
   }
 
   //
@@ -360,9 +372,11 @@ ExtractGuidedSectionDecode (
   ASSERT (AuthenticationStatus != NULL);
 
   if (IS_SECTION2 (InputSection)) {
-    SectionDefinitionGuid = &(((EFI_GUID_DEFINED_SECTION2 *)InputSection)->SectionDefinitionGuid);
+    SectionDefinitionGuid =
+      &(((EFI_GUID_DEFINED_SECTION2 *)InputSection)->SectionDefinitionGuid);
   } else {
-    SectionDefinitionGuid = &(((EFI_GUID_DEFINED_SECTION *)InputSection)->SectionDefinitionGuid);
+    SectionDefinitionGuid =
+      &(((EFI_GUID_DEFINED_SECTION *)InputSection)->SectionDefinitionGuid);
   }
 
   //

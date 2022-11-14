@@ -90,7 +90,9 @@ ThumbMovwMovtImmediateAddress (
   Word = Instructions;  // MOVW
   Top  = Word + 2;      // MOVT
 
-  return (ThumbMovtImmediateAddress (Top) << 16) + ThumbMovtImmediateAddress (Word);
+  return (ThumbMovtImmediateAddress (Top) << 16) + ThumbMovtImmediateAddress (
+                                                     Word
+                                                     );
 }
 
 /**
@@ -180,7 +182,9 @@ PeCoffLoaderImageFormatSupported (
   IN  UINT16  Machine
   )
 {
-  if ((Machine == IMAGE_FILE_MACHINE_ARMTHUMB_MIXED) || (Machine ==  IMAGE_FILE_MACHINE_EBC)) {
+  if ((Machine == IMAGE_FILE_MACHINE_ARMTHUMB_MIXED) || (Machine ==
+                                                         IMAGE_FILE_MACHINE_EBC))
+  {
     return TRUE;
   }
 

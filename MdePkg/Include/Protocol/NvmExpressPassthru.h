@@ -19,7 +19,8 @@
     0x52c78312, 0x8edc, 0x4233, { 0x98, 0xf2, 0x1a, 0x1a, 0xa5, 0xe3, 0x88, 0xa5 } \
   }
 
-typedef struct _EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL;
+typedef struct _EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL
+EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL;
 
 typedef struct {
   UINT32    Attributes;

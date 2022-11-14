@@ -388,8 +388,10 @@ EFI_STATUS
   IN UINT32                                                  Enable,
   IN UINT32                                                  Disable,
   IN BOOLEAN                                                 ResetMCastFilter,
-  IN UINTN                                                   MCastFilterCnt     OPTIONAL,
-  IN EFI_MAC_ADDRESS                                         *MCastFilter OPTIONAL
+  IN UINTN
+  MCastFilterCnt     OPTIONAL,
+  IN EFI_MAC_ADDRESS                                         *MCastFilter
+  OPTIONAL
   );
 
 /**
@@ -632,7 +634,8 @@ EFI_STATUS
 //
 // Revision defined in EFI1.1
 //
-#define EFI_SIMPLE_NETWORK_INTERFACE_REVISION  EFI_SIMPLE_NETWORK_PROTOCOL_REVISION
+#define EFI_SIMPLE_NETWORK_INTERFACE_REVISION  \
+  EFI_SIMPLE_NETWORK_PROTOCOL_REVISION
 
 ///
 /// The EFI_SIMPLE_NETWORK_PROTOCOL protocol is used to initialize access

@@ -26,7 +26,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
     0xc280c73e, 0x15ca, 0x11da, {0xb0, 0xca, 0x00, 0x10, 0x83, 0xff, 0xca, 0x4d } \
   }
 
-typedef struct _EFI_AUTHENTICATION_INFO_PROTOCOL EFI_AUTHENTICATION_INFO_PROTOCOL;
+typedef struct _EFI_AUTHENTICATION_INFO_PROTOCOL
+EFI_AUTHENTICATION_INFO_PROTOCOL;
 
 #pragma pack(1)
 typedef struct {

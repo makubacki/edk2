@@ -89,7 +89,11 @@ GetPiPcdInfoProtocolPointer (
   EFI_STATUS  Status;
 
   if (mPiPcdInfo == NULL) {
-    Status = gBS->LocateProtocol (&gEfiGetPcdInfoProtocolGuid, NULL, (VOID **)&mPiPcdInfo);
+    Status = gBS->LocateProtocol (
+                    &gEfiGetPcdInfoProtocolGuid,
+                    NULL,
+                    (VOID **)&mPiPcdInfo
+                    );
     ASSERT_EFI_ERROR (Status);
     ASSERT (mPiPcdInfo != NULL);
   }
@@ -110,7 +114,11 @@ GetPcdInfoProtocolPointer (
   EFI_STATUS  Status;
 
   if (mPcdInfo == NULL) {
-    Status = gBS->LocateProtocol (&gGetPcdInfoProtocolGuid, NULL, (VOID **)&mPcdInfo);
+    Status = gBS->LocateProtocol (
+                    &gGetPcdInfoProtocolGuid,
+                    NULL,
+                    (VOID **)&mPcdInfo
+                    );
     ASSERT_EFI_ERROR (Status);
     ASSERT (mPcdInfo != NULL);
   }
@@ -814,7 +822,12 @@ LibPcdCallbackOnSet (
 
   ASSERT (NotificationFunction != NULL);
 
-  Status = GetPiPcdProtocol ()->CallbackOnSet (Guid, TokenNumber, (EFI_PCD_PROTOCOL_CALLBACK)NotificationFunction);
+  Status = GetPiPcdProtocol ()->CallbackOnSet (
+                                  Guid,
+                                  TokenNumber,
+                                  (EFI_PCD_PROTOCOL_CALLBACK)
+                                  NotificationFunction
+                                  );
   ASSERT_EFI_ERROR (Status);
 
   return;
@@ -845,7 +858,12 @@ LibPcdCancelCallback (
 
   ASSERT (NotificationFunction != NULL);
 
-  Status = GetPiPcdProtocol ()->CancelCallback (Guid, TokenNumber, (EFI_PCD_PROTOCOL_CALLBACK)NotificationFunction);
+  Status = GetPiPcdProtocol ()->CancelCallback (
+                                  Guid,
+                                  TokenNumber,
+                                  (EFI_PCD_PROTOCOL_CALLBACK)
+                                  NotificationFunction
+                                  );
   ASSERT_EFI_ERROR (Status);
 
   return;
@@ -1144,7 +1162,10 @@ LibPcdGetInfo (
 {
   EFI_STATUS  Status;
 
-  Status = GetPcdInfoProtocolPointer ()->GetInfo (TokenNumber, (EFI_PCD_INFO *)PcdInfo);
+  Status = GetPcdInfoProtocolPointer ()->GetInfo (
+                                           TokenNumber,
+                                           (EFI_PCD_INFO *)PcdInfo
+                                           );
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -1171,7 +1192,11 @@ LibPcdGetInfoEx (
 {
   EFI_STATUS  Status;
 
-  Status = GetPiPcdInfoProtocolPointer ()->GetInfo (Guid, TokenNumber, (EFI_PCD_INFO *)PcdInfo);
+  Status = GetPiPcdInfoProtocolPointer ()->GetInfo (
+                                             Guid,
+                                             TokenNumber,
+                                             (EFI_PCD_INFO *)PcdInfo
+                                             );
   ASSERT_EFI_ERROR (Status);
 }
 

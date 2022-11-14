@@ -53,7 +53,9 @@ TdExtendRtmr (
   ASSERT (DataLen == SHA384_DIGEST_SIZE);
   ASSERT (Index >= 0 && Index < RTMR_COUNT);
 
-  if ((Data == NULL) || (DataLen != SHA384_DIGEST_SIZE) || (Index >= RTMR_COUNT)) {
+  if ((Data == NULL) || (DataLen != SHA384_DIGEST_SIZE) || (Index >=
+                                                            RTMR_COUNT))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -66,7 +68,13 @@ TdExtendRtmr (
   ZeroMem (ExtendBuffer, SHA384_DIGEST_SIZE);
   CopyMem (ExtendBuffer, Data, SHA384_DIGEST_SIZE);
 
-  TdCallStatus = TdCall (TDCALL_TDEXTENDRTMR, (UINT64)(UINTN)ExtendBuffer, Index, 0, 0);
+  TdCallStatus = TdCall (
+                   TDCALL_TDEXTENDRTMR,
+                   (UINT64)(UINTN)ExtendBuffer,
+                   Index,
+                   0,
+                   0
+                   );
 
   if (TdCallStatus == TDX_EXIT_REASON_SUCCESS) {
     Status = EFI_SUCCESS;
@@ -77,7 +85,11 @@ TdExtendRtmr (
   }
 
   if (Status != EFI_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Error returned from TdExtendRtmr call - 0x%lx\n", TdCallStatus));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Error returned from TdExtendRtmr call - 0x%lx\n",
+      TdCallStatus
+      ));
   }
 
   return Status;

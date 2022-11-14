@@ -27,7 +27,8 @@
     0x0DE2CE25, 0x446A, 0x45a7, {0xBF, 0xC9, 0x37, 0xDA, 0x26, 0x34, 0x4B, 0x37 } \
   }
 
-typedef struct _EFI_PEI_DEVICE_RECOVERY_MODULE_PPI EFI_PEI_DEVICE_RECOVERY_MODULE_PPI;
+typedef struct _EFI_PEI_DEVICE_RECOVERY_MODULE_PPI
+EFI_PEI_DEVICE_RECOVERY_MODULE_PPI;
 
 /**
   Returns the number of DXE capsules residing on the device.

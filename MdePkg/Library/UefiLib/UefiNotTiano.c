@@ -321,7 +321,10 @@ EfiInitializeFwVolDevicepathNode (
   //
   FvDevicePathNode->Header.Type    = MEDIA_DEVICE_PATH;
   FvDevicePathNode->Header.SubType = MEDIA_PIWG_FW_FILE_DP;
-  SetDevicePathNodeLength (&FvDevicePathNode->Header, sizeof (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH));
+  SetDevicePathNodeLength (
+    &FvDevicePathNode->Header,
+    sizeof (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH)
+    );
 
   CopyGuid (&FvDevicePathNode->FvFileName, NameGuid);
 }

@@ -12,7 +12,8 @@
 //
 // GCC inline assembly for Read Write Barrier
 //
-#define _ReadWriteBarrier()  do { __asm__ __volatile__ ("": : : "memory"); } while(0)
+#define _ReadWriteBarrier()  \
+  do { __asm__ __volatile__ ("": : : "memory"); } while(0)
 
 #define SPIN_LOCK_RELEASED  ((UINTN) 1)
 #define SPIN_LOCK_ACQUIRED  ((UINTN) 2)

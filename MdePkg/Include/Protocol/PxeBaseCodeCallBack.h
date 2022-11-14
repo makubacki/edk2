@@ -35,7 +35,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 ///
 /// UEFI Protocol name.
 ///
-typedef struct _EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL;
+typedef struct _EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL
+EFI_PXE_BASE_CODE_CALLBACK_PROTOCOL;
 
 ///
 /// EFI1.1 Protocol name.

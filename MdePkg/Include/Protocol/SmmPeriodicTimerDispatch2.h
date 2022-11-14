@@ -18,7 +18,8 @@
 #include <Pi/PiSmmCis.h>
 #include <Protocol/MmPeriodicTimerDispatch.h>
 
-#define EFI_SMM_PERIODIC_TIMER_DISPATCH2_PROTOCOL_GUID  EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL_GUID
+#define EFI_SMM_PERIODIC_TIMER_DISPATCH2_PROTOCOL_GUID  \
+  EFI_MM_PERIODIC_TIMER_DISPATCH_PROTOCOL_GUID
 
 ///
 /// Example: A chipset supports periodic SMIs on every 64ms or 2 seconds.
@@ -60,7 +61,8 @@ typedef struct {
 ///
 typedef EFI_MM_PERIODIC_TIMER_CONTEXT EFI_SMM_PERIODIC_TIMER_CONTEXT;
 
-typedef struct _EFI_SMM_PERIODIC_TIMER_DISPATCH2_PROTOCOL EFI_SMM_PERIODIC_TIMER_DISPATCH2_PROTOCOL;
+typedef struct _EFI_SMM_PERIODIC_TIMER_DISPATCH2_PROTOCOL
+EFI_SMM_PERIODIC_TIMER_DISPATCH2_PROTOCOL;
 
 /**
   Register a child SMI source dispatch function for SMM periodic timer.

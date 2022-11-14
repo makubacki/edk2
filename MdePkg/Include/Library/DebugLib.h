@@ -341,15 +341,23 @@ UnitTestDebugAssert (
     #undef _ASSERT
   #endif
   #if defined (__clang__) && defined (__FILE_NAME__)
-#define _ASSERT(Expression)  UnitTestDebugAssert (__FILE_NAME__, DEBUG_LINE_NUMBER, DEBUG_EXPRESSION_STRING (Expression))
+#define _ASSERT( \
+               Expression)  \
+  UnitTestDebugAssert (__FILE_NAME__, DEBUG_LINE_NUMBER, DEBUG_EXPRESSION_STRING (Expression))
   #else
-#define _ASSERT(Expression)  UnitTestDebugAssert (__FILE__, DEBUG_LINE_NUMBER, DEBUG_EXPRESSION_STRING (Expression))
+#define _ASSERT( \
+               Expression)  \
+  UnitTestDebugAssert (__FILE__, DEBUG_LINE_NUMBER, DEBUG_EXPRESSION_STRING (Expression))
   #endif
 #else
   #if defined (__clang__) && defined (__FILE_NAME__)
-#define _ASSERT(Expression)  DebugAssert (__FILE_NAME__, DEBUG_LINE_NUMBER, DEBUG_EXPRESSION_STRING (Expression))
+#define _ASSERT( \
+               Expression)  \
+  DebugAssert (__FILE_NAME__, DEBUG_LINE_NUMBER, DEBUG_EXPRESSION_STRING (Expression))
   #else
-#define _ASSERT(Expression)  DebugAssert (__FILE__, DEBUG_LINE_NUMBER, DEBUG_EXPRESSION_STRING (Expression))
+#define _ASSERT( \
+               Expression)  \
+  DebugAssert (__FILE__, DEBUG_LINE_NUMBER, DEBUG_EXPRESSION_STRING (Expression))
   #endif
 #endif
 
@@ -532,7 +540,8 @@ UnitTestDebugAssert (
   are not included in a module.
 
 **/
-#define DEBUG_CODE_BEGIN()  do { if (DebugCodeEnabled ()) { UINT8  __DebugCodeLocal
+#define DEBUG_CODE_BEGIN()  \
+  do { if (DebugCodeEnabled ()) { UINT8  __DebugCodeLocal
 
 /**
   The macro that marks the end of debug source code.
@@ -543,7 +552,8 @@ UnitTestDebugAssert (
   are not included in a module.
 
 **/
-#define DEBUG_CODE_END()  __DebugCodeLocal = 0; __DebugCodeLocal++; } } while (FALSE)
+#define DEBUG_CODE_END()  \
+  __DebugCodeLocal = 0; __DebugCodeLocal++; } } while (FALSE)
 
 /**
   The macro that declares a section of debug source code.

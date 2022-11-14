@@ -47,22 +47,36 @@ PeiGetExtractGuidedSectionHandlerInfo (
   Hob.Raw = GetNextHob (EFI_HOB_TYPE_GUID_EXTENSION, GetHobList ());
   while (Hob.Raw != NULL) {
     if (CompareGuid (&(Hob.Guid->Name), &gEfiCallerIdGuid)) {
-      HandlerInfo = (PEI_EXTRACT_GUIDED_SECTION_HANDLER_INFO *)GET_GUID_HOB_DATA (Hob.Guid);
+      HandlerInfo =
+        (PEI_EXTRACT_GUIDED_SECTION_HANDLER_INFO *)GET_GUID_HOB_DATA (Hob.Guid);
       if (HandlerInfo->Signature == PEI_EXTRACT_HANDLER_INFO_SIGNATURE) {
         //
         // Update Table Pointer when hob start address is changed.
         //
         if (HandlerInfo->ExtractHandlerGuidTable != (GUID *)(HandlerInfo + 1)) {
           HandlerInfo->ExtractHandlerGuidTable   = (GUID *)(HandlerInfo + 1);
-          HandlerInfo->ExtractDecodeHandlerTable = (EXTRACT_GUIDED_SECTION_DECODE_HANDLER *)(
-                                                                                             (UINT8 *)HandlerInfo->ExtractHandlerGuidTable +
-                                                                                             PcdGet32 (PcdMaximumGuidedExtractHandler) * sizeof (GUID)
-                                                                                             );
-          HandlerInfo->ExtractGetInfoHandlerTable = (EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER *)(
-                                                                                                (UINT8 *)HandlerInfo->ExtractDecodeHandlerTable +
-                                                                                                PcdGet32 (PcdMaximumGuidedExtractHandler) *
-                                                                                                sizeof (EXTRACT_GUIDED_SECTION_DECODE_HANDLER)
-                                                                                                );
+          HandlerInfo->ExtractDecodeHandlerTable =
+            (EXTRACT_GUIDED_SECTION_DECODE_HANDLER *)(
+                                                      (
+                                                       UINT8 *)HandlerInfo->
+                                                        ExtractHandlerGuidTable
+                                                      +
+                                                      PcdGet32 (
+                                                        PcdMaximumGuidedExtractHandler
+                                                        ) * sizeof (GUID)
+                                                      );
+          HandlerInfo->ExtractGetInfoHandlerTable =
+            (EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER *)(
+                                                        (
+                                                         UINT8 *)HandlerInfo->
+                                                          ExtractDecodeHandlerTable
+                                                        +
+                                                        PcdGet32 (
+                                                          PcdMaximumGuidedExtractHandler
+                                                          ) *
+                                                        sizeof (
+                                                                EXTRACT_GUIDED_SECTION_DECODE_HANDLER)
+                                                        );
         }
 
         //
@@ -84,7 +98,9 @@ PeiGetExtractGuidedSectionHandlerInfo (
                   &gEfiCallerIdGuid,
                   sizeof (PEI_EXTRACT_GUIDED_SECTION_HANDLER_INFO) +
                   PcdGet32 (PcdMaximumGuidedExtractHandler) *
-                  (sizeof (GUID) + sizeof (EXTRACT_GUIDED_SECTION_DECODE_HANDLER) + sizeof (EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER))
+                  (sizeof (GUID) +
+                   sizeof (EXTRACT_GUIDED_SECTION_DECODE_HANDLER) +
+                   sizeof (EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER))
                   );
   if (HandlerInfo == NULL) {
     //
@@ -100,15 +116,26 @@ PeiGetExtractGuidedSectionHandlerInfo (
   HandlerInfo->Signature                 = PEI_EXTRACT_HANDLER_INFO_SIGNATURE;
   HandlerInfo->NumberOfExtractHandler    = 0;
   HandlerInfo->ExtractHandlerGuidTable   = (GUID *)(HandlerInfo + 1);
-  HandlerInfo->ExtractDecodeHandlerTable = (EXTRACT_GUIDED_SECTION_DECODE_HANDLER *)(
-                                                                                     (UINT8 *)HandlerInfo->ExtractHandlerGuidTable +
-                                                                                     PcdGet32 (PcdMaximumGuidedExtractHandler) * sizeof (GUID)
-                                                                                     );
-  HandlerInfo->ExtractGetInfoHandlerTable = (EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER *)(
-                                                                                        (UINT8 *)HandlerInfo->ExtractDecodeHandlerTable +
-                                                                                        PcdGet32 (PcdMaximumGuidedExtractHandler) *
-                                                                                        sizeof (EXTRACT_GUIDED_SECTION_DECODE_HANDLER)
-                                                                                        );
+  HandlerInfo->ExtractDecodeHandlerTable =
+    (EXTRACT_GUIDED_SECTION_DECODE_HANDLER *)(
+                                              (
+                                               UINT8 *)HandlerInfo->
+                                                ExtractHandlerGuidTable +
+                                              PcdGet32 (
+                                                PcdMaximumGuidedExtractHandler
+                                                ) * sizeof (GUID)
+                                              );
+  HandlerInfo->ExtractGetInfoHandlerTable =
+    (EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER *)(
+                                                (
+                                                 UINT8 *)HandlerInfo->
+                                                  ExtractDecodeHandlerTable +
+                                                PcdGet32 (
+                                                  PcdMaximumGuidedExtractHandler
+                                                  ) *
+                                                sizeof (
+                                                        EXTRACT_GUIDED_SECTION_DECODE_HANDLER)
+                                                );
   //
   // return the created HandlerInfo.
   //
@@ -214,7 +241,11 @@ ExtractGuidedSectionRegisterHandlers (
   //
   ASSERT (HandlerInfo != NULL);
   for (Index = 0; Index < HandlerInfo->NumberOfExtractHandler; Index++) {
-    if (CompareGuid (HandlerInfo->ExtractHandlerGuidTable + Index, SectionGuid)) {
+    if (CompareGuid (
+          HandlerInfo->ExtractHandlerGuidTable + Index,
+          SectionGuid
+          ))
+    {
       //
       // If the guided handler has been registered before, only update its handler.
       //
@@ -227,16 +258,25 @@ ExtractGuidedSectionRegisterHandlers (
   //
   // Check the global table is enough to contain new Handler.
   //
-  if (HandlerInfo->NumberOfExtractHandler >= PcdGet32 (PcdMaximumGuidedExtractHandler)) {
+  if (HandlerInfo->NumberOfExtractHandler >= PcdGet32 (
+                                               PcdMaximumGuidedExtractHandler
+                                               ))
+  {
     return RETURN_OUT_OF_RESOURCES;
   }
 
   //
   // Register new Handler and guid value.
   //
-  CopyGuid (HandlerInfo->ExtractHandlerGuidTable + HandlerInfo->NumberOfExtractHandler, SectionGuid);
-  HandlerInfo->ExtractDecodeHandlerTable[HandlerInfo->NumberOfExtractHandler]    = DecodeHandler;
-  HandlerInfo->ExtractGetInfoHandlerTable[HandlerInfo->NumberOfExtractHandler++] = GetInfoHandler;
+  CopyGuid (
+    HandlerInfo->ExtractHandlerGuidTable +
+    HandlerInfo->NumberOfExtractHandler,
+    SectionGuid
+    );
+  HandlerInfo->ExtractDecodeHandlerTable[HandlerInfo->NumberOfExtractHandler]
+    = DecodeHandler;
+  HandlerInfo->ExtractGetInfoHandlerTable[HandlerInfo->NumberOfExtractHandler++]
+    = GetInfoHandler;
 
   //
   // Build the Guided Section GUID HOB to record the GUID itself.
@@ -316,9 +356,11 @@ ExtractGuidedSectionGetInfo (
   }
 
   if (IS_SECTION2 (InputSection)) {
-    SectionDefinitionGuid = &(((EFI_GUID_DEFINED_SECTION2 *)InputSection)->SectionDefinitionGuid);
+    SectionDefinitionGuid =
+      &(((EFI_GUID_DEFINED_SECTION2 *)InputSection)->SectionDefinitionGuid);
   } else {
-    SectionDefinitionGuid = &(((EFI_GUID_DEFINED_SECTION *)InputSection)->SectionDefinitionGuid);
+    SectionDefinitionGuid =
+      &(((EFI_GUID_DEFINED_SECTION *)InputSection)->SectionDefinitionGuid);
   }
 
   //
@@ -326,7 +368,11 @@ ExtractGuidedSectionGetInfo (
   //
   ASSERT (HandlerInfo != NULL);
   for (Index = 0; Index < HandlerInfo->NumberOfExtractHandler; Index++) {
-    if (CompareGuid (HandlerInfo->ExtractHandlerGuidTable + Index, SectionDefinitionGuid)) {
+    if (CompareGuid (
+          HandlerInfo->ExtractHandlerGuidTable + Index,
+          SectionDefinitionGuid
+          ))
+    {
       //
       // Call the match handler to get information for the input section data.
       //
@@ -410,9 +456,11 @@ ExtractGuidedSectionDecode (
   }
 
   if (IS_SECTION2 (InputSection)) {
-    SectionDefinitionGuid = &(((EFI_GUID_DEFINED_SECTION2 *)InputSection)->SectionDefinitionGuid);
+    SectionDefinitionGuid =
+      &(((EFI_GUID_DEFINED_SECTION2 *)InputSection)->SectionDefinitionGuid);
   } else {
-    SectionDefinitionGuid = &(((EFI_GUID_DEFINED_SECTION *)InputSection)->SectionDefinitionGuid);
+    SectionDefinitionGuid =
+      &(((EFI_GUID_DEFINED_SECTION *)InputSection)->SectionDefinitionGuid);
   }
 
   //
@@ -420,7 +468,11 @@ ExtractGuidedSectionDecode (
   //
   ASSERT (HandlerInfo != NULL);
   for (Index = 0; Index < HandlerInfo->NumberOfExtractHandler; Index++) {
-    if (CompareGuid (HandlerInfo->ExtractHandlerGuidTable + Index, SectionDefinitionGuid)) {
+    if (CompareGuid (
+          HandlerInfo->ExtractHandlerGuidTable + Index,
+          SectionDefinitionGuid
+          ))
+    {
       //
       // Call the match handler to extract raw data for the input guided section.
       //
@@ -496,7 +548,11 @@ ExtractGuidedSectionGetHandlers (
   //
   ASSERT (HandlerInfo != NULL);
   for (Index = 0; Index < HandlerInfo->NumberOfExtractHandler; Index++) {
-    if (CompareGuid (HandlerInfo->ExtractHandlerGuidTable + Index, SectionGuid)) {
+    if (CompareGuid (
+          HandlerInfo->ExtractHandlerGuidTable + Index,
+          SectionGuid
+          ))
+    {
       //
       // If the guided handler has been registered before, then return the registered handlers.
       //

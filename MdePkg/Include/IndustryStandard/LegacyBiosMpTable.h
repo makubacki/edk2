@@ -19,7 +19,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 #pragma pack(1)
 
-#define EFI_LEGACY_MP_TABLE_FLOATING_POINTER_SIGNATURE  SIGNATURE_32 ('_', 'M', 'P', '_')
+#define EFI_LEGACY_MP_TABLE_FLOATING_POINTER_SIGNATURE  \
+  SIGNATURE_32 ('_', 'M', 'P', '_')
 typedef struct {
   UINT32    Reserved1  : 6;
   UINT32    MutipleClk : 1;
@@ -276,11 +277,16 @@ typedef struct {
 } EFI_LEGACY_MP_TABLE_ENTRY_EXT_COMPAT_BUS_ADDR_SPACE_MODIFIER_ADDR_MODE;
 
 typedef struct {
-  UINT8                                                                     EntryType;
-  UINT8                                                                     Length;
-  UINT8                                                                     BusId;
-  EFI_LEGACY_MP_TABLE_ENTRY_EXT_COMPAT_BUS_ADDR_SPACE_MODIFIER_ADDR_MODE    AddrMode;
-  UINT32                                                                    PredefinedRangeList;
+  UINT8
+        EntryType;
+  UINT8
+        Length;
+  UINT8
+        BusId;
+  EFI_LEGACY_MP_TABLE_ENTRY_EXT_COMPAT_BUS_ADDR_SPACE_MODIFIER_ADDR_MODE
+        AddrMode;
+  UINT32
+        PredefinedRangeList;
 } EFI_LEGACY_MP_TABLE_ENTRY_EXT_COMPAT_BUS_ADDR_SPACE_MODIFIER;
 
 #pragma pack()

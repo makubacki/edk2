@@ -434,7 +434,8 @@ typedef struct {
 ///
 /// "RSD PTR " Root System Description Pointer
 ///
-#define EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE  SIGNATURE_64('R', 'S', 'D', ' ', 'P', 'T', 'R', ' ')
+#define EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE  \
+  SIGNATURE_64('R', 'S', 'D', ' ', 'P', 'T', 'R', ' ')
 
 ///
 /// "SPIC" Multiple SAPIC Description Table
@@ -442,97 +443,116 @@ typedef struct {
 /// BUGBUG: Don't know where this came from except SR870BN4 uses it.
 /// #define EFI_ACPI_2_0_MULTIPLE_SAPIC_DESCRIPTION_TABLE_SIGNATURE 0x43495053
 ///
-#define EFI_ACPI_2_0_MULTIPLE_SAPIC_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('A', 'P', 'I', 'C')
+#define EFI_ACPI_2_0_MULTIPLE_SAPIC_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('A', 'P', 'I', 'C')
 
 ///
 /// "BOOT" MS Simple Boot Spec
 ///
-#define EFI_ACPI_2_0_SIMPLE_BOOT_FLAG_TABLE_SIGNATURE  SIGNATURE_32('B', 'O', 'O', 'T')
+#define EFI_ACPI_2_0_SIMPLE_BOOT_FLAG_TABLE_SIGNATURE  \
+  SIGNATURE_32('B', 'O', 'O', 'T')
 
 ///
 /// "DBGP" MS Bebug Port Spec
 ///
-#define EFI_ACPI_2_0_DEBUG_PORT_TABLE_SIGNATURE  SIGNATURE_32('D', 'B', 'G', 'P')
+#define EFI_ACPI_2_0_DEBUG_PORT_TABLE_SIGNATURE  \
+  SIGNATURE_32('D', 'B', 'G', 'P')
 
 ///
 /// "DSDT" Differentiated System Description Table
 ///
-#define EFI_ACPI_2_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('D', 'S', 'D', 'T')
+#define EFI_ACPI_2_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('D', 'S', 'D', 'T')
 
 ///
 /// "ECDT" Embedded Controller Boot Resources Table
 ///
-#define EFI_ACPI_2_0_EMBEDDED_CONTROLLER_BOOT_RESOURCES_TABLE_SIGNATURE  SIGNATURE_32('E', 'C', 'D', 'T')
+#define EFI_ACPI_2_0_EMBEDDED_CONTROLLER_BOOT_RESOURCES_TABLE_SIGNATURE  \
+  SIGNATURE_32('E', 'C', 'D', 'T')
 
 ///
 /// "ETDT" Event Timer Description Table
 ///
-#define EFI_ACPI_2_0_EVENT_TIMER_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('E', 'T', 'D', 'T')
+#define EFI_ACPI_2_0_EVENT_TIMER_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('E', 'T', 'D', 'T')
 
 ///
 /// "FACS" Firmware ACPI Control Structure
 ///
-#define EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE  SIGNATURE_32('F', 'A', 'C', 'S')
+#define EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE  \
+  SIGNATURE_32('F', 'A', 'C', 'S')
 
 ///
 /// "FACP" Fixed ACPI Description Table
 ///
-#define EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('F', 'A', 'C', 'P')
+#define EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('F', 'A', 'C', 'P')
 
 ///
 /// "APIC" Multiple APIC Description Table
 ///
-#define EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('A', 'P', 'I', 'C')
+#define EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('A', 'P', 'I', 'C')
 
 ///
 /// "PSDT" Persistent System Description Table
 ///
-#define EFI_ACPI_2_0_PERSISTENT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('P', 'S', 'D', 'T')
+#define EFI_ACPI_2_0_PERSISTENT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('P', 'S', 'D', 'T')
 
 ///
 /// "RSDT" Root System Description Table
 ///
-#define EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('R', 'S', 'D', 'T')
+#define EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('R', 'S', 'D', 'T')
 
 ///
 /// "SBST" Smart Battery Specification Table
 ///
-#define EFI_ACPI_2_0_SMART_BATTERY_SPECIFICATION_TABLE_SIGNATURE  SIGNATURE_32('S', 'B', 'S', 'T')
+#define EFI_ACPI_2_0_SMART_BATTERY_SPECIFICATION_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'B', 'S', 'T')
 
 ///
 /// "SLIT" System Locality Information Table
 ///
-#define EFI_ACPI_2_0_SYSTEM_LOCALITY_INFORMATION_TABLE_SIGNATURE  SIGNATURE_32('S', 'L', 'I', 'T')
+#define EFI_ACPI_2_0_SYSTEM_LOCALITY_INFORMATION_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'L', 'I', 'T')
 
 ///
 /// "SPCR" Serial Port Console Redirection Table
 ///
-#define EFI_ACPI_2_0_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE  SIGNATURE_32('S', 'P', 'C', 'R')
+#define EFI_ACPI_2_0_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'P', 'C', 'R')
 
 ///
 /// "SRAT" Static Resource Affinity Table
 ///
-#define EFI_ACPI_2_0_STATIC_RESOURCE_AFFINITY_TABLE_SIGNATURE  SIGNATURE_32('S', 'R', 'A', 'T')
+#define EFI_ACPI_2_0_STATIC_RESOURCE_AFFINITY_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'R', 'A', 'T')
 
 ///
 /// "SSDT" Secondary System Description Table
 ///
-#define EFI_ACPI_2_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('S', 'S', 'D', 'T')
+#define EFI_ACPI_2_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'S', 'D', 'T')
 
 ///
 /// "SPMI" Server Platform Management Interface Table
 ///
-#define EFI_ACPI_2_0_SERVER_PLATFORM_MANAGEMENT_INTERFACE_SIGNATURE  SIGNATURE_32('S', 'P', 'M', 'I')
+#define EFI_ACPI_2_0_SERVER_PLATFORM_MANAGEMENT_INTERFACE_SIGNATURE  \
+  SIGNATURE_32('S', 'P', 'M', 'I')
 
 ///
 /// "XSDT" Extended System Description Table
 ///
-#define EFI_ACPI_2_0_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('X', 'S', 'D', 'T')
+#define EFI_ACPI_2_0_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('X', 'S', 'D', 'T')
 
 ///
 /// "MCFG" PCI Express Memory Mapped Configuration Space Base Address Description Table
 ///
-#define EFI_ACPI_2_0_MEMORY_MAPPED_CONFIGURATION_BASE_ADDRESS_TABLE_SIGNATURE  SIGNATURE_32('M', 'C', 'F', 'G')
+#define EFI_ACPI_2_0_MEMORY_MAPPED_CONFIGURATION_BASE_ADDRESS_TABLE_SIGNATURE  \
+  SIGNATURE_32('M', 'C', 'F', 'G')
 
 #pragma pack()
 

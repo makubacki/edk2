@@ -35,7 +35,11 @@ SmbusLibConstructor (
 {
   EFI_STATUS  Status;
 
-  Status = gBS->LocateProtocol (&gEfiSmbusHcProtocolGuid, NULL, (VOID **)&mSmbus);
+  Status = gBS->LocateProtocol (
+                  &gEfiSmbusHcProtocolGuid,
+                  NULL,
+                  (VOID **)&mSmbus
+                  );
   ASSERT_EFI_ERROR (Status);
   ASSERT (mSmbus != NULL);
 
@@ -77,7 +81,9 @@ InternalSmBusExec (
   RETURN_STATUS             ReturnStatus;
   EFI_SMBUS_DEVICE_ADDRESS  SmbusDeviceAddress;
 
-  SmbusDeviceAddress.SmbusDeviceAddress = SMBUS_LIB_SLAVE_ADDRESS (SmBusAddress);
+  SmbusDeviceAddress.SmbusDeviceAddress = SMBUS_LIB_SLAVE_ADDRESS (
+                                            SmBusAddress
+                                            );
 
   ReturnStatus = mSmbus->Execute (
                            mSmbus,

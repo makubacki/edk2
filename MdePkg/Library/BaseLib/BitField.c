@@ -68,7 +68,10 @@ InternalBaseLibBitFieldOrUint (
   // EndBit - StartBit + 1 might be 32 while the result right shifting 32 on a 32bit integer is undefined,
   // So the logic is updated to right shift (EndBit - StartBit) bits and compare the last bit directly.
   //
-  ASSERT ((OrData >> (EndBit - StartBit)) == ((OrData >> (EndBit - StartBit)) & 1));
+  ASSERT (
+    (OrData >> (EndBit - StartBit)) == ((OrData >> (EndBit - StartBit)) &
+                                        1)
+    );
 
   //
   // ~((UINTN)-2 << EndBit) is a mask in which bit[0] thru bit[EndBit]
@@ -110,7 +113,10 @@ InternalBaseLibBitFieldAndUint (
   // EndBit - StartBit + 1 might be 32 while the result right shifting 32 on a 32bit integer is undefined,
   // So the logic is updated to right shift (EndBit - StartBit) bits and compare the last bit directly.
   //
-  ASSERT ((AndData >> (EndBit - StartBit)) == ((AndData >> (EndBit - StartBit)) & 1));
+  ASSERT (
+    (AndData >> (EndBit - StartBit)) == ((AndData >> (EndBit -
+                                                      StartBit)) & 1)
+    );
 
   //
   // ~((UINTN)-2 << EndBit) is a mask in which bit[0] thru bit[EndBit]
@@ -223,7 +229,12 @@ BitFieldOr8 (
 {
   ASSERT (EndBit < 8);
   ASSERT (StartBit <= EndBit);
-  return (UINT8)InternalBaseLibBitFieldOrUint (Operand, StartBit, EndBit, OrData);
+  return (UINT8)InternalBaseLibBitFieldOrUint (
+                  Operand,
+                  StartBit,
+                  EndBit,
+                  OrData
+                  );
 }
 
 /**
@@ -261,7 +272,12 @@ BitFieldAnd8 (
 {
   ASSERT (EndBit < 8);
   ASSERT (StartBit <= EndBit);
-  return (UINT8)InternalBaseLibBitFieldAndUint (Operand, StartBit, EndBit, AndData);
+  return (UINT8)InternalBaseLibBitFieldAndUint (
+                  Operand,
+                  StartBit,
+                  EndBit,
+                  AndData
+                  );
 }
 
 /**
@@ -415,7 +431,12 @@ BitFieldOr16 (
 {
   ASSERT (EndBit < 16);
   ASSERT (StartBit <= EndBit);
-  return (UINT16)InternalBaseLibBitFieldOrUint (Operand, StartBit, EndBit, OrData);
+  return (UINT16)InternalBaseLibBitFieldOrUint (
+                   Operand,
+                   StartBit,
+                   EndBit,
+                   OrData
+                   );
 }
 
 /**
@@ -453,7 +474,12 @@ BitFieldAnd16 (
 {
   ASSERT (EndBit < 16);
   ASSERT (StartBit <= EndBit);
-  return (UINT16)InternalBaseLibBitFieldAndUint (Operand, StartBit, EndBit, AndData);
+  return (UINT16)InternalBaseLibBitFieldAndUint (
+                   Operand,
+                   StartBit,
+                   EndBit,
+                   AndData
+                   );
 }
 
 /**
@@ -607,7 +633,12 @@ BitFieldOr32 (
 {
   ASSERT (EndBit < 32);
   ASSERT (StartBit <= EndBit);
-  return (UINT32)InternalBaseLibBitFieldOrUint (Operand, StartBit, EndBit, OrData);
+  return (UINT32)InternalBaseLibBitFieldOrUint (
+                   Operand,
+                   StartBit,
+                   EndBit,
+                   OrData
+                   );
 }
 
 /**
@@ -645,7 +676,12 @@ BitFieldAnd32 (
 {
   ASSERT (EndBit < 32);
   ASSERT (StartBit <= EndBit);
-  return (UINT32)InternalBaseLibBitFieldAndUint (Operand, StartBit, EndBit, AndData);
+  return (UINT32)InternalBaseLibBitFieldAndUint (
+                   Operand,
+                   StartBit,
+                   EndBit,
+                   AndData
+                   );
 }
 
 /**
@@ -808,7 +844,13 @@ BitFieldOr64 (
   // EndBit - StartBit + 1 might be 64 while the result right shifting 64 on RShiftU64() API is invalid,
   // So the logic is updated to right shift (EndBit - StartBit) bits and compare the last bit directly.
   //
-  ASSERT (RShiftU64 (OrData, EndBit - StartBit) == (RShiftU64 (OrData, EndBit - StartBit) & 1));
+  ASSERT (
+    RShiftU64 (OrData, EndBit - StartBit) == (RShiftU64 (
+                                                OrData,
+                                                EndBit -
+                                                StartBit
+                                                ) & 1)
+    );
 
   Value1 = LShiftU64 (OrData, StartBit);
   Value2 = LShiftU64 ((UINT64)-2, EndBit);
@@ -860,7 +902,12 @@ BitFieldAnd64 (
   // EndBit - StartBit + 1 might be 64 while the right shifting 64 on RShiftU64() API is invalid,
   // So the logic is updated to right shift (EndBit - StartBit) bits and compare the last bit directly.
   //
-  ASSERT (RShiftU64 (AndData, EndBit - StartBit) == (RShiftU64 (AndData, EndBit - StartBit) & 1));
+  ASSERT (
+    RShiftU64 (AndData, EndBit - StartBit) == (RShiftU64 (
+                                                 AndData,
+                                                 EndBit - StartBit
+                                                 ) & 1)
+    );
 
   Value1 = LShiftU64 (~AndData, StartBit);
   Value2 = LShiftU64 ((UINT64)-2, EndBit);

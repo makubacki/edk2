@@ -61,7 +61,8 @@ UINTN  mDxeRuntimePciExpressLibNumberOfRuntimeRanges = 0;
 ///
 /// The table of PCI devices that have been registered for runtime access.
 ///
-PCI_EXPRESS_RUNTIME_REGISTRATION_TABLE  *mDxeRuntimePciExpressLibRegistrationTable = NULL;
+PCI_EXPRESS_RUNTIME_REGISTRATION_TABLE  *
+  mDxeRuntimePciExpressLibRegistrationTable = NULL;
 
 ///
 /// The table index of the most recent virtual address lookup.
@@ -95,8 +96,13 @@ DxeRuntimePciExpressLibVirtualNotify (
   // Convert physical addresses associated with the set of registered PCI devices to
   // virtual addresses.
   //
-  for (Index = 0; Index < mDxeRuntimePciExpressLibNumberOfRuntimeRanges; Index++) {
-    EfiConvertPointer (0, (VOID **)&(mDxeRuntimePciExpressLibRegistrationTable[Index].VirtualAddress));
+  for (Index = 0; Index < mDxeRuntimePciExpressLibNumberOfRuntimeRanges;
+       Index++)
+  {
+    EfiConvertPointer (
+      0,
+      (VOID **)&(mDxeRuntimePciExpressLibRegistrationTable[Index].VirtualAddress)
+      );
   }
 
   //
@@ -128,8 +134,12 @@ DxeRuntimePciExpressLibConstructor (
   //
   // Cache the physical address of the PCI Express MMIO range into a module global variable
   //
-  mDxeRuntimePciExpressLibPciExpressBaseAddress = (UINTN)PcdGet64 (PcdPciExpressBaseAddress);
-  mDxeRuntimePciExpressLibPciExpressBaseSize    = (UINTN)PcdGet64 (PcdPciExpressBaseSize);
+  mDxeRuntimePciExpressLibPciExpressBaseAddress = (UINTN)PcdGet64 (
+                                                           PcdPciExpressBaseAddress
+                                                           );
+  mDxeRuntimePciExpressLibPciExpressBaseSize = (UINTN)PcdGet64 (
+                                                        PcdPciExpressBaseSize
+                                                        );
 
   //
   // Register SetVirtualAddressMap () notify function
@@ -231,18 +241,30 @@ GetPciExpressAddress (
   //
   // See if there is a physical address match at the exact same index as the last address match
   //
-  if (mDxeRuntimePciExpressLibRegistrationTable[mDxeRuntimePciExpressLibLastRuntimeRange].PhysicalAddress == (Address & (~0x00000fff))) {
+  if (mDxeRuntimePciExpressLibRegistrationTable[
+                                               mDxeRuntimePciExpressLibLastRuntimeRange
+      ].PhysicalAddress == (Address &
+                            (
+                                       ~0x00000fff)))
+  {
     //
     // Convert the physical address to a virtual address and return the virtual address
     //
-    return (Address & 0x00000fff) + mDxeRuntimePciExpressLibRegistrationTable[mDxeRuntimePciExpressLibLastRuntimeRange].VirtualAddress;
+    return (Address & 0x00000fff) +
+           mDxeRuntimePciExpressLibRegistrationTable[
+                                                                             mDxeRuntimePciExpressLibLastRuntimeRange
+           ].VirtualAddress;
   }
 
   //
   // Search the entire table for a physical address match
   //
-  for (Index = 0; Index < mDxeRuntimePciExpressLibNumberOfRuntimeRanges; Index++) {
-    if (mDxeRuntimePciExpressLibRegistrationTable[Index].PhysicalAddress == (Address & (~0x00000fff))) {
+  for (Index = 0; Index < mDxeRuntimePciExpressLibNumberOfRuntimeRanges;
+       Index++)
+  {
+    if (mDxeRuntimePciExpressLibRegistrationTable[Index].PhysicalAddress ==
+        (Address & (~0x00000fff)))
+    {
       //
       // Cache the matching index value
       //
@@ -250,7 +272,8 @@ GetPciExpressAddress (
       //
       // Convert the physical address to a virtual address and return the virtual address
       //
-      return (Address & 0x00000fff) + mDxeRuntimePciExpressLibRegistrationTable[Index].VirtualAddress;
+      return (Address & 0x00000fff) +
+             mDxeRuntimePciExpressLibRegistrationTable[Index].VirtualAddress;
     }
   }
 
@@ -327,8 +350,12 @@ PciExpressRegisterForRuntimeAccess (
   //
   // See if Address has already been registered for runtime access
   //
-  for (Index = 0; Index < mDxeRuntimePciExpressLibNumberOfRuntimeRanges; Index++) {
-    if (mDxeRuntimePciExpressLibRegistrationTable[Index].PhysicalAddress == Address) {
+  for (Index = 0; Index < mDxeRuntimePciExpressLibNumberOfRuntimeRanges;
+       Index++)
+  {
+    if (mDxeRuntimePciExpressLibRegistrationTable[Index].PhysicalAddress ==
+        Address)
+    {
       return RETURN_SUCCESS;
     }
   }
@@ -345,7 +372,11 @@ PciExpressRegisterForRuntimeAccess (
   // Mark the 4KB region for the PCI Express Bus/Dev/Func as EFI_RUNTIME_MEMORY so the OS
   // will allocate a virtual address range for the 4KB PCI Configuration Header.
   //
-  Status = gDS->SetMemorySpaceAttributes (Address, 0x1000, Descriptor.Attributes | EFI_MEMORY_RUNTIME);
+  Status = gDS->SetMemorySpaceAttributes (
+                  Address,
+                  0x1000,
+                  Descriptor.Attributes | EFI_MEMORY_RUNTIME
+                  );
   if (EFI_ERROR (Status)) {
     return RETURN_UNSUPPORTED;
   }
@@ -354,17 +385,25 @@ PciExpressRegisterForRuntimeAccess (
   // Grow the size of the registration table
   //
   NewTable = ReallocateRuntimePool (
-               (mDxeRuntimePciExpressLibNumberOfRuntimeRanges + 0) * sizeof (PCI_EXPRESS_RUNTIME_REGISTRATION_TABLE),
-               (mDxeRuntimePciExpressLibNumberOfRuntimeRanges + 1) * sizeof (PCI_EXPRESS_RUNTIME_REGISTRATION_TABLE),
+               (mDxeRuntimePciExpressLibNumberOfRuntimeRanges + 0) *
+               sizeof (PCI_EXPRESS_RUNTIME_REGISTRATION_TABLE),
+               (mDxeRuntimePciExpressLibNumberOfRuntimeRanges + 1) *
+               sizeof (PCI_EXPRESS_RUNTIME_REGISTRATION_TABLE),
                mDxeRuntimePciExpressLibRegistrationTable
                );
   if (NewTable == NULL) {
     return RETURN_OUT_OF_RESOURCES;
   }
 
-  mDxeRuntimePciExpressLibRegistrationTable                                                                = NewTable;
-  mDxeRuntimePciExpressLibRegistrationTable[mDxeRuntimePciExpressLibNumberOfRuntimeRanges].PhysicalAddress = Address;
-  mDxeRuntimePciExpressLibRegistrationTable[mDxeRuntimePciExpressLibNumberOfRuntimeRanges].VirtualAddress  = Address;
+  mDxeRuntimePciExpressLibRegistrationTable
+    =
+      NewTable;
+  mDxeRuntimePciExpressLibRegistrationTable[
+                                           mDxeRuntimePciExpressLibNumberOfRuntimeRanges
+  ].PhysicalAddress = Address;
+  mDxeRuntimePciExpressLibRegistrationTable[
+                                           mDxeRuntimePciExpressLibNumberOfRuntimeRanges
+  ].VirtualAddress  = Address;
   mDxeRuntimePciExpressLibNumberOfRuntimeRanges++;
 
   return RETURN_SUCCESS;
@@ -1698,7 +1737,12 @@ PciExpressReadBuffer (
     //
     // Read a word if StartAddress is word aligned
     //
-    WriteUnaligned16 ((UINT16 *)Buffer, (UINT16)PciExpressRead16 (StartAddress));
+    WriteUnaligned16 (
+      (UINT16 *)Buffer,
+      (UINT16)PciExpressRead16 (
+                StartAddress
+                )
+      );
 
     StartAddress += sizeof (UINT16);
     Size         -= sizeof (UINT16);
@@ -1709,7 +1753,12 @@ PciExpressReadBuffer (
     //
     // Read as many double words as possible
     //
-    WriteUnaligned32 ((UINT32 *)Buffer, (UINT32)PciExpressRead32 (StartAddress));
+    WriteUnaligned32 (
+      (UINT32 *)Buffer,
+      (UINT32)PciExpressRead32 (
+                StartAddress
+                )
+      );
 
     StartAddress += sizeof (UINT32);
     Size         -= sizeof (UINT32);
@@ -1720,7 +1769,12 @@ PciExpressReadBuffer (
     //
     // Read the last remaining word if exist
     //
-    WriteUnaligned16 ((UINT16 *)Buffer, (UINT16)PciExpressRead16 (StartAddress));
+    WriteUnaligned16 (
+      (UINT16 *)Buffer,
+      (UINT16)PciExpressRead16 (
+                StartAddress
+                )
+      );
     StartAddress += sizeof (UINT16);
     Size         -= sizeof (UINT16);
     Buffer        = (UINT16 *)Buffer + 1;

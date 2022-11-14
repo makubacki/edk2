@@ -64,7 +64,11 @@ PeCoffLoaderRelocateImageEx (
       RiscVHi20Fixup =  (UINT32 *)(*(UINT64 *)(*FixupData));
       if (RiscVHi20Fixup != NULL) {
         Value  = (UINT32)(RV_X (*RiscVHi20Fixup, 12, 20) << 12);
-        Value2 = (UINT32)(RV_X (*(UINT32 *)Fixup, 7, 5) | (RV_X (*(UINT32 *)Fixup, 25, 7) << 5));
+        Value2 = (UINT32)(RV_X (*(UINT32 *)Fixup, 7, 5) | (RV_X (
+                                                             *(UINT32 *)Fixup,
+                                                             25,
+                                                             7
+                                                             ) << 5));
         if (Value2 & (RISCV_IMM_REACH/2)) {
           Value2 |= ~(RISCV_IMM_REACH-1);
         }
@@ -76,7 +80,8 @@ PeCoffLoaderRelocateImageEx (
                                     (RV_X (*(UINT32 *)RiscVHi20Fixup, 0, 12));
         Value2           = *(UINT32 *)Fixup & 0x01fff07f;
         Value           &= RISCV_IMM_REACH - 1;
-        *(UINT32 *)Fixup = Value2 | (UINT32)(((RV_X (Value, 0, 5) << 7) | (RV_X (Value, 5, 7) << 25)));
+        *(UINT32 *)Fixup = Value2 | (UINT32)(((RV_X (Value, 0, 5) << 7) |
+                                              (RV_X (Value, 5, 7) << 25)));
       }
 
       break;

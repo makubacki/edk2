@@ -425,7 +425,8 @@ ReportDebugCodeEnabled (
                                  is already in progress.
 
 **/
-#define REPORT_STATUS_CODE_WITH_EXTENDED_DATA(Type, Value, ExtendedData, ExtendedDataSize)         \
+#define REPORT_STATUS_CODE_WITH_EXTENDED_DATA(Type, Value, ExtendedData, \
+                                              ExtendedDataSize)         \
   (ReportProgressCodeEnabled() && ((Type) & EFI_STATUS_CODE_TYPE_MASK) == EFI_PROGRESS_CODE) ?  \
   ReportStatusCodeWithExtendedData(Type,Value,ExtendedData,ExtendedDataSize)                 :  \
   (ReportErrorCodeEnabled() && ((Type) & EFI_STATUS_CODE_TYPE_MASK) == EFI_ERROR_CODE)       ?  \
@@ -462,7 +463,8 @@ ReportDebugCodeEnabled (
                                  is already in progress.
 
 **/
-#define REPORT_STATUS_CODE_EX(Type, Value, Instance, CallerId, ExtendedDataGuid, ExtendedData, ExtendedDataSize)  \
+#define REPORT_STATUS_CODE_EX(Type, Value, Instance, CallerId, ExtendedDataGuid, \
+                              ExtendedData, ExtendedDataSize)  \
   (ReportProgressCodeEnabled() && ((Type) & EFI_STATUS_CODE_TYPE_MASK) == EFI_PROGRESS_CODE)             ?  \
   ReportStatusCodeEx(Type,Value,Instance,CallerId,ExtendedDataGuid,ExtendedData,ExtendedDataSize)        :  \
   (ReportErrorCodeEnabled() && ((Type) & EFI_STATUS_CODE_TYPE_MASK) == EFI_ERROR_CODE)                   ?  \

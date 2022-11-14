@@ -19,7 +19,8 @@
     0x107a772b, 0xd5e1, 0x11d4, {0x9a, 0x46, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d } \
   }
 
-typedef struct _EFI_DRIVER_CONFIGURATION_PROTOCOL EFI_DRIVER_CONFIGURATION_PROTOCOL;
+typedef struct _EFI_DRIVER_CONFIGURATION_PROTOCOL
+EFI_DRIVER_CONFIGURATION_PROTOCOL;
 
 /**
   Allows the user to set controller specific options for a controller that a
@@ -68,7 +69,8 @@ EFI_STATUS
 (EFIAPI *EFI_DRIVER_CONFIGURATION_SET_OPTIONS)(
   IN EFI_DRIVER_CONFIGURATION_PROTOCOL                        *This,
   IN  EFI_HANDLE                                              ControllerHandle,
-  IN  EFI_HANDLE                                              ChildHandle  OPTIONAL,
+  IN  EFI_HANDLE
+  ChildHandle  OPTIONAL,
   IN  CHAR8                                                   *Language,
   OUT EFI_DRIVER_CONFIGURATION_ACTION_REQUIRED                *ActionRequired
   );
@@ -107,7 +109,8 @@ EFI_STATUS
 (EFIAPI *EFI_DRIVER_CONFIGURATION_OPTIONS_VALID)(
   IN EFI_DRIVER_CONFIGURATION_PROTOCOL                        *This,
   IN  EFI_HANDLE                                              ControllerHandle,
-  IN  EFI_HANDLE                                              ChildHandle  OPTIONAL
+  IN  EFI_HANDLE
+  ChildHandle  OPTIONAL
   );
 
 /**
@@ -134,7 +137,8 @@ EFI_STATUS
 (EFIAPI *EFI_DRIVER_CONFIGURATION_FORCE_DEFAULTS)(
   IN EFI_DRIVER_CONFIGURATION_PROTOCOL                        *This,
   IN  EFI_HANDLE                                              ControllerHandle,
-  IN  EFI_HANDLE                                              ChildHandle  OPTIONAL,
+  IN  EFI_HANDLE
+  ChildHandle  OPTIONAL,
   IN  UINT32                                                  DefaultType,
   OUT EFI_DRIVER_CONFIGURATION_ACTION_REQUIRED                *ActionRequired
   );

@@ -82,7 +82,10 @@ GetParamByNodeName (
     return NULL;
   }
 
-  ParamStr = AllocateCopyPool ((ParameterLength + 1) * sizeof (CHAR16), ParamStr);
+  ParamStr = AllocateCopyPool (
+               (ParameterLength + 1) * sizeof (CHAR16),
+               ParamStr
+               );
   if (ParamStr == NULL) {
     return NULL;
   }
@@ -511,7 +514,8 @@ DevPathFromTextMemoryMapped (
   MemMap             = (MEMMAP_DEVICE_PATH *)CreateDeviceNode (
                                                HARDWARE_DEVICE_PATH,
                                                HW_MEMMAP_DP,
-                                               (UINT16)sizeof (MEMMAP_DEVICE_PATH)
+                                               (UINT16)sizeof (
+                                                              MEMMAP_DEVICE_PATH)
                                                );
 
   MemMap->MemoryType = (UINT32)Strtoi (MemoryTypeStr);
@@ -556,7 +560,8 @@ ConvertFromTextVendor (
   Vendor = (VENDOR_DEVICE_PATH *)CreateDeviceNode (
                                    Type,
                                    SubType,
-                                   (UINT16)(sizeof (VENDOR_DEVICE_PATH) + Length)
+                                   (UINT16)(sizeof (VENDOR_DEVICE_PATH) +
+                                            Length)
                                    );
 
   StrToGuid (GuidStr, &Vendor->Guid);
@@ -605,7 +610,8 @@ DevPathFromTextCtrl (
   Controller    = (CONTROLLER_DEVICE_PATH *)CreateDeviceNode (
                                               HARDWARE_DEVICE_PATH,
                                               HW_CONTROLLER_DP,
-                                              (UINT16)sizeof (CONTROLLER_DEVICE_PATH)
+                                              (UINT16)sizeof (
+                                                             CONTROLLER_DEVICE_PATH)
                                               );
   Controller->ControllerNumber = (UINT32)Strtoi (ControllerStr);
 
@@ -869,7 +875,9 @@ DevPathFromTextAcpiEx (
   CIDSTRStr = GetNextParamStr (&TextDeviceNode);
   UIDSTRStr = GetNextParamStr (&TextDeviceNode);
 
-  Length = (UINT16)(sizeof (ACPI_EXTENDED_HID_DEVICE_PATH) + StrLen (HIDSTRStr) + 1);
+  Length = (UINT16)(sizeof (ACPI_EXTENDED_HID_DEVICE_PATH) + StrLen (
+                                                               HIDSTRStr
+                                                               ) + 1);
   Length = (UINT16)(Length + StrLen (UIDSTRStr) + 1);
   Length = (UINT16)(Length + StrLen (CIDSTRStr) + 1);
   AcpiEx = (ACPI_EXTENDED_HID_DEVICE_PATH *)CreateDeviceNode (
@@ -882,7 +890,8 @@ DevPathFromTextAcpiEx (
   AcpiEx->CID = EisaIdFromText (CIDStr);
   AcpiEx->UID = (UINT32)Strtoi (UIDStr);
 
-  AsciiStr = (CHAR8 *)((UINT8 *)AcpiEx + sizeof (ACPI_EXTENDED_HID_DEVICE_PATH));
+  AsciiStr = (CHAR8 *)((UINT8 *)AcpiEx +
+                       sizeof (ACPI_EXTENDED_HID_DEVICE_PATH));
   StrToAscii (HIDSTRStr, &AsciiStr);
   StrToAscii (UIDSTRStr, &AsciiStr);
   StrToAscii (CIDSTRStr, &AsciiStr);
@@ -913,7 +922,9 @@ DevPathFromTextAcpiExp (
   HIDStr    = GetNextParamStr (&TextDeviceNode);
   CIDStr    = GetNextParamStr (&TextDeviceNode);
   UIDSTRStr = GetNextParamStr (&TextDeviceNode);
-  Length    = (UINT16)(sizeof (ACPI_EXTENDED_HID_DEVICE_PATH) + StrLen (UIDSTRStr) + 3);
+  Length    = (UINT16)(sizeof (ACPI_EXTENDED_HID_DEVICE_PATH) + StrLen (
+                                                                  UIDSTRStr
+                                                                  ) + 3);
   AcpiEx    = (ACPI_EXTENDED_HID_DEVICE_PATH *)CreateDeviceNode (
                                                  ACPI_DEVICE_PATH,
                                                  ACPI_EXTENDED_DP,
@@ -934,7 +945,8 @@ DevPathFromTextAcpiExp (
 
   AcpiEx->UID = 0;
 
-  AsciiStr = (CHAR8 *)((UINT8 *)AcpiEx + sizeof (ACPI_EXTENDED_HID_DEVICE_PATH));
+  AsciiStr = (CHAR8 *)((UINT8 *)AcpiEx +
+                       sizeof (ACPI_EXTENDED_HID_DEVICE_PATH));
   //
   // HID string is NULL
   //
@@ -1118,7 +1130,8 @@ DevPathFromTextFibre (
   Fibre  = (FIBRECHANNEL_DEVICE_PATH *)CreateDeviceNode (
                                          MESSAGING_DEVICE_PATH,
                                          MSG_FIBRECHANNEL_DP,
-                                         (UINT16)sizeof (FIBRECHANNEL_DEVICE_PATH)
+                                         (UINT16)sizeof (
+                                                        FIBRECHANNEL_DEVICE_PATH)
                                          );
 
   Fibre->Reserved = 0;
@@ -1150,7 +1163,8 @@ DevPathFromTextFibreEx (
   FibreEx = (FIBRECHANNELEX_DEVICE_PATH *)CreateDeviceNode (
                                             MESSAGING_DEVICE_PATH,
                                             MSG_FIBRECHANNELEX_DP,
-                                            (UINT16)sizeof (FIBRECHANNELEX_DEVICE_PATH)
+                                            (UINT16)sizeof (
+                                                           FIBRECHANNELEX_DEVICE_PATH)
                                             );
 
   FibreEx->Reserved = 0;
@@ -1279,7 +1293,8 @@ DevPathFromTextInfiniband (
   InfiniBand = (INFINIBAND_DEVICE_PATH *)CreateDeviceNode (
                                            MESSAGING_DEVICE_PATH,
                                            MSG_INFINIBAND_DP,
-                                           (UINT16)sizeof (INFINIBAND_DEVICE_PATH)
+                                           (UINT16)sizeof (
+                                                          INFINIBAND_DEVICE_PATH)
                                            );
 
   InfiniBand->ResourceFlags = (UINT32)Strtoi (FlagsStr);
@@ -1431,7 +1446,8 @@ DevPathFromTextUartFlowCtrl (
   UartFlowControl = (UART_FLOW_CONTROL_DEVICE_PATH *)CreateDeviceNode (
                                                        MESSAGING_DEVICE_PATH,
                                                        MSG_VENDOR_DP,
-                                                       (UINT16)sizeof (UART_FLOW_CONTROL_DEVICE_PATH)
+                                                       (UINT16)sizeof (
+                                                                      UART_FLOW_CONTROL_DEVICE_PATH)
                                                        );
 
   CopyGuid (&UartFlowControl->Guid, &gEfiUartDevicePathGuid);
@@ -1492,7 +1508,11 @@ DevPathFromTextSAS (
 
   if (StrCmp (SASSATAStr, L"NoTopology") == 0) {
     Info = 0x0;
-  } else if ((StrCmp (SASSATAStr, L"SATA") == 0) || (StrCmp (SASSATAStr, L"SAS") == 0)) {
+  } else if ((StrCmp (SASSATAStr, L"SATA") == 0) || (StrCmp (
+                                                       SASSATAStr,
+                                                       L"SAS"
+                                                       ) == 0))
+  {
     Uint16 = (UINT16)Strtoi (DriveBayStr);
     if (Uint16 == 0) {
       Info = 0x1;
@@ -1588,7 +1608,11 @@ DevPathFromTextSasEx (
 
   if (StrCmp (SASSATAStr, L"NoTopology") == 0) {
     Info = 0x0;
-  } else if ((StrCmp (SASSATAStr, L"SATA") == 0) || (StrCmp (SASSATAStr, L"SAS") == 0)) {
+  } else if ((StrCmp (SASSATAStr, L"SATA") == 0) || (StrCmp (
+                                                       SASSATAStr,
+                                                       L"SAS"
+                                                       ) == 0))
+  {
     Uint16 = (UINT16)Strtoi (DriveBayStr);
     if (Uint16 == 0) {
       Info = 0x1;
@@ -1660,7 +1684,8 @@ DevPathFromTextNVMe (
   Nvme             = (NVME_NAMESPACE_DEVICE_PATH *)CreateDeviceNode (
                                                      MESSAGING_DEVICE_PATH,
                                                      MSG_NVME_NAMESPACE_DP,
-                                                     (UINT16)sizeof (NVME_NAMESPACE_DEVICE_PATH)
+                                                     (UINT16)sizeof (
+                                                                    NVME_NAMESPACE_DEVICE_PATH)
                                                      );
 
   Nvme->NamespaceId = (UINT32)Strtoi (NamespaceIdStr);
@@ -1998,7 +2023,8 @@ DevPathFromTextUart (
     Strtoi64 (BaudStr, &Uart->BaudRate);
   }
 
-  Uart->DataBits = (UINT8)((StrCmp (DataBitsStr, L"DEFAULT") == 0) ? 8 : Strtoi (DataBitsStr));
+  Uart->DataBits = (UINT8)((StrCmp (DataBitsStr, L"DEFAULT") == 0) ? 8 :
+                           Strtoi (DataBitsStr));
   switch (*ParityStr) {
     case L'D':
       Uart->Parity = 0;
@@ -2511,7 +2537,9 @@ DevPathFromTextUsbWwid (
   UsbWwid = (USB_WWID_DEVICE_PATH *)CreateDeviceNode (
                                       MESSAGING_DEVICE_PATH,
                                       MSG_USB_WWID_DP,
-                                      (UINT16)(sizeof (USB_WWID_DEVICE_PATH) + SerialNumberStrLen * sizeof (CHAR16))
+                                      (UINT16)(sizeof (USB_WWID_DEVICE_PATH) +
+                                               SerialNumberStrLen *
+                                               sizeof (CHAR16))
                                       );
   UsbWwid->VendorId        = (UINT16)Strtoi (VIDStr);
   UsbWwid->ProductId       = (UINT16)Strtoi (PIDStr);
@@ -2550,7 +2578,8 @@ DevPathFromTextUnit (
   LogicalUnit = (DEVICE_LOGICAL_UNIT_DEVICE_PATH *)CreateDeviceNode (
                                                      MESSAGING_DEVICE_PATH,
                                                      MSG_DEVICE_LOGICAL_UNIT_DP,
-                                                     (UINT16)sizeof (DEVICE_LOGICAL_UNIT_DEVICE_PATH)
+                                                     (UINT16)sizeof (
+                                                                    DEVICE_LOGICAL_UNIT_DEVICE_PATH)
                                                      );
 
   LogicalUnit->Lun = (UINT8)Strtoi (LunStr);
@@ -2593,7 +2622,11 @@ DevPathFromTextiSCSI (
   ISCSIDevPath      = (ISCSI_DEVICE_PATH_WITH_NAME *)CreateDeviceNode (
                                                        MESSAGING_DEVICE_PATH,
                                                        MSG_ISCSI_DP,
-                                                       (UINT16)(sizeof (ISCSI_DEVICE_PATH_WITH_NAME) + StrLen (NameStr))
+                                                       (UINT16)(sizeof (
+                                                                       ISCSI_DEVICE_PATH_WITH_NAME)
+                                                                + StrLen (
+                                                                    NameStr
+                                                                    ))
                                                        );
 
   AsciiStr = ISCSIDevPath->TargetName;
@@ -2682,7 +2715,8 @@ DevPathFromTextBluetooth (
   BluetoothDp  = (BLUETOOTH_DEVICE_PATH *)CreateDeviceNode (
                                             MESSAGING_DEVICE_PATH,
                                             MSG_BLUETOOTH_DP,
-                                            (UINT16)sizeof (BLUETOOTH_DEVICE_PATH)
+                                            (UINT16)sizeof (
+                                                           BLUETOOTH_DEVICE_PATH)
                                             );
   StrHexToBytes (
     BluetoothStr,
@@ -2754,7 +2788,8 @@ DevPathFromTextBluetoothLE (
   BluetoothLeDp          = (BLUETOOTH_LE_DEVICE_PATH *)CreateDeviceNode (
                                                          MESSAGING_DEVICE_PATH,
                                                          MSG_BLUETOOTH_LE_DP,
-                                                         (UINT16)sizeof (BLUETOOTH_LE_DEVICE_PATH)
+                                                         (UINT16)sizeof (
+                                                                        BLUETOOTH_LE_DEVICE_PATH)
                                                          );
 
   BluetoothLeDp->Address.Type = (UINT8)Strtoi (BluetoothLeAddrTypeStr);
@@ -2818,7 +2853,9 @@ DevPathFromTextDns (
   //
   // Create the DNS DeviceNode.
   //
-  DnsDeviceNodeLength = (UINT16)(sizeof (EFI_DEVICE_PATH_PROTOCOL) + sizeof (UINT8) + DnsServerIpCount * sizeof (EFI_IP_ADDRESS));
+  DnsDeviceNodeLength = (UINT16)(sizeof (EFI_DEVICE_PATH_PROTOCOL) +
+                                 sizeof (UINT8) + DnsServerIpCount *
+                                 sizeof (EFI_IP_ADDRESS));
   DnsDeviceNode       = (DNS_DEVICE_PATH *)CreateDeviceNode (
                                              MESSAGING_DEVICE_PATH,
                                              MSG_DNS_DP,
@@ -2846,12 +2883,24 @@ DevPathFromTextDns (
     DeviceNodeStrPtr++;
   }
 
-  for (DnsServerIpIndex = 0; DnsServerIpIndex < DnsServerIpCount; DnsServerIpIndex++) {
+  for (DnsServerIpIndex = 0; DnsServerIpIndex < DnsServerIpCount;
+       DnsServerIpIndex++)
+  {
     DnsServerIp = GetNextParamStr (&TextDeviceNode);
     if (DnsDeviceNode->IsIPv6 == 0x00) {
-      StrToIpv4Address (DnsServerIp, NULL, &(DnsDeviceNode->DnsServerIp[DnsServerIpIndex].v4), NULL);
+      StrToIpv4Address (
+        DnsServerIp,
+        NULL,
+        &(DnsDeviceNode->DnsServerIp[DnsServerIpIndex].v4),
+        NULL
+        );
     } else {
-      StrToIpv6Address (DnsServerIp, NULL, &(DnsDeviceNode->DnsServerIp[DnsServerIpIndex].v6), NULL);
+      StrToIpv6Address (
+        DnsServerIp,
+        NULL,
+        &(DnsDeviceNode->DnsServerIp[DnsServerIpIndex].v6),
+        NULL
+        );
     }
   }
 
@@ -2880,7 +2929,8 @@ DevPathFromTextUri (
   Uri       = (URI_DEVICE_PATH *)CreateDeviceNode (
                                    MESSAGING_DEVICE_PATH,
                                    MSG_URI_DP,
-                                   (UINT16)(sizeof (URI_DEVICE_PATH) + UriLength)
+                                   (UINT16)(sizeof (URI_DEVICE_PATH) +
+                                            UriLength)
                                    );
 
   while (UriLength-- != 0) {
@@ -2935,7 +2985,8 @@ DevPathFromTextHD (
   Hd           = (HARDDRIVE_DEVICE_PATH *)CreateDeviceNode (
                                             MEDIA_DEVICE_PATH,
                                             MEDIA_HARDDRIVE_DP,
-                                            (UINT16)sizeof (HARDDRIVE_DEVICE_PATH)
+                                            (UINT16)sizeof (
+                                                           HARDDRIVE_DEVICE_PATH)
                                             );
 
   Hd->PartitionNumber = (UINT32)Strtoi (PartitionStr);
@@ -3036,7 +3087,8 @@ DevPathFromTextFilePath (
   File = (FILEPATH_DEVICE_PATH *)CreateDeviceNode (
                                    MEDIA_DEVICE_PATH,
                                    MEDIA_FILEPATH_DP,
-                                   (UINT16)(sizeof (FILEPATH_DEVICE_PATH) + StrLen (TextDeviceNode) * 2)
+                                   (UINT16)(sizeof (FILEPATH_DEVICE_PATH) +
+                                            StrLen (TextDeviceNode) * 2)
                                    );
 
   StrCpyS (File->PathName, StrLen (TextDeviceNode) + 1, TextDeviceNode);
@@ -3064,7 +3116,8 @@ DevPathFromTextMedia (
   Media   = (MEDIA_PROTOCOL_DEVICE_PATH *)CreateDeviceNode (
                                             MEDIA_DEVICE_PATH,
                                             MEDIA_PROTOCOL_DP,
-                                            (UINT16)sizeof (MEDIA_PROTOCOL_DEVICE_PATH)
+                                            (UINT16)sizeof (
+                                                           MEDIA_PROTOCOL_DEVICE_PATH)
                                             );
 
   StrToGuid (GuidStr, &Media->Protocol);
@@ -3092,7 +3145,8 @@ DevPathFromTextFv (
   Fv      = (MEDIA_FW_VOL_DEVICE_PATH *)CreateDeviceNode (
                                           MEDIA_DEVICE_PATH,
                                           MEDIA_PIWG_FW_VOL_DP,
-                                          (UINT16)sizeof (MEDIA_FW_VOL_DEVICE_PATH)
+                                          (UINT16)sizeof (
+                                                         MEDIA_FW_VOL_DEVICE_PATH)
                                           );
 
   StrToGuid (GuidStr, &Fv->FvName);
@@ -3120,7 +3174,8 @@ DevPathFromTextFvFile (
   FvFile  = (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)CreateDeviceNode (
                                                    MEDIA_DEVICE_PATH,
                                                    MEDIA_PIWG_FW_FILE_DP,
-                                                   (UINT16)sizeof (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH)
+                                                   (UINT16)sizeof (
+                                                                  MEDIA_FW_VOL_FILEPATH_DEVICE_PATH)
                                                    );
 
   StrToGuid (GuidStr, &FvFile->FvFileName);
@@ -3147,11 +3202,14 @@ DevPathFromTextRelativeOffsetRange (
 
   StartingOffsetStr = GetNextParamStr (&TextDeviceNode);
   EndingOffsetStr   = GetNextParamStr (&TextDeviceNode);
-  Offset            = (MEDIA_RELATIVE_OFFSET_RANGE_DEVICE_PATH *)CreateDeviceNode (
-                                                                   MEDIA_DEVICE_PATH,
-                                                                   MEDIA_RELATIVE_OFFSET_RANGE_DP,
-                                                                   (UINT16)sizeof (MEDIA_RELATIVE_OFFSET_RANGE_DEVICE_PATH)
-                                                                   );
+  Offset            =
+    (MEDIA_RELATIVE_OFFSET_RANGE_DEVICE_PATH *)CreateDeviceNode (
+                                                 MEDIA_DEVICE_PATH,
+                                                 MEDIA_RELATIVE_OFFSET_RANGE_DP,
+                                                 (UINT16)
+                                                 sizeof (
+                                                                                  MEDIA_RELATIVE_OFFSET_RANGE_DEVICE_PATH)
+                                                 );
 
   Strtoi64 (StartingOffsetStr, &Offset->StartingOffset);
   Strtoi64 (EndingOffsetStr, &Offset->EndingOffset);
@@ -3187,7 +3245,8 @@ DevPathFromTextRamDisk (
   RamDisk         = (MEDIA_RAM_DISK_DEVICE_PATH *)CreateDeviceNode (
                                                     MEDIA_DEVICE_PATH,
                                                     MEDIA_RAM_DISK_DP,
-                                                    (UINT16)sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
+                                                    (UINT16)sizeof (
+                                                                   MEDIA_RAM_DISK_DEVICE_PATH)
                                                     );
 
   Strtoi64 (StartingAddrStr, &StartingAddr);
@@ -3227,7 +3286,8 @@ DevPathFromTextVirtualDisk (
   RamDisk = (MEDIA_RAM_DISK_DEVICE_PATH *)CreateDeviceNode (
                                             MEDIA_DEVICE_PATH,
                                             MEDIA_RAM_DISK_DP,
-                                            (UINT16)sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
+                                            (UINT16)sizeof (
+                                                           MEDIA_RAM_DISK_DEVICE_PATH)
                                             );
 
   Strtoi64 (StartingAddrStr, &StartingAddr);
@@ -3267,7 +3327,8 @@ DevPathFromTextVirtualCd (
   RamDisk = (MEDIA_RAM_DISK_DEVICE_PATH *)CreateDeviceNode (
                                             MEDIA_DEVICE_PATH,
                                             MEDIA_RAM_DISK_DP,
-                                            (UINT16)sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
+                                            (UINT16)sizeof (
+                                                           MEDIA_RAM_DISK_DEVICE_PATH)
                                             );
 
   Strtoi64 (StartingAddrStr, &StartingAddr);
@@ -3307,7 +3368,8 @@ DevPathFromTextPersistentVirtualDisk (
   RamDisk = (MEDIA_RAM_DISK_DEVICE_PATH *)CreateDeviceNode (
                                             MEDIA_DEVICE_PATH,
                                             MEDIA_RAM_DISK_DP,
-                                            (UINT16)sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
+                                            (UINT16)sizeof (
+                                                           MEDIA_RAM_DISK_DEVICE_PATH)
                                             );
 
   Strtoi64 (StartingAddrStr, &StartingAddr);
@@ -3347,7 +3409,8 @@ DevPathFromTextPersistentVirtualCd (
   RamDisk = (MEDIA_RAM_DISK_DEVICE_PATH *)CreateDeviceNode (
                                             MEDIA_DEVICE_PATH,
                                             MEDIA_RAM_DISK_DP,
-                                            (UINT16)sizeof (MEDIA_RAM_DISK_DEVICE_PATH)
+                                            (UINT16)sizeof (
+                                                           MEDIA_RAM_DISK_DEVICE_PATH)
                                             );
 
   Strtoi64 (StartingAddrStr, &StartingAddr);
@@ -3401,7 +3464,8 @@ DevPathFromTextBBS (
   Bbs      = (BBS_BBS_DEVICE_PATH *)CreateDeviceNode (
                                       BBS_DEVICE_PATH,
                                       BBS_BBS_DP,
-                                      (UINT16)(sizeof (BBS_BBS_DEVICE_PATH) + StrLen (IdStr))
+                                      (UINT16)(sizeof (BBS_BBS_DEVICE_PATH) +
+                                               StrLen (IdStr))
                                       );
 
   if (StrCmp (TypeStr, L"Floppy") == 0) {
@@ -3471,98 +3535,186 @@ DevPathFromTextSata (
   return (EFI_DEVICE_PATH_PROTOCOL *)Sata;
 }
 
-GLOBAL_REMOVE_IF_UNREFERENCED DEVICE_PATH_FROM_TEXT_TABLE  mUefiDevicePathLibDevPathFromTextTable[] = {
-  { L"Path",                    DevPathFromTextPath                    },
+GLOBAL_REMOVE_IF_UNREFERENCED DEVICE_PATH_FROM_TEXT_TABLE
+  mUefiDevicePathLibDevPathFromTextTable[] = {
+  { L"Path",
+    DevPathFromTextPath                                                                },
 
-  { L"HardwarePath",            DevPathFromTextHardwarePath            },
-  { L"Pci",                     DevPathFromTextPci                     },
-  { L"PcCard",                  DevPathFromTextPcCard                  },
-  { L"MemoryMapped",            DevPathFromTextMemoryMapped            },
-  { L"VenHw",                   DevPathFromTextVenHw                   },
-  { L"Ctrl",                    DevPathFromTextCtrl                    },
-  { L"BMC",                     DevPathFromTextBmc                     },
+  { L"HardwarePath",
+    DevPathFromTextHardwarePath                                                                               },
+  { L"Pci",
+    DevPathFromTextPci                                                                                                              },
+  { L"PcCard",
+    DevPathFromTextPcCard                                                                                                                                 },
+  { L"MemoryMapped",
+    DevPathFromTextMemoryMapped                                                                                                                                                 },
+  { L"VenHw",
+    DevPathFromTextVenHw                                                                                                                                                                              },
+  { L"Ctrl",
+    DevPathFromTextCtrl                                                                                                                                                                                                     },
+  { L"BMC",
+    DevPathFromTextBmc                                                                                                                                                                                                                            },
 
-  { L"AcpiPath",                DevPathFromTextAcpiPath                },
-  { L"Acpi",                    DevPathFromTextAcpi                    },
-  { L"PciRoot",                 DevPathFromTextPciRoot                 },
-  { L"PcieRoot",                DevPathFromTextPcieRoot                },
-  { L"Floppy",                  DevPathFromTextFloppy                  },
-  { L"Keyboard",                DevPathFromTextKeyboard                },
-  { L"Serial",                  DevPathFromTextSerial                  },
-  { L"ParallelPort",            DevPathFromTextParallelPort            },
-  { L"AcpiEx",                  DevPathFromTextAcpiEx                  },
-  { L"AcpiExp",                 DevPathFromTextAcpiExp                 },
-  { L"AcpiAdr",                 DevPathFromTextAcpiAdr                 },
+  { L"AcpiPath",
+    DevPathFromTextAcpiPath                                                                                                                                                                                                                                             },
+  { L"Acpi",
+    DevPathFromTextAcpi                                                                                                                                                                                                                                                                       },
+  { L"PciRoot",
+    DevPathFromTextPciRoot                                                                                                                                                                                                                                                                                          },
+  { L"PcieRoot",
+    DevPathFromTextPcieRoot                                                                                                                                                                                                                                                                                                               },
+  { L"Floppy",
+    DevPathFromTextFloppy                                                                                                                                                                                                                                                                                                                                       },
+  { L"Keyboard",
+    DevPathFromTextKeyboard                                                                                                                                                                                                                                                                                                                                                           },
+  { L"Serial",
+    DevPathFromTextSerial                                                                                                                                                                                                                                                                                                                                                                                   },
+  { L"ParallelPort",
+    DevPathFromTextParallelPort                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { L"AcpiEx",
+    DevPathFromTextAcpiEx                                                                                                                                                                                                                                                                                                                                                                                                                               },
+  { L"AcpiExp",
+    DevPathFromTextAcpiExp                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+  { L"AcpiAdr",
+    DevPathFromTextAcpiAdr                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
 
-  { L"Msg",                     DevPathFromTextMsg                     },
-  { L"Ata",                     DevPathFromTextAta                     },
-  { L"Scsi",                    DevPathFromTextScsi                    },
-  { L"Fibre",                   DevPathFromTextFibre                   },
-  { L"FibreEx",                 DevPathFromTextFibreEx                 },
-  { L"I1394",                   DevPathFromText1394                    },
-  { L"USB",                     DevPathFromTextUsb                     },
-  { L"I2O",                     DevPathFromTextI2O                     },
-  { L"Infiniband",              DevPathFromTextInfiniband              },
-  { L"VenMsg",                  DevPathFromTextVenMsg                  },
-  { L"VenPcAnsi",               DevPathFromTextVenPcAnsi               },
-  { L"VenVt100",                DevPathFromTextVenVt100                },
-  { L"VenVt100Plus",            DevPathFromTextVenVt100Plus            },
-  { L"VenUtf8",                 DevPathFromTextVenUtf8                 },
-  { L"UartFlowCtrl",            DevPathFromTextUartFlowCtrl            },
-  { L"SAS",                     DevPathFromTextSAS                     },
-  { L"SasEx",                   DevPathFromTextSasEx                   },
-  { L"NVMe",                    DevPathFromTextNVMe                    },
-  { L"UFS",                     DevPathFromTextUfs                     },
-  { L"SD",                      DevPathFromTextSd                      },
-  { L"eMMC",                    DevPathFromTextEmmc                    },
-  { L"DebugPort",               DevPathFromTextDebugPort               },
-  { L"MAC",                     DevPathFromTextMAC                     },
-  { L"IPv4",                    DevPathFromTextIPv4                    },
-  { L"IPv6",                    DevPathFromTextIPv6                    },
-  { L"Uart",                    DevPathFromTextUart                    },
-  { L"UsbClass",                DevPathFromTextUsbClass                },
-  { L"UsbAudio",                DevPathFromTextUsbAudio                },
-  { L"UsbCDCControl",           DevPathFromTextUsbCDCControl           },
-  { L"UsbHID",                  DevPathFromTextUsbHID                  },
-  { L"UsbImage",                DevPathFromTextUsbImage                },
-  { L"UsbPrinter",              DevPathFromTextUsbPrinter              },
-  { L"UsbMassStorage",          DevPathFromTextUsbMassStorage          },
-  { L"UsbHub",                  DevPathFromTextUsbHub                  },
-  { L"UsbCDCData",              DevPathFromTextUsbCDCData              },
-  { L"UsbSmartCard",            DevPathFromTextUsbSmartCard            },
-  { L"UsbVideo",                DevPathFromTextUsbVideo                },
-  { L"UsbDiagnostic",           DevPathFromTextUsbDiagnostic           },
-  { L"UsbWireless",             DevPathFromTextUsbWireless             },
-  { L"UsbDeviceFirmwareUpdate", DevPathFromTextUsbDeviceFirmwareUpdate },
-  { L"UsbIrdaBridge",           DevPathFromTextUsbIrdaBridge           },
-  { L"UsbTestAndMeasurement",   DevPathFromTextUsbTestAndMeasurement   },
-  { L"UsbWwid",                 DevPathFromTextUsbWwid                 },
-  { L"Unit",                    DevPathFromTextUnit                    },
-  { L"iSCSI",                   DevPathFromTextiSCSI                   },
-  { L"Vlan",                    DevPathFromTextVlan                    },
-  { L"Dns",                     DevPathFromTextDns                     },
-  { L"Uri",                     DevPathFromTextUri                     },
-  { L"Bluetooth",               DevPathFromTextBluetooth               },
-  { L"Wi-Fi",                   DevPathFromTextWiFi                    },
-  { L"BluetoothLE",             DevPathFromTextBluetoothLE             },
-  { L"MediaPath",               DevPathFromTextMediaPath               },
-  { L"HD",                      DevPathFromTextHD                      },
-  { L"CDROM",                   DevPathFromTextCDROM                   },
-  { L"VenMedia",                DevPathFromTextVenMedia                },
-  { L"Media",                   DevPathFromTextMedia                   },
-  { L"Fv",                      DevPathFromTextFv                      },
-  { L"FvFile",                  DevPathFromTextFvFile                  },
-  { L"Offset",                  DevPathFromTextRelativeOffsetRange     },
-  { L"RamDisk",                 DevPathFromTextRamDisk                 },
-  { L"VirtualDisk",             DevPathFromTextVirtualDisk             },
-  { L"VirtualCD",               DevPathFromTextVirtualCd               },
-  { L"PersistentVirtualDisk",   DevPathFromTextPersistentVirtualDisk   },
-  { L"PersistentVirtualCD",     DevPathFromTextPersistentVirtualCd     },
+  { L"Msg",
+    DevPathFromTextMsg                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+  { L"Ata",
+    DevPathFromTextAta                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+  { L"Scsi",
+    DevPathFromTextScsi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+  { L"Fibre",
+    DevPathFromTextFibre                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+  { L"FibreEx",
+    DevPathFromTextFibreEx                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+  { L"I1394",
+    DevPathFromText1394                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+  { L"USB",
+    DevPathFromTextUsb                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+  { L"I2O",
+    DevPathFromTextI2O                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { L"Infiniband",
+    DevPathFromTextInfiniband                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+  { L"VenMsg",
+    DevPathFromTextVenMsg                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { L"VenPcAnsi",
+    DevPathFromTextVenPcAnsi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+  { L"VenVt100",
+    DevPathFromTextVenVt100                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+  { L"VenVt100Plus",
+    DevPathFromTextVenVt100Plus                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { L"VenUtf8",
+    DevPathFromTextVenUtf8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { L"UartFlowCtrl",
+    DevPathFromTextUartFlowCtrl                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+  { L"SAS",
+    DevPathFromTextSAS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { L"SasEx",
+    DevPathFromTextSasEx                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { L"NVMe",
+    DevPathFromTextNVMe                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+  { L"UFS",
+    DevPathFromTextUfs                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+  { L"SD",
+    DevPathFromTextSd                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { L"eMMC",
+    DevPathFromTextEmmc                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+  { L"DebugPort",
+    DevPathFromTextDebugPort                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
+  { L"MAC",
+    DevPathFromTextMAC                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+  { L"IPv4",
+    DevPathFromTextIPv4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+  { L"IPv6",
+    DevPathFromTextIPv6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { L"Uart",
+    DevPathFromTextUart                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+  { L"UsbClass",
+    DevPathFromTextUsbClass                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+  { L"UsbAudio",
+    DevPathFromTextUsbAudio                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+  { L"UsbCDCControl",
+    DevPathFromTextUsbCDCControl                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { L"UsbHID",
+    DevPathFromTextUsbHID                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+  { L"UsbImage",
+    DevPathFromTextUsbImage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { L"UsbPrinter",
+    DevPathFromTextUsbPrinter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { L"UsbMassStorage",
+    DevPathFromTextUsbMassStorage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+  { L"UsbHub",
+    DevPathFromTextUsbHub                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { L"UsbCDCData",
+    DevPathFromTextUsbCDCData                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+  { L"UsbSmartCard",
+    DevPathFromTextUsbSmartCard                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+  { L"UsbVideo",
+    DevPathFromTextUsbVideo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { L"UsbDiagnostic",
+    DevPathFromTextUsbDiagnostic                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+  { L"UsbWireless",
+    DevPathFromTextUsbWireless                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+  { L"UsbDeviceFirmwareUpdate",
+    DevPathFromTextUsbDeviceFirmwareUpdate                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+  { L"UsbIrdaBridge",
+    DevPathFromTextUsbIrdaBridge                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+  { L"UsbTestAndMeasurement",
+    DevPathFromTextUsbTestAndMeasurement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+  { L"UsbWwid",
+    DevPathFromTextUsbWwid                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
+  { L"Unit",
+    DevPathFromTextUnit                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+  { L"iSCSI",
+    DevPathFromTextiSCSI                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+  { L"Vlan",
+    DevPathFromTextVlan                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+  { L"Dns",
+    DevPathFromTextDns                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+  { L"Uri",
+    DevPathFromTextUri                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { L"Bluetooth",
+    DevPathFromTextBluetooth                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { L"Wi-Fi",
+    DevPathFromTextWiFi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+  { L"BluetoothLE",
+    DevPathFromTextBluetoothLE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+  { L"MediaPath",
+    DevPathFromTextMediaPath                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+  { L"HD",
+    DevPathFromTextHD                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+  { L"CDROM",
+    DevPathFromTextCDROM                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+  { L"VenMedia",
+    DevPathFromTextVenMedia                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { L"Media",
+    DevPathFromTextMedia                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
+  { L"Fv",
+    DevPathFromTextFv                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+  { L"FvFile",
+    DevPathFromTextFvFile                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { L"Offset",
+    DevPathFromTextRelativeOffsetRange                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+  { L"RamDisk",
+    DevPathFromTextRamDisk                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { L"VirtualDisk",
+    DevPathFromTextVirtualDisk                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+  { L"VirtualCD",
+    DevPathFromTextVirtualCd                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
+  { L"PersistentVirtualDisk",
+    DevPathFromTextPersistentVirtualDisk                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+  { L"PersistentVirtualCD",
+    DevPathFromTextPersistentVirtualCd                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
 
-  { L"BbsPath",                 DevPathFromTextBbsPath                 },
-  { L"BBS",                     DevPathFromTextBBS                     },
-  { L"Sata",                    DevPathFromTextSata                    },
-  { NULL,                       NULL                                   }
+  { L"BbsPath",
+    DevPathFromTextBbsPath                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+  { L"BBS",
+    DevPathFromTextBBS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+  { L"Sata",
+    DevPathFromTextSata                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+  { NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              }
 };
 
 /**
@@ -3597,8 +3749,14 @@ UefiDevicePathLibConvertTextToDeviceNode (
   DeviceNodeStr = UefiDevicePathLibStrDuplicate (TextDeviceNode);
   ASSERT (DeviceNodeStr != NULL);
 
-  for (Index = 0; mUefiDevicePathLibDevPathFromTextTable[Index].Function != NULL; Index++) {
-    ParamStr = GetParamByNodeName (DeviceNodeStr, mUefiDevicePathLibDevPathFromTextTable[Index].DevicePathNodeText);
+  for (Index = 0; mUefiDevicePathLibDevPathFromTextTable[Index].Function !=
+       NULL; Index++)
+  {
+    ParamStr = GetParamByNodeName (
+                 DeviceNodeStr,
+                 mUefiDevicePathLibDevPathFromTextTable[Index].
+                   DevicePathNodeText
+                 );
     if (ParamStr != NULL) {
       FromText = mUefiDevicePathLibDevPathFromTextTable[Index].Function;
       break;
@@ -3651,14 +3809,18 @@ UefiDevicePathLibConvertTextToDevicePath (
     return NULL;
   }
 
-  DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)AllocatePool (END_DEVICE_PATH_LENGTH);
+  DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)AllocatePool (
+                                             END_DEVICE_PATH_LENGTH
+                                             );
   ASSERT (DevicePath != NULL);
   SetDevicePathEndNode (DevicePath);
 
   DevicePathStr = UefiDevicePathLibStrDuplicate (TextDevicePath);
 
   Str = DevicePathStr;
-  while ((DeviceNodeStr = GetNextDeviceNodeStr (&Str, &IsInstanceEnd)) != NULL) {
+  while ((DeviceNodeStr = GetNextDeviceNodeStr (&Str, &IsInstanceEnd)) !=
+         NULL)
+  {
     DeviceNode = UefiDevicePathLibConvertTextToDeviceNode (DeviceNodeStr);
 
     NewDevicePath = AppendDevicePathNode (DevicePath, DeviceNode);
@@ -3667,7 +3829,9 @@ UefiDevicePathLibConvertTextToDevicePath (
     DevicePath = NewDevicePath;
 
     if (IsInstanceEnd) {
-      DeviceNode = (EFI_DEVICE_PATH_PROTOCOL *)AllocatePool (END_DEVICE_PATH_LENGTH);
+      DeviceNode = (EFI_DEVICE_PATH_PROTOCOL *)AllocatePool (
+                                                 END_DEVICE_PATH_LENGTH
+                                                 );
       ASSERT (DeviceNode != NULL);
       SetDevicePathEndNode (DeviceNode);
       DeviceNode->SubType = END_INSTANCE_DEVICE_PATH_SUBTYPE;

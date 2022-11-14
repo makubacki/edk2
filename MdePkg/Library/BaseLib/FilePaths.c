@@ -36,7 +36,10 @@ PathRemoveLastItem (
   {
     if ((*Walker == L'\\') && (*(Walker + 1) != CHAR_NULL)) {
       LastSlash = Walker+1;
-    } else if ((*Walker == L':') && (*(Walker + 1) != L'\\') && (*(Walker + 1) != CHAR_NULL)) {
+    } else if ((*Walker == L':') && (*(Walker + 1) != L'\\') && (*(Walker +
+                                                                   1) !=
+                                                                 CHAR_NULL))
+    {
       LastSlash = Walker+1;
     }
   }
@@ -98,7 +101,9 @@ PathCleanUpDirectories (
     CopyMem (TempString, TempString + 2, StrSize (TempString + 2));
   }
 
-  if ((StrLen (Path) >= 2) && (StrCmp (Path + StrLen (Path) - 2, L"\\.") == 0)) {
+  if ((StrLen (Path) >= 2) && (StrCmp (Path + StrLen (Path) - 2, L"\\.") ==
+                               0))
+  {
     Path[StrLen (Path) - 1] = CHAR_NULL;
   }
 

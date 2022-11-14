@@ -820,8 +820,12 @@ typedef struct {
 ///
 /// ACPI RASF Platform RAS Capabilities
 ///
-#define EFI_ACPI_6_0_RASF_PLATFORM_RAS_CAPABILITY_HARDWARE_BASED_PATROL_SCRUB_SUPPOTED                          0x01
-#define EFI_ACPI_6_0_RASF_PLATFORM_RAS_CAPABILITY_HARDWARE_BASED_PATROL_SCRUB_SUPPOTED_AND_EXPOSED_TO_SOFTWARE  0x02
+#define \
+  EFI_ACPI_6_0_RASF_PLATFORM_RAS_CAPABILITY_HARDWARE_BASED_PATROL_SCRUB_SUPPOTED                                \
+          0x01
+#define \
+  EFI_ACPI_6_0_RASF_PLATFORM_RAS_CAPABILITY_HARDWARE_BASED_PATROL_SCRUB_SUPPOTED_AND_EXPOSED_TO_SOFTWARE        \
+          0x02
 
 ///
 /// ACPI RASF Parameter Block structure for PATROL_SCRUB
@@ -930,9 +934,15 @@ typedef struct {
   UINT64    ExitLatencyToMPS0;
 } EFI_ACPI_6_0_MPST_MEMORY_POWER_STATE_CHARACTERISTICS_STRUCTURE;
 
-#define EFI_ACPI_6_0_MPST_MEMORY_POWER_STATE_CHARACTERISTICS_STRUCTURE_FLAG_MEMORY_CONTENT_PRESERVED             0x01
-#define EFI_ACPI_6_0_MPST_MEMORY_POWER_STATE_CHARACTERISTICS_STRUCTURE_FLAG_AUTONOMOUS_MEMORY_POWER_STATE_ENTRY  0x02
-#define EFI_ACPI_6_0_MPST_MEMORY_POWER_STATE_CHARACTERISTICS_STRUCTURE_FLAG_AUTONOMOUS_MEMORY_POWER_STATE_EXIT   0x04
+#define \
+  EFI_ACPI_6_0_MPST_MEMORY_POWER_STATE_CHARACTERISTICS_STRUCTURE_FLAG_MEMORY_CONTENT_PRESERVED                   \
+          0x01
+#define \
+  EFI_ACPI_6_0_MPST_MEMORY_POWER_STATE_CHARACTERISTICS_STRUCTURE_FLAG_AUTONOMOUS_MEMORY_POWER_STATE_ENTRY        \
+          0x02
+#define \
+  EFI_ACPI_6_0_MPST_MEMORY_POWER_STATE_CHARACTERISTICS_STRUCTURE_FLAG_AUTONOMOUS_MEMORY_POWER_STATE_EXIT         \
+          0x04
 
 typedef struct {
   UINT16    MemoryPowerStateCharacteristicsCount;
@@ -975,7 +985,8 @@ typedef struct {
 ///
 typedef struct {
   EFI_ACPI_6_0_PMMT_COMMON_MEMORY_AGGREGATOR_DEVICE_STRUCTURE    Header;
-  UINT16                                                         SocketIdentifier;
+  UINT16
+                                                                 SocketIdentifier;
   UINT16                                                         Reserved;
   // EFI_ACPI_6_0_PMMT_MEMORY_CONTROLLER_MEMORY_AGGREGATOR_DEVICE_STRUCTURE  MemoryController[];
 } EFI_ACPI_6_0_PMMT_SOCKET_MEMORY_AGGREGATOR_DEVICE_STRUCTURE;
@@ -989,10 +1000,13 @@ typedef struct {
   UINT32                                                         WriteLatency;
   UINT32                                                         ReadBandwidth;
   UINT32                                                         WriteBandwidth;
-  UINT16                                                         OptimalAccessUnit;
-  UINT16                                                         OptimalAccessAlignment;
+  UINT16
+                                                                 OptimalAccessUnit;
+  UINT16
+                                                                 OptimalAccessAlignment;
   UINT16                                                         Reserved;
-  UINT16                                                         NumberOfProximityDomains;
+  UINT16
+                                                                 NumberOfProximityDomains;
   // UINT32                                                       ProximityDomain[NumberOfProximityDomains];
   // EFI_ACPI_6_0_PMMT_DIMM_MEMORY_AGGREGATOR_DEVICE_STRUCTURE    PhysicalComponent[];
 } EFI_ACPI_6_0_PMMT_MEMORY_CONTROLLER_MEMORY_AGGREGATOR_DEVICE_STRUCTURE;
@@ -1002,7 +1016,8 @@ typedef struct {
 ///
 typedef struct {
   EFI_ACPI_6_0_PMMT_COMMON_MEMORY_AGGREGATOR_DEVICE_STRUCTURE    Header;
-  UINT16                                                         PhysicalComponentIdentifier;
+  UINT16
+                                                                 PhysicalComponentIdentifier;
   UINT16                                                         Reserved;
   UINT32                                                         SizeOfDimm;
   UINT32                                                         SmbiosHandle;
@@ -1180,7 +1195,8 @@ typedef struct {
 ///
 /// FPDT Firmware Basic Boot Performance Table signature
 ///
-#define EFI_ACPI_6_0_FPDT_BOOT_PERFORMANCE_TABLE_SIGNATURE  SIGNATURE_32('F', 'B', 'P', 'T')
+#define EFI_ACPI_6_0_FPDT_BOOT_PERFORMANCE_TABLE_SIGNATURE  \
+  SIGNATURE_32('F', 'B', 'P', 'T')
 
 //
 // FPDT Firmware Basic Boot Performance Table
@@ -1195,7 +1211,8 @@ typedef struct {
 ///
 /// FPDT "S3PT" S3 Performance Table
 ///
-#define EFI_ACPI_6_0_FPDT_S3_PERFORMANCE_TABLE_SIGNATURE  SIGNATURE_32('S', '3', 'P', 'T')
+#define EFI_ACPI_6_0_FPDT_S3_PERFORMANCE_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', '3', 'P', 'T')
 
 //
 // FPDT Firmware S3 Boot Performance Table
@@ -1347,9 +1364,12 @@ typedef struct {
 ///
 /// SBSA Generic Watchdog Timer Flags.  All other bits are reserved and must be 0.
 ///
-#define EFI_ACPI_6_0_GTDT_SBSA_GENERIC_WATCHDOG_FLAG_TIMER_INTERRUPT_MODE      BIT0
-#define EFI_ACPI_6_0_GTDT_SBSA_GENERIC_WATCHDOG_FLAG_TIMER_INTERRUPT_POLARITY  BIT1
-#define EFI_ACPI_6_0_GTDT_SBSA_GENERIC_WATCHDOG_FLAG_SECURE_TIMER              BIT2
+#define EFI_ACPI_6_0_GTDT_SBSA_GENERIC_WATCHDOG_FLAG_TIMER_INTERRUPT_MODE      \
+          BIT0
+#define EFI_ACPI_6_0_GTDT_SBSA_GENERIC_WATCHDOG_FLAG_TIMER_INTERRUPT_POLARITY  \
+          BIT1
+#define EFI_ACPI_6_0_GTDT_SBSA_GENERIC_WATCHDOG_FLAG_SECURE_TIMER              \
+          BIT2
 
 //
 // NVDIMM Firmware Interface Table definition.
@@ -1367,13 +1387,21 @@ typedef struct {
 //
 // Definition for NFIT Table Structure Types
 //
-#define EFI_ACPI_6_0_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE_TYPE              0
-#define EFI_ACPI_6_0_NFIT_MEMORY_DEVICE_TO_SYSTEM_ADDRESS_RANGE_MAP_STRUCTURE_TYPE  1
-#define EFI_ACPI_6_0_NFIT_INTERLEAVE_STRUCTURE_TYPE                                 2
-#define EFI_ACPI_6_0_NFIT_SMBIOS_MANAGEMENT_INFORMATION_STRUCTURE_TYPE              3
-#define EFI_ACPI_6_0_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE_TYPE                      4
-#define EFI_ACPI_6_0_NFIT_NVDIMM_BLOCK_DATA_WINDOW_REGION_STRUCTURE_TYPE            5
-#define EFI_ACPI_6_0_NFIT_FLUSH_HINT_ADDRESS_STRUCTURE_TYPE                         6
+#define EFI_ACPI_6_0_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE_TYPE              \
+                                                                                    0
+#define \
+  EFI_ACPI_6_0_NFIT_MEMORY_DEVICE_TO_SYSTEM_ADDRESS_RANGE_MAP_STRUCTURE_TYPE        \
+                                                                                    1
+#define EFI_ACPI_6_0_NFIT_INTERLEAVE_STRUCTURE_TYPE                                 \
+                                                                                    2
+#define EFI_ACPI_6_0_NFIT_SMBIOS_MANAGEMENT_INFORMATION_STRUCTURE_TYPE              \
+                                                                                    3
+#define EFI_ACPI_6_0_NFIT_NVDIMM_CONTROL_REGION_STRUCTURE_TYPE                      \
+                                                                                    4
+#define EFI_ACPI_6_0_NFIT_NVDIMM_BLOCK_DATA_WINDOW_REGION_STRUCTURE_TYPE            \
+                                                                                    5
+#define EFI_ACPI_6_0_NFIT_FLUSH_HINT_ADDRESS_STRUCTURE_TYPE                         \
+                                                                                    6
 
 //
 // Definition for NFIT Structure Header
@@ -1386,16 +1414,29 @@ typedef struct {
 //
 // Definition for System Physical Address Range Structure
 //
-#define EFI_ACPI_6_0_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_FLAGS_CONTROL_REGION_FOR_MANAGEMENT  BIT0
-#define EFI_ACPI_6_0_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_FLAGS_PROXIMITY_DOMAIN_VALID         BIT1
-#define EFI_ACPI_6_0_NFIT_GUID_VOLATILE_MEMORY_REGION                                        { 0x7305944F, 0xFDDA, 0x44E3, { 0xB1, 0x6C, 0x3F, 0x22, 0xD2, 0x52, 0xE5, 0xD0 }}
-#define EFI_ACPI_6_0_NFIT_GUID_BYTE_ADDRESSABLE_PERSISTENT_MEMORY_REGION                     { 0x66F0D379, 0xB4F3, 0x4074, { 0xAC, 0x43, 0x0D, 0x33, 0x18, 0xB7, 0x8C, 0xDB }}
-#define EFI_ACPI_6_0_NFIT_GUID_NVDIMM_CONTROL_REGION                                         { 0x92F701F6, 0x13B4, 0x405D, { 0x91, 0x0B, 0x29, 0x93, 0x67, 0xE8, 0x23, 0x4C }}
-#define EFI_ACPI_6_0_NFIT_GUID_NVDIMM_BLOCK_DATA_WINDOW_REGION                               { 0x91AF0530, 0x5D86, 0x470E, { 0xA6, 0xB0, 0x0A, 0x2D, 0xB9, 0x40, 0x82, 0x49 }}
-#define EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_DISK_REGION_VOLATILE              { 0x77AB535A, 0x45FC, 0x624B, { 0x55, 0x60, 0xF7, 0xB2, 0x81, 0xD1, 0xF9, 0x6E }}
-#define EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_CD_REGION_VOLATILE                { 0x3D5ABD30, 0x4175, 0x87CE, { 0x6D, 0x64, 0xD2, 0xAD, 0xE5, 0x23, 0xC4, 0xBB }}
-#define EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_DISK_REGION_PERSISTENT            { 0x5CEA02C9, 0x4D07, 0x69D3, { 0x26, 0x9F ,0x44, 0x96, 0xFB, 0xE0, 0x96, 0xF9 }}
-#define EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_CD_REGION_PERSISTENT              { 0x08018188, 0x42CD, 0xBB48, { 0x10, 0x0F, 0x53, 0x87, 0xD5, 0x3D, 0xED, 0x3D }}
+#define \
+  EFI_ACPI_6_0_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_FLAGS_CONTROL_REGION_FOR_MANAGEMENT        \
+          BIT0
+#define \
+  EFI_ACPI_6_0_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_FLAGS_PROXIMITY_DOMAIN_VALID               \
+          BIT1
+#define EFI_ACPI_6_0_NFIT_GUID_VOLATILE_MEMORY_REGION                                        \
+          { 0x7305944F, 0xFDDA, 0x44E3, { 0xB1, 0x6C, 0x3F, 0x22, 0xD2, 0x52, 0xE5, 0xD0 }}
+#define EFI_ACPI_6_0_NFIT_GUID_BYTE_ADDRESSABLE_PERSISTENT_MEMORY_REGION                     \
+          { 0x66F0D379, 0xB4F3, 0x4074, { 0xAC, 0x43, 0x0D, 0x33, 0x18, 0xB7, 0x8C, 0xDB }}
+#define EFI_ACPI_6_0_NFIT_GUID_NVDIMM_CONTROL_REGION                                         \
+          { 0x92F701F6, 0x13B4, 0x405D, { 0x91, 0x0B, 0x29, 0x93, 0x67, 0xE8, 0x23, 0x4C }}
+#define EFI_ACPI_6_0_NFIT_GUID_NVDIMM_BLOCK_DATA_WINDOW_REGION                               \
+          { 0x91AF0530, 0x5D86, 0x470E, { 0xA6, 0xB0, 0x0A, 0x2D, 0xB9, 0x40, 0x82, 0x49 }}
+#define EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_DISK_REGION_VOLATILE              \
+          { 0x77AB535A, 0x45FC, 0x624B, { 0x55, 0x60, 0xF7, 0xB2, 0x81, 0xD1, 0xF9, 0x6E }}
+#define EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_CD_REGION_VOLATILE                \
+          { 0x3D5ABD30, 0x4175, 0x87CE, { 0x6D, 0x64, 0xD2, 0xAD, 0xE5, 0x23, 0xC4, 0xBB }}
+#define \
+  EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_DISK_REGION_PERSISTENT                  \
+          { 0x5CEA02C9, 0x4D07, 0x69D3, { 0x26, 0x9F ,0x44, 0x96, 0xFB, 0xE0, 0x96, 0xF9 }}
+#define EFI_ACPI_6_0_NFIT_GUID_RAM_DISK_SUPPORTING_VIRTUAL_CD_REGION_PERSISTENT              \
+          { 0x08018188, 0x42CD, 0xBB48, { 0x10, 0x0F, 0x53, 0x87, 0xD5, 0x3D, 0xED, 0x3D }}
 typedef struct {
   UINT16    Type;
   UINT16    Length;
@@ -1421,12 +1462,21 @@ typedef struct {
   UINT32    Reserved_28         : 4;
 } EFI_ACPI_6_0_NFIT_DEVICE_HANDLE;
 
-#define EFI_ACPI_6_0_NFIT_MEMORY_DEVICE_STATE_FLAGS_PREVIOUS_SAVE_FAIL                                      BIT0
-#define EFI_ACPI_6_0_NFIT_MEMORY_DEVICE_STATE_FLAGS_LAST_RESTORE_FAIL                                       BIT1
-#define EFI_ACPI_6_0_NFIT_MEMORY_DEVICE_STATE_FLAGS_PLATFORM_FLUSH_FAIL                                     BIT2
-#define EFI_ACPI_6_0_NFIT_MEMORY_DEVICE_STATE_FLAGS_NOT_ARMED_PRIOR_TO_OSPM_HAND_OFF                        BIT3
-#define EFI_ACPI_6_0_NFIT_MEMORY_DEVICE_STATE_FLAGS_SMART_HEALTH_EVENTS_PRIOR_OSPM_HAND_OFF                 BIT4
-#define EFI_ACPI_6_0_NFIT_MEMORY_DEVICE_STATE_FLAGS_FIRMWARE_ENABLED_TO_NOTIFY_OSPM_ON_SMART_HEALTH_EVENTS  BIT5
+#define EFI_ACPI_6_0_NFIT_MEMORY_DEVICE_STATE_FLAGS_PREVIOUS_SAVE_FAIL                                      \
+          BIT0
+#define EFI_ACPI_6_0_NFIT_MEMORY_DEVICE_STATE_FLAGS_LAST_RESTORE_FAIL                                       \
+          BIT1
+#define EFI_ACPI_6_0_NFIT_MEMORY_DEVICE_STATE_FLAGS_PLATFORM_FLUSH_FAIL                                     \
+          BIT2
+#define \
+  EFI_ACPI_6_0_NFIT_MEMORY_DEVICE_STATE_FLAGS_NOT_ARMED_PRIOR_TO_OSPM_HAND_OFF                              \
+          BIT3
+#define \
+  EFI_ACPI_6_0_NFIT_MEMORY_DEVICE_STATE_FLAGS_SMART_HEALTH_EVENTS_PRIOR_OSPM_HAND_OFF                       \
+          BIT4
+#define \
+  EFI_ACPI_6_0_NFIT_MEMORY_DEVICE_STATE_FLAGS_FIRMWARE_ENABLED_TO_NOTIFY_OSPM_ON_SMART_HEALTH_EVENTS        \
+          BIT5
 typedef struct {
   UINT16                             Type;
   UINT16                             Length;
@@ -1470,7 +1520,9 @@ typedef struct {
 //
 // Definition for NVDIMM Control Region Structure
 //
-#define EFI_ACPI_6_0_NFIT_NVDIMM_CONTROL_REGION_FLAGS_BLOCK_DATA_WINDOWS_BUFFERED  BIT0
+#define \
+  EFI_ACPI_6_0_NFIT_NVDIMM_CONTROL_REGION_FLAGS_BLOCK_DATA_WINDOWS_BUFFERED        \
+  BIT0
 typedef struct {
   UINT16    Type;
   UINT16    Length;
@@ -1655,9 +1707,12 @@ typedef struct {
 ///
 /// IA-32 Architecture Machine Check Bank Structure MCA data format
 ///
-#define EFI_ACPI_6_0_IA32_ARCHITECTURE_MACHINE_CHECK_ERROR_DATA_FORMAT_IA32     0x00
-#define EFI_ACPI_6_0_IA32_ARCHITECTURE_MACHINE_CHECK_ERROR_DATA_FORMAT_INTEL64  0x01
-#define EFI_ACPI_6_0_IA32_ARCHITECTURE_MACHINE_CHECK_ERROR_DATA_FORMAT_AMD64    0x02
+#define EFI_ACPI_6_0_IA32_ARCHITECTURE_MACHINE_CHECK_ERROR_DATA_FORMAT_IA32     \
+          0x00
+#define EFI_ACPI_6_0_IA32_ARCHITECTURE_MACHINE_CHECK_ERROR_DATA_FORMAT_INTEL64  \
+          0x01
+#define EFI_ACPI_6_0_IA32_ARCHITECTURE_MACHINE_CHECK_ERROR_DATA_FORMAT_AMD64    \
+          0x02
 
 //
 // Hardware Error Notification types. All other values are reserved
@@ -1688,15 +1743,24 @@ typedef struct {
 /// Hardware Error Notification Structure Definition
 ///
 typedef struct {
-  UINT8                                                                            Type;
-  UINT8                                                                            Length;
-  EFI_ACPI_6_0_HARDWARE_ERROR_NOTIFICATION_CONFIGURATION_WRITE_ENABLE_STRUCTURE    ConfigurationWriteEnable;
-  UINT32                                                                           PollInterval;
-  UINT32                                                                           Vector;
-  UINT32                                                                           SwitchToPollingThresholdValue;
-  UINT32                                                                           SwitchToPollingThresholdWindow;
-  UINT32                                                                           ErrorThresholdValue;
-  UINT32                                                                           ErrorThresholdWindow;
+  UINT8
+        Type;
+  UINT8
+        Length;
+  EFI_ACPI_6_0_HARDWARE_ERROR_NOTIFICATION_CONFIGURATION_WRITE_ENABLE_STRUCTURE
+        ConfigurationWriteEnable;
+  UINT32
+        PollInterval;
+  UINT32
+        Vector;
+  UINT32
+        SwitchToPollingThresholdValue;
+  UINT32
+        SwitchToPollingThresholdWindow;
+  UINT32
+        ErrorThresholdValue;
+  UINT32
+        ErrorThresholdWindow;
 } EFI_ACPI_6_0_HARDWARE_ERROR_NOTIFICATION_STRUCTURE;
 
 ///
@@ -1708,7 +1772,8 @@ typedef struct {
   UINT8                                                 Reserved0[2];
   UINT8                                                 Flags;
   UINT8                                                 Enabled;
-  UINT32                                                NumberOfRecordsToPreAllocate;
+  UINT32
+                                                        NumberOfRecordsToPreAllocate;
   UINT32                                                MaxSectionsPerRecord;
   EFI_ACPI_6_0_HARDWARE_ERROR_NOTIFICATION_STRUCTURE    NotificationStructure;
   UINT8                                                 NumberOfHardwareBanks;
@@ -1806,7 +1871,8 @@ typedef struct {
   UINT16                                                RelatedSourceId;
   UINT8                                                 Flags;
   UINT8                                                 Enabled;
-  UINT32                                                NumberOfRecordsToPreAllocate;
+  UINT32
+                                                        NumberOfRecordsToPreAllocate;
   UINT32                                                MaxSectionsPerRecord;
   UINT32                                                MaxRawDataLength;
   EFI_ACPI_6_0_GENERIC_ADDRESS_STRUCTURE                ErrorStatusAddress;
@@ -2126,272 +2192,328 @@ typedef struct {
 ///
 /// "RSD PTR " Root System Description Pointer
 ///
-#define EFI_ACPI_6_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE  SIGNATURE_64('R', 'S', 'D', ' ', 'P', 'T', 'R', ' ')
+#define EFI_ACPI_6_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE  \
+  SIGNATURE_64('R', 'S', 'D', ' ', 'P', 'T', 'R', ' ')
 
 ///
 /// "APIC" Multiple APIC Description Table
 ///
-#define EFI_ACPI_6_0_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('A', 'P', 'I', 'C')
+#define EFI_ACPI_6_0_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('A', 'P', 'I', 'C')
 
 ///
 /// "BERT" Boot Error Record Table
 ///
-#define EFI_ACPI_6_0_BOOT_ERROR_RECORD_TABLE_SIGNATURE  SIGNATURE_32('B', 'E', 'R', 'T')
+#define EFI_ACPI_6_0_BOOT_ERROR_RECORD_TABLE_SIGNATURE  \
+  SIGNATURE_32('B', 'E', 'R', 'T')
 
 ///
 /// "BGRT" Boot Graphics Resource Table
 ///
-#define EFI_ACPI_6_0_BOOT_GRAPHICS_RESOURCE_TABLE_SIGNATURE  SIGNATURE_32('B', 'G', 'R', 'T')
+#define EFI_ACPI_6_0_BOOT_GRAPHICS_RESOURCE_TABLE_SIGNATURE  \
+  SIGNATURE_32('B', 'G', 'R', 'T')
 
 ///
 /// "CPEP" Corrected Platform Error Polling Table
 ///
-#define EFI_ACPI_6_0_CORRECTED_PLATFORM_ERROR_POLLING_TABLE_SIGNATURE  SIGNATURE_32('C', 'P', 'E', 'P')
+#define EFI_ACPI_6_0_CORRECTED_PLATFORM_ERROR_POLLING_TABLE_SIGNATURE  \
+  SIGNATURE_32('C', 'P', 'E', 'P')
 
 ///
 /// "DSDT" Differentiated System Description Table
 ///
-#define EFI_ACPI_6_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('D', 'S', 'D', 'T')
+#define EFI_ACPI_6_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('D', 'S', 'D', 'T')
 
 ///
 /// "ECDT" Embedded Controller Boot Resources Table
 ///
-#define EFI_ACPI_6_0_EMBEDDED_CONTROLLER_BOOT_RESOURCES_TABLE_SIGNATURE  SIGNATURE_32('E', 'C', 'D', 'T')
+#define EFI_ACPI_6_0_EMBEDDED_CONTROLLER_BOOT_RESOURCES_TABLE_SIGNATURE  \
+  SIGNATURE_32('E', 'C', 'D', 'T')
 
 ///
 /// "EINJ" Error Injection Table
 ///
-#define EFI_ACPI_6_0_ERROR_INJECTION_TABLE_SIGNATURE  SIGNATURE_32('E', 'I', 'N', 'J')
+#define EFI_ACPI_6_0_ERROR_INJECTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('E', 'I', 'N', 'J')
 
 ///
 /// "ERST" Error Record Serialization Table
 ///
-#define EFI_ACPI_6_0_ERROR_RECORD_SERIALIZATION_TABLE_SIGNATURE  SIGNATURE_32('E', 'R', 'S', 'T')
+#define EFI_ACPI_6_0_ERROR_RECORD_SERIALIZATION_TABLE_SIGNATURE  \
+  SIGNATURE_32('E', 'R', 'S', 'T')
 
 ///
 /// "FACP" Fixed ACPI Description Table
 ///
-#define EFI_ACPI_6_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('F', 'A', 'C', 'P')
+#define EFI_ACPI_6_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('F', 'A', 'C', 'P')
 
 ///
 /// "FACS" Firmware ACPI Control Structure
 ///
-#define EFI_ACPI_6_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE  SIGNATURE_32('F', 'A', 'C', 'S')
+#define EFI_ACPI_6_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE  \
+  SIGNATURE_32('F', 'A', 'C', 'S')
 
 ///
 /// "FPDT" Firmware Performance Data Table
 ///
-#define EFI_ACPI_6_0_FIRMWARE_PERFORMANCE_DATA_TABLE_SIGNATURE  SIGNATURE_32('F', 'P', 'D', 'T')
+#define EFI_ACPI_6_0_FIRMWARE_PERFORMANCE_DATA_TABLE_SIGNATURE  \
+  SIGNATURE_32('F', 'P', 'D', 'T')
 
 ///
 /// "GTDT" Generic Timer Description Table
 ///
-#define EFI_ACPI_6_0_GENERIC_TIMER_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('G', 'T', 'D', 'T')
+#define EFI_ACPI_6_0_GENERIC_TIMER_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('G', 'T', 'D', 'T')
 
 ///
 /// "HEST" Hardware Error Source Table
 ///
-#define EFI_ACPI_6_0_HARDWARE_ERROR_SOURCE_TABLE_SIGNATURE  SIGNATURE_32('H', 'E', 'S', 'T')
+#define EFI_ACPI_6_0_HARDWARE_ERROR_SOURCE_TABLE_SIGNATURE  \
+  SIGNATURE_32('H', 'E', 'S', 'T')
 
 ///
 /// "MPST" Memory Power State Table
 ///
-#define EFI_ACPI_6_0_MEMORY_POWER_STATE_TABLE_SIGNATURE  SIGNATURE_32('M', 'P', 'S', 'T')
+#define EFI_ACPI_6_0_MEMORY_POWER_STATE_TABLE_SIGNATURE  \
+  SIGNATURE_32('M', 'P', 'S', 'T')
 
 ///
 /// "MSCT" Maximum System Characteristics Table
 ///
-#define EFI_ACPI_6_0_MAXIMUM_SYSTEM_CHARACTERISTICS_TABLE_SIGNATURE  SIGNATURE_32('M', 'S', 'C', 'T')
+#define EFI_ACPI_6_0_MAXIMUM_SYSTEM_CHARACTERISTICS_TABLE_SIGNATURE  \
+  SIGNATURE_32('M', 'S', 'C', 'T')
 
 ///
 /// "NFIT" NVDIMM Firmware Interface Table
 ///
-#define EFI_ACPI_6_0_NVDIMM_FIRMWARE_INTERFACE_TABLE_STRUCTURE_SIGNATURE  SIGNATURE_32('N', 'F', 'I', 'T')
+#define EFI_ACPI_6_0_NVDIMM_FIRMWARE_INTERFACE_TABLE_STRUCTURE_SIGNATURE  \
+  SIGNATURE_32('N', 'F', 'I', 'T')
 
 ///
 /// "PMTT" Platform Memory Topology Table
 ///
-#define EFI_ACPI_6_0_PLATFORM_MEMORY_TOPOLOGY_TABLE_SIGNATURE  SIGNATURE_32('P', 'M', 'T', 'T')
+#define EFI_ACPI_6_0_PLATFORM_MEMORY_TOPOLOGY_TABLE_SIGNATURE  \
+  SIGNATURE_32('P', 'M', 'T', 'T')
 
 ///
 /// "PSDT" Persistent System Description Table
 ///
-#define EFI_ACPI_6_0_PERSISTENT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('P', 'S', 'D', 'T')
+#define EFI_ACPI_6_0_PERSISTENT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('P', 'S', 'D', 'T')
 
 ///
 /// "RASF" ACPI RAS Feature Table
 ///
-#define EFI_ACPI_6_0_ACPI_RAS_FEATURE_TABLE_SIGNATURE  SIGNATURE_32('R', 'A', 'S', 'F')
+#define EFI_ACPI_6_0_ACPI_RAS_FEATURE_TABLE_SIGNATURE  \
+  SIGNATURE_32('R', 'A', 'S', 'F')
 
 ///
 /// "RSDT" Root System Description Table
 ///
-#define EFI_ACPI_6_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('R', 'S', 'D', 'T')
+#define EFI_ACPI_6_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('R', 'S', 'D', 'T')
 
 ///
 /// "SBST" Smart Battery Specification Table
 ///
-#define EFI_ACPI_6_0_SMART_BATTERY_SPECIFICATION_TABLE_SIGNATURE  SIGNATURE_32('S', 'B', 'S', 'T')
+#define EFI_ACPI_6_0_SMART_BATTERY_SPECIFICATION_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'B', 'S', 'T')
 
 ///
 /// "SLIT" System Locality Information Table
 ///
-#define EFI_ACPI_6_0_SYSTEM_LOCALITY_INFORMATION_TABLE_SIGNATURE  SIGNATURE_32('S', 'L', 'I', 'T')
+#define EFI_ACPI_6_0_SYSTEM_LOCALITY_INFORMATION_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'L', 'I', 'T')
 
 ///
 /// "SRAT" System Resource Affinity Table
 ///
-#define EFI_ACPI_6_0_SYSTEM_RESOURCE_AFFINITY_TABLE_SIGNATURE  SIGNATURE_32('S', 'R', 'A', 'T')
+#define EFI_ACPI_6_0_SYSTEM_RESOURCE_AFFINITY_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'R', 'A', 'T')
 
 ///
 /// "SSDT" Secondary System Description Table
 ///
-#define EFI_ACPI_6_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('S', 'S', 'D', 'T')
+#define EFI_ACPI_6_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'S', 'D', 'T')
 
 ///
 /// "XSDT" Extended System Description Table
 ///
-#define EFI_ACPI_6_0_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('X', 'S', 'D', 'T')
+#define EFI_ACPI_6_0_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('X', 'S', 'D', 'T')
 
 ///
 /// "BOOT" MS Simple Boot Spec
 ///
-#define EFI_ACPI_6_0_SIMPLE_BOOT_FLAG_TABLE_SIGNATURE  SIGNATURE_32('B', 'O', 'O', 'T')
+#define EFI_ACPI_6_0_SIMPLE_BOOT_FLAG_TABLE_SIGNATURE  \
+  SIGNATURE_32('B', 'O', 'O', 'T')
 
 ///
 /// "CSRT" MS Core System Resource Table
 ///
-#define EFI_ACPI_6_0_CORE_SYSTEM_RESOURCE_TABLE_SIGNATURE  SIGNATURE_32('C', 'S', 'R', 'T')
+#define EFI_ACPI_6_0_CORE_SYSTEM_RESOURCE_TABLE_SIGNATURE  \
+  SIGNATURE_32('C', 'S', 'R', 'T')
 
 ///
 /// "DBG2" MS Debug Port 2 Spec
 ///
-#define EFI_ACPI_6_0_DEBUG_PORT_2_TABLE_SIGNATURE  SIGNATURE_32('D', 'B', 'G', '2')
+#define EFI_ACPI_6_0_DEBUG_PORT_2_TABLE_SIGNATURE  \
+  SIGNATURE_32('D', 'B', 'G', '2')
 
 ///
 /// "DBGP" MS Debug Port Spec
 ///
-#define EFI_ACPI_6_0_DEBUG_PORT_TABLE_SIGNATURE  SIGNATURE_32('D', 'B', 'G', 'P')
+#define EFI_ACPI_6_0_DEBUG_PORT_TABLE_SIGNATURE  \
+  SIGNATURE_32('D', 'B', 'G', 'P')
 
 ///
 /// "DMAR" DMA Remapping Table
 ///
-#define EFI_ACPI_6_0_DMA_REMAPPING_TABLE_SIGNATURE  SIGNATURE_32('D', 'M', 'A', 'R')
+#define EFI_ACPI_6_0_DMA_REMAPPING_TABLE_SIGNATURE  \
+  SIGNATURE_32('D', 'M', 'A', 'R')
 
 ///
 /// "DRTM" Dynamic Root of Trust for Measurement Table
 ///
-#define EFI_ACPI_6_0_DYNAMIC_ROOT_OF_TRUST_FOR_MEASUREMENT_TABLE_SIGNATURE  SIGNATURE_32('D', 'R', 'T', 'M')
+#define EFI_ACPI_6_0_DYNAMIC_ROOT_OF_TRUST_FOR_MEASUREMENT_TABLE_SIGNATURE  \
+  SIGNATURE_32('D', 'R', 'T', 'M')
 
 ///
 /// "ETDT" Event Timer Description Table
 ///
-#define EFI_ACPI_6_0_EVENT_TIMER_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('E', 'T', 'D', 'T')
+#define EFI_ACPI_6_0_EVENT_TIMER_DESCRIPTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('E', 'T', 'D', 'T')
 
 ///
 /// "HPET" IA-PC High Precision Event Timer Table
 ///
-#define EFI_ACPI_6_0_HIGH_PRECISION_EVENT_TIMER_TABLE_SIGNATURE  SIGNATURE_32('H', 'P', 'E', 'T')
+#define EFI_ACPI_6_0_HIGH_PRECISION_EVENT_TIMER_TABLE_SIGNATURE  \
+  SIGNATURE_32('H', 'P', 'E', 'T')
 
 ///
 /// "iBFT" iSCSI Boot Firmware Table
 ///
-#define EFI_ACPI_6_0_ISCSI_BOOT_FIRMWARE_TABLE_SIGNATURE  SIGNATURE_32('i', 'B', 'F', 'T')
+#define EFI_ACPI_6_0_ISCSI_BOOT_FIRMWARE_TABLE_SIGNATURE  \
+  SIGNATURE_32('i', 'B', 'F', 'T')
 
 ///
 /// "IORT" I/O Remapping Table
 ///
-#define EFI_ACPI_6_0_IO_REMAPPING_TABLE_SIGNATURE  SIGNATURE_32('I', 'O', 'R', 'T')
+#define EFI_ACPI_6_0_IO_REMAPPING_TABLE_SIGNATURE  \
+  SIGNATURE_32('I', 'O', 'R', 'T')
 
 ///
 /// "IVRS" I/O Virtualization Reporting Structure
 ///
-#define EFI_ACPI_6_0_IO_VIRTUALIZATION_REPORTING_STRUCTURE_SIGNATURE  SIGNATURE_32('I', 'V', 'R', 'S')
+#define EFI_ACPI_6_0_IO_VIRTUALIZATION_REPORTING_STRUCTURE_SIGNATURE  \
+  SIGNATURE_32('I', 'V', 'R', 'S')
 
 ///
 /// "LPIT" Low Power Idle Table
 ///
-#define EFI_ACPI_6_0_LOW_POWER_IDLE_TABLE_STRUCTURE_SIGNATURE  SIGNATURE_32('L', 'P', 'I', 'T')
+#define EFI_ACPI_6_0_LOW_POWER_IDLE_TABLE_STRUCTURE_SIGNATURE  \
+  SIGNATURE_32('L', 'P', 'I', 'T')
 
 ///
 /// "MCFG" PCI Express Memory Mapped Configuration Space Base Address Description Table
 ///
-#define EFI_ACPI_6_0_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('M', 'C', 'F', 'G')
+#define \
+  EFI_ACPI_6_0_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE        \
+  SIGNATURE_32('M', 'C', 'F', 'G')
 
 ///
 /// "MCHI" Management Controller Host Interface Table
 ///
-#define EFI_ACPI_6_0_MANAGEMENT_CONTROLLER_HOST_INTERFACE_TABLE_SIGNATURE  SIGNATURE_32('M', 'C', 'H', 'I')
+#define EFI_ACPI_6_0_MANAGEMENT_CONTROLLER_HOST_INTERFACE_TABLE_SIGNATURE  \
+  SIGNATURE_32('M', 'C', 'H', 'I')
 
 ///
 /// "MSDM" MS Data Management Table
 ///
-#define EFI_ACPI_6_0_DATA_MANAGEMENT_TABLE_SIGNATURE  SIGNATURE_32('M', 'S', 'D', 'M')
+#define EFI_ACPI_6_0_DATA_MANAGEMENT_TABLE_SIGNATURE  \
+  SIGNATURE_32('M', 'S', 'D', 'M')
 
 ///
 /// "PCCT" Platform Communications Channel Table
 ///
-#define EFI_ACPI_6_0_PLATFORM_COMMUNICATIONS_CHANNEL_TABLE_SIGNATURE  SIGNATURE_32('P', 'C', 'C', 'T')
+#define EFI_ACPI_6_0_PLATFORM_COMMUNICATIONS_CHANNEL_TABLE_SIGNATURE  \
+  SIGNATURE_32('P', 'C', 'C', 'T')
 
 ///
 /// "SLIC" MS Software Licensing Table Specification
 ///
-#define EFI_ACPI_6_0_SOFTWARE_LICENSING_TABLE_SIGNATURE  SIGNATURE_32('S', 'L', 'I', 'C')
+#define EFI_ACPI_6_0_SOFTWARE_LICENSING_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'L', 'I', 'C')
 
 ///
 /// "SPCR" Serial Port Console Redirection Table
 ///
-#define EFI_ACPI_6_0_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE  SIGNATURE_32('S', 'P', 'C', 'R')
+#define EFI_ACPI_6_0_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'P', 'C', 'R')
 
 ///
 /// "SPMI" Server Platform Management Interface Table
 ///
-#define EFI_ACPI_6_0_SERVER_PLATFORM_MANAGEMENT_INTERFACE_TABLE_SIGNATURE  SIGNATURE_32('S', 'P', 'M', 'I')
+#define EFI_ACPI_6_0_SERVER_PLATFORM_MANAGEMENT_INTERFACE_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'P', 'M', 'I')
 
 ///
 /// "STAO" _STA Override Table
 ///
-#define EFI_ACPI_6_0_STA_OVERRIDE_TABLE_SIGNATURE  SIGNATURE_32('S', 'T', 'A', 'O')
+#define EFI_ACPI_6_0_STA_OVERRIDE_TABLE_SIGNATURE  \
+  SIGNATURE_32('S', 'T', 'A', 'O')
 
 ///
 /// "TCPA" Trusted Computing Platform Alliance Capabilities Table
 ///
-#define EFI_ACPI_6_0_TRUSTED_COMPUTING_PLATFORM_ALLIANCE_CAPABILITIES_TABLE_SIGNATURE  SIGNATURE_32('T', 'C', 'P', 'A')
+#define \
+  EFI_ACPI_6_0_TRUSTED_COMPUTING_PLATFORM_ALLIANCE_CAPABILITIES_TABLE_SIGNATURE        \
+  SIGNATURE_32('T', 'C', 'P', 'A')
 
 ///
 /// "TPM2" Trusted Computing Platform 1 Table
 ///
-#define EFI_ACPI_6_0_TRUSTED_COMPUTING_PLATFORM_2_TABLE_SIGNATURE  SIGNATURE_32('T', 'P', 'M', '2')
+#define EFI_ACPI_6_0_TRUSTED_COMPUTING_PLATFORM_2_TABLE_SIGNATURE  \
+  SIGNATURE_32('T', 'P', 'M', '2')
 
 ///
 /// "UEFI" UEFI ACPI Data Table
 ///
-#define EFI_ACPI_6_0_UEFI_ACPI_DATA_TABLE_SIGNATURE  SIGNATURE_32('U', 'E', 'F', 'I')
+#define EFI_ACPI_6_0_UEFI_ACPI_DATA_TABLE_SIGNATURE  \
+  SIGNATURE_32('U', 'E', 'F', 'I')
 
 ///
 /// "WAET" Windows ACPI Emulated Devices Table
 ///
-#define EFI_ACPI_6_0_WINDOWS_ACPI_EMULATED_DEVICES_TABLE_SIGNATURE  SIGNATURE_32('W', 'A', 'E', 'T')
+#define EFI_ACPI_6_0_WINDOWS_ACPI_EMULATED_DEVICES_TABLE_SIGNATURE  \
+  SIGNATURE_32('W', 'A', 'E', 'T')
 
 ///
 /// "WDAT" Watchdog Action Table
 ///
-#define EFI_ACPI_6_0_WATCHDOG_ACTION_TABLE_SIGNATURE  SIGNATURE_32('W', 'D', 'A', 'T')
+#define EFI_ACPI_6_0_WATCHDOG_ACTION_TABLE_SIGNATURE  \
+  SIGNATURE_32('W', 'D', 'A', 'T')
 
 ///
 /// "WDRT" Watchdog Resource Table
 ///
-#define EFI_ACPI_6_0_WATCHDOG_RESOURCE_TABLE_SIGNATURE  SIGNATURE_32('W', 'D', 'R', 'T')
+#define EFI_ACPI_6_0_WATCHDOG_RESOURCE_TABLE_SIGNATURE  \
+  SIGNATURE_32('W', 'D', 'R', 'T')
 
 ///
 /// "WPBT" MS Platform Binary Table
 ///
-#define EFI_ACPI_6_0_PLATFORM_BINARY_TABLE_SIGNATURE  SIGNATURE_32('W', 'P', 'B', 'T')
+#define EFI_ACPI_6_0_PLATFORM_BINARY_TABLE_SIGNATURE  \
+  SIGNATURE_32('W', 'P', 'B', 'T')
 
 ///
 /// "XENV" Xen Project Table
 ///
-#define EFI_ACPI_6_0_XEN_PROJECT_TABLE_SIGNATURE  SIGNATURE_32('X', 'E', 'N', 'V')
+#define EFI_ACPI_6_0_XEN_PROJECT_TABLE_SIGNATURE  \
+  SIGNATURE_32('X', 'E', 'N', 'V')
 
 #pragma pack()
 

@@ -39,7 +39,8 @@ typedef struct {
   UINT32                                    EventTimerBlockId;
   EFI_ACPI_2_0_GENERIC_ADDRESS_STRUCTURE    BaseAddressLower32Bit;
   UINT8                                     HpetNumber;
-  UINT16                                    MainCounterMinimumClockTickInPeriodicMode;
+  UINT16
+                                            MainCounterMinimumClockTickInPeriodicMode;
   UINT8                                     PageProtectionAndOemAttribute;
 } EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER;
 

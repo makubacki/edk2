@@ -24,7 +24,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
     0x6f8c2b35, 0xfef4, 0x448d, {0x82, 0x56, 0xe1, 0x1b, 0x19, 0xd6, 0x10, 0x77 } \
   }
 
-typedef struct _EFI_SEC_PLATFORM_INFORMATION_PPI EFI_SEC_PLATFORM_INFORMATION_PPI;
+typedef struct _EFI_SEC_PLATFORM_INFORMATION_PPI
+EFI_SEC_PLATFORM_INFORMATION_PPI;
 
 ///
 /// EFI_HEALTH_FLAGS
@@ -82,8 +83,8 @@ typedef union {
 #define NORMAL_BOOT_CALL     0x0
 #define RECOVERY_CHECK_CALL  0x3
 
-typedef EFI_HEALTH_FLAGS X64_HANDOFF_STATUS;
-typedef EFI_HEALTH_FLAGS IA32_HANDOFF_STATUS;
+typedef EFI_HEALTH_FLAGS  X64_HANDOFF_STATUS;
+typedef EFI_HEALTH_FLAGS  IA32_HANDOFF_STATUS;
 ///
 /// The hand-off status structure for Itanium architecture.
 ///

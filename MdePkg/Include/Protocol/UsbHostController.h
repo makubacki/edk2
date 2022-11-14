@@ -231,10 +231,14 @@ EFI_STATUS
   IN     UINT8                                               MaxiumPacketLength,
   IN     BOOLEAN                                             IsNewTransfer,
   IN OUT UINT8                                               *DataToggle,
-  IN     UINTN                                               PollingInterval  OPTIONAL,
-  IN     UINTN                                               DataLength       OPTIONAL,
-  IN     EFI_ASYNC_USB_TRANSFER_CALLBACK                     CallBackFunction OPTIONAL,
-  IN     VOID                                                *Context         OPTIONAL
+  IN     UINTN
+  PollingInterval  OPTIONAL,
+  IN     UINTN
+  DataLength       OPTIONAL,
+  IN     EFI_ASYNC_USB_TRANSFER_CALLBACK
+  CallBackFunction OPTIONAL,
+  IN     VOID                                                *Context
+  OPTIONAL
   );
 
 /**

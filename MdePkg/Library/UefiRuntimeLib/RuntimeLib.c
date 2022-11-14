@@ -399,7 +399,13 @@ EfiGetVariable (
   OUT     VOID      *Data
   )
 {
-  return mInternalRT->GetVariable (VariableName, VendorGuid, Attributes, DataSize, Data);
+  return mInternalRT->GetVariable (
+                        VariableName,
+                        VendorGuid,
+                        Attributes,
+                        DataSize,
+                        Data
+                        );
 }
 
 /**
@@ -440,7 +446,11 @@ EfiGetNextVariableName (
   IN OUT EFI_GUID  *VendorGuid
   )
 {
-  return mInternalRT->GetNextVariableName (VariableNameSize, VariableName, VendorGuid);
+  return mInternalRT->GetNextVariableName (
+                        VariableNameSize,
+                        VariableName,
+                        VendorGuid
+                        );
 }
 
 /**
@@ -482,7 +492,13 @@ EfiSetVariable (
   IN VOID      *Data
   )
 {
-  return mInternalRT->SetVariable (VariableName, VendorGuid, Attributes, DataSize, Data);
+  return mInternalRT->SetVariable (
+                        VariableName,
+                        VendorGuid,
+                        Attributes,
+                        DataSize,
+                        Data
+                        );
 }
 
 /**

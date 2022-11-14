@@ -19,7 +19,8 @@
 ///
 /// Declare forward reference for the Timer Architectural Protocol
 ///
-typedef struct _EFI_WATCHDOG_TIMER_ARCH_PROTOCOL EFI_WATCHDOG_TIMER_ARCH_PROTOCOL;
+typedef struct _EFI_WATCHDOG_TIMER_ARCH_PROTOCOL
+EFI_WATCHDOG_TIMER_ARCH_PROTOCOL;
 
 /**
   A function of this type is called when the watchdog timer fires if a

@@ -53,7 +53,12 @@ PostCode (
   IN UINT32  Value
   )
 {
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, POST_CODE_TO_STATUS_CODE_VALUE (Value));
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    POST_CODE_TO_STATUS_CODE_VALUE (
+      Value
+      )
+    );
   return Value;
 }
 
@@ -123,7 +128,8 @@ PostCodeEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdPostCodePropertyMask) & POST_CODE_PROPERTY_POST_CODE_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdPostCodePropertyMask) &
+                    POST_CODE_PROPERTY_POST_CODE_ENABLED) != 0);
 }
 
 /**
@@ -144,5 +150,6 @@ PostCodeDescriptionEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdPostCodePropertyMask) & POST_CODE_PROPERTY_POST_CODE_DESCRIPTION_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdPostCodePropertyMask) &
+                    POST_CODE_PROPERTY_POST_CODE_DESCRIPTION_ENABLED) != 0);
 }

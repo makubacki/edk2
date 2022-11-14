@@ -54,7 +54,9 @@
 
   @return ClearMemory bit value
 **/
-#define MOR_CLEAR_MEMORY_VALUE(mor)  (((UINT8)(mor) & MOR_CLEAR_MEMORY_BIT_MASK) >> MOR_CLEAR_MEMORY_BIT_OFFSET)
+#define MOR_CLEAR_MEMORY_VALUE( \
+                              mor)  \
+  (((UINT8)(mor) & MOR_CLEAR_MEMORY_BIT_MASK) >> MOR_CLEAR_MEMORY_BIT_OFFSET)
 
 /**
   Return the DisableAutoDetect bit value 0 or 1.
@@ -63,7 +65,9 @@
 
   @return DisableAutoDetect bit value
 **/
-#define MOR_DISABLE_AUTO_DETECT_VALUE(mor)  (((UINT8)(mor) & MOR_DISABLEAUTODETECT_BIT_MASK) >> MOR_DISABLEAUTODETECT_BIT_OFFSET)
+#define MOR_DISABLE_AUTO_DETECT_VALUE( \
+                                     mor)  \
+  (((UINT8)(mor) & MOR_DISABLEAUTODETECT_BIT_MASK) >> MOR_DISABLEAUTODETECT_BIT_OFFSET)
 
 extern EFI_GUID  gEfiMemoryOverwriteControlDataGuid;
 

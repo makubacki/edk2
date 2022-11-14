@@ -41,39 +41,88 @@ GenerateRandomNumberViaNist800Algorithm (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = gBS->LocateProtocol (&gEfiRngProtocolGuid, NULL, (VOID **)&RngProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiRngProtocolGuid,
+                  NULL,
+                  (VOID **)&RngProtocol
+                  );
   if (EFI_ERROR (Status) || (RngProtocol == NULL)) {
-    DEBUG ((DEBUG_ERROR, "%a: Could not locate RNG prototocol, Status = %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Could not locate RNG prototocol, Status = %r\n",
+      __FUNCTION__,
+      Status
+      ));
     return Status;
   }
 
-  Status = RngProtocol->GetRNG (RngProtocol, &gEfiRngAlgorithmSp80090Ctr256Guid, BufferSize, Buffer);
-  DEBUG ((DEBUG_INFO, "%a: GetRNG algorithm CTR-256 - Status = %r\n", __FUNCTION__, Status));
+  Status = RngProtocol->GetRNG (
+                          RngProtocol,
+                          &gEfiRngAlgorithmSp80090Ctr256Guid,
+                          BufferSize,
+                          Buffer
+                          );
+  DEBUG ((
+    DEBUG_INFO,
+    "%a: GetRNG algorithm CTR-256 - Status = %r\n",
+    __FUNCTION__,
+    Status
+    ));
   if (!EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = RngProtocol->GetRNG (RngProtocol, &gEfiRngAlgorithmSp80090Hmac256Guid, BufferSize, Buffer);
-  DEBUG ((DEBUG_INFO, "%a: GetRNG algorithm HMAC-256 - Status = %r\n", __FUNCTION__, Status));
+  Status = RngProtocol->GetRNG (
+                          RngProtocol,
+                          &gEfiRngAlgorithmSp80090Hmac256Guid,
+                          BufferSize,
+                          Buffer
+                          );
+  DEBUG ((
+    DEBUG_INFO,
+    "%a: GetRNG algorithm HMAC-256 - Status = %r\n",
+    __FUNCTION__,
+    Status
+    ));
   if (!EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = RngProtocol->GetRNG (RngProtocol, &gEfiRngAlgorithmSp80090Hash256Guid, BufferSize, Buffer);
-  DEBUG ((DEBUG_INFO, "%a: GetRNG algorithm Hash-256 - Status = %r\n", __FUNCTION__, Status));
+  Status = RngProtocol->GetRNG (
+                          RngProtocol,
+                          &gEfiRngAlgorithmSp80090Hash256Guid,
+                          BufferSize,
+                          Buffer
+                          );
+  DEBUG ((
+    DEBUG_INFO,
+    "%a: GetRNG algorithm Hash-256 - Status = %r\n",
+    __FUNCTION__,
+    Status
+    ));
   if (!EFI_ERROR (Status)) {
     return Status;
   }
 
   // If all the other methods have failed, use the default method from the RngProtocol
   Status = RngProtocol->GetRNG (RngProtocol, NULL, BufferSize, Buffer);
-  DEBUG ((DEBUG_INFO, "%a: GetRNG algorithm Hash-256 - Status = %r\n", __FUNCTION__, Status));
+  DEBUG ((
+    DEBUG_INFO,
+    "%a: GetRNG algorithm Hash-256 - Status = %r\n",
+    __FUNCTION__,
+    Status
+    ));
   if (!EFI_ERROR (Status)) {
     return Status;
   }
 
   // If we get to this point, we have failed
-  DEBUG ((DEBUG_ERROR, "%a: GetRNG() failed, staus = %r\n", __FUNCTION__, Status));
+  DEBUG ((
+    DEBUG_ERROR,
+    "%a: GetRNG() failed, staus = %r\n",
+    __FUNCTION__,
+    Status
+    ));
 
   return Status;
 }// GenerateRandomNumberViaNist800Algorithm()
@@ -101,7 +150,10 @@ GetRandomNumber16 (
     return FALSE;
   }
 
-  Status = GenerateRandomNumberViaNist800Algorithm ((UINT8 *)Rand, sizeof (UINT16));
+  Status = GenerateRandomNumberViaNist800Algorithm (
+             (UINT8 *)Rand,
+             sizeof (UINT16)
+             );
   if (EFI_ERROR (Status)) {
     return FALSE;
   }
@@ -132,7 +184,10 @@ GetRandomNumber32 (
     return FALSE;
   }
 
-  Status = GenerateRandomNumberViaNist800Algorithm ((UINT8 *)Rand, sizeof (UINT32));
+  Status = GenerateRandomNumberViaNist800Algorithm (
+             (UINT8 *)Rand,
+             sizeof (UINT32)
+             );
   if (EFI_ERROR (Status)) {
     return FALSE;
   }
@@ -163,7 +218,10 @@ GetRandomNumber64 (
     return FALSE;
   }
 
-  Status = GenerateRandomNumberViaNist800Algorithm ((UINT8 *)Rand, sizeof (UINT64));
+  Status = GenerateRandomNumberViaNist800Algorithm (
+             (UINT8 *)Rand,
+             sizeof (UINT64)
+             );
   if (EFI_ERROR (Status)) {
     return FALSE;
   }
@@ -194,7 +252,11 @@ GetRandomNumber128 (
     return FALSE;
   }
 
-  Status = GenerateRandomNumberViaNist800Algorithm ((UINT8 *)Rand, 2 * sizeof (UINT64));
+  Status = GenerateRandomNumberViaNist800Algorithm (
+             (UINT8 *)Rand,
+             2 *
+             sizeof (UINT64)
+             );
   if (EFI_ERROR (Status)) {
     return FALSE;
   }

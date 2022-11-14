@@ -24,7 +24,8 @@
     0x898890e9, 0x84b2, 0x4f3a, { 0x8c, 0x58, 0xd8, 0x57, 0x78, 0x13, 0xe0, 0xac } \
   }
 
-typedef struct _EFI_BLUETOOTH_ATTRIBUTE_PROTOCOL EFI_BLUETOOTH_ATTRIBUTE_PROTOCOL;
+typedef struct _EFI_BLUETOOTH_ATTRIBUTE_PROTOCOL
+EFI_BLUETOOTH_ATTRIBUTE_PROTOCOL;
 
 #pragma pack(1)
 
@@ -44,7 +45,9 @@ typedef struct {
 #define UUID_32BIT_TYPE_LEN   4
 #define UUID_128BIT_TYPE_LEN  16
 
-#define BLUETOOTH_IS_ATTRIBUTE_OF_TYPE(a, t)  ((a)->Type.Length == UUID_16BIT_TYPE_LEN && (a)->Type.Data.Uuid16 == (t))
+#define BLUETOOTH_IS_ATTRIBUTE_OF_TYPE(a, \
+                                       t)  \
+  ((a)->Type.Length == UUID_16BIT_TYPE_LEN && (a)->Type.Data.Uuid16 == (t))
 
 //
 // Bluetooth Attribute Permission
@@ -262,10 +265,11 @@ EFI_STATUS
   );
 
 struct _EFI_BLUETOOTH_ATTRIBUTE_PROTOCOL {
-  EFI_BLUETOOTH_ATTRIBUTE_SEND_REQUEST                        SendRequest;
-  EFI_BLUETOOTH_ATTRIBUTE_REGISTER_FOR_SERVER_NOTIFICATION    RegisterForServerNotification;
-  EFI_BLUETOOTH_ATTRIBUTE_GET_SERVICE_INFO                    GetServiceInfo;
-  EFI_BLUETOOTH_ATTRIBUTE_GET_DEVICE_INFO                     GetDeviceInfo;
+  EFI_BLUETOOTH_ATTRIBUTE_SEND_REQUEST        SendRequest;
+  EFI_BLUETOOTH_ATTRIBUTE_REGISTER_FOR_SERVER_NOTIFICATION
+                                              RegisterForServerNotification;
+  EFI_BLUETOOTH_ATTRIBUTE_GET_SERVICE_INFO    GetServiceInfo;
+  EFI_BLUETOOTH_ATTRIBUTE_GET_DEVICE_INFO     GetDeviceInfo;
 };
 
 extern EFI_GUID  gEfiBluetoothAttributeProtocolGuid;

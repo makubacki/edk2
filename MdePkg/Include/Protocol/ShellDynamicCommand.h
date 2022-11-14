@@ -22,7 +22,8 @@
 //
 // Define for forward reference.
 //
-typedef struct _EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL;
+typedef struct _EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL
+EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL;
 
 /**
   This is the shell command handler function pointer callback type.  This

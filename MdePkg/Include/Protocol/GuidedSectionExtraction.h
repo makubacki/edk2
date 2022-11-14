@@ -26,7 +26,8 @@
 // section type that it is intended to process.
 //
 
-typedef struct _EFI_GUIDED_SECTION_EXTRACTION_PROTOCOL EFI_GUIDED_SECTION_EXTRACTION_PROTOCOL;
+typedef struct _EFI_GUIDED_SECTION_EXTRACTION_PROTOCOL
+EFI_GUIDED_SECTION_EXTRACTION_PROTOCOL;
 
 /**
   The ExtractSection() function processes the input section and

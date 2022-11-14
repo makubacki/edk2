@@ -472,7 +472,13 @@ SmBusReadBlock (
   ASSERT (SMBUS_LIB_LENGTH (SmBusAddress)    == 0);
   ASSERT (SMBUS_LIB_RESERVED (SmBusAddress) == 0);
 
-  return InternalSmBusExec (EfiSmbusReadBlock, SmBusAddress, 0x20, Buffer, Status);
+  return InternalSmBusExec (
+           EfiSmbusReadBlock,
+           SmBusAddress,
+           0x20,
+           Buffer,
+           Status
+           );
 }
 
 /**
@@ -523,7 +529,13 @@ SmBusWriteBlock (
   ASSERT (SMBUS_LIB_RESERVED (SmBusAddress) == 0);
 
   Length = SMBUS_LIB_LENGTH (SmBusAddress);
-  return InternalSmBusExec (EfiSmbusWriteBlock, SmBusAddress, Length, Buffer, Status);
+  return InternalSmBusExec (
+           EfiSmbusWriteBlock,
+           SmBusAddress,
+           Length,
+           Buffer,
+           Status
+           );
 }
 
 /**
@@ -582,5 +594,11 @@ SmBusBlockProcessCall (
   // Assuming that ReadBuffer is large enough to save another memory copy.
   //
   ReadBuffer = CopyMem (ReadBuffer, WriteBuffer, Length);
-  return InternalSmBusExec (EfiSmbusBWBRProcessCall, SmBusAddress, Length, ReadBuffer, Status);
+  return InternalSmBusExec (
+           EfiSmbusBWBRProcessCall,
+           SmBusAddress,
+           Length,
+           ReadBuffer,
+           Status
+           );
 }

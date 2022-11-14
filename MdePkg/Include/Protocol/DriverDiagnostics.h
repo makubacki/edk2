@@ -100,7 +100,8 @@ EFI_STATUS
 (EFIAPI *EFI_DRIVER_DIAGNOSTICS_RUN_DIAGNOSTICS)(
   IN EFI_DRIVER_DIAGNOSTICS_PROTOCOL                        *This,
   IN  EFI_HANDLE                                            ControllerHandle,
-  IN  EFI_HANDLE                                            ChildHandle  OPTIONAL,
+  IN  EFI_HANDLE
+  ChildHandle  OPTIONAL,
   IN  EFI_DRIVER_DIAGNOSTIC_TYPE                            DiagnosticType,
   IN  CHAR8                                                 *Language,
   OUT EFI_GUID                                              **ErrorType,

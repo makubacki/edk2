@@ -22,9 +22,10 @@ typedef struct _EFI_MM_SYSTEM_TABLE EFI_MM_SYSTEM_TABLE;
 ///
 /// The Management Mode System Table (MMST) revision is 1.6
 ///
-#define MM_SPECIFICATION_MAJOR_REVISION  1
-#define MM_SPECIFICATION_MINOR_REVISION  60
-#define EFI_MM_SYSTEM_TABLE_REVISION     ((MM_SPECIFICATION_MAJOR_REVISION<<16) | (MM_SPECIFICATION_MINOR_REVISION))
+#define MM_SPECIFICATION_MAJOR_REVISION    1
+#define MM_SPECIFICATION_MINOR_REVISION    60
+#define EFI_MM_SYSTEM_TABLE_REVISION     \
+                                           ((MM_SPECIFICATION_MAJOR_REVISION<<16) | (MM_SPECIFICATION_MINOR_REVISION))
 
 /**
   Adds, updates, or removes a configuration table entry from the Management Mode System Table.

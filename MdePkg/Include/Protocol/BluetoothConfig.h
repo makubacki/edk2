@@ -45,7 +45,9 @@ typedef struct {
   ///
   /// Remote device name
   ///
-  UINT8                        RemoteDeviceName[BLUETOOTH_HCI_COMMAND_LOCAL_READABLE_NAME_MAX_SIZE];
+  UINT8                        RemoteDeviceName[
+                                                BLUETOOTH_HCI_COMMAND_LOCAL_READABLE_NAME_MAX_SIZE
+  ];
 } EFI_BLUETOOTH_SCAN_CALLBACK_INFORMATION;
 
 ///
@@ -496,7 +498,8 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_BLUETOOTH_CONFIG_REGISTER_CONNECT_COMPLETE_CALLBACK)(
   IN EFI_BLUETOOTH_CONFIG_PROTOCOL                                      *This,
-  IN EFI_BLUETOOTH_CONFIG_REGISTER_CONNECT_COMPLETE_CALLBACK_FUNCTION   Callback,
+  IN EFI_BLUETOOTH_CONFIG_REGISTER_CONNECT_COMPLETE_CALLBACK_FUNCTION
+  Callback,
   IN VOID                                                               *Context
   );
 
@@ -504,17 +507,20 @@ EFI_STATUS
 /// This protocol abstracts user interface configuration for Bluetooth device.
 ///
 struct _EFI_BLUETOOTH_CONFIG_PROTOCOL {
-  EFI_BLUETOOTH_CONFIG_INIT                                  Init;
-  EFI_BLUETOOTH_CONFIG_SCAN                                  Scan;
-  EFI_BLUETOOTH_CONFIG_CONNECT                               Connect;
-  EFI_BLUETOOTH_CONFIG_DISCONNECT                            Disconnect;
-  EFI_BLUETOOTH_CONFIG_GET_DATA                              GetData;
-  EFI_BLUETOOTH_CONFIG_SET_DATA                              SetData;
-  EFI_BLUETOOTH_CONFIG_GET_REMOTE_DATA                       GetRemoteData;
-  EFI_BLUETOOTH_CONFIG_REGISTER_PIN_CALLBACK                 RegisterPinCallback;
-  EFI_BLUETOOTH_CONFIG_REGISTER_GET_LINK_KEY_CALLBACK        RegisterGetLinkKeyCallback;
-  EFI_BLUETOOTH_CONFIG_REGISTER_SET_LINK_KEY_CALLBACK        RegisterSetLinkKeyCallback;
-  EFI_BLUETOOTH_CONFIG_REGISTER_CONNECT_COMPLETE_CALLBACK    RegisterLinkConnectCompleteCallback;
+  EFI_BLUETOOTH_CONFIG_INIT                     Init;
+  EFI_BLUETOOTH_CONFIG_SCAN                     Scan;
+  EFI_BLUETOOTH_CONFIG_CONNECT                  Connect;
+  EFI_BLUETOOTH_CONFIG_DISCONNECT               Disconnect;
+  EFI_BLUETOOTH_CONFIG_GET_DATA                 GetData;
+  EFI_BLUETOOTH_CONFIG_SET_DATA                 SetData;
+  EFI_BLUETOOTH_CONFIG_GET_REMOTE_DATA          GetRemoteData;
+  EFI_BLUETOOTH_CONFIG_REGISTER_PIN_CALLBACK    RegisterPinCallback;
+  EFI_BLUETOOTH_CONFIG_REGISTER_GET_LINK_KEY_CALLBACK
+                                                RegisterGetLinkKeyCallback;
+  EFI_BLUETOOTH_CONFIG_REGISTER_SET_LINK_KEY_CALLBACK
+                                                RegisterSetLinkKeyCallback;
+  EFI_BLUETOOTH_CONFIG_REGISTER_CONNECT_COMPLETE_CALLBACK
+                                                RegisterLinkConnectCompleteCallback;
 };
 
 extern EFI_GUID  gEfiBluetoothConfigProtocolGuid;

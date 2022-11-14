@@ -39,8 +39,12 @@
 // These register offsets are defined as 0x1000 + (N * (4 << CAP.DSTRD))
 // Get the doorbell stride bit shift value from the controller capabilities.
 //
-#define NVME_SQTDBL_OFFSET(QID, DSTRD)  0x1000 + ((2 * (QID)) * (4 << (DSTRD)))         // Submission Queue y (NVM) Tail Doorbell
-#define NVME_CQHDBL_OFFSET(QID, DSTRD)  0x1000 + (((2 * (QID)) + 1) * (4 << (DSTRD)))   // Completion Queue y (NVM) Head Doorbell
+#define NVME_SQTDBL_OFFSET(QID, \
+                           DSTRD)  \
+                                                  0x1000 + ((2 * (QID)) * (4 << (DSTRD)))// Submission Queue y (NVM) Tail Doorbell
+#define NVME_CQHDBL_OFFSET(QID, \
+                           DSTRD)  \
+                                                  0x1000 + (((2 * (QID)) + 1) * (4 << (DSTRD)))// Completion Queue y (NVM) Head Doorbell
 
 #pragma pack(1)
 

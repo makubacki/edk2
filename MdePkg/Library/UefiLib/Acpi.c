@@ -54,12 +54,17 @@ ScanTableInSDT (
     return NULL;
   }
 
-  EntryCount = (Sdt->Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / TablePointerSize;
+  EntryCount = (Sdt->Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) /
+               TablePointerSize;
 
   BasePtr = (UINTN)(Sdt + 1);
   for (Index = 0; Index < EntryCount; Index++) {
     EntryPtr = 0;
-    CopyMem (&EntryPtr, (VOID *)(BasePtr + Index * TablePointerSize), TablePointerSize);
+    CopyMem (
+      &EntryPtr,
+      (VOID *)(BasePtr + Index * TablePointerSize),
+      TablePointerSize
+      );
     Table = (EFI_ACPI_COMMON_HEADER *)((UINTN)(EntryPtr));
     if ((Table != NULL) && (Table->Signature == Signature)) {
       if (PreviousTable != NULL) {
@@ -103,7 +108,9 @@ LocateAcpiFacsFromFadt (
     return NULL;
   }
 
-  if (Fadt->Header.Revision < EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION) {
+  if (Fadt->Header.Revision <
+      EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION)
+  {
     Facs = (EFI_ACPI_COMMON_HEADER *)(UINTN)Fadt->FirmwareCtrl;
   } else {
     CopyMem (&Data64, &Fadt->XFirmwareCtrl, sizeof (UINT64));
@@ -137,7 +144,9 @@ LocateAcpiDsdtFromFadt (
     return NULL;
   }
 
-  if (Fadt->Header.Revision < EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION) {
+  if (Fadt->Header.Revision <
+      EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION)
+  {
     Dsdt = (EFI_ACPI_COMMON_HEADER *)(UINTN)Fadt->Dsdt;
   } else {
     CopyMem (&Data64, &Fadt->XDsdt, sizeof (UINT64));
@@ -207,7 +216,9 @@ LocateAcpiTableInAcpiConfigurationTable (
   //
   if (Rsdp->Revision >= EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER_REVISION) {
     Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)Rsdp->XsdtAddress;
-    if (Signature == EFI_ACPI_2_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+    if (Signature ==
+        EFI_ACPI_2_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE)
+    {
       ASSERT (PreviousTable == NULL);
       //
       // It is to locate DSDT,
@@ -221,7 +232,9 @@ LocateAcpiTableInAcpiConfigurationTable (
                                                             NULL
                                                             );
       Table = LocateAcpiDsdtFromFadt (Fadt);
-    } else if (Signature == EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE) {
+    } else if (Signature ==
+               EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE)
+    {
       ASSERT (PreviousTable == NULL);
       //
       // It is to locate FACS,
@@ -262,7 +275,9 @@ LocateAcpiTableInAcpiConfigurationTable (
   // Search RSDT
   //
   Rsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)Rsdp->RsdtAddress;
-  if (Signature == EFI_ACPI_2_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+  if (Signature ==
+      EFI_ACPI_2_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE)
+  {
     ASSERT (PreviousTable == NULL);
     //
     // It is to locate DSDT,
@@ -276,7 +291,9 @@ LocateAcpiTableInAcpiConfigurationTable (
                                                           NULL
                                                           );
     Table = LocateAcpiDsdtFromFadt (Fadt);
-  } else if (Signature == EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE) {
+  } else if (Signature ==
+             EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE)
+  {
     ASSERT (PreviousTable == NULL);
     //
     // It is to locate FACS,
@@ -355,9 +372,13 @@ EfiLocateNextAcpiTable (
       // PreviousTable->Signature is not same with Signature.
       //
       return NULL;
-    } else if ((Signature == EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) ||
-               (Signature == EFI_ACPI_2_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) ||
-               (Signature == EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE))
+    } else if (  (Signature ==
+                EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) ||
+               (Signature ==
+                EFI_ACPI_2_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE)
+              ||
+               (Signature ==
+                EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE))
     {
       //
       // There is only one FADT/DSDT/FACS table,

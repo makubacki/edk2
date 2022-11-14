@@ -12,7 +12,8 @@
 
 #include <IndustryStandard/Acpi.h>
 
-#define EFI_ACPI_WINDOWS_SMM_SECURITY_MITIGATION_TABLE_SIGNATURE  SIGNATURE_32('W', 'S', 'M', 'T')
+#define EFI_ACPI_WINDOWS_SMM_SECURITY_MITIGATION_TABLE_SIGNATURE  \
+  SIGNATURE_32('W', 'S', 'M', 'T')
 
 #pragma pack(1)
 

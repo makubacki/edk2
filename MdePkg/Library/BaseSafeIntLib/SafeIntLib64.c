@@ -390,7 +390,11 @@ SafeUintnMult (
   OUT UINTN  *Result
   )
 {
-  return SafeUint64Mult ((UINT64)Multiplicand, (UINT64)Multiplier, (UINT64 *)Result);
+  return SafeUint64Mult (
+           (UINT64)Multiplicand,
+           (UINT64)Multiplier,
+           (UINT64 *)Result
+           );
 }
 
 /**
@@ -486,5 +490,9 @@ SafeIntnMult (
   OUT INTN  *Result
   )
 {
-  return SafeInt64Mult ((INT64)Multiplicand, (INT64)Multiplier, (INT64 *)Result);
+  return SafeInt64Mult (
+           (INT64)Multiplicand,
+           (INT64)Multiplier,
+           (INT64 *)Result
+           );
 }

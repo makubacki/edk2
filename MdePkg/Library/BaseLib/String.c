@@ -807,7 +807,9 @@ AsciiStriCmp (
 
   UpperFirstString  = AsciiCharToUpper (*FirstString);
   UpperSecondString = AsciiCharToUpper (*SecondString);
-  while ((*FirstString != '\0') && (*SecondString != '\0') && (UpperFirstString == UpperSecondString)) {
+  while ((*FirstString != '\0') && (*SecondString != '\0') &&
+         (UpperFirstString == UpperSecondString))
+  {
     FirstString++;
     SecondString++;
     UpperFirstString  = AsciiCharToUpper (*FirstString);
@@ -1186,7 +1188,10 @@ Base64Encode (
   //
   // Check if SourceLength or  DestinationSize is valid
   //
-  if ((SourceLength >= (MAX_ADDRESS - (UINTN)Source)) || (*DestinationSize >= (MAX_ADDRESS - (UINTN)Destination))) {
+  if ((SourceLength >= (MAX_ADDRESS - (UINTN)Source)) || (*DestinationSize >=
+                                                          (MAX_ADDRESS -
+                                                           (UINTN)Destination)))
+  {
     return RETURN_INVALID_PARAMETER;
   }
 
@@ -1206,8 +1211,10 @@ Base64Encode (
   //
   while (Left >= 3) {
     *Destination++ = EncodingTable[(Source[0] & 0xfc) >> 2];
-    *Destination++ = EncodingTable[((Source[0] & 0x03) << 4) + ((Source[1] & 0xf0) >> 4)];
-    *Destination++ = EncodingTable[((Source[1] & 0x0f) << 2) + ((Source[2] & 0xc0) >> 6)];
+    *Destination++ = EncodingTable[((Source[0] & 0x03) << 4) + ((Source[1] &
+                                                                 0xf0) >> 4)];
+    *Destination++ = EncodingTable[((Source[1] & 0x0f) << 2) + ((Source[2] &
+                                                                 0xc0) >> 6)];
     *Destination++ = EncodingTable[(Source[2] & 0x3f)];
     Left          -= 3;
     Source        += 3;
@@ -1239,7 +1246,8 @@ Base64Encode (
       // Two more data bytes, and one pad character
       //
       *Destination++ = EncodingTable[(Source[0] & 0xfc) >> 2];
-      *Destination++ = EncodingTable[((Source[0] & 0x03) << 4) + ((Source[1] & 0xf0) >> 4)];
+      *Destination++ = EncodingTable[((Source[0] & 0x03) << 4) + ((Source[1] &
+                                                                   0xf0) >> 4)];
       *Destination++ = EncodingTable[((Source[1] & 0x0f) << 2)];
       *Destination++ = '=';
       break;

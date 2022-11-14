@@ -302,9 +302,13 @@ DebugAssert (
   //
   // Generate a Breakpoint, DeadLoop, or NOP based on PCD settings
   //
-  if ((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_ASSERT_BREAKPOINT_ENABLED) != 0) {
+  if ((PcdGet8 (PcdDebugPropertyMask) &
+       DEBUG_PROPERTY_ASSERT_BREAKPOINT_ENABLED) != 0)
+  {
     CpuBreakpoint ();
-  } else if ((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_ASSERT_DEADLOOP_ENABLED) != 0) {
+  } else if ((PcdGet8 (PcdDebugPropertyMask) &
+              DEBUG_PROPERTY_ASSERT_DEADLOOP_ENABLED) != 0)
+  {
     CpuDeadLoop ();
   }
 }
@@ -358,7 +362,8 @@ DebugAssertEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_DEBUG_ASSERT_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) &
+                    DEBUG_PROPERTY_DEBUG_ASSERT_ENABLED) != 0);
 }
 
 /**
@@ -377,7 +382,8 @@ DebugPrintEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_DEBUG_PRINT_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) &
+                    DEBUG_PROPERTY_DEBUG_PRINT_ENABLED) != 0);
 }
 
 /**
@@ -396,7 +402,8 @@ DebugCodeEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_DEBUG_CODE_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) &
+                    DEBUG_PROPERTY_DEBUG_CODE_ENABLED) != 0);
 }
 
 /**
@@ -415,7 +422,8 @@ DebugClearMemoryEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_CLEAR_MEMORY_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) &
+                    DEBUG_PROPERTY_CLEAR_MEMORY_ENABLED) != 0);
 }
 
 /**

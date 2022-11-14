@@ -89,7 +89,11 @@ TdAcceptPages (
 
   if ((StartAddress & ~0xFFFFFFFFFF000ULL) != 0) {
     ASSERT (FALSE);
-    DEBUG ((DEBUG_ERROR, "Accept page address(0x%llx) is not valid. [63:52] and [11:0] must be 0\n", StartAddress));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Accept page address(0x%llx) is not valid. [63:52] and [11:0] must be 0\n",
+      StartAddress
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
@@ -98,7 +102,11 @@ TdAcceptPages (
   GpaPageLevel = GetGpaPageLevel (PageSize);
   if (GpaPageLevel == INVALID_ACCEPT_PAGELEVEL) {
     ASSERT (FALSE);
-    DEBUG ((DEBUG_ERROR, "Accept page size must be 4K/2M. Invalid page size - 0x%llx\n", PageSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Accept page size must be 4K/2M. Invalid page size - 0x%llx\n",
+      PageSize
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
@@ -114,18 +122,34 @@ DoAcceptPage:
         // Already accepted
         //
         mNumberOfDuplicatedAcceptedPages++;
-        DEBUG ((DEBUG_WARN, "Page at Address (0x%llx) has already been accepted. - %d\n", Address, mNumberOfDuplicatedAcceptedPages));
-      } else if ((TdxStatus & ~0xFFFFULL) == TDX_EXIT_REASON_PAGE_SIZE_MISMATCH) {
+        DEBUG ((
+          DEBUG_WARN,
+          "Page at Address (0x%llx) has already been accepted. - %d\n",
+          Address,
+          mNumberOfDuplicatedAcceptedPages
+          ));
+      } else if ((TdxStatus & ~0xFFFFULL) ==
+                 TDX_EXIT_REASON_PAGE_SIZE_MISMATCH)
+      {
         //
         // GpaPageLevel is mismatch, fall back to a smaller GpaPageLevel if possible
         //
-        DEBUG ((DEBUG_VERBOSE, "Address %llx cannot be accepted in PageLevel of %d\n", Address, GpaPageLevel));
+        DEBUG ((
+          DEBUG_VERBOSE,
+          "Address %llx cannot be accepted in PageLevel of %d\n",
+          Address,
+          GpaPageLevel
+          ));
 
         if (GpaPageLevel == 0) {
           //
           // Cannot fall back to smaller page level
           //
-          DEBUG ((DEBUG_ERROR, "AcceptPage cannot fallback from PageLevel %d\n", GpaPageLevel));
+          DEBUG ((
+            DEBUG_ERROR,
+            "AcceptPage cannot fallback from PageLevel %d\n",
+            GpaPageLevel
+            ));
           Status = EFI_INVALID_PARAMETER;
           break;
         } else {

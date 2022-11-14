@@ -298,7 +298,9 @@ typedef struct {
   UINT32                           ArpCacheEntries;
   EFI_PXE_BASE_CODE_ARP_ENTRY      ArpCache[EFI_PXE_BASE_CODE_MAX_ARP_ENTRIES];
   UINT32                           RouteTableEntries;
-  EFI_PXE_BASE_CODE_ROUTE_ENTRY    RouteTable[EFI_PXE_BASE_CODE_MAX_ROUTE_ENTRIES];
+  EFI_PXE_BASE_CODE_ROUTE_ENTRY    RouteTable[
+                                              EFI_PXE_BASE_CODE_MAX_ROUTE_ENTRIES
+  ];
   EFI_PXE_BASE_CODE_ICMP_ERROR     IcmpError;
   EFI_PXE_BASE_CODE_TFTP_ERROR     TftpError;
 } EFI_PXE_BASE_CODE_MODE;
@@ -893,7 +895,8 @@ EFI_STATUS
 //
 // Revision defined in EFI1.1
 //
-#define EFI_PXE_BASE_CODE_INTERFACE_REVISION  EFI_PXE_BASE_CODE_PROTOCOL_REVISION
+#define EFI_PXE_BASE_CODE_INTERFACE_REVISION  \
+  EFI_PXE_BASE_CODE_PROTOCOL_REVISION
 
 ///
 /// The EFI_PXE_BASE_CODE_PROTOCOL is used to control PXE-compatible devices.

@@ -21,7 +21,8 @@
   #pragma pack()
 #endif
 
-#if defined (__GNUC__) && defined (__pic__) && !defined (USING_LTO)  && !defined (__APPLE__)
+#if defined (__GNUC__) && defined (__pic__) && !defined (USING_LTO)  && \
+  !defined (__APPLE__)
 //
 // Mark all symbol declarations and references as hidden, meaning they will
 // not be subject to symbol preemption. This allows the compiler to refer to

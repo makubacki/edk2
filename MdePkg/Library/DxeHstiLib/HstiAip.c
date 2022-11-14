@@ -40,7 +40,9 @@ HstiAipGetInfo (
 {
   HSTI_AIP_PRIVATE_DATA  *HstiAip;
 
-  if ((This == NULL) || (InformationBlock == NULL) || (InformationBlockSize == NULL)) {
+  if ((This == NULL) || (InformationBlock == NULL) || (InformationBlockSize ==
+                                                       NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -153,11 +155,16 @@ HstiAipGetSupportedTypes (
   OUT UINTN                             *InfoTypesBufferCount
   )
 {
-  if ((This == NULL) || (InfoTypesBuffer == NULL) || (InfoTypesBufferCount == NULL)) {
+  if ((This == NULL) || (InfoTypesBuffer == NULL) || (InfoTypesBufferCount ==
+                                                      NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
-  *InfoTypesBuffer = AllocateCopyPool (sizeof (gAdapterInfoPlatformSecurityGuid), &gAdapterInfoPlatformSecurityGuid);
+  *InfoTypesBuffer = AllocateCopyPool (
+                       sizeof (gAdapterInfoPlatformSecurityGuid),
+                       &gAdapterInfoPlatformSecurityGuid
+                       );
   if (*InfoTypesBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

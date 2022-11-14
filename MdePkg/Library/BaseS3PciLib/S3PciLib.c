@@ -72,7 +72,11 @@ InternalSavePciWrite8ValueToBootScript (
   IN UINT8  Value
   )
 {
-  InternalSavePciWriteValueToBootScript (S3BootScriptWidthUint8, Address, &Value);
+  InternalSavePciWriteValueToBootScript (
+    S3BootScriptWidthUint8,
+    Address,
+    &Value
+    );
 
   return Value;
 }
@@ -126,7 +130,13 @@ S3PciWrite8 (
   IN UINT8  Value
   )
 {
-  return InternalSavePciWrite8ValueToBootScript (Address, PciWrite8 (Address, Value));
+  return InternalSavePciWrite8ValueToBootScript (
+           Address,
+           PciWrite8 (
+             Address,
+             Value
+             )
+           );
 }
 
 /**
@@ -156,7 +166,13 @@ S3PciOr8 (
   IN UINT8  OrData
   )
 {
-  return InternalSavePciWrite8ValueToBootScript (Address, PciOr8 (Address, OrData));
+  return InternalSavePciWrite8ValueToBootScript (
+           Address,
+           PciOr8 (
+             Address,
+             OrData
+             )
+           );
 }
 
 /**
@@ -186,7 +202,13 @@ S3PciAnd8 (
   IN UINT8  AndData
   )
 {
-  return InternalSavePciWrite8ValueToBootScript (Address, PciAnd8 (Address, AndData));
+  return InternalSavePciWrite8ValueToBootScript (
+           Address,
+           PciAnd8 (
+             Address,
+             AndData
+             )
+           );
 }
 
 /**
@@ -220,7 +242,14 @@ S3PciAndThenOr8 (
   IN UINT8  OrData
   )
 {
-  return InternalSavePciWrite8ValueToBootScript (Address, PciAndThenOr8 (Address, AndData, OrData));
+  return InternalSavePciWrite8ValueToBootScript (
+           Address,
+           PciAndThenOr8 (
+             Address,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -253,7 +282,14 @@ S3PciBitFieldRead8 (
   IN UINTN  EndBit
   )
 {
-  return InternalSavePciWrite8ValueToBootScript (Address, PciBitFieldRead8 (Address, StartBit, EndBit));
+  return InternalSavePciWrite8ValueToBootScript (
+           Address,
+           PciBitFieldRead8 (
+             Address,
+             StartBit,
+             EndBit
+             )
+           );
 }
 
 /**
@@ -290,7 +326,15 @@ S3PciBitFieldWrite8 (
   IN UINT8  Value
   )
 {
-  return InternalSavePciWrite8ValueToBootScript (Address, PciBitFieldWrite8 (Address, StartBit, EndBit, Value));
+  return InternalSavePciWrite8ValueToBootScript (
+           Address,
+           PciBitFieldWrite8 (
+             Address,
+             StartBit,
+             EndBit,
+             Value
+             )
+           );
 }
 
 /**
@@ -330,7 +374,15 @@ S3PciBitFieldOr8 (
   IN UINT8  OrData
   )
 {
-  return InternalSavePciWrite8ValueToBootScript (Address, PciBitFieldOr8 (Address, StartBit, EndBit, OrData));
+  return InternalSavePciWrite8ValueToBootScript (
+           Address,
+           PciBitFieldOr8 (
+             Address,
+             StartBit,
+             EndBit,
+             OrData
+             )
+           );
 }
 
 /**
@@ -370,7 +422,15 @@ S3PciBitFieldAnd8 (
   IN UINT8  AndData
   )
 {
-  return InternalSavePciWrite8ValueToBootScript (Address, PciBitFieldAnd8 (Address, StartBit, EndBit, AndData));
+  return InternalSavePciWrite8ValueToBootScript (
+           Address,
+           PciBitFieldAnd8 (
+             Address,
+             StartBit,
+             EndBit,
+             AndData
+             )
+           );
 }
 
 /**
@@ -414,7 +474,10 @@ S3PciBitFieldAndThenOr8 (
   IN UINT8  OrData
   )
 {
-  return InternalSavePciWrite8ValueToBootScript (Address, PciBitFieldAndThenOr8 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSavePciWrite8ValueToBootScript (
+           Address,
+           PciBitFieldAndThenOr8 (Address, StartBit, EndBit, AndData, OrData)
+           );
 }
 
 /**
@@ -438,7 +501,11 @@ InternalSavePciWrite16ValueToBootScript (
   IN UINT16  Value
   )
 {
-  InternalSavePciWriteValueToBootScript (S3BootScriptWidthUint16, Address, &Value);
+  InternalSavePciWriteValueToBootScript (
+    S3BootScriptWidthUint16,
+    Address,
+    &Value
+    );
 
   return Value;
 }
@@ -494,7 +561,13 @@ S3PciWrite16 (
   IN UINT16  Value
   )
 {
-  return InternalSavePciWrite16ValueToBootScript (Address, PciWrite16 (Address, Value));
+  return InternalSavePciWrite16ValueToBootScript (
+           Address,
+           PciWrite16 (
+             Address,
+             Value
+             )
+           );
 }
 
 /**
@@ -525,7 +598,13 @@ S3PciOr16 (
   IN UINT16  OrData
   )
 {
-  return InternalSavePciWrite16ValueToBootScript (Address, PciOr16 (Address, OrData));
+  return InternalSavePciWrite16ValueToBootScript (
+           Address,
+           PciOr16 (
+             Address,
+             OrData
+             )
+           );
 }
 
 /**
@@ -556,7 +635,13 @@ S3PciAnd16 (
   IN UINT16  AndData
   )
 {
-  return InternalSavePciWrite16ValueToBootScript (Address, PciAnd16 (Address, AndData));
+  return InternalSavePciWrite16ValueToBootScript (
+           Address,
+           PciAnd16 (
+             Address,
+             AndData
+             )
+           );
 }
 
 /**
@@ -591,7 +676,14 @@ S3PciAndThenOr16 (
   IN UINT16  OrData
   )
 {
-  return InternalSavePciWrite16ValueToBootScript (Address, PciAndThenOr16 (Address, AndData, OrData));
+  return InternalSavePciWrite16ValueToBootScript (
+           Address,
+           PciAndThenOr16 (
+             Address,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -625,7 +717,14 @@ S3PciBitFieldRead16 (
   IN UINTN  EndBit
   )
 {
-  return InternalSavePciWrite16ValueToBootScript (Address, PciBitFieldRead16 (Address, StartBit, EndBit));
+  return InternalSavePciWrite16ValueToBootScript (
+           Address,
+           PciBitFieldRead16 (
+             Address,
+             StartBit,
+             EndBit
+             )
+           );
 }
 
 /**
@@ -663,7 +762,15 @@ S3PciBitFieldWrite16 (
   IN UINT16  Value
   )
 {
-  return InternalSavePciWrite16ValueToBootScript (Address, PciBitFieldWrite16 (Address, StartBit, EndBit, Value));
+  return InternalSavePciWrite16ValueToBootScript (
+           Address,
+           PciBitFieldWrite16 (
+             Address,
+             StartBit,
+             EndBit,
+             Value
+             )
+           );
 }
 
 /**
@@ -704,7 +811,15 @@ S3PciBitFieldOr16 (
   IN UINT16  OrData
   )
 {
-  return InternalSavePciWrite16ValueToBootScript (Address, PciBitFieldOr16 (Address, StartBit, EndBit, OrData));
+  return InternalSavePciWrite16ValueToBootScript (
+           Address,
+           PciBitFieldOr16 (
+             Address,
+             StartBit,
+             EndBit,
+             OrData
+             )
+           );
 }
 
 /**
@@ -745,7 +860,15 @@ S3PciBitFieldAnd16 (
   IN UINT16  AndData
   )
 {
-  return InternalSavePciWrite16ValueToBootScript (Address, PciBitFieldAnd16 (Address, StartBit, EndBit, AndData));
+  return InternalSavePciWrite16ValueToBootScript (
+           Address,
+           PciBitFieldAnd16 (
+             Address,
+             StartBit,
+             EndBit,
+             AndData
+             )
+           );
 }
 
 /**
@@ -790,7 +913,10 @@ S3PciBitFieldAndThenOr16 (
   IN UINT16  OrData
   )
 {
-  return InternalSavePciWrite16ValueToBootScript (Address, PciBitFieldAndThenOr16 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSavePciWrite16ValueToBootScript (
+           Address,
+           PciBitFieldAndThenOr16 (Address, StartBit, EndBit, AndData, OrData)
+           );
 }
 
 /**
@@ -814,7 +940,11 @@ InternalSavePciWrite32ValueToBootScript (
   IN UINT32  Value
   )
 {
-  InternalSavePciWriteValueToBootScript (S3BootScriptWidthUint32, Address, &Value);
+  InternalSavePciWriteValueToBootScript (
+    S3BootScriptWidthUint32,
+    Address,
+    &Value
+    );
 
   return Value;
 }
@@ -870,7 +1000,13 @@ S3PciWrite32 (
   IN UINT32  Value
   )
 {
-  return InternalSavePciWrite32ValueToBootScript (Address, PciWrite32 (Address, Value));
+  return InternalSavePciWrite32ValueToBootScript (
+           Address,
+           PciWrite32 (
+             Address,
+             Value
+             )
+           );
 }
 
 /**
@@ -901,7 +1037,13 @@ S3PciOr32 (
   IN UINT32  OrData
   )
 {
-  return InternalSavePciWrite32ValueToBootScript (Address, PciOr32 (Address, OrData));
+  return InternalSavePciWrite32ValueToBootScript (
+           Address,
+           PciOr32 (
+             Address,
+             OrData
+             )
+           );
 }
 
 /**
@@ -932,7 +1074,13 @@ S3PciAnd32 (
   IN UINT32  AndData
   )
 {
-  return InternalSavePciWrite32ValueToBootScript (Address, PciAnd32 (Address, AndData));
+  return InternalSavePciWrite32ValueToBootScript (
+           Address,
+           PciAnd32 (
+             Address,
+             AndData
+             )
+           );
 }
 
 /**
@@ -967,7 +1115,14 @@ S3PciAndThenOr32 (
   IN UINT32  OrData
   )
 {
-  return InternalSavePciWrite32ValueToBootScript (Address, PciAndThenOr32 (Address, AndData, OrData));
+  return InternalSavePciWrite32ValueToBootScript (
+           Address,
+           PciAndThenOr32 (
+             Address,
+             AndData,
+             OrData
+             )
+           );
 }
 
 /**
@@ -1001,7 +1156,14 @@ S3PciBitFieldRead32 (
   IN UINTN  EndBit
   )
 {
-  return InternalSavePciWrite32ValueToBootScript (Address, PciBitFieldRead32 (Address, StartBit, EndBit));
+  return InternalSavePciWrite32ValueToBootScript (
+           Address,
+           PciBitFieldRead32 (
+             Address,
+             StartBit,
+             EndBit
+             )
+           );
 }
 
 /**
@@ -1039,7 +1201,15 @@ S3PciBitFieldWrite32 (
   IN UINT32  Value
   )
 {
-  return InternalSavePciWrite32ValueToBootScript (Address, PciBitFieldWrite32 (Address, StartBit, EndBit, Value));
+  return InternalSavePciWrite32ValueToBootScript (
+           Address,
+           PciBitFieldWrite32 (
+             Address,
+             StartBit,
+             EndBit,
+             Value
+             )
+           );
 }
 
 /**
@@ -1080,7 +1250,15 @@ S3PciBitFieldOr32 (
   IN UINT32  OrData
   )
 {
-  return InternalSavePciWrite32ValueToBootScript (Address, PciBitFieldOr32 (Address, StartBit, EndBit, OrData));
+  return InternalSavePciWrite32ValueToBootScript (
+           Address,
+           PciBitFieldOr32 (
+             Address,
+             StartBit,
+             EndBit,
+             OrData
+             )
+           );
 }
 
 /**
@@ -1121,7 +1299,15 @@ S3PciBitFieldAnd32 (
   IN UINT32  AndData
   )
 {
-  return InternalSavePciWrite32ValueToBootScript (Address, PciBitFieldAnd32 (Address, StartBit, EndBit, AndData));
+  return InternalSavePciWrite32ValueToBootScript (
+           Address,
+           PciBitFieldAnd32 (
+             Address,
+             StartBit,
+             EndBit,
+             AndData
+             )
+           );
 }
 
 /**
@@ -1166,7 +1352,10 @@ S3PciBitFieldAndThenOr32 (
   IN UINT32  OrData
   )
 {
-  return InternalSavePciWrite32ValueToBootScript (Address, PciBitFieldAndThenOr32 (Address, StartBit, EndBit, AndData, OrData));
+  return InternalSavePciWrite32ValueToBootScript (
+           Address,
+           PciBitFieldAndThenOr32 (Address, StartBit, EndBit, AndData, OrData)
+           );
 }
 
 /**

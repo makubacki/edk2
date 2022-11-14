@@ -59,7 +59,11 @@ PciLibConstructor (
 {
   EFI_STATUS  Status;
 
-  Status = gSmst->SmmLocateProtocol (&gEfiSmmPciRootBridgeIoProtocolGuid, NULL, (VOID **)&mSmmPciRootBridgeIo);
+  Status = gSmst->SmmLocateProtocol (
+                    &gEfiSmmPciRootBridgeIoProtocolGuid,
+                    NULL,
+                    (VOID **)&mSmmPciRootBridgeIo
+                    );
   ASSERT_EFI_ERROR (Status);
   ASSERT (mSmmPciRootBridgeIo != NULL);
 
@@ -214,7 +218,11 @@ PciWrite8 (
 {
   ASSERT_INVALID_PCI_ADDRESS (Address, 0);
 
-  return (UINT8)SmmPciLibPciRootBridgeIoWriteWorker (Address, EfiPciWidthUint8, Value);
+  return (UINT8)SmmPciLibPciRootBridgeIoWriteWorker (
+                  Address,
+                  EfiPciWidthUint8,
+                  Value
+                  );
 }
 
 /**
@@ -508,7 +516,13 @@ PciBitFieldAndThenOr8 (
 {
   return PciWrite8 (
            Address,
-           BitFieldAndThenOr8 (PciRead8 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr8 (
+             PciRead8 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 
@@ -536,7 +550,10 @@ PciRead16 (
 {
   ASSERT_INVALID_PCI_ADDRESS (Address, 1);
 
-  return (UINT16)SmmPciLibPciRootBridgeIoReadWorker (Address, EfiPciWidthUint16);
+  return (UINT16)SmmPciLibPciRootBridgeIoReadWorker (
+                   Address,
+                   EfiPciWidthUint16
+                   );
 }
 
 /**
@@ -565,7 +582,11 @@ PciWrite16 (
 {
   ASSERT_INVALID_PCI_ADDRESS (Address, 1);
 
-  return (UINT16)SmmPciLibPciRootBridgeIoWriteWorker (Address, EfiPciWidthUint16, Value);
+  return (UINT16)SmmPciLibPciRootBridgeIoWriteWorker (
+                   Address,
+                   EfiPciWidthUint16,
+                   Value
+                   );
 }
 
 /**
@@ -661,7 +682,11 @@ PciAndThenOr16 (
   IN      UINT16  OrData
   )
 {
-  return PciWrite16 (Address, (UINT16)((PciRead16 (Address) & AndData) | OrData));
+  return PciWrite16 (
+           Address,
+           (UINT16)((PciRead16 (Address) & AndData) |
+                    OrData)
+           );
 }
 
 /**
@@ -867,7 +892,13 @@ PciBitFieldAndThenOr16 (
 {
   return PciWrite16 (
            Address,
-           BitFieldAndThenOr16 (PciRead16 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr16 (
+             PciRead16 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 
@@ -924,7 +955,11 @@ PciWrite32 (
 {
   ASSERT_INVALID_PCI_ADDRESS (Address, 3);
 
-  return SmmPciLibPciRootBridgeIoWriteWorker (Address, EfiPciWidthUint32, Value);
+  return SmmPciLibPciRootBridgeIoWriteWorker (
+           Address,
+           EfiPciWidthUint32,
+           Value
+           );
 }
 
 /**
@@ -1226,7 +1261,13 @@ PciBitFieldAndThenOr32 (
 {
   return PciWrite32 (
            Address,
-           BitFieldAndThenOr32 (PciRead32 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr32 (
+             PciRead32 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 

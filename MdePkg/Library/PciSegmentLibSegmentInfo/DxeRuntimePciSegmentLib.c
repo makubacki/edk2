@@ -39,7 +39,8 @@ UINTN  mDxeRuntimePciSegmentLibNumberOfRuntimeRanges = 0;
 ///
 /// The table of PCI devices that have been registered for runtime access.
 ///
-PCI_SEGMENT_RUNTIME_REGISTRATION_TABLE  *mDxeRuntimePciSegmentLibRegistrationTable = NULL;
+PCI_SEGMENT_RUNTIME_REGISTRATION_TABLE  *
+  mDxeRuntimePciSegmentLibRegistrationTable = NULL;
 
 ///
 /// The table index of the most recent virtual address lookup.
@@ -74,15 +75,24 @@ DxeRuntimePciSegmentLibVirtualNotify (
   // Convert physical addresses associated with the set of registered PCI devices to
   // virtual addresses.
   //
-  for (Index = 0; Index < mDxeRuntimePciSegmentLibNumberOfRuntimeRanges; Index++) {
-    Status = EfiConvertPointer (0, (VOID **)&(mDxeRuntimePciSegmentLibRegistrationTable[Index].VirtualAddress));
+  for (Index = 0; Index < mDxeRuntimePciSegmentLibNumberOfRuntimeRanges;
+       Index++)
+  {
+    Status = EfiConvertPointer (
+               0,
+               (VOID **)&(mDxeRuntimePciSegmentLibRegistrationTable[Index].
+                            VirtualAddress)
+               );
     ASSERT_EFI_ERROR (Status);
   }
 
   //
   // Convert table pointer that is allocated from EfiRuntimeServicesData to a virtual address.
   //
-  Status = EfiConvertPointer (0, (VOID **)&mDxeRuntimePciSegmentLibRegistrationTable);
+  Status = EfiConvertPointer (
+             0,
+             (VOID **)&mDxeRuntimePciSegmentLibRegistrationTable
+             );
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -214,8 +224,12 @@ PciSegmentRegisterForRuntimeAccess (
   //
   // See if Address has already been registered for runtime access
   //
-  for (Index = 0; Index < mDxeRuntimePciSegmentLibNumberOfRuntimeRanges; Index++) {
-    if (mDxeRuntimePciSegmentLibRegistrationTable[Index].PhysicalAddress == Address) {
+  for (Index = 0; Index < mDxeRuntimePciSegmentLibNumberOfRuntimeRanges;
+       Index++)
+  {
+    if (mDxeRuntimePciSegmentLibRegistrationTable[Index].PhysicalAddress ==
+        Address)
+    {
       return RETURN_SUCCESS;
     }
   }
@@ -232,7 +246,11 @@ PciSegmentRegisterForRuntimeAccess (
   // Mark the 4KB region for the PCI Express Bus/Dev/Func as EFI_RUNTIME_MEMORY so the OS
   // will allocate a virtual address range for the 4KB PCI Configuration Header.
   //
-  Status = gDS->SetMemorySpaceAttributes (Address, EFI_PAGE_SIZE, Descriptor.Attributes | EFI_MEMORY_RUNTIME);
+  Status = gDS->SetMemorySpaceAttributes (
+                  Address,
+                  EFI_PAGE_SIZE,
+                  Descriptor.Attributes | EFI_MEMORY_RUNTIME
+                  );
   if (EFI_ERROR (Status)) {
     return RETURN_UNSUPPORTED;
   }
@@ -241,17 +259,25 @@ PciSegmentRegisterForRuntimeAccess (
   // Grow the size of the registration table
   //
   NewTable = ReallocateRuntimePool (
-               (mDxeRuntimePciSegmentLibNumberOfRuntimeRanges + 0) * sizeof (PCI_SEGMENT_RUNTIME_REGISTRATION_TABLE),
-               (mDxeRuntimePciSegmentLibNumberOfRuntimeRanges + 1) * sizeof (PCI_SEGMENT_RUNTIME_REGISTRATION_TABLE),
+               (mDxeRuntimePciSegmentLibNumberOfRuntimeRanges + 0) *
+               sizeof (PCI_SEGMENT_RUNTIME_REGISTRATION_TABLE),
+               (mDxeRuntimePciSegmentLibNumberOfRuntimeRanges + 1) *
+               sizeof (PCI_SEGMENT_RUNTIME_REGISTRATION_TABLE),
                mDxeRuntimePciSegmentLibRegistrationTable
                );
   if (NewTable == NULL) {
     return RETURN_OUT_OF_RESOURCES;
   }
 
-  mDxeRuntimePciSegmentLibRegistrationTable                                                                = NewTable;
-  mDxeRuntimePciSegmentLibRegistrationTable[mDxeRuntimePciSegmentLibNumberOfRuntimeRanges].PhysicalAddress = Address;
-  mDxeRuntimePciSegmentLibRegistrationTable[mDxeRuntimePciSegmentLibNumberOfRuntimeRanges].VirtualAddress  = Address;
+  mDxeRuntimePciSegmentLibRegistrationTable
+    =
+      NewTable;
+  mDxeRuntimePciSegmentLibRegistrationTable[
+                                           mDxeRuntimePciSegmentLibNumberOfRuntimeRanges
+  ].PhysicalAddress = Address;
+  mDxeRuntimePciSegmentLibRegistrationTable[
+                                           mDxeRuntimePciSegmentLibNumberOfRuntimeRanges
+  ].VirtualAddress  = Address;
   mDxeRuntimePciSegmentLibNumberOfRuntimeRanges++;
 
   return RETURN_SUCCESS;
@@ -281,18 +307,30 @@ PciSegmentLibVirtualAddress (
   //
   // See if there is a physical address match at the exact same index as the last address match
   //
-  if (mDxeRuntimePciSegmentLibRegistrationTable[mDxeRuntimePciSegmentLibLastRuntimeRange].PhysicalAddress == (Address & (~(UINTN)EFI_PAGE_MASK))) {
+  if (mDxeRuntimePciSegmentLibRegistrationTable[
+                                               mDxeRuntimePciSegmentLibLastRuntimeRange
+      ].PhysicalAddress == (Address &
+                            (
+                                       ~(UINTN)EFI_PAGE_MASK)))
+  {
     //
     // Convert the physical address to a virtual address and return the virtual address
     //
-    return (Address & EFI_PAGE_MASK) + mDxeRuntimePciSegmentLibRegistrationTable[mDxeRuntimePciSegmentLibLastRuntimeRange].VirtualAddress;
+    return (Address & EFI_PAGE_MASK) +
+           mDxeRuntimePciSegmentLibRegistrationTable[
+                                                                                       mDxeRuntimePciSegmentLibLastRuntimeRange
+           ].VirtualAddress;
   }
 
   //
   // Search the entire table for a physical address match
   //
-  for (Index = 0; Index < mDxeRuntimePciSegmentLibNumberOfRuntimeRanges; Index++) {
-    if (mDxeRuntimePciSegmentLibRegistrationTable[Index].PhysicalAddress == (Address & (~(UINTN)EFI_PAGE_MASK))) {
+  for (Index = 0; Index < mDxeRuntimePciSegmentLibNumberOfRuntimeRanges;
+       Index++)
+  {
+    if (mDxeRuntimePciSegmentLibRegistrationTable[Index].PhysicalAddress ==
+        (Address & (~(UINTN)EFI_PAGE_MASK)))
+    {
       //
       // Cache the matching index value
       //
@@ -300,7 +338,8 @@ PciSegmentLibVirtualAddress (
       //
       // Convert the physical address to a virtual address and return the virtual address
       //
-      return (Address & EFI_PAGE_MASK) + mDxeRuntimePciSegmentLibRegistrationTable[Index].VirtualAddress;
+      return (Address & EFI_PAGE_MASK) +
+             mDxeRuntimePciSegmentLibRegistrationTable[Index].VirtualAddress;
     }
   }
 

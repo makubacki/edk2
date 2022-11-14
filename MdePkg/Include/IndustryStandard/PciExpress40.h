@@ -24,13 +24,22 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define PCI_EXPRESS_EXTENDED_CAPABILITY_PHYSICAL_LAYER_16_0_VER1  0x1
 
 // Register offsets from Physical Layer PCI-E Ext Cap Header
-#define PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_CAPABILITIES_OFFSET                       0x04
-#define PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_CONTROL_OFFSET                            0x08
-#define PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_STATUS_OFFSET                             0x0C
-#define PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_LOCAL_DATA_PARITY_STATUS_OFFSET           0x10
-#define PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_FIRST_RETIMER_DATA_PARITY_STATUS_OFFSET   0x14
-#define PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_SECOND_RETIMER_DATA_PARITY_STATUS_OFFSET  0x18
-#define PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_LANE_EQUALIZATION_CONTROL_OFFSET          0x20
+#define PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_CAPABILITIES_OFFSET                       \
+      0x04
+#define PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_CONTROL_OFFSET                            \
+      0x08
+#define PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_STATUS_OFFSET                             \
+      0x0C
+#define PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_LOCAL_DATA_PARITY_STATUS_OFFSET           \
+      0x10
+#define \
+  PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_FIRST_RETIMER_DATA_PARITY_STATUS_OFFSET         \
+      0x14
+#define \
+  PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_SECOND_RETIMER_DATA_PARITY_STATUS_OFFSET        \
+      0x18
+#define PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_LANE_EQUALIZATION_CONTROL_OFFSET          \
+      0x20
 
 typedef union {
   struct {
@@ -67,15 +76,19 @@ typedef union {
 } PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_LANE_EQUALIZATION_CONTROL;
 
 typedef struct {
-  PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER                         Header;
-  PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_CAPABILITIES                 Capablities;
-  PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_CONTROL                      Control;
-  PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_STATUS                       Status;
-  UINT32                                                           LocalDataParityMismatchStatus;
-  UINT32                                                           FirstRetimerDataParityMismatchStatus;
-  UINT32                                                           SecondRetimerDataParityMismatchStatus;
-  UINT32                                                           Reserved;
-  PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_LANE_EQUALIZATION_CONTROL    LaneEqualizationControl[1];
+  PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER            Header;
+  PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_CAPABILITIES    Capablities;
+  PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_CONTROL         Control;
+  PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_STATUS          Status;
+  UINT32
+                                                      LocalDataParityMismatchStatus;
+  UINT32
+                                                      FirstRetimerDataParityMismatchStatus;
+  UINT32
+                                                      SecondRetimerDataParityMismatchStatus;
+  UINT32                                              Reserved;
+  PCI_EXPRESS_REG_PHYSICAL_LAYER_16_0_LANE_EQUALIZATION_CONTROL
+                                                      LaneEqualizationControl[1];
 } PCI_EXPRESS_EXTENDED_CAPABILITIES_PHYSICAL_LAYER_16_0;
 ///@}
 
@@ -99,10 +112,12 @@ typedef union {
 } PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_2;
 
 typedef struct {
-  PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER           Header;
-  PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_1    DesignatedVendorSpecificHeader1;
-  PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_2    DesignatedVendorSpecificHeader2;
-  UINT8                                              DesignatedVendorSpecific[1];
+  PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER    Header;
+  PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_1
+                                              DesignatedVendorSpecificHeader1;
+  PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_2
+                                              DesignatedVendorSpecificHeader2;
+  UINT8                                       DesignatedVendorSpecific[1];
 } PCI_EXPRESS_EXTENDED_CAPABILITIES_DESIGNATED_VENDOR_SPECIFIC;
 ///@}
 

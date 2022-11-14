@@ -832,7 +832,13 @@ FileHandleGetFileName (
         // Prepare to move to the parent directory.
         // Also determine whether CurrentHandle refers to the Root directory.
         //
-        Status = CurrentHandle->Open (CurrentHandle, &NextHigherHandle, L"..", EFI_FILE_MODE_READ, 0);
+        Status = CurrentHandle->Open (
+                                  CurrentHandle,
+                                  &NextHigherHandle,
+                                  L"..",
+                                  EFI_FILE_MODE_READ,
+                                  0
+                                  );
         //
         // We got info... do we have a name? if yes precede the current path with it...
         //
@@ -848,7 +854,10 @@ FileHandleGetFileName (
           //
           Status = EFI_SUCCESS;
           if (*FullFileName == NULL) {
-            ASSERT ((*FullFileName == NULL && Size == 0) || (*FullFileName != NULL));
+            ASSERT (
+              (*FullFileName == NULL && Size == 0) || (*FullFileName !=
+                                                       NULL)
+              );
             *FullFileName = StrnCatGrowLeft (FullFileName, &Size, L"\\", 0);
           }
 
@@ -856,12 +865,23 @@ FileHandleGetFileName (
           break;
         } else {
           if (*FullFileName == NULL) {
-            ASSERT ((*FullFileName == NULL && Size == 0) || (*FullFileName != NULL));
+            ASSERT (
+              (*FullFileName == NULL && Size == 0) || (*FullFileName !=
+                                                       NULL)
+              );
             *FullFileName = StrnCatGrowLeft (FullFileName, &Size, L"\\", 0);
           }
 
-          ASSERT ((*FullFileName == NULL && Size == 0) || (*FullFileName != NULL));
-          *FullFileName = StrnCatGrowLeft (FullFileName, &Size, FileInfo->FileName, 0);
+          ASSERT (
+            (*FullFileName == NULL && Size == 0) || (*FullFileName !=
+                                                     NULL)
+            );
+          *FullFileName = StrnCatGrowLeft (
+                            FullFileName,
+                            &Size,
+                            FileInfo->FileName,
+                            0
+                            );
           *FullFileName = StrnCatGrowLeft (FullFileName, &Size, L"\\", 0);
           FreePool (FileInfo);
         }
@@ -1247,7 +1267,12 @@ FileHandlePrintLine (
   // Print into our buffer
   //
   VA_START (Marker, Format);
-  UnicodeVSPrint (Buffer, PcdGet16 (PcdUefiFileHandleLibPrintBufferSize), Format, Marker);
+  UnicodeVSPrint (
+    Buffer,
+    PcdGet16 (PcdUefiFileHandleLibPrintBufferSize),
+    Format,
+    Marker
+    );
   VA_END (Marker);
 
   //

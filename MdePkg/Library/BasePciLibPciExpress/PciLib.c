@@ -372,7 +372,13 @@ PciBitFieldAndThenOr8 (
   IN      UINT8  OrData
   )
 {
-  return PciExpressBitFieldAndThenOr8 (Address, StartBit, EndBit, AndData, OrData);
+  return PciExpressBitFieldAndThenOr8 (
+           Address,
+           StartBit,
+           EndBit,
+           AndData,
+           OrData
+           );
 }
 
 /**
@@ -715,7 +721,13 @@ PciBitFieldAndThenOr16 (
   IN      UINT16  OrData
   )
 {
-  return PciExpressBitFieldAndThenOr16 (Address, StartBit, EndBit, AndData, OrData);
+  return PciExpressBitFieldAndThenOr16 (
+           Address,
+           StartBit,
+           EndBit,
+           AndData,
+           OrData
+           );
 }
 
 /**
@@ -1058,7 +1070,13 @@ PciBitFieldAndThenOr32 (
   IN      UINT32  OrData
   )
 {
-  return PciExpressBitFieldAndThenOr32 (Address, StartBit, EndBit, AndData, OrData);
+  return PciExpressBitFieldAndThenOr32 (
+           Address,
+           StartBit,
+           EndBit,
+           AndData,
+           OrData
+           );
 }
 
 /**

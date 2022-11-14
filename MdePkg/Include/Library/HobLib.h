@@ -528,7 +528,9 @@ BuildMemoryAllocationHob (
   @retval FALSE      The HOB specified by HobStart is not the last HOB in the HOB list.
 
 **/
-#define END_OF_HOB_LIST(HobStart)  (GET_HOB_TYPE (HobStart) == (UINT16)EFI_HOB_TYPE_END_OF_HOB_LIST)
+#define END_OF_HOB_LIST( \
+                       HobStart)  \
+  (GET_HOB_TYPE (HobStart) == (UINT16)EFI_HOB_TYPE_END_OF_HOB_LIST)
 
 /**
   Returns a pointer to data buffer from a HOB of type EFI_HOB_TYPE_GUID_EXTENSION.

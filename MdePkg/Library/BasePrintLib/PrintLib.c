@@ -70,7 +70,14 @@ UnicodeVSPrint (
 {
   ASSERT_UNICODE_BUFFER (StartOfBuffer);
   ASSERT_UNICODE_BUFFER (FormatString);
-  return BasePrintLibSPrintMarker ((CHAR8 *)StartOfBuffer, BufferSize >> 1, FORMAT_UNICODE | OUTPUT_UNICODE, (CHAR8 *)FormatString, Marker, NULL);
+  return BasePrintLibSPrintMarker (
+           (CHAR8 *)StartOfBuffer,
+           BufferSize >> 1,
+           FORMAT_UNICODE | OUTPUT_UNICODE,
+           (CHAR8 *)FormatString,
+           Marker,
+           NULL
+           );
 }
 
 /**
@@ -122,7 +129,14 @@ UnicodeBSPrint (
 {
   ASSERT_UNICODE_BUFFER (StartOfBuffer);
   ASSERT_UNICODE_BUFFER (FormatString);
-  return BasePrintLibSPrintMarker ((CHAR8 *)StartOfBuffer, BufferSize >> 1, FORMAT_UNICODE | OUTPUT_UNICODE, (CHAR8 *)FormatString, gNullVaList, Marker);
+  return BasePrintLibSPrintMarker (
+           (CHAR8 *)StartOfBuffer,
+           BufferSize >> 1,
+           FORMAT_UNICODE | OUTPUT_UNICODE,
+           (CHAR8 *)FormatString,
+           gNullVaList,
+           Marker
+           );
 }
 
 /**
@@ -178,7 +192,12 @@ UnicodeSPrint (
   UINTN    NumberOfPrinted;
 
   VA_START (Marker, FormatString);
-  NumberOfPrinted = UnicodeVSPrint (StartOfBuffer, BufferSize, FormatString, Marker);
+  NumberOfPrinted = UnicodeVSPrint (
+                      StartOfBuffer,
+                      BufferSize,
+                      FormatString,
+                      Marker
+                      );
   VA_END (Marker);
   return NumberOfPrinted;
 }
@@ -232,7 +251,14 @@ UnicodeVSPrintAsciiFormat (
   )
 {
   ASSERT_UNICODE_BUFFER (StartOfBuffer);
-  return BasePrintLibSPrintMarker ((CHAR8 *)StartOfBuffer, BufferSize >> 1, OUTPUT_UNICODE, FormatString, Marker, NULL);
+  return BasePrintLibSPrintMarker (
+           (CHAR8 *)StartOfBuffer,
+           BufferSize >> 1,
+           OUTPUT_UNICODE,
+           FormatString,
+           Marker,
+           NULL
+           );
 }
 
 /**
@@ -282,7 +308,14 @@ UnicodeBSPrintAsciiFormat (
   )
 {
   ASSERT_UNICODE_BUFFER (StartOfBuffer);
-  return BasePrintLibSPrintMarker ((CHAR8 *)StartOfBuffer, BufferSize >> 1, OUTPUT_UNICODE, FormatString, gNullVaList, Marker);
+  return BasePrintLibSPrintMarker (
+           (CHAR8 *)StartOfBuffer,
+           BufferSize >> 1,
+           OUTPUT_UNICODE,
+           FormatString,
+           gNullVaList,
+           Marker
+           );
 }
 
 /**
@@ -338,7 +371,12 @@ UnicodeSPrintAsciiFormat (
   UINTN    NumberOfPrinted;
 
   VA_START (Marker, FormatString);
-  NumberOfPrinted = UnicodeVSPrintAsciiFormat (StartOfBuffer, BufferSize, FormatString, Marker);
+  NumberOfPrinted = UnicodeVSPrintAsciiFormat (
+                      StartOfBuffer,
+                      BufferSize,
+                      FormatString,
+                      Marker
+                      );
   VA_END (Marker);
   return NumberOfPrinted;
 }
@@ -405,7 +443,14 @@ UnicodeValueToStringS (
   )
 {
   ASSERT_UNICODE_BUFFER (Buffer);
-  return BasePrintLibConvertValueToStringS ((CHAR8 *)Buffer, BufferSize, Flags, Value, Width, 2);
+  return BasePrintLibConvertValueToStringS (
+           (CHAR8 *)Buffer,
+           BufferSize,
+           Flags,
+           Value,
+           Width,
+           2
+           );
 }
 
 /**
@@ -454,7 +499,14 @@ AsciiVSPrint (
   IN  VA_LIST      Marker
   )
 {
-  return BasePrintLibSPrintMarker (StartOfBuffer, BufferSize, 0, FormatString, Marker, NULL);
+  return BasePrintLibSPrintMarker (
+           StartOfBuffer,
+           BufferSize,
+           0,
+           FormatString,
+           Marker,
+           NULL
+           );
 }
 
 /**
@@ -501,7 +553,14 @@ AsciiBSPrint (
   IN  BASE_LIST    Marker
   )
 {
-  return BasePrintLibSPrintMarker (StartOfBuffer, BufferSize, 0, FormatString, gNullVaList, Marker);
+  return BasePrintLibSPrintMarker (
+           StartOfBuffer,
+           BufferSize,
+           0,
+           FormatString,
+           gNullVaList,
+           Marker
+           );
 }
 
 /**
@@ -555,7 +614,12 @@ AsciiSPrint (
   UINTN    NumberOfPrinted;
 
   VA_START (Marker, FormatString);
-  NumberOfPrinted = AsciiVSPrint (StartOfBuffer, BufferSize, FormatString, Marker);
+  NumberOfPrinted = AsciiVSPrint (
+                      StartOfBuffer,
+                      BufferSize,
+                      FormatString,
+                      Marker
+                      );
   VA_END (Marker);
   return NumberOfPrinted;
 }
@@ -609,7 +673,14 @@ AsciiVSPrintUnicodeFormat (
   )
 {
   ASSERT_UNICODE_BUFFER (FormatString);
-  return BasePrintLibSPrintMarker (StartOfBuffer, BufferSize, FORMAT_UNICODE, (CHAR8 *)FormatString, Marker, NULL);
+  return BasePrintLibSPrintMarker (
+           StartOfBuffer,
+           BufferSize,
+           FORMAT_UNICODE,
+           (CHAR8 *)FormatString,
+           Marker,
+           NULL
+           );
 }
 
 /**
@@ -659,7 +730,14 @@ AsciiBSPrintUnicodeFormat (
   )
 {
   ASSERT_UNICODE_BUFFER (FormatString);
-  return BasePrintLibSPrintMarker (StartOfBuffer, BufferSize, FORMAT_UNICODE, (CHAR8 *)FormatString, gNullVaList, Marker);
+  return BasePrintLibSPrintMarker (
+           StartOfBuffer,
+           BufferSize,
+           FORMAT_UNICODE,
+           (CHAR8 *)FormatString,
+           gNullVaList,
+           Marker
+           );
 }
 
 /**
@@ -715,7 +793,12 @@ AsciiSPrintUnicodeFormat (
   UINTN    NumberOfPrinted;
 
   VA_START (Marker, FormatString);
-  NumberOfPrinted = AsciiVSPrintUnicodeFormat (StartOfBuffer, BufferSize, FormatString, Marker);
+  NumberOfPrinted = AsciiVSPrintUnicodeFormat (
+                      StartOfBuffer,
+                      BufferSize,
+                      FormatString,
+                      Marker
+                      );
   VA_END (Marker);
   return NumberOfPrinted;
 }
@@ -779,7 +862,14 @@ AsciiValueToStringS (
   IN UINTN      Width
   )
 {
-  return BasePrintLibConvertValueToStringS (Buffer, BufferSize, Flags, Value, Width, 1);
+  return BasePrintLibConvertValueToStringS (
+           Buffer,
+           BufferSize,
+           Flags,
+           Value,
+           Width,
+           1
+           );
 }
 
 /**
@@ -807,7 +897,15 @@ SPrintLength (
   )
 {
   ASSERT_UNICODE_BUFFER (FormatString);
-  return BasePrintLibSPrintMarker (NULL, 0, FORMAT_UNICODE | OUTPUT_UNICODE | COUNT_ONLY_NO_PRINT, (CHAR8 *)FormatString, Marker, NULL);
+  return BasePrintLibSPrintMarker (
+           NULL,
+           0,
+           FORMAT_UNICODE | OUTPUT_UNICODE |
+           COUNT_ONLY_NO_PRINT,
+           (CHAR8 *)FormatString,
+           Marker,
+           NULL
+           );
 }
 
 /**
@@ -832,5 +930,13 @@ SPrintLengthAsciiFormat (
   IN  VA_LIST      Marker
   )
 {
-  return BasePrintLibSPrintMarker (NULL, 0, OUTPUT_UNICODE | COUNT_ONLY_NO_PRINT, (CHAR8 *)FormatString, Marker, NULL);
+  return BasePrintLibSPrintMarker (
+           NULL,
+           0,
+           OUTPUT_UNICODE |
+           COUNT_ONLY_NO_PRINT,
+           (CHAR8 *)FormatString,
+           Marker,
+           NULL
+           );
 }

@@ -59,7 +59,12 @@ GetPiPcdPpiPointer (
   EFI_STATUS       Status;
   EFI_PEI_PCD_PPI  *PiPcdPpi;
 
-  Status = PeiServicesLocatePpi (&gEfiPeiPcdPpiGuid, 0, NULL, (VOID **)&PiPcdPpi);
+  Status = PeiServicesLocatePpi (
+             &gEfiPeiPcdPpiGuid,
+             0,
+             NULL,
+             (VOID **)&PiPcdPpi
+             );
   ASSERT_EFI_ERROR (Status);
 
   return PiPcdPpi;
@@ -82,7 +87,12 @@ GetPcdInfoPpiPointer (
   EFI_STATUS        Status;
   GET_PCD_INFO_PPI  *PcdInfoPpi;
 
-  Status = PeiServicesLocatePpi (&gGetPcdInfoPpiGuid, 0, NULL, (VOID **)&PcdInfoPpi);
+  Status = PeiServicesLocatePpi (
+             &gGetPcdInfoPpiGuid,
+             0,
+             NULL,
+             (VOID **)&PcdInfoPpi
+             );
   ASSERT_EFI_ERROR (Status);
 
   return PcdInfoPpi;
@@ -105,7 +115,12 @@ GetPiPcdInfoPpiPointer (
   EFI_STATUS            Status;
   EFI_GET_PCD_INFO_PPI  *PiPcdInfoPpi;
 
-  Status = PeiServicesLocatePpi (&gEfiGetPcdInfoPpiGuid, 0, NULL, (VOID **)&PiPcdInfoPpi);
+  Status = PeiServicesLocatePpi (
+             &gEfiGetPcdInfoPpiGuid,
+             0,
+             NULL,
+             (VOID **)&PiPcdInfoPpi
+             );
   ASSERT_EFI_ERROR (Status);
 
   return PiPcdInfoPpi;
@@ -564,7 +579,11 @@ LibPcdSetPtrS (
     ASSERT (Buffer != NULL);
   }
 
-  return (GetPcdPpiPointer ())->SetPtr (TokenNumber, SizeOfBuffer, (VOID *)Buffer);
+  return (GetPcdPpiPointer ())->SetPtr (
+                                  TokenNumber,
+                                  SizeOfBuffer,
+                                  (VOID *)Buffer
+                                  );
 }
 
 /**
@@ -744,7 +763,12 @@ LibPcdSetExPtrS (
     ASSERT (Buffer != NULL);
   }
 
-  return (GetPiPcdPpiPointer ())->SetPtr (Guid, TokenNumber, SizeOfBuffer, Buffer);
+  return (GetPiPcdPpiPointer ())->SetPtr (
+                                    Guid,
+                                    TokenNumber,
+                                    SizeOfBuffer,
+                                    Buffer
+                                    );
 }
 
 /**
@@ -804,7 +828,12 @@ LibPcdCallbackOnSet (
 
   ASSERT (NotificationFunction != NULL);
 
-  Status = (GetPiPcdPpiPointer ())->CallbackOnSet (Guid, TokenNumber, (EFI_PEI_PCD_PPI_CALLBACK)NotificationFunction);
+  Status = (GetPiPcdPpiPointer ())->CallbackOnSet (
+                                      Guid,
+                                      TokenNumber,
+                                      (EFI_PEI_PCD_PPI_CALLBACK)
+                                      NotificationFunction
+                                      );
 
   ASSERT_EFI_ERROR (Status);
 
@@ -836,7 +865,12 @@ LibPcdCancelCallback (
 
   ASSERT (NotificationFunction != NULL);
 
-  Status = (GetPiPcdPpiPointer ())->CancelCallback (Guid, TokenNumber, (EFI_PEI_PCD_PPI_CALLBACK)NotificationFunction);
+  Status = (GetPiPcdPpiPointer ())->CancelCallback (
+                                      Guid,
+                                      TokenNumber,
+                                      (EFI_PEI_PCD_PPI_CALLBACK)
+                                      NotificationFunction
+                                      );
 
   ASSERT_EFI_ERROR (Status);
 
@@ -1136,7 +1170,10 @@ LibPcdGetInfo (
 {
   EFI_STATUS  Status;
 
-  Status = GetPcdInfoPpiPointer ()->GetInfo (TokenNumber, (EFI_PCD_INFO *)PcdInfo);
+  Status = GetPcdInfoPpiPointer ()->GetInfo (
+                                      TokenNumber,
+                                      (EFI_PCD_INFO *)PcdInfo
+                                      );
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -1163,7 +1200,11 @@ LibPcdGetInfoEx (
 {
   EFI_STATUS  Status;
 
-  Status = GetPiPcdInfoPpiPointer ()->GetInfo (Guid, TokenNumber, (EFI_PCD_INFO *)PcdInfo);
+  Status = GetPiPcdInfoPpiPointer ()->GetInfo (
+                                        Guid,
+                                        TokenNumber,
+                                        (EFI_PCD_INFO *)PcdInfo
+                                        );
   ASSERT_EFI_ERROR (Status);
 }
 

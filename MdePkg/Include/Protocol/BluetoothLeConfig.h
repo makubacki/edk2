@@ -21,7 +21,8 @@
     0x8f76da58, 0x1f99, 0x4275, { 0xa4, 0xec, 0x47, 0x56, 0x51, 0x5b, 0x1c, 0xe8 } \
   }
 
-typedef struct _EFI_BLUETOOTH_LE_CONFIG_PROTOCOL EFI_BLUETOOTH_LE_CONFIG_PROTOCOL;
+typedef struct _EFI_BLUETOOTH_LE_CONFIG_PROTOCOL
+EFI_BLUETOOTH_LE_CONFIG_PROTOCOL;
 
 /**
   Initialize BluetoothLE host controller and local device.
@@ -610,18 +611,22 @@ EFI_STATUS
 /// This protocol abstracts user interface configuration for BluetoothLe device.
 ///
 struct _EFI_BLUETOOTH_LE_CONFIG_PROTOCOL {
-  EFI_BLUETOOTH_LE_CONFIG_INIT                                  Init;
-  EFI_BLUETOOTH_LE_CONFIG_SCAN                                  Scan;
-  EFI_BLUETOOTH_LE_CONFIG_CONNECT                               Connect;
-  EFI_BLUETOOTH_LE_CONFIG_DISCONNECT                            Disconnect;
-  EFI_BLUETOOTH_LE_CONFIG_GET_DATA                              GetData;
-  EFI_BLUETOOTH_LE_CONFIG_SET_DATA                              SetData;
-  EFI_BLUETOOTH_LE_CONFIG_GET_REMOTE_DATA                       GetRemoteData;
-  EFI_BLUETOOTH_LE_REGISTER_SMP_AUTH_CALLBACK                   RegisterSmpAuthCallback;
-  EFI_BLUETOOTH_LE_SEND_SMP_AUTH_DATA                           SendSmpAuthData;
-  EFI_BLUETOOTH_LE_CONFIG_REGISTER_SMP_GET_DATA_CALLBACK        RegisterSmpGetDataCallback;
-  EFI_BLUETOOTH_LE_CONFIG_REGISTER_SMP_SET_DATA_CALLBACK        RegisterSmpSetDataCallback;
-  EFI_BLUETOOTH_LE_CONFIG_REGISTER_CONNECT_COMPLETE_CALLBACK    RegisterLinkConnectCompleteCallback;
+  EFI_BLUETOOTH_LE_CONFIG_INIT               Init;
+  EFI_BLUETOOTH_LE_CONFIG_SCAN               Scan;
+  EFI_BLUETOOTH_LE_CONFIG_CONNECT            Connect;
+  EFI_BLUETOOTH_LE_CONFIG_DISCONNECT         Disconnect;
+  EFI_BLUETOOTH_LE_CONFIG_GET_DATA           GetData;
+  EFI_BLUETOOTH_LE_CONFIG_SET_DATA           SetData;
+  EFI_BLUETOOTH_LE_CONFIG_GET_REMOTE_DATA    GetRemoteData;
+  EFI_BLUETOOTH_LE_REGISTER_SMP_AUTH_CALLBACK
+                                             RegisterSmpAuthCallback;
+  EFI_BLUETOOTH_LE_SEND_SMP_AUTH_DATA        SendSmpAuthData;
+  EFI_BLUETOOTH_LE_CONFIG_REGISTER_SMP_GET_DATA_CALLBACK
+                                             RegisterSmpGetDataCallback;
+  EFI_BLUETOOTH_LE_CONFIG_REGISTER_SMP_SET_DATA_CALLBACK
+                                             RegisterSmpSetDataCallback;
+  EFI_BLUETOOTH_LE_CONFIG_REGISTER_CONNECT_COMPLETE_CALLBACK
+                                             RegisterLinkConnectCompleteCallback;
 };
 
 extern EFI_GUID  gEfiBluetoothLeConfigProtocolGuid;

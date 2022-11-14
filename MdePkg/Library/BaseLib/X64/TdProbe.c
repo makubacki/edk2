@@ -39,7 +39,13 @@ TdIsEnabled (
       break;
     }
 
-    AsmCpuid (CPUID_VERSION_INFO, NULL, NULL, &CpuIdVersionInfoEcx.Uint32, NULL);
+    AsmCpuid (
+      CPUID_VERSION_INFO,
+      NULL,
+      NULL,
+      &CpuIdVersionInfoEcx.Uint32,
+      NULL
+      );
     if (CpuIdVersionInfoEcx.Bits.ParaVirtualized == 0) {
       break;
     }

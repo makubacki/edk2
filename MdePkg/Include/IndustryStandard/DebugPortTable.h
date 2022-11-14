@@ -37,7 +37,9 @@ typedef struct {
 //
 // Interface Type
 //
-#define EFI_ACPI_DBGP_INTERFACE_TYPE_FULL_16550                                 0
-#define EFI_ACPI_DBGP_INTERFACE_TYPE_16550_SUBSET_COMPATIBLE_WITH_MS_DBGP_SPEC  1
+#define EFI_ACPI_DBGP_INTERFACE_TYPE_FULL_16550                                 \
+      0
+#define EFI_ACPI_DBGP_INTERFACE_TYPE_16550_SUBSET_COMPATIBLE_WITH_MS_DBGP_SPEC  \
+      1
 
 #endif

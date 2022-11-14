@@ -34,7 +34,10 @@ AsmFxRestore (
   //
   // Check the flag recorded by AsmFxSave()
   //
-  ASSERT (0xAA5555AA == *(UINT32 *)(&Buffer->Buffer[sizeof (Buffer->Buffer) - 4]));
+  ASSERT (
+    0xAA5555AA == *(UINT32 *)(&Buffer->Buffer[sizeof (Buffer->Buffer) -
+                                              4])
+    );
 
   InternalX86FxRestore (Buffer);
 }

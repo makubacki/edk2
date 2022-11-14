@@ -143,7 +143,12 @@ S3SmBusReceiveByte (
 
   Byte = SmBusReceiveByte (SmBusAddress, Status);
 
-  InternalSaveSmBusExecToBootScript (EfiSmbusReceiveByte, SmBusAddress, 1, &Byte);
+  InternalSaveSmBusExecToBootScript (
+    EfiSmbusReceiveByte,
+    SmBusAddress,
+    1,
+    &Byte
+    );
 
   return Byte;
 }
@@ -365,7 +370,12 @@ S3SmBusProcessCall (
 
   Word = SmBusProcessCall (SmBusAddress, Value, Status);
 
-  InternalSaveSmBusExecToBootScript (EfiSmbusProcessCall, SmBusAddress, 2, &Value);
+  InternalSaveSmBusExecToBootScript (
+    EfiSmbusProcessCall,
+    SmBusAddress,
+    2,
+    &Value
+    );
 
   return Word;
 }
@@ -406,7 +416,12 @@ S3SmBusReadBlock (
 
   Length = SmBusReadBlock (SmBusAddress, Buffer, Status);
 
-  InternalSaveSmBusExecToBootScript (EfiSmbusReadBlock, SmBusAddress, Length, Buffer);
+  InternalSaveSmBusExecToBootScript (
+    EfiSmbusReadBlock,
+    SmBusAddress,
+    Length,
+    Buffer
+    );
 
   return Length;
 }
@@ -445,7 +460,12 @@ S3SmBusWriteBlock (
 
   Length = SmBusWriteBlock (SmBusAddress, Buffer, Status);
 
-  InternalSaveSmBusExecToBootScript (EfiSmbusWriteBlock, SmBusAddress, SMBUS_LIB_LENGTH (SmBusAddress), Buffer);
+  InternalSaveSmBusExecToBootScript (
+    EfiSmbusWriteBlock,
+    SmBusAddress,
+    SMBUS_LIB_LENGTH (SmBusAddress),
+    Buffer
+    );
 
   return Length;
 }
@@ -486,9 +506,19 @@ S3SmBusBlockProcessCall (
 {
   UINTN  Length;
 
-  Length = SmBusBlockProcessCall (SmBusAddress, WriteBuffer, ReadBuffer, Status);
+  Length = SmBusBlockProcessCall (
+             SmBusAddress,
+             WriteBuffer,
+             ReadBuffer,
+             Status
+             );
 
-  InternalSaveSmBusExecToBootScript (EfiSmbusBWBRProcessCall, SmBusAddress, SMBUS_LIB_LENGTH (SmBusAddress), ReadBuffer);
+  InternalSaveSmBusExecToBootScript (
+    EfiSmbusBWBRProcessCall,
+    SmBusAddress,
+    SMBUS_LIB_LENGTH (SmBusAddress),
+    ReadBuffer
+    );
 
   return Length;
 }

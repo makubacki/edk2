@@ -93,7 +93,11 @@ EfiGetSystemConfigurationTable (
   SystemTable = gST;
   *Table      = NULL;
   for (Index = 0; Index < SystemTable->NumberOfTableEntries; Index++) {
-    if (CompareGuid (TableGuid, &(SystemTable->ConfigurationTable[Index].VendorGuid))) {
+    if (CompareGuid (
+          TableGuid,
+          &(SystemTable->ConfigurationTable[Index].VendorGuid)
+          ))
+    {
       *Table = SystemTable->ConfigurationTable[Index].VendorTable;
       return EFI_SUCCESS;
     }
@@ -627,7 +631,8 @@ EfiTestChildHandle (
   Status = EFI_UNSUPPORTED;
   for (Index = 0; Index < EntryCount; Index++) {
     if ((OpenInfoBuffer[Index].ControllerHandle == ChildHandle) &&
-        ((OpenInfoBuffer[Index].Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0))
+        ((OpenInfoBuffer[Index].Attributes &
+          EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0))
     {
       Status = EFI_SUCCESS;
       break;
@@ -658,15 +663,21 @@ IsLanguageSupported (
   UINTN  Index;
 
   while (*SupportedLanguages != 0) {
-    for (Index = 0; SupportedLanguages[Index] != 0 && SupportedLanguages[Index] != ';'; Index++) {
+    for (Index = 0; SupportedLanguages[Index] != 0 &&
+         SupportedLanguages[Index] != ';'; Index++)
+    {
     }
 
-    if ((AsciiStrnCmp (SupportedLanguages, TargetLanguage, Index) == 0) && (TargetLanguage[Index] == 0)) {
+    if ((AsciiStrnCmp (SupportedLanguages, TargetLanguage, Index) == 0) &&
+        (TargetLanguage[Index] == 0))
+    {
       return EFI_SUCCESS;
     }
 
     SupportedLanguages += Index;
-    for ( ; *SupportedLanguages != 0 && *SupportedLanguages == ';'; SupportedLanguages++) {
+    for ( ; *SupportedLanguages != 0 && *SupportedLanguages == ';';
+          SupportedLanguages++)
+    {
     }
   }
 
@@ -736,7 +747,11 @@ LookupUnicodeString (
       // Search the Unicode String Table for the matching Language specifier
       //
       while (UnicodeStringTable->Language != NULL) {
-        if (CompareIso639LanguageCode (Language, UnicodeStringTable->Language)) {
+        if (CompareIso639LanguageCode (
+              Language,
+              UnicodeStringTable->Language
+              ))
+        {
           //
           // A matching string was found, so return it
           //
@@ -855,7 +870,9 @@ LookupUnicodeString2 (
   while (UnicodeStringTable->Language != NULL) {
     LanguageString = UnicodeStringTable->Language;
     while (0 != *LanguageString) {
-      for (Index = 0; LanguageString[Index] != 0 && LanguageString[Index] != ';'; Index++) {
+      for (Index = 0; LanguageString[Index] != 0 && LanguageString[Index] !=
+           ';'; Index++)
+      {
       }
 
       if (AsciiStrnCmp (LanguageString, Language, Index) == 0) {
@@ -864,7 +881,9 @@ LookupUnicodeString2 (
       }
 
       LanguageString += Index;
-      for (Index = 0; LanguageString[Index] != 0 && LanguageString[Index] == ';'; Index++) {
+      for (Index = 0; LanguageString[Index] != 0 && LanguageString[Index] ==
+           ';'; Index++)
+      {
       }
     }
 
@@ -924,7 +943,9 @@ AddUnicodeString (
   //
   // Make sure the parameter are valid
   //
-  if ((Language == NULL) || (UnicodeString == NULL) || (UnicodeStringTable == NULL)) {
+  if ((Language == NULL) || (UnicodeString == NULL) || (UnicodeStringTable ==
+                                                        NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -954,7 +975,11 @@ AddUnicodeString (
       if (*UnicodeStringTable != NULL) {
         OldUnicodeStringTable = *UnicodeStringTable;
         while (OldUnicodeStringTable->Language != NULL) {
-          if (CompareIso639LanguageCode (Language, OldUnicodeStringTable->Language)) {
+          if (CompareIso639LanguageCode (
+                Language,
+                OldUnicodeStringTable->Language
+                ))
+          {
             return EFI_ALREADY_STARTED;
           }
 
@@ -968,7 +993,10 @@ AddUnicodeString (
       // entries, plus 1 entry for the new Unicode String, plus 1 entry for the end of table
       // marker
       //
-      NewUnicodeStringTable = AllocatePool ((NumberOfEntries + 2) * sizeof (EFI_UNICODE_STRING_TABLE));
+      NewUnicodeStringTable = AllocatePool (
+                                (NumberOfEntries + 2) *
+                                sizeof (EFI_UNICODE_STRING_TABLE)
+                                );
       if (NewUnicodeStringTable == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -988,7 +1016,10 @@ AddUnicodeString (
       //
       // Allocate space for a copy of the Language specifier
       //
-      NewUnicodeStringTable[NumberOfEntries].Language = AllocateCopyPool (3, Language);
+      NewUnicodeStringTable[NumberOfEntries].Language = AllocateCopyPool (
+                                                          3,
+                                                          Language
+                                                          );
       if (NewUnicodeStringTable[NumberOfEntries].Language == NULL) {
         FreePool (NewUnicodeStringTable);
         return EFI_OUT_OF_RESOURCES;
@@ -997,14 +1028,19 @@ AddUnicodeString (
       //
       // Compute the length of the Unicode String
       //
-      for (UnicodeStringLength = 0; UnicodeString[UnicodeStringLength] != 0; UnicodeStringLength++) {
+      for (UnicodeStringLength = 0; UnicodeString[UnicodeStringLength] != 0;
+           UnicodeStringLength++)
+      {
       }
 
       //
       // Allocate space for a copy of the Unicode String
       //
       NewUnicodeStringTable[NumberOfEntries].UnicodeString = AllocateCopyPool (
-                                                               (UnicodeStringLength + 1) * sizeof (CHAR16),
+                                                               (
+                                                               UnicodeStringLength
+                                                               + 1) *
+                                                               sizeof (CHAR16),
                                                                UnicodeString
                                                                );
       if (NewUnicodeStringTable[NumberOfEntries].UnicodeString == NULL) {
@@ -1103,7 +1139,9 @@ AddUnicodeString2 (
   //
   // Make sure the parameter are valid
   //
-  if ((Language == NULL) || (UnicodeString == NULL) || (UnicodeStringTable == NULL)) {
+  if ((Language == NULL) || (UnicodeString == NULL) || (UnicodeStringTable ==
+                                                        NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1155,7 +1193,9 @@ AddUnicodeString2 (
       LanguageString = OldUnicodeStringTable->Language;
 
       while (*LanguageString != 0) {
-        for (Index = 0; LanguageString[Index] != 0 && LanguageString[Index] != ';'; Index++) {
+        for (Index = 0; LanguageString[Index] != 0 && LanguageString[Index] !=
+             ';'; Index++)
+        {
         }
 
         if (AsciiStrnCmp (Language, LanguageString, Index) == 0) {
@@ -1163,7 +1203,9 @@ AddUnicodeString2 (
         }
 
         LanguageString += Index;
-        for ( ; *LanguageString != 0 && *LanguageString == ';'; LanguageString++) {
+        for ( ; *LanguageString != 0 && *LanguageString == ';';
+              LanguageString++)
+        {
         }
       }
 
@@ -1177,7 +1219,10 @@ AddUnicodeString2 (
   // entries, plus 1 entry for the new Unicode String, plus 1 entry for the end of table
   // marker
   //
-  NewUnicodeStringTable = AllocatePool ((NumberOfEntries + 2) * sizeof (EFI_UNICODE_STRING_TABLE));
+  NewUnicodeStringTable = AllocatePool (
+                            (NumberOfEntries + 2) *
+                            sizeof (EFI_UNICODE_STRING_TABLE)
+                            );
   if (NewUnicodeStringTable == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1197,7 +1242,10 @@ AddUnicodeString2 (
   //
   // Allocate space for a copy of the Language specifier
   //
-  NewUnicodeStringTable[NumberOfEntries].Language = AllocateCopyPool (AsciiStrSize (Language), Language);
+  NewUnicodeStringTable[NumberOfEntries].Language = AllocateCopyPool (
+                                                      AsciiStrSize (Language),
+                                                      Language
+                                                      );
   if (NewUnicodeStringTable[NumberOfEntries].Language == NULL) {
     FreePool (NewUnicodeStringTable);
     return EFI_OUT_OF_RESOURCES;
@@ -1206,13 +1254,19 @@ AddUnicodeString2 (
   //
   // Compute the length of the Unicode String
   //
-  for (UnicodeStringLength = 0; UnicodeString[UnicodeStringLength] != 0; UnicodeStringLength++) {
+  for (UnicodeStringLength = 0; UnicodeString[UnicodeStringLength] != 0;
+       UnicodeStringLength++)
+  {
   }
 
   //
   // Allocate space for a copy of the Unicode String
   //
-  NewUnicodeStringTable[NumberOfEntries].UnicodeString = AllocateCopyPool (StrSize (UnicodeString), UnicodeString);
+  NewUnicodeStringTable[NumberOfEntries].UnicodeString = AllocateCopyPool (
+                                                           StrSize (
+                                                             UnicodeString),
+                                                           UnicodeString
+                                                           );
   if (NewUnicodeStringTable[NumberOfEntries].UnicodeString == NULL) {
     FreePool (NewUnicodeStringTable[NumberOfEntries].Language);
     FreePool (NewUnicodeStringTable);
@@ -1335,7 +1389,13 @@ GetVariable2 (
     *Size = 0;
   }
 
-  Status = gRT->GetVariable ((CHAR16 *)Name, (EFI_GUID *)Guid, NULL, &BufferSize, *Value);
+  Status = gRT->GetVariable (
+                  (CHAR16 *)Name,
+                  (EFI_GUID *)Guid,
+                  NULL,
+                  &BufferSize,
+                  *Value
+                  );
   if (Status != EFI_BUFFER_TOO_SMALL) {
     return Status;
   }
@@ -1352,7 +1412,13 @@ GetVariable2 (
   //
   // Get the variable data.
   //
-  Status = gRT->GetVariable ((CHAR16 *)Name, (EFI_GUID *)Guid, NULL, &BufferSize, *Value);
+  Status = gRT->GetVariable (
+                  (CHAR16 *)Name,
+                  (EFI_GUID *)Guid,
+                  NULL,
+                  &BufferSize,
+                  *Value
+                  );
   if (EFI_ERROR (Status)) {
     FreePool (*Value);
     *Value = NULL;
@@ -1416,7 +1482,13 @@ GetVariable3 (
     *Attr = 0;
   }
 
-  Status = gRT->GetVariable ((CHAR16 *)Name, (EFI_GUID *)Guid, Attr, &BufferSize, *Value);
+  Status = gRT->GetVariable (
+                  (CHAR16 *)Name,
+                  (EFI_GUID *)Guid,
+                  Attr,
+                  &BufferSize,
+                  *Value
+                  );
   if (Status != EFI_BUFFER_TOO_SMALL) {
     return Status;
   }
@@ -1433,7 +1505,13 @@ GetVariable3 (
   //
   // Get the variable data.
   //
-  Status = gRT->GetVariable ((CHAR16 *)Name, (EFI_GUID *)Guid, Attr, &BufferSize, *Value);
+  Status = gRT->GetVariable (
+                  (CHAR16 *)Name,
+                  (EFI_GUID *)Guid,
+                  Attr,
+                  &BufferSize,
+                  *Value
+                  );
   if (EFI_ERROR (Status)) {
     FreePool (*Value);
     *Value = NULL;
@@ -1546,7 +1624,9 @@ GetBestLanguage (
     // If in RFC 4646 mode, then determine the length of the first RFC 4646 language code in Language
     //
     if (Iso639Language == 0) {
-      for (LanguageLength = 0; Language[LanguageLength] != 0 && Language[LanguageLength] != ';'; LanguageLength++) {
+      for (LanguageLength = 0; Language[LanguageLength] != 0 &&
+           Language[LanguageLength] != ';'; LanguageLength++)
+      {
       }
     }
 
@@ -1557,7 +1637,9 @@ GetBestLanguage (
       //
       // Loop through all language codes in SupportedLanguages
       //
-      for (Supported = SupportedLanguages; *Supported != '\0'; Supported += CompareLength) {
+      for (Supported = SupportedLanguages; *Supported != '\0'; Supported +=
+             CompareLength)
+      {
         //
         // In RFC 4646 mode, then Loop through all language codes in SupportedLanguages
         //
@@ -1571,7 +1653,9 @@ GetBestLanguage (
           //
           // Determine the length of the next language code in Supported
           //
-          for (CompareLength = 0; Supported[CompareLength] != 0 && Supported[CompareLength] != ';'; CompareLength++) {
+          for (CompareLength = 0; Supported[CompareLength] != 0 &&
+               Supported[CompareLength] != ';'; CompareLength++)
+          {
           }
 
           //
@@ -1608,7 +1692,9 @@ GetBestLanguage (
         //
         // If RFC 4646 mode, then trim Language from the right to the next '-' character
         //
-        for (LanguageLength--; LanguageLength > 0 && Language[LanguageLength] != '-'; LanguageLength--) {
+        for (LanguageLength--; LanguageLength > 0 && Language[LanguageLength] !=
+             '-'; LanguageLength--)
+        {
         }
       }
     }

@@ -46,7 +46,8 @@ typedef struct {
   ///
   /// Indicates the type of IPMI interface.
   ///
-  UINT8                                                              InterfaceType;
+  UINT8
+                                                                     InterfaceType;
   ///
   /// This field must always be 01h to be compatible with any software that
   /// implements previous versions of this spec.
@@ -55,11 +56,13 @@ typedef struct {
   ///
   /// Identifies the IPMI specification revision, in BCD format.
   ///
-  UINT16                                                             SpecificationRevision;
+  UINT16
+                                                                     SpecificationRevision;
   ///
   /// Interrupt type(s) used by the interface.
   ///
-  UINT8                                                              InterruptType;
+  UINT8
+                                                                     InterruptType;
   ///
   /// The bit assignment of the SCI interrupt within the GPEx_STS register of a
   /// GPE described if the FADT that the interface triggers.
@@ -72,11 +75,13 @@ typedef struct {
   ///
   /// PCI Device Flag.
   ///
-  UINT8                                                              PciDeviceFlag;
+  UINT8
+                                                                     PciDeviceFlag;
   ///
   /// The I/O APIC or I/O SAPIC Global System Interrupt used by the interface.
   ///
-  UINT32                                                             GlobalSystemInterrupt;
+  UINT32
+                                                                     GlobalSystemInterrupt;
   ///
   /// The base address of the interface register set described using the
   /// Generic Address Structure (GAS, See [ACPI 2.0] for the definition).

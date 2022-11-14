@@ -52,7 +52,9 @@ PeCoffLoaderGetEntryPoint (
     //
     // DOS image header is present, so read the PE header after the DOS image header.
     //
-    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)Pe32Data + (UINTN)((DosHdr->e_lfanew) & 0x0ffff));
+    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)Pe32Data +
+                                          (UINTN)((DosHdr->e_lfanew) &
+                                                  0x0ffff));
   } else {
     //
     // DOS image header is not present, so PE header is at the image base.
@@ -65,10 +67,14 @@ PeCoffLoaderGetEntryPoint (
   // AddressOfEntryPoint is common for PE32 & PE32+
   //
   if (Hdr.Te->Signature == EFI_TE_IMAGE_HEADER_SIGNATURE) {
-    *EntryPoint = (VOID *)((UINTN)Pe32Data + (UINTN)(Hdr.Te->AddressOfEntryPoint & 0x0ffffffff) + sizeof (EFI_TE_IMAGE_HEADER) - Hdr.Te->StrippedSize);
+    *EntryPoint = (VOID *)((UINTN)Pe32Data +
+                           (UINTN)(Hdr.Te->AddressOfEntryPoint & 0x0ffffffff) +
+                           sizeof (EFI_TE_IMAGE_HEADER) - Hdr.Te->StrippedSize);
     return RETURN_SUCCESS;
   } else if (Hdr.Pe32->Signature == EFI_IMAGE_NT_SIGNATURE) {
-    *EntryPoint = (VOID *)((UINTN)Pe32Data + (UINTN)(Hdr.Pe32->OptionalHeader.AddressOfEntryPoint & 0x0ffffffff));
+    *EntryPoint = (VOID *)((UINTN)Pe32Data +
+                           (UINTN)(Hdr.Pe32->OptionalHeader.AddressOfEntryPoint
+                                   & 0x0ffffffff));
     return RETURN_SUCCESS;
   }
 
@@ -103,7 +109,9 @@ PeCoffLoaderGetMachineType (
     //
     // DOS image header is present, so read the PE header after the DOS image header.
     //
-    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)Pe32Data + (UINTN)((DosHdr->e_lfanew) & 0x0ffff));
+    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)Pe32Data +
+                                          (UINTN)((DosHdr->e_lfanew) &
+                                                  0x0ffff));
   } else {
     //
     // DOS image header is not present, so PE header is at the image base.
@@ -167,7 +175,9 @@ PeCoffLoaderGetPdbPointer (
     //
     // DOS image header is present, so read the PE header after the DOS image header.
     //
-    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)Pe32Data + (UINTN)((DosHdr->e_lfanew) & 0x0ffff));
+    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)Pe32Data +
+                                          (UINTN)((DosHdr->e_lfanew) &
+                                                  0x0ffff));
   } else {
     //
     // DOS image header is not present, so PE header is at the image base.
@@ -176,12 +186,18 @@ PeCoffLoaderGetPdbPointer (
   }
 
   if (Hdr.Te->Signature == EFI_TE_IMAGE_HEADER_SIGNATURE) {
-    if (Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress != 0) {
-      DirectoryEntry = &Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG];
-      TEImageAdjust  = sizeof (EFI_TE_IMAGE_HEADER) - Hdr.Te->StrippedSize;
-      DebugEntry     = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Hdr.Te +
-                                                           Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress +
-                                                           TEImageAdjust);
+    if (Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress
+        != 0)
+    {
+      DirectoryEntry =
+        &Hdr.Te->DataDirectory[EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG];
+      TEImageAdjust = sizeof (EFI_TE_IMAGE_HEADER) - Hdr.Te->StrippedSize;
+      DebugEntry    = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Hdr.Te +
+                                                          Hdr.Te->DataDirectory
+                                                          [
+                                                                                EFI_TE_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                                          ].VirtualAddress +
+                                                          TEImageAdjust);
     }
   } else if (Hdr.Pe32->Signature == EFI_IMAGE_NT_SIGNATURE) {
     //
@@ -215,15 +231,28 @@ PeCoffLoaderGetPdbPointer (
       // Use PE32 offset get Debug Directory Entry
       //
       NumberOfRvaAndSizes = Hdr.Pe32->OptionalHeader.NumberOfRvaAndSizes;
-      DirectoryEntry      = (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_DEBUG]);
-      DebugEntry          = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Pe32Data + DirectoryEntry->VirtualAddress);
-    } else if (Hdr.Pe32->OptionalHeader.Magic == EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC) {
+      DirectoryEntry      =
+        (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32->OptionalHeader.DataDirectory[
+                                                                                                  EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                      ]);
+      DebugEntry =
+        (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Pe32Data +
+                                            DirectoryEntry->VirtualAddress);
+    } else if (Hdr.Pe32->OptionalHeader.Magic ==
+               EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC)
+    {
       //
       // Use PE32+ offset get Debug Directory Entry
       //
       NumberOfRvaAndSizes = Hdr.Pe32Plus->OptionalHeader.NumberOfRvaAndSizes;
-      DirectoryEntry      = (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_DEBUG]);
-      DebugEntry          = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Pe32Data + DirectoryEntry->VirtualAddress);
+      DirectoryEntry      =
+        (EFI_IMAGE_DATA_DIRECTORY *)&(Hdr.Pe32Plus->OptionalHeader.DataDirectory
+                                      [
+                                                            EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                      ]);
+      DebugEntry =
+        (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)((UINTN)Pe32Data +
+                                            DirectoryEntry->VirtualAddress);
     }
 
     if (NumberOfRvaAndSizes <= EFI_IMAGE_DIRECTORY_ENTRY_DEBUG) {
@@ -241,17 +270,24 @@ PeCoffLoaderGetPdbPointer (
   //
   // Scan the directory to find the debug entry.
   //
-  for (DirCount = 0; DirCount < DirectoryEntry->Size; DirCount += sizeof (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY), DebugEntry++) {
+  for (DirCount = 0; DirCount < DirectoryEntry->Size; DirCount +=
+         sizeof (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY), DebugEntry++)
+  {
     if (DebugEntry->Type == EFI_IMAGE_DEBUG_TYPE_CODEVIEW) {
       if (DebugEntry->SizeOfData > 0) {
-        CodeViewEntryPointer = (VOID *)((UINTN)DebugEntry->RVA + ((UINTN)Pe32Data) + (UINTN)TEImageAdjust);
+        CodeViewEntryPointer = (VOID *)((UINTN)DebugEntry->RVA +
+                                        ((UINTN)Pe32Data) +
+                                        (UINTN)TEImageAdjust);
         switch (*(UINT32 *)CodeViewEntryPointer) {
           case CODEVIEW_SIGNATURE_NB10:
-            return (VOID *)((CHAR8 *)CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY));
+            return (VOID *)((CHAR8 *)CodeViewEntryPointer +
+                            sizeof (EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY));
           case CODEVIEW_SIGNATURE_RSDS:
-            return (VOID *)((CHAR8 *)CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_RSDS_ENTRY));
+            return (VOID *)((CHAR8 *)CodeViewEntryPointer +
+                            sizeof (EFI_IMAGE_DEBUG_CODEVIEW_RSDS_ENTRY));
           case CODEVIEW_SIGNATURE_MTOC:
-            return (VOID *)((CHAR8 *)CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_MTOC_ENTRY));
+            return (VOID *)((CHAR8 *)CodeViewEntryPointer +
+                            sizeof (EFI_IMAGE_DEBUG_CODEVIEW_MTOC_ENTRY));
           default:
             break;
         }
@@ -291,7 +327,9 @@ PeCoffGetSizeOfHeaders (
     //
     // DOS image header is present, so read the PE header after the DOS image header.
     //
-    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)Pe32Data + (UINTN)((DosHdr->e_lfanew) & 0x0ffff));
+    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)Pe32Data +
+                                          (UINTN)((DosHdr->e_lfanew) &
+                                                  0x0ffff));
   } else {
     //
     // DOS image header is not present, so PE header is at the image base.
@@ -300,7 +338,8 @@ PeCoffGetSizeOfHeaders (
   }
 
   if (Hdr.Te->Signature == EFI_TE_IMAGE_HEADER_SIGNATURE) {
-    SizeOfHeaders = sizeof (EFI_TE_IMAGE_HEADER) + (UINTN)Hdr.Te->BaseOfCode - (UINTN)Hdr.Te->StrippedSize;
+    SizeOfHeaders = sizeof (EFI_TE_IMAGE_HEADER) + (UINTN)Hdr.Te->BaseOfCode -
+                    (UINTN)Hdr.Te->StrippedSize;
   } else if (Hdr.Pe32->Signature == EFI_IMAGE_NT_SIGNATURE) {
     SizeOfHeaders = Hdr.Pe32->OptionalHeader.SizeOfHeaders;
   } else {
@@ -346,7 +385,9 @@ PeCoffSearchImageBase (
       //
       // DOS image header is present, so read the PE header after the DOS image header.
       //
-      Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)(Pe32Data + (UINTN)((DosHdr->e_lfanew) & 0x0ffff));
+      Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)(Pe32Data +
+                                            (UINTN)((DosHdr->e_lfanew) &
+                                                    0x0ffff));
       //
       // Make sure PE header address does not overflow and is less than the initial address.
       //
@@ -361,9 +402,17 @@ PeCoffSearchImageBase (
       //
       Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)Pe32Data;
       if ((Hdr.Te->Signature == EFI_TE_IMAGE_HEADER_SIGNATURE) &&
-          ((Hdr.Te->Machine == IMAGE_FILE_MACHINE_I386)  || (Hdr.Te->Machine == IMAGE_FILE_MACHINE_IA64) ||
-           (Hdr.Te->Machine == IMAGE_FILE_MACHINE_EBC)   || (Hdr.Te->Machine == IMAGE_FILE_MACHINE_X64)  ||
-           (Hdr.Te->Machine == IMAGE_FILE_MACHINE_ARM64) || (Hdr.Te->Machine == IMAGE_FILE_MACHINE_ARMTHUMB_MIXED))
+          (  (Hdr.Te->Machine == IMAGE_FILE_MACHINE_I386)  ||
+             (Hdr.Te->Machine ==
+              IMAGE_FILE_MACHINE_IA64)
+          ||
+             (Hdr.Te->Machine == IMAGE_FILE_MACHINE_EBC)   ||
+             (Hdr.Te->Machine ==
+              IMAGE_FILE_MACHINE_X64)
+          ||
+             (Hdr.Te->Machine == IMAGE_FILE_MACHINE_ARM64) ||
+             (Hdr.Te->Machine ==
+              IMAGE_FILE_MACHINE_ARMTHUMB_MIXED))
           )
       {
         break;

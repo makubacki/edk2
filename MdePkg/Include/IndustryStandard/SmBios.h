@@ -1974,7 +1974,8 @@ typedef struct {
   SMBIOS_TABLE_STRING                        FirmwareVersion;
   UINT16                                     ModuleManufacturerID;
   UINT16                                     ModuleProductID;
-  UINT16                                     MemorySubsystemControllerManufacturerID;
+  UINT16
+                                             MemorySubsystemControllerManufacturerID;
   UINT16                                     MemorySubsystemControllerProductID;
   UINT64                                     NonVolatileSize;
   UINT64                                     VolatileSize;

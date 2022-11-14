@@ -1451,7 +1451,12 @@ PciExpressReadBuffer (
     //
     // Read a word if StartAddress is word aligned
     //
-    WriteUnaligned16 ((UINT16 *)Buffer, (UINT16)PciExpressRead16 (StartAddress));
+    WriteUnaligned16 (
+      (UINT16 *)Buffer,
+      (UINT16)PciExpressRead16 (
+                StartAddress
+                )
+      );
 
     StartAddress += sizeof (UINT16);
     Size         -= sizeof (UINT16);
@@ -1462,7 +1467,12 @@ PciExpressReadBuffer (
     //
     // Read as many double words as possible
     //
-    WriteUnaligned32 ((UINT32 *)Buffer, (UINT32)PciExpressRead32 (StartAddress));
+    WriteUnaligned32 (
+      (UINT32 *)Buffer,
+      (UINT32)PciExpressRead32 (
+                StartAddress
+                )
+      );
 
     StartAddress += sizeof (UINT32);
     Size         -= sizeof (UINT32);
@@ -1473,7 +1483,12 @@ PciExpressReadBuffer (
     //
     // Read the last remaining word if exist
     //
-    WriteUnaligned16 ((UINT16 *)Buffer, (UINT16)PciExpressRead16 (StartAddress));
+    WriteUnaligned16 (
+      (UINT16 *)Buffer,
+      (UINT16)PciExpressRead16 (
+                StartAddress
+                )
+      );
     StartAddress += sizeof (UINT16);
     Size         -= sizeof (UINT16);
     Buffer        = (UINT16 *)Buffer + 1;

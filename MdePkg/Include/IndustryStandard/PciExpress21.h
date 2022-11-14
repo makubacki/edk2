@@ -491,12 +491,14 @@ typedef struct {
   PCI_EXPRESS_REG_UNCORRECTABLE_ERROR         UncorrectableErrorSeverity;
   UINT32                                      CorrectableErrorStatus;
   UINT32                                      CorrectableErrorMask;
-  UINT32                                      AdvancedErrorCapabilitiesAndControl;
+  UINT32
+                                              AdvancedErrorCapabilitiesAndControl;
   UINT32                                      HeaderLog[4];
   UINT32                                      RootErrorCommand;
   UINT32                                      RootErrorStatus;
   UINT16                                      ErrorSourceIdentification;
-  UINT16                                      CorrectableErrorSourceIdentification;
+  UINT16
+                                              CorrectableErrorSourceIdentification;
   UINT32                                      TlpPrefixLog[4];
 } PCI_EXPRESS_EXTENDED_CAPABILITIES_ADVANCED_ERROR_REPORTING;
 
@@ -541,7 +543,9 @@ typedef struct {
   UINT32                                      LinkEntry[1];
 } PCI_EXPRESS_EXTENDED_CAPABILITIES_LINK_DECLARATION;
 
-#define PCI_EXPRESS_EXTENDED_CAPABILITY_LINK_DECLARATION_GET_LINK_COUNT(LINK_DECLARATION)  (UINT8)(((LINK_DECLARATION->ElementSelfDescription)&0x0000ff00)>>8)
+#define PCI_EXPRESS_EXTENDED_CAPABILITY_LINK_DECLARATION_GET_LINK_COUNT( \
+                                                                       LINK_DECLARATION)  \
+  (UINT8)(((LINK_DECLARATION->ElementSelfDescription)&0x0000ff00)>>8)
 
 #define PCI_EXPRESS_EXTENDED_CAPABILITY_LINK_CONTROL_ID    0x0006
 #define PCI_EXPRESS_EXTENDED_CAPABILITY_LINK_CONTROL_VER1  0x1
@@ -576,21 +580,31 @@ typedef struct {
   UINT8                                       EgressControlVectorArray[1];
 } PCI_EXPRESS_EXTENDED_CAPABILITIES_ACS_EXTENDED;
 
-#define PCI_EXPRESS_EXTENDED_CAPABILITY_ACS_EXTENDED_GET_EGRES_CONTROL(ACS_EXTENDED)      (UINT8)(((ACS_EXTENDED->AcsCapability)&0x00000020))
-#define PCI_EXPRESS_EXTENDED_CAPABILITY_ACS_EXTENDED_GET_EGRES_VECTOR_SIZE(ACS_EXTENDED)  (UINT8)(((ACS_EXTENDED->AcsCapability)&0x0000FF00))
+#define PCI_EXPRESS_EXTENDED_CAPABILITY_ACS_EXTENDED_GET_EGRES_CONTROL( \
+                                                                      ACS_EXTENDED)      \
+      (UINT8)(((ACS_EXTENDED->AcsCapability)&0x00000020))
+#define PCI_EXPRESS_EXTENDED_CAPABILITY_ACS_EXTENDED_GET_EGRES_VECTOR_SIZE( \
+                                                                          ACS_EXTENDED)  \
+      (UINT8)(((ACS_EXTENDED->AcsCapability)&0x0000FF00))
 
-#define PCI_EXPRESS_EXTENDED_CAPABILITY_EVENT_COLLECTOR_ENDPOINT_ASSOCIATION_ID    0x0007
-#define PCI_EXPRESS_EXTENDED_CAPABILITY_EVENT_COLLECTOR_ENDPOINT_ASSOCIATION_VER1  0x1
+#define PCI_EXPRESS_EXTENDED_CAPABILITY_EVENT_COLLECTOR_ENDPOINT_ASSOCIATION_ID    \
+                                                                                   0x0007
+#define \
+  PCI_EXPRESS_EXTENDED_CAPABILITY_EVENT_COLLECTOR_ENDPOINT_ASSOCIATION_VER1        \
+                                                                                   0x1
 
 typedef struct {
   PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER    Header;
   UINT32                                      AssociationBitmap;
 } PCI_EXPRESS_EXTENDED_CAPABILITIES_EVENT_COLLECTOR_ENDPOINT_ASSOCIATION;
 
-#define PCI_EXPRESS_EXTENDED_CAPABILITY_MULTI_FUNCTION_VIRTUAL_CHANNEL_ID    0x0008
-#define PCI_EXPRESS_EXTENDED_CAPABILITY_MULTI_FUNCTION_VIRTUAL_CHANNEL_VER1  0x1
+#define PCI_EXPRESS_EXTENDED_CAPABILITY_MULTI_FUNCTION_VIRTUAL_CHANNEL_ID    \
+                                                                                   0x0008
+#define PCI_EXPRESS_EXTENDED_CAPABILITY_MULTI_FUNCTION_VIRTUAL_CHANNEL_VER1  \
+                                                                                   0x1
 
-typedef PCI_EXPRESS_EXTENDED_CAPABILITIES_VIRTUAL_CHANNEL_CAPABILITY PCI_EXPRESS_EXTENDED_CAPABILITIES_MULTI_FUNCTION_VIRTUAL_CHANNEL_CAPABILITY;
+typedef PCI_EXPRESS_EXTENDED_CAPABILITIES_VIRTUAL_CHANNEL_CAPABILITY
+PCI_EXPRESS_EXTENDED_CAPABILITIES_MULTI_FUNCTION_VIRTUAL_CHANNEL_CAPABILITY;
 
 #define PCI_EXPRESS_EXTENDED_CAPABILITY_VENDOR_SPECIFIC_ID    0x000B
 #define PCI_EXPRESS_EXTENDED_CAPABILITY_VENDOR_SPECIFIC_VER1  0x1
@@ -601,7 +615,9 @@ typedef struct {
   UINT8                                       VendorSpecific[1];
 } PCI_EXPRESS_EXTENDED_CAPABILITIES_VENDOR_SPECIFIC;
 
-#define PCI_EXPRESS_EXTENDED_CAPABILITY_VENDOR_SPECIFIC_GET_SIZE(VENDOR)  (UINT16)(((VENDOR->VendorSpecificHeader)&0xFFF00000)>>20)
+#define PCI_EXPRESS_EXTENDED_CAPABILITY_VENDOR_SPECIFIC_GET_SIZE( \
+                                                                VENDOR)  \
+  (UINT16)(((VENDOR->VendorSpecificHeader)&0xFFF00000)>>20)
 
 #define PCI_EXPRESS_EXTENDED_CAPABILITY_RCRB_HEADER_ID    0x000A
 #define PCI_EXPRESS_EXTENDED_CAPABILITY_RCRB_HEADER_VER1  0x1
@@ -653,8 +669,10 @@ typedef union {
 } PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_CONTROL;
 
 typedef struct {
-  PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_CAPABILITY    ResizableBarCapability;
-  PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_CONTROL       ResizableBarControl;
+  PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_CAPABILITY
+        ResizableBarCapability;
+  PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_CONTROL
+        ResizableBarControl;
 } PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_ENTRY;
 
 typedef struct {
@@ -662,7 +680,9 @@ typedef struct {
   PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_ENTRY    Capability[1];
 } PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR;
 
-#define GET_NUMBER_RESIZABLE_BARS(x)  (x->Capability[0].ResizableBarControl.Bits.ResizableBarNumber)
+#define GET_NUMBER_RESIZABLE_BARS( \
+                                 x)  \
+  (x->Capability[0].ResizableBarControl.Bits.ResizableBarNumber)
 
 #define PCI_EXPRESS_EXTENDED_CAPABILITY_ARI_CAPABILITY_ID    0x000E
 #define PCI_EXPRESS_EXTENDED_CAPABILITY_ARI_CAPABILITY_VER1  0x1
@@ -685,7 +705,10 @@ typedef struct {
   UINT8                                       DpaPowerAllocationArray[1];
 } PCI_EXPRESS_EXTENDED_CAPABILITIES_DYNAMIC_POWER_ALLOCATION;
 
-#define PCI_EXPRESS_EXTENDED_CAPABILITY_DYNAMIC_POWER_ALLOCATION_GET_SUBSTATE_MAX(POWER)  (UINT16)(((POWER->DpaCapability)&0x0000000F))
+#define \
+  PCI_EXPRESS_EXTENDED_CAPABILITY_DYNAMIC_POWER_ALLOCATION_GET_SUBSTATE_MAX( \
+                                                                                 POWER)  \
+  (UINT16)(((POWER->DpaCapability)&0x0000000F))
 
 #define PCI_EXPRESS_EXTENDED_CAPABILITY_LATENCE_TOLERANCE_REPORTING_ID    0x0018
 #define PCI_EXPRESS_EXTENDED_CAPABILITY_LATENCE_TOLERANCE_REPORTING_VER1  0x1
@@ -706,7 +729,9 @@ typedef struct {
   UINT16                                      TphStTable[1];
 } PCI_EXPRESS_EXTENDED_CAPABILITIES_TPH;
 
-#define GET_TPH_TABLE_SIZE(x)  ((x->TphRequesterCapability & 0x7FF0000)>>16) * sizeof(UINT16)
+#define GET_TPH_TABLE_SIZE( \
+                          x)  \
+  ((x->TphRequesterCapability & 0x7FF0000)>>16) * sizeof(UINT16)
 
 #pragma pack()
 

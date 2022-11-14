@@ -129,7 +129,8 @@ typedef EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL SIMPLE_TEXT_OUTPUT_INTERFACE;
 //
 // Do not use EFI_BACKGROUND_xxx values with this macro.
 //
-#define EFI_TEXT_ATTR(Foreground, Background)  ((Foreground) | ((Background) << 4))
+#define EFI_TEXT_ATTR(Foreground, \
+                      Background)  ((Foreground) | ((Background) << 4))
 
 #define EFI_BACKGROUND_BLACK      0x00
 #define EFI_BACKGROUND_BLUE       0x10
@@ -138,7 +139,8 @@ typedef EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL SIMPLE_TEXT_OUTPUT_INTERFACE;
 #define EFI_BACKGROUND_RED        0x40
 #define EFI_BACKGROUND_MAGENTA    (EFI_BACKGROUND_BLUE | EFI_BACKGROUND_RED)
 #define EFI_BACKGROUND_BROWN      (EFI_BACKGROUND_GREEN | EFI_BACKGROUND_RED)
-#define EFI_BACKGROUND_LIGHTGRAY  (EFI_BACKGROUND_BLUE | EFI_BACKGROUND_GREEN | EFI_BACKGROUND_RED)
+#define EFI_BACKGROUND_LIGHTGRAY  \
+                                  (EFI_BACKGROUND_BLUE | EFI_BACKGROUND_GREEN | EFI_BACKGROUND_RED)
 
 //
 // We currently define attributes from 0 - 7F for color manipulations

@@ -1576,7 +1576,14 @@ AsmCpuidEx (
   OUT     UINT32  *Edx   OPTIONAL
   )
 {
-  return gUnitTestHostBaseLib.X86->AsmCpuidEx (Index, SubIndex, Eax, Ebx, Ecx, Edx);
+  return gUnitTestHostBaseLib.X86->AsmCpuidEx (
+                                     Index,
+                                     SubIndex,
+                                     Eax,
+                                     Ebx,
+                                     Ecx,
+                                     Edx
+                                     );
 }
 
 /**
@@ -2544,7 +2551,12 @@ AsmEnablePaging32 (
   IN      VOID                      *NewStack
   )
 {
-  gUnitTestHostBaseLib.X86->AsmEnablePaging32 (EntryPoint, Context1, Context2, NewStack);
+  gUnitTestHostBaseLib.X86->AsmEnablePaging32 (
+                              EntryPoint,
+                              Context1,
+                              Context2,
+                              NewStack
+                              );
 }
 
 /**
@@ -2590,7 +2602,12 @@ AsmDisablePaging32 (
   IN      VOID                      *NewStack
   )
 {
-  gUnitTestHostBaseLib.X86->AsmDisablePaging32 (EntryPoint, Context1, Context2, NewStack);
+  gUnitTestHostBaseLib.X86->AsmDisablePaging32 (
+                              EntryPoint,
+                              Context1,
+                              Context2,
+                              NewStack
+                              );
 }
 
 /**
@@ -2635,7 +2652,13 @@ AsmEnablePaging64 (
   IN      UINT64  NewStack
   )
 {
-  gUnitTestHostBaseLib.X86->AsmEnablePaging64 (Cs, EntryPoint, Context1, Context2, NewStack);
+  gUnitTestHostBaseLib.X86->AsmEnablePaging64 (
+                              Cs,
+                              EntryPoint,
+                              Context1,
+                              Context2,
+                              NewStack
+                              );
 }
 
 /**
@@ -2678,7 +2701,13 @@ AsmDisablePaging64 (
   IN      UINT32  NewStack
   )
 {
-  gUnitTestHostBaseLib.X86->AsmDisablePaging64 (Cs, EntryPoint, Context1, Context2, NewStack);
+  gUnitTestHostBaseLib.X86->AsmDisablePaging64 (
+                              Cs,
+                              EntryPoint,
+                              Context1,
+                              Context2,
+                              NewStack
+                              );
 }
 
 /**
@@ -2709,7 +2738,10 @@ AsmGetThunk16Properties (
   OUT     UINT32  *ExtraStackSize
   )
 {
-  gUnitTestHostBaseLib.X86->AsmGetThunk16Properties (RealModeBufferSize, ExtraStackSize);
+  gUnitTestHostBaseLib.X86->AsmGetThunk16Properties (
+                              RealModeBufferSize,
+                              ExtraStackSize
+                              );
 }
 
 /**
@@ -2898,7 +2930,11 @@ PatchInstructionX86 (
   IN  UINTN                     ValueSize
   )
 {
-  gUnitTestHostBaseLib.X86->PatchInstructionX86 (InstructionEnd, PatchValue, ValueSize);
+  gUnitTestHostBaseLib.X86->PatchInstructionX86 (
+                              InstructionEnd,
+                              PatchValue,
+                              ValueSize
+                              );
 }
 
 ///

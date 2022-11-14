@@ -139,7 +139,11 @@ GetNextGuidHob (
   EFI_PEI_HOB_POINTERS  GuidHob;
 
   GuidHob.Raw = (UINT8 *)HobStart;
-  while ((GuidHob.Raw = GetNextHob (EFI_HOB_TYPE_GUID_EXTENSION, GuidHob.Raw)) != NULL) {
+  while ((GuidHob.Raw = GetNextHob (
+                          EFI_HOB_TYPE_GUID_EXTENSION,
+                          GuidHob.Raw
+                          )) != NULL)
+  {
     if (CompareGuid (Guid, &GuidHob.Guid->Name)) {
       break;
     }

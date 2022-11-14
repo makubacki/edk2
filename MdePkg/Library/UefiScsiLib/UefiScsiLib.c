@@ -1367,7 +1367,13 @@ ScsiSecurityProtocolInCommand (
     }
 
     Cdb[4] = BIT7;
-    WriteUnaligned32 ((UINT32 *)&Cdb[6], SwapBytes32 ((UINT32)DataLength / 512));
+    WriteUnaligned32 (
+      (UINT32 *)&Cdb[6],
+      SwapBytes32 (
+        (UINT32)DataLength /
+        512
+        )
+      );
   } else {
     WriteUnaligned32 ((UINT32 *)&Cdb[6], SwapBytes32 ((UINT32)DataLength));
   }
@@ -1478,7 +1484,13 @@ ScsiSecurityProtocolOutCommand (
     }
 
     Cdb[4] = BIT7;
-    WriteUnaligned32 ((UINT32 *)&Cdb[6], SwapBytes32 ((UINT32)DataLength / 512));
+    WriteUnaligned32 (
+      (UINT32 *)&Cdb[6],
+      SwapBytes32 (
+        (UINT32)DataLength /
+        512
+        )
+      );
   } else {
     WriteUnaligned32 ((UINT32 *)&Cdb[6], SwapBytes32 ((UINT32)DataLength));
   }

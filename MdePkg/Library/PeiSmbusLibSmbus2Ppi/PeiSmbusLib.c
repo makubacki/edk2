@@ -26,7 +26,12 @@ InternalGetSmbusPpi (
   EFI_STATUS          Status;
   EFI_PEI_SMBUS2_PPI  *SmbusPpi;
 
-  Status = PeiServicesLocatePpi (&gEfiPeiSmbus2PpiGuid, 0, NULL, (VOID **)&SmbusPpi);
+  Status = PeiServicesLocatePpi (
+             &gEfiPeiSmbus2PpiGuid,
+             0,
+             NULL,
+             (VOID **)&SmbusPpi
+             );
   ASSERT_EFI_ERROR (Status);
   ASSERT (SmbusPpi != NULL);
 
@@ -70,7 +75,9 @@ InternalSmBusExec (
   EFI_SMBUS_DEVICE_ADDRESS  SmbusDeviceAddress;
 
   SmbusPpi                              = InternalGetSmbusPpi ();
-  SmbusDeviceAddress.SmbusDeviceAddress = SMBUS_LIB_SLAVE_ADDRESS (SmBusAddress);
+  SmbusDeviceAddress.SmbusDeviceAddress = SMBUS_LIB_SLAVE_ADDRESS (
+                                            SmBusAddress
+                                            );
 
   ReturnStatus = SmbusPpi->Execute (
                              SmbusPpi,

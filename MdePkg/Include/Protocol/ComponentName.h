@@ -96,7 +96,8 @@ EFI_STATUS
 (EFIAPI *EFI_COMPONENT_NAME_GET_CONTROLLER_NAME)(
   IN EFI_COMPONENT_NAME_PROTOCOL                              *This,
   IN  EFI_HANDLE                                              ControllerHandle,
-  IN  EFI_HANDLE                                              ChildHandle        OPTIONAL,
+  IN  EFI_HANDLE
+  ChildHandle        OPTIONAL,
   IN  CHAR8                                                   *Language,
   OUT CHAR16                                                  **ControllerName
   );

@@ -44,7 +44,9 @@ InternalMemCopyMem (
   CONST UINT64     *Source64;
   UINTN            Alignment;
 
-  if ((((UINTN)DestinationBuffer & 0x7) == 0) && (((UINTN)SourceBuffer & 0x7) == 0) && (Length >= 8)) {
+  if ((((UINTN)DestinationBuffer & 0x7) == 0) && (((UINTN)SourceBuffer & 0x7) ==
+                                                  0) && (Length >= 8))
+  {
     if (SourceBuffer > DestinationBuffer) {
       Destination64 = (UINT64 *)DestinationBuffer;
       Source64      = (CONST UINT64 *)SourceBuffer;
@@ -86,7 +88,10 @@ InternalMemCopyMem (
         Length            -= 8;
       }
     }
-  } else if ((((UINTN)DestinationBuffer & 0x3) == 0) && (((UINTN)SourceBuffer & 0x3) == 0) && (Length >= 4)) {
+  } else if ((((UINTN)DestinationBuffer & 0x3) == 0) && (((UINTN)SourceBuffer &
+                                                          0x3) == 0) &&
+             (Length >= 4))
+  {
     if (SourceBuffer > DestinationBuffer) {
       Destination32 = (UINT32 *)DestinationBuffer;
       Source32      = (CONST UINT32 *)SourceBuffer;

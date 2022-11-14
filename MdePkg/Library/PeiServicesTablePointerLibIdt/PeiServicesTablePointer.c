@@ -38,7 +38,8 @@ GetPeiServicesTablePointer (
   IA32_DESCRIPTOR         Idtr;
 
   AsmReadIdtr (&Idtr);
-  PeiServices = (CONST EFI_PEI_SERVICES **)(*(UINTN *)(Idtr.Base - sizeof (UINTN)));
+  PeiServices = (CONST EFI_PEI_SERVICES **)(*(UINTN *)(Idtr.Base -
+                                                       sizeof (UINTN)));
   ASSERT (PeiServices != NULL);
   return PeiServices;
 }
@@ -100,7 +101,8 @@ MigratePeiServicesTablePointer (
   // Get PEI Services Table pointer
   //
   AsmReadIdtr (&Idtr);
-  PeiServices = (CONST EFI_PEI_SERVICES **)(*(UINTN *)(Idtr.Base - sizeof (UINTN)));
+  PeiServices = (CONST EFI_PEI_SERVICES **)(*(UINTN *)(Idtr.Base -
+                                                       sizeof (UINTN)));
   ASSERT (PeiServices != NULL);
   //
   // Allocate the permanent memory.
@@ -108,14 +110,21 @@ MigratePeiServicesTablePointer (
   Status = (*PeiServices)->AllocatePages (
                              PeiServices,
                              EfiBootServicesCode,
-                             EFI_SIZE_TO_PAGES (Idtr.Limit + 1 + sizeof (UINTN)),
+                             EFI_SIZE_TO_PAGES (
+                               Idtr.Limit + 1 +
+                               sizeof (UINTN)
+                               ),
                              &IdtBase
                              );
   ASSERT_EFI_ERROR (Status);
   //
   // Idt table needs to be migrated into memory.
   //
-  CopyMem ((VOID *)(UINTN)IdtBase, (VOID *)(Idtr.Base - sizeof (UINTN)), Idtr.Limit + 1 + sizeof (UINTN));
+  CopyMem (
+    (VOID *)(UINTN)IdtBase,
+    (VOID *)(Idtr.Base - sizeof (UINTN)),
+    Idtr.Limit + 1 + sizeof (UINTN)
+    );
   Idtr.Base = (UINTN)IdtBase + sizeof (UINTN);
   AsmWriteIdtr (&Idtr);
 

@@ -99,13 +99,17 @@ typedef struct {
 ///  elements are contained in a EFI_BIS_DATA struct pointed to
 ///  by the provided EFI_BIS_DATA*.
 ///
-#define BIS_GET_SIGINFO_COUNT(BisDataPtr)  ((BisDataPtr)->Length / sizeof (EFI_BIS_SIGNATURE_INFO))
+#define BIS_GET_SIGINFO_COUNT( \
+                             BisDataPtr)  \
+  ((BisDataPtr)->Length / sizeof (EFI_BIS_SIGNATURE_INFO))
 
 ///
 /// BIS_GET_SIGINFO_ARRAY - produces a EFI_BIS_SIGNATURE_INFO*
 ///  from a given EFI_BIS_DATA*.
 ///
-#define BIS_GET_SIGINFO_ARRAY(BisDataPtr)  ((EFI_BIS_SIGNATURE_INFO *) (BisDataPtr)->Data)
+#define BIS_GET_SIGINFO_ARRAY( \
+                             BisDataPtr)  \
+  ((EFI_BIS_SIGNATURE_INFO *) (BisDataPtr)->Data)
 
 ///
 /// Support an old name for backward compatibility.
@@ -424,16 +428,21 @@ EFI_STATUS
 /// certificate for the purpose of an integrity and authorization check.
 ///
 struct _EFI_BIS_PROTOCOL {
-  EFI_BIS_INITIALIZE                                    Initialize;
-  EFI_BIS_SHUTDOWN                                      Shutdown;
-  EFI_BIS_FREE                                          Free;
-  EFI_BIS_GET_BOOT_OBJECT_AUTHORIZATION_CERTIFICATE     GetBootObjectAuthorizationCertificate;
-  EFI_BIS_GET_BOOT_OBJECT_AUTHORIZATION_CHECKFLAG       GetBootObjectAuthorizationCheckFlag;
-  EFI_BIS_GET_BOOT_OBJECT_AUTHORIZATION_UPDATE_TOKEN    GetBootObjectAuthorizationUpdateToken;
-  EFI_BIS_GET_SIGNATURE_INFO                            GetSignatureInfo;
-  EFI_BIS_UPDATE_BOOT_OBJECT_AUTHORIZATION              UpdateBootObjectAuthorization;
-  EFI_BIS_VERIFY_BOOT_OBJECT                            VerifyBootObject;
-  EFI_BIS_VERIFY_OBJECT_WITH_CREDENTIAL                 VerifyObjectWithCredential;
+  EFI_BIS_INITIALIZE            Initialize;
+  EFI_BIS_SHUTDOWN              Shutdown;
+  EFI_BIS_FREE                  Free;
+  EFI_BIS_GET_BOOT_OBJECT_AUTHORIZATION_CERTIFICATE
+                                GetBootObjectAuthorizationCertificate;
+  EFI_BIS_GET_BOOT_OBJECT_AUTHORIZATION_CHECKFLAG
+                                GetBootObjectAuthorizationCheckFlag;
+  EFI_BIS_GET_BOOT_OBJECT_AUTHORIZATION_UPDATE_TOKEN
+                                GetBootObjectAuthorizationUpdateToken;
+  EFI_BIS_GET_SIGNATURE_INFO    GetSignatureInfo;
+  EFI_BIS_UPDATE_BOOT_OBJECT_AUTHORIZATION
+                                UpdateBootObjectAuthorization;
+  EFI_BIS_VERIFY_BOOT_OBJECT    VerifyBootObject;
+  EFI_BIS_VERIFY_OBJECT_WITH_CREDENTIAL
+                                VerifyObjectWithCredential;
 };
 
 extern EFI_GUID  gEfiBisProtocolGuid;

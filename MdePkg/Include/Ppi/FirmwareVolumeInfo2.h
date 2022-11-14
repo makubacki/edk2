@@ -15,7 +15,8 @@
 #define EFI_PEI_FIRMWARE_VOLUME_INFO2_PPI_GUID \
 { 0xea7ca24b, 0xded5, 0x4dad, { 0xa3, 0x89, 0xbf, 0x82, 0x7e, 0x8f, 0x9b, 0x38 } }
 
-typedef struct _EFI_PEI_FIRMWARE_VOLUME_INFO2_PPI EFI_PEI_FIRMWARE_VOLUME_INFO2_PPI;
+typedef struct _EFI_PEI_FIRMWARE_VOLUME_INFO2_PPI
+EFI_PEI_FIRMWARE_VOLUME_INFO2_PPI;
 
 ///
 ///  This PPI describes the location and format of a firmware volume.

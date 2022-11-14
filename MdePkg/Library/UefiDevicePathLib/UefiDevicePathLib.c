@@ -164,7 +164,10 @@ AppendDevicePathInstance (
   IN CONST EFI_DEVICE_PATH_PROTOCOL  *DevicePathInstance OPTIONAL
   )
 {
-  return UefiDevicePathLibAppendDevicePathInstance (DevicePath, DevicePathInstance);
+  return UefiDevicePathLibAppendDevicePathInstance (
+           DevicePath,
+           DevicePathInstance
+           );
 }
 
 /**
@@ -282,7 +285,11 @@ ConvertDeviceNodeToText (
   IN BOOLEAN                         AllowShortcuts
   )
 {
-  return UefiDevicePathLibConvertDeviceNodeToText (DeviceNode, DisplayOnly, AllowShortcuts);
+  return UefiDevicePathLibConvertDeviceNodeToText (
+           DeviceNode,
+           DisplayOnly,
+           AllowShortcuts
+           );
 }
 
 /**
@@ -308,7 +315,11 @@ ConvertDevicePathToText (
   IN BOOLEAN                         AllowShortcuts
   )
 {
-  return UefiDevicePathLibConvertDevicePathToText (DevicePath, DisplayOnly, AllowShortcuts);
+  return UefiDevicePathLibConvertDevicePathToText (
+           DevicePath,
+           DisplayOnly,
+           AllowShortcuts
+           );
 }
 
 /**

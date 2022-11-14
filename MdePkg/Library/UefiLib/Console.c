@@ -16,7 +16,8 @@ typedef struct {
 #define NARROW_CHAR  0xFFF0
 #define WIDE_CHAR    0xFFF1
 
-GLOBAL_REMOVE_IF_UNREFERENCED CONST UNICODE_WIDTH_ENTRY  mUnicodeWidthTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED CONST UNICODE_WIDTH_ENTRY  mUnicodeWidthTable[] =
+{
   //
   // General script area
   //
@@ -328,7 +329,9 @@ UefiLibGetStringWidth (
     //
     // Advance to the null-terminator or to the first width directive
     //
-    for ( ; (String[Index] != NARROW_CHAR) && (String[Index] != WIDE_CHAR) && (String[Index] != 0); Index++) {
+    for ( ; (String[Index] != NARROW_CHAR) && (String[Index] != WIDE_CHAR) &&
+          (String[Index] != 0); Index++)
+    {
       Count = Count + IncrementValue;
 
       if (LimitLen && (Count > MaxWidth)) {
@@ -420,7 +423,11 @@ CreatePopUp (
   MaxLength     = 0;
   NumberOfLines = 0;
   while ((String = VA_ARG (Args, CHAR16 *)) != NULL) {
-    MaxLength = MAX (MaxLength, UefiLibGetStringWidth (String, FALSE, 0, NULL) / 2);
+    MaxLength = MAX (
+                  MaxLength,
+                  UefiLibGetStringWidth (String, FALSE, 0, NULL) /
+                  2
+                  );
     NumberOfLines++;
   }
 
@@ -505,7 +512,11 @@ CreatePopUp (
       //
       // Length <= MaxLength
       //
-      ConOut->SetCursorPosition (ConOut, Column + 1 + (MaxLength - Length) / 2, Row++);
+      ConOut->SetCursorPosition (
+                ConOut,
+                Column + 1 + (MaxLength - Length) / 2,
+                Row++
+                );
       ConOut->OutputString (ConOut, String);
     } else {
       //
@@ -546,7 +557,11 @@ CreatePopUp (
   // Restore the cursor visibility, position, and attributes
   //
   ConOut->EnableCursor (ConOut, SavedConsoleMode.CursorVisible);
-  ConOut->SetCursorPosition (ConOut, SavedConsoleMode.CursorColumn, SavedConsoleMode.CursorRow);
+  ConOut->SetCursorPosition (
+            ConOut,
+            SavedConsoleMode.CursorColumn,
+            SavedConsoleMode.CursorRow
+            );
   ConOut->SetAttribute (ConOut, SavedConsoleMode.Attribute);
 
   //

@@ -843,66 +843,117 @@ typedef struct {
 } SPD4_MODULE_UNBUFFERED;
 
 typedef struct {
-  SPD4_RDIMM_MODULE_NOMINAL_HEIGHT                                         ModuleNominalHeight;                                 ///< 128     Module Nominal Height
-  SPD4_RDIMM_MODULE_NOMINAL_THICKNESS                                      ModuleMaximumThickness;                              ///< 129     Module Maximum Thickness
-  SPD4_RDIMM_REFERENCE_RAW_CARD                                            ReferenceRawCardUsed;                                ///< 130     Reference Raw Card Used
-  SPD4_RDIMM_MODULE_ATTRIBUTES                                             DimmModuleAttributes;                                ///< 131     DIMM Module Attributes
-  SPD4_RDIMM_THERMAL_HEAT_SPREADER_SOLUTION                                DimmThermalHeatSpreaderSolution;                     ///< 132     RDIMM Thermal Heat Spreader Solution
-  SPD4_MANUFACTURER_ID_CODE                                                RegisterManufacturerIdCode;                          ///< 133-134 Register Manufacturer ID Code
-  SPD4_RDIMM_REGISTER_REVISION_NUMBER                                      RegisterRevisionNumber;                              ///< 135     Register Revision Number
-  SPD4_RDIMM_ADDRESS_MAPPING_FROM_REGISTER_TO_DRAM                         AddressMappingFromRegisterToDRAM;                    ///< 136     Address Mapping from Register to DRAM
-  SPD4_RDIMM_REGISTER_OUTPUT_DRIVE_STRENGTH_FOR_CONTROL_COMMAND_ADDRESS    RegisterOutputDriveStrengthForControlCommandAddress; ///< 137 Register Output Drive Strength for Control and Command Address
-  SPD4_RDIMM_REGISTER_OUTPUT_DRIVE_STRENGTH_FOR_CLOCK                      RegisterOutputDriveStrengthForClock;                 ///< 138     Register Output Drive Strength for Clock
-  UINT8                                                                    Reserved[253 - 139 + 1];                             ///< 253-139 Reserved
-  SPD4_CYCLIC_REDUNDANCY_CODE                                              Crc;                                                 ///< 254-255 Cyclical Redundancy Code (CRC)
+  SPD4_RDIMM_MODULE_NOMINAL_HEIGHT
+                                 ModuleNominalHeight;                                                                           ///< 128     Module Nominal Height
+  SPD4_RDIMM_MODULE_NOMINAL_THICKNESS
+                                 ModuleMaximumThickness;                                                                        ///< 129     Module Maximum Thickness
+  SPD4_RDIMM_REFERENCE_RAW_CARD
+                                 ReferenceRawCardUsed;                                                                          ///< 130     Reference Raw Card Used
+  SPD4_RDIMM_MODULE_ATTRIBUTES
+                                 DimmModuleAttributes;                                                                          ///< 131     DIMM Module Attributes
+  SPD4_RDIMM_THERMAL_HEAT_SPREADER_SOLUTION
+                                 DimmThermalHeatSpreaderSolution;                                                               ///< 132     RDIMM Thermal Heat Spreader Solution
+  SPD4_MANUFACTURER_ID_CODE
+                                 RegisterManufacturerIdCode;                                                                    ///< 133-134 Register Manufacturer ID Code
+  SPD4_RDIMM_REGISTER_REVISION_NUMBER
+                                 RegisterRevisionNumber;                                                                        ///< 135     Register Revision Number
+  SPD4_RDIMM_ADDRESS_MAPPING_FROM_REGISTER_TO_DRAM
+                                 AddressMappingFromRegisterToDRAM;                                                              ///< 136     Address Mapping from Register to DRAM
+  SPD4_RDIMM_REGISTER_OUTPUT_DRIVE_STRENGTH_FOR_CONTROL_COMMAND_ADDRESS
+                                 RegisterOutputDriveStrengthForControlCommandAddress;                                           ///< 137 Register Output Drive Strength for Control and Command Address
+  SPD4_RDIMM_REGISTER_OUTPUT_DRIVE_STRENGTH_FOR_CLOCK
+                                 RegisterOutputDriveStrengthForClock;                                                           ///< 138     Register Output Drive Strength for Clock
+  UINT8
+                                 Reserved[253 - 139 + 1];                                                                       ///< 253-139 Reserved
+  SPD4_CYCLIC_REDUNDANCY_CODE    Crc;                                                                                           ///< 254-255 Cyclical Redundancy Code (CRC)
 } SPD4_MODULE_REGISTERED;
 
 typedef struct {
-  SPD4_LRDIMM_MODULE_NOMINAL_HEIGHT                                         ModuleNominalHeight;                                 ///< 128     Module Nominal Height
-  SPD4_LRDIMM_MODULE_NOMINAL_THICKNESS                                      ModuleMaximumThickness;                              ///< 129     Module Maximum Thickness
-  SPD4_LRDIMM_REFERENCE_RAW_CARD                                            ReferenceRawCardUsed;                                ///< 130     Reference Raw Card Used
-  SPD4_LRDIMM_MODULE_ATTRIBUTES                                             DimmModuleAttributes;                                ///< 131     DIMM Module Attributes
-  SPD4_LRDIMM_THERMAL_HEAT_SPREADER_SOLUTION                                ThermalHeatSpreaderSolution;                         ///< 132     RDIMM Thermal Heat Spreader Solution
-  SPD4_MANUFACTURER_ID_CODE                                                 RegisterManufacturerIdCode;                          ///< 133-134 Register Manufacturer ID Code
-  SPD4_LRDIMM_REGISTER_REVISION_NUMBER                                      RegisterRevisionNumber;                              ///< 135     Register Revision Number
-  SPD4_LRDIMM_ADDRESS_MAPPING_FROM_REGISTER_TO_DRAM                         AddressMappingFromRegisterToDram;                    ///< 136 Address Mapping from Register to DRAM
-  SPD4_LRDIMM_REGISTER_OUTPUT_DRIVE_STRENGTH_FOR_CONTROL_COMMAND_ADDRESS    RegisterOutputDriveStrengthForControlCommandAddress; ///< 137 Register Output Drive Strength for Control and Command Address
-  SPD4_LRDIMM_REGISTER_OUTPUT_DRIVE_STRENGTH_FOR_CLOCK                      RegisterOutputDriveStrengthForClock;                 ///< 138 Register Output Drive Strength for Clock
-  SPD4_LRDIMM_DATA_BUFFER_REVISION_NUMBER                                   DataBufferRevisionNumber;                            ///< 139     Data Buffer Revision Number
-  SPD4_LRDIMM_DRAM_VREFDQ_FOR_PACKAGE_RANK                                  DramVrefDQForPackageRank0;                           ///< 140     DRAM VrefDQ for Package Rank 0
-  SPD4_LRDIMM_DRAM_VREFDQ_FOR_PACKAGE_RANK                                  DramVrefDQForPackageRank1;                           ///< 141     DRAM VrefDQ for Package Rank 1
-  SPD4_LRDIMM_DRAM_VREFDQ_FOR_PACKAGE_RANK                                  DramVrefDQForPackageRank2;                           ///< 142     DRAM VrefDQ for Package Rank 2
-  SPD4_LRDIMM_DRAM_VREFDQ_FOR_PACKAGE_RANK                                  DramVrefDQForPackageRank3;                           ///< 143     DRAM VrefDQ for Package Rank 3
-  SPD4_LRDIMM_DATA_BUFFER_VREFDQ_FOR_DRAM_INTERFACE                         DataBufferVrefDQForDramInterface;                    ///< 144     Data Buffer VrefDQ for DRAM Interface
-  SPD4_LRDIMM_DATA_BUFFER_MDQ_DRIVE_STRENGTH_RTT_FOR_DATA_RATE              DataBufferMdqDriveStrengthRttForDataRateLe1866;      ///< 145     Data Buffer MDQ Drive Strength and RTT for data rate <= 1866
-  SPD4_LRDIMM_DATA_BUFFER_MDQ_DRIVE_STRENGTH_RTT_FOR_DATA_RATE              DataBufferMdqDriveStrengthRttForDataRateLe2400;      ///< 146     Data Buffer MDQ Drive Strength and RTT for data rate <=2400
-  SPD4_LRDIMM_DATA_BUFFER_MDQ_DRIVE_STRENGTH_RTT_FOR_DATA_RATE              DataBufferMdqDriveStrengthRttForDataRateLe3200;      ///< 147     Data Buffer MDQ Drive Strength and RTT for data rate <=3200
-  SPD4_LRDIMM_DRAM_DRIVE_STRENGTH                                           DramDriveStrength;                                   ///< 148     DRAM Drive Strength
-  SPD4_LRDIMM_DRAM_ODT_RTT_WR_RTT_NOM_FOR_DATA_RATE                         DramOdtRttWrRttNomForDataRateLe1866;                 ///< 149     DRAM ODT (RTT_WR and RTT_NOM) for data rate <= 1866
-  SPD4_LRDIMM_DRAM_ODT_RTT_WR_RTT_NOM_FOR_DATA_RATE                         DramOdtRttWrRttNomForDataRateLe2400;                 ///< 150     DRAM ODT (RTT_WR and RTT_NOM) for data rate <= 2400
-  SPD4_LRDIMM_DRAM_ODT_RTT_WR_RTT_NOM_FOR_DATA_RATE                         DramOdtRttWrRttNomForDataRateLe3200;                 ///< 151     DRAM ODT (RTT_WR and RTT_NOM) for data rate <= 3200
-  SPD4_LRDIMM_DRAM_ODT_RTT_PARK_FOR_DATA_RATE                               DramOdtRttParkForDataRateLe1866;                     ///< 152     DRAM ODT (RTT_PARK) for data rate <= 1866
-  SPD4_LRDIMM_DRAM_ODT_RTT_PARK_FOR_DATA_RATE                               DramOdtRttParkForDataRateLe2400;                     ///< 153     DRAM ODT (RTT_PARK) for data rate <= 2400
-  SPD4_LRDIMM_DRAM_ODT_RTT_PARK_FOR_DATA_RATE                               DramOdtRttParkForDataRateLe3200;                     ///< 154     DRAM ODT (RTT_PARK) for data rate <= 3200
-  SPD4_LRDIMM_DATA_BUFFER_VREFDQ_FOR_DRAM_INTERFACE_RANGE                   DataBufferVrefDQForDramInterfaceRange;               ///< 155     Data Buffer VrefDQ for DRAM Interface Range
-  SPD4_LRDIMM_DATA_BUFFER_DQ_DECISION_FEEDBACK_EQUALIZATION                 DataBufferDqDecisionFeedbackEqualization;            ///< 156     Data Buffer DQ Decision Feedback Equalization
-  UINT8                                                                     Reserved[253 - 157 + 1];                             ///< 253-132 Reserved
-  SPD4_CYCLIC_REDUNDANCY_CODE                                               Crc;                                                 ///< 254-255 Cyclical Redundancy Code (CRC)
+  SPD4_LRDIMM_MODULE_NOMINAL_HEIGHT
+                                 ModuleNominalHeight;                                                                            ///< 128     Module Nominal Height
+  SPD4_LRDIMM_MODULE_NOMINAL_THICKNESS
+                                 ModuleMaximumThickness;                                                                         ///< 129     Module Maximum Thickness
+  SPD4_LRDIMM_REFERENCE_RAW_CARD
+                                 ReferenceRawCardUsed;                                                                           ///< 130     Reference Raw Card Used
+  SPD4_LRDIMM_MODULE_ATTRIBUTES
+                                 DimmModuleAttributes;                                                                           ///< 131     DIMM Module Attributes
+  SPD4_LRDIMM_THERMAL_HEAT_SPREADER_SOLUTION
+                                 ThermalHeatSpreaderSolution;                                                                    ///< 132     RDIMM Thermal Heat Spreader Solution
+  SPD4_MANUFACTURER_ID_CODE
+                                 RegisterManufacturerIdCode;                                                                     ///< 133-134 Register Manufacturer ID Code
+  SPD4_LRDIMM_REGISTER_REVISION_NUMBER
+                                 RegisterRevisionNumber;                                                                         ///< 135     Register Revision Number
+  SPD4_LRDIMM_ADDRESS_MAPPING_FROM_REGISTER_TO_DRAM
+                                 AddressMappingFromRegisterToDram;                                                               ///< 136 Address Mapping from Register to DRAM
+  SPD4_LRDIMM_REGISTER_OUTPUT_DRIVE_STRENGTH_FOR_CONTROL_COMMAND_ADDRESS
+                                 RegisterOutputDriveStrengthForControlCommandAddress;                                            ///< 137 Register Output Drive Strength for Control and Command Address
+  SPD4_LRDIMM_REGISTER_OUTPUT_DRIVE_STRENGTH_FOR_CLOCK
+                                 RegisterOutputDriveStrengthForClock;                                                            ///< 138 Register Output Drive Strength for Clock
+  SPD4_LRDIMM_DATA_BUFFER_REVISION_NUMBER
+                                 DataBufferRevisionNumber;                                                                       ///< 139     Data Buffer Revision Number
+  SPD4_LRDIMM_DRAM_VREFDQ_FOR_PACKAGE_RANK
+                                 DramVrefDQForPackageRank0;                                                                      ///< 140     DRAM VrefDQ for Package Rank 0
+  SPD4_LRDIMM_DRAM_VREFDQ_FOR_PACKAGE_RANK
+                                 DramVrefDQForPackageRank1;                                                                      ///< 141     DRAM VrefDQ for Package Rank 1
+  SPD4_LRDIMM_DRAM_VREFDQ_FOR_PACKAGE_RANK
+                                 DramVrefDQForPackageRank2;                                                                      ///< 142     DRAM VrefDQ for Package Rank 2
+  SPD4_LRDIMM_DRAM_VREFDQ_FOR_PACKAGE_RANK
+                                 DramVrefDQForPackageRank3;                                                                      ///< 143     DRAM VrefDQ for Package Rank 3
+  SPD4_LRDIMM_DATA_BUFFER_VREFDQ_FOR_DRAM_INTERFACE
+                                 DataBufferVrefDQForDramInterface;                                                               ///< 144     Data Buffer VrefDQ for DRAM Interface
+  SPD4_LRDIMM_DATA_BUFFER_MDQ_DRIVE_STRENGTH_RTT_FOR_DATA_RATE
+                                 DataBufferMdqDriveStrengthRttForDataRateLe1866;                                                 ///< 145     Data Buffer MDQ Drive Strength and RTT for data rate <= 1866
+  SPD4_LRDIMM_DATA_BUFFER_MDQ_DRIVE_STRENGTH_RTT_FOR_DATA_RATE
+                                 DataBufferMdqDriveStrengthRttForDataRateLe2400;                                                 ///< 146     Data Buffer MDQ Drive Strength and RTT for data rate <=2400
+  SPD4_LRDIMM_DATA_BUFFER_MDQ_DRIVE_STRENGTH_RTT_FOR_DATA_RATE
+                                 DataBufferMdqDriveStrengthRttForDataRateLe3200;                                                 ///< 147     Data Buffer MDQ Drive Strength and RTT for data rate <=3200
+  SPD4_LRDIMM_DRAM_DRIVE_STRENGTH
+                                 DramDriveStrength;                                                                              ///< 148     DRAM Drive Strength
+  SPD4_LRDIMM_DRAM_ODT_RTT_WR_RTT_NOM_FOR_DATA_RATE
+                                 DramOdtRttWrRttNomForDataRateLe1866;                                                            ///< 149     DRAM ODT (RTT_WR and RTT_NOM) for data rate <= 1866
+  SPD4_LRDIMM_DRAM_ODT_RTT_WR_RTT_NOM_FOR_DATA_RATE
+                                 DramOdtRttWrRttNomForDataRateLe2400;                                                            ///< 150     DRAM ODT (RTT_WR and RTT_NOM) for data rate <= 2400
+  SPD4_LRDIMM_DRAM_ODT_RTT_WR_RTT_NOM_FOR_DATA_RATE
+                                 DramOdtRttWrRttNomForDataRateLe3200;                                                            ///< 151     DRAM ODT (RTT_WR and RTT_NOM) for data rate <= 3200
+  SPD4_LRDIMM_DRAM_ODT_RTT_PARK_FOR_DATA_RATE
+                                 DramOdtRttParkForDataRateLe1866;                                                                ///< 152     DRAM ODT (RTT_PARK) for data rate <= 1866
+  SPD4_LRDIMM_DRAM_ODT_RTT_PARK_FOR_DATA_RATE
+                                 DramOdtRttParkForDataRateLe2400;                                                                ///< 153     DRAM ODT (RTT_PARK) for data rate <= 2400
+  SPD4_LRDIMM_DRAM_ODT_RTT_PARK_FOR_DATA_RATE
+                                 DramOdtRttParkForDataRateLe3200;                                                                ///< 154     DRAM ODT (RTT_PARK) for data rate <= 3200
+  SPD4_LRDIMM_DATA_BUFFER_VREFDQ_FOR_DRAM_INTERFACE_RANGE
+                                 DataBufferVrefDQForDramInterfaceRange;                                                          ///< 155     Data Buffer VrefDQ for DRAM Interface Range
+  SPD4_LRDIMM_DATA_BUFFER_DQ_DECISION_FEEDBACK_EQUALIZATION
+                                 DataBufferDqDecisionFeedbackEqualization;                                                       ///< 156     Data Buffer DQ Decision Feedback Equalization
+  UINT8
+                                 Reserved[253 - 157 + 1];                                                                        ///< 253-132 Reserved
+  SPD4_CYCLIC_REDUNDANCY_CODE    Crc;                                                                                            ///< 254-255 Cyclical Redundancy Code (CRC)
 } SPD4_MODULE_LOADREDUCED;
 
 typedef struct {
-  UINT8                                                         Reserved0[191 - 128 + 1];                   ///< 128-191  Reserved
-  SPD4_NVDIMM_MODULE_PRODUCT_IDENTIFIER                         ModuleProductIdentifier;                    ///< 192-193  Module Product Identifier
-  SPD4_NVDIMM_SUBSYSTEM_CONTROLLER_MANUFACTURER_ID_CODE         SubsystemControllerManufacturerIdCode;      ///< 194-195  Subsystem Controller Manufacturer's ID Code
-  SPD4_NVDIMM_SUBSYSTEM_CONTROLLER_IDENTIFIER                   SubsystemControllerIdentifier;              ///< 196-197  Subsystem Controller Identifier
-  SPD4_NVDIMM_SUBSYSTEM_CONTROLLER_REVISION_CODE                SubsystemControllerRevisionCode;            ///< 198      Subsystem Controller Revision Code
-  SPD4_NVDIMM_REFERENCE_RAW_CARD                                ReferenceRawCardUsed;                       ///< 199      Reference Raw Card Used
-  SPD4_NVDIMM_MODULE_CHARACTERISTICS                            ModuleCharacteristics;                      ///< 200      Module Characteristics
-  SPD4_NVDIMM_HYBRID_MODULE_MEDIA_TYPES                         HybridModuleMediaTypes;                     ///< 201-202  Hybrid Module Media Types
-  SPD4_NVDIMM_MAXIMUM_NONVOLATILE_MEMORY_INITIALIZATION_TIME    MaximumNonVolatileMemoryInitializationTime; ///< 203 Maximum Non-Volatile Memory Initialization Time
-  SPD4_NVDIMM_FUNCTION_INTERFACE_DESCRIPTOR                     FunctionInterfaceDescriptors[8];            ///< 204-219  Function Interface Descriptors
-  UINT8                                                         Reserved[253 - 220 + 1];                    ///< 220-253  Reserved
-  SPD4_CYCLIC_REDUNDANCY_CODE                                   Crc;                                        ///< 254-255  Cyclical Redundancy Code (CRC)
+  UINT8                          Reserved0[191 -
+                                               128 + 1];                                                    ///< 128-191  Reserved
+  SPD4_NVDIMM_MODULE_PRODUCT_IDENTIFIER
+                                 ModuleProductIdentifier;                                                   ///< 192-193  Module Product Identifier
+  SPD4_NVDIMM_SUBSYSTEM_CONTROLLER_MANUFACTURER_ID_CODE
+                                 SubsystemControllerManufacturerIdCode;                                     ///< 194-195  Subsystem Controller Manufacturer's ID Code
+  SPD4_NVDIMM_SUBSYSTEM_CONTROLLER_IDENTIFIER
+                                 SubsystemControllerIdentifier;                                             ///< 196-197  Subsystem Controller Identifier
+  SPD4_NVDIMM_SUBSYSTEM_CONTROLLER_REVISION_CODE
+                                 SubsystemControllerRevisionCode;                                           ///< 198      Subsystem Controller Revision Code
+  SPD4_NVDIMM_REFERENCE_RAW_CARD
+                                 ReferenceRawCardUsed;                                                      ///< 199      Reference Raw Card Used
+  SPD4_NVDIMM_MODULE_CHARACTERISTICS
+                                 ModuleCharacteristics;                                                     ///< 200      Module Characteristics
+  SPD4_NVDIMM_HYBRID_MODULE_MEDIA_TYPES
+                                 HybridModuleMediaTypes;                                                    ///< 201-202  Hybrid Module Media Types
+  SPD4_NVDIMM_MAXIMUM_NONVOLATILE_MEMORY_INITIALIZATION_TIME
+                                 MaximumNonVolatileMemoryInitializationTime;                                ///< 203 Maximum Non-Volatile Memory Initialization Time
+  SPD4_NVDIMM_FUNCTION_INTERFACE_DESCRIPTOR
+                                 FunctionInterfaceDescriptors[8];                                           ///< 204-219  Function Interface Descriptors
+  UINT8                          Reserved[253 -
+                                              220 + 1];                                                     ///< 220-253  Reserved
+  SPD4_CYCLIC_REDUNDANCY_CODE    Crc;                                                                       ///< 254-255  Cyclical Redundancy Code (CRC)
 } SPD4_MODULE_NVDIMM;
 
 typedef union {

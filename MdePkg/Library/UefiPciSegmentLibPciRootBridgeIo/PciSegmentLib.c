@@ -57,7 +57,10 @@ PciSegmentLibConstructor (
 
   mNumberOfPciRootBridges = HandleCount;
 
-  mPciRootBridgeData = AllocatePool (HandleCount * sizeof (PCI_ROOT_BRIDGE_DATA));
+  mPciRootBridgeData = AllocatePool (
+                         HandleCount *
+                         sizeof (PCI_ROOT_BRIDGE_DATA)
+                         );
   ASSERT (mPciRootBridgeData != NULL);
 
   //
@@ -75,7 +78,10 @@ PciSegmentLibConstructor (
     mPciRootBridgeData[Index].PciRootBridgeIo = PciRootBridgeIo;
     mPciRootBridgeData[Index].SegmentNumber   = PciRootBridgeIo->SegmentNumber;
 
-    Status = PciRootBridgeIo->Configuration (PciRootBridgeIo, (VOID **)&Descriptors);
+    Status = PciRootBridgeIo->Configuration (
+                                PciRootBridgeIo,
+                                (VOID **)&Descriptors
+                                );
     ASSERT_EFI_ERROR (Status);
 
     while (Descriptors->Desc != ACPI_END_TAG_DESCRIPTOR) {
@@ -151,7 +157,11 @@ PciSegmentLibSearchForRootBridge (
       // Matches the bus number of address with bus number range of protocol instance.
       //
       BusNumber = BitFieldRead64 (Address, 20, 27);
-      if ((BusNumber >= mPciRootBridgeData[Index].MinBusNumber) && (BusNumber <= mPciRootBridgeData[Index].MaxBusNumber)) {
+      if ((BusNumber >= mPciRootBridgeData[Index].MinBusNumber) && (BusNumber <=
+                                                                    mPciRootBridgeData
+                                                                    [Index].
+                                                                      MaxBusNumber))
+      {
         return mPciRootBridgeData[Index].PciRootBridgeIo;
       }
     }
@@ -285,7 +295,10 @@ PciSegmentRead8 (
 {
   ASSERT_INVALID_PCI_SEGMENT_ADDRESS (Address, 0);
 
-  return (UINT8)DxePciSegmentLibPciRootBridgeIoReadWorker (Address, EfiPciWidthUint8);
+  return (UINT8)DxePciSegmentLibPciRootBridgeIoReadWorker (
+                  Address,
+                  EfiPciWidthUint8
+                  );
 }
 
 /**
@@ -311,7 +324,11 @@ PciSegmentWrite8 (
 {
   ASSERT_INVALID_PCI_SEGMENT_ADDRESS (Address, 0);
 
-  return (UINT8)DxePciSegmentLibPciRootBridgeIoWriteWorker (Address, EfiPciWidthUint8, Value);
+  return (UINT8)DxePciSegmentLibPciRootBridgeIoWriteWorker (
+                  Address,
+                  EfiPciWidthUint8,
+                  Value
+                  );
 }
 
 /**
@@ -338,7 +355,11 @@ PciSegmentOr8 (
   IN UINT8   OrData
   )
 {
-  return PciSegmentWrite8 (Address, (UINT8)(PciSegmentRead8 (Address) | OrData));
+  return PciSegmentWrite8 (
+           Address,
+           (UINT8)(PciSegmentRead8 (Address) |
+                   OrData)
+           );
 }
 
 /**
@@ -364,7 +385,11 @@ PciSegmentAnd8 (
   IN UINT8   AndData
   )
 {
-  return PciSegmentWrite8 (Address, (UINT8)(PciSegmentRead8 (Address) & AndData));
+  return PciSegmentWrite8 (
+           Address,
+           (UINT8)(PciSegmentRead8 (Address) &
+                   AndData)
+           );
 }
 
 /**
@@ -395,7 +420,11 @@ PciSegmentAndThenOr8 (
   IN UINT8   OrData
   )
 {
-  return PciSegmentWrite8 (Address, (UINT8)((PciSegmentRead8 (Address) & AndData) | OrData));
+  return PciSegmentWrite8 (
+           Address,
+           (UINT8)((PciSegmentRead8 (Address) &
+                    AndData) | OrData)
+           );
 }
 
 /**
@@ -595,7 +624,13 @@ PciSegmentBitFieldAndThenOr8 (
 {
   return PciSegmentWrite8 (
            Address,
-           BitFieldAndThenOr8 (PciSegmentRead8 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr8 (
+             PciSegmentRead8 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 
@@ -621,7 +656,10 @@ PciSegmentRead16 (
 {
   ASSERT_INVALID_PCI_SEGMENT_ADDRESS (Address, 1);
 
-  return (UINT16)DxePciSegmentLibPciRootBridgeIoReadWorker (Address, EfiPciWidthUint16);
+  return (UINT16)DxePciSegmentLibPciRootBridgeIoReadWorker (
+                   Address,
+                   EfiPciWidthUint16
+                   );
 }
 
 /**
@@ -648,7 +686,11 @@ PciSegmentWrite16 (
 {
   ASSERT_INVALID_PCI_SEGMENT_ADDRESS (Address, 1);
 
-  return (UINT16)DxePciSegmentLibPciRootBridgeIoWriteWorker (Address, EfiPciWidthUint16, Value);
+  return (UINT16)DxePciSegmentLibPciRootBridgeIoWriteWorker (
+                   Address,
+                   EfiPciWidthUint16,
+                   Value
+                   );
 }
 
 /**
@@ -678,7 +720,11 @@ PciSegmentOr16 (
   IN UINT16  OrData
   )
 {
-  return PciSegmentWrite16 (Address, (UINT16)(PciSegmentRead16 (Address) | OrData));
+  return PciSegmentWrite16 (
+           Address,
+           (UINT16)(PciSegmentRead16 (Address) |
+                    OrData)
+           );
 }
 
 /**
@@ -706,7 +752,11 @@ PciSegmentAnd16 (
   IN UINT16  AndData
   )
 {
-  return PciSegmentWrite16 (Address, (UINT16)(PciSegmentRead16 (Address) & AndData));
+  return PciSegmentWrite16 (
+           Address,
+           (UINT16)(PciSegmentRead16 (Address) &
+                    AndData)
+           );
 }
 
 /**
@@ -738,7 +788,11 @@ PciSegmentAndThenOr16 (
   IN UINT16  OrData
   )
 {
-  return PciSegmentWrite16 (Address, (UINT16)((PciSegmentRead16 (Address) & AndData) | OrData));
+  return PciSegmentWrite16 (
+           Address,
+           (UINT16)((PciSegmentRead16 (Address) &
+                     AndData) | OrData)
+           );
 }
 
 /**
@@ -943,7 +997,13 @@ PciSegmentBitFieldAndThenOr16 (
 {
   return PciSegmentWrite16 (
            Address,
-           BitFieldAndThenOr16 (PciSegmentRead16 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr16 (
+             PciSegmentRead16 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 
@@ -996,7 +1056,11 @@ PciSegmentWrite32 (
 {
   ASSERT_INVALID_PCI_SEGMENT_ADDRESS (Address, 3);
 
-  return DxePciSegmentLibPciRootBridgeIoWriteWorker (Address, EfiPciWidthUint32, Value);
+  return DxePciSegmentLibPciRootBridgeIoWriteWorker (
+           Address,
+           EfiPciWidthUint32,
+           Value
+           );
 }
 
 /**
@@ -1084,7 +1148,11 @@ PciSegmentAndThenOr32 (
   IN UINT32  OrData
   )
 {
-  return PciSegmentWrite32 (Address, (PciSegmentRead32 (Address) & AndData) | OrData);
+  return PciSegmentWrite32 (
+           Address,
+           (PciSegmentRead32 (Address) & AndData) |
+           OrData
+           );
 }
 
 /**
@@ -1287,7 +1355,13 @@ PciSegmentBitFieldAndThenOr32 (
 {
   return PciSegmentWrite32 (
            Address,
-           BitFieldAndThenOr32 (PciSegmentRead32 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr32 (
+             PciSegmentRead32 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 

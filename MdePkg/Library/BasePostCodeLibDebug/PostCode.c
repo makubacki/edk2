@@ -93,7 +93,8 @@ PostCodeEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdPostCodePropertyMask) & POST_CODE_PROPERTY_POST_CODE_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdPostCodePropertyMask) &
+                    POST_CODE_PROPERTY_POST_CODE_ENABLED) != 0);
 }
 
 /**
@@ -114,5 +115,6 @@ PostCodeDescriptionEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdPostCodePropertyMask) & POST_CODE_PROPERTY_POST_CODE_DESCRIPTION_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdPostCodePropertyMask) &
+                    POST_CODE_PROPERTY_POST_CODE_DESCRIPTION_ENABLED) != 0);
 }

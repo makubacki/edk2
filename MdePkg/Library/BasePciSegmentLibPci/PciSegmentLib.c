@@ -134,7 +134,10 @@ PciSegmentOr8 (
   IN UINT8   OrData
   )
 {
-  return PciWrite8 (PCI_SEGMENT_TO_PCI_ADDRESS (Address), (UINT8)(PciSegmentRead8 (Address) | OrData));
+  return PciWrite8 (
+           PCI_SEGMENT_TO_PCI_ADDRESS (Address),
+           (UINT8)(PciSegmentRead8 (Address) | OrData)
+           );
 }
 
 /**
@@ -160,7 +163,11 @@ PciSegmentAnd8 (
   IN UINT8   AndData
   )
 {
-  return PciSegmentWrite8 (Address, (UINT8)(PciSegmentRead8 (Address) & AndData));
+  return PciSegmentWrite8 (
+           Address,
+           (UINT8)(PciSegmentRead8 (Address) &
+                   AndData)
+           );
 }
 
 /**
@@ -191,7 +198,11 @@ PciSegmentAndThenOr8 (
   IN UINT8   OrData
   )
 {
-  return PciSegmentWrite8 (Address, (UINT8)((PciSegmentRead8 (Address) & AndData) | OrData));
+  return PciSegmentWrite8 (
+           Address,
+           (UINT8)((PciSegmentRead8 (Address) &
+                    AndData) | OrData)
+           );
 }
 
 /**
@@ -391,7 +402,13 @@ PciSegmentBitFieldAndThenOr8 (
 {
   return PciSegmentWrite8 (
            Address,
-           BitFieldAndThenOr8 (PciSegmentRead8 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr8 (
+             PciSegmentRead8 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 
@@ -474,7 +491,11 @@ PciSegmentOr16 (
   IN UINT16  OrData
   )
 {
-  return PciSegmentWrite16 (Address, (UINT16)(PciSegmentRead16 (Address) | OrData));
+  return PciSegmentWrite16 (
+           Address,
+           (UINT16)(PciSegmentRead16 (Address) |
+                    OrData)
+           );
 }
 
 /**
@@ -502,7 +523,11 @@ PciSegmentAnd16 (
   IN UINT16  AndData
   )
 {
-  return PciSegmentWrite16 (Address, (UINT16)(PciSegmentRead16 (Address) & AndData));
+  return PciSegmentWrite16 (
+           Address,
+           (UINT16)(PciSegmentRead16 (Address) &
+                    AndData)
+           );
 }
 
 /**
@@ -534,7 +559,11 @@ PciSegmentAndThenOr16 (
   IN UINT16  OrData
   )
 {
-  return PciSegmentWrite16 (Address, (UINT16)((PciSegmentRead16 (Address) & AndData) | OrData));
+  return PciSegmentWrite16 (
+           Address,
+           (UINT16)((PciSegmentRead16 (Address) &
+                     AndData) | OrData)
+           );
 }
 
 /**
@@ -739,7 +768,13 @@ PciSegmentBitFieldAndThenOr16 (
 {
   return PciSegmentWrite16 (
            Address,
-           BitFieldAndThenOr16 (PciSegmentRead16 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr16 (
+             PciSegmentRead16 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 
@@ -880,7 +915,11 @@ PciSegmentAndThenOr32 (
   IN UINT32  OrData
   )
 {
-  return PciSegmentWrite32 (Address, (PciSegmentRead32 (Address) & AndData) | OrData);
+  return PciSegmentWrite32 (
+           Address,
+           (PciSegmentRead32 (Address) & AndData) |
+           OrData
+           );
 }
 
 /**
@@ -1083,7 +1122,13 @@ PciSegmentBitFieldAndThenOr32 (
 {
   return PciSegmentWrite32 (
            Address,
-           BitFieldAndThenOr32 (PciSegmentRead32 (Address), StartBit, EndBit, AndData, OrData)
+           BitFieldAndThenOr32 (
+             PciSegmentRead32 (Address),
+             StartBit,
+             EndBit,
+             AndData,
+             OrData
+             )
            );
 }
 

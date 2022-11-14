@@ -58,7 +58,14 @@ TdIoRead8 (
   UINT64  Status;
   UINT64  Val;
 
-  Status = TdVmCall (TDVMCALL_IO, TDVMCALL_ACCESS_SIZE_1, TDVMCALL_ACCESS_READ, Port, 0, &Val);
+  Status = TdVmCall (
+             TDVMCALL_IO,
+             TDVMCALL_ACCESS_SIZE_1,
+             TDVMCALL_ACCESS_READ,
+             Port,
+             0,
+             &Val
+             );
   if (Status != 0) {
     TdVmCall (TDVMCALL_HALT, 0, 0, 0, 0, 0);
   }
@@ -87,7 +94,14 @@ TdIoRead16 (
 
   ASSERT ((Port & 1) == 0);
 
-  Status = TdVmCall (TDVMCALL_IO, TDVMCALL_ACCESS_SIZE_2, TDVMCALL_ACCESS_READ, Port, 0, &Val);
+  Status = TdVmCall (
+             TDVMCALL_IO,
+             TDVMCALL_ACCESS_SIZE_2,
+             TDVMCALL_ACCESS_READ,
+             Port,
+             0,
+             &Val
+             );
   if (Status != 0) {
     TdVmCall (TDVMCALL_HALT, 0, 0, 0, 0, 0);
   }
@@ -116,7 +130,14 @@ TdIoRead32 (
 
   ASSERT ((Port & 3) == 0);
 
-  Status = TdVmCall (TDVMCALL_IO, TDVMCALL_ACCESS_SIZE_4, TDVMCALL_ACCESS_READ, Port, 0, &Val);
+  Status = TdVmCall (
+             TDVMCALL_IO,
+             TDVMCALL_ACCESS_SIZE_4,
+             TDVMCALL_ACCESS_READ,
+             Port,
+             0,
+             &Val
+             );
   if (Status != 0) {
     TdVmCall (TDVMCALL_HALT, 0, 0, 0, 0, 0);
   }
@@ -146,7 +167,14 @@ TdIoWrite8 (
   UINT64  Val;
 
   Val    = Value;
-  Status = TdVmCall (TDVMCALL_IO, TDVMCALL_ACCESS_SIZE_1, TDVMCALL_ACCESS_WRITE, Port, Val, 0);
+  Status = TdVmCall (
+             TDVMCALL_IO,
+             TDVMCALL_ACCESS_SIZE_1,
+             TDVMCALL_ACCESS_WRITE,
+             Port,
+             Val,
+             0
+             );
   if (Status != 0) {
     TdVmCall (TDVMCALL_HALT, 0, 0, 0, 0, 0);
   }
@@ -177,7 +205,14 @@ TdIoWrite16 (
 
   ASSERT ((Port & 1) == 0);
   Val    = Value;
-  Status = TdVmCall (TDVMCALL_IO, TDVMCALL_ACCESS_SIZE_2, TDVMCALL_ACCESS_WRITE, Port, Val, 0);
+  Status = TdVmCall (
+             TDVMCALL_IO,
+             TDVMCALL_ACCESS_SIZE_2,
+             TDVMCALL_ACCESS_WRITE,
+             Port,
+             Val,
+             0
+             );
   if (Status != 0) {
     TdVmCall (TDVMCALL_HALT, 0, 0, 0, 0, 0);
   }
@@ -208,7 +243,14 @@ TdIoWrite32 (
 
   ASSERT ((Port & 3) == 0);
   Val    = Value;
-  Status = TdVmCall (TDVMCALL_IO, TDVMCALL_ACCESS_SIZE_4, TDVMCALL_ACCESS_WRITE, Port, Val, 0);
+  Status = TdVmCall (
+             TDVMCALL_IO,
+             TDVMCALL_ACCESS_SIZE_4,
+             TDVMCALL_ACCESS_WRITE,
+             Port,
+             Val,
+             0
+             );
   if (Status != 0) {
     TdVmCall (TDVMCALL_HALT, 0, 0, 0, 0, 0);
   }
@@ -235,7 +277,14 @@ TdMmioRead8 (
   UINT64  Value;
   UINT64  Status;
 
-  Status = TdVmCall (TDVMCALL_MMIO, TDVMCALL_ACCESS_SIZE_1, TDVMCALL_ACCESS_READ, Address | TdSharedPageMask (), 0, &Value);
+  Status = TdVmCall (
+             TDVMCALL_MMIO,
+             TDVMCALL_ACCESS_SIZE_1,
+             TDVMCALL_ACCESS_READ,
+             Address | TdSharedPageMask (),
+             0,
+             &Value
+             );
   if (Status != 0) {
     Value = *(volatile UINT64 *)Address;
   }
@@ -265,7 +314,14 @@ TdMmioWrite8 (
   UINT64  Status;
 
   Val    = Value;
-  Status = TdVmCall (TDVMCALL_MMIO, TDVMCALL_ACCESS_SIZE_1, TDVMCALL_ACCESS_WRITE, Address | TdSharedPageMask (), Val, 0);
+  Status = TdVmCall (
+             TDVMCALL_MMIO,
+             TDVMCALL_ACCESS_SIZE_1,
+             TDVMCALL_ACCESS_WRITE,
+             Address | TdSharedPageMask (),
+             Val,
+             0
+             );
   if (Status != 0) {
     *(volatile UINT8 *)Address = Value;
   }
@@ -292,7 +348,14 @@ TdMmioRead16 (
   UINT64  Value;
   UINT64  Status;
 
-  Status = TdVmCall (TDVMCALL_MMIO, TDVMCALL_ACCESS_SIZE_2, TDVMCALL_ACCESS_READ, Address | TdSharedPageMask (), 0, &Value);
+  Status = TdVmCall (
+             TDVMCALL_MMIO,
+             TDVMCALL_ACCESS_SIZE_2,
+             TDVMCALL_ACCESS_READ,
+             Address | TdSharedPageMask (),
+             0,
+             &Value
+             );
   if (Status != 0) {
     Value = *(volatile UINT64 *)Address;
   }
@@ -324,7 +387,14 @@ TdMmioWrite16 (
   ASSERT ((Address & 1) == 0);
 
   Val    = Value;
-  Status = TdVmCall (TDVMCALL_MMIO, TDVMCALL_ACCESS_SIZE_2, TDVMCALL_ACCESS_WRITE, Address | TdSharedPageMask (), Val, 0);
+  Status = TdVmCall (
+             TDVMCALL_MMIO,
+             TDVMCALL_ACCESS_SIZE_2,
+             TDVMCALL_ACCESS_WRITE,
+             Address | TdSharedPageMask (),
+             Val,
+             0
+             );
   if (Status != 0) {
     *(volatile UINT16 *)Address = Value;
   }
@@ -351,7 +421,14 @@ TdMmioRead32 (
   UINT64  Value;
   UINT64  Status;
 
-  Status = TdVmCall (TDVMCALL_MMIO, TDVMCALL_ACCESS_SIZE_4, TDVMCALL_ACCESS_READ, Address | TdSharedPageMask (), 0, &Value);
+  Status = TdVmCall (
+             TDVMCALL_MMIO,
+             TDVMCALL_ACCESS_SIZE_4,
+             TDVMCALL_ACCESS_READ,
+             Address | TdSharedPageMask (),
+             0,
+             &Value
+             );
   if (Status != 0) {
     Value = *(volatile UINT64 *)Address;
   }
@@ -383,7 +460,14 @@ TdMmioWrite32 (
   ASSERT ((Address & 3) == 0);
 
   Val    = Value;
-  Status = TdVmCall (TDVMCALL_MMIO, TDVMCALL_ACCESS_SIZE_4, TDVMCALL_ACCESS_WRITE, Address | TdSharedPageMask (), Val, 0);
+  Status = TdVmCall (
+             TDVMCALL_MMIO,
+             TDVMCALL_ACCESS_SIZE_4,
+             TDVMCALL_ACCESS_WRITE,
+             Address | TdSharedPageMask (),
+             Val,
+             0
+             );
   if (Status != 0) {
     *(volatile UINT32 *)Address = Value;
   }
@@ -410,7 +494,14 @@ TdMmioRead64 (
   UINT64  Value;
   UINT64  Status;
 
-  Status = TdVmCall (TDVMCALL_MMIO, TDVMCALL_ACCESS_SIZE_8, TDVMCALL_ACCESS_READ, Address | TdSharedPageMask (), 0, &Value);
+  Status = TdVmCall (
+             TDVMCALL_MMIO,
+             TDVMCALL_ACCESS_SIZE_8,
+             TDVMCALL_ACCESS_READ,
+             Address | TdSharedPageMask (),
+             0,
+             &Value
+             );
   if (Status != 0) {
     Value = *(volatile UINT64 *)Address;
   }
@@ -440,7 +531,14 @@ TdMmioWrite64 (
   ASSERT ((Address & 7) == 0);
 
   Val    = Value;
-  Status = TdVmCall (TDVMCALL_MMIO, TDVMCALL_ACCESS_SIZE_8, TDVMCALL_ACCESS_WRITE, Address | TdSharedPageMask (), Val, 0);
+  Status = TdVmCall (
+             TDVMCALL_MMIO,
+             TDVMCALL_ACCESS_SIZE_8,
+             TDVMCALL_ACCESS_WRITE,
+             Address | TdSharedPageMask (),
+             Val,
+             0
+             );
   if (Status != 0) {
     *(volatile UINT64 *)Address = Value;
   }

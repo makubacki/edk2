@@ -28,7 +28,8 @@
 // that it is intended to process.
 //
 
-typedef struct _EFI_PEI_GUIDED_SECTION_EXTRACTION_PPI EFI_PEI_GUIDED_SECTION_EXTRACTION_PPI;
+typedef struct _EFI_PEI_GUIDED_SECTION_EXTRACTION_PPI
+EFI_PEI_GUIDED_SECTION_EXTRACTION_PPI;
 
 /**
   Processes the input section and returns the data contained therein

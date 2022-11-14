@@ -84,7 +84,9 @@ InternalSyncCompareExchange16 (
   ASSERT (!((UINT64)Value & (sizeof (Value) - 1)));
 
   /* Mask inputs to the correct size. */
-  Mask               = (((~0UL) - (1UL << (0)) + 1) & (~0UL >> (64 - 1 - ((sizeof (UINT16) * 8) - 1))));
+  Mask               = (((~0UL) - (1UL << (0)) + 1) & (~0UL >> (64 - 1 -
+                                                                ((sizeof (UINT16)
+                                                                  * 8) - 1))));
   LocalCompareValue  = ((UINT64)CompareValue) & Mask;
   LocalExchangeValue = ((UINT64)ExchangeValue) & Mask;
 

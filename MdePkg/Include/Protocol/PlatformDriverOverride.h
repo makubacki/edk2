@@ -17,7 +17,8 @@
     0x6b30c738, 0xa391, 0x11d4, {0x9a, 0x3b, 0x00, 0x90, 0x27, 0x3f, 0xc1, 0x4d } \
   }
 
-typedef struct _EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL;
+typedef struct _EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL
+EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL;
 
 //
 // Prototypes for the Platform Driver Override Protocol

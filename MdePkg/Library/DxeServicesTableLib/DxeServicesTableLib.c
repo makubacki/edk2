@@ -54,7 +54,10 @@ DxeServicesTableLibConstructor (
   //
   // Cache copy of the DXE Services Table
   //
-  Status = EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **)&gDS);
+  Status = EfiGetSystemConfigurationTable (
+             &gEfiDxeServicesTableGuid,
+             (VOID **)&gDS
+             );
   ASSERT_EFI_ERROR (Status);
   ASSERT (gDS != NULL);
 

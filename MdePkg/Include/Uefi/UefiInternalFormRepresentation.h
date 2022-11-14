@@ -2058,7 +2058,8 @@ typedef struct _EFI_HII_AIBT_RESTORE_SCRN_BLOCK {
 /// An animation block to describe an animation sequence that continuously cycles,
 /// and where one image is simply displayed over the previous image.
 ///
-typedef EFI_HII_AIBT_OVERLAY_IMAGES_BLOCK EFI_HII_AIBT_OVERLAY_IMAGES_LOOP_BLOCK;
+typedef EFI_HII_AIBT_OVERLAY_IMAGES_BLOCK
+EFI_HII_AIBT_OVERLAY_IMAGES_LOOP_BLOCK;
 
 ///
 /// An animation block to describe an animation sequence that continuously cycles,

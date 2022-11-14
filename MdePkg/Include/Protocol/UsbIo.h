@@ -204,9 +204,12 @@ EFI_STATUS
   IN EFI_USB_IO_PROTOCOL                                 *This,
   IN UINT8                                               DeviceEndpoint,
   IN BOOLEAN                                             IsNewTransfer,
-  IN UINTN                                               PollingInterval    OPTIONAL,
-  IN UINTN                                               DataLength         OPTIONAL,
-  IN EFI_ASYNC_USB_TRANSFER_CALLBACK                     InterruptCallBack  OPTIONAL,
+  IN UINTN
+  PollingInterval    OPTIONAL,
+  IN UINTN
+  DataLength         OPTIONAL,
+  IN EFI_ASYNC_USB_TRANSFER_CALLBACK
+  InterruptCallBack  OPTIONAL,
   IN VOID                                                *Context OPTIONAL
   );
 
