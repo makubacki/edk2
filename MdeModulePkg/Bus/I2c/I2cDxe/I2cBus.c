@@ -75,8 +75,8 @@ VENDOR_DEVICE_PATH  gVendorDevicePathTemplate = {
 //
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mI2cBusDriverNameTable[] = {
-  { "eng;en", (CHAR16 *)L"I2C Bus Driver"     },
-  { NULL,     NULL                            }
+  { "eng;en", (CHAR16 *)L"I2C Bus Driver" },
+  { NULL,     NULL                        }
 };
 
 //
