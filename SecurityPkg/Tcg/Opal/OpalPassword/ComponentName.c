@@ -11,7 +11,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gOpalComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gOpalComponentName =
+{
   OpalEfiDriverComponentNameGetDriverName,
   OpalEfiDriverComponentNameGetControllerName,
   "eng"
@@ -20,17 +21,22 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gOpalComponentName = 
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gOpalComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gOpalComponentName2 = {
   OpalEfiDriverComponentName2GetDriverName,
   OpalEfiDriverComponentName2GetControllerName,
   "en"
 };
 
 /// The name of the driver in all the languages we support.
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mOpalDriverNameTable[] = {
-  { LANGUAGE_RFC_3066_ENGLISH,  (CHAR16 *)EFI_DRIVER_NAME_UNICODE },
-  { LANGUAGE_ISO_639_2_ENGLISH, (CHAR16 *)EFI_DRIVER_NAME_UNICODE },
-  { 0,                          0                                 }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mOpalDriverNameTable[] =
+{
+  { LANGUAGE_RFC_3066_ENGLISH,
+    (CHAR16 *)EFI_DRIVER_NAME_UNICODE                                                   },
+  { LANGUAGE_ISO_639_2_ENGLISH,
+    (CHAR16 *)EFI_DRIVER_NAME_UNICODE                                                                             },
+  { 0,
+    0                                                                                                             }
 };
 
 /**
@@ -219,7 +225,9 @@ GetControllerName (
   CHAR16      **ControllerName
   )
 {
-  if ((Language == NULL) || (ControllerName == NULL) || (ControllerHandle == NULL)) {
+  if ((Language == NULL) || (ControllerName == NULL) || (ControllerHandle ==
+                                                         NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -305,7 +313,12 @@ OpalEfiDriverComponentNameGetControllerName (
   CHAR16                       **ControllerName
   )
 {
-  return (GetControllerName (ControllerHandle, ChildHandle, Language, ControllerName));
+  return (GetControllerName (
+            ControllerHandle,
+            ChildHandle,
+            Language,
+            ControllerName
+            ));
 }
 
 /**
@@ -386,5 +399,10 @@ OpalEfiDriverComponentName2GetControllerName (
   CHAR16                        **ControllerName
   )
 {
-  return (GetControllerName (ControllerHandle, ChildHandle, Language, ControllerName));
+  return (GetControllerName (
+            ControllerHandle,
+            ChildHandle,
+            Language,
+            ControllerName
+            ));
 }

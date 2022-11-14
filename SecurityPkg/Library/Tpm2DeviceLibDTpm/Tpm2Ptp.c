@@ -120,7 +120,10 @@ PtpCrbRequestUseTpm (
     return EFI_NOT_FOUND;
   }
 
-  MmioWrite32 ((UINTN)&CrbReg->LocalityControl, PTP_CRB_LOCALITY_CONTROL_REQUEST_ACCESS);
+  MmioWrite32 (
+    (UINTN)&CrbReg->LocalityControl,
+    PTP_CRB_LOCALITY_CONTROL_REQUEST_ACCESS
+    );
   Status = PtpCrbWaitRegisterBits (
              &CrbReg->LocalityStatus,
              PTP_CRB_LOCALITY_STATUS_GRANTED,
@@ -192,7 +195,13 @@ PtpCrbTpmCommand (
     // STEP 0:
     // if CapCRbIdelByPass == 0, enforce Idle state before sending command
     //
-    if ((GetCachedIdleByPass () == 0) && ((MmioRead32 ((UINTN)&CrbReg->CrbControlStatus) & PTP_CRB_CONTROL_AREA_STATUS_TPM_IDLE) == 0)) {
+    if ((GetCachedIdleByPass () == 0) && ((MmioRead32 (
+                                             (UINTN)&CrbReg->CrbControlStatus
+                                             ) &
+                                           PTP_CRB_CONTROL_AREA_STATUS_TPM_IDLE)
+                                          ==
+                                          0))
+    {
       Status = PtpCrbWaitRegisterBits (
                  &CrbReg->CrbControlStatus,
                  PTP_CRB_CONTROL_AREA_STATUS_TPM_IDLE,
@@ -202,7 +211,10 @@ PtpCrbTpmCommand (
       if (EFI_ERROR (Status)) {
         RetryCnt++;
         if (RetryCnt < RETRY_CNT_MAX) {
-          MmioWrite32 ((UINTN)&CrbReg->CrbControlRequest, PTP_CRB_CONTROL_AREA_REQUEST_GO_IDLE);
+          MmioWrite32 (
+            (UINTN)&CrbReg->CrbControlRequest,
+            PTP_CRB_CONTROL_AREA_REQUEST_GO_IDLE
+            );
           continue;
         } else {
           //
@@ -220,7 +232,10 @@ PtpCrbTpmCommand (
     // of 1 by software to Request.cmdReady, as indicated by the Status field
     // being cleared to 0.
     //
-    MmioWrite32 ((UINTN)&CrbReg->CrbControlRequest, PTP_CRB_CONTROL_AREA_REQUEST_COMMAND_READY);
+    MmioWrite32 (
+      (UINTN)&CrbReg->CrbControlRequest,
+      PTP_CRB_CONTROL_AREA_REQUEST_COMMAND_READY
+      );
     Status = PtpCrbWaitRegisterBits (
                &CrbReg->CrbControlRequest,
                0,
@@ -230,7 +245,10 @@ PtpCrbTpmCommand (
     if (EFI_ERROR (Status)) {
       RetryCnt++;
       if (RetryCnt < RETRY_CNT_MAX) {
-        MmioWrite32 ((UINTN)&CrbReg->CrbControlRequest, PTP_CRB_CONTROL_AREA_REQUEST_GO_IDLE);
+        MmioWrite32 (
+          (UINTN)&CrbReg->CrbControlRequest,
+          PTP_CRB_CONTROL_AREA_REQUEST_GO_IDLE
+          );
         continue;
       } else {
         Status = EFI_DEVICE_ERROR;
@@ -247,7 +265,10 @@ PtpCrbTpmCommand (
     if (EFI_ERROR (Status)) {
       RetryCnt++;
       if (RetryCnt < RETRY_CNT_MAX) {
-        MmioWrite32 ((UINTN)&CrbReg->CrbControlRequest, PTP_CRB_CONTROL_AREA_REQUEST_GO_IDLE);
+        MmioWrite32 (
+          (UINTN)&CrbReg->CrbControlRequest,
+          PTP_CRB_CONTROL_AREA_REQUEST_GO_IDLE
+          );
         continue;
       } else {
         Status = EFI_DEVICE_ERROR;
@@ -268,12 +289,30 @@ PtpCrbTpmCommand (
     MmioWrite8 ((UINTN)&CrbReg->CrbDataBuffer[Index], BufferIn[Index]);
   }
 
-  MmioWrite32 ((UINTN)&CrbReg->CrbControlCommandAddressHigh, (UINT32)RShiftU64 ((UINTN)CrbReg->CrbDataBuffer, 32));
-  MmioWrite32 ((UINTN)&CrbReg->CrbControlCommandAddressLow, (UINT32)(UINTN)CrbReg->CrbDataBuffer);
-  MmioWrite32 ((UINTN)&CrbReg->CrbControlCommandSize, sizeof (CrbReg->CrbDataBuffer));
+  MmioWrite32 (
+    (UINTN)&CrbReg->CrbControlCommandAddressHigh,
+    (UINT32)RShiftU64 (
+              (UINTN)CrbReg->CrbDataBuffer,
+              32
+              )
+    );
+  MmioWrite32 (
+    (UINTN)&CrbReg->CrbControlCommandAddressLow,
+    (UINT32)(UINTN)CrbReg->CrbDataBuffer
+    );
+  MmioWrite32 (
+    (UINTN)&CrbReg->CrbControlCommandSize,
+    sizeof (CrbReg->CrbDataBuffer)
+    );
 
-  MmioWrite64 ((UINTN)&CrbReg->CrbControlResponseAddrss, (UINT32)(UINTN)CrbReg->CrbDataBuffer);
-  MmioWrite32 ((UINTN)&CrbReg->CrbControlResponseSize, sizeof (CrbReg->CrbDataBuffer));
+  MmioWrite64 (
+    (UINTN)&CrbReg->CrbControlResponseAddrss,
+    (UINT32)(UINTN)CrbReg->CrbDataBuffer
+    );
+  MmioWrite32 (
+    (UINTN)&CrbReg->CrbControlResponseSize,
+    sizeof (CrbReg->CrbDataBuffer)
+    );
 
   //
   // STEP 3:
@@ -379,7 +418,10 @@ GoIdle_Exit:
   //
   //  Return to Idle state by setting TPM_CRB_CTRL_STS_x.Status.goIdle to 1.
   //
-  MmioWrite32 ((UINTN)&CrbReg->CrbControlRequest, PTP_CRB_CONTROL_AREA_REQUEST_GO_IDLE);
+  MmioWrite32 (
+    (UINTN)&CrbReg->CrbControlRequest,
+    PTP_CRB_CONTROL_AREA_REQUEST_GO_IDLE
+    );
 
   return Status;
 }
@@ -446,20 +488,30 @@ Tpm2GetPtpInterface (
   //
   // Check interface id
   //
-  InterfaceId.Uint32         = MmioRead32 ((UINTN)&((PTP_CRB_REGISTERS *)Register)->InterfaceId);
-  InterfaceCapability.Uint32 = MmioRead32 ((UINTN)&((PTP_FIFO_REGISTERS *)Register)->InterfaceCapability);
+  InterfaceId.Uint32 = MmioRead32 (
+                         (UINTN)&((PTP_CRB_REGISTERS *)Register)->InterfaceId
+                         );
+  InterfaceCapability.Uint32 = MmioRead32 (
+                                 (UINTN)&((PTP_FIFO_REGISTERS *)Register)->
+                                   InterfaceCapability
+                                 );
 
-  if ((InterfaceId.Bits.InterfaceType == PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_CRB) &&
-      (InterfaceId.Bits.InterfaceVersion == PTP_INTERFACE_IDENTIFIER_INTERFACE_VERSION_CRB) &&
+  if ((InterfaceId.Bits.InterfaceType ==
+       PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_CRB) &&
+      (InterfaceId.Bits.InterfaceVersion ==
+       PTP_INTERFACE_IDENTIFIER_INTERFACE_VERSION_CRB) &&
       (InterfaceId.Bits.CapCRB != 0))
   {
     return Tpm2PtpInterfaceCrb;
   }
 
-  if ((InterfaceId.Bits.InterfaceType == PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_FIFO) &&
-      (InterfaceId.Bits.InterfaceVersion == PTP_INTERFACE_IDENTIFIER_INTERFACE_VERSION_FIFO) &&
+  if ((InterfaceId.Bits.InterfaceType ==
+       PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_FIFO) &&
+      (InterfaceId.Bits.InterfaceVersion ==
+       PTP_INTERFACE_IDENTIFIER_INTERFACE_VERSION_FIFO) &&
       (InterfaceId.Bits.CapFIFO != 0) &&
-      (InterfaceCapability.Bits.InterfaceVersion == INTERFACE_CAPABILITY_INTERFACE_VERSION_PTP))
+      (InterfaceCapability.Bits.InterfaceVersion ==
+       INTERFACE_CAPABILITY_INTERFACE_VERSION_PTP))
   {
     return Tpm2PtpInterfaceFifo;
   }
@@ -484,7 +536,9 @@ Tpm2GetIdleByPass (
   //
   // Check interface id
   //
-  InterfaceId.Uint32 = MmioRead32 ((UINTN)&((PTP_CRB_REGISTERS *)Register)->InterfaceId);
+  InterfaceId.Uint32 = MmioRead32 (
+                         (UINTN)&((PTP_CRB_REGISTERS *)Register)->InterfaceId
+                         );
 
   return (UINT8)(InterfaceId.Bits.CapCRBIdleBypass);
 }
@@ -511,37 +565,79 @@ DumpPtpInfo (
     return;
   }
 
-  InterfaceId.Uint32         = MmioRead32 ((UINTN)&((PTP_CRB_REGISTERS *)Register)->InterfaceId);
-  InterfaceCapability.Uint32 = MmioRead32 ((UINTN)&((PTP_FIFO_REGISTERS *)Register)->InterfaceCapability);
-  StatusEx                   = MmioRead8 ((UINTN)&((PTP_FIFO_REGISTERS *)Register)->StatusEx);
+  InterfaceId.Uint32 = MmioRead32 (
+                         (UINTN)&((PTP_CRB_REGISTERS *)Register)->InterfaceId
+                         );
+  InterfaceCapability.Uint32 = MmioRead32 (
+                                 (UINTN)&((PTP_FIFO_REGISTERS *)Register)->
+                                   InterfaceCapability
+                                 );
+  StatusEx = MmioRead8 (
+               (UINTN)&((PTP_FIFO_REGISTERS *)Register)->StatusEx
+               );
 
   //
   // Dump InterfaceId Register for PTP
   //
   DEBUG ((DEBUG_INFO, "InterfaceId - 0x%08x\n", InterfaceId.Uint32));
-  DEBUG ((DEBUG_INFO, "  InterfaceType    - 0x%02x\n", InterfaceId.Bits.InterfaceType));
-  if (InterfaceId.Bits.InterfaceType != PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_TIS) {
-    DEBUG ((DEBUG_INFO, "  InterfaceVersion - 0x%02x\n", InterfaceId.Bits.InterfaceVersion));
-    DEBUG ((DEBUG_INFO, "  CapFIFO          - 0x%x\n", InterfaceId.Bits.CapFIFO));
-    DEBUG ((DEBUG_INFO, "  CapCRB           - 0x%x\n", InterfaceId.Bits.CapCRB));
+  DEBUG ((
+    DEBUG_INFO,
+    "  InterfaceType    - 0x%02x\n",
+    InterfaceId.Bits.InterfaceType
+    ));
+  if (InterfaceId.Bits.InterfaceType !=
+      PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_TIS)
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "  InterfaceVersion - 0x%02x\n",
+      InterfaceId.Bits.InterfaceVersion
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "  CapFIFO          - 0x%x\n",
+      InterfaceId.Bits.CapFIFO
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "  CapCRB           - 0x%x\n",
+      InterfaceId.Bits.CapCRB
+      ));
   }
 
   //
   // Dump Capability Register for TIS and FIFO
   //
-  DEBUG ((DEBUG_INFO, "InterfaceCapability - 0x%08x\n", InterfaceCapability.Uint32));
-  if ((InterfaceId.Bits.InterfaceType == PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_TIS) ||
-      (InterfaceId.Bits.InterfaceType == PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_FIFO))
+  DEBUG ((
+    DEBUG_INFO,
+    "InterfaceCapability - 0x%08x\n",
+    InterfaceCapability.Uint32
+    ));
+  if ((InterfaceId.Bits.InterfaceType ==
+       PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_TIS) ||
+      (InterfaceId.Bits.InterfaceType ==
+       PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_FIFO))
   {
-    DEBUG ((DEBUG_INFO, "  InterfaceVersion - 0x%x\n", InterfaceCapability.Bits.InterfaceVersion));
+    DEBUG ((
+      DEBUG_INFO,
+      "  InterfaceVersion - 0x%x\n",
+      InterfaceCapability.Bits.InterfaceVersion
+      ));
   }
 
   //
   // Dump StatusEx Register for PTP FIFO
   //
   DEBUG ((DEBUG_INFO, "StatusEx - 0x%02x\n", StatusEx));
-  if (InterfaceCapability.Bits.InterfaceVersion == INTERFACE_CAPABILITY_INTERFACE_VERSION_PTP) {
-    DEBUG ((DEBUG_INFO, "  TpmFamily - 0x%x\n", (StatusEx & PTP_FIFO_STS_EX_TPM_FAMILY) >> PTP_FIFO_STS_EX_TPM_FAMILY_OFFSET));
+  if (InterfaceCapability.Bits.InterfaceVersion ==
+      INTERFACE_CAPABILITY_INTERFACE_VERSION_PTP)
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "  TpmFamily - 0x%x\n",
+      (StatusEx &
+       PTP_FIFO_STS_EX_TPM_FAMILY) >> PTP_FIFO_STS_EX_TPM_FAMILY_OFFSET
+      ));
   }
 
   Vid          = 0xFFFF;
@@ -635,10 +731,18 @@ DTpm2RequestUseTpm (
   PtpInterface = GetCachedPtpInterface ();
   switch (PtpInterface) {
     case Tpm2PtpInterfaceCrb:
-      return PtpCrbRequestUseTpm ((PTP_CRB_REGISTERS_PTR)(UINTN)PcdGet64 (PcdTpmBaseAddress));
+      return PtpCrbRequestUseTpm (
+               (PTP_CRB_REGISTERS_PTR)(UINTN)PcdGet64 (
+                                               PcdTpmBaseAddress
+                                               )
+               );
     case Tpm2PtpInterfaceFifo:
     case Tpm2PtpInterfaceTis:
-      return TisPcRequestUseTpm ((TIS_PC_REGISTERS_PTR)(UINTN)PcdGet64 (PcdTpmBaseAddress));
+      return TisPcRequestUseTpm (
+               (TIS_PC_REGISTERS_PTR)(UINTN)PcdGet64 (
+                                              PcdTpmBaseAddress
+                                              )
+               );
     default:
       return EFI_NOT_FOUND;
   }

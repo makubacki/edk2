@@ -144,7 +144,11 @@ GetProcessorsCpuLocation (
   EFI_CPU_PHYSICAL_LOCATION  *ProcessorLocBuf;
   UINTN                      Index;
 
-  Status = gBS->LocateProtocol (&gEfiMpServiceProtocolGuid, NULL, (VOID **)&MpProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiMpServiceProtocolGuid,
+                  NULL,
+                  (VOID **)&MpProtocol
+                  );
   if (EFI_ERROR (Status)) {
     //
     // MP protocol is not installed
@@ -589,7 +593,11 @@ TcgDxeHashLogExtendEventI (
 
 Done:
   if ((Status == EFI_DEVICE_ERROR) || (Status == EFI_TIMEOUT)) {
-    DEBUG ((DEBUG_ERROR, "TcgDxeHashLogExtendEventI - %r. Disable TPM.\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "TcgDxeHashLogExtendEventI - %r. Disable TPM.\n",
+      Status
+      ));
     TcgData->BsCap.TPMPresentFlag = FALSE;
     REPORT_STATUS_CODE (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
@@ -731,7 +739,13 @@ SetupEventLog (
     // To initialize them as 0xFF is recommended
     // because the OS can know the last entry for that.
     //
-    SetMem ((VOID *)(UINTN)mTcgClientAcpiTemplate.Lasa, PcdGet32 (PcdTcgLogAreaMinLen), 0xFF);
+    SetMem (
+      (VOID *)(UINTN)mTcgClientAcpiTemplate.Lasa,
+      PcdGet32 (
+        PcdTcgLogAreaMinLen
+        ),
+      0xFF
+      );
     mTcgClientAcpiTemplate.Laml = PcdGet32 (PcdTcgLogAreaMinLen);
   } else {
     Lasa = mTcgServerAcpiTemplate.Lasa;
@@ -751,13 +765,20 @@ SetupEventLog (
     // To initialize them as 0xFF is recommended
     // because the OS can know the last entry for that.
     //
-    SetMem ((VOID *)(UINTN)mTcgServerAcpiTemplate.Lasa, PcdGet32 (PcdTcgLogAreaMinLen), 0xFF);
+    SetMem (
+      (VOID *)(UINTN)mTcgServerAcpiTemplate.Lasa,
+      PcdGet32 (
+        PcdTcgLogAreaMinLen
+        ),
+      0xFF
+      );
     mTcgServerAcpiTemplate.Laml = PcdGet32 (PcdTcgLogAreaMinLen);
   }
 
   GuidHob.Raw = GetHobList ();
   while (!EFI_ERROR (Status) &&
-         (GuidHob.Raw = GetNextGuidHob (&gTcgEventEntryHobGuid, GuidHob.Raw)) != NULL)
+         (GuidHob.Raw = GetNextGuidHob (&gTcgEventEntryHobGuid, GuidHob.Raw)) !=
+         NULL)
   {
     TcgEvent    = GET_GUID_HOB_DATA (GuidHob.Guid);
     GuidHob.Raw = GET_NEXT_HOB (GuidHob);
@@ -973,8 +994,10 @@ MeasureVariable (
   VarNameLength      = StrLen (VarName);
   TcgEvent.PCRIndex  = PCRIndex;
   TcgEvent.EventType = EventType;
-  TcgEvent.EventSize = (UINT32)(sizeof (*VarLog) + VarNameLength * sizeof (*VarName) + VarSize
-                                - sizeof (VarLog->UnicodeName) - sizeof (VarLog->VariableData));
+  TcgEvent.EventSize = (UINT32)(sizeof (*VarLog) + VarNameLength *
+                                sizeof (*VarName) + VarSize
+                                - sizeof (VarLog->UnicodeName) -
+                                sizeof (VarLog->VariableData));
 
   VarLog = (EFI_VARIABLE_DATA *)AllocatePool (TcgEvent.EventSize);
   if (VarLog == NULL) {
@@ -1089,7 +1112,12 @@ MeasureAllBootVariables (
 
   BootCount /= sizeof (*BootOrder);
   for (Index = 0; Index < BootCount; Index++) {
-    UnicodeSPrint (mBootVarName, sizeof (mBootVarName), L"Boot%04x", BootOrder[Index]);
+    UnicodeSPrint (
+      mBootVarName,
+      sizeof (mBootVarName),
+      L"Boot%04x",
+      BootOrder[Index]
+      );
     Status = ReadAndMeasureBootVariable (
                mBootVarName,
                &gEfiGlobalVariableGuid,
@@ -1148,7 +1176,11 @@ OnReadyToBoot (
                EFI_CALLING_EFI_APPLICATION
                );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a not Measured. Error!\n", EFI_CALLING_EFI_APPLICATION));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a not Measured. Error!\n",
+        EFI_CALLING_EFI_APPLICATION
+        ));
     }
 
     //
@@ -1180,7 +1212,11 @@ OnReadyToBoot (
                EFI_RETURNING_FROM_EFI_APPLICATION
                );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a not Measured. Error!\n", EFI_RETURNING_FROM_EFI_APPLICATION));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a not Measured. Error!\n",
+        EFI_RETURNING_FROM_EFI_APPLICATION
+        ));
     }
   }
 
@@ -1214,23 +1250,46 @@ InstallAcpiTable (
   UINT8                    Checksum;
   UINT64                   OemTableId;
 
-  Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID **)&AcpiTable);
+  Status = gBS->LocateProtocol (
+                  &gEfiAcpiTableProtocolGuid,
+                  NULL,
+                  (VOID **)&AcpiTable
+                  );
   if (EFI_ERROR (Status)) {
     return;
   }
 
   if (PcdGet8 (PcdTpmPlatformClass) == TCG_PLATFORM_TYPE_CLIENT) {
-    CopyMem (mTcgClientAcpiTemplate.Header.OemId, PcdGetPtr (PcdAcpiDefaultOemId), sizeof (mTcgClientAcpiTemplate.Header.OemId));
+    CopyMem (
+      mTcgClientAcpiTemplate.Header.OemId,
+      PcdGetPtr (
+        PcdAcpiDefaultOemId
+        ),
+      sizeof (mTcgClientAcpiTemplate.Header.OemId)
+      );
     OemTableId = PcdGet64 (PcdAcpiDefaultOemTableId);
-    CopyMem (&mTcgClientAcpiTemplate.Header.OemTableId, &OemTableId, sizeof (UINT64));
-    mTcgClientAcpiTemplate.Header.OemRevision     = PcdGet32 (PcdAcpiDefaultOemRevision);
-    mTcgClientAcpiTemplate.Header.CreatorId       = PcdGet32 (PcdAcpiDefaultCreatorId);
-    mTcgClientAcpiTemplate.Header.CreatorRevision = PcdGet32 (PcdAcpiDefaultCreatorRevision);
+    CopyMem (
+      &mTcgClientAcpiTemplate.Header.OemTableId,
+      &OemTableId,
+      sizeof (UINT64)
+      );
+    mTcgClientAcpiTemplate.Header.OemRevision = PcdGet32 (
+                                                  PcdAcpiDefaultOemRevision
+                                                  );
+    mTcgClientAcpiTemplate.Header.CreatorId = PcdGet32 (
+                                                PcdAcpiDefaultCreatorId
+                                                );
+    mTcgClientAcpiTemplate.Header.CreatorRevision = PcdGet32 (
+                                                      PcdAcpiDefaultCreatorRevision
+                                                      );
     //
     // The ACPI table must be checksummed before calling the InstallAcpiTable()
     // service of the ACPI table protocol to install it.
     //
-    Checksum                               = CalculateCheckSum8 ((UINT8 *)&mTcgClientAcpiTemplate, sizeof (mTcgClientAcpiTemplate));
+    Checksum = CalculateCheckSum8 (
+                 (UINT8 *)&mTcgClientAcpiTemplate,
+                 sizeof (mTcgClientAcpiTemplate)
+                 );
     mTcgClientAcpiTemplate.Header.Checksum = Checksum;
 
     Status = AcpiTable->InstallAcpiTable (
@@ -1240,24 +1299,45 @@ InstallAcpiTable (
                           &TableKey
                           );
   } else {
-    CopyMem (mTcgServerAcpiTemplate.Header.OemId, PcdGetPtr (PcdAcpiDefaultOemId), sizeof (mTcgServerAcpiTemplate.Header.OemId));
+    CopyMem (
+      mTcgServerAcpiTemplate.Header.OemId,
+      PcdGetPtr (
+        PcdAcpiDefaultOemId
+        ),
+      sizeof (mTcgServerAcpiTemplate.Header.OemId)
+      );
     OemTableId = PcdGet64 (PcdAcpiDefaultOemTableId);
-    CopyMem (&mTcgServerAcpiTemplate.Header.OemTableId, &OemTableId, sizeof (UINT64));
-    mTcgServerAcpiTemplate.Header.OemRevision     = PcdGet32 (PcdAcpiDefaultOemRevision);
-    mTcgServerAcpiTemplate.Header.CreatorId       = PcdGet32 (PcdAcpiDefaultCreatorId);
-    mTcgServerAcpiTemplate.Header.CreatorRevision = PcdGet32 (PcdAcpiDefaultCreatorRevision);
+    CopyMem (
+      &mTcgServerAcpiTemplate.Header.OemTableId,
+      &OemTableId,
+      sizeof (UINT64)
+      );
+    mTcgServerAcpiTemplate.Header.OemRevision = PcdGet32 (
+                                                  PcdAcpiDefaultOemRevision
+                                                  );
+    mTcgServerAcpiTemplate.Header.CreatorId = PcdGet32 (
+                                                PcdAcpiDefaultCreatorId
+                                                );
+    mTcgServerAcpiTemplate.Header.CreatorRevision = PcdGet32 (
+                                                      PcdAcpiDefaultCreatorRevision
+                                                      );
     //
     // The ACPI table must be checksummed before calling the InstallAcpiTable()
     // service of the ACPI table protocol to install it.
     //
-    Checksum                               = CalculateCheckSum8 ((UINT8 *)&mTcgServerAcpiTemplate, sizeof (mTcgServerAcpiTemplate));
+    Checksum = CalculateCheckSum8 (
+                 (UINT8 *)&mTcgServerAcpiTemplate,
+                 sizeof (mTcgServerAcpiTemplate)
+                 );
     mTcgServerAcpiTemplate.Header.Checksum = Checksum;
 
     mTcgServerAcpiTemplate.BaseAddress.Address = PcdGet64 (PcdTpmBaseAddress);
     Status                                     = AcpiTable->InstallAcpiTable (
                                                               AcpiTable,
-                                                              &mTcgServerAcpiTemplate,
-                                                              sizeof (mTcgServerAcpiTemplate),
+                                                              &
+                                                              mTcgServerAcpiTemplate,
+                                                              sizeof (
+                                                                     mTcgServerAcpiTemplate),
                                                               &TableKey
                                                               );
   }
@@ -1292,7 +1372,11 @@ OnExitBootServices (
              EFI_EXIT_BOOT_SERVICES_INVOCATION
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a not Measured. Error!\n", EFI_EXIT_BOOT_SERVICES_INVOCATION));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a not Measured. Error!\n",
+      EFI_EXIT_BOOT_SERVICES_INVOCATION
+      ));
   }
 
   //
@@ -1302,7 +1386,11 @@ OnExitBootServices (
              EFI_EXIT_BOOT_SERVICES_SUCCEEDED
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a not Measured. Error!\n", EFI_EXIT_BOOT_SERVICES_SUCCEEDED));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a not Measured. Error!\n",
+      EFI_EXIT_BOOT_SERVICES_SUCCEEDED
+      ));
   }
 }
 
@@ -1331,7 +1419,11 @@ OnExitBootServicesFailed (
              EFI_EXIT_BOOT_SERVICES_FAILED
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a not Measured. Error!\n", EFI_EXIT_BOOT_SERVICES_FAILED));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a not Measured. Error!\n",
+      EFI_EXIT_BOOT_SERVICES_FAILED
+      ));
   }
 }
 
@@ -1383,7 +1475,11 @@ DriverEntry (
   EFI_EVENT   Event;
   VOID        *Registration;
 
-  if (!CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm12Guid)) {
+  if (!CompareGuid (
+         PcdGetPtr (PcdTpmInstanceGuid),
+         &gEfiTpmDeviceInstanceTpm12Guid
+         ))
+  {
     DEBUG ((DEBUG_ERROR, "No TPM12 instance required!\n"));
     return EFI_UNSUPPORTED;
   }
@@ -1414,7 +1510,9 @@ DriverEntry (
                   EFI_NATIVE_INTERFACE,
                   &mTcgDxeData.TcgProtocol
                   );
-  if (!EFI_ERROR (Status) && (!mTcgDxeData.BsCap.TPMDeactivatedFlag) && mTcgDxeData.BsCap.TPMPresentFlag) {
+  if (!EFI_ERROR (Status) && (!mTcgDxeData.BsCap.TPMDeactivatedFlag) &&
+      mTcgDxeData.BsCap.TPMPresentFlag)
+  {
     //
     // Setup the log area and copy event log from hob list to it
     //
@@ -1456,7 +1554,13 @@ DriverEntry (
   //
   // Install ACPI Table
   //
-  EfiCreateProtocolNotifyEvent (&gEfiAcpiTableProtocolGuid, TPL_CALLBACK, InstallAcpiTable, NULL, &Registration);
+  EfiCreateProtocolNotifyEvent (
+    &gEfiAcpiTableProtocolGuid,
+    TPL_CALLBACK,
+    InstallAcpiTable,
+    NULL,
+    &Registration
+    );
 
   return Status;
 }

@@ -59,7 +59,13 @@ GetVariable2 (
     *Size = 0;
   }
 
-  Status = gRT->GetVariable ((CHAR16 *)Name, (EFI_GUID *)Guid, NULL, &BufferSize, *Value);
+  Status = gRT->GetVariable (
+                  (CHAR16 *)Name,
+                  (EFI_GUID *)Guid,
+                  NULL,
+                  &BufferSize,
+                  *Value
+                  );
   if (Status != EFI_BUFFER_TOO_SMALL) {
     return Status;
   }
@@ -76,7 +82,13 @@ GetVariable2 (
   //
   // Get the variable data.
   //
-  Status = gRT->GetVariable ((CHAR16 *)Name, (EFI_GUID *)Guid, NULL, &BufferSize, *Value);
+  Status = gRT->GetVariable (
+                  (CHAR16 *)Name,
+                  (EFI_GUID *)Guid,
+                  NULL,
+                  &BufferSize,
+                  *Value
+                  );
   if (EFI_ERROR (Status)) {
     FreePool (*Value);
     *Value = NULL;
@@ -140,7 +152,13 @@ GetVariable3 (
     *Attr = 0;
   }
 
-  Status = gRT->GetVariable ((CHAR16 *)Name, (EFI_GUID *)Guid, Attr, &BufferSize, *Value);
+  Status = gRT->GetVariable (
+                  (CHAR16 *)Name,
+                  (EFI_GUID *)Guid,
+                  Attr,
+                  &BufferSize,
+                  *Value
+                  );
   if (Status != EFI_BUFFER_TOO_SMALL) {
     return Status;
   }
@@ -157,7 +175,13 @@ GetVariable3 (
   //
   // Get the variable data.
   //
-  Status = gRT->GetVariable ((CHAR16 *)Name, (EFI_GUID *)Guid, Attr, &BufferSize, *Value);
+  Status = gRT->GetVariable (
+                  (CHAR16 *)Name,
+                  (EFI_GUID *)Guid,
+                  Attr,
+                  &BufferSize,
+                  *Value
+                  );
   if (EFI_ERROR (Status)) {
     FreePool (*Value);
     *Value = NULL;

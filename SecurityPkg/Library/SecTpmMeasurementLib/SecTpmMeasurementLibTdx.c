@@ -113,7 +113,13 @@ TpmMeasureAndLogData (
     return EFI_INVALID_PARAMETER;
   }
 
-  DEBUG ((DEBUG_INFO, "Creating TdTcg2PcrEvent PCR[%d]/RTMR[%d] EventType 0x%x\n", PcrIndex, RtmrIndex, EventType));
+  DEBUG ((
+    DEBUG_INFO,
+    "Creating TdTcg2PcrEvent PCR[%d]/RTMR[%d] EventType 0x%x\n",
+    PcrIndex,
+    RtmrIndex,
+    EventType
+    ));
 
   Status = HashAndExtend (
              RtmrIndex,
@@ -134,7 +140,8 @@ TpmMeasureAndLogData (
   //
   EventHobData = BuildGuidHob (
                    &gCcEventEntryHobGuid,
-                   sizeof (TcgPcrEvent2->PCRIndex) + sizeof (TcgPcrEvent2->EventType) +
+                   sizeof (TcgPcrEvent2->PCRIndex) +
+                   sizeof (TcgPcrEvent2->EventType) +
                    sizeof (TDX_DIGEST_VALUE) +
                    sizeof (TcgPcrEvent2->EventSize) + LogLen
                    );

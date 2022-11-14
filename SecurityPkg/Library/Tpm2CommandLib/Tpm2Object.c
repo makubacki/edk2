@@ -75,19 +75,34 @@ Tpm2ReadPublic (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2ReadPublic - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2ReadPublic - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   ResponseCode = SwapBytes32 (RecvBuffer.Header.responseCode);
   if (ResponseCode != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2ReadPublic - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2ReadPublic - responseCode - %x\n",
+      SwapBytes32 (
+        RecvBuffer.Header.responseCode
+        )
+      ));
   }
 
   switch (ResponseCode) {
@@ -106,13 +121,18 @@ Tpm2ReadPublic (
   //
   OutPublicSize = SwapBytes16 (RecvBuffer.OutPublic.size);
   if (OutPublicSize > sizeof (TPMT_PUBLIC)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2ReadPublic - OutPublicSize error %x\n", OutPublicSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2ReadPublic - OutPublicSize error %x\n",
+      OutPublicSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   NameSize = SwapBytes16 (
                ReadUnaligned16 (
-                 (UINT16 *)((UINT8 *)&RecvBuffer + sizeof (TPM2_RESPONSE_HEADER) +
+                 (UINT16 *)((UINT8 *)&RecvBuffer +
+                            sizeof (TPM2_RESPONSE_HEADER) +
                             sizeof (UINT16) + OutPublicSize)
                  )
                );
@@ -123,18 +143,33 @@ Tpm2ReadPublic (
 
   QualifiedNameSize = SwapBytes16 (
                         ReadUnaligned16 (
-                          (UINT16 *)((UINT8 *)&RecvBuffer + sizeof (TPM2_RESPONSE_HEADER) +
+                          (UINT16 *)((UINT8 *)&RecvBuffer +
+                                     sizeof (TPM2_RESPONSE_HEADER) +
                                      sizeof (UINT16) + OutPublicSize +
                                      sizeof (UINT16) + NameSize)
                           )
                         );
   if (QualifiedNameSize > sizeof (TPMU_NAME)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2ReadPublic - QualifiedNameSize error %x\n", QualifiedNameSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2ReadPublic - QualifiedNameSize error %x\n",
+      QualifiedNameSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
-  if (RecvBufferSize != sizeof (TPM2_RESPONSE_HEADER) + sizeof (UINT16) + OutPublicSize + sizeof (UINT16) + NameSize + sizeof (UINT16) + QualifiedNameSize) {
-    DEBUG ((DEBUG_ERROR, "Tpm2ReadPublic - RecvBufferSize %x Error - OutPublicSize %x, NameSize %x, QualifiedNameSize %x\n", RecvBufferSize, OutPublicSize, NameSize, QualifiedNameSize));
+  if (RecvBufferSize != sizeof (TPM2_RESPONSE_HEADER) + sizeof (UINT16) +
+      OutPublicSize + sizeof (UINT16) + NameSize + sizeof (UINT16) +
+      QualifiedNameSize)
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2ReadPublic - RecvBufferSize %x Error - OutPublicSize %x, NameSize %x, QualifiedNameSize %x\n",
+      RecvBufferSize,
+      OutPublicSize,
+      NameSize,
+      QualifiedNameSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -146,57 +181,114 @@ Tpm2ReadPublic (
   OutPublic->size               = OutPublicSize;
   OutPublic->publicArea.type    = SwapBytes16 (OutPublic->publicArea.type);
   OutPublic->publicArea.nameAlg = SwapBytes16 (OutPublic->publicArea.nameAlg);
-  WriteUnaligned32 ((UINT32 *)&OutPublic->publicArea.objectAttributes, SwapBytes32 (ReadUnaligned32 ((UINT32 *)&OutPublic->publicArea.objectAttributes)));
-  Buffer                                = (UINT8 *)&RecvBuffer.OutPublic.publicArea.authPolicy;
-  OutPublic->publicArea.authPolicy.size = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-  Buffer                               += sizeof (UINT16);
+  WriteUnaligned32 (
+    (UINT32 *)&OutPublic->publicArea.objectAttributes,
+    SwapBytes32 (
+      ReadUnaligned32 (
+        (UINT32 *)&OutPublic->publicArea.objectAttributes
+        )
+      )
+    );
+  Buffer =
+    (UINT8 *)&RecvBuffer.OutPublic.publicArea.authPolicy;
+  OutPublic->publicArea.authPolicy.size = SwapBytes16 (
+                                            ReadUnaligned16 (
+                                              (UINT16 *)Buffer
+                                              )
+                                            );
+  Buffer += sizeof (UINT16);
   if (OutPublic->publicArea.authPolicy.size > sizeof (TPMU_HA)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2ReadPublic - authPolicy.size error %x\n", OutPublic->publicArea.authPolicy.size));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2ReadPublic - authPolicy.size error %x\n",
+      OutPublic->publicArea.authPolicy.size
+      ));
     return EFI_DEVICE_ERROR;
   }
 
-  CopyMem (OutPublic->publicArea.authPolicy.buffer, Buffer, OutPublic->publicArea.authPolicy.size);
+  CopyMem (
+    OutPublic->publicArea.authPolicy.buffer,
+    Buffer,
+    OutPublic->publicArea.authPolicy.size
+    );
   Buffer += OutPublic->publicArea.authPolicy.size;
 
   // TPMU_PUBLIC_PARMS
   switch (OutPublic->publicArea.type) {
     case TPM_ALG_KEYEDHASH:
-      OutPublic->publicArea.parameters.keyedHashDetail.scheme.scheme = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-      Buffer                                                        += sizeof (UINT16);
+      OutPublic->publicArea.parameters.keyedHashDetail.scheme.scheme =
+        SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+      Buffer +=
+        sizeof (UINT16);
       switch (OutPublic->publicArea.parameters.keyedHashDetail.scheme.scheme) {
         case TPM_ALG_HMAC:
-          OutPublic->publicArea.parameters.keyedHashDetail.scheme.details.hmac.hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                                      += sizeof (UINT16);
+          OutPublic->publicArea.parameters.keyedHashDetail.scheme.details.hmac.
+            hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer
+            += sizeof (UINT16);
           break;
         case TPM_ALG_XOR:
-          OutPublic->publicArea.parameters.keyedHashDetail.scheme.details.xor.hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                                     += sizeof (UINT16);
-          OutPublic->publicArea.parameters.keyedHashDetail.scheme.details.xor.kdf     = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                                     += sizeof (UINT16);
+          OutPublic->publicArea.parameters.keyedHashDetail.scheme.details.xor.
+            hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer
+            += sizeof (UINT16);
+          OutPublic->publicArea.parameters.keyedHashDetail.scheme.details.xor.
+            kdf = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer
+            += sizeof (UINT16);
           break;
         default:
           return EFI_UNSUPPORTED;
       }
 
     case TPM_ALG_SYMCIPHER:
-      OutPublic->publicArea.parameters.symDetail.algorithm = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-      Buffer                                              += sizeof (UINT16);
+      OutPublic->publicArea.parameters.symDetail.algorithm = SwapBytes16 (
+                                                               ReadUnaligned16 (
+                                                                 (UINT16 *)
+                                                                 Buffer)
+                                                               );
+      Buffer += sizeof (UINT16);
       switch (OutPublic->publicArea.parameters.symDetail.algorithm) {
         case TPM_ALG_AES:
-          OutPublic->publicArea.parameters.symDetail.keyBits.aes = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                += sizeof (UINT16);
-          OutPublic->publicArea.parameters.symDetail.mode.aes    = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                += sizeof (UINT16);
+          OutPublic->publicArea.parameters.symDetail.keyBits.aes = SwapBytes16 (
+                                                                     ReadUnaligned16 (
+                                                                       (UINT16 *)
+                                                                       Buffer)
+                                                                     );
+          Buffer +=
+            sizeof (UINT16);
+          OutPublic->publicArea.parameters.symDetail.mode.aes = SwapBytes16 (
+                                                                  ReadUnaligned16 (
+                                                                    (UINT16 *)
+                                                                    Buffer)
+                                                                  );
+          Buffer +=
+            sizeof (UINT16);
           break;
         case TPM_ALG_SM4:
-          OutPublic->publicArea.parameters.symDetail.keyBits.SM4 = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                += sizeof (UINT16);
-          OutPublic->publicArea.parameters.symDetail.mode.SM4    = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                += sizeof (UINT16);
+          OutPublic->publicArea.parameters.symDetail.keyBits.SM4 = SwapBytes16 (
+                                                                     ReadUnaligned16 (
+                                                                       (UINT16 *)
+                                                                       Buffer)
+                                                                     );
+          Buffer +=
+            sizeof (UINT16);
+          OutPublic->publicArea.parameters.symDetail.mode.SM4 = SwapBytes16 (
+                                                                  ReadUnaligned16 (
+                                                                    (UINT16 *)
+                                                                    Buffer)
+                                                                  );
+          Buffer +=
+            sizeof (UINT16);
           break;
         case TPM_ALG_XOR:
-          OutPublic->publicArea.parameters.symDetail.keyBits.xor = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                += sizeof (UINT16);
+          OutPublic->publicArea.parameters.symDetail.keyBits.xor = SwapBytes16 (
+                                                                     ReadUnaligned16 (
+                                                                       (UINT16 *)
+                                                                       Buffer)
+                                                                     );
+          Buffer +=
+            sizeof (UINT16);
           break;
         case TPM_ALG_NULL:
           break;
@@ -206,20 +298,30 @@ Tpm2ReadPublic (
 
       break;
     case TPM_ALG_RSA:
-      OutPublic->publicArea.parameters.rsaDetail.symmetric.algorithm = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-      Buffer                                                        += sizeof (UINT16);
+      OutPublic->publicArea.parameters.rsaDetail.symmetric.algorithm =
+        SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+      Buffer +=
+        sizeof (UINT16);
       switch (OutPublic->publicArea.parameters.rsaDetail.symmetric.algorithm) {
         case TPM_ALG_AES:
-          OutPublic->publicArea.parameters.rsaDetail.symmetric.keyBits.aes = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                          += sizeof (UINT16);
-          OutPublic->publicArea.parameters.rsaDetail.symmetric.mode.aes    = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                          += sizeof (UINT16);
+          OutPublic->publicArea.parameters.rsaDetail.symmetric.keyBits.aes =
+            SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer +=
+            sizeof (UINT16);
+          OutPublic->publicArea.parameters.rsaDetail.symmetric.mode.aes =
+            SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer +=
+            sizeof (UINT16);
           break;
         case TPM_ALG_SM4:
-          OutPublic->publicArea.parameters.rsaDetail.symmetric.keyBits.SM4 = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                          += sizeof (UINT16);
-          OutPublic->publicArea.parameters.rsaDetail.symmetric.mode.SM4    = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                          += sizeof (UINT16);
+          OutPublic->publicArea.parameters.rsaDetail.symmetric.keyBits.SM4 =
+            SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer +=
+            sizeof (UINT16);
+          OutPublic->publicArea.parameters.rsaDetail.symmetric.mode.SM4 =
+            SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer +=
+            sizeof (UINT16);
           break;
         case TPM_ALG_NULL:
           break;
@@ -227,22 +329,33 @@ Tpm2ReadPublic (
           return EFI_UNSUPPORTED;
       }
 
-      OutPublic->publicArea.parameters.rsaDetail.scheme.scheme = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-      Buffer                                                  += sizeof (UINT16);
+      OutPublic->publicArea.parameters.rsaDetail.scheme.scheme = SwapBytes16 (
+                                                                   ReadUnaligned16 (
+                                                                     (UINT16 *)
+                                                                     Buffer)
+                                                                   );
+      Buffer +=
+        sizeof (UINT16);
       switch (OutPublic->publicArea.parameters.rsaDetail.scheme.scheme) {
         case TPM_ALG_RSASSA:
-          OutPublic->publicArea.parameters.rsaDetail.scheme.details.rsassa.hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                                  += sizeof (UINT16);
+          OutPublic->publicArea.parameters.rsaDetail.scheme.details.rsassa.
+            hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer
+            += sizeof (UINT16);
           break;
         case TPM_ALG_RSAPSS:
-          OutPublic->publicArea.parameters.rsaDetail.scheme.details.rsapss.hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                                  += sizeof (UINT16);
+          OutPublic->publicArea.parameters.rsaDetail.scheme.details.rsapss.
+            hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer
+            += sizeof (UINT16);
           break;
         case TPM_ALG_RSAES:
           break;
         case TPM_ALG_OAEP:
-          OutPublic->publicArea.parameters.rsaDetail.scheme.details.oaep.hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                                += sizeof (UINT16);
+          OutPublic->publicArea.parameters.rsaDetail.scheme.details.oaep.hashAlg
+            = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer
+            += sizeof (UINT16);
           break;
         case TPM_ALG_NULL:
           break;
@@ -250,26 +363,42 @@ Tpm2ReadPublic (
           return EFI_UNSUPPORTED;
       }
 
-      OutPublic->publicArea.parameters.rsaDetail.keyBits  = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+      OutPublic->publicArea.parameters.rsaDetail.keyBits = SwapBytes16 (
+                                                             ReadUnaligned16 (
+                                                               (UINT16 *)Buffer)
+                                                             );
       Buffer                                             += sizeof (UINT16);
-      OutPublic->publicArea.parameters.rsaDetail.exponent = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-      Buffer                                             += sizeof (UINT32);
+      OutPublic->publicArea.parameters.rsaDetail.exponent = SwapBytes16 (
+                                                              ReadUnaligned16 (
+                                                                (UINT16 *)Buffer)
+                                                              );
+      Buffer += sizeof (UINT32);
       break;
     case TPM_ALG_ECC:
-      OutPublic->publicArea.parameters.eccDetail.symmetric.algorithm = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-      Buffer                                                        += sizeof (UINT16);
+      OutPublic->publicArea.parameters.eccDetail.symmetric.algorithm =
+        SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+      Buffer +=
+        sizeof (UINT16);
       switch (OutPublic->publicArea.parameters.eccDetail.symmetric.algorithm) {
         case TPM_ALG_AES:
-          OutPublic->publicArea.parameters.eccDetail.symmetric.keyBits.aes = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                          += sizeof (UINT16);
-          OutPublic->publicArea.parameters.eccDetail.symmetric.mode.aes    = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                          += sizeof (UINT16);
+          OutPublic->publicArea.parameters.eccDetail.symmetric.keyBits.aes =
+            SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer +=
+            sizeof (UINT16);
+          OutPublic->publicArea.parameters.eccDetail.symmetric.mode.aes =
+            SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer +=
+            sizeof (UINT16);
           break;
         case TPM_ALG_SM4:
-          OutPublic->publicArea.parameters.eccDetail.symmetric.keyBits.SM4 = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                          += sizeof (UINT16);
-          OutPublic->publicArea.parameters.eccDetail.symmetric.mode.SM4    = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                          += sizeof (UINT16);
+          OutPublic->publicArea.parameters.eccDetail.symmetric.keyBits.SM4 =
+            SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer +=
+            sizeof (UINT16);
+          OutPublic->publicArea.parameters.eccDetail.symmetric.mode.SM4 =
+            SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer +=
+            sizeof (UINT16);
           break;
         case TPM_ALG_NULL:
           break;
@@ -277,20 +406,31 @@ Tpm2ReadPublic (
           return EFI_UNSUPPORTED;
       }
 
-      OutPublic->publicArea.parameters.eccDetail.scheme.scheme = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-      Buffer                                                  += sizeof (UINT16);
+      OutPublic->publicArea.parameters.eccDetail.scheme.scheme = SwapBytes16 (
+                                                                   ReadUnaligned16 (
+                                                                     (UINT16 *)
+                                                                     Buffer)
+                                                                   );
+      Buffer +=
+        sizeof (UINT16);
       switch (OutPublic->publicArea.parameters.eccDetail.scheme.scheme) {
         case TPM_ALG_ECDSA:
-          OutPublic->publicArea.parameters.eccDetail.scheme.details.ecdsa.hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                                 += sizeof (UINT16);
+          OutPublic->publicArea.parameters.eccDetail.scheme.details.ecdsa.
+            hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer
+            += sizeof (UINT16);
           break;
         case TPM_ALG_ECDAA:
-          OutPublic->publicArea.parameters.eccDetail.scheme.details.ecdaa.hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                                 += sizeof (UINT16);
+          OutPublic->publicArea.parameters.eccDetail.scheme.details.ecdaa.
+            hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer
+            += sizeof (UINT16);
           break;
         case TPM_ALG_ECSCHNORR:
-          OutPublic->publicArea.parameters.eccDetail.scheme.details.ecSchnorr.hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                                     += sizeof (UINT16);
+          OutPublic->publicArea.parameters.eccDetail.scheme.details.ecSchnorr.
+            hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer
+            += sizeof (UINT16);
           break;
         case TPM_ALG_ECDH:
           break;
@@ -300,26 +440,41 @@ Tpm2ReadPublic (
           return EFI_UNSUPPORTED;
       }
 
-      OutPublic->publicArea.parameters.eccDetail.curveID    = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+      OutPublic->publicArea.parameters.eccDetail.curveID = SwapBytes16 (
+                                                             ReadUnaligned16 (
+                                                               (UINT16 *)Buffer)
+                                                             );
       Buffer                                               += sizeof (UINT16);
-      OutPublic->publicArea.parameters.eccDetail.kdf.scheme = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-      Buffer                                               += sizeof (UINT16);
+      OutPublic->publicArea.parameters.eccDetail.kdf.scheme = SwapBytes16 (
+                                                                ReadUnaligned16 (
+                                                                  (UINT16 *)
+                                                                  Buffer)
+                                                                );
+      Buffer += sizeof (UINT16);
       switch (OutPublic->publicArea.parameters.eccDetail.kdf.scheme) {
         case TPM_ALG_MGF1:
-          OutPublic->publicArea.parameters.eccDetail.kdf.details.mgf1.hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                             += sizeof (UINT16);
+          OutPublic->publicArea.parameters.eccDetail.kdf.details.mgf1.hashAlg =
+            SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer +=
+            sizeof (UINT16);
           break;
         case TPM_ALG_KDF1_SP800_108:
-          OutPublic->publicArea.parameters.eccDetail.kdf.details.kdf1_sp800_108.hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                                       += sizeof (UINT16);
+          OutPublic->publicArea.parameters.eccDetail.kdf.details.kdf1_sp800_108.
+            hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer
+            += sizeof (UINT16);
           break;
         case TPM_ALG_KDF1_SP800_56a:
-          OutPublic->publicArea.parameters.eccDetail.kdf.details.kdf1_SP800_56a.hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                                       += sizeof (UINT16);
+          OutPublic->publicArea.parameters.eccDetail.kdf.details.kdf1_SP800_56a.
+            hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer
+            += sizeof (UINT16);
           break;
         case TPM_ALG_KDF2:
-          OutPublic->publicArea.parameters.eccDetail.kdf.details.kdf2.hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-          Buffer                                                             += sizeof (UINT16);
+          OutPublic->publicArea.parameters.eccDetail.kdf.details.kdf2.hashAlg =
+            SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+          Buffer +=
+            sizeof (UINT16);
           break;
         case TPM_ALG_NULL:
           break;
@@ -335,66 +490,137 @@ Tpm2ReadPublic (
   // TPMU_PUBLIC_ID
   switch (OutPublic->publicArea.type) {
     case TPM_ALG_KEYEDHASH:
-      OutPublic->publicArea.unique.keyedHash.size = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-      Buffer                                     += sizeof (UINT16);
+      OutPublic->publicArea.unique.keyedHash.size = SwapBytes16 (
+                                                      ReadUnaligned16 (
+                                                        (UINT16 *)Buffer)
+                                                      );
+      Buffer += sizeof (UINT16);
       if (OutPublic->publicArea.unique.keyedHash.size > sizeof (TPMU_HA)) {
-        DEBUG ((DEBUG_ERROR, "Tpm2ReadPublic - keyedHash.size error %x\n", OutPublic->publicArea.unique.keyedHash.size));
+        DEBUG ((
+          DEBUG_ERROR,
+          "Tpm2ReadPublic - keyedHash.size error %x\n",
+          OutPublic->publicArea.unique.keyedHash.size
+          ));
         return EFI_DEVICE_ERROR;
       }
 
-      CopyMem (OutPublic->publicArea.unique.keyedHash.buffer, Buffer, OutPublic->publicArea.unique.keyedHash.size);
+      CopyMem (
+        OutPublic->publicArea.unique.keyedHash.buffer,
+        Buffer,
+        OutPublic->publicArea.unique.keyedHash.size
+        );
       Buffer += OutPublic->publicArea.unique.keyedHash.size;
       break;
     case TPM_ALG_SYMCIPHER:
-      OutPublic->publicArea.unique.sym.size = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-      Buffer                               += sizeof (UINT16);
+      OutPublic->publicArea.unique.sym.size = SwapBytes16 (
+                                                ReadUnaligned16 (
+                                                  (UINT16 *)Buffer
+                                                  )
+                                                );
+      Buffer += sizeof (UINT16);
       if (OutPublic->publicArea.unique.sym.size > sizeof (TPMU_HA)) {
-        DEBUG ((DEBUG_ERROR, "Tpm2ReadPublic - sym.size error %x\n", OutPublic->publicArea.unique.sym.size));
+        DEBUG ((
+          DEBUG_ERROR,
+          "Tpm2ReadPublic - sym.size error %x\n",
+          OutPublic->publicArea.unique.sym.size
+          ));
         return EFI_DEVICE_ERROR;
       }
 
-      CopyMem (OutPublic->publicArea.unique.sym.buffer, Buffer, OutPublic->publicArea.unique.sym.size);
+      CopyMem (
+        OutPublic->publicArea.unique.sym.buffer,
+        Buffer,
+        OutPublic->publicArea.unique.sym.size
+        );
       Buffer += OutPublic->publicArea.unique.sym.size;
       break;
     case TPM_ALG_RSA:
-      OutPublic->publicArea.unique.rsa.size = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-      Buffer                               += sizeof (UINT16);
+      OutPublic->publicArea.unique.rsa.size = SwapBytes16 (
+                                                ReadUnaligned16 (
+                                                  (UINT16 *)Buffer
+                                                  )
+                                                );
+      Buffer += sizeof (UINT16);
       if (OutPublic->publicArea.unique.rsa.size > MAX_RSA_KEY_BYTES) {
-        DEBUG ((DEBUG_ERROR, "Tpm2ReadPublic - rsa.size error %x\n", OutPublic->publicArea.unique.rsa.size));
+        DEBUG ((
+          DEBUG_ERROR,
+          "Tpm2ReadPublic - rsa.size error %x\n",
+          OutPublic->publicArea.unique.rsa.size
+          ));
         return EFI_DEVICE_ERROR;
       }
 
-      CopyMem (OutPublic->publicArea.unique.rsa.buffer, Buffer, OutPublic->publicArea.unique.rsa.size);
+      CopyMem (
+        OutPublic->publicArea.unique.rsa.buffer,
+        Buffer,
+        OutPublic->publicArea.unique.rsa.size
+        );
       Buffer += OutPublic->publicArea.unique.rsa.size;
       break;
     case TPM_ALG_ECC:
-      OutPublic->publicArea.unique.ecc.x.size = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-      Buffer                                 += sizeof (UINT16);
+      OutPublic->publicArea.unique.ecc.x.size = SwapBytes16 (
+                                                  ReadUnaligned16 (
+                                                    (UINT16 *)Buffer
+                                                    )
+                                                  );
+      Buffer += sizeof (UINT16);
       if (OutPublic->publicArea.unique.ecc.x.size > MAX_ECC_KEY_BYTES) {
-        DEBUG ((DEBUG_ERROR, "Tpm2ReadPublic - ecc.x.size error %x\n", OutPublic->publicArea.unique.ecc.x.size));
+        DEBUG ((
+          DEBUG_ERROR,
+          "Tpm2ReadPublic - ecc.x.size error %x\n",
+          OutPublic->publicArea.unique.ecc.x.size
+          ));
         return EFI_DEVICE_ERROR;
       }
 
-      CopyMem (OutPublic->publicArea.unique.ecc.x.buffer, Buffer, OutPublic->publicArea.unique.ecc.x.size);
-      Buffer                                 += OutPublic->publicArea.unique.ecc.x.size;
-      OutPublic->publicArea.unique.ecc.y.size = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-      Buffer                                 += sizeof (UINT16);
+      CopyMem (
+        OutPublic->publicArea.unique.ecc.x.buffer,
+        Buffer,
+        OutPublic->publicArea.unique.ecc.x.size
+        );
+      Buffer +=
+        OutPublic->publicArea.unique.ecc.x.size;
+      OutPublic->publicArea.unique.ecc.y.size = SwapBytes16 (
+                                                  ReadUnaligned16 (
+                                                    (UINT16 *)Buffer
+                                                    )
+                                                  );
+      Buffer += sizeof (UINT16);
       if (OutPublic->publicArea.unique.ecc.y.size > MAX_ECC_KEY_BYTES) {
-        DEBUG ((DEBUG_ERROR, "Tpm2ReadPublic - ecc.y.size error %x\n", OutPublic->publicArea.unique.ecc.y.size));
+        DEBUG ((
+          DEBUG_ERROR,
+          "Tpm2ReadPublic - ecc.y.size error %x\n",
+          OutPublic->publicArea.unique.ecc.y.size
+          ));
         return EFI_DEVICE_ERROR;
       }
 
-      CopyMem (OutPublic->publicArea.unique.ecc.y.buffer, Buffer, OutPublic->publicArea.unique.ecc.y.size);
+      CopyMem (
+        OutPublic->publicArea.unique.ecc.y.buffer,
+        Buffer,
+        OutPublic->publicArea.unique.ecc.y.size
+        );
       Buffer += OutPublic->publicArea.unique.ecc.y.size;
       break;
     default:
       return EFI_UNSUPPORTED;
   }
 
-  CopyMem (Name->name, (UINT8 *)&RecvBuffer + sizeof (TPM2_RESPONSE_HEADER) + sizeof (UINT16) + OutPublicSize + sizeof (UINT16), NameSize);
+  CopyMem (
+    Name->name,
+    (UINT8 *)&RecvBuffer + sizeof (TPM2_RESPONSE_HEADER) +
+    sizeof (UINT16) + OutPublicSize + sizeof (UINT16),
+    NameSize
+    );
   Name->size = NameSize;
 
-  CopyMem (QualifiedName->name, (UINT8 *)&RecvBuffer + sizeof (TPM2_RESPONSE_HEADER) + sizeof (UINT16) + OutPublicSize + sizeof (UINT16) + NameSize + sizeof (UINT16), QualifiedNameSize);
+  CopyMem (
+    QualifiedName->name,
+    (UINT8 *)&RecvBuffer +
+    sizeof (TPM2_RESPONSE_HEADER) + sizeof (UINT16) + OutPublicSize +
+    sizeof (UINT16) + NameSize + sizeof (UINT16),
+    QualifiedNameSize
+    );
   QualifiedName->size = QualifiedNameSize;
 
   return EFI_SUCCESS;

@@ -75,7 +75,9 @@ Tpm2DictionaryAttackLockReset (
   // Construct command
   //
   SendBuffer.Header.tag         = SwapBytes16 (TPM_ST_SESSIONS);
-  SendBuffer.Header.commandCode = SwapBytes32 (TPM_CC_DictionaryAttackLockReset);
+  SendBuffer.Header.commandCode = SwapBytes32 (
+                                    TPM_CC_DictionaryAttackLockReset
+                                    );
 
   SendBuffer.LockHandle = SwapBytes32 (LockHandle);
 
@@ -96,19 +98,32 @@ Tpm2DictionaryAttackLockReset (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2DictionaryAttackLockReset - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2DictionaryAttackLockReset - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
 
   if (SwapBytes32 (RecvBuffer.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2DictionaryAttackLockReset - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2DictionaryAttackLockReset - responseCode - %x\n",
+      SwapBytes32 (RecvBuffer.Header.responseCode)
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
@@ -157,7 +172,9 @@ Tpm2DictionaryAttackParameters (
   // Construct command
   //
   SendBuffer.Header.tag         = SwapBytes16 (TPM_ST_SESSIONS);
-  SendBuffer.Header.commandCode = SwapBytes32 (TPM_CC_DictionaryAttackParameters);
+  SendBuffer.Header.commandCode = SwapBytes32 (
+                                    TPM_CC_DictionaryAttackParameters
+                                    );
 
   SendBuffer.LockHandle = SwapBytes32 (LockHandle);
 
@@ -188,19 +205,32 @@ Tpm2DictionaryAttackParameters (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2DictionaryAttackParameters - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2DictionaryAttackParameters - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
 
   if (SwapBytes32 (RecvBuffer.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2DictionaryAttackParameters - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2DictionaryAttackParameters - responseCode - %x\n",
+      SwapBytes32 (RecvBuffer.Header.responseCode)
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }

@@ -88,7 +88,11 @@ InternalCreateHashInterfaceHob (
 
   ZeroMem (&LocalHashInterfaceHob, sizeof (LocalHashInterfaceHob));
   CopyGuid (&LocalHashInterfaceHob.Identifier, Identifier);
-  return BuildGuidDataHob (&mHashLibPeiRouterGuid, &LocalHashInterfaceHob, sizeof (LocalHashInterfaceHob));
+  return BuildGuidDataHob (
+           &mHashLibPeiRouterGuid,
+           &LocalHashInterfaceHob,
+           sizeof (LocalHashInterfaceHob)
+           );
 }
 
 /**
@@ -109,7 +113,8 @@ CheckSupportedHashMaskMismatch (
   ASSERT (HashInterfaceHobLast != NULL);
 
   if ((HashInterfaceHobLast->SupportedHashMask != 0) &&
-      (HashInterfaceHobCurrent->SupportedHashMask != HashInterfaceHobLast->SupportedHashMask))
+      (HashInterfaceHobCurrent->SupportedHashMask !=
+       HashInterfaceHobLast->SupportedHashMask))
   {
     DEBUG ((
       DEBUG_WARN,
@@ -117,7 +122,10 @@ CheckSupportedHashMaskMismatch (
       HashInterfaceHobCurrent->SupportedHashMask,
       HashInterfaceHobLast->SupportedHashMask
       ));
-    DEBUG ((DEBUG_WARN, "that are linking different HashInstanceLib instances!\n"));
+    DEBUG ((
+      DEBUG_WARN,
+      "that are linking different HashInstanceLib instances!\n"
+      ));
   }
 }
 
@@ -151,11 +159,16 @@ HashStart (
 
   CheckSupportedHashMaskMismatch (HashInterfaceHob);
 
-  HashCtx = AllocatePool (sizeof (*HashCtx) * HashInterfaceHob->HashInterfaceCount);
+  HashCtx = AllocatePool (
+              sizeof (*HashCtx) *
+              HashInterfaceHob->HashInterfaceCount
+              );
   ASSERT (HashCtx != NULL);
 
   for (Index = 0; Index < HashInterfaceHob->HashInterfaceCount; Index++) {
-    HashMask = Tpm2GetHashMaskFromAlgo (&HashInterfaceHob->HashInterface[Index].HashGuid);
+    HashMask = Tpm2GetHashMaskFromAlgo (
+                 &HashInterfaceHob->HashInterface[Index].HashGuid
+                 );
     if ((HashMask & PcdGet32 (PcdTpm2HashMask)) != 0) {
       HashInterfaceHob->HashInterface[Index].HashInit (&HashCtx[Index]);
     }
@@ -202,9 +215,15 @@ HashUpdate (
   HashCtx = (HASH_HANDLE *)HashHandle;
 
   for (Index = 0; Index < HashInterfaceHob->HashInterfaceCount; Index++) {
-    HashMask = Tpm2GetHashMaskFromAlgo (&HashInterfaceHob->HashInterface[Index].HashGuid);
+    HashMask = Tpm2GetHashMaskFromAlgo (
+                 &HashInterfaceHob->HashInterface[Index].HashGuid
+                 );
     if ((HashMask & PcdGet32 (PcdTpm2HashMask)) != 0) {
-      HashInterfaceHob->HashInterface[Index].HashUpdate (HashCtx[Index], DataToHash, DataToHashLen);
+      HashInterfaceHob->HashInterface[Index].HashUpdate (
+                                               HashCtx[Index],
+                                               DataToHash,
+                                               DataToHashLen
+                                               );
     }
   }
 
@@ -254,10 +273,19 @@ HashCompleteAndExtend (
   ZeroMem (DigestList, sizeof (*DigestList));
 
   for (Index = 0; Index < HashInterfaceHob->HashInterfaceCount; Index++) {
-    HashMask = Tpm2GetHashMaskFromAlgo (&HashInterfaceHob->HashInterface[Index].HashGuid);
+    HashMask = Tpm2GetHashMaskFromAlgo (
+                 &HashInterfaceHob->HashInterface[Index].HashGuid
+                 );
     if ((HashMask & PcdGet32 (PcdTpm2HashMask)) != 0) {
-      HashInterfaceHob->HashInterface[Index].HashUpdate (HashCtx[Index], DataToHash, DataToHashLen);
-      HashInterfaceHob->HashInterface[Index].HashFinal (HashCtx[Index], &Digest);
+      HashInterfaceHob->HashInterface[Index].HashUpdate (
+                                               HashCtx[Index],
+                                               DataToHash,
+                                               DataToHashLen
+                                               );
+      HashInterfaceHob->HashInterface[Index].HashFinal (
+                                               HashCtx[Index],
+                                               &Digest
+                                               );
       Tpm2SetHashToDigestList (DigestList, &Digest);
     }
   }
@@ -361,8 +389,16 @@ RegisterHashInterfaceLib (
   // Check duplication
   //
   for (Index = 0; Index < HashInterfaceHob->HashInterfaceCount; Index++) {
-    if (CompareGuid (&HashInterfaceHob->HashInterface[Index].HashGuid, &HashInterface->HashGuid)) {
-      DEBUG ((DEBUG_ERROR, "Hash Interface (%g) has been registered\n", &HashInterface->HashGuid));
+    if (CompareGuid (
+          &HashInterfaceHob->HashInterface[Index].HashGuid,
+          &HashInterface->HashGuid
+          ))
+    {
+      DEBUG ((
+        DEBUG_ERROR,
+        "Hash Interface (%g) has been registered\n",
+        &HashInterface->HashGuid
+        ));
       return EFI_ALREADY_STARTED;
     }
   }
@@ -370,11 +406,19 @@ RegisterHashInterfaceLib (
   //
   // Record hash algorithm bitmap of CURRENT module which consumes HashLib.
   //
-  HashInterfaceHob->SupportedHashMask = PcdGet32 (PcdTcg2HashAlgorithmBitmap) | HashMask;
-  Status                              = PcdSet32S (PcdTcg2HashAlgorithmBitmap, HashInterfaceHob->SupportedHashMask);
+  HashInterfaceHob->SupportedHashMask = PcdGet32 (PcdTcg2HashAlgorithmBitmap) |
+                                        HashMask;
+  Status = PcdSet32S (
+             PcdTcg2HashAlgorithmBitmap,
+             HashInterfaceHob->SupportedHashMask
+             );
   ASSERT_EFI_ERROR (Status);
 
-  CopyMem (&HashInterfaceHob->HashInterface[HashInterfaceHob->HashInterfaceCount], HashInterface, sizeof (*HashInterface));
+  CopyMem (
+    &HashInterfaceHob->HashInterface[HashInterfaceHob->HashInterfaceCount],
+    HashInterface,
+    sizeof (*HashInterface)
+    );
   HashInterfaceHob->HashInterfaceCount++;
 
   return EFI_SUCCESS;
@@ -426,7 +470,10 @@ HashLibBaseCryptoRouterPeiConstructor (
     // This is the second execution of this module, clear the hash interface
     // information registered at its first execution.
     //
-    ZeroMem (&HashInterfaceHob->HashInterface, sizeof (HashInterfaceHob->HashInterface));
+    ZeroMem (
+      &HashInterfaceHob->HashInterface,
+      sizeof (HashInterfaceHob->HashInterface)
+      );
     HashInterfaceHob->HashInterfaceCount = 0;
     HashInterfaceHob->SupportedHashMask  = 0;
   }

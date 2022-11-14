@@ -62,7 +62,12 @@ Tpm2Startup (
   Cmd.StartupType        = SwapBytes16 (StartupType);
 
   ResultBufSize = sizeof (Res);
-  Status        = Tpm2SubmitCommand (sizeof (Cmd), (UINT8 *)&Cmd, &ResultBufSize, (UINT8 *)&Res);
+  Status        = Tpm2SubmitCommand (
+                    sizeof (Cmd),
+                    (UINT8 *)&Cmd,
+                    &ResultBufSize,
+                    (UINT8 *)&Res
+                    );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -77,7 +82,11 @@ Tpm2Startup (
       DEBUG ((DEBUG_INFO, "TPM2Startup: TPM_RC_INITIALIZE\n"));
       return EFI_SUCCESS;
     default:
-      DEBUG ((DEBUG_ERROR, "Tpm2Startup: Response Code error! 0x%08x\r\n", ResponseCode));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Tpm2Startup: Response Code error! 0x%08x\r\n",
+        ResponseCode
+        ));
       return EFI_DEVICE_ERROR;
   }
 }
@@ -107,13 +116,22 @@ Tpm2Shutdown (
   Cmd.ShutdownType       = SwapBytes16 (ShutdownType);
 
   ResultBufSize = sizeof (Res);
-  Status        = Tpm2SubmitCommand (sizeof (Cmd), (UINT8 *)&Cmd, &ResultBufSize, (UINT8 *)&Res);
+  Status        = Tpm2SubmitCommand (
+                    sizeof (Cmd),
+                    (UINT8 *)&Cmd,
+                    &ResultBufSize,
+                    (UINT8 *)&Res
+                    );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (SwapBytes32 (Res.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2Shutdown: Response Code error! 0x%08x\r\n", SwapBytes32 (Res.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2Shutdown: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (Res.Header.responseCode)
+      ));
     return EFI_DEVICE_ERROR;
   }
 

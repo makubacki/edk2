@@ -99,7 +99,12 @@ Tpm2GetCapability (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -112,7 +117,11 @@ Tpm2GetCapability (
   // Fail if command failed
   //
   if (SwapBytes32 (RecvBuffer.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2GetCapability: Response Code error! 0x%08x\r\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2GetCapability: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (RecvBuffer.Header.responseCode)
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -123,7 +132,12 @@ Tpm2GetCapability (
   //
   // Does not unpack all possible property here, the caller should unpack it and note the byte order.
   //
-  CopyMem (CapabilityData, &RecvBuffer.CapabilityData, RecvBufferSize - sizeof (TPM2_RESPONSE_HEADER) - sizeof (UINT8));
+  CopyMem (
+    CapabilityData,
+    &RecvBuffer.CapabilityData,
+    RecvBufferSize -
+    sizeof (TPM2_RESPONSE_HEADER) - sizeof (UINT8)
+    );
 
   return EFI_SUCCESS;
 }
@@ -233,7 +247,9 @@ Tpm2GetCapabilityFirmwareVersion (
     return Status;
   }
 
-  *FirmwareVersion1 = SwapBytes32 (TpmCap.data.tpmProperties.tpmProperty->value);
+  *FirmwareVersion1 = SwapBytes32 (
+                        TpmCap.data.tpmProperties.tpmProperty->value
+                        );
 
   Status = Tpm2GetCapability (
              TPM_CAP_TPM_PROPERTIES,
@@ -246,7 +262,9 @@ Tpm2GetCapabilityFirmwareVersion (
     return Status;
   }
 
-  *FirmwareVersion2 = SwapBytes32 (TpmCap.data.tpmProperties.tpmProperty->value);
+  *FirmwareVersion2 = SwapBytes32 (
+                        TpmCap.data.tpmProperties.tpmProperty->value
+                        );
 
   return EFI_SUCCESS;
 }
@@ -338,13 +356,26 @@ Tpm2GetCapabilitySupportedAlg (
 
   AlgList->count = SwapBytes32 (AlgList->count);
   if (AlgList->count > MAX_CAP_ALGS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2GetCapabilitySupportedAlg - AlgList->count error %x\n", AlgList->count));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2GetCapabilitySupportedAlg - AlgList->count error %x\n",
+      AlgList->count
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   for (Index = 0; Index < AlgList->count; Index++) {
-    AlgList->algProperties[Index].alg = SwapBytes16 (AlgList->algProperties[Index].alg);
-    WriteUnaligned32 ((UINT32 *)&AlgList->algProperties[Index].algProperties, SwapBytes32 (ReadUnaligned32 ((UINT32 *)&AlgList->algProperties[Index].algProperties)));
+    AlgList->algProperties[Index].alg = SwapBytes16 (
+                                          AlgList->algProperties[Index].alg
+                                          );
+    WriteUnaligned32 (
+      (UINT32 *)&AlgList->algProperties[Index].algProperties,
+      SwapBytes32 (
+        ReadUnaligned32 (
+          (UINT32 *)&AlgList->algProperties[Index].algProperties
+          )
+        )
+      );
   }
 
   return EFI_SUCCESS;
@@ -493,19 +524,36 @@ Tpm2GetCapabilityPcrs (
 
   Pcrs->count = SwapBytes32 (TpmCap.data.assignedPCR.count);
   if (Pcrs->count > HASH_COUNT) {
-    DEBUG ((DEBUG_ERROR, "Tpm2GetCapabilityPcrs - Pcrs->count error %x\n", Pcrs->count));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2GetCapabilityPcrs - Pcrs->count error %x\n",
+      Pcrs->count
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   for (Index = 0; Index < Pcrs->count; Index++) {
-    Pcrs->pcrSelections[Index].hash         = SwapBytes16 (TpmCap.data.assignedPCR.pcrSelections[Index].hash);
-    Pcrs->pcrSelections[Index].sizeofSelect = TpmCap.data.assignedPCR.pcrSelections[Index].sizeofSelect;
+    Pcrs->pcrSelections[Index].hash = SwapBytes16 (
+                                        TpmCap.data.assignedPCR.pcrSelections[
+                                                                                                Index
+                                        ].hash
+                                        );
+    Pcrs->pcrSelections[Index].sizeofSelect =
+      TpmCap.data.assignedPCR.pcrSelections[Index].sizeofSelect;
     if (Pcrs->pcrSelections[Index].sizeofSelect > PCR_SELECT_MAX) {
-      DEBUG ((DEBUG_ERROR, "Tpm2GetCapabilityPcrs - sizeofSelect error %x\n", Pcrs->pcrSelections[Index].sizeofSelect));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Tpm2GetCapabilityPcrs - sizeofSelect error %x\n",
+        Pcrs->pcrSelections[Index].sizeofSelect
+        ));
       return EFI_DEVICE_ERROR;
     }
 
-    CopyMem (Pcrs->pcrSelections[Index].pcrSelect, TpmCap.data.assignedPCR.pcrSelections[Index].pcrSelect, Pcrs->pcrSelections[Index].sizeofSelect);
+    CopyMem (
+      Pcrs->pcrSelections[Index].pcrSelect,
+      TpmCap.data.assignedPCR.pcrSelections[Index].pcrSelect,
+      Pcrs->pcrSelections[Index].sizeofSelect
+      );
   }
 
   return EFI_SUCCESS;
@@ -544,7 +592,10 @@ Tpm2GetCapabilitySupportedAndActivePcrs (
   // If error, assume that we have at least SHA-1 (and return the error.)
   //
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "GetSupportedAndActivePcrs - Tpm2GetCapabilityPcrs fail!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "GetSupportedAndActivePcrs - Tpm2GetCapabilityPcrs fail!\n"
+      ));
     *TpmHashAlgorithmBitmap = HASH_ALG_SHA1;
     *ActivePcrBanks         = HASH_ALG_SHA1;
     ActivePcrBankCount      = 1;
@@ -559,64 +610,122 @@ Tpm2GetCapabilitySupportedAndActivePcrs (
     for (Index = 0; Index < Pcrs.count; Index++) {
       switch (Pcrs.pcrSelections[Index].hash) {
         case TPM_ALG_SHA1:
-          DEBUG ((DEBUG_VERBOSE, "GetSupportedAndActivePcrs - HASH_ALG_SHA1 present.\n"));
+          DEBUG ((
+            DEBUG_VERBOSE,
+            "GetSupportedAndActivePcrs - HASH_ALG_SHA1 present.\n"
+            ));
           *TpmHashAlgorithmBitmap |= HASH_ALG_SHA1;
-          if (!IsZeroBuffer (Pcrs.pcrSelections[Index].pcrSelect, Pcrs.pcrSelections[Index].sizeofSelect)) {
-            DEBUG ((DEBUG_VERBOSE, "GetSupportedAndActivePcrs - HASH_ALG_SHA1 active.\n"));
+          if (!IsZeroBuffer (
+                 Pcrs.pcrSelections[Index].pcrSelect,
+                 Pcrs.pcrSelections[Index].sizeofSelect
+                 ))
+          {
+            DEBUG ((
+              DEBUG_VERBOSE,
+              "GetSupportedAndActivePcrs - HASH_ALG_SHA1 active.\n"
+              ));
             *ActivePcrBanks |= HASH_ALG_SHA1;
             ActivePcrBankCount++;
           }
 
           break;
         case TPM_ALG_SHA256:
-          DEBUG ((DEBUG_VERBOSE, "GetSupportedAndActivePcrs - HASH_ALG_SHA256 present.\n"));
+          DEBUG ((
+            DEBUG_VERBOSE,
+            "GetSupportedAndActivePcrs - HASH_ALG_SHA256 present.\n"
+            ));
           *TpmHashAlgorithmBitmap |= HASH_ALG_SHA256;
-          if (!IsZeroBuffer (Pcrs.pcrSelections[Index].pcrSelect, Pcrs.pcrSelections[Index].sizeofSelect)) {
-            DEBUG ((DEBUG_VERBOSE, "GetSupportedAndActivePcrs - HASH_ALG_SHA256 active.\n"));
+          if (!IsZeroBuffer (
+                 Pcrs.pcrSelections[Index].pcrSelect,
+                 Pcrs.pcrSelections[Index].sizeofSelect
+                 ))
+          {
+            DEBUG ((
+              DEBUG_VERBOSE,
+              "GetSupportedAndActivePcrs - HASH_ALG_SHA256 active.\n"
+              ));
             *ActivePcrBanks |= HASH_ALG_SHA256;
             ActivePcrBankCount++;
           }
 
           break;
         case TPM_ALG_SHA384:
-          DEBUG ((DEBUG_VERBOSE, "GetSupportedAndActivePcrs - HASH_ALG_SHA384 present.\n"));
+          DEBUG ((
+            DEBUG_VERBOSE,
+            "GetSupportedAndActivePcrs - HASH_ALG_SHA384 present.\n"
+            ));
           *TpmHashAlgorithmBitmap |= HASH_ALG_SHA384;
-          if (!IsZeroBuffer (Pcrs.pcrSelections[Index].pcrSelect, Pcrs.pcrSelections[Index].sizeofSelect)) {
-            DEBUG ((DEBUG_VERBOSE, "GetSupportedAndActivePcrs - HASH_ALG_SHA384 active.\n"));
+          if (!IsZeroBuffer (
+                 Pcrs.pcrSelections[Index].pcrSelect,
+                 Pcrs.pcrSelections[Index].sizeofSelect
+                 ))
+          {
+            DEBUG ((
+              DEBUG_VERBOSE,
+              "GetSupportedAndActivePcrs - HASH_ALG_SHA384 active.\n"
+              ));
             *ActivePcrBanks |= HASH_ALG_SHA384;
             ActivePcrBankCount++;
           }
 
           break;
         case TPM_ALG_SHA512:
-          DEBUG ((DEBUG_VERBOSE, "GetSupportedAndActivePcrs - HASH_ALG_SHA512 present.\n"));
+          DEBUG ((
+            DEBUG_VERBOSE,
+            "GetSupportedAndActivePcrs - HASH_ALG_SHA512 present.\n"
+            ));
           *TpmHashAlgorithmBitmap |= HASH_ALG_SHA512;
-          if (!IsZeroBuffer (Pcrs.pcrSelections[Index].pcrSelect, Pcrs.pcrSelections[Index].sizeofSelect)) {
-            DEBUG ((DEBUG_VERBOSE, "GetSupportedAndActivePcrs - HASH_ALG_SHA512 active.\n"));
+          if (!IsZeroBuffer (
+                 Pcrs.pcrSelections[Index].pcrSelect,
+                 Pcrs.pcrSelections[Index].sizeofSelect
+                 ))
+          {
+            DEBUG ((
+              DEBUG_VERBOSE,
+              "GetSupportedAndActivePcrs - HASH_ALG_SHA512 active.\n"
+              ));
             *ActivePcrBanks |= HASH_ALG_SHA512;
             ActivePcrBankCount++;
           }
 
           break;
         case TPM_ALG_SM3_256:
-          DEBUG ((DEBUG_VERBOSE, "GetSupportedAndActivePcrs - HASH_ALG_SM3_256 present.\n"));
+          DEBUG ((
+            DEBUG_VERBOSE,
+            "GetSupportedAndActivePcrs - HASH_ALG_SM3_256 present.\n"
+            ));
           *TpmHashAlgorithmBitmap |= HASH_ALG_SM3_256;
-          if (!IsZeroBuffer (Pcrs.pcrSelections[Index].pcrSelect, Pcrs.pcrSelections[Index].sizeofSelect)) {
-            DEBUG ((DEBUG_VERBOSE, "GetSupportedAndActivePcrs - HASH_ALG_SM3_256 active.\n"));
+          if (!IsZeroBuffer (
+                 Pcrs.pcrSelections[Index].pcrSelect,
+                 Pcrs.pcrSelections[Index].sizeofSelect
+                 ))
+          {
+            DEBUG ((
+              DEBUG_VERBOSE,
+              "GetSupportedAndActivePcrs - HASH_ALG_SM3_256 active.\n"
+              ));
             *ActivePcrBanks |= HASH_ALG_SM3_256;
             ActivePcrBankCount++;
           }
 
           break;
         default:
-          DEBUG ((DEBUG_VERBOSE, "GetSupportedAndActivePcrs - Unsupported bank 0x%04x.\n", Pcrs.pcrSelections[Index].hash));
+          DEBUG ((
+            DEBUG_VERBOSE,
+            "GetSupportedAndActivePcrs - Unsupported bank 0x%04x.\n",
+            Pcrs.pcrSelections[Index].hash
+            ));
           continue;
           break;
       }
     }
   }
 
-  DEBUG ((DEBUG_INFO, "GetSupportedAndActivePcrs - Count = %08x\n", ActivePcrBankCount));
+  DEBUG ((
+    DEBUG_INFO,
+    "GetSupportedAndActivePcrs - Count = %08x\n",
+    ActivePcrBankCount
+    ));
   return Status;
 }
 
@@ -688,8 +797,13 @@ Tpm2GetCapabilityIsCommandImplemented (
     return Status;
   }
 
-  CopyMem (&Attribute, &TpmCap.data.command.commandAttributes[0], sizeof (UINT32));
-  *IsCmdImpl = (Command == (SwapBytes32 (Attribute) & TPMA_CC_COMMANDINDEX_MASK));
+  CopyMem (
+    &Attribute,
+    &TpmCap.data.command.commandAttributes[0],
+    sizeof (UINT32)
+    );
+  *IsCmdImpl = (Command == (SwapBytes32 (Attribute) &
+                            TPMA_CC_COMMANDINDEX_MASK));
 
   return EFI_SUCCESS;
 }
@@ -726,17 +840,37 @@ Tpm2TestParms (
   Buffer += sizeof (UINT16);
   switch (Parameters->type) {
     case TPM_ALG_KEYEDHASH:
-      WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.keyedHashDetail.scheme.scheme));
+      WriteUnaligned16 (
+        (UINT16 *)Buffer,
+        SwapBytes16 (
+          Parameters->parameters.keyedHashDetail.scheme.scheme
+          )
+        );
       Buffer += sizeof (UINT16);
       switch (Parameters->parameters.keyedHashDetail.scheme.scheme) {
         case TPM_ALG_HMAC:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.keyedHashDetail.scheme.details.hmac.hashAlg));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.keyedHashDetail.scheme.details.hmac.hashAlg
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_XOR:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.keyedHashDetail.scheme.details.xor.hashAlg));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.keyedHashDetail.scheme.details.xor.hashAlg
+              )
+            );
           Buffer += sizeof (UINT16);
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.keyedHashDetail.scheme.details.xor.kdf));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.keyedHashDetail.scheme.details.xor.kdf
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         default:
@@ -744,23 +878,53 @@ Tpm2TestParms (
       }
 
     case TPM_ALG_SYMCIPHER:
-      WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.symDetail.algorithm));
+      WriteUnaligned16 (
+        (UINT16 *)Buffer,
+        SwapBytes16 (
+          Parameters->parameters.symDetail.algorithm
+          )
+        );
       Buffer += sizeof (UINT16);
       switch (Parameters->parameters.symDetail.algorithm) {
         case TPM_ALG_AES:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.symDetail.keyBits.aes));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.symDetail.keyBits.aes
+              )
+            );
           Buffer += sizeof (UINT16);
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.symDetail.mode.aes));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.symDetail.mode.aes
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_SM4:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.symDetail.keyBits.SM4));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.symDetail.keyBits.SM4
+              )
+            );
           Buffer += sizeof (UINT16);
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.symDetail.mode.SM4));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.symDetail.mode.SM4
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_XOR:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.symDetail.keyBits.xor));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.symDetail.keyBits.xor
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_NULL:
@@ -771,19 +935,44 @@ Tpm2TestParms (
 
       break;
     case TPM_ALG_RSA:
-      WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.rsaDetail.symmetric.algorithm));
+      WriteUnaligned16 (
+        (UINT16 *)Buffer,
+        SwapBytes16 (
+          Parameters->parameters.rsaDetail.symmetric.algorithm
+          )
+        );
       Buffer += sizeof (UINT16);
       switch (Parameters->parameters.rsaDetail.symmetric.algorithm) {
         case TPM_ALG_AES:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.rsaDetail.symmetric.keyBits.aes));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.rsaDetail.symmetric.keyBits.aes
+              )
+            );
           Buffer += sizeof (UINT16);
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.rsaDetail.symmetric.mode.aes));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.rsaDetail.symmetric.mode.aes
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_SM4:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.rsaDetail.symmetric.keyBits.SM4));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.rsaDetail.symmetric.keyBits.SM4
+              )
+            );
           Buffer += sizeof (UINT16);
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.rsaDetail.symmetric.mode.SM4));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.rsaDetail.symmetric.mode.SM4
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_NULL:
@@ -792,21 +981,41 @@ Tpm2TestParms (
           return EFI_INVALID_PARAMETER;
       }
 
-      WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.rsaDetail.scheme.scheme));
+      WriteUnaligned16 (
+        (UINT16 *)Buffer,
+        SwapBytes16 (
+          Parameters->parameters.rsaDetail.scheme.scheme
+          )
+        );
       Buffer += sizeof (UINT16);
       switch (Parameters->parameters.rsaDetail.scheme.scheme) {
         case TPM_ALG_RSASSA:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.rsaDetail.scheme.details.rsassa.hashAlg));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.rsaDetail.scheme.details.rsassa.hashAlg
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_RSAPSS:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.rsaDetail.scheme.details.rsapss.hashAlg));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.rsaDetail.scheme.details.rsapss.hashAlg
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_RSAES:
           break;
         case TPM_ALG_OAEP:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.rsaDetail.scheme.details.oaep.hashAlg));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.rsaDetail.scheme.details.oaep.hashAlg
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_NULL:
@@ -815,25 +1024,60 @@ Tpm2TestParms (
           return EFI_INVALID_PARAMETER;
       }
 
-      WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.rsaDetail.keyBits));
+      WriteUnaligned16 (
+        (UINT16 *)Buffer,
+        SwapBytes16 (
+          Parameters->parameters.rsaDetail.keyBits
+          )
+        );
       Buffer += sizeof (UINT16);
-      WriteUnaligned32 ((UINT32 *)Buffer, SwapBytes32 (Parameters->parameters.rsaDetail.exponent));
+      WriteUnaligned32 (
+        (UINT32 *)Buffer,
+        SwapBytes32 (
+          Parameters->parameters.rsaDetail.exponent
+          )
+        );
       Buffer += sizeof (UINT32);
       break;
     case TPM_ALG_ECC:
-      WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.symmetric.algorithm));
+      WriteUnaligned16 (
+        (UINT16 *)Buffer,
+        SwapBytes16 (
+          Parameters->parameters.eccDetail.symmetric.algorithm
+          )
+        );
       Buffer += sizeof (UINT16);
       switch (Parameters->parameters.eccDetail.symmetric.algorithm) {
         case TPM_ALG_AES:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.symmetric.keyBits.aes));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.eccDetail.symmetric.keyBits.aes
+              )
+            );
           Buffer += sizeof (UINT16);
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.symmetric.mode.aes));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.eccDetail.symmetric.mode.aes
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_SM4:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.symmetric.keyBits.SM4));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.eccDetail.symmetric.keyBits.SM4
+              )
+            );
           Buffer += sizeof (UINT16);
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.symmetric.mode.SM4));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.eccDetail.symmetric.mode.SM4
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_NULL:
@@ -842,19 +1086,39 @@ Tpm2TestParms (
           return EFI_INVALID_PARAMETER;
       }
 
-      WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.scheme.scheme));
+      WriteUnaligned16 (
+        (UINT16 *)Buffer,
+        SwapBytes16 (
+          Parameters->parameters.eccDetail.scheme.scheme
+          )
+        );
       Buffer += sizeof (UINT16);
       switch (Parameters->parameters.eccDetail.scheme.scheme) {
         case TPM_ALG_ECDSA:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.scheme.details.ecdsa.hashAlg));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.eccDetail.scheme.details.ecdsa.hashAlg
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_ECDAA:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.scheme.details.ecdaa.hashAlg));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.eccDetail.scheme.details.ecdaa.hashAlg
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_ECSCHNORR:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.scheme.details.ecSchnorr.hashAlg));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.eccDetail.scheme.details.ecSchnorr.hashAlg
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_ECDH:
@@ -865,25 +1129,57 @@ Tpm2TestParms (
           return EFI_INVALID_PARAMETER;
       }
 
-      WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.curveID));
+      WriteUnaligned16 (
+        (UINT16 *)Buffer,
+        SwapBytes16 (
+          Parameters->parameters.eccDetail.curveID
+          )
+        );
       Buffer += sizeof (UINT16);
-      WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.kdf.scheme));
+      WriteUnaligned16 (
+        (UINT16 *)Buffer,
+        SwapBytes16 (
+          Parameters->parameters.eccDetail.kdf.scheme
+          )
+        );
       Buffer += sizeof (UINT16);
       switch (Parameters->parameters.eccDetail.kdf.scheme) {
         case TPM_ALG_MGF1:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.kdf.details.mgf1.hashAlg));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.eccDetail.kdf.details.mgf1.hashAlg
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_KDF1_SP800_108:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.kdf.details.kdf1_sp800_108.hashAlg));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.eccDetail.kdf.details.kdf1_sp800_108.
+                hashAlg
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_KDF1_SP800_56a:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.kdf.details.kdf1_SP800_56a.hashAlg));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.eccDetail.kdf.details.kdf1_SP800_56a.
+                hashAlg
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_KDF2:
-          WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Parameters->parameters.eccDetail.kdf.details.kdf2.hashAlg));
+          WriteUnaligned16 (
+            (UINT16 *)Buffer,
+            SwapBytes16 (
+              Parameters->parameters.eccDetail.kdf.details.kdf2.hashAlg
+              )
+            );
           Buffer += sizeof (UINT16);
           break;
         case TPM_ALG_NULL:
@@ -904,18 +1200,33 @@ Tpm2TestParms (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2TestParms - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2TestParms - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   if (SwapBytes32 (RecvBuffer.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2TestParms - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2TestParms - responseCode - %x\n",
+      SwapBytes32 (
+        RecvBuffer.Header.responseCode
+        )
+      ));
     return EFI_UNSUPPORTED;
   }
 

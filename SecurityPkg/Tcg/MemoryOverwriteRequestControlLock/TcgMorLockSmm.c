@@ -144,7 +144,9 @@ MorLockDriverEntryPointSmm (
     return Status;
   }
 
-  Status = SmmVarCheck->SmmRegisterSetVariableCheckHandler (SetVariableCheckHandlerMor);
+  Status = SmmVarCheck->SmmRegisterSetVariableCheckHandler (
+                          SetVariableCheckHandlerMor
+                          );
   ASSERT_EFI_ERROR (Status);
 
   return Status;

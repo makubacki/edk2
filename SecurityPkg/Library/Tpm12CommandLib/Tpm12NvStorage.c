@@ -74,37 +74,85 @@ Tpm12NvDefineSpace (
   //
   // send Tpm command TPM_ORD_NV_DefineSpace
   //
-  Command.Hdr.tag                                       = SwapBytes16 (TPM_TAG_RQU_COMMAND);
-  Command.Hdr.paramSize                                 = SwapBytes32 (sizeof (Command));
-  Command.Hdr.ordinal                                   = SwapBytes32 (TPM_ORD_NV_DefineSpace);
-  Command.PubInfo.tag                                   = SwapBytes16 (PubInfo->tag);
-  Command.PubInfo.nvIndex                               = SwapBytes32 (PubInfo->nvIndex);
-  Command.PubInfo.pcrInfoRead.pcrSelection.sizeOfSelect = SwapBytes16 (PubInfo->pcrInfoRead.pcrSelection.sizeOfSelect);
-  Command.PubInfo.pcrInfoRead.pcrSelection.pcrSelect[0] = PubInfo->pcrInfoRead.pcrSelection.pcrSelect[0];
-  Command.PubInfo.pcrInfoRead.pcrSelection.pcrSelect[1] = PubInfo->pcrInfoRead.pcrSelection.pcrSelect[1];
-  Command.PubInfo.pcrInfoRead.pcrSelection.pcrSelect[2] = PubInfo->pcrInfoRead.pcrSelection.pcrSelect[2];
-  Command.PubInfo.pcrInfoRead.localityAtRelease         = PubInfo->pcrInfoRead.localityAtRelease;
-  CopyMem (&Command.PubInfo.pcrInfoRead.digestAtRelease, &PubInfo->pcrInfoRead.digestAtRelease, sizeof (PubInfo->pcrInfoRead.digestAtRelease));
-  Command.PubInfo.pcrInfoWrite.pcrSelection.sizeOfSelect = SwapBytes16 (PubInfo->pcrInfoWrite.pcrSelection.sizeOfSelect);
-  Command.PubInfo.pcrInfoWrite.pcrSelection.pcrSelect[0] = PubInfo->pcrInfoWrite.pcrSelection.pcrSelect[0];
-  Command.PubInfo.pcrInfoWrite.pcrSelection.pcrSelect[1] = PubInfo->pcrInfoWrite.pcrSelection.pcrSelect[1];
-  Command.PubInfo.pcrInfoWrite.pcrSelection.pcrSelect[2] = PubInfo->pcrInfoWrite.pcrSelection.pcrSelect[2];
-  Command.PubInfo.pcrInfoWrite.localityAtRelease         = PubInfo->pcrInfoWrite.localityAtRelease;
-  CopyMem (&Command.PubInfo.pcrInfoWrite.digestAtRelease, &PubInfo->pcrInfoWrite.digestAtRelease, sizeof (PubInfo->pcrInfoWrite.digestAtRelease));
+  Command.Hdr.tag = SwapBytes16 (
+                      TPM_TAG_RQU_COMMAND
+                      );
+  Command.Hdr.paramSize = SwapBytes32 (
+                            sizeof (Command)
+                            );
+  Command.Hdr.ordinal = SwapBytes32 (
+                          TPM_ORD_NV_DefineSpace
+                          );
+  Command.PubInfo.tag = SwapBytes16 (
+                          PubInfo->tag
+                          );
+  Command.PubInfo.nvIndex = SwapBytes32 (
+                              PubInfo->nvIndex
+                              );
+  Command.PubInfo.pcrInfoRead.pcrSelection.sizeOfSelect = SwapBytes16 (
+                                                            PubInfo->pcrInfoRead
+                                                              .pcrSelection.
+                                                              sizeOfSelect
+                                                            );
+  Command.PubInfo.pcrInfoRead.pcrSelection.pcrSelect[0] =
+    PubInfo->pcrInfoRead.pcrSelection.pcrSelect[0];
+  Command.PubInfo.pcrInfoRead.pcrSelection.pcrSelect[1] =
+    PubInfo->pcrInfoRead.pcrSelection.pcrSelect[1];
+  Command.PubInfo.pcrInfoRead.pcrSelection.pcrSelect[2] =
+    PubInfo->pcrInfoRead.pcrSelection.pcrSelect[2];
+  Command.PubInfo.pcrInfoRead.localityAtRelease =
+    PubInfo->pcrInfoRead.localityAtRelease;
+  CopyMem (
+    &Command.PubInfo.pcrInfoRead.digestAtRelease,
+    &PubInfo->pcrInfoRead.digestAtRelease,
+    sizeof (PubInfo->pcrInfoRead.digestAtRelease)
+    );
+  Command.PubInfo.pcrInfoWrite.pcrSelection.sizeOfSelect = SwapBytes16 (
+                                                             PubInfo->
+                                                               pcrInfoWrite.
+                                                               pcrSelection.
+                                                               sizeOfSelect
+                                                             );
+  Command.PubInfo.pcrInfoWrite.pcrSelection.pcrSelect[0] =
+    PubInfo->pcrInfoWrite.pcrSelection.pcrSelect[0];
+  Command.PubInfo.pcrInfoWrite.pcrSelection.pcrSelect[1] =
+    PubInfo->pcrInfoWrite.pcrSelection.pcrSelect[1];
+  Command.PubInfo.pcrInfoWrite.pcrSelection.pcrSelect[2] =
+    PubInfo->pcrInfoWrite.pcrSelection.pcrSelect[2];
+  Command.PubInfo.pcrInfoWrite.localityAtRelease =
+    PubInfo->pcrInfoWrite.localityAtRelease;
+  CopyMem (
+    &Command.PubInfo.pcrInfoWrite.digestAtRelease,
+    &PubInfo->pcrInfoWrite.digestAtRelease,
+    sizeof (PubInfo->pcrInfoWrite.digestAtRelease)
+    );
   Command.PubInfo.permission.tag        = SwapBytes16 (PubInfo->permission.tag);
-  Command.PubInfo.permission.attributes = SwapBytes32 (PubInfo->permission.attributes);
-  Command.PubInfo.bReadSTClear          = PubInfo->bReadSTClear;
-  Command.PubInfo.bWriteSTClear         = PubInfo->bWriteSTClear;
-  Command.PubInfo.bWriteDefine          = PubInfo->bWriteDefine;
-  Command.PubInfo.dataSize              = SwapBytes32 (PubInfo->dataSize);
+  Command.PubInfo.permission.attributes = SwapBytes32 (
+                                            PubInfo->permission.attributes
+                                            );
+  Command.PubInfo.bReadSTClear  = PubInfo->bReadSTClear;
+  Command.PubInfo.bWriteSTClear = PubInfo->bWriteSTClear;
+  Command.PubInfo.bWriteDefine  = PubInfo->bWriteDefine;
+  Command.PubInfo.dataSize      = SwapBytes32 (PubInfo->dataSize);
   CopyMem (&Command.EncAuth, EncAuth, sizeof (*EncAuth));
   Length = sizeof (Response);
-  Status = Tpm12SubmitCommand (sizeof (Command), (UINT8 *)&Command, &Length, (UINT8 *)&Response);
+  Status = Tpm12SubmitCommand (
+             sizeof (Command),
+             (UINT8 *)&Command,
+             &Length,
+             (UINT8 *)&Response
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  DEBUG ((DEBUG_INFO, "Tpm12NvDefineSpace - ReturnCode = %x\n", SwapBytes32 (Response.returnCode)));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tpm12NvDefineSpace - ReturnCode = %x\n",
+    SwapBytes32 (
+      Response.returnCode
+      )
+    ));
   switch (SwapBytes32 (Response.returnCode)) {
     case TPM_SUCCESS:
       return EFI_SUCCESS;
@@ -148,12 +196,23 @@ Tpm12NvReadValue (
   Command.Offset        = SwapBytes32 (Offset);
   Command.DataSize      = SwapBytes32 (*DataSize);
   Length                = sizeof (Response);
-  Status                = Tpm12SubmitCommand (sizeof (Command), (UINT8 *)&Command, &Length, (UINT8 *)&Response);
+  Status                = Tpm12SubmitCommand (
+                            sizeof (Command),
+                            (UINT8 *)&Command,
+                            &Length,
+                            (UINT8 *)&Response
+                            );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  DEBUG ((DEBUG_INFO, "Tpm12NvReadValue - ReturnCode = %x\n", SwapBytes32 (Response.Hdr.returnCode)));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tpm12NvReadValue - ReturnCode = %x\n",
+    SwapBytes32 (
+      Response.Hdr.returnCode
+      )
+    ));
   switch (SwapBytes32 (Response.Hdr.returnCode)) {
     case TPM_SUCCESS:
       break;
@@ -217,12 +276,23 @@ Tpm12NvWriteValue (
   Command.DataSize      = SwapBytes32 (DataSize);
   CopyMem (Command.Data, Data, DataSize);
   ResponseLength = sizeof (Response);
-  Status         = Tpm12SubmitCommand (CommandLength, (UINT8 *)&Command, &ResponseLength, (UINT8 *)&Response);
+  Status         = Tpm12SubmitCommand (
+                     CommandLength,
+                     (UINT8 *)&Command,
+                     &ResponseLength,
+                     (UINT8 *)&Response
+                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  DEBUG ((DEBUG_INFO, "Tpm12NvWriteValue - ReturnCode = %x\n", SwapBytes32 (Response.returnCode)));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tpm12NvWriteValue - ReturnCode = %x\n",
+    SwapBytes32 (
+      Response.returnCode
+      )
+    ));
   switch (SwapBytes32 (Response.returnCode)) {
     case TPM_SUCCESS:
       return EFI_SUCCESS;

@@ -54,7 +54,12 @@ Tpm2SelfTest (
   Cmd.FullTest           = FullTest;
 
   ResultBufSize = sizeof (Res);
-  Status        = Tpm2SubmitCommand (sizeof (Cmd), (UINT8 *)&Cmd, &ResultBufSize, (UINT8 *)&Res);
+  Status        = Tpm2SubmitCommand (
+                    sizeof (Cmd),
+                    (UINT8 *)&Cmd,
+                    &ResultBufSize,
+                    (UINT8 *)&Res
+                    );
 
   return Status;
 }

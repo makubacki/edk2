@@ -49,7 +49,12 @@ Tpm12Startup (
   Command.Hdr.ordinal   = SwapBytes32 (TPM_ORD_Startup);
   Command.TpmSt         = SwapBytes16 (TpmSt);
   Length                = sizeof (Response);
-  Status                = Tpm12SubmitCommand (sizeof (Command), (UINT8 *)&Command, &Length, (UINT8 *)&Response);
+  Status                = Tpm12SubmitCommand (
+                            sizeof (Command),
+                            (UINT8 *)&Command,
+                            &Length,
+                            (UINT8 *)&Response
+                            );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -91,7 +96,12 @@ Tpm12SaveState (
   Command.paramSize = SwapBytes32 (sizeof (Command));
   Command.ordinal   = SwapBytes32 (TPM_ORD_SaveState);
   Length            = sizeof (Response);
-  Status            = Tpm12SubmitCommand (sizeof (Command), (UINT8 *)&Command, &Length, (UINT8 *)&Response);
+  Status            = Tpm12SubmitCommand (
+                        sizeof (Command),
+                        (UINT8 *)&Command,
+                        &Length,
+                        (UINT8 *)&Response
+                        );
   if (EFI_ERROR (Status)) {
     return Status;
   }

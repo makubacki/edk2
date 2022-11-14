@@ -153,19 +153,34 @@ Tpm2PolicySecret (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PolicySecret - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PolicySecret - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
 
   if (SwapBytes32 (RecvBuffer.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PolicySecret - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PolicySecret - responseCode - %x\n",
+      SwapBytes32 (
+        RecvBuffer.Header.responseCode
+        )
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
@@ -176,7 +191,11 @@ Tpm2PolicySecret (
   Buffer        = (UINT8 *)&RecvBuffer.Timeout;
   Timeout->size = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
   if (Timeout->size > sizeof (UINT64)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PolicySecret - Timeout->size error %x\n", Timeout->size));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PolicySecret - Timeout->size error %x\n",
+      Timeout->size
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
@@ -191,7 +210,11 @@ Tpm2PolicySecret (
   PolicyTicket->digest.size = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
   Buffer                   += sizeof (UINT16);
   if (PolicyTicket->digest.size > sizeof (TPMU_HA)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PolicySecret - digest.size error %x\n", PolicyTicket->digest.size));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PolicySecret - digest.size error %x\n",
+      PolicyTicket->digest.size
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
@@ -245,9 +268,18 @@ Tpm2PolicyOR (
   WriteUnaligned32 ((UINT32 *)Buffer, SwapBytes32 (HashList->count));
   Buffer += sizeof (UINT32);
   for (Index = 0; Index < HashList->count; Index++) {
-    WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (HashList->digests[Index].size));
+    WriteUnaligned16 (
+      (UINT16 *)Buffer,
+      SwapBytes16 (
+        HashList->digests[Index].size
+        )
+      );
     Buffer += sizeof (UINT16);
-    CopyMem (Buffer, HashList->digests[Index].buffer, HashList->digests[Index].size);
+    CopyMem (
+      Buffer,
+      HashList->digests[Index].buffer,
+      HashList->digests[Index].size
+      );
     Buffer += HashList->digests[Index].size;
   }
 
@@ -258,18 +290,33 @@ Tpm2PolicyOR (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PolicyOR - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PolicyOR - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   if (SwapBytes32 (RecvBuffer.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PolicyOR - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PolicyOR - responseCode - %x\n",
+      SwapBytes32 (
+        RecvBuffer.Header.responseCode
+        )
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -314,18 +361,31 @@ Tpm2PolicyCommandCode (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PolicyCommandCode - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PolicyCommandCode - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   if (SwapBytes32 (RecvBuffer.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PolicyCommandCode - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PolicyCommandCode - responseCode - %x\n",
+      SwapBytes32 (RecvBuffer.Header.responseCode)
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -370,18 +430,31 @@ Tpm2PolicyGetDigest (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PolicyGetDigest - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PolicyGetDigest - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   if (SwapBytes32 (RecvBuffer.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PolicyGetDigest - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PolicyGetDigest - responseCode - %x\n",
+      SwapBytes32 (RecvBuffer.Header.responseCode)
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -390,7 +463,11 @@ Tpm2PolicyGetDigest (
   //
   PolicyHash->size = SwapBytes16 (RecvBuffer.PolicyHash.size);
   if (PolicyHash->size > sizeof (TPMU_HA)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PolicyGetDigest - PolicyHash->size error %x\n", PolicyHash->size));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PolicyGetDigest - PolicyHash->size error %x\n",
+      PolicyHash->size
+      ));
     return EFI_DEVICE_ERROR;
   }
 

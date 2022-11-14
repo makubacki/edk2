@@ -115,7 +115,9 @@ GetSavedOpalRequest (
          (VariableSize >= TempVariable->Length) &&
          (TempVariable->Length > sizeof (OPAL_REQUEST_VARIABLE)))
   {
-    DevicePathInVariable     = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)TempVariable + sizeof (OPAL_REQUEST_VARIABLE));
+    DevicePathInVariable =
+      (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)TempVariable +
+                                   sizeof (OPAL_REQUEST_VARIABLE));
     DevicePathSizeInVariable = GetDevicePathSize (DevicePathInVariable);
     DevicePath               = OpalDisk->OpalDevicePath;
     DevicePathSize           = GetDevicePathSize (DevicePath);
@@ -136,7 +138,8 @@ GetSavedOpalRequest (
     }
 
     VariableSize -= TempVariable->Length;
-    TempVariable  = (OPAL_REQUEST_VARIABLE *)((UINTN)TempVariable + TempVariable->Length);
+    TempVariable  = (OPAL_REQUEST_VARIABLE *)((UINTN)TempVariable +
+                                              TempVariable->Length);
   }
 
   FreePool (Variable);
@@ -195,7 +198,9 @@ SaveOpalRequest (
            (TempVariableSize >= TempVariable->Length) &&
            (TempVariable->Length > sizeof (OPAL_REQUEST_VARIABLE)))
     {
-      DevicePathInVariable     = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)TempVariable + sizeof (OPAL_REQUEST_VARIABLE));
+      DevicePathInVariable =
+        (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)TempVariable +
+                                     sizeof (OPAL_REQUEST_VARIABLE));
       DevicePathSizeInVariable = GetDevicePathSize (DevicePathInVariable);
       DevicePath               = OpalDisk->OpalDevicePath;
       DevicePathSize           = GetDevicePathSize (DevicePath);
@@ -206,14 +211,19 @@ SaveOpalRequest (
         // Found the node for the OPAL device.
         // Update the OPAL request.
         //
-        CopyMem (&TempVariable->OpalRequest, &OpalRequest, sizeof (OPAL_REQUEST));
+        CopyMem (
+          &TempVariable->OpalRequest,
+          &OpalRequest,
+          sizeof (OPAL_REQUEST)
+          );
         NewVariable     = Variable;
         NewVariableSize = VariableSize;
         break;
       }
 
       TempVariableSize -= TempVariable->Length;
-      TempVariable      = (OPAL_REQUEST_VARIABLE *)((UINTN)TempVariable + TempVariable->Length);
+      TempVariable      = (OPAL_REQUEST_VARIABLE *)((UINTN)TempVariable +
+                                                    TempVariable->Length);
     }
 
     if (NewVariable == NULL) {
@@ -223,14 +233,19 @@ SaveOpalRequest (
       //
       DevicePath      = OpalDisk->OpalDevicePath;
       DevicePathSize  = GetDevicePathSize (DevicePath);
-      NewVariableSize = VariableSize + sizeof (OPAL_REQUEST_VARIABLE) + DevicePathSize;
-      NewVariable     = AllocatePool (NewVariableSize);
+      NewVariableSize = VariableSize + sizeof (OPAL_REQUEST_VARIABLE) +
+                        DevicePathSize;
+      NewVariable = AllocatePool (NewVariableSize);
       ASSERT (NewVariable != NULL);
       CopyMem (NewVariable, Variable, VariableSize);
-      TempVariable         = (OPAL_REQUEST_VARIABLE *)((UINTN)NewVariable + VariableSize);
-      TempVariable->Length = (UINT32)(sizeof (OPAL_REQUEST_VARIABLE) + DevicePathSize);
+      TempVariable         = (OPAL_REQUEST_VARIABLE *)((UINTN)NewVariable +
+                                                       VariableSize);
+      TempVariable->Length = (UINT32)(sizeof (OPAL_REQUEST_VARIABLE) +
+                                      DevicePathSize);
       CopyMem (&TempVariable->OpalRequest, &OpalRequest, sizeof (OPAL_REQUEST));
-      DevicePathInVariable = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)TempVariable + sizeof (OPAL_REQUEST_VARIABLE));
+      DevicePathInVariable = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)TempVariable +
+                                                          sizeof (
+                                                                                       OPAL_REQUEST_VARIABLE));
       CopyMem (DevicePathInVariable, DevicePath, DevicePathSize);
     }
   } else {
@@ -239,9 +254,12 @@ SaveOpalRequest (
     NewVariableSize = sizeof (OPAL_REQUEST_VARIABLE) + DevicePathSize;
     NewVariable     = AllocatePool (NewVariableSize);
     ASSERT (NewVariable != NULL);
-    NewVariable->Length = (UINT32)(sizeof (OPAL_REQUEST_VARIABLE) + DevicePathSize);
+    NewVariable->Length = (UINT32)(sizeof (OPAL_REQUEST_VARIABLE) +
+                                   DevicePathSize);
     CopyMem (&NewVariable->OpalRequest, &OpalRequest, sizeof (OPAL_REQUEST));
-    DevicePathInVariable = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)NewVariable + sizeof (OPAL_REQUEST_VARIABLE));
+    DevicePathInVariable = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)NewVariable +
+                                                        sizeof (
+                                                                                    OPAL_REQUEST_VARIABLE));
     CopyMem (DevicePathInVariable, DevicePath, DevicePathSize);
   }
 
@@ -286,55 +304,129 @@ HiiSetCurrentConfiguration (
   //
   PpStorageFlag = Tcg2PhysicalPresenceLibGetManagementFlags ();
 
-  if ((PpStorageFlag & TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_ENABLE_BLOCK_SID) != 0) {
-    NewString = HiiGetString (gHiiPackageListHandle, STRING_TOKEN (STR_ENABLED), NULL);
+  if ((PpStorageFlag & TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_ENABLE_BLOCK_SID) !=
+      0)
+  {
+    NewString = HiiGetString (
+                  gHiiPackageListHandle,
+                  STRING_TOKEN (STR_ENABLED),
+                  NULL
+                  );
     if (NewString == NULL) {
-      DEBUG ((DEBUG_INFO, "HiiSetCurrentConfiguration: HiiGetString( ) failed\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "HiiSetCurrentConfiguration: HiiGetString( ) failed\n"
+        ));
       return;
     }
   } else {
-    NewString = HiiGetString (gHiiPackageListHandle, STRING_TOKEN (STR_DISABLED), NULL);
+    NewString = HiiGetString (
+                  gHiiPackageListHandle,
+                  STRING_TOKEN (
+                    STR_DISABLED
+                    ),
+                  NULL
+                  );
     if (NewString == NULL) {
-      DEBUG ((DEBUG_INFO, "HiiSetCurrentConfiguration: HiiGetString( ) failed\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "HiiSetCurrentConfiguration: HiiGetString( ) failed\n"
+        ));
       return;
     }
   }
 
-  HiiSetString (gHiiPackageListHandle, STRING_TOKEN (STR_BLOCKSID_STATUS1), NewString, NULL);
+  HiiSetString (
+    gHiiPackageListHandle,
+    STRING_TOKEN (STR_BLOCKSID_STATUS1),
+    NewString,
+    NULL
+    );
   FreePool (NewString);
 
-  if ((PpStorageFlag & TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_ENABLE_BLOCK_SID) != 0) {
-    NewString = HiiGetString (gHiiPackageListHandle, STRING_TOKEN (STR_DISK_INFO_ENABLE_BLOCKSID_TRUE), NULL);
+  if ((PpStorageFlag &
+       TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_ENABLE_BLOCK_SID) != 0)
+  {
+    NewString = HiiGetString (
+                  gHiiPackageListHandle,
+                  STRING_TOKEN (
+                    STR_DISK_INFO_ENABLE_BLOCKSID_TRUE
+                    ),
+                  NULL
+                  );
     if (NewString == NULL) {
-      DEBUG ((DEBUG_INFO, "HiiSetCurrentConfiguration: HiiGetString( ) failed\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "HiiSetCurrentConfiguration: HiiGetString( ) failed\n"
+        ));
       return;
     }
   } else {
-    NewString = HiiGetString (gHiiPackageListHandle, STRING_TOKEN (STR_DISK_INFO_ENABLE_BLOCKSID_FALSE), NULL);
+    NewString = HiiGetString (
+                  gHiiPackageListHandle,
+                  STRING_TOKEN (
+                    STR_DISK_INFO_ENABLE_BLOCKSID_FALSE
+                    ),
+                  NULL
+                  );
     if (NewString == NULL) {
-      DEBUG ((DEBUG_INFO, "HiiSetCurrentConfiguration: HiiGetString( ) failed\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "HiiSetCurrentConfiguration: HiiGetString( ) failed\n"
+        ));
       return;
     }
   }
 
-  HiiSetString (gHiiPackageListHandle, STRING_TOKEN (STR_BLOCKSID_STATUS2), NewString, NULL);
+  HiiSetString (
+    gHiiPackageListHandle,
+    STRING_TOKEN (STR_BLOCKSID_STATUS2),
+    NewString,
+    NULL
+    );
   FreePool (NewString);
 
-  if ((PpStorageFlag & TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_DISABLE_BLOCK_SID) != 0) {
-    NewString = HiiGetString (gHiiPackageListHandle, STRING_TOKEN (STR_DISK_INFO_DISABLE_BLOCKSID_TRUE), NULL);
+  if ((PpStorageFlag &
+       TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_DISABLE_BLOCK_SID) !=
+      0)
+  {
+    NewString = HiiGetString (
+                  gHiiPackageListHandle,
+                  STRING_TOKEN (
+                    STR_DISK_INFO_DISABLE_BLOCKSID_TRUE
+                    ),
+                  NULL
+                  );
     if (NewString == NULL) {
-      DEBUG ((DEBUG_INFO, "HiiSetCurrentConfiguration: HiiGetString( ) failed\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "HiiSetCurrentConfiguration: HiiGetString( ) failed\n"
+        ));
       return;
     }
   } else {
-    NewString = HiiGetString (gHiiPackageListHandle, STRING_TOKEN (STR_DISK_INFO_DISABLE_BLOCKSID_FALSE), NULL);
+    NewString = HiiGetString (
+                  gHiiPackageListHandle,
+                  STRING_TOKEN (
+                    STR_DISK_INFO_DISABLE_BLOCKSID_FALSE
+                    ),
+                  NULL
+                  );
     if (NewString == NULL) {
-      DEBUG ((DEBUG_INFO, "HiiSetCurrentConfiguration: HiiGetString( ) failed\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "HiiSetCurrentConfiguration: HiiGetString( ) failed\n"
+        ));
       return;
     }
   }
 
-  HiiSetString (gHiiPackageListHandle, STRING_TOKEN (STR_BLOCKSID_STATUS3), NewString, NULL);
+  HiiSetString (
+    gHiiPackageListHandle,
+    STRING_TOKEN (STR_BLOCKSID_STATUS3),
+    NewString,
+    NULL
+    );
   FreePool (NewString);
 }
 
@@ -482,7 +574,10 @@ HiiPopulateMainMenuForm (
 
   for (Index = 0; Index < gHiiConfiguration.NumDisks; Index++) {
     OpalDisk = HiiGetOpalDiskCB (Index);
-    if ((OpalDisk != NULL) && OpalFeatureSupported (&OpalDisk->SupportedAttributes)) {
+    if ((OpalDisk != NULL) && OpalFeatureSupported (
+                                &OpalDisk->SupportedAttributes
+                                ))
+    {
       gHiiConfiguration.SupportedDisks |= (1 << Index);
       DiskNameId                        = GetDiskNameStringId (Index);
       DiskName                          = HiiDiskGetNameCB (Index);
@@ -554,7 +649,15 @@ HiiConfirmDataRemovalAction (
   ApproveResponse = L'Y';
   RejectResponse  = L'N';
 
-  UnicodeSPrint (Unicode, StrSize (L"WARNING: ############# action needs about ####### seconds"), L"WARNING: %s action needs about %d seconds", ActionString, OpalDisk->EstimateTimeCost);
+  UnicodeSPrint (
+    Unicode,
+    StrSize (
+      L"WARNING: ############# action needs about ####### seconds"
+      ),
+    L"WARNING: %s action needs about %d seconds",
+    ActionString,
+    OpalDisk->EstimateTimeCost
+    );
 
   do {
     CreatePopUp (
@@ -567,11 +670,16 @@ HiiConfirmDataRemovalAction (
       NULL
       );
   } while (
-           ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) != (ApproveResponse | UPPER_LOWER_CASE_OFFSET)) &&
-           ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) != (RejectResponse | UPPER_LOWER_CASE_OFFSET))
-           );
+             ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) != (ApproveResponse |
+                                                              UPPER_LOWER_CASE_OFFSET))
+          &&
+             ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) != (RejectResponse |
+                                                              UPPER_LOWER_CASE_OFFSET))
+             );
 
-  if ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) == (RejectResponse | UPPER_LOWER_CASE_OFFSET)) {
+  if ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) == (RejectResponse |
+                                                      UPPER_LOWER_CASE_OFFSET))
+  {
     return EFI_ABORTED;
   }
 
@@ -639,7 +747,10 @@ DriverCallback (
         return HiiPopulateMainMenuForm ();
 
       case HII_KEY_ID_VAR_SELECTED_DISK_AVAILABLE_ACTIONS:
-        DEBUG ((DEBUG_INFO, "HII_KEY_ID_VAR_SELECTED_DISK_AVAILABLE_ACTIONS\n"));
+        DEBUG ((
+          DEBUG_INFO,
+          "HII_KEY_ID_VAR_SELECTED_DISK_AVAILABLE_ACTIONS\n"
+          ));
         return HiiPopulateDiskInfoForm ();
     }
   } else if (Action == EFI_BROWSER_ACTION_CHANGING) {
@@ -683,19 +794,23 @@ DriverCallback (
             break;
 
           case 3:
-            PpRequest = TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_ENABLE_BLOCK_SID_FUNC_TRUE;
+            PpRequest =
+              TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_ENABLE_BLOCK_SID_FUNC_TRUE;
             break;
 
           case 4:
-            PpRequest = TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_ENABLE_BLOCK_SID_FUNC_FALSE;
+            PpRequest =
+              TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_ENABLE_BLOCK_SID_FUNC_FALSE;
             break;
 
           case 5:
-            PpRequest = TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_DISABLE_BLOCK_SID_FUNC_TRUE;
+            PpRequest =
+              TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_DISABLE_BLOCK_SID_FUNC_TRUE;
             break;
 
           case 6:
-            PpRequest = TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_DISABLE_BLOCK_SID_FUNC_FALSE;
+            PpRequest =
+              TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_DISABLE_BLOCK_SID_FUNC_FALSE;
             break;
 
           default:
@@ -712,7 +827,10 @@ DriverCallback (
       case HII_KEY_ID_SET_ADMIN_PWD:
         DEBUG ((DEBUG_INFO, "HII_KEY_ID_SET_ADMIN_PWD\n"));
         gHiiConfiguration.OpalRequest.SetAdminPwd = Value->b;
-        OpalDisk                                  = HiiGetOpalDiskCB (gHiiConfiguration.SelectedDiskIndex);
+        OpalDisk                                  = HiiGetOpalDiskCB (
+                                                      gHiiConfiguration.
+                                                        SelectedDiskIndex
+                                                      );
         if (OpalDisk != NULL) {
           SaveOpalRequest (OpalDisk, gHiiConfiguration.OpalRequest);
         }
@@ -723,7 +841,10 @@ DriverCallback (
       case HII_KEY_ID_SET_USER_PWD:
         DEBUG ((DEBUG_INFO, "HII_KEY_ID_SET_USER_PWD\n"));
         gHiiConfiguration.OpalRequest.SetUserPwd = Value->b;
-        OpalDisk                                 = HiiGetOpalDiskCB (gHiiConfiguration.SelectedDiskIndex);
+        OpalDisk                                 = HiiGetOpalDiskCB (
+                                                     gHiiConfiguration.
+                                                       SelectedDiskIndex
+                                                     );
         if (OpalDisk != NULL) {
           SaveOpalRequest (OpalDisk, gHiiConfiguration.OpalRequest);
         }
@@ -734,7 +855,10 @@ DriverCallback (
       case HII_KEY_ID_SECURE_ERASE:
         DEBUG ((DEBUG_INFO, "HII_KEY_ID_SECURE_ERASE\n"));
         gHiiConfiguration.OpalRequest.SecureErase = Value->b;
-        OpalDisk                                  = HiiGetOpalDiskCB (gHiiConfiguration.SelectedDiskIndex);
+        OpalDisk                                  = HiiGetOpalDiskCB (
+                                                      gHiiConfiguration.
+                                                        SelectedDiskIndex
+                                                      );
         if (OpalDisk != NULL) {
           SaveOpalRequest (OpalDisk, gHiiConfiguration.OpalRequest);
         }
@@ -745,7 +869,10 @@ DriverCallback (
       case HII_KEY_ID_REVERT:
         DEBUG ((DEBUG_INFO, "HII_KEY_ID_REVERT\n"));
         gHiiConfiguration.OpalRequest.Revert = Value->b;
-        OpalDisk                             = HiiGetOpalDiskCB (gHiiConfiguration.SelectedDiskIndex);
+        OpalDisk                             = HiiGetOpalDiskCB (
+                                                 gHiiConfiguration.
+                                                   SelectedDiskIndex
+                                                 );
         if (OpalDisk != NULL) {
           SaveOpalRequest (OpalDisk, gHiiConfiguration.OpalRequest);
         }
@@ -755,7 +882,10 @@ DriverCallback (
       case HII_KEY_ID_KEEP_USER_DATA:
         DEBUG ((DEBUG_INFO, "HII_KEY_ID_KEEP_USER_DATA\n"));
         gHiiConfiguration.OpalRequest.KeepUserData = Value->b;
-        OpalDisk                                   = HiiGetOpalDiskCB (gHiiConfiguration.SelectedDiskIndex);
+        OpalDisk                                   = HiiGetOpalDiskCB (
+                                                       gHiiConfiguration.
+                                                         SelectedDiskIndex
+                                                       );
         if (OpalDisk != NULL) {
           SaveOpalRequest (OpalDisk, gHiiConfiguration.OpalRequest);
         }
@@ -766,7 +896,10 @@ DriverCallback (
       case HII_KEY_ID_PSID_REVERT:
         DEBUG ((DEBUG_INFO, "HII_KEY_ID_PSID_REVERT\n"));
         gHiiConfiguration.OpalRequest.PsidRevert = Value->b;
-        OpalDisk                                 = HiiGetOpalDiskCB (gHiiConfiguration.SelectedDiskIndex);
+        OpalDisk                                 = HiiGetOpalDiskCB (
+                                                     gHiiConfiguration.
+                                                       SelectedDiskIndex
+                                                     );
         if (OpalDisk != NULL) {
           SaveOpalRequest (OpalDisk, gHiiConfiguration.OpalRequest);
         }
@@ -777,7 +910,10 @@ DriverCallback (
       case HII_KEY_ID_DISABLE_USER:
         DEBUG ((DEBUG_INFO, "HII_KEY_ID_DISABLE_USER\n"));
         gHiiConfiguration.OpalRequest.DisableUser = Value->b;
-        OpalDisk                                  = HiiGetOpalDiskCB (gHiiConfiguration.SelectedDiskIndex);
+        OpalDisk                                  = HiiGetOpalDiskCB (
+                                                      gHiiConfiguration.
+                                                        SelectedDiskIndex
+                                                      );
         if (OpalDisk != NULL) {
           SaveOpalRequest (OpalDisk, gHiiConfiguration.OpalRequest);
         }
@@ -788,7 +924,10 @@ DriverCallback (
       case HII_KEY_ID_ENABLE_FEATURE:
         DEBUG ((DEBUG_INFO, "HII_KEY_ID_ENABLE_FEATURE\n"));
         gHiiConfiguration.OpalRequest.EnableFeature = Value->b;
-        OpalDisk                                    = HiiGetOpalDiskCB (gHiiConfiguration.SelectedDiskIndex);
+        OpalDisk                                    = HiiGetOpalDiskCB (
+                                                        gHiiConfiguration.
+                                                          SelectedDiskIndex
+                                                        );
         if (OpalDisk != NULL) {
           SaveOpalRequest (OpalDisk, gHiiConfiguration.OpalRequest);
         }
@@ -857,37 +996,67 @@ HiiPopulateDiskInfoForm (
 
   if (OpalDisk != NULL) {
     OpalDiskUpdateStatus (OpalDisk);
-    Ret = OpalSupportGetAvailableActions (&OpalDisk->SupportedAttributes, &OpalDisk->LockingFeature, OpalDisk->Owner, &AvailActions);
+    Ret = OpalSupportGetAvailableActions (
+            &OpalDisk->SupportedAttributes,
+            &OpalDisk->LockingFeature,
+            OpalDisk->Owner,
+            &AvailActions
+            );
     if (Ret == TcgResultSuccess) {
       //
       // Update actions, always allow PSID Revert
       //
-      gHiiConfiguration.SelectedDiskAvailableActions |= (AvailActions.PsidRevert == 1) ? HII_ACTION_PSID_REVERT : HII_ACTION_NONE;
+      gHiiConfiguration.SelectedDiskAvailableActions |=
+        (AvailActions.PsidRevert == 1) ? HII_ACTION_PSID_REVERT :
+        HII_ACTION_NONE;
 
       //
       // Always allow unlock to handle device migration
       //
-      gHiiConfiguration.SelectedDiskAvailableActions |= (AvailActions.Unlock == 1) ? HII_ACTION_UNLOCK : HII_ACTION_NONE;
+      gHiiConfiguration.SelectedDiskAvailableActions |= (AvailActions.Unlock ==
+                                                         1) ?
+                                                        HII_ACTION_UNLOCK :
+                                                        HII_ACTION_NONE;
 
-      if (!OpalFeatureEnabled (&OpalDisk->SupportedAttributes, &OpalDisk->LockingFeature)) {
+      if (!OpalFeatureEnabled (
+             &OpalDisk->SupportedAttributes,
+             &OpalDisk->LockingFeature
+             ))
+      {
         if (OpalDisk->Owner == OpalOwnershipNobody) {
-          gHiiConfiguration.SelectedDiskAvailableActions |= HII_ACTION_ENABLE_FEATURE;
+          gHiiConfiguration.SelectedDiskAvailableActions |=
+            HII_ACTION_ENABLE_FEATURE;
 
           //
           // Update strings
           //
-          HiiSetFormString (STRING_TOKEN (STR_DISK_INFO_PSID_REVERT), "PSID Revert to factory default");
+          HiiSetFormString (
+            STRING_TOKEN (STR_DISK_INFO_PSID_REVERT),
+            "PSID Revert to factory default"
+            );
         } else {
           DEBUG ((DEBUG_INFO, "Feature disabled but ownership != nobody\n"));
         }
       } else {
-        gHiiConfiguration.SelectedDiskAvailableActions |= (AvailActions.Revert == 1) ? HII_ACTION_REVERT : HII_ACTION_NONE;
-        gHiiConfiguration.SelectedDiskAvailableActions |= (AvailActions.AdminPass == 1) ? HII_ACTION_SET_ADMIN_PWD : HII_ACTION_NONE;
-        gHiiConfiguration.SelectedDiskAvailableActions |= (AvailActions.UserPass == 1) ? HII_ACTION_SET_USER_PWD : HII_ACTION_NONE;
-        gHiiConfiguration.SelectedDiskAvailableActions |= (AvailActions.SecureErase == 1) ? HII_ACTION_SECURE_ERASE : HII_ACTION_NONE;
-        gHiiConfiguration.SelectedDiskAvailableActions |= (AvailActions.DisableUser == 1) ? HII_ACTION_DISABLE_USER : HII_ACTION_NONE;
+        gHiiConfiguration.SelectedDiskAvailableActions |=
+          (AvailActions.Revert == 1) ? HII_ACTION_REVERT : HII_ACTION_NONE;
+        gHiiConfiguration.SelectedDiskAvailableActions |=
+          (AvailActions.AdminPass == 1) ? HII_ACTION_SET_ADMIN_PWD :
+          HII_ACTION_NONE;
+        gHiiConfiguration.SelectedDiskAvailableActions |=
+          (AvailActions.UserPass == 1) ? HII_ACTION_SET_USER_PWD :
+          HII_ACTION_NONE;
+        gHiiConfiguration.SelectedDiskAvailableActions |=
+          (AvailActions.SecureErase == 1) ? HII_ACTION_SECURE_ERASE :
+          HII_ACTION_NONE;
+        gHiiConfiguration.SelectedDiskAvailableActions |=
+          (AvailActions.DisableUser == 1) ? HII_ACTION_DISABLE_USER :
+          HII_ACTION_NONE;
 
-        HiiSetFormString (STRING_TOKEN (STR_DISK_INFO_PSID_REVERT), "PSID Revert to factory default and Disable");
+        HiiSetFormString (
+          STRING_TOKEN (STR_DISK_INFO_PSID_REVERT),
+          "PSID Revert to factory default and Disable"
+          );
 
         //
         // Determine revert options for disk
@@ -928,7 +1097,10 @@ HiiSetBlockSidAction (
   UINT32      ReturnCode;
   EFI_STATUS  Status;
 
-  ReturnCode = Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (PpRequest, 0);
+  ReturnCode = Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (
+                 PpRequest,
+                 0
+                 );
   if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_SUCCESS) {
     Status = EFI_SUCCESS;
   } else if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_GENERAL_FAILURE) {
@@ -973,7 +1145,12 @@ RouteConfig (
   }
 
   *Progress = Configuration;
-  if (!HiiIsConfigHdrMatch (Configuration, &gHiiSetupVariableGuid, OpalPasswordStorageName)) {
+  if (!HiiIsConfigHdrMatch (
+         Configuration,
+         &gHiiSetupVariableGuid,
+         OpalPasswordStorageName
+         ))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -1034,7 +1211,11 @@ ExtractConfig (
 
   *Progress = Request;
   if ((Request != NULL) &&
-      !HiiIsConfigHdrMatch (Request, &gHiiSetupVariableGuid, OpalPasswordStorageName))
+      !HiiIsConfigHdrMatch (
+         Request,
+         &gHiiSetupVariableGuid,
+         OpalPasswordStorageName
+         ))
   {
     return EFI_NOT_FOUND;
   }
@@ -1049,15 +1230,25 @@ ExtractConfig (
     // followed by "&OFFSET=0&WIDTH=WWWWWWWWWWWWWWWW" followed by a Null-terminator
     //
     DriverHandle     = HiiGetDriverImageHandleCB ();
-    ConfigRequestHdr = HiiConstructConfigHdr (&gHiiSetupVariableGuid, OpalPasswordStorageName, DriverHandle);
-    Size             = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
-    ConfigRequest    = AllocateZeroPool (Size);
+    ConfigRequestHdr = HiiConstructConfigHdr (
+                         &gHiiSetupVariableGuid,
+                         OpalPasswordStorageName,
+                         DriverHandle
+                         );
+    Size          = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
+    ConfigRequest = AllocateZeroPool (Size);
     if (ConfigRequest == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
     AllocatedRequest = TRUE;
-    UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
+    UnicodeSPrint (
+      ConfigRequest,
+      Size,
+      L"%s&OFFSET=0&WIDTH=%016LX",
+      ConfigRequestHdr,
+      (UINT64)BufferSize
+      );
     FreePool (ConfigRequestHdr);
   }
 
@@ -1211,30 +1402,48 @@ OpalDiskInitialize (
   Session.Sscp    = Dev->Sscp;
   Session.MediaId = Dev->MediaId;
 
-  TcgResult = OpalGetSupportedAttributesInfo (&Session, &Dev->OpalDisk.SupportedAttributes, &Dev->OpalDisk.OpalBaseComId);
+  TcgResult = OpalGetSupportedAttributesInfo (
+                &Session,
+                &Dev->OpalDisk.SupportedAttributes,
+                &Dev->OpalDisk.OpalBaseComId
+                );
   if (TcgResult != TcgResultSuccess) {
     return EFI_DEVICE_ERROR;
   }
 
   Session.OpalBaseComId = Dev->OpalDisk.OpalBaseComId;
 
-  TcgResult = OpalUtilGetMsid (&Session, Dev->OpalDisk.Msid, OPAL_MSID_LENGTH, &Dev->OpalDisk.MsidLength);
+  TcgResult = OpalUtilGetMsid (
+                &Session,
+                Dev->OpalDisk.Msid,
+                OPAL_MSID_LENGTH,
+                &Dev->OpalDisk.MsidLength
+                );
   if (TcgResult != TcgResultSuccess) {
     return EFI_DEVICE_ERROR;
   }
 
   if (Dev->OpalDisk.SupportedAttributes.DataRemoval) {
-    TcgResult = OpalUtilGetDataRemovalMechanismLists (&Session, RemovalMechanishLists);
+    TcgResult = OpalUtilGetDataRemovalMechanismLists (
+                  &Session,
+                  RemovalMechanishLists
+                  );
     if (TcgResult != TcgResultSuccess) {
       return EFI_DEVICE_ERROR;
     }
 
-    TcgResult = OpalUtilGetActiveDataRemovalMechanism (&Session, Dev->OpalDisk.Msid, Dev->OpalDisk.MsidLength, &ActiveDataRemovalMechanism);
+    TcgResult = OpalUtilGetActiveDataRemovalMechanism (
+                  &Session,
+                  Dev->OpalDisk.Msid,
+                  Dev->OpalDisk.MsidLength,
+                  &ActiveDataRemovalMechanism
+                  );
     if (TcgResult != TcgResultSuccess) {
       return EFI_DEVICE_ERROR;
     }
 
-    Dev->OpalDisk.EstimateTimeCost = RemovalMechanishLists[ActiveDataRemovalMechanism];
+    Dev->OpalDisk.EstimateTimeCost =
+      RemovalMechanishLists[ActiveDataRemovalMechanism];
   }
 
   return OpalDiskUpdateStatus (&Dev->OpalDisk);
@@ -1270,7 +1479,11 @@ OpalDiskUpdateOwnerShip (
   Session.MediaId       = OpalDisk->MediaId;
   Session.OpalBaseComId = OpalDisk->OpalBaseComId;
 
-  OpalDisk->Owner = OpalUtilDetermineOwnership (&Session, OpalDisk->Msid, OpalDisk->MsidLength);
+  OpalDisk->Owner = OpalUtilDetermineOwnership (
+                      &Session,
+                      OpalDisk->Msid,
+                      OpalDisk->MsidLength
+                      );
   return EFI_SUCCESS;
 }
 

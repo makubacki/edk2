@@ -134,7 +134,9 @@ Int2OctStr (
     *Ptr2 = *Ptr1;
   }
 
-  for ( ; Ptr1 < (CONST UINT8 *)(Integer + IntSizeInWords) && *Ptr1 == 0; Ptr1++) {
+  for ( ; Ptr1 < (CONST UINT8 *)(Integer + IntSizeInWords) && *Ptr1 == 0;
+        Ptr1++)
+  {
   }
 
   if (Ptr1 < (CONST UINT8 *)(Integer + IntSizeInWords)) {

@@ -80,8 +80,9 @@ CreateSigList (
   //
   // Allocate data for Signature Database
   //
-  SigListSize = sizeof (EFI_SIGNATURE_LIST) + sizeof (EFI_SIGNATURE_DATA) - 1 + Size;
-  TmpSigList  = (EFI_SIGNATURE_LIST *)AllocateZeroPool (SigListSize);
+  SigListSize = sizeof (EFI_SIGNATURE_LIST) + sizeof (EFI_SIGNATURE_DATA) - 1 +
+                Size;
+  TmpSigList = (EFI_SIGNATURE_LIST *)AllocateZeroPool (SigListSize);
   if (TmpSigList == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -90,7 +91,8 @@ CreateSigList (
   // Only gEfiCertX509Guid type is supported
   //
   TmpSigList->SignatureListSize   = (UINT32)SigListSize;
-  TmpSigList->SignatureSize       = (UINT32)(sizeof (EFI_SIGNATURE_DATA) - 1 + Size);
+  TmpSigList->SignatureSize       = (UINT32)(sizeof (EFI_SIGNATURE_DATA) - 1 +
+                                             Size);
   TmpSigList->SignatureHeaderSize = 0;
   CopyGuid (&TmpSigList->SignatureType, &gEfiCertX509Guid);
 
@@ -289,8 +291,9 @@ CreateTimeBasedPayload (
   Payload     = *Data;
   PayloadSize = *DataSize;
 
-  DescriptorSize = OFFSET_OF (EFI_VARIABLE_AUTHENTICATION_2, AuthInfo) + OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData);
-  NewData        = (UINT8 *)AllocateZeroPool (DescriptorSize + PayloadSize);
+  DescriptorSize = OFFSET_OF (EFI_VARIABLE_AUTHENTICATION_2, AuthInfo) +
+                   OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData);
+  NewData = (UINT8 *)AllocateZeroPool (DescriptorSize + PayloadSize);
   if (NewData == NULL) {
     DEBUG ((DEBUG_ERROR, "%a() Out of resources.\n", __FUNCTION__));
     return EFI_OUT_OF_RESOURCES;
@@ -304,7 +307,10 @@ CreateTimeBasedPayload (
 
   CopyMem (&DescriptorData->TimeStamp, Time, sizeof (EFI_TIME));
 
-  DescriptorData->AuthInfo.Hdr.dwLength         = OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData);
+  DescriptorData->AuthInfo.Hdr.dwLength = OFFSET_OF (
+                                            WIN_CERTIFICATE_UEFI_GUID,
+                                            CertData
+                                            );
   DescriptorData->AuthInfo.Hdr.wRevision        = 0x0200;
   DescriptorData->AuthInfo.Hdr.wCertificateType = WIN_CERT_TYPE_EFI_GUID;
   CopyGuid (&DescriptorData->AuthInfo.CertType, &gEfiCertPkcs7Guid);
@@ -352,7 +358,8 @@ DeleteVariable (
 
   Data     = NULL;
   DataSize = 0;
-  Attr     = EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS
+  Attr     = EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS |
+             EFI_VARIABLE_BOOTSERVICE_ACCESS
              | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS;
 
   Status = CreateTimeBasedPayload (&DataSize, &Data, &mMaxTimestamp);
@@ -450,7 +457,11 @@ IsSecureBootEnabled (
 
   SecureBoot = NULL;
 
-  Status = GetEfiGlobalVariable2 (EFI_SECURE_BOOT_MODE_NAME, (VOID **)&SecureBoot, NULL);
+  Status = GetEfiGlobalVariable2 (
+             EFI_SECURE_BOOT_MODE_NAME,
+             (VOID **)&SecureBoot,
+             NULL
+             );
   //
   // Skip verification if SecureBoot variable doesn't exist.
   //
@@ -603,13 +614,22 @@ DeleteSecureBootVariables (
 {
   EFI_STATUS  Status, TempStatus;
 
-  DEBUG ((DEBUG_INFO, "%a - Attempting to delete the Secure Boot variables.\n", __FUNCTION__));
+  DEBUG ((
+    DEBUG_INFO,
+    "%a - Attempting to delete the Secure Boot variables.\n",
+    __FUNCTION__
+    ));
 
   //
   // Step 1: Notify that a PK update is coming shortly...
   Status = DisablePKProtection ();
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - Failed to signal PK update start! %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Failed to signal PK update start! %r\n",
+      __FUNCTION__,
+      Status
+      ));
     // Classify this as a PK deletion error.
     Status = EFI_ABORTED;
   }
@@ -704,7 +724,12 @@ EnrollFromInput (
   Payload = NULL;
 
   if ((VariableName == NULL) || (VendorGuid == 0)) {
-    DEBUG ((DEBUG_ERROR, "Input vendor variable invalid: %p and %p\n", VariableName, VendorGuid));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Input vendor variable invalid: %p and %p\n",
+      VariableName,
+      VendorGuid
+      ));
     Status = EFI_INVALID_PARAMETER;
     goto Exit;
   }
@@ -726,9 +751,17 @@ EnrollFromInput (
     CopyMem (Payload, Data, DataSize);
   }
 
-  Status = CreateTimeBasedPayload (&PayloadSize, (UINT8 **)&Payload, &mDefaultPayloadTimestamp);
+  Status = CreateTimeBasedPayload (
+             &PayloadSize,
+             (UINT8 **)&Payload,
+             &mDefaultPayloadTimestamp
+             );
   if (EFI_ERROR (Status) || (Payload == NULL)) {
-    DEBUG ((DEBUG_ERROR, "Fail to create time-based data payload: %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Fail to create time-based data payload: %r\n",
+      Status
+      ));
     Payload = NULL;
     Status  = EFI_OUT_OF_RESOURCES;
     goto Exit;
@@ -798,18 +831,31 @@ SetSecureBootVariablesToDefault (
   DEBUG ((DEBUG_INFO, "%a() Entry\n", __FUNCTION__));
 
   if (SecureBootPayload == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a - Invalid SecureBoot payload is supplied!\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Invalid SecureBoot payload is supplied!\n",
+      __FUNCTION__
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
   //
   // Right off the bat, if SecureBoot is currently enabled, bail.
   if (IsSecureBootEnabled ()) {
-    DEBUG ((DEBUG_ERROR, "%a - Cannot set default keys while SecureBoot is enabled!\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Cannot set default keys while SecureBoot is enabled!\n",
+      __FUNCTION__
+      ));
     return EFI_ABORTED;
   }
 
-  DEBUG ((DEBUG_INFO, "%a - Setting up key %s!\n", __FUNCTION__, SecureBootPayload->SecureBootKeyName));
+  DEBUG ((
+    DEBUG_INFO,
+    "%a - Setting up key %s!\n",
+    __FUNCTION__,
+    SecureBootPayload->SecureBootKeyName
+    ));
 
   //
   // Start running down the list, creating variables in our wake.
@@ -834,10 +880,20 @@ SetSecureBootVariablesToDefault (
                  Data
                  );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a - Failed to enroll DB %r!\n", __FUNCTION__, Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a - Failed to enroll DB %r!\n",
+        __FUNCTION__,
+        Status
+        ));
     }
   } else {
-    DEBUG ((DEBUG_ERROR, "%a - Failed to enroll DBX %r!\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Failed to enroll DBX %r!\n",
+      __FUNCTION__,
+      Status
+      ));
   }
 
   // Keep it going. Keep it going. dbt if supplied...
@@ -851,7 +907,12 @@ SetSecureBootVariablesToDefault (
                  Data
                  );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a - Failed to enroll DBT %r!\n", __FUNCTION__, Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a - Failed to enroll DBT %r!\n",
+        __FUNCTION__,
+        Status
+        ));
     }
   }
 
@@ -866,7 +927,12 @@ SetSecureBootVariablesToDefault (
                  Data
                  );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a - Failed to enroll KEK %r!\n", __FUNCTION__, Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a - Failed to enroll KEK %r!\n",
+        __FUNCTION__,
+        Status
+        ));
     }
   }
 
@@ -889,7 +955,12 @@ SetSecureBootVariablesToDefault (
     //
     // Report PK creation errors.
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a - Failed to update the PK! - %r\n", __FUNCTION__, Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a - Failed to update the PK! - %r\n",
+        __FUNCTION__,
+        Status
+        ));
       Status = EFI_SECURITY_VIOLATION;
     }
   }

@@ -170,12 +170,20 @@ Tcg2MeasureGptTable (
     return EFI_UNSUPPORTED;
   }
 
-  Status = gBS->HandleProtocol (GptHandle, &gEfiBlockIoProtocolGuid, (VOID **)&BlockIo);
+  Status = gBS->HandleProtocol (
+                  GptHandle,
+                  &gEfiBlockIoProtocolGuid,
+                  (VOID **)&BlockIo
+                  );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
 
-  Status = gBS->HandleProtocol (GptHandle, &gEfiDiskIoProtocolGuid, (VOID **)&DiskIo);
+  Status = gBS->HandleProtocol (
+                  GptHandle,
+                  &gEfiDiskIoProtocolGuid,
+                  (VOID **)&DiskIo
+                  );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -183,7 +191,9 @@ Tcg2MeasureGptTable (
   //
   // Read the EFI Partition Table Header
   //
-  PrimaryHeader = (EFI_PARTITION_TABLE_HEADER *)AllocatePool (BlockIo->Media->BlockSize);
+  PrimaryHeader = (EFI_PARTITION_TABLE_HEADER *)AllocatePool (
+                                                  BlockIo->Media->BlockSize
+                                                  );
   if (PrimaryHeader == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -213,7 +223,10 @@ Tcg2MeasureGptTable (
   //
   // Read the partition entry.
   //
-  EntryPtr = (UINT8 *)AllocatePool (PrimaryHeader->NumberOfPartitionEntries * PrimaryHeader->SizeOfPartitionEntry);
+  EntryPtr = (UINT8 *)AllocatePool (
+                        PrimaryHeader->NumberOfPartitionEntries *
+                        PrimaryHeader->SizeOfPartitionEntry
+                        );
   if (EntryPtr == NULL) {
     FreePool (PrimaryHeader);
     return EFI_OUT_OF_RESOURCES;
@@ -222,8 +235,12 @@ Tcg2MeasureGptTable (
   Status = DiskIo->ReadDisk (
                      DiskIo,
                      BlockIo->Media->MediaId,
-                     MultU64x32 (PrimaryHeader->PartitionEntryLBA, BlockIo->Media->BlockSize),
-                     PrimaryHeader->NumberOfPartitionEntries * PrimaryHeader->SizeOfPartitionEntry,
+                     MultU64x32 (
+                       PrimaryHeader->PartitionEntryLBA,
+                       BlockIo->Media->BlockSize
+                       ),
+                     PrimaryHeader->NumberOfPartitionEntries *
+                     PrimaryHeader->SizeOfPartitionEntry,
                      EntryPtr
                      );
   if (EFI_ERROR (Status)) {
@@ -242,22 +259,28 @@ Tcg2MeasureGptTable (
       NumberOfPartition++;
     }
 
-    PartitionEntry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartitionEntry + PrimaryHeader->SizeOfPartitionEntry);
+    PartitionEntry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartitionEntry +
+                                             PrimaryHeader->SizeOfPartitionEntry);
   }
 
   //
   // Prepare Data for Measurement (CcProtocol and Tcg2Protocol)
   //
   EventSize = (UINT32)(sizeof (EFI_GPT_DATA) - sizeof (GptData->Partitions)
-                       + NumberOfPartition * PrimaryHeader->SizeOfPartitionEntry);
-  EventPtr = (UINT8 *)AllocateZeroPool (EventSize + sizeof (EFI_TCG2_EVENT) - sizeof (Tcg2Event->Event));
+                       + NumberOfPartition *
+                       PrimaryHeader->SizeOfPartitionEntry);
+  EventPtr = (UINT8 *)AllocateZeroPool (
+                        EventSize + sizeof (EFI_TCG2_EVENT) -
+                        sizeof (Tcg2Event->Event)
+                        );
   if (EventPtr == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;
   }
 
-  Tcg2Event                       = (EFI_TCG2_EVENT *)EventPtr;
-  Tcg2Event->Size                 = EventSize + sizeof (EFI_TCG2_EVENT) - sizeof (Tcg2Event->Event);
+  Tcg2Event       = (EFI_TCG2_EVENT *)EventPtr;
+  Tcg2Event->Size = EventSize + sizeof (EFI_TCG2_EVENT) -
+                    sizeof (Tcg2Event->Event);
   Tcg2Event->Header.HeaderSize    = sizeof (EFI_TCG2_EVENT_HEADER);
   Tcg2Event->Header.HeaderVersion = EFI_TCG2_EVENT_HEADER_VERSION;
   Tcg2Event->Header.PCRIndex      = 5;
@@ -267,7 +290,11 @@ Tcg2MeasureGptTable (
   //
   // Copy the EFI_PARTITION_TABLE_HEADER and NumberOfPartition
   //
-  CopyMem ((UINT8 *)GptData, (UINT8 *)PrimaryHeader, sizeof (EFI_PARTITION_TABLE_HEADER));
+  CopyMem (
+    (UINT8 *)GptData,
+    (UINT8 *)PrimaryHeader,
+    sizeof (EFI_PARTITION_TABLE_HEADER)
+    );
   GptData->NumberOfPartitions = NumberOfPartition;
   //
   // Copy the valid partition entry
@@ -277,14 +304,16 @@ Tcg2MeasureGptTable (
   for (Index = 0; Index < PrimaryHeader->NumberOfPartitionEntries; Index++) {
     if (!IsZeroGuid (&PartitionEntry->PartitionTypeGUID)) {
       CopyMem (
-        (UINT8 *)&GptData->Partitions + NumberOfPartition * PrimaryHeader->SizeOfPartitionEntry,
+        (UINT8 *)&GptData->Partitions + NumberOfPartition *
+        PrimaryHeader->SizeOfPartitionEntry,
         (UINT8 *)PartitionEntry,
         PrimaryHeader->SizeOfPartitionEntry
         );
       NumberOfPartition++;
     }
 
-    PartitionEntry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartitionEntry + PrimaryHeader->SizeOfPartitionEntry);
+    PartitionEntry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartitionEntry +
+                                             PrimaryHeader->SizeOfPartitionEntry);
   }
 
   //
@@ -298,9 +327,17 @@ Tcg2MeasureGptTable (
     // Tcg2Event has been created and initialized before. So only the MrIndex need
     // be adjusted.
     //
-    Status = CcProtocol->MapPcrToMrIndex (CcProtocol, Tcg2Event->Header.PCRIndex, &MrIndex);
+    Status = CcProtocol->MapPcrToMrIndex (
+                           CcProtocol,
+                           Tcg2Event->Header.PCRIndex,
+                           &MrIndex
+                           );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Cannot map PcrIndex(%d) to MrIndex\n", Tcg2Event->Header.PCRIndex));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Cannot map PcrIndex(%d) to MrIndex\n",
+        Tcg2Event->Header.PCRIndex
+        ));
       goto Exit;
     }
 
@@ -309,7 +346,8 @@ Tcg2MeasureGptTable (
     Status                  = CcProtocol->HashLogExtendEvent (
                                             CcProtocol,
                                             0,
-                                            (EFI_PHYSICAL_ADDRESS)(UINTN)(VOID *)GptData,
+                                            (EFI_PHYSICAL_ADDRESS)(UINTN)(VOID *)
+                                            GptData,
                                             (UINT64)EventSize,
                                             CcEvent
                                             );
@@ -317,7 +355,11 @@ Tcg2MeasureGptTable (
       mTcg2MeasureGptCount++;
     }
 
-    DEBUG ((DEBUG_INFO, "DxeTpm2MeasureBootHandler - Cc MeasureGptTable - %r\n", Status));
+    DEBUG ((
+      DEBUG_INFO,
+      "DxeTpm2MeasureBootHandler - Cc MeasureGptTable - %r\n",
+      Status
+      ));
   } else if (Tcg2Protocol != NULL) {
     //
     // If Tcg2Protocol is installed, then Measure GPT data with this protocol.
@@ -333,7 +375,11 @@ Tcg2MeasureGptTable (
       mTcg2MeasureGptCount++;
     }
 
-    DEBUG ((DEBUG_INFO, "DxeTpm2MeasureBootHandler - Tcg2 MeasureGptTable - %r\n", Status));
+    DEBUG ((
+      DEBUG_INFO,
+      "DxeTpm2MeasureBootHandler - Tcg2 MeasureGptTable - %r\n",
+      Status
+      ));
   }
 
 Exit:
@@ -417,14 +463,19 @@ Tcg2MeasurePeImage (
   //
   // Determine destination PCR by BootPolicy
   //
-  EventSize = sizeof (*ImageLoad) - sizeof (ImageLoad->DevicePath) + FilePathSize;
-  EventPtr  = AllocateZeroPool (EventSize + sizeof (EFI_TCG2_EVENT) - sizeof (Tcg2Event->Event));
+  EventSize = sizeof (*ImageLoad) - sizeof (ImageLoad->DevicePath) +
+              FilePathSize;
+  EventPtr = AllocateZeroPool (
+               EventSize + sizeof (EFI_TCG2_EVENT) -
+               sizeof (Tcg2Event->Event)
+               );
   if (EventPtr == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Tcg2Event                       = (EFI_TCG2_EVENT *)EventPtr;
-  Tcg2Event->Size                 = EventSize + sizeof (EFI_TCG2_EVENT) - sizeof (Tcg2Event->Event);
+  Tcg2Event       = (EFI_TCG2_EVENT *)EventPtr;
+  Tcg2Event->Size = EventSize + sizeof (EFI_TCG2_EVENT) -
+                    sizeof (Tcg2Event->Event);
   Tcg2Event->Header.HeaderSize    = sizeof (EFI_TCG2_EVENT_HEADER);
   Tcg2Event->Header.HeaderVersion = EFI_TCG2_EVENT_HEADER_VERSION;
   ImageLoad                       = (EFI_IMAGE_LOAD_EVENT *)Tcg2Event->Event;
@@ -463,9 +514,17 @@ Tcg2MeasurePeImage (
   // Log the PE data
   //
   if (CcProtocol != NULL) {
-    Status = CcProtocol->MapPcrToMrIndex (CcProtocol, Tcg2Event->Header.PCRIndex, &MrIndex);
+    Status = CcProtocol->MapPcrToMrIndex (
+                           CcProtocol,
+                           Tcg2Event->Header.PCRIndex,
+                           &MrIndex
+                           );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Cannot map PcrIndex(%d) to MrIndex\n", Tcg2Event->Header.PCRIndex));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Cannot map PcrIndex(%d) to MrIndex\n",
+        Tcg2Event->Header.PCRIndex
+        ));
       goto Finish;
     }
 
@@ -479,7 +538,11 @@ Tcg2MeasurePeImage (
                            ImageSize,
                            CcEvent
                            );
-    DEBUG ((DEBUG_INFO, "DxeTpm2MeasureBootHandler - Cc MeasurePeImage - %r\n", Status));
+    DEBUG ((
+      DEBUG_INFO,
+      "DxeTpm2MeasureBootHandler - Cc MeasurePeImage - %r\n",
+      Status
+      ));
   } else if (Tcg2Protocol != NULL) {
     Status = Tcg2Protocol->HashLogExtendEvent (
                              Tcg2Protocol,
@@ -488,7 +551,11 @@ Tcg2MeasurePeImage (
                              ImageSize,
                              Tcg2Event
                              );
-    DEBUG ((DEBUG_INFO, "DxeTpm2MeasureBootHandler - Tcg2 MeasurePeImage - %r\n", Status));
+    DEBUG ((
+      DEBUG_INFO,
+      "DxeTpm2MeasureBootHandler - Tcg2 MeasurePeImage - %r\n",
+      Status
+      ));
   }
 
   if (Status == EFI_VOLUME_FULL) {
@@ -531,24 +598,46 @@ GetMeasureBootProtocols (
   EFI_CC_BOOT_SERVICE_CAPABILITY    CcProtocolCapability;
 
   CcProtocol = NULL;
-  Status     = gBS->LocateProtocol (&gEfiCcMeasurementProtocolGuid, NULL, (VOID **)&CcProtocol);
+  Status     = gBS->LocateProtocol (
+                      &gEfiCcMeasurementProtocolGuid,
+                      NULL,
+                      (VOID **)&CcProtocol
+                      );
   if (EFI_ERROR (Status)) {
     //
     // Cc Measurement protocol is not installed.
     //
-    DEBUG ((DEBUG_VERBOSE, "CcMeasurementProtocol is not installed. - %r\n", Status));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "CcMeasurementProtocol is not installed. - %r\n",
+      Status
+      ));
   } else {
     ZeroMem (&CcProtocolCapability, sizeof (CcProtocolCapability));
     CcProtocolCapability.Size = sizeof (CcProtocolCapability);
-    Status                    = CcProtocol->GetCapability (CcProtocol, &CcProtocolCapability);
-    if (EFI_ERROR (Status) || (CcProtocolCapability.CcType.Type == EFI_CC_TYPE_NONE)) {
-      DEBUG ((DEBUG_ERROR, " CcProtocol->GetCapability returns : %x, %r\n", CcProtocolCapability.CcType.Type, Status));
+    Status                    = CcProtocol->GetCapability (
+                                              CcProtocol,
+                                              &CcProtocolCapability
+                                              );
+    if (EFI_ERROR (Status) || (CcProtocolCapability.CcType.Type ==
+                               EFI_CC_TYPE_NONE))
+    {
+      DEBUG ((
+        DEBUG_ERROR,
+        " CcProtocol->GetCapability returns : %x, %r\n",
+        CcProtocolCapability.CcType.Type,
+        Status
+        ));
       CcProtocol = NULL;
     }
   }
 
   Tcg2Protocol = NULL;
-  Status       = gBS->LocateProtocol (&gEfiTcg2ProtocolGuid, NULL, (VOID **)&Tcg2Protocol);
+  Status       = gBS->LocateProtocol (
+                        &gEfiTcg2ProtocolGuid,
+                        NULL,
+                        (VOID **)&Tcg2Protocol
+                        );
   if (EFI_ERROR (Status)) {
     //
     // Tcg2 protocol is not installed. So, TPM2 is not present.
@@ -556,7 +645,10 @@ GetMeasureBootProtocols (
     DEBUG ((DEBUG_VERBOSE, "Tcg2Protocol is not installed. - %r\n", Status));
   } else {
     Tcg2ProtocolCapability.Size = (UINT8)sizeof (Tcg2ProtocolCapability);
-    Status                      = Tcg2Protocol->GetCapability (Tcg2Protocol, &Tcg2ProtocolCapability);
+    Status                      = Tcg2Protocol->GetCapability (
+                                                  Tcg2Protocol,
+                                                  &Tcg2ProtocolCapability
+                                                  );
     if (EFI_ERROR (Status) || (!Tcg2ProtocolCapability.TPMPresentFlag)) {
       //
       // TPM device doesn't work or activate.
@@ -569,7 +661,8 @@ GetMeasureBootProtocols (
   MeasureBootProtocols->Tcg2Protocol = Tcg2Protocol;
   MeasureBootProtocols->CcProtocol   = CcProtocol;
 
-  return (Tcg2Protocol == NULL && CcProtocol == NULL) ? EFI_UNSUPPORTED : EFI_SUCCESS;
+  return (Tcg2Protocol == NULL && CcProtocol == NULL) ? EFI_UNSUPPORTED :
+         EFI_SUCCESS;
 }
 
 /**
@@ -642,7 +735,10 @@ DxeTpm2MeasureBootHandler (
     // None of Measured boot protocols (Tcg2, Cc) is installed.
     // Don't do any measurement, and directly return EFI_SUCCESS.
     //
-    DEBUG ((DEBUG_INFO, "None of Tcg2Protocol/CcMeasurementProtocol is installed.\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "None of Tcg2Protocol/CcMeasurementProtocol is installed.\n"
+      ));
     return EFI_SUCCESS;
   }
 
@@ -663,7 +759,11 @@ DxeTpm2MeasureBootHandler (
   // Is so, this device path may be a GPT device path.
   //
   DevicePathNode = OrigDevicePathNode;
-  Status         = gBS->LocateDevicePath (&gEfiBlockIoProtocolGuid, &DevicePathNode, &Handle);
+  Status         = gBS->LocateDevicePath (
+                          &gEfiBlockIoProtocolGuid,
+                          &DevicePathNode,
+                          &Handle
+                          );
   if (!EFI_ERROR (Status) && !mTcg2MeasureGptTableFlag) {
     //
     // Find the gpt partition on the given devicepath
@@ -680,8 +780,10 @@ DxeTpm2MeasureBootHandler (
         //
         // Check whether it is a gpt partition or not
         //
-        if ((((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->MBRType == MBR_TYPE_EFI_PARTITION_TABLE_HEADER) &&
-            (((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->SignatureType == SIGNATURE_TYPE_GUID))
+        if ((((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->MBRType ==
+             MBR_TYPE_EFI_PARTITION_TABLE_HEADER) &&
+            (((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->SignatureType ==
+             SIGNATURE_TYPE_GUID))
         {
           //
           // Change the partition device path to its parent device path (disk) and get the handle.
@@ -728,7 +830,11 @@ DxeTpm2MeasureBootHandler (
   // Check whether this device path support FVB protocol.
   //
   DevicePathNode = OrigDevicePathNode;
-  Status         = gBS->LocateDevicePath (&gEfiFirmwareVolumeBlockProtocolGuid, &DevicePathNode, &Handle);
+  Status         = gBS->LocateDevicePath (
+                          &gEfiFirmwareVolumeBlockProtocolGuid,
+                          &DevicePathNode,
+                          &Handle
+                          );
   if (!EFI_ERROR (Status)) {
     //
     // Don't check FV image, and directly return EFI_SUCCESS.
@@ -746,7 +852,9 @@ DxeTpm2MeasureBootHandler (
     //
     ApplicationRequired = TRUE;
 
-    if ((mTcg2CacheMeasuredHandle != Handle) && (mTcg2MeasuredHobData != NULL)) {
+    if ((mTcg2CacheMeasuredHandle != Handle) && (mTcg2MeasuredHobData !=
+                                                 NULL))
+    {
       //
       // Search for Root FV of this PE image
       //
@@ -800,7 +908,8 @@ DxeTpm2MeasureBootHandler (
   DevicePathNode = OrigDevicePathNode;
   ZeroMem (&ImageContext, sizeof (ImageContext));
   ImageContext.Handle    = (VOID *)FileBuffer;
-  ImageContext.ImageRead = (PE_COFF_LOADER_READ_FILE)DxeTpm2MeasureBootLibImageRead;
+  ImageContext.ImageRead =
+    (PE_COFF_LOADER_READ_FILE)DxeTpm2MeasureBootLibImageRead;
 
   //
   // Get information about the image being loaded
@@ -825,7 +934,8 @@ DxeTpm2MeasureBootHandler (
   // Measure drivers and applications if Application flag is not set
   //
   if ((!ApplicationRequired) ||
-      (ApplicationRequired && (ImageContext.ImageType == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION)))
+      (ApplicationRequired && (ImageContext.ImageType ==
+                               EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION)))
   {
     //
     // Print the image path to be measured.

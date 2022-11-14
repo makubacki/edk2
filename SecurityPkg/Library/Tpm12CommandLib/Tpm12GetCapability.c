@@ -68,18 +68,34 @@ Tpm12GetCapabilityFlagPermanent (
   Command.CapabilityFlagSize = SwapBytes32 (sizeof (TPM_CAP_FLAG_PERMANENT));
   Command.CapabilityFlag     = SwapBytes32 (TPM_CAP_FLAG_PERMANENT);
   Length                     = sizeof (Response);
-  Status                     = Tpm12SubmitCommand (sizeof (Command), (UINT8 *)&Command, &Length, (UINT8 *)&Response);
+  Status                     = Tpm12SubmitCommand (
+                                 sizeof (Command),
+                                 (UINT8 *)&Command,
+                                 &Length,
+                                 (UINT8 *)&Response
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (SwapBytes32 (Response.Hdr.returnCode) != TPM_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm12GetCapabilityFlagPermanent: Response Code error! 0x%08x\r\n", SwapBytes32 (Response.Hdr.returnCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm12GetCapabilityFlagPermanent: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (Response.Hdr.returnCode)
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   ZeroMem (TpmPermanentFlags, sizeof (*TpmPermanentFlags));
-  CopyMem (TpmPermanentFlags, &Response.Flags, MIN (sizeof (*TpmPermanentFlags), SwapBytes32 (Response.ResponseSize)));
+  CopyMem (
+    TpmPermanentFlags,
+    &Response.Flags,
+    MIN (
+      sizeof (*TpmPermanentFlags),
+      SwapBytes32 (Response.ResponseSize)
+      )
+    );
 
   return Status;
 }
@@ -114,18 +130,34 @@ Tpm12GetCapabilityFlagVolatile (
   Command.CapabilityFlagSize = SwapBytes32 (sizeof (TPM_CAP_FLAG_VOLATILE));
   Command.CapabilityFlag     = SwapBytes32 (TPM_CAP_FLAG_VOLATILE);
   Length                     = sizeof (Response);
-  Status                     = Tpm12SubmitCommand (sizeof (Command), (UINT8 *)&Command, &Length, (UINT8 *)&Response);
+  Status                     = Tpm12SubmitCommand (
+                                 sizeof (Command),
+                                 (UINT8 *)&Command,
+                                 &Length,
+                                 (UINT8 *)&Response
+                                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (SwapBytes32 (Response.Hdr.returnCode) != TPM_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm12GetCapabilityFlagVolatile: Response Code error! 0x%08x\r\n", SwapBytes32 (Response.Hdr.returnCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm12GetCapabilityFlagVolatile: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (Response.Hdr.returnCode)
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   ZeroMem (VolatileFlags, sizeof (*VolatileFlags));
-  CopyMem (VolatileFlags, &Response.Flags, MIN (sizeof (*VolatileFlags), SwapBytes32 (Response.ResponseSize)));
+  CopyMem (
+    VolatileFlags,
+    &Response.Flags,
+    MIN (
+      sizeof (*VolatileFlags),
+      SwapBytes32 (Response.ResponseSize)
+      )
+    );
 
   return Status;
 }

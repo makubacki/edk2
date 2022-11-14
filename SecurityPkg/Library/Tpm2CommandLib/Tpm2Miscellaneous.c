@@ -90,19 +90,32 @@ Tpm2SetAlgorithmSet (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2SetAlgorithmSet - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2SetAlgorithmSet - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
 
   if (SwapBytes32 (RecvBuffer.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2SetAlgorithmSet - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2SetAlgorithmSet - responseCode - %x\n",
+      SwapBytes32 (RecvBuffer.Header.responseCode)
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }

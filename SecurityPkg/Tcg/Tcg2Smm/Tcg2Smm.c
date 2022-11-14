@@ -69,12 +69,20 @@ TpmNvsCommunciate (
   TempCommBufferSize = *CommBufferSize;
 
   if (TempCommBufferSize != sizeof (TPM_NVS_MM_COMM_BUFFER)) {
-    DEBUG ((DEBUG_ERROR, "[%a] MM Communication buffer size is invalid for this handler!\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[%a] MM Communication buffer size is invalid for this handler!\n",
+      __FUNCTION__
+      ));
     return EFI_ACCESS_DENIED;
   }
 
   if (!IsBufferOutsideMmValid ((UINTN)CommBuffer, TempCommBufferSize)) {
-    DEBUG ((DEBUG_ERROR, "[%a] - MM Communication buffer in invalid location!\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[%a] - MM Communication buffer in invalid location!\n",
+      __FUNCTION__
+      ));
     return EFI_ACCESS_DENIED;
   }
 
@@ -85,14 +93,24 @@ TpmNvsCommunciate (
   Status     = EFI_SUCCESS;
   switch (CommParams->Function) {
     case TpmNvsMmExchangeInfo:
-      DEBUG ((DEBUG_VERBOSE, "[%a] - Function requested: MM_EXCHANGE_NVS_INFO\n", __FUNCTION__));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "[%a] - Function requested: MM_EXCHANGE_NVS_INFO\n",
+        __FUNCTION__
+        ));
       CommParams->RegisteredPpSwiValue = mPpSoftwareSmi;
       CommParams->RegisteredMcSwiValue = mMcSoftwareSmi;
-      mTcgNvs                          = (TCG_NVS *)(UINTN)CommParams->TargetAddress;
+      mTcgNvs                          =
+        (TCG_NVS *)(UINTN)CommParams->TargetAddress;
       break;
 
     default:
-      DEBUG ((DEBUG_INFO, "[%a] - Unknown function %d!\n", __FUNCTION__, CommParams->Function));
+      DEBUG ((
+        DEBUG_INFO,
+        "[%a] - Unknown function %d!\n",
+        __FUNCTION__,
+        CommParams->Function
+        ));
       Status = EFI_UNSUPPORTED;
       break;
   }
@@ -132,27 +150,39 @@ PhysicalPresenceCallback (
   UINT32  OperationRequest;
   UINT32  RequestParameter;
 
-  if (mTcgNvs->PhysicalPresence.Parameter == TCG_ACPI_FUNCTION_RETURN_REQUEST_RESPONSE_TO_OS) {
-    mTcgNvs->PhysicalPresence.ReturnCode = Tcg2PhysicalPresenceLibReturnOperationResponseToOsFunction (
-                                             &MostRecentRequest,
-                                             &Response
-                                             );
+  if (mTcgNvs->PhysicalPresence.Parameter ==
+      TCG_ACPI_FUNCTION_RETURN_REQUEST_RESPONSE_TO_OS)
+  {
+    mTcgNvs->PhysicalPresence.ReturnCode =
+      Tcg2PhysicalPresenceLibReturnOperationResponseToOsFunction (
+        &MostRecentRequest,
+        &Response
+        );
     mTcgNvs->PhysicalPresence.LastRequest = MostRecentRequest;
     mTcgNvs->PhysicalPresence.Response    = Response;
     return EFI_SUCCESS;
-  } else if (  (mTcgNvs->PhysicalPresence.Parameter == TCG_ACPI_FUNCTION_SUBMIT_REQUEST_TO_BIOS)
-            || (mTcgNvs->PhysicalPresence.Parameter == TCG_ACPI_FUNCTION_SUBMIT_REQUEST_TO_BIOS_2))
+  } else if (  (mTcgNvs->PhysicalPresence.Parameter ==
+                TCG_ACPI_FUNCTION_SUBMIT_REQUEST_TO_BIOS)
+            || (mTcgNvs->PhysicalPresence.Parameter ==
+                TCG_ACPI_FUNCTION_SUBMIT_REQUEST_TO_BIOS_2))
   {
-    OperationRequest                     = mTcgNvs->PhysicalPresence.Request;
-    RequestParameter                     = mTcgNvs->PhysicalPresence.RequestParameter;
-    mTcgNvs->PhysicalPresence.ReturnCode = Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunctionEx (
-                                             &OperationRequest,
-                                             &RequestParameter
-                                             );
+    OperationRequest = mTcgNvs->PhysicalPresence.Request;
+    RequestParameter =
+      mTcgNvs->PhysicalPresence.RequestParameter;
+    mTcgNvs->PhysicalPresence.ReturnCode =
+      Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunctionEx (
+        &OperationRequest,
+        &RequestParameter
+        );
     mTcgNvs->PhysicalPresence.Request          = OperationRequest;
     mTcgNvs->PhysicalPresence.RequestParameter = RequestParameter;
-  } else if (mTcgNvs->PhysicalPresence.Parameter == TCG_ACPI_FUNCTION_GET_USER_CONFIRMATION_STATUS_FOR_REQUEST) {
-    mTcgNvs->PhysicalPresence.ReturnCode = Tcg2PhysicalPresenceLibGetUserConfirmationStatusFunction (mTcgNvs->PPRequestUserConfirm);
+  } else if (mTcgNvs->PhysicalPresence.Parameter ==
+             TCG_ACPI_FUNCTION_GET_USER_CONFIRMATION_STATUS_FOR_REQUEST)
+  {
+    mTcgNvs->PhysicalPresence.ReturnCode =
+      Tcg2PhysicalPresenceLibGetUserConfirmationStatusFunction (
+        mTcgNvs->PPRequestUserConfirm
+        );
   }
 
   return EFI_SUCCESS;
@@ -189,9 +219,13 @@ MemoryClearCallback (
   UINT8       MorControl;
 
   mTcgNvs->MemoryClear.ReturnCode = MOR_REQUEST_SUCCESS;
-  if (mTcgNvs->MemoryClear.Parameter == ACPI_FUNCTION_DSM_MEMORY_CLEAR_INTERFACE) {
+  if (mTcgNvs->MemoryClear.Parameter ==
+      ACPI_FUNCTION_DSM_MEMORY_CLEAR_INTERFACE)
+  {
     MorControl = (UINT8)mTcgNvs->MemoryClear.Request;
-  } else if (mTcgNvs->MemoryClear.Parameter == ACPI_FUNCTION_PTS_CLEAR_MOR_BIT) {
+  } else if (mTcgNvs->MemoryClear.Parameter ==
+             ACPI_FUNCTION_PTS_CLEAR_MOR_BIT)
+  {
     DataSize = sizeof (UINT8);
     Status   = mSmmVariable->SmmGetVariable (
                                MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
@@ -202,7 +236,11 @@ MemoryClearCallback (
                                );
     if (EFI_ERROR (Status)) {
       mTcgNvs->MemoryClear.ReturnCode = MOR_REQUEST_GENERAL_FAILURE;
-      DEBUG ((DEBUG_ERROR, "[TPM] Get MOR variable failure! Status = %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "[TPM] Get MOR variable failure! Status = %r\n",
+        Status
+        ));
       return EFI_SUCCESS;
     }
 
@@ -213,7 +251,11 @@ MemoryClearCallback (
     MorControl &= ~MOR_CLEAR_MEMORY_BIT_MASK;
   } else {
     mTcgNvs->MemoryClear.ReturnCode = MOR_REQUEST_GENERAL_FAILURE;
-    DEBUG ((DEBUG_ERROR, "[TPM] MOR Parameter error! Parameter = %x\n", mTcgNvs->MemoryClear.Parameter));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[TPM] MOR Parameter error! Parameter = %x\n",
+      mTcgNvs->MemoryClear.Parameter
+      ));
     return EFI_SUCCESS;
   }
 
@@ -221,13 +263,19 @@ MemoryClearCallback (
   Status   = mSmmVariable->SmmSetVariable (
                              MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
                              &gEfiMemoryOverwriteControlDataGuid,
-                             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                             EFI_VARIABLE_NON_VOLATILE |
+                             EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                             EFI_VARIABLE_RUNTIME_ACCESS,
                              DataSize,
                              &MorControl
                              );
   if (EFI_ERROR (Status)) {
     mTcgNvs->MemoryClear.ReturnCode = MOR_REQUEST_GENERAL_FAILURE;
-    DEBUG ((DEBUG_ERROR, "[TPM] Set MOR variable failure! Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[TPM] Set MOR variable failure! Status = %r\n",
+      Status
+      ));
   }
 
   return EFI_SUCCESS;
@@ -285,7 +333,11 @@ InitializeTcgCommon (
   EFI_HANDLE                     McSwHandle;
   EFI_HANDLE                     NotifyHandle;
 
-  if (!CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm20DtpmGuid)) {
+  if (!CompareGuid (
+         PcdGetPtr (PcdTpmInstanceGuid),
+         &gEfiTpmDeviceInstanceTpm20DtpmGuid
+         ))
+  {
     DEBUG ((DEBUG_ERROR, "No TPM2 DTPM instance required!\n"));
     return EFI_UNSUPPORTED;
   }
@@ -298,38 +350,76 @@ InitializeTcgCommon (
   NotifyHandle       = NULL;
 
   // Register a root handler to communicate the NVS region and SMI channel between MM and DXE
-  Status = gMmst->MmiHandlerRegister (TpmNvsCommunciate, &gTpmNvsMmGuid, &mReadyToLockHandle);
+  Status = gMmst->MmiHandlerRegister (
+                    TpmNvsCommunciate,
+                    &gTpmNvsMmGuid,
+                    &mReadyToLockHandle
+                    );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[%a] Failed to register NVS communicate as root MM handler - %r!\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[%a] Failed to register NVS communicate as root MM handler - %r!\n",
+      __FUNCTION__,
+      Status
+      ));
     goto Cleanup;
   }
 
   //
   // Get the Sw dispatch protocol and register SMI callback functions.
   //
-  Status = gMmst->MmLocateProtocol (&gEfiSmmSwDispatch2ProtocolGuid, NULL, (VOID **)&SwDispatch);
+  Status = gMmst->MmLocateProtocol (
+                    &gEfiSmmSwDispatch2ProtocolGuid,
+                    NULL,
+                    (VOID **)&SwDispatch
+                    );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[%a] Failed to locate Sw dispatch protocol - %r!\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[%a] Failed to locate Sw dispatch protocol - %r!\n",
+      __FUNCTION__,
+      Status
+      ));
     goto Cleanup;
   }
 
   SwContext.SwSmiInputValue = (UINTN)-1;
-  Status                    = SwDispatch->Register (SwDispatch, PhysicalPresenceCallback, &SwContext, &PpSwHandle);
+  Status                    = SwDispatch->Register (
+                                            SwDispatch,
+                                            PhysicalPresenceCallback,
+                                            &SwContext,
+                                            &PpSwHandle
+                                            );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[%a] Failed to register PP callback as SW MM handler - %r!\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[%a] Failed to register PP callback as SW MM handler - %r!\n",
+      __FUNCTION__,
+      Status
+      ));
     goto Cleanup;
   }
 
   mPpSoftwareSmi = SwContext.SwSmiInputValue;
 
   SwContext.SwSmiInputValue = (UINTN)-1;
-  Status                    = SwDispatch->Register (SwDispatch, MemoryClearCallback, &SwContext, &McSwHandle);
+  Status                    = SwDispatch->Register (
+                                            SwDispatch,
+                                            MemoryClearCallback,
+                                            &SwContext,
+                                            &McSwHandle
+                                            );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[%a] Failed to register MC callback as SW MM handler - %r!\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[%a] Failed to register MC callback as SW MM handler - %r!\n",
+      __FUNCTION__,
+      Status
+      ));
     goto Cleanup;
   }
 
@@ -338,19 +428,37 @@ InitializeTcgCommon (
   //
   // Locate SmmVariableProtocol.
   //
-  Status = gMmst->MmLocateProtocol (&gEfiSmmVariableProtocolGuid, NULL, (VOID **)&mSmmVariable);
+  Status = gMmst->MmLocateProtocol (
+                    &gEfiSmmVariableProtocolGuid,
+                    NULL,
+                    (VOID **)&mSmmVariable
+                    );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     // Should not happen
-    DEBUG ((DEBUG_ERROR, "[%a] Failed to locate SMM variable protocol - %r!\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[%a] Failed to locate SMM variable protocol - %r!\n",
+      __FUNCTION__,
+      Status
+      ));
     goto Cleanup;
   }
 
   // Turn off the light before leaving the room... at least, take a remote...
-  Status = gMmst->MmRegisterProtocolNotify (&gEfiMmReadyToLockProtocolGuid, TcgMmReadyToLock, &NotifyHandle);
+  Status = gMmst->MmRegisterProtocolNotify (
+                    &gEfiMmReadyToLockProtocolGuid,
+                    TcgMmReadyToLock,
+                    &NotifyHandle
+                    );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[%a] Failed to register ready to lock notification - %r!\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[%a] Failed to register ready to lock notification - %r!\n",
+      __FUNCTION__,
+      Status
+      ));
     goto Cleanup;
   }
 
@@ -360,7 +468,11 @@ Cleanup:
   if (EFI_ERROR (Status)) {
     // Something is whacked, clean up the mess...
     if (NotifyHandle != NULL) {
-      gMmst->MmRegisterProtocolNotify (&gEfiMmReadyToLockProtocolGuid, NULL, &NotifyHandle);
+      gMmst->MmRegisterProtocolNotify (
+               &gEfiMmReadyToLockProtocolGuid,
+               NULL,
+               &NotifyHandle
+               );
     }
 
     if ((McSwHandle != NULL) && (SwDispatch != NULL)) {

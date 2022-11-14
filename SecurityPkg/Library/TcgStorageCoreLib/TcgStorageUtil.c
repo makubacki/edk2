@@ -82,7 +82,13 @@ TcgStartMethodCall (
       (CreateStruct->CurSubPacket == NULL)
       )
   {
-    DEBUG ((DEBUG_INFO, "unexpected state: ComPacket=%p CurPacket=%p CurSubPacket=%p\n", CreateStruct->ComPacket, CreateStruct->CurPacket, CreateStruct->CurSubPacket));
+    DEBUG ((
+      DEBUG_INFO,
+      "unexpected state: ComPacket=%p CurPacket=%p CurSubPacket=%p\n",
+      CreateStruct->ComPacket,
+      CreateStruct->CurPacket,
+      CreateStruct->CurSubPacket
+      ));
     return (TcgResultFailureInvalidAction);
   }
 
@@ -112,7 +118,13 @@ TcgStartParameters (
       (CreateStruct->CurSubPacket == NULL)
       )
   {
-    DEBUG ((DEBUG_INFO, "unexpected state: ComPacket=%p CurPacket=%p CurSubPacket=%p\n", CreateStruct->ComPacket, CreateStruct->CurPacket, CreateStruct->CurSubPacket));
+    DEBUG ((
+      DEBUG_INFO,
+      "unexpected state: ComPacket=%p CurPacket=%p CurSubPacket=%p\n",
+      CreateStruct->ComPacket,
+      CreateStruct->CurPacket,
+      CreateStruct->CurSubPacket
+      ));
     return (TcgResultFailureInvalidAction);
   }
 
@@ -138,7 +150,13 @@ TcgEndParameters (
       (CreateStruct->CurSubPacket == NULL)
       )
   {
-    DEBUG ((DEBUG_INFO, "unexpected state: ComPacket=%p CurPacket=%p CurSubPacket=%p\n", CreateStruct->ComPacket, CreateStruct->CurPacket, CreateStruct->CurSubPacket));
+    DEBUG ((
+      DEBUG_INFO,
+      "unexpected state: ComPacket=%p CurPacket=%p CurSubPacket=%p\n",
+      CreateStruct->ComPacket,
+      CreateStruct->CurPacket,
+      CreateStruct->CurSubPacket
+      ));
     return (TcgResultFailureInvalidAction);
   }
 
@@ -164,7 +182,13 @@ TcgEndMethodCall (
       (CreateStruct->CurSubPacket == NULL)
       )
   {
-    DEBUG ((DEBUG_INFO, "unexpected state: ComPacket=%p CurPacket=%p CurSubPacket=%p\n", CreateStruct->ComPacket, CreateStruct->CurPacket, CreateStruct->CurSubPacket));
+    DEBUG ((
+      DEBUG_INFO,
+      "unexpected state: ComPacket=%p CurPacket=%p CurSubPacket=%p\n",
+      CreateStruct->ComPacket,
+      CreateStruct->CurPacket,
+      CreateStruct->CurSubPacket
+      ));
     return (TcgResultFailureInvalidAction);
   }
 
@@ -201,7 +225,11 @@ TcgGetComIds (
   NULL_CHECK (ComIdExtension);
 
   if (ParseStruct->ComPacket == NULL) {
-    DEBUG ((DEBUG_INFO, "unexpected state: ComPacket=%p\n", ParseStruct->ComPacket));
+    DEBUG ((
+      DEBUG_INFO,
+      "unexpected state: ComPacket=%p\n",
+      ParseStruct->ComPacket
+      ));
     return TcgResultFailureInvalidAction;
   }
 
@@ -231,9 +259,21 @@ TcgCheckComIds (
   UINT16  ParseComIdExtension;
 
   ERROR_CHECK (TcgGetComIds (ParseStruct, &ParseComId, &ParseComIdExtension));
-  if ((ParseComId != ExpectedComId) || (ParseComIdExtension != ExpectedComIdExtension)) {
-    DEBUG ((DEBUG_INFO, "Com ID: Actual 0x%02X Expected 0x%02X\n", ParseComId, ExpectedComId));
-    DEBUG ((DEBUG_INFO, "Extended Com ID: 0x%02X Expected 0x%02X\n", ParseComIdExtension, ExpectedComIdExtension));
+  if ((ParseComId != ExpectedComId) || (ParseComIdExtension !=
+                                        ExpectedComIdExtension))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "Com ID: Actual 0x%02X Expected 0x%02X\n",
+      ParseComId,
+      ExpectedComId
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "Extended Com ID: 0x%02X Expected 0x%02X\n",
+      ParseComIdExtension,
+      ExpectedComIdExtension
+      ));
     return TcgResultFailure;
   }
 
@@ -267,7 +307,13 @@ TcgGetMethodStatus (
       (ParseStruct->CurSubPacket == NULL)
       )
   {
-    DEBUG ((DEBUG_INFO, "unexpected state: ComPacket=%p CurPacket=%p CurSubPacket=%p\n", ParseStruct->ComPacket, ParseStruct->CurPacket, ParseStruct->CurSubPacket));
+    DEBUG ((
+      DEBUG_INFO,
+      "unexpected state: ComPacket=%p CurPacket=%p CurSubPacket=%p\n",
+      ParseStruct->ComPacket,
+      ParseStruct->CurPacket,
+      ParseStruct->CurSubPacket
+      ));
     return TcgResultFailureInvalidAction;
   }
 
@@ -289,12 +335,20 @@ TcgGetMethodStatus (
   ERROR_CHECK (TcgGetNextEndList (&TmpParseStruct));
 
   if (Reserved1 != 0) {
-    DEBUG ((DEBUG_INFO, "Method status reserved1 = 0x%02X (expected 0)\n", Reserved1));
+    DEBUG ((
+      DEBUG_INFO,
+      "Method status reserved1 = 0x%02X (expected 0)\n",
+      Reserved1
+      ));
     return TcgResultFailure;
   }
 
   if (Reserved2 != 0) {
-    DEBUG ((DEBUG_INFO, "Method status reserved2 = 0x%02X (expected 0)\n", Reserved1));
+    DEBUG ((
+      DEBUG_INFO,
+      "Method status reserved2 = 0x%02X (expected 0)\n",
+      Reserved1
+      ));
     return TcgResultFailure;
   }
 
@@ -371,7 +425,13 @@ TcgCreateStartSession (
   ERROR_CHECK (TcgStartComPacket (CreateStruct, ComId, ComIdExtension));
   ERROR_CHECK (TcgStartPacket (CreateStruct, 0x0, 0x0, 0x0, 0x0, 0x0));
   ERROR_CHECK (TcgStartSubPacket (CreateStruct, 0x0));
-  ERROR_CHECK (TcgStartMethodCall (CreateStruct, TCG_UID_SMUID, TCG_UID_SM_START_SESSION));
+  ERROR_CHECK (
+    TcgStartMethodCall (
+      CreateStruct,
+      TCG_UID_SMUID,
+      TCG_UID_SM_START_SESSION
+      )
+    );
   ERROR_CHECK (TcgStartParameters (CreateStruct));
   ERROR_CHECK (TcgAddUINT32 (CreateStruct, HostSessionId));
   ERROR_CHECK (TcgAddTcgUid (CreateStruct, SpId));
@@ -381,7 +441,14 @@ TcgCreateStartSession (
   if ((HostChallenge != NULL) && (HostChallengeLength != 0)) {
     ERROR_CHECK (TcgAddStartName (CreateStruct));
     ERROR_CHECK (TcgAddUINT8 (CreateStruct, 0x00));   // TODO Create Enum for Method Optional Parameters?
-    ERROR_CHECK (TcgAddByteSequence (CreateStruct, HostChallenge, HostChallengeLength, FALSE));
+    ERROR_CHECK (
+      TcgAddByteSequence (
+        CreateStruct,
+        HostChallenge,
+        HostChallengeLength,
+        FALSE
+        )
+      );
     ERROR_CHECK (TcgAddEndName (CreateStruct));
   }
 
@@ -444,7 +511,14 @@ TcgParseSyncSession (
   ERROR_CHECK (TcgGetComIds (&TmpParseStruct, &ParseComId, &ParseExtComId));
 
   if ((ComId != ParseComId) || (ComIdExtension != ParseExtComId)) {
-    DEBUG ((DEBUG_INFO, "unmatched comid (exp: 0x%X recv: 0x%X) or comid extension (exp: 0x%X recv: 0x%X)\n", ComId, ParseComId, ComIdExtension, ParseExtComId));
+    DEBUG ((
+      DEBUG_INFO,
+      "unmatched comid (exp: 0x%X recv: 0x%X) or comid extension (exp: 0x%X recv: 0x%X)\n",
+      ComId,
+      ParseComId,
+      ComIdExtension,
+      ParseExtComId
+      ));
     return TcgResultFailure;
   }
 
@@ -468,7 +542,12 @@ TcgParseSyncSession (
   }
 
   if (HostSessionId != RecvHostSessionId) {
-    DEBUG ((DEBUG_INFO, "unmatched HostSessionId (exp: 0x%X recv: 0x%X)\n", HostSessionId, RecvHostSessionId));
+    DEBUG ((
+      DEBUG_INFO,
+      "unmatched HostSessionId (exp: 0x%X recv: 0x%X)\n",
+      HostSessionId,
+      RecvHostSessionId
+      ));
     return TcgResultFailure;
   }
 
@@ -500,7 +579,16 @@ TcgCreateEndSession (
   )
 {
   ERROR_CHECK (TcgStartComPacket (CreateStruct, ComId, ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (CreateStruct, TpSessionId, HostSessionId, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartPacket (
+      CreateStruct,
+      TpSessionId,
+      HostSessionId,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (CreateStruct, 0x0));
   ERROR_CHECK (TcgAddEndOfSession (CreateStruct));
   ERROR_CHECK (TcgEndSubPacket (CreateStruct));
@@ -587,10 +675,26 @@ TcgCreateSetCPin (
 {
   // set new SID Password
   ERROR_CHECK (TcgStartComPacket (CreateStruct, ComId, ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (CreateStruct, TperSession, HostSession, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartPacket (
+      CreateStruct,
+      TperSession,
+      HostSession,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (CreateStruct, 0x0));
   ERROR_CHECK (TcgStartMethodSet (CreateStruct, SidRow, 0x03)); // "PIN"
-  ERROR_CHECK (TcgAddByteSequence (CreateStruct, Password, PasswordSize, FALSE));
+  ERROR_CHECK (
+    TcgAddByteSequence (
+      CreateStruct,
+      Password,
+      PasswordSize,
+      FALSE
+      )
+    );
   ERROR_CHECK (TcgEndMethodSet (CreateStruct));
   ERROR_CHECK (TcgEndSubPacket (CreateStruct));
   ERROR_CHECK (TcgEndPacket (CreateStruct));
@@ -626,7 +730,16 @@ TcgSetAuthorityEnabled (
   )
 {
   ERROR_CHECK (TcgStartComPacket (CreateStruct, ComId, ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (CreateStruct, TperSession, HostSession, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartPacket (
+      CreateStruct,
+      TperSession,
+      HostSession,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (CreateStruct, 0x0));
   ERROR_CHECK (TcgStartMethodSet (CreateStruct, AuthorityUid, 0x05)); // "Enabled"
   ERROR_CHECK (TcgAddBOOLEAN (CreateStruct, Enabled));
@@ -683,21 +796,51 @@ TcgCreateSetAce (
   HalfUidBooleanAce[3] = 0xE;
 
   ERROR_CHECK (TcgStartComPacket (CreateStruct, ComId, ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (CreateStruct, TperSession, HostSession, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartPacket (
+      CreateStruct,
+      TperSession,
+      HostSession,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (CreateStruct, 0x0));
   ERROR_CHECK (TcgStartMethodSet (CreateStruct, AceRow, 0x03));     // "BooleanExpr"
   ERROR_CHECK (TcgAddStartList (CreateStruct));
   ERROR_CHECK (TcgAddStartName (CreateStruct));
-  ERROR_CHECK (TcgAddByteSequence (CreateStruct, HalfUidAuthorityObjectRef, sizeof (HalfUidAuthorityObjectRef), FALSE));
+  ERROR_CHECK (
+    TcgAddByteSequence (
+      CreateStruct,
+      HalfUidAuthorityObjectRef,
+      sizeof (HalfUidAuthorityObjectRef),
+      FALSE
+      )
+    );
   ERROR_CHECK (TcgAddTcgUid (CreateStruct, Authority1));
   ERROR_CHECK (TcgAddEndName (CreateStruct));
   ERROR_CHECK (TcgAddStartName (CreateStruct));
-  ERROR_CHECK (TcgAddByteSequence (CreateStruct, HalfUidAuthorityObjectRef, sizeof (HalfUidAuthorityObjectRef), FALSE));
+  ERROR_CHECK (
+    TcgAddByteSequence (
+      CreateStruct,
+      HalfUidAuthorityObjectRef,
+      sizeof (HalfUidAuthorityObjectRef),
+      FALSE
+      )
+    );
   ERROR_CHECK (TcgAddTcgUid (CreateStruct, Authority2));
   ERROR_CHECK (TcgAddEndName (CreateStruct));
 
   ERROR_CHECK (TcgAddStartName (CreateStruct));
-  ERROR_CHECK (TcgAddByteSequence (CreateStruct, HalfUidBooleanAce, sizeof (HalfUidBooleanAce), FALSE));
+  ERROR_CHECK (
+    TcgAddByteSequence (
+      CreateStruct,
+      HalfUidBooleanAce,
+      sizeof (HalfUidBooleanAce),
+      FALSE
+      )
+    );
   ERROR_CHECK (TcgAddBOOLEAN (CreateStruct, LogicalOperator));
   ERROR_CHECK (TcgAddEndName (CreateStruct));
   ERROR_CHECK (TcgAddEndList (CreateStruct));
@@ -746,12 +889,14 @@ TcgEnumLevel0Discovery (
   //
   // Subtract the Length of the Header, except the Length field, which is not included
   //
-  BytesLeft -= (sizeof (TCG_LEVEL0_DISCOVERY_HEADER) - sizeof (DiscoveryHeader->LengthBE));
+  BytesLeft -= (sizeof (TCG_LEVEL0_DISCOVERY_HEADER) -
+                sizeof (DiscoveryHeader->LengthBE));
 
   //
   // Move ptr to first descriptor
   //
-  DiscoveryBufferPtr = (const UINT8 *)DiscoveryHeader + sizeof (TCG_LEVEL0_DISCOVERY_HEADER);
+  DiscoveryBufferPtr = (const UINT8 *)DiscoveryHeader +
+                       sizeof (TCG_LEVEL0_DISCOVERY_HEADER);
 
   while (BytesLeft > sizeof (TCG_LEVEL0_FEATURE_DESCRIPTOR_HEADER)) {
     //
@@ -867,7 +1012,10 @@ TcgIsProtocolSupported (
   ListLength = SwapBytes16 (ProtocolList->ListLength_BE);
 
   if (ListLength > sizeof (ProtocolList->List)) {
-    DEBUG ((DEBUG_INFO, "WARNING: list Length is larger than max allowed Value; truncating\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "WARNING: list Length is larger than max allowed Value; truncating\n"
+      ));
     ListLength = sizeof (ProtocolList->List);
   }
 
@@ -897,7 +1045,11 @@ TcgIsLocked (
   TCG_LOCKING_FEATURE_DESCRIPTOR  *LockDescriptor;
 
   Size           = 0;
-  LockDescriptor = (TCG_LOCKING_FEATURE_DESCRIPTOR *)TcgGetFeature (Discovery, TCG_FEATURE_LOCKING, &Size);
+  LockDescriptor = (TCG_LOCKING_FEATURE_DESCRIPTOR *)TcgGetFeature (
+                                                       Discovery,
+                                                       TCG_FEATURE_LOCKING,
+                                                       &Size
+                                                       );
 
   if ((LockDescriptor != NULL) && (Size >= sizeof (*LockDescriptor))) {
     DEBUG ((DEBUG_INFO, "locked: %d\n", LockDescriptor->Locked));

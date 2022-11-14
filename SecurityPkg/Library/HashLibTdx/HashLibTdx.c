@@ -123,7 +123,10 @@ HashCompleteAndExtend (
     );
   DigestList->count++;
 
-  ASSERT (DigestList->count == 1 && DigestList->digests[0].hashAlg == TPM_ALG_SHA384);
+  ASSERT (
+    DigestList->count == 1 && DigestList->digests[0].hashAlg ==
+    TPM_ALG_SHA384
+    );
 
   Status = TdExtendRtmr (
              (UINT32 *)DigestList->digests[0].digest.sha384,

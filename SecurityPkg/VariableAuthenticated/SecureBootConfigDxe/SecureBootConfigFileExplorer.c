@@ -154,7 +154,12 @@ UpdatePage (
     return TRUE;
   }
 
-  StringToken =  HiiSetString (gSecureBootPrivateData->HiiHandle, 0, FileName, NULL);
+  StringToken =  HiiSetString (
+                   gSecureBootPrivateData->HiiHandle,
+                   0,
+                   FileName,
+                   NULL
+                   );
 
   gSecureBootPrivateData->FileContext->FileName = FileName;
 

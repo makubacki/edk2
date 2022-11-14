@@ -124,7 +124,11 @@ Tpm2StartAuthSession (
       break;
     default:
       ASSERT (FALSE);
-      DEBUG ((DEBUG_ERROR, "Tpm2StartAuthSession - Symmetric->algorithm - %x\n", Symmetric->algorithm));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Tpm2StartAuthSession - Symmetric->algorithm - %x\n",
+        Symmetric->algorithm
+        ));
       return EFI_UNSUPPORTED;
   }
 
@@ -138,18 +142,31 @@ Tpm2StartAuthSession (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2StartAuthSession - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2StartAuthSession - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   if (SwapBytes32 (RecvBuffer.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2StartAuthSession - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2StartAuthSession - responseCode - %x\n",
+      SwapBytes32 (RecvBuffer.Header.responseCode)
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -159,7 +176,11 @@ Tpm2StartAuthSession (
   *SessionHandle = SwapBytes32 (RecvBuffer.SessionHandle);
   NonceTPM->size = SwapBytes16 (RecvBuffer.NonceTPM.size);
   if (NonceTPM->size > sizeof (TPMU_HA)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2StartAuthSession - NonceTPM->size error %x\n", NonceTPM->size));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2StartAuthSession - NonceTPM->size error %x\n",
+      NonceTPM->size
+      ));
     return EFI_DEVICE_ERROR;
   }
 

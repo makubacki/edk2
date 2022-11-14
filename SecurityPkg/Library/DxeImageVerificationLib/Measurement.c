@@ -54,7 +54,9 @@ AssignVarName (
 {
   UINTN  Index;
 
-  for (Index = 0; Index < sizeof (mVariableType)/sizeof (mVariableType[0]); Index++) {
+  for (Index = 0; Index < sizeof (mVariableType)/sizeof (mVariableType[0]);
+       Index++)
+  {
     if (StrCmp (VarName, mVariableType[Index].VariableName) == 0) {
       return mVariableType[Index].VariableName;
     }
@@ -77,7 +79,9 @@ AssignVendorGuid (
 {
   UINTN  Index;
 
-  for (Index = 0; Index < sizeof (mVariableType)/sizeof (mVariableType[0]); Index++) {
+  for (Index = 0; Index < sizeof (mVariableType)/sizeof (mVariableType[0]);
+       Index++)
+  {
     if (CompareGuid (VendorGuid, mVariableType[Index].VendorGuid)) {
       return mVariableType[Index].VendorGuid;
     }
@@ -112,13 +116,21 @@ AddDataMeasured (
     //
     // Need enlarge
     //
-    NewMeasuredAuthorityList = AllocateZeroPool (sizeof (VARIABLE_RECORD) * (mMeasuredAuthorityCountMax + MEASURED_AUTHORITY_COUNT_MAX));
+    NewMeasuredAuthorityList = AllocateZeroPool (
+                                 sizeof (VARIABLE_RECORD) *
+                                 (mMeasuredAuthorityCountMax +
+                                  MEASURED_AUTHORITY_COUNT_MAX)
+                                 );
     if (NewMeasuredAuthorityList == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
     if (mMeasuredAuthorityList != NULL) {
-      CopyMem (NewMeasuredAuthorityList, mMeasuredAuthorityList, sizeof (VARIABLE_RECORD) * mMeasuredAuthorityCount);
+      CopyMem (
+        NewMeasuredAuthorityList,
+        mMeasuredAuthorityList,
+        sizeof (VARIABLE_RECORD) * mMeasuredAuthorityCount
+        );
       FreePool (mMeasuredAuthorityList);
     }
 
@@ -129,10 +141,15 @@ AddDataMeasured (
   //
   // Add new entry
   //
-  mMeasuredAuthorityList[mMeasuredAuthorityCount].VariableName = AssignVarName (VarName);
-  mMeasuredAuthorityList[mMeasuredAuthorityCount].VendorGuid   = AssignVendorGuid (VendorGuid);
-  mMeasuredAuthorityList[mMeasuredAuthorityCount].Size         = Size;
-  mMeasuredAuthorityList[mMeasuredAuthorityCount].Data         = AllocatePool (Size);
+  mMeasuredAuthorityList[mMeasuredAuthorityCount].VariableName = AssignVarName (
+                                                                   VarName
+                                                                   );
+  mMeasuredAuthorityList[mMeasuredAuthorityCount].VendorGuid =
+    AssignVendorGuid (VendorGuid);
+  mMeasuredAuthorityList[mMeasuredAuthorityCount].Size = Size;
+  mMeasuredAuthorityList[mMeasuredAuthorityCount].Data = AllocatePool (
+                                                           Size
+                                                           );
   if (mMeasuredAuthorityList[mMeasuredAuthorityCount].Data == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -194,7 +211,9 @@ IsSecureAuthorityVariable (
 {
   UINTN  Index;
 
-  for (Index = 0; Index < sizeof (mVariableType)/sizeof (mVariableType[0]); Index++) {
+  for (Index = 0; Index < sizeof (mVariableType)/sizeof (mVariableType[0]);
+       Index++)
+  {
     if ((StrCmp (VariableName, mVariableType[Index].VariableName) == 0) &&
         (CompareGuid (VendorGuid, mVariableType[Index].VendorGuid)))
     {
@@ -237,8 +256,10 @@ MeasureVariable (
   // from the EFI_SIGNATURE_LIST that contained the authority that was used to validate the image
   //
   VarNameLength = StrLen (VarName);
-  VarLogSize    = (UINT32)(sizeof (*VarLog) + VarNameLength * sizeof (*VarName) + VarSize
-                           - sizeof (VarLog->UnicodeName) - sizeof (VarLog->VariableData));
+  VarLogSize    = (UINT32)(sizeof (*VarLog) + VarNameLength *
+                           sizeof (*VarName) + VarSize
+                           - sizeof (VarLog->UnicodeName) -
+                           sizeof (VarLog->VariableData));
 
   VarLog = (UEFI_VARIABLE_DATA *)AllocateZeroPool (VarLogSize);
   if (VarLog == NULL) {
@@ -259,8 +280,18 @@ MeasureVariable (
     VarSize
     );
 
-  DEBUG ((DEBUG_INFO, "DxeImageVerification: MeasureVariable (Pcr - %x, EventType - %x, ", (UINTN)7, (UINTN)EV_EFI_VARIABLE_AUTHORITY));
-  DEBUG ((DEBUG_INFO, "VariableName - %s, VendorGuid - %g)\n", VarName, VendorGuid));
+  DEBUG ((
+    DEBUG_INFO,
+    "DxeImageVerification: MeasureVariable (Pcr - %x, EventType - %x, ",
+    (UINTN)7,
+    (UINTN)EV_EFI_VARIABLE_AUTHORITY
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "VariableName - %s, VendorGuid - %g)\n",
+    VarName,
+    VendorGuid
+    ));
 
   Status = TpmMeasureAndLogData (
              7,

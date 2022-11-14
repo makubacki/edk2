@@ -22,10 +22,10 @@ typedef struct {
 } TPM2_HASH_MASK;
 
 TPM2_HASH_MASK  mTpm2HashMask[] = {
-  { TPM_ALG_SHA1,   HASH_ALG_SHA1   },
-  { TPM_ALG_SHA256, HASH_ALG_SHA256 },
-  { TPM_ALG_SHA384, HASH_ALG_SHA384 },
-  { TPM_ALG_SHA512, HASH_ALG_SHA512 },
+  { TPM_ALG_SHA1,   HASH_ALG_SHA1     },
+  { TPM_ALG_SHA256, HASH_ALG_SHA256   },
+  { TPM_ALG_SHA384, HASH_ALG_SHA384   },
+  { TPM_ALG_SHA512, HASH_ALG_SHA512   },
 };
 
 /**
@@ -42,7 +42,9 @@ Tpm2GetAlgoFromHashMask (
   UINTN   Index;
 
   HashMask = PcdGet32 (PcdTpm2HashMask);
-  for (Index = 0; Index < sizeof (mTpm2HashMask)/sizeof (mTpm2HashMask[0]); Index++) {
+  for (Index = 0; Index < sizeof (mTpm2HashMask)/sizeof (mTpm2HashMask[0]);
+       Index++)
+  {
     if (mTpm2HashMask[Index].Mask == HashMask) {
       return mTpm2HashMask[Index].AlgoId;
     }
@@ -102,7 +104,9 @@ HashUpdate (
   EFI_STATUS        Status;
 
   Buffer = (UINT8 *)(UINTN)DataToHash;
-  for (HashLen = DataToHashLen; HashLen > sizeof (HashBuffer.buffer); HashLen -= sizeof (HashBuffer.buffer)) {
+  for (HashLen = DataToHashLen; HashLen > sizeof (HashBuffer.buffer); HashLen -=
+         sizeof (HashBuffer.buffer))
+  {
     HashBuffer.size = sizeof (HashBuffer.buffer);
     CopyMem (HashBuffer.buffer, Buffer, sizeof (HashBuffer.buffer));
     Buffer += sizeof (HashBuffer.buffer);
@@ -157,7 +161,9 @@ HashCompleteAndExtend (
   AlgoId = Tpm2GetAlgoFromHashMask ();
 
   Buffer = (UINT8 *)(UINTN)DataToHash;
-  for (HashLen = DataToHashLen; HashLen > sizeof (HashBuffer.buffer); HashLen -= sizeof (HashBuffer.buffer)) {
+  for (HashLen = DataToHashLen; HashLen > sizeof (HashBuffer.buffer); HashLen -=
+         sizeof (HashBuffer.buffer))
+  {
     HashBuffer.size = sizeof (HashBuffer.buffer);
     CopyMem (HashBuffer.buffer, Buffer, sizeof (HashBuffer.buffer));
     Buffer += sizeof (HashBuffer.buffer);
@@ -244,7 +250,9 @@ HashAndExtend (
 
   AlgoId = Tpm2GetAlgoFromHashMask ();
 
-  if ((AlgoId == TPM_ALG_NULL) && (DataToHashLen <= sizeof (EventData.buffer))) {
+  if ((AlgoId == TPM_ALG_NULL) && (DataToHashLen <=
+                                   sizeof (EventData.buffer)))
+  {
     EventData.size = (UINT16)DataToHashLen;
     CopyMem (EventData.buffer, DataToHash, DataToHashLen);
     Status = Tpm2PcrEvent (PcrIndex, &EventData, DigestList);
@@ -263,7 +271,9 @@ HashAndExtend (
   DEBUG ((DEBUG_VERBOSE, "\n Tpm2HashSequenceStart Success \n"));
 
   Buffer = (UINT8 *)(UINTN)DataToHash;
-  for (HashLen = DataToHashLen; HashLen > sizeof (HashBuffer.buffer); HashLen -= sizeof (HashBuffer.buffer)) {
+  for (HashLen = DataToHashLen; HashLen > sizeof (HashBuffer.buffer); HashLen -=
+         sizeof (HashBuffer.buffer))
+  {
     HashBuffer.size = sizeof (HashBuffer.buffer);
     CopyMem (HashBuffer.buffer, Buffer, sizeof (HashBuffer.buffer));
     Buffer += sizeof (HashBuffer.buffer);

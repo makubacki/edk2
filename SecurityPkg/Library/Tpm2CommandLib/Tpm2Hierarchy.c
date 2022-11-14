@@ -178,19 +178,32 @@ Tpm2SetPrimaryPolicy (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2SetPrimaryPolicy - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2SetPrimaryPolicy - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
 
   if (SwapBytes32 (RecvBuffer.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2SetPrimaryPolicy - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2SetPrimaryPolicy - responseCode - %x\n",
+      SwapBytes32 (RecvBuffer.Header.responseCode)
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
@@ -247,7 +260,12 @@ Tpm2Clear (
   Cmd.Header.paramSize = SwapBytes32 (CmdSize);
 
   ResultBufSize = sizeof (Res);
-  Status        = Tpm2SubmitCommand (CmdSize, (UINT8 *)&Cmd, &ResultBufSize, (UINT8 *)&Res);
+  Status        = Tpm2SubmitCommand (
+                    CmdSize,
+                    (UINT8 *)&Cmd,
+                    &ResultBufSize,
+                    (UINT8 *)&Res
+                    );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -272,7 +290,13 @@ Tpm2Clear (
   // Fail if command failed
   //
   if (SwapBytes32 (Res.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Clear: Response Code error! 0x%08x\r\n", SwapBytes32 (Res.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Clear: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (
+        Res.Header.responseCode
+        )
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
@@ -341,13 +365,21 @@ Tpm2ClearControl (
   Cmd.Header.paramSize = SwapBytes32 (CmdSize);
 
   ResultBufSize = sizeof (Res);
-  Status        = Tpm2SubmitCommand (CmdSize, (UINT8 *)&Cmd, &ResultBufSize, (UINT8 *)&Res);
+  Status        = Tpm2SubmitCommand (
+                    CmdSize,
+                    (UINT8 *)&Cmd,
+                    &ResultBufSize,
+                    (UINT8 *)&Res
+                    );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   if (ResultBufSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "ClearControl: Failed ExecuteCommand: Buffer Too Small\r\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ClearControl: Failed ExecuteCommand: Buffer Too Small\r\n"
+      ));
     Status = EFI_BUFFER_TOO_SMALL;
     goto Done;
   }
@@ -357,7 +389,11 @@ Tpm2ClearControl (
   //
   RespSize = SwapBytes32 (Res.Header.paramSize);
   if (RespSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "ClearControl: Response size too large! %d\r\n", RespSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ClearControl: Response size too large! %d\r\n",
+      RespSize
+      ));
     Status = EFI_BUFFER_TOO_SMALL;
     goto Done;
   }
@@ -366,7 +402,11 @@ Tpm2ClearControl (
   // Fail if command failed
   //
   if (SwapBytes32 (Res.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "ClearControl: Response Code error! 0x%08x\r\n", SwapBytes32 (Res.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ClearControl: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (Res.Header.responseCode)
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
@@ -460,7 +500,10 @@ Tpm2HierarchyChangeAuth (
   }
 
   if (ResultBufSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "HierarchyChangeAuth: Failed ExecuteCommand: Buffer Too Small\r\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "HierarchyChangeAuth: Failed ExecuteCommand: Buffer Too Small\r\n"
+      ));
     Status = EFI_BUFFER_TOO_SMALL;
     goto Done;
   }
@@ -470,7 +513,11 @@ Tpm2HierarchyChangeAuth (
   //
   RespSize = SwapBytes32 (Res.Header.paramSize);
   if (RespSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "HierarchyChangeAuth: Response size too large! %d\r\n", RespSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "HierarchyChangeAuth: Response size too large! %d\r\n",
+      RespSize
+      ));
     Status = EFI_BUFFER_TOO_SMALL;
     goto Done;
   }
@@ -479,7 +526,11 @@ Tpm2HierarchyChangeAuth (
   // Fail if command failed
   //
   if (SwapBytes32 (Res.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "HierarchyChangeAuth: Response Code error! 0x%08x\r\n", SwapBytes32 (Res.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "HierarchyChangeAuth: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (Res.Header.responseCode)
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
@@ -558,7 +609,10 @@ Tpm2ChangeEPS (
   }
 
   if (ResultBufSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "ChangeEPS: Failed ExecuteCommand: Buffer Too Small\r\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ChangeEPS: Failed ExecuteCommand: Buffer Too Small\r\n"
+      ));
     Status = EFI_BUFFER_TOO_SMALL;
     goto Done;
   }
@@ -568,7 +622,11 @@ Tpm2ChangeEPS (
   //
   RespSize = SwapBytes32 (Res.Header.paramSize);
   if (RespSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "ChangeEPS: Response size too large! %d\r\n", RespSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ChangeEPS: Response size too large! %d\r\n",
+      RespSize
+      ));
     Status = EFI_BUFFER_TOO_SMALL;
     goto Done;
   }
@@ -577,7 +635,11 @@ Tpm2ChangeEPS (
   // Fail if command failed
   //
   if (SwapBytes32 (Res.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "ChangeEPS: Response Code error! 0x%08x\r\n", SwapBytes32 (Res.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ChangeEPS: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (Res.Header.responseCode)
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
@@ -656,7 +718,10 @@ Tpm2ChangePPS (
   }
 
   if (ResultBufSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "ChangePPS: Failed ExecuteCommand: Buffer Too Small\r\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ChangePPS: Failed ExecuteCommand: Buffer Too Small\r\n"
+      ));
     Status = EFI_BUFFER_TOO_SMALL;
     goto Done;
   }
@@ -666,7 +731,11 @@ Tpm2ChangePPS (
   //
   RespSize = SwapBytes32 (Res.Header.paramSize);
   if (RespSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "ChangePPS: Response size too large! %d\r\n", RespSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ChangePPS: Response size too large! %d\r\n",
+      RespSize
+      ));
     Status = EFI_BUFFER_TOO_SMALL;
     goto Done;
   }
@@ -675,7 +744,11 @@ Tpm2ChangePPS (
   // Fail if command failed
   //
   if (SwapBytes32 (Res.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "ChangePPS: Response Code error! 0x%08x\r\n", SwapBytes32 (Res.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ChangePPS: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (Res.Header.responseCode)
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
@@ -764,7 +837,10 @@ Tpm2HierarchyControl (
   }
 
   if (ResultBufSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "HierarchyControl: Failed ExecuteCommand: Buffer Too Small\r\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "HierarchyControl: Failed ExecuteCommand: Buffer Too Small\r\n"
+      ));
     Status = EFI_BUFFER_TOO_SMALL;
     goto Done;
   }
@@ -774,7 +850,11 @@ Tpm2HierarchyControl (
   //
   RespSize = SwapBytes32 (Res.Header.paramSize);
   if (RespSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "HierarchyControl: Response size too large! %d\r\n", RespSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "HierarchyControl: Response size too large! %d\r\n",
+      RespSize
+      ));
     Status = EFI_BUFFER_TOO_SMALL;
     goto Done;
   }
@@ -783,7 +863,11 @@ Tpm2HierarchyControl (
   // Fail if command failed
   //
   if (SwapBytes32 (Res.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "HierarchyControl: Response Code error! 0x%08x\r\n", SwapBytes32 (Res.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "HierarchyControl: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (Res.Header.responseCode)
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }

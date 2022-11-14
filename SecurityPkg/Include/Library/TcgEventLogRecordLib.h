@@ -24,7 +24,8 @@ typedef struct {
 #define HANDOFF_TABLE_POINTER_DESC  "1234567890ABCDEF"
 typedef struct {
   UINT8                      TableDescriptionSize;
-  UINT8                      TableDescription[sizeof (HANDOFF_TABLE_POINTER_DESC)];
+  UINT8                      TableDescription[sizeof (HANDOFF_TABLE_POINTER_DESC)
+  ];
   UINT64                     NumberOfTables;
   EFI_CONFIGURATION_TABLE    TableEntry[1];
 } HANDOFF_TABLE_POINTERS2_STRUCT;

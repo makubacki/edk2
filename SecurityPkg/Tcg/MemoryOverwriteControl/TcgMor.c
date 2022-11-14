@@ -48,12 +48,18 @@ OnReadyToBoot (
   Status   = gRT->SetVariable (
                     MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
                     &gEfiMemoryOverwriteControlDataGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                    EFI_VARIABLE_NON_VOLATILE |
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS,
                     DataSize,
                     &mMorControl
                     );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TcgMor: Clear MOR_CLEAR_MEMORY_BIT failure, Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "TcgMor: Clear MOR_CLEAR_MEMORY_BIT failure, Status = %r\n",
+      Status
+      ));
   }
 }
 
@@ -157,7 +163,8 @@ InitiateTPerReset (
   }
 
   Data = (SUPPORTED_SECURITY_PROTOCOLS_PARAMETER_DATA *)Buffer;
-  Len  = (Data->SupportedSecurityListLength[0] << 8) + Data->SupportedSecurityListLength[1];
+  Len  = (Data->SupportedSecurityListLength[0] << 8) +
+         Data->SupportedSecurityListLength[1];
 
   //
   // Iterate full supported security protocol list to check if TCG or IEEE 1667 protocol
@@ -184,7 +191,10 @@ InitiateTPerReset (
   }
 
   if (!TcgFlag && !IeeeFlag) {
-    DEBUG ((DEBUG_INFO, "Neither a TCG nor IEEE 1667 protocol device is found\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "Neither a TCG nor IEEE 1667 protocol device is found\n"
+      ));
     goto Exit;
   }
 
@@ -333,7 +343,9 @@ MorDriverEntryPoint (
     Status      = gRT->SetVariable (
                          MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
                          &gEfiMemoryOverwriteControlDataGuid,
-                         EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                         EFI_VARIABLE_NON_VOLATILE |
+                         EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                         EFI_VARIABLE_RUNTIME_ACCESS,
                          DataSize,
                          &mMorControl
                          );
@@ -342,7 +354,10 @@ MorDriverEntryPoint (
     //
     // Create a Ready To Boot Event and Clear the MorControl bit in the call back function.
     //
-    DEBUG ((DEBUG_INFO, "TcgMor: Create ReadyToBoot Event for MorControl Bit cleaning!\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "TcgMor: Create ReadyToBoot Event for MorControl Bit cleaning!\n"
+      ));
     Status = EfiCreateEventReadyToBootEx (
                TPL_CALLBACK,
                OnReadyToBoot,

@@ -59,7 +59,11 @@ Hash2ServiceBindingCreateChild (
   // Init the instance data.
   //
   Instance->Signature = HASH2_INSTANCE_DATA_SIGNATURE;
-  CopyMem (&Instance->Hash2Protocol, &mHash2Protocol, sizeof (Instance->Hash2Protocol));
+  CopyMem (
+    &Instance->Hash2Protocol,
+    &mHash2Protocol,
+    sizeof (Instance->Hash2Protocol)
+    );
   Instance->Hash2ServiceData = Hash2ServiceData;
 
   Status = gBS->InstallMultipleProtocolInterfaces (
@@ -132,7 +136,9 @@ Hash2ServiceBindingDestroyChild (
   // Check if this ChildHandle is valid
   //
   Instance = NULL;
-  for (Entry = (&Hash2ServiceData->ChildrenList)->ForwardLink; Entry != (&Hash2ServiceData->ChildrenList); Entry = Entry->ForwardLink) {
+  for (Entry = (&Hash2ServiceData->ChildrenList)->ForwardLink; Entry !=
+       (&Hash2ServiceData->ChildrenList); Entry = Entry->ForwardLink)
+  {
     Instance = HASH2_INSTANCE_DATA_FROM_LINK (Entry);
     if (Instance->Handle == ChildHandle) {
       break;
@@ -216,7 +222,11 @@ Hash2DriverEntryPoint (
   }
 
   Hash2ServiceData->Signature = HASH2_SERVICE_DATA_SIGNATURE;
-  CopyMem (&Hash2ServiceData->ServiceBinding, &mHash2ServiceBindingProtocol, sizeof (EFI_SERVICE_BINDING_PROTOCOL));
+  CopyMem (
+    &Hash2ServiceData->ServiceBinding,
+    &mHash2ServiceBindingProtocol,
+    sizeof (EFI_SERVICE_BINDING_PROTOCOL)
+    );
   InitializeListHead (&Hash2ServiceData->ChildrenList);
 
   //

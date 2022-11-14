@@ -125,11 +125,20 @@ Tpm2PcrExtend (
 
   // Digest
   for (Index = 0; Index < Digests->count; Index++) {
-    WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (Digests->digests[Index].hashAlg));
+    WriteUnaligned16 (
+      (UINT16 *)Buffer,
+      SwapBytes16 (
+        Digests->digests[Index].hashAlg
+        )
+      );
     Buffer    += sizeof (UINT16);
     DigestSize = GetHashSizeFromAlgo (Digests->digests[Index].hashAlg);
     if (DigestSize == 0) {
-      DEBUG ((DEBUG_ERROR, "Unknown hash algorithm %d\r\n", Digests->digests[Index].hashAlg));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Unknown hash algorithm %d\r\n",
+        Digests->digests[Index].hashAlg
+        ));
       return EFI_DEVICE_ERROR;
     }
 
@@ -162,13 +171,21 @@ Tpm2PcrExtend (
   Cmd.Header.paramSize = SwapBytes32 (CmdSize);
 
   ResultBufSize = sizeof (Res);
-  Status        = Tpm2SubmitCommand (CmdSize, (UINT8 *)&Cmd, &ResultBufSize, (UINT8 *)&Res);
+  Status        = Tpm2SubmitCommand (
+                    CmdSize,
+                    (UINT8 *)&Cmd,
+                    &ResultBufSize,
+                    (UINT8 *)&Res
+                    );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (ResultBufSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrExtend: Failed ExecuteCommand: Buffer Too Small\r\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrExtend: Failed ExecuteCommand: Buffer Too Small\r\n"
+      ));
     return EFI_BUFFER_TOO_SMALL;
   }
 
@@ -177,7 +194,11 @@ Tpm2PcrExtend (
   //
   RespSize = SwapBytes32 (Res.Header.paramSize);
   if (RespSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrExtend: Response size too large! %d\r\n", RespSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrExtend: Response size too large! %d\r\n",
+      RespSize
+      ));
     return EFI_BUFFER_TOO_SMALL;
   }
 
@@ -185,7 +206,11 @@ Tpm2PcrExtend (
   // Fail if command failed
   //
   if (SwapBytes32 (Res.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrExtend: Response Code error! 0x%08x\r\n", SwapBytes32 (Res.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrExtend: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (Res.Header.responseCode)
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -262,13 +287,21 @@ Tpm2PcrEvent (
   Cmd.Header.paramSize = SwapBytes32 (CmdSize);
 
   ResultBufSize = sizeof (Res);
-  Status        = Tpm2SubmitCommand (CmdSize, (UINT8 *)&Cmd, &ResultBufSize, (UINT8 *)&Res);
+  Status        = Tpm2SubmitCommand (
+                    CmdSize,
+                    (UINT8 *)&Cmd,
+                    &ResultBufSize,
+                    (UINT8 *)&Res
+                    );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (ResultBufSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrEvent: Failed ExecuteCommand: Buffer Too Small\r\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrEvent: Failed ExecuteCommand: Buffer Too Small\r\n"
+      ));
     return EFI_BUFFER_TOO_SMALL;
   }
 
@@ -277,7 +310,11 @@ Tpm2PcrEvent (
   //
   RespSize = SwapBytes32 (Res.Header.paramSize);
   if (RespSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrEvent: Response size too large! %d\r\n", RespSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrEvent: Response size too large! %d\r\n",
+      RespSize
+      ));
     return EFI_BUFFER_TOO_SMALL;
   }
 
@@ -285,7 +322,11 @@ Tpm2PcrEvent (
   // Fail if command failed
   //
   if (SwapBytes32 (Res.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrEvent: Response Code error! 0x%08x\r\n", SwapBytes32 (Res.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrEvent: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (Res.Header.responseCode)
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -296,17 +337,31 @@ Tpm2PcrEvent (
 
   Digests->count = SwapBytes32 (ReadUnaligned32 ((UINT32 *)Buffer));
   if (Digests->count > HASH_COUNT) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrEvent - Digests->count error %x\n", Digests->count));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrEvent - Digests->count error %x\n",
+      Digests->count
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   Buffer += sizeof (UINT32);
   for (Index = 0; Index < Digests->count; Index++) {
-    Digests->digests[Index].hashAlg = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
-    Buffer                         += sizeof (UINT16);
-    DigestSize                      = GetHashSizeFromAlgo (Digests->digests[Index].hashAlg);
+    Digests->digests[Index].hashAlg = SwapBytes16 (
+                                        ReadUnaligned16 (
+                                          (UINT16 *)Buffer
+                                          )
+                                        );
+    Buffer    += sizeof (UINT16);
+    DigestSize = GetHashSizeFromAlgo (
+                   Digests->digests[Index].hashAlg
+                   );
     if (DigestSize == 0) {
-      DEBUG ((DEBUG_ERROR, "Unknown hash algorithm %d\r\n", Digests->digests[Index].hashAlg));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Unknown hash algorithm %d\r\n",
+        Digests->digests[Index].hashAlg
+        ));
       return EFI_DEVICE_ERROR;
     }
 
@@ -358,30 +413,58 @@ Tpm2PcrRead (
 
   SendBuffer.PcrSelectionIn.count = SwapBytes32 (PcrSelectionIn->count);
   for (Index = 0; Index < PcrSelectionIn->count; Index++) {
-    SendBuffer.PcrSelectionIn.pcrSelections[Index].hash         = SwapBytes16 (PcrSelectionIn->pcrSelections[Index].hash);
-    SendBuffer.PcrSelectionIn.pcrSelections[Index].sizeofSelect = PcrSelectionIn->pcrSelections[Index].sizeofSelect;
-    CopyMem (&SendBuffer.PcrSelectionIn.pcrSelections[Index].pcrSelect, &PcrSelectionIn->pcrSelections[Index].pcrSelect, SendBuffer.PcrSelectionIn.pcrSelections[Index].sizeofSelect);
+    SendBuffer.PcrSelectionIn.pcrSelections[Index].hash = SwapBytes16 (
+                                                            PcrSelectionIn->
+                                                              pcrSelections[
+                                                                                                            Index
+                                                            ].hash
+                                                            );
+    SendBuffer.PcrSelectionIn.pcrSelections[Index].sizeofSelect =
+      PcrSelectionIn->pcrSelections[Index].sizeofSelect;
+    CopyMem (
+      &SendBuffer.PcrSelectionIn.pcrSelections[Index].pcrSelect,
+      &PcrSelectionIn->pcrSelections[Index].pcrSelect,
+      SendBuffer.PcrSelectionIn.pcrSelections[Index].sizeofSelect
+      );
   }
 
-  SendBufferSize              = sizeof (SendBuffer.Header) + sizeof (SendBuffer.PcrSelectionIn.count) + sizeof (SendBuffer.PcrSelectionIn.pcrSelections[0]) * PcrSelectionIn->count;
+  SendBufferSize = sizeof (SendBuffer.Header) +
+                   sizeof (SendBuffer.PcrSelectionIn.count) +
+                   sizeof (SendBuffer.PcrSelectionIn.pcrSelections[0]) *
+                   PcrSelectionIn->count;
   SendBuffer.Header.paramSize = SwapBytes32 (SendBufferSize);
 
   //
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrRead - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrRead - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   if (SwapBytes32 (RecvBuffer.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrRead - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrRead - responseCode - %x\n",
+      SwapBytes32 (
+        RecvBuffer.Header.responseCode
+        )
+      ));
     return EFI_NOT_FOUND;
   }
 
@@ -392,8 +475,14 @@ Tpm2PcrRead (
   //
   // PcrUpdateCounter
   //
-  if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER) + sizeof (RecvBuffer.PcrUpdateCounter)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrRead - RecvBufferSize Error - %x\n", RecvBufferSize));
+  if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER) +
+      sizeof (RecvBuffer.PcrUpdateCounter))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrRead - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -402,42 +491,80 @@ Tpm2PcrRead (
   //
   // PcrSelectionOut
   //
-  if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER) + sizeof (RecvBuffer.PcrUpdateCounter) + sizeof (RecvBuffer.PcrSelectionOut.count)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrRead - RecvBufferSize Error - %x\n", RecvBufferSize));
+  if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER) +
+      sizeof (RecvBuffer.PcrUpdateCounter) +
+      sizeof (RecvBuffer.PcrSelectionOut.count))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrRead - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   PcrSelectionOut->count = SwapBytes32 (RecvBuffer.PcrSelectionOut.count);
   if (PcrSelectionOut->count > HASH_COUNT) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrRead - PcrSelectionOut->count error %x\n", PcrSelectionOut->count));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrRead - PcrSelectionOut->count error %x\n",
+      PcrSelectionOut->count
+      ));
     return EFI_DEVICE_ERROR;
   }
 
-  if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER) + sizeof (RecvBuffer.PcrUpdateCounter) + sizeof (RecvBuffer.PcrSelectionOut.count) + sizeof (RecvBuffer.PcrSelectionOut.pcrSelections[0]) * PcrSelectionOut->count) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrRead - RecvBufferSize Error - %x\n", RecvBufferSize));
+  if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER) +
+      sizeof (RecvBuffer.PcrUpdateCounter) +
+      sizeof (RecvBuffer.PcrSelectionOut.count) +
+      sizeof (RecvBuffer.PcrSelectionOut.pcrSelections[0]) *
+      PcrSelectionOut->count)
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrRead - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   for (Index = 0; Index < PcrSelectionOut->count; Index++) {
-    PcrSelectionOut->pcrSelections[Index].hash         = SwapBytes16 (RecvBuffer.PcrSelectionOut.pcrSelections[Index].hash);
-    PcrSelectionOut->pcrSelections[Index].sizeofSelect = RecvBuffer.PcrSelectionOut.pcrSelections[Index].sizeofSelect;
+    PcrSelectionOut->pcrSelections[Index].hash = SwapBytes16 (
+                                                   RecvBuffer.PcrSelectionOut.
+                                                     pcrSelections[Index].hash
+                                                   );
+    PcrSelectionOut->pcrSelections[Index].sizeofSelect =
+      RecvBuffer.PcrSelectionOut.pcrSelections[Index].sizeofSelect;
     if (PcrSelectionOut->pcrSelections[Index].sizeofSelect > PCR_SELECT_MAX) {
       return EFI_DEVICE_ERROR;
     }
 
-    CopyMem (&PcrSelectionOut->pcrSelections[Index].pcrSelect, &RecvBuffer.PcrSelectionOut.pcrSelections[Index].pcrSelect, PcrSelectionOut->pcrSelections[Index].sizeofSelect);
+    CopyMem (
+      &PcrSelectionOut->pcrSelections[Index].pcrSelect,
+      &RecvBuffer.PcrSelectionOut.pcrSelections[Index].pcrSelect,
+      PcrSelectionOut->pcrSelections[Index].sizeofSelect
+      );
   }
 
   //
   // PcrValues
   //
-  PcrValuesOut     = (TPML_DIGEST *)((UINT8 *)&RecvBuffer + sizeof (TPM2_RESPONSE_HEADER) + sizeof (RecvBuffer.PcrUpdateCounter) + sizeof (RecvBuffer.PcrSelectionOut.count) + sizeof (RecvBuffer.PcrSelectionOut.pcrSelections[0]) * PcrSelectionOut->count);
+  PcrValuesOut     = (TPML_DIGEST *)((UINT8 *)&RecvBuffer +
+                                     sizeof (TPM2_RESPONSE_HEADER) +
+                                     sizeof (RecvBuffer.PcrUpdateCounter) +
+                                     sizeof (RecvBuffer.PcrSelectionOut.count) +
+                                     sizeof (RecvBuffer.PcrSelectionOut.
+                                               pcrSelections[0]) *
+                                     PcrSelectionOut->count);
   PcrValues->count = SwapBytes32 (PcrValuesOut->count);
   //
   // The number of digests in list is not greater than 8 per TPML_DIGEST definition
   //
   if (PcrValues->count > 8) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrRead - PcrValues->count error %x\n", PcrValues->count));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrRead - PcrValues->count error %x\n",
+      PcrValues->count
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -445,12 +572,21 @@ Tpm2PcrRead (
   for (Index = 0; Index < PcrValues->count; Index++) {
     PcrValues->digests[Index].size = SwapBytes16 (Digests->size);
     if (PcrValues->digests[Index].size > sizeof (TPMU_HA)) {
-      DEBUG ((DEBUG_ERROR, "Tpm2PcrRead - Digest.size error %x\n", PcrValues->digests[Index].size));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Tpm2PcrRead - Digest.size error %x\n",
+        PcrValues->digests[Index].size
+        ));
       return EFI_DEVICE_ERROR;
     }
 
-    CopyMem (&PcrValues->digests[Index].buffer, &Digests->buffer, PcrValues->digests[Index].size);
-    Digests = (TPM2B_DIGEST *)((UINT8 *)Digests + sizeof (Digests->size) + PcrValues->digests[Index].size);
+    CopyMem (
+      &PcrValues->digests[Index].buffer,
+      &Digests->buffer,
+      PcrValues->digests[Index].size
+      );
+    Digests = (TPM2B_DIGEST *)((UINT8 *)Digests + sizeof (Digests->size) +
+                               PcrValues->digests[Index].size);
   }
 
   return EFI_SUCCESS;
@@ -515,11 +651,20 @@ Tpm2PcrAllocate (
   WriteUnaligned32 ((UINT32 *)Buffer, SwapBytes32 (PcrAllocation->count));
   Buffer += sizeof (UINT32);
   for (Index = 0; Index < PcrAllocation->count; Index++) {
-    WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (PcrAllocation->pcrSelections[Index].hash));
+    WriteUnaligned16 (
+      (UINT16 *)Buffer,
+      SwapBytes16 (
+        PcrAllocation->pcrSelections[Index].hash
+        )
+      );
     Buffer          += sizeof (UINT16);
     *(UINT8 *)Buffer = PcrAllocation->pcrSelections[Index].sizeofSelect;
     Buffer++;
-    CopyMem (Buffer, PcrAllocation->pcrSelections[Index].pcrSelect, PcrAllocation->pcrSelections[Index].sizeofSelect);
+    CopyMem (
+      Buffer,
+      PcrAllocation->pcrSelections[Index].pcrSelect,
+      PcrAllocation->pcrSelections[Index].sizeofSelect
+      );
     Buffer += PcrAllocation->pcrSelections[Index].sizeofSelect;
   }
 
@@ -543,7 +688,10 @@ Tpm2PcrAllocate (
   }
 
   if (ResultBufSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrAllocate: Failed ExecuteCommand: Buffer Too Small\r\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrAllocate: Failed ExecuteCommand: Buffer Too Small\r\n"
+      ));
     Status = EFI_BUFFER_TOO_SMALL;
     goto Done;
   }
@@ -553,7 +701,11 @@ Tpm2PcrAllocate (
   //
   RespSize = SwapBytes32 (Res.Header.paramSize);
   if (RespSize > sizeof (Res)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrAllocate: Response size too large! %d\r\n", RespSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrAllocate: Response size too large! %d\r\n",
+      RespSize
+      ));
     Status = EFI_BUFFER_TOO_SMALL;
     goto Done;
   }
@@ -562,7 +714,11 @@ Tpm2PcrAllocate (
   // Fail if command failed
   //
   if (SwapBytes32 (Res.Header.responseCode) != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2PcrAllocate: Response Code error! 0x%08x\r\n", SwapBytes32 (Res.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2PcrAllocate: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (Res.Header.responseCode)
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
@@ -617,7 +773,11 @@ Tpm2PcrAllocateBanks (
     ZeroMem (&LocalAuthSession, sizeof (LocalAuthSession));
     LocalAuthSession.sessionHandle = TPM_RS_PW;
     LocalAuthSession.hmac.size     = PlatformAuth->size;
-    CopyMem (LocalAuthSession.hmac.buffer, PlatformAuth->buffer, PlatformAuth->size);
+    CopyMem (
+      LocalAuthSession.hmac.buffer,
+      PlatformAuth->buffer,
+      PlatformAuth->size
+      );
   }
 
   //
@@ -625,8 +785,10 @@ Tpm2PcrAllocateBanks (
   //
   ZeroMem (&PcrAllocation, sizeof (PcrAllocation));
   if ((HASH_ALG_SHA1 & SupportedPCRBanks) != 0) {
-    PcrAllocation.pcrSelections[PcrAllocation.count].hash         = TPM_ALG_SHA1;
-    PcrAllocation.pcrSelections[PcrAllocation.count].sizeofSelect = PCR_SELECT_MAX;
+    PcrAllocation.pcrSelections[PcrAllocation.count].hash =
+      TPM_ALG_SHA1;
+    PcrAllocation.pcrSelections[PcrAllocation.count].sizeofSelect =
+      PCR_SELECT_MAX;
     if ((HASH_ALG_SHA1 & PCRBanks) != 0) {
       PcrAllocation.pcrSelections[PcrAllocation.count].pcrSelect[0] = 0xFF;
       PcrAllocation.pcrSelections[PcrAllocation.count].pcrSelect[1] = 0xFF;
@@ -641,8 +803,10 @@ Tpm2PcrAllocateBanks (
   }
 
   if ((HASH_ALG_SHA256 & SupportedPCRBanks) != 0) {
-    PcrAllocation.pcrSelections[PcrAllocation.count].hash         = TPM_ALG_SHA256;
-    PcrAllocation.pcrSelections[PcrAllocation.count].sizeofSelect = PCR_SELECT_MAX;
+    PcrAllocation.pcrSelections[PcrAllocation.count].hash =
+      TPM_ALG_SHA256;
+    PcrAllocation.pcrSelections[PcrAllocation.count].sizeofSelect =
+      PCR_SELECT_MAX;
     if ((HASH_ALG_SHA256 & PCRBanks) != 0) {
       PcrAllocation.pcrSelections[PcrAllocation.count].pcrSelect[0] = 0xFF;
       PcrAllocation.pcrSelections[PcrAllocation.count].pcrSelect[1] = 0xFF;
@@ -657,8 +821,10 @@ Tpm2PcrAllocateBanks (
   }
 
   if ((HASH_ALG_SHA384 & SupportedPCRBanks) != 0) {
-    PcrAllocation.pcrSelections[PcrAllocation.count].hash         = TPM_ALG_SHA384;
-    PcrAllocation.pcrSelections[PcrAllocation.count].sizeofSelect = PCR_SELECT_MAX;
+    PcrAllocation.pcrSelections[PcrAllocation.count].hash =
+      TPM_ALG_SHA384;
+    PcrAllocation.pcrSelections[PcrAllocation.count].sizeofSelect =
+      PCR_SELECT_MAX;
     if ((HASH_ALG_SHA384 & PCRBanks) != 0) {
       PcrAllocation.pcrSelections[PcrAllocation.count].pcrSelect[0] = 0xFF;
       PcrAllocation.pcrSelections[PcrAllocation.count].pcrSelect[1] = 0xFF;
@@ -673,8 +839,10 @@ Tpm2PcrAllocateBanks (
   }
 
   if ((HASH_ALG_SHA512 & SupportedPCRBanks) != 0) {
-    PcrAllocation.pcrSelections[PcrAllocation.count].hash         = TPM_ALG_SHA512;
-    PcrAllocation.pcrSelections[PcrAllocation.count].sizeofSelect = PCR_SELECT_MAX;
+    PcrAllocation.pcrSelections[PcrAllocation.count].hash =
+      TPM_ALG_SHA512;
+    PcrAllocation.pcrSelections[PcrAllocation.count].sizeofSelect =
+      PCR_SELECT_MAX;
     if ((HASH_ALG_SHA512 & PCRBanks) != 0) {
       PcrAllocation.pcrSelections[PcrAllocation.count].pcrSelect[0] = 0xFF;
       PcrAllocation.pcrSelections[PcrAllocation.count].pcrSelect[1] = 0xFF;
@@ -689,8 +857,10 @@ Tpm2PcrAllocateBanks (
   }
 
   if ((HASH_ALG_SM3_256 & SupportedPCRBanks) != 0) {
-    PcrAllocation.pcrSelections[PcrAllocation.count].hash         = TPM_ALG_SM3_256;
-    PcrAllocation.pcrSelections[PcrAllocation.count].sizeofSelect = PCR_SELECT_MAX;
+    PcrAllocation.pcrSelections[PcrAllocation.count].hash =
+      TPM_ALG_SM3_256;
+    PcrAllocation.pcrSelections[PcrAllocation.count].sizeofSelect =
+      PCR_SELECT_MAX;
     if ((HASH_ALG_SM3_256 & PCRBanks) != 0) {
       PcrAllocation.pcrSelections[PcrAllocation.count].pcrSelect[0] = 0xFF;
       PcrAllocation.pcrSelections[PcrAllocation.count].pcrSelect[1] = 0xFF;
@@ -713,7 +883,11 @@ Tpm2PcrAllocateBanks (
              &SizeNeeded,
              &SizeAvailable
              );
-  DEBUG ((DEBUG_INFO, "Tpm2PcrAllocateBanks call Tpm2PcrAllocate - %r\n", Status));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tpm2PcrAllocateBanks call Tpm2PcrAllocate - %r\n",
+    Status
+    ));
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -794,7 +968,10 @@ Tpm2PcrReadForActiveBank (
              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "ReadPcr: Unable to read TPM capabilities and active PCRs\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ReadPcr: Unable to read TPM capabilities and active PCRs\n"
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -838,18 +1015,27 @@ Tpm2PcrReadForActiveBank (
     // Skip unsupported and inactive PCR banks
     //
     if ((TcgRegistryHashAlg & ActivePcrBanks) == 0) {
-      DEBUG ((DEBUG_VERBOSE, "Skipping unsupported or inactive bank: 0x%04x\n", CurrentPcrBankHash));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "Skipping unsupported or inactive bank: 0x%04x\n",
+        CurrentPcrBankHash
+        ));
       continue;
     }
 
     //
     // Select PCR from current active bank
     //
-    PcrSelectionIn.pcrSelections[PcrSelectionIn.count].hash         = Pcrs.pcrSelections[Index].hash;
-    PcrSelectionIn.pcrSelections[PcrSelectionIn.count].sizeofSelect = PCR_SELECT_MAX;
-    PcrSelectionIn.pcrSelections[PcrSelectionIn.count].pcrSelect[0] = (PcrIndex < 8) ? 1 << PcrIndex : 0;
-    PcrSelectionIn.pcrSelections[PcrSelectionIn.count].pcrSelect[1] = (PcrIndex > 7) && (PcrIndex < 16) ? 1 << (PcrIndex - 8) : 0;
-    PcrSelectionIn.pcrSelections[PcrSelectionIn.count].pcrSelect[2] = (PcrIndex > 15) ? 1 << (PcrIndex - 16) : 0;
+    PcrSelectionIn.pcrSelections[PcrSelectionIn.count].hash =
+      Pcrs.pcrSelections[Index].hash;
+    PcrSelectionIn.pcrSelections[PcrSelectionIn.count].sizeofSelect =
+      PCR_SELECT_MAX;
+    PcrSelectionIn.pcrSelections[PcrSelectionIn.count].pcrSelect[0] =
+      (PcrIndex < 8) ? 1 << PcrIndex : 0;
+    PcrSelectionIn.pcrSelections[PcrSelectionIn.count].pcrSelect[1] =
+      (PcrIndex > 7) && (PcrIndex < 16) ? 1 << (PcrIndex - 8) : 0;
+    PcrSelectionIn.pcrSelections[PcrSelectionIn.count].pcrSelect[2] =
+      (PcrIndex > 15) ? 1 << (PcrIndex - 16) : 0;
     PcrSelectionIn.count++;
   }
 

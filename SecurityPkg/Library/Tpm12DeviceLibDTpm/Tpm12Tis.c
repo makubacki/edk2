@@ -73,20 +73,30 @@ Tpm12GetPtpInterface (
   //
   // Check interface id
   //
-  InterfaceId.Uint32         = MmioRead32 ((UINTN)&((PTP_CRB_REGISTERS *)Register)->InterfaceId);
-  InterfaceCapability.Uint32 = MmioRead32 ((UINTN)&((PTP_FIFO_REGISTERS *)Register)->InterfaceCapability);
+  InterfaceId.Uint32 = MmioRead32 (
+                         (UINTN)&((PTP_CRB_REGISTERS *)Register)->InterfaceId
+                         );
+  InterfaceCapability.Uint32 = MmioRead32 (
+                                 (UINTN)&((PTP_FIFO_REGISTERS *)Register)->
+                                   InterfaceCapability
+                                 );
 
-  if ((InterfaceId.Bits.InterfaceType == PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_CRB) &&
-      (InterfaceId.Bits.InterfaceVersion == PTP_INTERFACE_IDENTIFIER_INTERFACE_VERSION_CRB) &&
+  if ((InterfaceId.Bits.InterfaceType ==
+       PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_CRB) &&
+      (InterfaceId.Bits.InterfaceVersion ==
+       PTP_INTERFACE_IDENTIFIER_INTERFACE_VERSION_CRB) &&
       (InterfaceId.Bits.CapCRB != 0))
   {
     return PtpInterfaceCrb;
   }
 
-  if ((InterfaceId.Bits.InterfaceType == PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_FIFO) &&
-      (InterfaceId.Bits.InterfaceVersion == PTP_INTERFACE_IDENTIFIER_INTERFACE_VERSION_FIFO) &&
+  if ((InterfaceId.Bits.InterfaceType ==
+       PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_FIFO) &&
+      (InterfaceId.Bits.InterfaceVersion ==
+       PTP_INTERFACE_IDENTIFIER_INTERFACE_VERSION_FIFO) &&
       (InterfaceId.Bits.CapFIFO != 0) &&
-      (InterfaceCapability.Bits.InterfaceVersion == INTERFACE_CAPABILITY_INTERFACE_VERSION_PTP))
+      (InterfaceCapability.Bits.InterfaceVersion ==
+       INTERFACE_CAPABILITY_INTERFACE_VERSION_PTP))
   {
     return PtpInterfaceFifo;
   }
@@ -385,8 +395,15 @@ Tpm12TisTpmCommand (
   //
   CopyMem (&Data16, BufferOut, sizeof (UINT16));
   RspTag = SwapBytes16 (Data16);
-  if ((RspTag != TPM_TAG_RSP_COMMAND) && (RspTag != TPM_TAG_RSP_AUTH1_COMMAND) && (RspTag != TPM_TAG_RSP_AUTH2_COMMAND)) {
-    DEBUG ((DEBUG_ERROR, "TPM12: Response tag error - current tag value is %x\n", RspTag));
+  if ((RspTag != TPM_TAG_RSP_COMMAND) && (RspTag !=
+                                          TPM_TAG_RSP_AUTH1_COMMAND) &&
+      (RspTag != TPM_TAG_RSP_AUTH2_COMMAND))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "TPM12: Response tag error - current tag value is %x\n",
+      RspTag
+      ));
     Status = EFI_UNSUPPORTED;
     goto Exit;
   }
@@ -458,7 +475,11 @@ Tpm12SubmitCommand (
   //
   // Special handle for TPM1.2 to check PTP too, because PTP/TIS share same register address.
   //
-  PtpInterface = Tpm12GetPtpInterface ((VOID *)(UINTN)PcdGet64 (PcdTpmBaseAddress));
+  PtpInterface = Tpm12GetPtpInterface (
+                   (VOID *)(UINTN)PcdGet64 (
+                                    PcdTpmBaseAddress
+                                    )
+                   );
   switch (PtpInterface) {
     case PtpInterfaceFifo:
     case PtpInterfaceTis:
@@ -529,7 +550,10 @@ Tpm12PtpCrbRequestUseTpm (
 {
   EFI_STATUS  Status;
 
-  MmioWrite32 ((UINTN)&CrbReg->LocalityControl, PTP_CRB_LOCALITY_CONTROL_REQUEST_ACCESS);
+  MmioWrite32 (
+    (UINTN)&CrbReg->LocalityControl,
+    PTP_CRB_LOCALITY_CONTROL_REQUEST_ACCESS
+    );
   Status = Tpm12PtpCrbWaitRegisterBits (
              &CrbReg->LocalityStatus,
              PTP_CRB_LOCALITY_STATUS_GRANTED,
@@ -558,13 +582,25 @@ Tpm12RequestUseTpm (
   // Special handle for TPM1.2 to check PTP too, because PTP/TIS share same register address.
   // Some other program might leverage this function to check the existence of TPM chip.
   //
-  PtpInterface = Tpm12GetPtpInterface ((VOID *)(UINTN)PcdGet64 (PcdTpmBaseAddress));
+  PtpInterface = Tpm12GetPtpInterface (
+                   (VOID *)(UINTN)PcdGet64 (
+                                    PcdTpmBaseAddress
+                                    )
+                   );
   switch (PtpInterface) {
     case PtpInterfaceCrb:
-      return Tpm12PtpCrbRequestUseTpm ((PTP_CRB_REGISTERS_PTR)(UINTN)PcdGet64 (PcdTpmBaseAddress));
+      return Tpm12PtpCrbRequestUseTpm (
+               (PTP_CRB_REGISTERS_PTR)(UINTN)PcdGet64 (
+                                               PcdTpmBaseAddress
+                                               )
+               );
     case PtpInterfaceFifo:
     case PtpInterfaceTis:
-      return Tpm12TisPcRequestUseTpm ((TIS_PC_REGISTERS_PTR)(UINTN)PcdGet64 (PcdTpmBaseAddress));
+      return Tpm12TisPcRequestUseTpm (
+               (TIS_PC_REGISTERS_PTR)(UINTN)PcdGet64 (
+                                              PcdTpmBaseAddress
+                                              )
+               );
     default:
       return EFI_NOT_FOUND;
   }

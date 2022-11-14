@@ -92,7 +92,12 @@ GetTpmCapability (
   //
   SendBufPtr = (UINT32 *)(TpmRqu + 1);
   WriteUnaligned32 (SendBufPtr++, SwapBytes32 (TPM_CAP_FLAG));
-  WriteUnaligned32 (SendBufPtr++, SwapBytes32 (sizeof (TPM_CAP_FLAG_PERMANENT)));
+  WriteUnaligned32 (
+    SendBufPtr++,
+    SwapBytes32 (
+      sizeof (TPM_CAP_FLAG_PERMANENT)
+      )
+    );
   WriteUnaligned32 (SendBufPtr, SwapBytes32 (TPM_CAP_FLAG_PERMANENT));
 
   Status = TcgProtocol->PassThroughToTpm (
@@ -106,11 +111,15 @@ GetTpmCapability (
     return Status;
   }
 
-  if ((TpmRsp->tag != SwapBytes16 (TPM_TAG_RSP_COMMAND)) || (TpmRsp->returnCode != 0)) {
+  if ((TpmRsp->tag != SwapBytes16 (TPM_TAG_RSP_COMMAND)) ||
+      (TpmRsp->returnCode != 0))
+  {
     return EFI_DEVICE_ERROR;
   }
 
-  TpmPermanentFlags = (TPM_PERMANENT_FLAGS *)&RecvBuffer[sizeof (TPM_RSP_COMMAND_HDR) + sizeof (UINT32)];
+  TpmPermanentFlags =
+    (TPM_PERMANENT_FLAGS *)&RecvBuffer[sizeof (TPM_RSP_COMMAND_HDR) +
+                                       sizeof (UINT32)];
 
   if (LifetimeLock != NULL) {
     *LifetimeLock = TpmPermanentFlags->physicalPresenceLifetimeLock;
@@ -152,7 +161,12 @@ TpmPhysicalPresence (
   TpmRqu->tag       = SwapBytes16 (TPM_TAG_RQU_COMMAND);
   TpmRqu->paramSize = SwapBytes32 (sizeof (Buffer));
   TpmRqu->ordinal   = SwapBytes32 (TSC_ORD_PhysicalPresence);
-  WriteUnaligned16 (TpmPp, (TPM_PHYSICAL_PRESENCE)SwapBytes16 (PhysicalPresence));
+  WriteUnaligned16 (
+    TpmPp,
+    (TPM_PHYSICAL_PRESENCE)SwapBytes16 (
+                             PhysicalPresence
+                             )
+    );
 
   Status = TcgProtocol->PassThroughToTpm (
                           TcgProtocol,
@@ -205,7 +219,10 @@ TpmCommandNoReturnData (
   TPM_RSP_COMMAND_HDR  TpmRsp;
   UINT32               Size;
 
-  TpmRqu = (TPM_RQU_COMMAND_HDR *)AllocatePool (sizeof (*TpmRqu) + AdditionalParameterSize);
+  TpmRqu = (TPM_RQU_COMMAND_HDR *)AllocatePool (
+                                    sizeof (*TpmRqu) +
+                                    AdditionalParameterSize
+                                    );
   if (TpmRqu == NULL) {
     return TCG_PP_OPERATION_RESPONSE_BIOS_FAILURE;
   }
@@ -299,17 +316,33 @@ ExecutePhysicalPresence (
                );
 
     case PHYSICAL_PRESENCE_ENABLE_ACTIVATE:
-      TpmResponse = ExecutePhysicalPresence (TcgProtocol, PHYSICAL_PRESENCE_ENABLE, PpiFlags);
+      TpmResponse = ExecutePhysicalPresence (
+                      TcgProtocol,
+                      PHYSICAL_PRESENCE_ENABLE,
+                      PpiFlags
+                      );
       if (TpmResponse == 0) {
-        TpmResponse = ExecutePhysicalPresence (TcgProtocol, PHYSICAL_PRESENCE_ACTIVATE, PpiFlags);
+        TpmResponse = ExecutePhysicalPresence (
+                        TcgProtocol,
+                        PHYSICAL_PRESENCE_ACTIVATE,
+                        PpiFlags
+                        );
       }
 
       return TpmResponse;
 
     case PHYSICAL_PRESENCE_DEACTIVATE_DISABLE:
-      TpmResponse = ExecutePhysicalPresence (TcgProtocol, PHYSICAL_PRESENCE_DEACTIVATE, PpiFlags);
+      TpmResponse = ExecutePhysicalPresence (
+                      TcgProtocol,
+                      PHYSICAL_PRESENCE_DEACTIVATE,
+                      PpiFlags
+                      );
       if (TpmResponse == 0) {
-        TpmResponse = ExecutePhysicalPresence (TcgProtocol, PHYSICAL_PRESENCE_DISABLE, PpiFlags);
+        TpmResponse = ExecutePhysicalPresence (
+                        TcgProtocol,
+                        PHYSICAL_PRESENCE_DISABLE,
+                        PpiFlags
+                        );
       }
 
       return TpmResponse;
@@ -338,19 +371,35 @@ ExecutePhysicalPresence (
       // PHYSICAL_PRESENCE_SET_OWNER_INSTALL_TRUE will be executed after reboot
       //
       if ((PpiFlags->PPFlags & TCG_VENDOR_LIB_FLAG_RESET_TRACK) == 0) {
-        TpmResponse        = ExecutePhysicalPresence (TcgProtocol, PHYSICAL_PRESENCE_ENABLE_ACTIVATE, PpiFlags);
+        TpmResponse = ExecutePhysicalPresence (
+                        TcgProtocol,
+                        PHYSICAL_PRESENCE_ENABLE_ACTIVATE,
+                        PpiFlags
+                        );
         PpiFlags->PPFlags |= TCG_VENDOR_LIB_FLAG_RESET_TRACK;
       } else {
-        TpmResponse        = ExecutePhysicalPresence (TcgProtocol, PHYSICAL_PRESENCE_SET_OWNER_INSTALL_TRUE, PpiFlags);
+        TpmResponse = ExecutePhysicalPresence (
+                        TcgProtocol,
+                        PHYSICAL_PRESENCE_SET_OWNER_INSTALL_TRUE,
+                        PpiFlags
+                        );
         PpiFlags->PPFlags &= ~TCG_VENDOR_LIB_FLAG_RESET_TRACK;
       }
 
       return TpmResponse;
 
     case PHYSICAL_PRESENCE_DEACTIVATE_DISABLE_OWNER_FALSE:
-      TpmResponse = ExecutePhysicalPresence (TcgProtocol, PHYSICAL_PRESENCE_SET_OWNER_INSTALL_FALSE, PpiFlags);
+      TpmResponse = ExecutePhysicalPresence (
+                      TcgProtocol,
+                      PHYSICAL_PRESENCE_SET_OWNER_INSTALL_FALSE,
+                      PpiFlags
+                      );
       if (TpmResponse == 0) {
-        TpmResponse = ExecutePhysicalPresence (TcgProtocol, PHYSICAL_PRESENCE_DEACTIVATE_DISABLE, PpiFlags);
+        TpmResponse = ExecutePhysicalPresence (
+                        TcgProtocol,
+                        PHYSICAL_PRESENCE_DEACTIVATE_DISABLE,
+                        PpiFlags
+                        );
       }
 
       return TpmResponse;
@@ -377,9 +426,17 @@ ExecutePhysicalPresence (
       return TCG_PP_OPERATION_RESPONSE_BIOS_FAILURE;
 
     case PHYSICAL_PRESENCE_CLEAR_ENABLE_ACTIVATE:
-      TpmResponse = ExecutePhysicalPresence (TcgProtocol, PHYSICAL_PRESENCE_CLEAR, PpiFlags);
+      TpmResponse = ExecutePhysicalPresence (
+                      TcgProtocol,
+                      PHYSICAL_PRESENCE_CLEAR,
+                      PpiFlags
+                      );
       if (TpmResponse == 0) {
-        TpmResponse = ExecutePhysicalPresence (TcgProtocol, PHYSICAL_PRESENCE_ENABLE_ACTIVATE, PpiFlags);
+        TpmResponse = ExecutePhysicalPresence (
+                        TcgProtocol,
+                        PHYSICAL_PRESENCE_ENABLE_ACTIVATE,
+                        PpiFlags
+                        );
       }
 
       return TpmResponse;
@@ -414,10 +471,18 @@ ExecutePhysicalPresence (
       // PHYSICAL_PRESENCE_CLEAR will be executed after reboot.
       //
       if ((PpiFlags->PPFlags & TCG_VENDOR_LIB_FLAG_RESET_TRACK) == 0) {
-        TpmResponse        = ExecutePhysicalPresence (TcgProtocol, PHYSICAL_PRESENCE_ENABLE_ACTIVATE, PpiFlags);
+        TpmResponse = ExecutePhysicalPresence (
+                        TcgProtocol,
+                        PHYSICAL_PRESENCE_ENABLE_ACTIVATE,
+                        PpiFlags
+                        );
         PpiFlags->PPFlags |= TCG_VENDOR_LIB_FLAG_RESET_TRACK;
       } else {
-        TpmResponse        = ExecutePhysicalPresence (TcgProtocol, PHYSICAL_PRESENCE_CLEAR, PpiFlags);
+        TpmResponse = ExecutePhysicalPresence (
+                        TcgProtocol,
+                        PHYSICAL_PRESENCE_CLEAR,
+                        PpiFlags
+                        );
         PpiFlags->PPFlags &= ~TCG_VENDOR_LIB_FLAG_RESET_TRACK;
       }
 
@@ -429,10 +494,18 @@ ExecutePhysicalPresence (
       // PHYSICAL_PRESENCE_CLEAR_ENABLE_ACTIVATE will be executed after reboot.
       //
       if ((PpiFlags->PPFlags & TCG_VENDOR_LIB_FLAG_RESET_TRACK) == 0) {
-        TpmResponse        = ExecutePhysicalPresence (TcgProtocol, PHYSICAL_PRESENCE_ENABLE_ACTIVATE, PpiFlags);
+        TpmResponse = ExecutePhysicalPresence (
+                        TcgProtocol,
+                        PHYSICAL_PRESENCE_ENABLE_ACTIVATE,
+                        PpiFlags
+                        );
         PpiFlags->PPFlags |= TCG_VENDOR_LIB_FLAG_RESET_TRACK;
       } else {
-        TpmResponse        = ExecutePhysicalPresence (TcgProtocol, PHYSICAL_PRESENCE_CLEAR_ENABLE_ACTIVATE, PpiFlags);
+        TpmResponse = ExecutePhysicalPresence (
+                        TcgProtocol,
+                        PHYSICAL_PRESENCE_CLEAR_ENABLE_ACTIVATE,
+                        PpiFlags
+                        );
         PpiFlags->PPFlags &= ~TCG_VENDOR_LIB_FLAG_RESET_TRACK;
       }
 
@@ -516,7 +589,12 @@ TcgPhysicalPresenceLibConstructor (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  mPpStringPackHandle = HiiAddPackages (&gEfiPhysicalPresenceGuid, ImageHandle, DxeTcgPhysicalPresenceLibStrings, NULL);
+  mPpStringPackHandle = HiiAddPackages (
+                          &gEfiPhysicalPresenceGuid,
+                          ImageHandle,
+                          DxeTcgPhysicalPresenceLibStrings,
+                          NULL
+                          );
   ASSERT (mPpStringPackHandle != NULL);
 
   return EFI_SUCCESS;
@@ -558,7 +636,13 @@ UserConfirm (
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ACCEPT_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
@@ -570,11 +654,23 @@ UserConfirm (
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ACCEPT_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
@@ -586,7 +682,13 @@ UserConfirm (
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ACCEPT_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
@@ -598,11 +700,23 @@ UserConfirm (
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ACCEPT_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
@@ -614,73 +728,153 @@ UserConfirm (
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
-      TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_CLEAR));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), L" \n\n", (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_CLEAR
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        L" \n\n",
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_CAUTION_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
     case PHYSICAL_PRESENCE_ENABLE_ACTIVATE:
-      TmpStr2 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ENABLE_ACTIVATE));
+      TmpStr2 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_ENABLE_ACTIVATE
+                    )
+                  );
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_HEAD_STR));
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_NOTE_ON));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ACCEPT_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
     case PHYSICAL_PRESENCE_DEACTIVATE_DISABLE:
-      TmpStr2 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_DEACTIVATE_DISABLE));
+      TmpStr2 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_DEACTIVATE_DISABLE
+                    )
+                  );
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_HEAD_STR));
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_NOTE_OFF));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ACCEPT_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
     case PHYSICAL_PRESENCE_SET_OWNER_INSTALL_TRUE:
-      TmpStr2 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ALLOW_TAKE_OWNERSHIP));
+      TmpStr2 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_ALLOW_TAKE_OWNERSHIP
+                    )
+                  );
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_HEAD_STR));
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ACCEPT_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
     case PHYSICAL_PRESENCE_SET_OWNER_INSTALL_FALSE:
-      TmpStr2 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_DISALLOW_TAKE_OWNERSHIP));
+      TmpStr2 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_DISALLOW_TAKE_OWNERSHIP
+                    )
+                  );
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_HEAD_STR));
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ACCEPT_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
@@ -692,11 +886,23 @@ UserConfirm (
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_NOTE_ON));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ACCEPT_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
@@ -708,32 +914,74 @@ UserConfirm (
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_NOTE_OFF));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ACCEPT_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
     case PHYSICAL_PRESENCE_DEFERRED_PP_UNOWNERED_FIELD_UPGRADE:
       CautionKey = TRUE;
-      TmpStr2    = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_UNOWNED_FIELD_UPGRADE));
+      TmpStr2    = PhysicalPresenceGetStringById (
+                     STRING_TOKEN (
+                       TPM_UNOWNED_FIELD_UPGRADE
+                       )
+                     );
 
-      TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_UPGRADE_HEAD_STR));
+      TmpStr1 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_UPGRADE_HEAD_STR
+                    )
+                  );
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
-      TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_MAINTAIN));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_MAINTAIN
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_CAUTION_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
@@ -747,42 +995,94 @@ UserConfirm (
 
     case PHYSICAL_PRESENCE_CLEAR_ENABLE_ACTIVATE:
       CautionKey = TRUE;
-      TmpStr2    = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_CLEAR_TURN_ON));
+      TmpStr2    = PhysicalPresenceGetStringById (
+                     STRING_TOKEN (
+                       TPM_CLEAR_TURN_ON
+                       )
+                     );
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_HEAD_STR));
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_NOTE_ON));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
-      TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_CLEAR));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_CLEAR
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
-      TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_CLEAR_CONT));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_CLEAR_CONT
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_CAUTION_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
     case PHYSICAL_PRESENCE_SET_NO_PPI_PROVISION_TRUE:
-      TmpStr2 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_NO_PPI_PROVISION));
+      TmpStr2 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_NO_PPI_PROVISION
+                    )
+                  );
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_PPI_HEAD_STR));
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ACCEPT_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_NO_PPI_INFO));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
@@ -795,84 +1095,206 @@ UserConfirm (
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_NOTE_CLEAR));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
-      TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_CLEAR));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), L" \n\n", (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_CLEAR
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        L" \n\n",
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_CAUTION_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_NO_PPI_INFO));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
     case PHYSICAL_PRESENCE_SET_NO_PPI_MAINTENANCE_TRUE:
       CautionKey = TRUE;
-      TmpStr2    = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_NO_PPI_MAINTAIN));
+      TmpStr2    = PhysicalPresenceGetStringById (
+                     STRING_TOKEN (
+                       TPM_NO_PPI_MAINTAIN
+                       )
+                     );
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_PPI_HEAD_STR));
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
-      TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_MAINTAIN));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_MAINTAIN
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_CAUTION_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_NO_PPI_INFO));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
     case PHYSICAL_PRESENCE_ENABLE_ACTIVATE_CLEAR:
       CautionKey = TRUE;
-      TmpStr2    = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ENABLE_ACTIVATE_CLEAR));
+      TmpStr2    = PhysicalPresenceGetStringById (
+                     STRING_TOKEN (
+                       TPM_ENABLE_ACTIVATE_CLEAR
+                       )
+                     );
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_HEAD_STR));
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
-      TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_CLEAR));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), L" \n\n", (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_CLEAR
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        L" \n\n",
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_CAUTION_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
     case PHYSICAL_PRESENCE_ENABLE_ACTIVATE_CLEAR_ENABLE_ACTIVATE:
       CautionKey = TRUE;
-      TmpStr2    = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ENABLE_ACTIVATE_CLEAR_ENABLE_ACTIVATE));
+      TmpStr2    = PhysicalPresenceGetStringById (
+                     STRING_TOKEN (
+                       TPM_ENABLE_ACTIVATE_CLEAR_ENABLE_ACTIVATE
+                       )
+                     );
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_HEAD_STR));
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_NOTE_ON));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
-      TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_CLEAR));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_CLEAR
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
-      TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_CLEAR_CONT));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_CLEAR_CONT
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       TmpStr1 = PhysicalPresenceGetStringById (STRING_TOKEN (TPM_CAUTION_KEY));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
       break;
 
@@ -891,7 +1313,12 @@ UserConfirm (
 
   DstStr[80] = L'\0';
   for (Index = 0; Index < StrLen (ConfirmText); Index += 80) {
-    StrnCpyS (DstStr, sizeof (DstStr) / sizeof (CHAR16), ConfirmText + Index, sizeof (DstStr) / sizeof (CHAR16) - 1);
+    StrnCpyS (
+      DstStr,
+      sizeof (DstStr) / sizeof (CHAR16),
+      ConfirmText + Index,
+      sizeof (DstStr) / sizeof (CHAR16) - 1
+      );
     Print (DstStr);
   }
 
@@ -947,7 +1374,9 @@ HaveValidTpmRequest  (
     case PHYSICAL_PRESENCE_ENABLE_ACTIVATE_OWNER_TRUE:
     case PHYSICAL_PRESENCE_DEACTIVATE_DISABLE_OWNER_FALSE:
     case PHYSICAL_PRESENCE_SET_OPERATOR_AUTH:
-      if ((Flags.PPFlags & TCG_BIOS_TPM_MANAGEMENT_FLAG_NO_PPI_PROVISION) != 0) {
+      if ((Flags.PPFlags & TCG_BIOS_TPM_MANAGEMENT_FLAG_NO_PPI_PROVISION) !=
+          0)
+      {
         *RequestConfirmed = TRUE;
       }
 
@@ -962,7 +1391,9 @@ HaveValidTpmRequest  (
       break;
 
     case PHYSICAL_PRESENCE_DEFERRED_PP_UNOWNERED_FIELD_UPGRADE:
-      if ((Flags.PPFlags & TCG_BIOS_TPM_MANAGEMENT_FLAG_NO_PPI_MAINTENANCE) != 0) {
+      if ((Flags.PPFlags & TCG_BIOS_TPM_MANAGEMENT_FLAG_NO_PPI_MAINTENANCE) !=
+          0)
+      {
         *RequestConfirmed = TRUE;
       }
 
@@ -970,7 +1401,10 @@ HaveValidTpmRequest  (
 
     case PHYSICAL_PRESENCE_CLEAR_ENABLE_ACTIVATE:
     case PHYSICAL_PRESENCE_ENABLE_ACTIVATE_CLEAR_ENABLE_ACTIVATE:
-      if (((Flags.PPFlags & TCG_BIOS_TPM_MANAGEMENT_FLAG_NO_PPI_CLEAR) != 0) && ((Flags.PPFlags & TCG_BIOS_TPM_MANAGEMENT_FLAG_NO_PPI_PROVISION) != 0)) {
+      if (((Flags.PPFlags & TCG_BIOS_TPM_MANAGEMENT_FLAG_NO_PPI_CLEAR) != 0) &&
+          ((Flags.PPFlags & TCG_BIOS_TPM_MANAGEMENT_FLAG_NO_PPI_PROVISION) !=
+           0))
+      {
         *RequestConfirmed = TRUE;
       }
 
@@ -988,8 +1422,14 @@ HaveValidTpmRequest  (
       break;
 
     default:
-      if (TcgPpData->PPRequest >= TCG_PHYSICAL_PRESENCE_VENDOR_SPECIFIC_OPERATION) {
-        IsRequestValid = TcgPpVendorLibHasValidRequest (TcgPpData->PPRequest, Flags.PPFlags, RequestConfirmed);
+      if (TcgPpData->PPRequest >=
+          TCG_PHYSICAL_PRESENCE_VENDOR_SPECIFIC_OPERATION)
+      {
+        IsRequestValid = TcgPpVendorLibHasValidRequest (
+                           TcgPpData->PPRequest,
+                           Flags.PPFlags,
+                           RequestConfirmed
+                           );
         if (!IsRequestValid) {
           return FALSE;
         } else {
@@ -1053,7 +1493,9 @@ ExecutePendingTpmRequest (
     Status                   = gRT->SetVariable (
                                       PHYSICAL_PRESENCE_VARIABLE,
                                       &gEfiPhysicalPresenceGuid,
-                                      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                                      EFI_VARIABLE_NON_VOLATILE |
+                                      EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                                      EFI_VARIABLE_RUNTIME_ACCESS,
                                       DataSize,
                                       TcgPpData
                                       );
@@ -1064,8 +1506,12 @@ ExecutePendingTpmRequest (
   if (TcgPpData->PPRequest >= TCG_PHYSICAL_PRESENCE_VENDOR_SPECIFIC_OPERATION) {
     NewFlags              = Flags;
     NewPPFlags            = NewFlags.PPFlags;
-    TcgPpData->PPResponse = TcgPpVendorLibExecutePendingRequest (TcgPpData->PPRequest, &NewPPFlags, &ResetRequired);
-    NewFlags.PPFlags      = (UINT8)NewPPFlags;
+    TcgPpData->PPResponse = TcgPpVendorLibExecutePendingRequest (
+                              TcgPpData->PPRequest,
+                              &NewPPFlags,
+                              &ResetRequired
+                              );
+    NewFlags.PPFlags = (UINT8)NewPPFlags;
   } else {
     if (!RequestConfirmed) {
       //
@@ -1080,18 +1526,26 @@ ExecutePendingTpmRequest (
     TcgPpData->PPResponse = TCG_PP_OPERATION_RESPONSE_USER_ABORT;
     NewFlags              = Flags;
     if (RequestConfirmed) {
-      TcgPpData->PPResponse = ExecutePhysicalPresence (TcgProtocol, TcgPpData->PPRequest, &NewFlags);
+      TcgPpData->PPResponse = ExecutePhysicalPresence (
+                                TcgProtocol,
+                                TcgPpData->PPRequest,
+                                &NewFlags
+                                );
     }
   }
 
   //
   // Save the flags if it is updated.
   //
-  if (CompareMem (&Flags, &NewFlags, sizeof (EFI_PHYSICAL_PRESENCE_FLAGS)) != 0) {
+  if (CompareMem (&Flags, &NewFlags, sizeof (EFI_PHYSICAL_PRESENCE_FLAGS)) !=
+      0)
+  {
     Status = gRT->SetVariable (
                     PHYSICAL_PRESENCE_FLAGS_VARIABLE,
                     &gEfiPhysicalPresenceGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                    EFI_VARIABLE_NON_VOLATILE |
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS,
                     sizeof (EFI_PHYSICAL_PRESENCE_FLAGS),
                     &NewFlags
                     );
@@ -1115,7 +1569,9 @@ ExecutePendingTpmRequest (
   Status   = gRT->SetVariable (
                     PHYSICAL_PRESENCE_VARIABLE,
                     &gEfiPhysicalPresenceGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                    EFI_VARIABLE_NON_VOLATILE |
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS,
                     DataSize,
                     TcgPpData
                     );
@@ -1144,7 +1600,9 @@ ExecutePendingTpmRequest (
     case PHYSICAL_PRESENCE_ENABLE_ACTIVATE_CLEAR_ENABLE_ACTIVATE:
       break;
     default:
-      if (TcgPpData->LastPPRequest >= TCG_PHYSICAL_PRESENCE_VENDOR_SPECIFIC_OPERATION) {
+      if (TcgPpData->LastPPRequest >=
+          TCG_PHYSICAL_PRESENCE_VENDOR_SPECIFIC_OPERATION)
+      {
         if (ResetRequired) {
           break;
         } else {
@@ -1192,7 +1650,11 @@ TcgPhysicalPresenceLibProcessRequest (
   EDKII_VARIABLE_LOCK_PROTOCOL  *VariableLockProtocol;
   EFI_PHYSICAL_PRESENCE_FLAGS   PpiFlags;
 
-  Status = gBS->LocateProtocol (&gEfiTcgProtocolGuid, NULL, (VOID **)&TcgProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiTcgProtocolGuid,
+                  NULL,
+                  (VOID **)&TcgProtocol
+                  );
   if (EFI_ERROR (Status)) {
     return;
   }
@@ -1213,12 +1675,18 @@ TcgPhysicalPresenceLibProcessRequest (
     Status           = gRT->SetVariable (
                               PHYSICAL_PRESENCE_FLAGS_VARIABLE,
                               &gEfiPhysicalPresenceGuid,
-                              EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                              EFI_VARIABLE_NON_VOLATILE |
+                              EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                              EFI_VARIABLE_RUNTIME_ACCESS,
                               sizeof (EFI_PHYSICAL_PRESENCE_FLAGS),
                               &PpiFlags
                               );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "[TPM] Set physical presence flag failed, Status = %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "[TPM] Set physical presence flag failed, Status = %r\n",
+        Status
+        ));
       return;
     }
   }
@@ -1229,7 +1697,11 @@ TcgPhysicalPresenceLibProcessRequest (
   // This flags variable controls whether physical presence is required for TPM command.
   // It should be protected from malicious software. We set it as read-only variable here.
   //
-  Status = gBS->LocateProtocol (&gEdkiiVariableLockProtocolGuid, NULL, (VOID **)&VariableLockProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEdkiiVariableLockProtocolGuid,
+                  NULL,
+                  (VOID **)&VariableLockProtocol
+                  );
   if (!EFI_ERROR (Status)) {
     Status = VariableLockProtocol->RequestToLock (
                                      VariableLockProtocol,
@@ -1237,7 +1709,12 @@ TcgPhysicalPresenceLibProcessRequest (
                                      &gEfiPhysicalPresenceGuid
                                      );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "[TPM] Error when lock variable %s, Status = %r\n", PHYSICAL_PRESENCE_FLAGS_VARIABLE, Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "[TPM] Error when lock variable %s, Status = %r\n",
+        PHYSICAL_PRESENCE_FLAGS_VARIABLE,
+        Status
+        ));
       ASSERT_EFI_ERROR (Status);
     }
   }
@@ -1259,17 +1736,28 @@ TcgPhysicalPresenceLibProcessRequest (
     Status   = gRT->SetVariable (
                       PHYSICAL_PRESENCE_VARIABLE,
                       &gEfiPhysicalPresenceGuid,
-                      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                      EFI_VARIABLE_NON_VOLATILE |
+                      EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                      EFI_VARIABLE_RUNTIME_ACCESS,
                       DataSize,
                       &TcgPpData
                       );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "[TPM] Set physical presence variable failed, Status = %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "[TPM] Set physical presence variable failed, Status = %r\n",
+        Status
+        ));
       return;
     }
   }
 
-  DEBUG ((DEBUG_INFO, "[TPM] Flags=%x, PPRequest=%x\n", PpiFlags.PPFlags, TcgPpData.PPRequest));
+  DEBUG ((
+    DEBUG_INFO,
+    "[TPM] Flags=%x, PPRequest=%x\n",
+    PpiFlags.PPFlags,
+    TcgPpData.PPRequest
+    ));
 
   if (TcgPpData.PPRequest == PHYSICAL_PRESENCE_NO_ACTION) {
     //
@@ -1291,7 +1779,10 @@ TcgPhysicalPresenceLibProcessRequest (
       return;
     }
 
-    Status = TpmPhysicalPresence (TcgProtocol, TPM_PHYSICAL_PRESENCE_CMD_ENABLE);
+    Status = TpmPhysicalPresence (
+               TcgProtocol,
+               TPM_PHYSICAL_PRESENCE_CMD_ENABLE
+               );
     if (EFI_ERROR (Status)) {
       return;
     }
@@ -1314,7 +1805,11 @@ TcgPhysicalPresenceLibProcessRequest (
   //
   // Lock physical presence.
   //
-  TpmPhysicalPresence (TcgProtocol, TPM_PHYSICAL_PRESENCE_NOTPRESENT | TPM_PHYSICAL_PRESENCE_LOCK);
+  TpmPhysicalPresence (
+    TcgProtocol,
+    TPM_PHYSICAL_PRESENCE_NOTPRESENT |
+    TPM_PHYSICAL_PRESENCE_LOCK
+    );
 }
 
 /**
@@ -1342,7 +1837,11 @@ TcgPhysicalPresenceLibNeedUserConfirm (
   EFI_TCG_PROTOCOL             *TcgProtocol;
   EFI_PHYSICAL_PRESENCE_FLAGS  PpiFlags;
 
-  Status = gBS->LocateProtocol (&gEfiTcgProtocolGuid, NULL, (VOID **)&TcgProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiTcgProtocolGuid,
+                  NULL,
+                  (VOID **)&TcgProtocol
+                  );
   if (EFI_ERROR (Status)) {
     return FALSE;
   }

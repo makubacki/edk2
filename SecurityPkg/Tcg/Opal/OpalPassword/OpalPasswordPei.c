@@ -230,7 +230,11 @@ IsOpalDeviceLocked (
   Session.Sscp    = &OpalDev->Sscp;
   Session.MediaId = 0;
 
-  Ret = OpalGetSupportedAttributesInfo (&Session, &SupportedAttributes, &OpalBaseComId);
+  Ret = OpalGetSupportedAttributesInfo (
+          &Session,
+          &SupportedAttributes,
+          &OpalBaseComId
+          );
   if (Ret != TcgResultSuccess) {
     return FALSE;
   }
@@ -286,14 +290,19 @@ UnlockOpalPassword (
   }
 
   PpStorageFlags = Tcg2PhysicalPresenceLibGetManagementFlags ();
-  if ((PpStorageFlags & TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_ENABLE_BLOCK_SID) != 0) {
+  if ((PpStorageFlags & TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_ENABLE_BLOCK_SID) !=
+      0)
+  {
     BlockSIDEnabled = TRUE;
   } else {
     BlockSIDEnabled = FALSE;
   }
 
   if (BlockSIDEnabled && BlockSidSupport) {
-    DEBUG ((DEBUG_INFO, "OpalPassword: S3 phase send BlockSid command to device!\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "OpalPassword: S3 phase send BlockSid command to device!\n"
+      ));
     ZeroMem (&Session, sizeof (Session));
     Session.Sscp          = &OpalDev->Sscp;
     Session.MediaId       = 0;
@@ -335,11 +344,19 @@ UnlockOpalPasswordDevices (
   //
   DevInfoBuffer = &DummyData;
   DevInfoLength = sizeof (DummyData);
-  Status        = RestoreLockBox (&mOpalDeviceLockBoxGuid, DevInfoBuffer, &DevInfoLength);
+  Status        = RestoreLockBox (
+                    &mOpalDeviceLockBoxGuid,
+                    DevInfoBuffer,
+                    &DevInfoLength
+                    );
   if (Status == EFI_BUFFER_TOO_SMALL) {
     DevInfoBuffer = AllocatePages (EFI_SIZE_TO_PAGES (DevInfoLength));
     if (DevInfoBuffer != NULL) {
-      Status = RestoreLockBox (&mOpalDeviceLockBoxGuid, DevInfoBuffer, &DevInfoLength);
+      Status = RestoreLockBox (
+                 &mOpalDeviceLockBoxGuid,
+                 DevInfoBuffer,
+                 &DevInfoLength
+                 );
     }
   }
 
@@ -377,7 +394,8 @@ UnlockOpalPasswordDevices (
     //
     for (DevInfo = (OPAL_DEVICE_LOCKBOX_DATA *)DevInfoBuffer;
          (UINTN)DevInfo < ((UINTN)DevInfoBuffer + DevInfoLength);
-         DevInfo = (OPAL_DEVICE_LOCKBOX_DATA *)((UINTN)DevInfo + DevInfo->Length))
+         DevInfo = (OPAL_DEVICE_LOCKBOX_DATA *)((UINTN)DevInfo +
+                                                DevInfo->Length))
     {
       //
       // Find the matching device.
@@ -437,7 +455,8 @@ OpalPasswordStorageSecurityPpiNotify (
 }
 
 EFI_PEI_NOTIFY_DESCRIPTOR  mOpalPasswordStorageSecurityPpiNotifyDesc = {
-  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+   EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEdkiiPeiStorageSecurityCommandPpiGuid,
   OpalPasswordStorageSecurityPpiNotify
 };

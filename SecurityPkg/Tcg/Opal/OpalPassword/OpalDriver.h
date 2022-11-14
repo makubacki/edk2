@@ -176,7 +176,9 @@ typedef struct {
 //
 // Retrieves a OPAL_DRIVER_DEVICE based on the pointer to its StorageSecurity protocol.
 //
-#define DRIVER_DEVICE_FROM_OPALDISK(OpalDiskPointer)  (OPAL_DRIVER_DEVICE*)(BASE_CR(OpalDiskPointer, OPAL_DRIVER_DEVICE, OpalDisk))
+#define DRIVER_DEVICE_FROM_OPALDISK( \
+                                   OpalDiskPointer)  \
+  (OPAL_DRIVER_DEVICE*)(BASE_CR(OpalDiskPointer, OPAL_DRIVER_DEVICE, OpalDisk))
 
 /**
   Get devcie list info.

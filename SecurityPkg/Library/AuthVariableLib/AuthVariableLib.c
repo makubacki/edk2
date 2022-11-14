@@ -26,7 +26,10 @@ UINT32  mMaxCertDbSize;
 UINT32  mPlatformMode;
 UINT8   mVendorKeyState;
 
-EFI_GUID  mSignatureSupport[] = { EFI_CERT_SHA1_GUID, EFI_CERT_SHA256_GUID, EFI_CERT_RSA2048_GUID, EFI_CERT_X509_GUID };
+EFI_GUID  mSignatureSupport[] = {
+  EFI_CERT_SHA1_GUID, EFI_CERT_SHA256_GUID, EFI_CERT_RSA2048_GUID,
+  EFI_CERT_X509_GUID
+};
 
 //
 // Hash context pointer
@@ -145,15 +148,18 @@ AuthVariableLibInitialize (
   // Reserve runtime buffer for certificate database. The size excludes variable header and name size.
   // Use EFI_CERT_DB_VOLATILE_NAME size since it is longer.
   //
-  mMaxCertDbSize = (UINT32)(mAuthVarLibContextIn->MaxAuthVariableSize - sizeof (EFI_CERT_DB_VOLATILE_NAME));
+  mMaxCertDbSize = (UINT32)(mAuthVarLibContextIn->MaxAuthVariableSize -
+                            sizeof (EFI_CERT_DB_VOLATILE_NAME));
   mCertDbStore   = AllocateRuntimePool (mMaxCertDbSize);
   if (mCertDbStore == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Status = AuthServiceInternalFindVariable (EFI_PLATFORM_KEY_NAME, &gEfiGlobalVariableGuid, (VOID **)&Data, &DataSize);
+  Status = AuthServiceInternalFindVariable (EFI_PLATFORM_KEY_NAME,
+             &gEfiGlobalVariableGuid, (VOID **)&Data, &DataSize);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Variable %s does not exist.\n", EFI_PLATFORM_KEY_NAME));
+    DEBUG ((DEBUG_INFO, "Variable %s does not exist.\n",
+      EFI_PLATFORM_KEY_NAME));
   } else {
     DEBUG ((DEBUG_INFO, "Variable %s exists.\n", EFI_PLATFORM_KEY_NAME));
   }
@@ -198,7 +204,10 @@ AuthVariableLibInitialize (
   // If "SecureBootEnable" variable is SECURE_BOOT_DISABLE, Set "SecureBoot" variable to SECURE_BOOT_MODE_DISABLE.
   //
   SecureBootEnable = SECURE_BOOT_DISABLE;
-  Status           = AuthServiceInternalFindVariable (EFI_SECURE_BOOT_ENABLE_NAME, &gEfiSecureBootEnableDisableGuid, (VOID **)&Data, &DataSize);
+  Status           = AuthServiceInternalFindVariable (
+                       EFI_SECURE_BOOT_ENABLE_NAME,
+                       &gEfiSecureBootEnableDisableGuid, (VOID **)&Data,
+                       &DataSize);
   if (!EFI_ERROR (Status)) {
     if (mPlatformMode == USER_MODE) {
       SecureBootEnable = *(UINT8 *)Data;
@@ -213,7 +222,8 @@ AuthVariableLibInitialize (
                          &gEfiSecureBootEnableDisableGuid,
                          &SecureBootEnable,
                          sizeof (UINT8),
-                         EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS
+                         EFI_VARIABLE_NON_VOLATILE |
+                         EFI_VARIABLE_BOOTSERVICE_ACCESS
                          );
     if (EFI_ERROR (Status)) {
       return Status;
@@ -223,7 +233,8 @@ AuthVariableLibInitialize (
   //
   // Create "SecureBoot" variable with BS+RT attribute set.
   //
-  if ((SecureBootEnable == SECURE_BOOT_ENABLE) && (mPlatformMode == USER_MODE)) {
+  if ((SecureBootEnable == SECURE_BOOT_ENABLE) && (mPlatformMode ==
+                                                   USER_MODE)) {
     SecureBootMode = SECURE_BOOT_MODE_ENABLE;
   } else {
     SecureBootMode = SECURE_BOOT_MODE_DISABLE;
@@ -240,9 +251,12 @@ AuthVariableLibInitialize (
     return Status;
   }
 
-  DEBUG ((DEBUG_INFO, "Variable %s is %x\n", EFI_SETUP_MODE_NAME, mPlatformMode));
-  DEBUG ((DEBUG_INFO, "Variable %s is %x\n", EFI_SECURE_BOOT_MODE_NAME, SecureBootMode));
-  DEBUG ((DEBUG_INFO, "Variable %s is %x\n", EFI_SECURE_BOOT_ENABLE_NAME, SecureBootEnable));
+  DEBUG ((DEBUG_INFO, "Variable %s is %x\n", EFI_SETUP_MODE_NAME,
+    mPlatformMode));
+  DEBUG ((DEBUG_INFO, "Variable %s is %x\n", EFI_SECURE_BOOT_MODE_NAME,
+    SecureBootMode));
+  DEBUG ((DEBUG_INFO, "Variable %s is %x\n", EFI_SECURE_BOOT_ENABLE_NAME,
+    SecureBootEnable));
 
   //
   // Initialize "CustomMode" in STANDARD_SECURE_BOOT_MODE state.
@@ -273,7 +287,9 @@ AuthVariableLibInitialize (
              &DataSize
              );
   if (EFI_ERROR (Status)) {
-    VarAttr  = EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS;
+    VarAttr = EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS |
+              EFI_VARIABLE_BOOTSERVICE_ACCESS |
+              EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS;
     ListSize = sizeof (UINT32);
     Status   = AuthServiceInternalUpdateVariable (
                  EFI_CERT_DB_NAME,
@@ -299,7 +315,8 @@ AuthVariableLibInitialize (
   //
   // Create "certdbv" variable with RT+BS+AT set.
   //
-  VarAttr  = EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS;
+  VarAttr = EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+            EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS;
   ListSize = sizeof (UINT32);
   Status   = AuthServiceInternalUpdateVariable (
                EFI_CERT_DB_VOLATILE_NAME,
@@ -315,7 +332,8 @@ AuthVariableLibInitialize (
   //
   // Check "VendorKeysNv" variable's existence and create "VendorKeys" variable accordingly.
   //
-  Status = AuthServiceInternalFindVariable (EFI_VENDOR_KEYS_NV_VARIABLE_NAME, &gEfiVendorKeysNvGuid, (VOID **)&Data, &DataSize);
+  Status = AuthServiceInternalFindVariable (EFI_VENDOR_KEYS_NV_VARIABLE_NAME,
+             &gEfiVendorKeysNvGuid, (VOID **)&Data, &DataSize);
   if (!EFI_ERROR (Status)) {
     mVendorKeyState = *(UINT8 *)Data;
   } else {
@@ -328,7 +346,9 @@ AuthVariableLibInitialize (
                         &gEfiVendorKeysNvGuid,
                         &mVendorKeyState,
                         sizeof (UINT8),
-                        EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+                        EFI_VARIABLE_NON_VOLATILE |
+                        EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                        EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
                         );
     if (EFI_ERROR (Status)) {
       return Status;
@@ -349,23 +369,32 @@ AuthVariableLibInitialize (
     return Status;
   }
 
-  DEBUG ((DEBUG_INFO, "Variable %s is %x\n", EFI_VENDOR_KEYS_VARIABLE_NAME, mVendorKeyState));
+  DEBUG ((DEBUG_INFO, "Variable %s is %x\n", EFI_VENDOR_KEYS_VARIABLE_NAME,
+    mVendorKeyState));
 
-  AuthVarLibContextOut->StructVersion       = AUTH_VAR_LIB_CONTEXT_OUT_STRUCT_VERSION;
-  AuthVarLibContextOut->StructSize          = sizeof (AUTH_VAR_LIB_CONTEXT_OUT);
-  AuthVarLibContextOut->AuthVarEntry        = mAuthVarEntry;
-  AuthVarLibContextOut->AuthVarEntryCount   = ARRAY_SIZE (mAuthVarEntry);
-  mAuthVarAddressPointer[0]                 = (VOID **)&mCertDbStore;
-  mAuthVarAddressPointer[1]                 = (VOID **)&mHashCtx;
-  mAuthVarAddressPointer[2]                 = (VOID **)&mAuthVarLibContextIn;
-  mAuthVarAddressPointer[3]                 = (VOID **)&(mAuthVarLibContextIn->FindVariable),
-  mAuthVarAddressPointer[4]                 = (VOID **)&(mAuthVarLibContextIn->FindNextVariable),
-  mAuthVarAddressPointer[5]                 = (VOID **)&(mAuthVarLibContextIn->UpdateVariable),
-  mAuthVarAddressPointer[6]                 = (VOID **)&(mAuthVarLibContextIn->GetScratchBuffer),
-  mAuthVarAddressPointer[7]                 = (VOID **)&(mAuthVarLibContextIn->CheckRemainingSpaceForConsistency),
-  mAuthVarAddressPointer[8]                 = (VOID **)&(mAuthVarLibContextIn->AtRuntime),
+  AuthVarLibContextOut->StructVersion =
+    AUTH_VAR_LIB_CONTEXT_OUT_STRUCT_VERSION;
+  AuthVarLibContextOut->StructSize        = sizeof (AUTH_VAR_LIB_CONTEXT_OUT);
+  AuthVarLibContextOut->AuthVarEntry      = mAuthVarEntry;
+  AuthVarLibContextOut->AuthVarEntryCount = ARRAY_SIZE (mAuthVarEntry);
+  mAuthVarAddressPointer[0]               = (VOID **)&mCertDbStore;
+  mAuthVarAddressPointer[1]               = (VOID **)&mHashCtx;
+  mAuthVarAddressPointer[2]               = (VOID **)&mAuthVarLibContextIn;
+  mAuthVarAddressPointer[3]               =
+    (VOID **)&(mAuthVarLibContextIn->FindVariable),
+  mAuthVarAddressPointer[4] =
+    (VOID **)&(mAuthVarLibContextIn->FindNextVariable),
+  mAuthVarAddressPointer[5] =
+    (VOID **)&(mAuthVarLibContextIn->UpdateVariable),
+  mAuthVarAddressPointer[6] =
+    (VOID **)&(mAuthVarLibContextIn->GetScratchBuffer),
+  mAuthVarAddressPointer[7] =
+    (VOID **)&(mAuthVarLibContextIn->CheckRemainingSpaceForConsistency),
+  mAuthVarAddressPointer[8] =
+    (VOID **)&(mAuthVarLibContextIn->AtRuntime),
   AuthVarLibContextOut->AddressPointer      = mAuthVarAddressPointer;
-  AuthVarLibContextOut->AddressPointerCount = ARRAY_SIZE (mAuthVarAddressPointer);
+  AuthVarLibContextOut->AddressPointerCount = ARRAY_SIZE (
+                                                mAuthVarAddressPointer);
 
   return Status;
 }
@@ -402,22 +431,33 @@ AuthVariableLibProcessVariable (
 {
   EFI_STATUS  Status;
 
-  if (CompareGuid (VendorGuid, &gEfiGlobalVariableGuid) && (StrCmp (VariableName, EFI_PLATFORM_KEY_NAME) == 0)) {
-    Status = ProcessVarWithPk (VariableName, VendorGuid, Data, DataSize, Attributes, TRUE);
-  } else if (CompareGuid (VendorGuid, &gEfiGlobalVariableGuid) && (StrCmp (VariableName, EFI_KEY_EXCHANGE_KEY_NAME) == 0)) {
-    Status = ProcessVarWithPk (VariableName, VendorGuid, Data, DataSize, Attributes, FALSE);
+  if (CompareGuid (VendorGuid, &gEfiGlobalVariableGuid) && (StrCmp (
+                                                              VariableName,
+                                                              EFI_PLATFORM_KEY_NAME)
+                                                            == 0)) {
+    Status = ProcessVarWithPk (VariableName, VendorGuid, Data, DataSize,
+               Attributes, TRUE);
+  } else if (CompareGuid (VendorGuid, &gEfiGlobalVariableGuid) && (StrCmp (
+                                                                     VariableName,
+                                                                     EFI_KEY_EXCHANGE_KEY_NAME)
+                                                                   == 0)) {
+    Status = ProcessVarWithPk (VariableName, VendorGuid, Data, DataSize,
+               Attributes, FALSE);
   } else if (CompareGuid (VendorGuid, &gEfiImageSecurityDatabaseGuid) &&
              ((StrCmp (VariableName, EFI_IMAGE_SECURITY_DATABASE)  == 0) ||
               (StrCmp (VariableName, EFI_IMAGE_SECURITY_DATABASE1) == 0) ||
               (StrCmp (VariableName, EFI_IMAGE_SECURITY_DATABASE2) == 0)
              ))
   {
-    Status = ProcessVarWithPk (VariableName, VendorGuid, Data, DataSize, Attributes, FALSE);
+    Status = ProcessVarWithPk (VariableName, VendorGuid, Data, DataSize,
+               Attributes, FALSE);
     if (EFI_ERROR (Status)) {
-      Status = ProcessVarWithKek (VariableName, VendorGuid, Data, DataSize, Attributes);
+      Status = ProcessVarWithKek (VariableName, VendorGuid, Data, DataSize,
+                 Attributes);
     }
   } else {
-    Status = ProcessVariable (VariableName, VendorGuid, Data, DataSize, Attributes);
+    Status = ProcessVariable (VariableName, VendorGuid, Data, DataSize,
+               Attributes);
   }
 
   return Status;

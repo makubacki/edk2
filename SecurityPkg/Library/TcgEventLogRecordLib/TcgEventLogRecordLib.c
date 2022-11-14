@@ -60,11 +60,15 @@ TpmMeasurementGetFvName (
     return NULL;
   }
 
-  if (FvHeader->ExtHeaderOffset + sizeof (EFI_FIRMWARE_VOLUME_EXT_HEADER) > FvLength) {
+  if (FvHeader->ExtHeaderOffset + sizeof (EFI_FIRMWARE_VOLUME_EXT_HEADER) >
+      FvLength)
+  {
     return NULL;
   }
 
-  FvExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)(UINTN)(FvBase + FvHeader->ExtHeaderOffset);
+  FvExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)(UINTN)(FvBase +
+                                                          FvHeader->
+                                                            ExtHeaderOffset);
 
   return &FvExtHeader->FvName;
 }
@@ -102,12 +106,23 @@ MeasureFirmwareBlob (
   FvName = TpmMeasurementGetFvName (FirmwareBlobBase, FirmwareBlobLength);
 
   if (((Description != NULL) || (FvName != NULL)) &&
-      (PcdGet32 (PcdTcgPfpMeasurementRevision) >= TCG_EfiSpecIDEventStruct_SPEC_ERRATA_TPM2_REV_105))
+      (PcdGet32 (PcdTcgPfpMeasurementRevision) >=
+       TCG_EfiSpecIDEventStruct_SPEC_ERRATA_TPM2_REV_105))
   {
     if (Description != NULL) {
-      AsciiSPrint ((CHAR8 *)FvBlob2.BlobDescription, sizeof (FvBlob2.BlobDescription), "%a", Description);
+      AsciiSPrint (
+        (CHAR8 *)FvBlob2.BlobDescription,
+        sizeof (FvBlob2.BlobDescription),
+        "%a",
+        Description
+        );
     } else {
-      AsciiSPrint ((CHAR8 *)FvBlob2.BlobDescription, sizeof (FvBlob2.BlobDescription), "Fv(%g)", FvName);
+      AsciiSPrint (
+        (CHAR8 *)FvBlob2.BlobDescription,
+        sizeof (FvBlob2.BlobDescription),
+        "Fv(%g)",
+        FvName
+        );
     }
 
     FvBlob2.BlobDescriptionSize = sizeof (FvBlob2.BlobDescription);
@@ -170,12 +185,19 @@ MeasureHandoffTable (
   EFI_STATUS                      Status;
 
   if ((Description != NULL) &&
-      (PcdGet32 (PcdTcgPfpMeasurementRevision) >= TCG_EfiSpecIDEventStruct_SPEC_ERRATA_TPM2_REV_105))
+      (PcdGet32 (PcdTcgPfpMeasurementRevision) >=
+       TCG_EfiSpecIDEventStruct_SPEC_ERRATA_TPM2_REV_105))
   {
-    AsciiSPrint ((CHAR8 *)HandoffTables2.TableDescription, sizeof (HandoffTables2.TableDescription), "%a", Description);
+    AsciiSPrint (
+      (CHAR8 *)HandoffTables2.TableDescription,
+      sizeof (HandoffTables2.TableDescription),
+      "%a",
+      Description
+      );
 
-    HandoffTables2.TableDescriptionSize = sizeof (HandoffTables2.TableDescription);
-    HandoffTables2.NumberOfTables       = 1;
+    HandoffTables2.TableDescriptionSize =
+      sizeof (HandoffTables2.TableDescription);
+    HandoffTables2.NumberOfTables = 1;
     CopyGuid (&(HandoffTables2.TableEntry[0].VendorGuid), TableGuid);
     HandoffTables2.TableEntry[0].VendorTable = TableAddress;
 

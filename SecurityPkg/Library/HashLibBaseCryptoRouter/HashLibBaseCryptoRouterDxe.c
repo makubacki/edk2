@@ -46,7 +46,10 @@ CheckSupportedHashMaskMismatch (
       mSupportedHashMaskCurrent,
       mSupportedHashMaskLast
       ));
-    DEBUG ((DEBUG_WARN, "that are linking different HashInstanceLib instances!\n"));
+    DEBUG ((
+      DEBUG_WARN,
+      "that are linking different HashInstanceLib instances!\n"
+      ));
   }
 }
 
@@ -121,7 +124,11 @@ HashUpdate (
   for (Index = 0; Index < mHashInterfaceCount; Index++) {
     HashMask = Tpm2GetHashMaskFromAlgo (&mHashInterface[Index].HashGuid);
     if ((HashMask & PcdGet32 (PcdTpm2HashMask)) != 0) {
-      mHashInterface[Index].HashUpdate (HashCtx[Index], DataToHash, DataToHashLen);
+      mHashInterface[Index].HashUpdate (
+                              HashCtx[Index],
+                              DataToHash,
+                              DataToHashLen
+                              );
     }
   }
 
@@ -167,7 +174,11 @@ HashCompleteAndExtend (
   for (Index = 0; Index < mHashInterfaceCount; Index++) {
     HashMask = Tpm2GetHashMaskFromAlgo (&mHashInterface[Index].HashGuid);
     if ((HashMask & PcdGet32 (PcdTpm2HashMask)) != 0) {
-      mHashInterface[Index].HashUpdate (HashCtx[Index], DataToHash, DataToHashLen);
+      mHashInterface[Index].HashUpdate (
+                              HashCtx[Index],
+                              DataToHash,
+                              DataToHashLen
+                              );
       mHashInterface[Index].HashFinal (HashCtx[Index], &Digest);
       Tpm2SetHashToDigestList (DigestList, &Digest);
     }
@@ -249,7 +260,9 @@ RegisterHashInterfaceLib (
     return EFI_UNSUPPORTED;
   }
 
-  if (mHashInterfaceCount >= sizeof (mHashInterface)/sizeof (mHashInterface[0])) {
+  if (mHashInterfaceCount >= sizeof (mHashInterface)/
+      sizeof (mHashInterface[0]))
+  {
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -257,8 +270,16 @@ RegisterHashInterfaceLib (
   // Check duplication
   //
   for (Index = 0; Index < mHashInterfaceCount; Index++) {
-    if (CompareGuid (&mHashInterface[Index].HashGuid, &HashInterface->HashGuid)) {
-      DEBUG ((DEBUG_ERROR, "Hash Interface (%g) has been registered\n", &HashInterface->HashGuid));
+    if (CompareGuid (
+          &mHashInterface[Index].HashGuid,
+          &HashInterface->HashGuid
+          ))
+    {
+      DEBUG ((
+        DEBUG_ERROR,
+        "Hash Interface (%g) has been registered\n",
+        &HashInterface->HashGuid
+        ));
       return EFI_ALREADY_STARTED;
     }
   }
@@ -267,10 +288,17 @@ RegisterHashInterfaceLib (
   // Record hash algorithm bitmap of CURRENT module which consumes HashLib.
   //
   mSupportedHashMaskCurrent = PcdGet32 (PcdTcg2HashAlgorithmBitmap) | HashMask;
-  Status                    = PcdSet32S (PcdTcg2HashAlgorithmBitmap, mSupportedHashMaskCurrent);
+  Status                    = PcdSet32S (
+                                PcdTcg2HashAlgorithmBitmap,
+                                mSupportedHashMaskCurrent
+                                );
   ASSERT_EFI_ERROR (Status);
 
-  CopyMem (&mHashInterface[mHashInterfaceCount], HashInterface, sizeof (*HashInterface));
+  CopyMem (
+    &mHashInterface[mHashInterfaceCount],
+    HashInterface,
+    sizeof (*HashInterface)
+    );
   mHashInterfaceCount++;
 
   return EFI_SUCCESS;

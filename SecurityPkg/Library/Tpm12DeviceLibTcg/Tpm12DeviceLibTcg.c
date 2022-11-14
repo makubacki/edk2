@@ -42,7 +42,11 @@ Tpm12SubmitCommand (
   TPM_RSP_COMMAND_HDR  *Header;
 
   if (mTcgProtocol == NULL) {
-    Status = gBS->LocateProtocol (&gEfiTcgProtocolGuid, NULL, (VOID **)&mTcgProtocol);
+    Status = gBS->LocateProtocol (
+                    &gEfiTcgProtocolGuid,
+                    NULL,
+                    (VOID **)&mTcgProtocol
+                    );
     if (EFI_ERROR (Status)) {
       //
       // TCG protocol is not installed. So, TPM12 is not present.
@@ -88,7 +92,11 @@ Tpm12RequestUseTpm (
   EFI_STATUS  Status;
 
   if (mTcgProtocol == NULL) {
-    Status = gBS->LocateProtocol (&gEfiTcgProtocolGuid, NULL, (VOID **)&mTcgProtocol);
+    Status = gBS->LocateProtocol (
+                    &gEfiTcgProtocolGuid,
+                    NULL,
+                    (VOID **)&mTcgProtocol
+                    );
     if (EFI_ERROR (Status)) {
       //
       // TCG protocol is not installed. So, TPM12 is not present.

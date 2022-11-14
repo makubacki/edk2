@@ -37,7 +37,11 @@ OpalUtilPsidRevert (
   NULL_CHECK (Psid);
 
   RemovalTimeOut = GetRevertTimeOut (Session);
-  DEBUG ((DEBUG_INFO, "OpalUtilPsidRevert: Timeout value = %d\n", RemovalTimeOut));
+  DEBUG ((
+    DEBUG_INFO,
+    "OpalUtilPsidRevert: Timeout value = %d\n",
+    RemovalTimeOut
+    ));
 
   Ret = OpalStartSession (
           Session,
@@ -48,7 +52,9 @@ OpalUtilPsidRevert (
           OPAL_ADMIN_SP_PSID_AUTHORITY,
           &MethodStatus
           );
-  if ((Ret == TcgResultSuccess) && (MethodStatus == TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  if ((Ret == TcgResultSuccess) && (MethodStatus ==
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     Ret = OpalPyrite2PsidRevert (Session, RemovalTimeOut);
     if (Ret != TcgResultSuccess) {
       //
@@ -103,8 +109,15 @@ OpalUtilSetAdminPasswordAsSid (
           OPAL_ADMIN_SP_SID_AUTHORITY,
           &MethodStatus
           );
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
-    DEBUG ((DEBUG_INFO, "start session with admin SP as SID authority failed: Ret=%d MethodStatus=%u\n", Ret, MethodStatus));
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "start session with admin SP as SID authority failed: Ret=%d MethodStatus=%u\n",
+      Ret,
+      MethodStatus
+      ));
     goto done;
   }
 
@@ -119,9 +132,16 @@ OpalUtilSetAdminPasswordAsSid (
           &MethodStatus
           );
 
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     OpalEndSession (Session);
-    DEBUG ((DEBUG_INFO, "set Password failed: Ret=%d MethodStatus=%u\n", Ret, MethodStatus));
+    DEBUG ((
+      DEBUG_INFO,
+      "set Password failed: Ret=%d MethodStatus=%u\n",
+      Ret,
+      MethodStatus
+      ));
     goto done;
   }
 
@@ -130,8 +150,15 @@ OpalUtilSetAdminPasswordAsSid (
   //
   Ret = OpalActivateLockingSp (Session, &MethodStatus);
   OpalEndSession (Session);
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
-    DEBUG ((DEBUG_INFO, "activate locking SP failed: Ret=%d MethodStatus=%u\n", Ret, MethodStatus));
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "activate locking SP failed: Ret=%d MethodStatus=%u\n",
+      Ret,
+      MethodStatus
+      ));
     goto done;
   }
 
@@ -193,8 +220,15 @@ OpalUtilSetOpalLockingRange (
           OPAL_LOCKING_SP_ADMIN1_AUTHORITY,
           &MethodStatus
           );
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
-    DEBUG ((DEBUG_INFO, "start session with locking SP failed: Ret=%d MethodStatus=%u\n", Ret, MethodStatus));
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "start session with locking SP failed: Ret=%d MethodStatus=%u\n",
+      Ret,
+      MethodStatus
+      ));
     goto done;
   }
 
@@ -214,8 +248,15 @@ OpalUtilSetOpalLockingRange (
           );
 
   OpalEndSession (Session);
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
-    DEBUG ((DEBUG_INFO, "set locking range failed: Ret=%d MethodStatus=0x%x\n", Ret, MethodStatus));
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "set locking range failed: Ret=%d MethodStatus=0x%x\n",
+      Ret,
+      MethodStatus
+      ));
   }
 
 done:
@@ -267,17 +308,30 @@ OpalUtilSetAdminPassword (
           OPAL_ADMIN_SP_SID_AUTHORITY,
           &MethodStatus
           );
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
-    DEBUG ((DEBUG_INFO, "start session with admin SP using old Password failed\n"));
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "start session with admin SP using old Password failed\n"
+      ));
     goto done;
   }
 
   //
   // Update SID = new pw
   //
-  Ret = OpalSetPassword (Session, OPAL_UID_ADMIN_SP_C_PIN_SID, NewPassword, NewPasswordLength, &MethodStatus);
+  Ret = OpalSetPassword (
+          Session,
+          OPAL_UID_ADMIN_SP_C_PIN_SID,
+          NewPassword,
+          NewPasswordLength,
+          &MethodStatus
+          );
   OpalEndSession (Session);
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     DEBUG ((DEBUG_INFO, "set new admin SP Password failed\n"));
     goto done;
   }
@@ -291,17 +345,30 @@ OpalUtilSetAdminPassword (
           OPAL_LOCKING_SP_ADMIN1_AUTHORITY,
           &MethodStatus
           );
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
-    DEBUG ((DEBUG_INFO, "start session with locking SP using old Password failed\n"));
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "start session with locking SP using old Password failed\n"
+      ));
     goto done;
   }
 
   //
   // Update admin locking SP to new pw
   //
-  Ret = OpalSetPassword (Session, OPAL_LOCKING_SP_C_PIN_ADMIN1, NewPassword, NewPasswordLength, &MethodStatus);
+  Ret = OpalSetPassword (
+          Session,
+          OPAL_LOCKING_SP_C_PIN_ADMIN1,
+          NewPassword,
+          NewPasswordLength,
+          &MethodStatus
+          );
   OpalEndSession (Session);
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     DEBUG ((DEBUG_INFO, "set new locking SP Password failed\n"));
     goto done;
   }
@@ -354,7 +421,9 @@ OpalUtilSetUserPassword (
           OPAL_LOCKING_SP_USER1_AUTHORITY,
           &MethodStatus
           );
-  if ((Ret == TcgResultSuccess) && (MethodStatus == TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  if ((Ret == TcgResultSuccess) && (MethodStatus ==
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     Ret = OpalSetPassword (
             Session,
             OPAL_LOCKING_SP_C_PIN_USER1,
@@ -363,7 +432,9 @@ OpalUtilSetUserPassword (
             &MethodStatus
             );
     OpalEndSession (Session);
-    if ((Ret == TcgResultSuccess) && (MethodStatus == TCG_METHOD_STATUS_CODE_SUCCESS)) {
+    if ((Ret == TcgResultSuccess) && (MethodStatus ==
+                                      TCG_METHOD_STATUS_CODE_SUCCESS))
+    {
       return Ret;
     }
   }
@@ -384,8 +455,13 @@ OpalUtilSetUserPassword (
           OPAL_LOCKING_SP_ADMIN1_AUTHORITY,
           &MethodStatus
           );
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
-    DEBUG ((DEBUG_INFO, "StartSession with locking SP as admin1 authority failed\n"));
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "StartSession with locking SP as admin1 authority failed\n"
+      ));
     goto done;
   }
 
@@ -401,7 +477,9 @@ OpalUtilSetUserPassword (
           &MethodStatus
           );
   OpalEndSession (Session);
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     DEBUG ((DEBUG_INFO, "OpalSetLockingSpAuthorityEnabledAndPin failed\n"));
     goto done;
   }
@@ -447,7 +525,9 @@ OpalUtilVerifyPassword (
           HostSigningAuthority,
           &MethodStatus
           );
-  if ((Ret == TcgResultSuccess) && (MethodStatus == TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  if ((Ret == TcgResultSuccess) && (MethodStatus ==
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     OpalEndSession (Session);
     return TcgResultSuccess;
   }
@@ -494,7 +574,9 @@ OpalUtilSecureErase (
           &MethodStatus
           );
 
-  if ((Ret == TcgResultSuccess) && (MethodStatus == TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  if ((Ret == TcgResultSuccess) && (MethodStatus ==
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     Ret             = OpalGlobalLockingRangeGenKey (Session, &MethodStatus);
     *PasswordFailed = FALSE;
     OpalEndSession (Session);
@@ -512,7 +594,9 @@ OpalUtilSecureErase (
             &MethodStatus
             );
 
-    if ((Ret == TcgResultSuccess) && (MethodStatus == TCG_METHOD_STATUS_CODE_SUCCESS)) {
+    if ((Ret == TcgResultSuccess) && (MethodStatus ==
+                                      TCG_METHOD_STATUS_CODE_SUCCESS))
+    {
       Ret             = OpalGlobalLockingRangeGenKey (Session, &MethodStatus);
       *PasswordFailed = FALSE;
       OpalEndSession (Session);
@@ -565,7 +649,9 @@ OpalUtilDisableUser (
           OPAL_LOCKING_SP_ADMIN1_AUTHORITY,
           &MethodStatus
           );
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     DEBUG ((DEBUG_INFO, "StartSession with Locking SP as Admin1 failed\n"));
     *PasswordFailed = TRUE;
     goto done;
@@ -629,8 +715,15 @@ OpalUtilRevert (
           &MethodStatus
           );
 
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
-    DEBUG ((DEBUG_INFO, "error starting session: Ret=%d, MethodStatus=%u\n", Ret, MethodStatus));
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "error starting session: Ret=%d, MethodStatus=%u\n",
+      Ret,
+      MethodStatus
+      ));
     *PasswordFailed = TRUE;
     goto done;
   }
@@ -639,8 +732,15 @@ OpalUtilRevert (
   //
   // Try to revert with admin1
   //
-  Ret = OpalPyrite2AdminRevert (Session, KeepUserData, &MethodStatus, RemovalTimeOut);
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  Ret = OpalPyrite2AdminRevert (
+          Session,
+          KeepUserData,
+          &MethodStatus,
+          RemovalTimeOut
+          );
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     //
     // Device ends the session on successful revert, so only call OpalEndSession when fail.
     //
@@ -648,7 +748,13 @@ OpalUtilRevert (
     OpalEndSession (Session);
   }
 
-  Ret = OpalUtilSetSIDtoMSID (Session, Password, PasswordLength, Msid, MsidLength);
+  Ret = OpalUtilSetSIDtoMSID (
+          Session,
+          Password,
+          PasswordLength,
+          Msid,
+          MsidLength
+          );
 
 done:
   if (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS) {
@@ -697,14 +803,22 @@ OpalUtilSetSIDtoMSID (
           OPAL_ADMIN_SP_SID_AUTHORITY,
           &MethodStatus
           );
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     goto done;
   }
 
   //
   // Update SID pin
   //
-  Ret = OpalSetPassword (Session, OPAL_UID_ADMIN_SP_C_PIN_SID, Msid, MsidLength, &MethodStatus);
+  Ret = OpalSetPassword (
+          Session,
+          OPAL_UID_ADMIN_SP_C_PIN_SID,
+          Msid,
+          MsidLength,
+          &MethodStatus
+          );
   OpalEndSession (Session);
 
 done:
@@ -753,7 +867,9 @@ OpalUtilUpdateGlobalLockingRange (
           OPAL_LOCKING_SP_ADMIN1_AUTHORITY,
           &MethodStatus
           );
-  if ((Ret == TcgResultSuccess) && (MethodStatus == TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  if ((Ret == TcgResultSuccess) && (MethodStatus ==
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     Ret = OpalUpdateGlobalLockingRange (
             Session,
             ReadLocked,
@@ -761,7 +877,9 @@ OpalUtilUpdateGlobalLockingRange (
             &MethodStatus
             );
     OpalEndSession (Session);
-    if ((Ret == TcgResultSuccess) && (MethodStatus == TCG_METHOD_STATUS_CODE_SUCCESS)) {
+    if ((Ret == TcgResultSuccess) && (MethodStatus ==
+                                      TCG_METHOD_STATUS_CODE_SUCCESS))
+    {
       goto done;
     }
   }
@@ -782,12 +900,19 @@ OpalUtilUpdateGlobalLockingRange (
           OPAL_LOCKING_SP_USER1_AUTHORITY,
           &MethodStatus
           );
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     DEBUG ((DEBUG_INFO, "StartSession with Locking SP as User1 failed\n"));
     goto done;
   }
 
-  Ret = OpalUpdateGlobalLockingRange (Session, ReadLocked, WriteLocked, &MethodStatus);
+  Ret = OpalUpdateGlobalLockingRange (
+          Session,
+          ReadLocked,
+          WriteLocked,
+          &MethodStatus
+          );
   OpalEndSession (Session);
 
 done:
@@ -840,7 +965,9 @@ OpalUtilGetMsid (
           TCG_UID_NULL,
           &MethodStatus
           );
-  if ((Ret == TcgResultSuccess) && (MethodStatus == TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  if ((Ret == TcgResultSuccess) && (MethodStatus ==
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     Ret = OpalGetMsid (Session, MsidBufferLength, Msid, MsidLength);
     OpalEndSession (Session);
   }
@@ -893,7 +1020,9 @@ OpalUtilDetermineOwnership (
           OPAL_ADMIN_SP_SID_AUTHORITY,
           &MethodStatus
           );
-  if ((Ret == TcgResultSuccess) && (MethodStatus == TCG_METHOD_STATUS_CODE_SUCCESS)) {
+  if ((Ret == TcgResultSuccess) && (MethodStatus ==
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
     //
     // now we know that SID PIN == MSID PIN
     //
@@ -970,8 +1099,15 @@ OpalUtilGetActiveDataRemovalMechanism (
           OPAL_ADMIN_SP_ANYBODY_AUTHORITY,
           &MethodStatus
           );
-  if ((Ret != TcgResultSuccess) || (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
-    DEBUG ((DEBUG_INFO, "Start session with admin SP as SID authority failed: Ret=%d MethodStatus=%u\n", Ret, MethodStatus));
+  if ((Ret != TcgResultSuccess) || (MethodStatus !=
+                                    TCG_METHOD_STATUS_CODE_SUCCESS))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "Start session with admin SP as SID authority failed: Ret=%d MethodStatus=%u\n",
+      Ret,
+      MethodStatus
+      ));
     if (MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS) {
       Ret = TcgResultFailure;
     }
@@ -985,7 +1121,11 @@ OpalUtilGetActiveDataRemovalMechanism (
           );
 
   if (Ret != TcgResultSuccess) {
-    DEBUG ((DEBUG_INFO, "Pyrite2 Get Active Data Removal Mechanism failed: Ret=%d\n", Ret));
+    DEBUG ((
+      DEBUG_INFO,
+      "Pyrite2 Get Active Data Removal Mechanism failed: Ret=%d\n",
+      Ret
+      ));
   }
 
   OpalEndSession (Session);
@@ -1028,22 +1168,52 @@ GetDataRemovalTime (
 {
   switch (Index) {
     case OverwriteDataErase:
-      return CalculateDataRemovalTime (Descriptor->FormatBit0, SwapBytes16 (Descriptor->TimeBit0));
+      return CalculateDataRemovalTime (
+               Descriptor->FormatBit0,
+               SwapBytes16 (
+                 Descriptor->TimeBit0
+                 )
+               );
 
     case BlockErase:
-      return CalculateDataRemovalTime (Descriptor->FormatBit1, SwapBytes16 (Descriptor->TimeBit1));
+      return CalculateDataRemovalTime (
+               Descriptor->FormatBit1,
+               SwapBytes16 (
+                 Descriptor->TimeBit1
+                 )
+               );
 
     case CryptoErase:
-      return CalculateDataRemovalTime (Descriptor->FormatBit2, SwapBytes16 (Descriptor->TimeBit2));
+      return CalculateDataRemovalTime (
+               Descriptor->FormatBit2,
+               SwapBytes16 (
+                 Descriptor->TimeBit2
+                 )
+               );
 
     case Unmap:
-      return CalculateDataRemovalTime (Descriptor->FormatBit3, SwapBytes16 (Descriptor->TimeBit3));
+      return CalculateDataRemovalTime (
+               Descriptor->FormatBit3,
+               SwapBytes16 (
+                 Descriptor->TimeBit3
+                 )
+               );
 
     case ResetWritePointers:
-      return CalculateDataRemovalTime (Descriptor->FormatBit4, SwapBytes16 (Descriptor->TimeBit4));
+      return CalculateDataRemovalTime (
+               Descriptor->FormatBit4,
+               SwapBytes16 (
+                 Descriptor->TimeBit4
+                 )
+               );
 
     case VendorSpecificErase:
-      return CalculateDataRemovalTime (Descriptor->FormatBit5, SwapBytes16 (Descriptor->TimeBit5));
+      return CalculateDataRemovalTime (
+               Descriptor->FormatBit5,
+               SwapBytes16 (
+                 Descriptor->TimeBit5
+                 )
+               );
 
     default:
       return 0;
@@ -1074,7 +1244,12 @@ OpalUtilGetDataRemovalMechanismLists (
   NULL_CHECK (RemovalMechanismLists);
 
   DataSize = sizeof (Descriptor);
-  Ret      = OpalGetFeatureDescriptor (Session, TCG_FEATURE_DATA_REMOVAL, &DataSize, &Descriptor);
+  Ret      = OpalGetFeatureDescriptor (
+               Session,
+               TCG_FEATURE_DATA_REMOVAL,
+               &DataSize,
+               &Descriptor
+               );
   if (Ret != TcgResultSuccess) {
     return TcgResultFailure;
   }
@@ -1082,7 +1257,11 @@ OpalUtilGetDataRemovalMechanismLists (
   ASSERT (Descriptor.RemovalMechanism != 0);
 
   for (Index = 0; Index < ResearvedMechanism; Index++) {
-    BitValue = (BOOLEAN)BitFieldRead8 (Descriptor.RemovalMechanism, Index, Index);
+    BitValue = (BOOLEAN)BitFieldRead8 (
+                          Descriptor.RemovalMechanism,
+                          Index,
+                          Index
+                          );
 
     if (BitValue == 0) {
       RemovalMechanismLists[Index] = 0;
@@ -1113,8 +1292,14 @@ GetRevertTimeOut (
   UINT32                       RemovalMechanishLists[ResearvedMechanism];
   UINT8                        ActiveDataRemovalMechanism;
 
-  TcgResult = OpalGetSupportedAttributesInfo (Session, &SupportedAttributes, &BaseComId);
-  if ((TcgResult != TcgResultSuccess) || (SupportedAttributes.DataRemoval == 0)) {
+  TcgResult = OpalGetSupportedAttributesInfo (
+                Session,
+                &SupportedAttributes,
+                &BaseComId
+                );
+  if ((TcgResult != TcgResultSuccess) || (SupportedAttributes.DataRemoval ==
+                                          0))
+  {
     return 0;
   }
 
@@ -1123,12 +1308,20 @@ GetRevertTimeOut (
     return 0;
   }
 
-  TcgResult = OpalUtilGetDataRemovalMechanismLists (Session, RemovalMechanishLists);
+  TcgResult = OpalUtilGetDataRemovalMechanismLists (
+                Session,
+                RemovalMechanishLists
+                );
   if (TcgResult != TcgResultSuccess) {
     return 0;
   }
 
-  TcgResult = OpalUtilGetActiveDataRemovalMechanism (Session, Msid, MsidLength, &ActiveDataRemovalMechanism);
+  TcgResult = OpalUtilGetActiveDataRemovalMechanism (
+                Session,
+                Msid,
+                MsidLength,
+                &ActiveDataRemovalMechanism
+                );
   if (TcgResult != TcgResultSuccess) {
     return 0;
   }

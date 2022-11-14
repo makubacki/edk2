@@ -60,7 +60,11 @@ OpalTrustedSend (
     return TcgResultFailureBufferTooSmall;
   }
 
-  ZeroMem ((UINT8 *)Buffer + TransferLength, TransferLength512 - TransferLength);
+  ZeroMem (
+    (UINT8 *)Buffer + TransferLength,
+    TransferLength512 -
+    TransferLength
+    );
 
   Status = Sscp->SendData (
                    Sscp,
@@ -117,7 +121,11 @@ OpalTrustedRecv (
   OutstandingData   = 0;
 
   if (TransferLength512 < sizeof (TCG_COM_PACKET)) {
-    DEBUG ((DEBUG_INFO, "transferLength %u too small for ComPacket\n", TransferLength512));
+    DEBUG ((
+      DEBUG_INFO,
+      "transferLength %u too small for ComPacket\n",
+      TransferLength512
+      ));
     return TcgResultFailureBufferTooSmall;
   }
 
@@ -154,7 +162,9 @@ OpalTrustedRecv (
       return TcgResultFailure;
     }
 
-    if ((SecurityProtocol != TCG_OPAL_SECURITY_PROTOCOL_1) && (SecurityProtocol != TCG_OPAL_SECURITY_PROTOCOL_2)) {
+    if ((SecurityProtocol != TCG_OPAL_SECURITY_PROTOCOL_1) &&
+        (SecurityProtocol != TCG_OPAL_SECURITY_PROTOCOL_2))
+    {
       return TcgResultSuccess;
     }
 
@@ -230,7 +240,13 @@ OpalPerformMethod (
     );
 
   ERROR_CHECK (TcgInitTcgParseStruct (ParseStruct, Buffer, BufferSize));
-  ERROR_CHECK (TcgCheckComIds (ParseStruct, Session->OpalBaseComId, Session->ComIdExtension));
+  ERROR_CHECK (
+    TcgCheckComIds (
+      ParseStruct,
+      Session->OpalBaseComId,
+      Session->ComIdExtension
+      )
+    );
   ERROR_CHECK (TcgGetMethodStatus (ParseStruct, MethodStatus));
 
   return TcgResultSuccess;
@@ -304,10 +320,31 @@ OpalPsidRevert (
   // Send Revert action on Admin SP
   //
   ERROR_CHECK (TcgInitTcgCreateStruct (&CreateStruct, Buffer, BUFFER_SIZE));
-  ERROR_CHECK (TcgStartComPacket (&CreateStruct, AdminSpSession->OpalBaseComId, AdminSpSession->ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (&CreateStruct, AdminSpSession->TperSessionId, AdminSpSession->HostSessionId, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartComPacket (
+      &CreateStruct,
+      AdminSpSession->OpalBaseComId,
+      AdminSpSession->ComIdExtension
+      )
+    );
+  ERROR_CHECK (
+    TcgStartPacket (
+      &CreateStruct,
+      AdminSpSession->TperSessionId,
+      AdminSpSession->HostSessionId,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (&CreateStruct, 0x0));
-  ERROR_CHECK (TcgStartMethodCall (&CreateStruct, OPAL_UID_ADMIN_SP, OPAL_ADMIN_SP_REVERT_METHOD));
+  ERROR_CHECK (
+    TcgStartMethodCall (
+      &CreateStruct,
+      OPAL_UID_ADMIN_SP,
+      OPAL_ADMIN_SP_REVERT_METHOD
+      )
+    );
   ERROR_CHECK (TcgStartParameters (&CreateStruct));
   ERROR_CHECK (TcgEndParameters (&CreateStruct));
   ERROR_CHECK (TcgEndMethodCall (&CreateStruct));
@@ -318,7 +355,17 @@ OpalPsidRevert (
   //
   // Send Revert Method Call
   //
-  ERROR_CHECK (OpalPerformMethod (AdminSpSession, Size, Buffer, BUFFER_SIZE, &ParseStruct, &MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      AdminSpSession,
+      Size,
+      Buffer,
+      BUFFER_SIZE,
+      &ParseStruct,
+      &MethodStatus,
+      0
+      )
+    );
   METHOD_STATUS_ERROR_CHECK (MethodStatus, TcgResultFailure);
 
   return TcgResultSuccess;
@@ -355,10 +402,31 @@ OpalPyrite2PsidRevert (
   // Send Revert action on Admin SP
   //
   ERROR_CHECK (TcgInitTcgCreateStruct (&CreateStruct, Buffer, BUFFER_SIZE));
-  ERROR_CHECK (TcgStartComPacket (&CreateStruct, AdminSpSession->OpalBaseComId, AdminSpSession->ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (&CreateStruct, AdminSpSession->TperSessionId, AdminSpSession->HostSessionId, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartComPacket (
+      &CreateStruct,
+      AdminSpSession->OpalBaseComId,
+      AdminSpSession->ComIdExtension
+      )
+    );
+  ERROR_CHECK (
+    TcgStartPacket (
+      &CreateStruct,
+      AdminSpSession->TperSessionId,
+      AdminSpSession->HostSessionId,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (&CreateStruct, 0x0));
-  ERROR_CHECK (TcgStartMethodCall (&CreateStruct, OPAL_UID_ADMIN_SP, OPAL_ADMIN_SP_REVERT_METHOD));
+  ERROR_CHECK (
+    TcgStartMethodCall (
+      &CreateStruct,
+      OPAL_UID_ADMIN_SP,
+      OPAL_ADMIN_SP_REVERT_METHOD
+      )
+    );
   ERROR_CHECK (TcgStartParameters (&CreateStruct));
   ERROR_CHECK (TcgEndParameters (&CreateStruct));
   ERROR_CHECK (TcgEndMethodCall (&CreateStruct));
@@ -369,7 +437,17 @@ OpalPyrite2PsidRevert (
   //
   // Send Revert Method Call
   //
-  ERROR_CHECK (OpalPerformMethod (AdminSpSession, Size, Buffer, BUFFER_SIZE, &ParseStruct, &MethodStatus, EstimateTimeCost));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      AdminSpSession,
+      Size,
+      Buffer,
+      BUFFER_SIZE,
+      &ParseStruct,
+      &MethodStatus,
+      EstimateTimeCost
+      )
+    );
   METHOD_STATUS_ERROR_CHECK (MethodStatus, TcgResultFailure);
 
   return TcgResultSuccess;
@@ -494,12 +572,29 @@ OpalStartSession (
       HostSigningAuthority
       )
     );
-  ERROR_CHECK (OpalPerformMethod (Session, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      Session,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
   if (*MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS) {
     return TcgResultSuccess; // return early if method failed - user must check MethodStatus
   }
 
-  if (TcgParseSyncSession (&ParseStruct, Session->OpalBaseComId, ComIdExtension, HostSessionId, &Session->TperSessionId) != TcgResultSuccess) {
+  if (TcgParseSyncSession (
+        &ParseStruct,
+        Session->OpalBaseComId,
+        ComIdExtension,
+        HostSessionId,
+        &Session->TperSessionId
+        ) != TcgResultSuccess)
+  {
     OpalEndSession (Session);
     return TcgResultFailure;
   }
@@ -562,7 +657,13 @@ OpalEndSession (
     );
 
   ERROR_CHECK (TcgInitTcgParseStruct (&ParseStruct, Buffer, sizeof (Buffer)));
-  ERROR_CHECK (TcgCheckComIds (&ParseStruct, Session->OpalBaseComId, Session->ComIdExtension));
+  ERROR_CHECK (
+    TcgCheckComIds (
+      &ParseStruct,
+      Session->OpalBaseComId,
+      Session->ComIdExtension
+      )
+    );
 
   ERROR_CHECK (TcgGetNextEndOfSession (&ParseStruct));
   return TcgResultSuccess;
@@ -605,10 +706,31 @@ OpalGetMsid (
   NULL_CHECK (MsidLength);
 
   ERROR_CHECK (TcgInitTcgCreateStruct (&CreateStruct, Buffer, BUFFER_SIZE));
-  ERROR_CHECK (TcgStartComPacket (&CreateStruct, AdminSpSession->OpalBaseComId, AdminSpSession->ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (&CreateStruct, AdminSpSession->TperSessionId, AdminSpSession->HostSessionId, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartComPacket (
+      &CreateStruct,
+      AdminSpSession->OpalBaseComId,
+      AdminSpSession->ComIdExtension
+      )
+    );
+  ERROR_CHECK (
+    TcgStartPacket (
+      &CreateStruct,
+      AdminSpSession->TperSessionId,
+      AdminSpSession->HostSessionId,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (&CreateStruct, 0x0));
-  ERROR_CHECK (TcgStartMethodCall (&CreateStruct, OPAL_UID_ADMIN_SP_C_PIN_MSID, TCG_UID_METHOD_GET));
+  ERROR_CHECK (
+    TcgStartMethodCall (
+      &CreateStruct,
+      OPAL_UID_ADMIN_SP_C_PIN_MSID,
+      TCG_UID_METHOD_GET
+      )
+    );
   ERROR_CHECK (TcgStartParameters (&CreateStruct));
   ERROR_CHECK (TcgAddStartList (&CreateStruct));
   ERROR_CHECK (TcgAddStartName (&CreateStruct));
@@ -629,7 +751,17 @@ OpalGetMsid (
   //
   // Send MSID Method Call
   //
-  ERROR_CHECK (OpalPerformMethod (AdminSpSession, Size, Buffer, BUFFER_SIZE, &ParseStruct, &MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      AdminSpSession,
+      Size,
+      Buffer,
+      BUFFER_SIZE,
+      &ParseStruct,
+      &MethodStatus,
+      0
+      )
+    );
   METHOD_STATUS_ERROR_CHECK (MethodStatus, TcgResultFailure);
 
   ERROR_CHECK (TcgGetNextStartList (&ParseStruct));
@@ -643,7 +775,12 @@ OpalGetMsid (
   ERROR_CHECK (TcgGetNextEndOfData (&ParseStruct));
 
   if (Col != OPAL_ADMIN_SP_PIN_COL) {
-    DEBUG ((DEBUG_INFO, "ERROR: got col %u, expected %u\n", Col, OPAL_ADMIN_SP_PIN_COL));
+    DEBUG ((
+      DEBUG_INFO,
+      "ERROR: got col %u, expected %u\n",
+      Col,
+      OPAL_ADMIN_SP_PIN_COL
+      ));
     return TcgResultFailure;
   }
 
@@ -652,7 +789,12 @@ OpalGetMsid (
   }
 
   if (MsidBufferSize < *MsidLength) {
-    DEBUG ((DEBUG_INFO, "Buffer too small MsidBufferSize: %d MsidLength: %d\n", MsidBufferSize, *MsidLength));
+    DEBUG ((
+      DEBUG_INFO,
+      "Buffer too small MsidBufferSize: %d MsidLength: %d\n",
+      MsidBufferSize,
+      *MsidLength
+      ));
     return TcgResultFailureBufferTooSmall;
   }
 
@@ -689,19 +831,50 @@ OpalPyrite2GetActiveDataRemovalMechanism (
   NULL_CHECK (ActiveDataRemovalMechanism);
 
   ERROR_CHECK (TcgInitTcgCreateStruct (&CreateStruct, Buffer, BUFFER_SIZE));
-  ERROR_CHECK (TcgStartComPacket (&CreateStruct, AdminSpSession->OpalBaseComId, AdminSpSession->ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (&CreateStruct, AdminSpSession->TperSessionId, AdminSpSession->HostSessionId, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartComPacket (
+      &CreateStruct,
+      AdminSpSession->OpalBaseComId,
+      AdminSpSession->ComIdExtension
+      )
+    );
+  ERROR_CHECK (
+    TcgStartPacket (
+      &CreateStruct,
+      AdminSpSession->TperSessionId,
+      AdminSpSession->HostSessionId,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (&CreateStruct, 0x0));
-  ERROR_CHECK (TcgStartMethodCall (&CreateStruct, OPAL_UID_ADMIN_SP_DATA_REMOVAL_MECHANISM, TCG_UID_METHOD_GET));
+  ERROR_CHECK (
+    TcgStartMethodCall (
+      &CreateStruct,
+      OPAL_UID_ADMIN_SP_DATA_REMOVAL_MECHANISM,
+      TCG_UID_METHOD_GET
+      )
+    );
   ERROR_CHECK (TcgStartParameters (&CreateStruct));
   ERROR_CHECK (TcgAddStartList (&CreateStruct));
   ERROR_CHECK (TcgAddStartName (&CreateStruct));
   ERROR_CHECK (TcgAddUINT8 (&CreateStruct, TCG_CELL_BLOCK_START_COLUMN_NAME));
-  ERROR_CHECK (TcgAddUINT8 (&CreateStruct, OPAL_ADMIN_SP_ACTIVE_DATA_REMOVAL_MECHANISM_COL));
+  ERROR_CHECK (
+    TcgAddUINT8 (
+      &CreateStruct,
+      OPAL_ADMIN_SP_ACTIVE_DATA_REMOVAL_MECHANISM_COL
+      )
+    );
   ERROR_CHECK (TcgAddEndName (&CreateStruct));
   ERROR_CHECK (TcgAddStartName (&CreateStruct));
   ERROR_CHECK (TcgAddUINT8 (&CreateStruct, TCG_CELL_BLOCK_END_COLUMN_NAME));
-  ERROR_CHECK (TcgAddUINT8 (&CreateStruct, OPAL_ADMIN_SP_ACTIVE_DATA_REMOVAL_MECHANISM_COL));
+  ERROR_CHECK (
+    TcgAddUINT8 (
+      &CreateStruct,
+      OPAL_ADMIN_SP_ACTIVE_DATA_REMOVAL_MECHANISM_COL
+      )
+    );
   ERROR_CHECK (TcgAddEndName (&CreateStruct));
   ERROR_CHECK (TcgAddEndList (&CreateStruct));
   ERROR_CHECK (TcgEndParameters (&CreateStruct));
@@ -713,7 +886,17 @@ OpalPyrite2GetActiveDataRemovalMechanism (
   //
   // Send Get Active Data Removal Mechanism Method Call
   //
-  ERROR_CHECK (OpalPerformMethod (AdminSpSession, Size, Buffer, BUFFER_SIZE, &ParseStruct, &MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      AdminSpSession,
+      Size,
+      Buffer,
+      BUFFER_SIZE,
+      &ParseStruct,
+      &MethodStatus,
+      0
+      )
+    );
   METHOD_STATUS_ERROR_CHECK (MethodStatus, TcgResultFailure);
 
   ERROR_CHECK (TcgGetNextStartList (&ParseStruct));
@@ -727,7 +910,12 @@ OpalPyrite2GetActiveDataRemovalMechanism (
   ERROR_CHECK (TcgGetNextEndOfData (&ParseStruct));
 
   if (Col != OPAL_ADMIN_SP_ACTIVE_DATA_REMOVAL_MECHANISM_COL) {
-    DEBUG ((DEBUG_INFO, "ERROR: got col %u, expected %u\n", Col, OPAL_ADMIN_SP_ACTIVE_DATA_REMOVAL_MECHANISM_COL));
+    DEBUG ((
+      DEBUG_INFO,
+      "ERROR: got col %u, expected %u\n",
+      Col,
+      OPAL_ADMIN_SP_ACTIVE_DATA_REMOVAL_MECHANISM_COL
+      ));
     return TcgResultFailure;
   }
 
@@ -738,7 +926,11 @@ OpalPyrite2GetActiveDataRemovalMechanism (
   //
   // Copy active data removal mechanism into Buffer
   //
-  CopyMem (ActiveDataRemovalMechanism, &RecvActiveDataRemovalMechanism, sizeof (RecvActiveDataRemovalMechanism));
+  CopyMem (
+    ActiveDataRemovalMechanism,
+    &RecvActiveDataRemovalMechanism,
+    sizeof (RecvActiveDataRemovalMechanism)
+    );
   return TcgResultSuccess;
 }
 
@@ -783,7 +975,9 @@ OpalAdminRevert (
             MethodStatus
             );
 
-    if ((Ret != TcgResultSuccess) || (*MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
+    if ((Ret != TcgResultSuccess) || (*MethodStatus !=
+                                      TCG_METHOD_STATUS_CODE_SUCCESS))
+    {
       //
       // bail out
       //
@@ -792,10 +986,31 @@ OpalAdminRevert (
   }
 
   ERROR_CHECK (TcgInitTcgCreateStruct (&CreateStruct, Buf, sizeof (Buf)));
-  ERROR_CHECK (TcgStartComPacket (&CreateStruct, LockingSpSession->OpalBaseComId, LockingSpSession->ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (&CreateStruct, LockingSpSession->TperSessionId, LockingSpSession->HostSessionId, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartComPacket (
+      &CreateStruct,
+      LockingSpSession->OpalBaseComId,
+      LockingSpSession->ComIdExtension
+      )
+    );
+  ERROR_CHECK (
+    TcgStartPacket (
+      &CreateStruct,
+      LockingSpSession->TperSessionId,
+      LockingSpSession->HostSessionId,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (&CreateStruct, 0x0));
-  ERROR_CHECK (TcgStartMethodCall (&CreateStruct, TCG_UID_THIS_SP, OPAL_LOCKING_SP_REVERTSP_METHOD));
+  ERROR_CHECK (
+    TcgStartMethodCall (
+      &CreateStruct,
+      TCG_UID_THIS_SP,
+      OPAL_LOCKING_SP_REVERTSP_METHOD
+      )
+    );
   ERROR_CHECK (TcgStartParameters (&CreateStruct));
 
   if (KeepUserData) {
@@ -817,7 +1032,17 @@ OpalAdminRevert (
   //
   // Send RevertSP method call
   //
-  ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      LockingSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
 
   //
   // Session is immediately ended by device after successful revertsp, so no need to end Session
@@ -879,7 +1104,9 @@ OpalPyrite2AdminRevert (
             MethodStatus
             );
 
-    if ((Ret != TcgResultSuccess) || (*MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS)) {
+    if ((Ret != TcgResultSuccess) || (*MethodStatus !=
+                                      TCG_METHOD_STATUS_CODE_SUCCESS))
+    {
       //
       // bail out
       //
@@ -888,10 +1115,31 @@ OpalPyrite2AdminRevert (
   }
 
   ERROR_CHECK (TcgInitTcgCreateStruct (&CreateStruct, Buf, sizeof (Buf)));
-  ERROR_CHECK (TcgStartComPacket (&CreateStruct, LockingSpSession->OpalBaseComId, LockingSpSession->ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (&CreateStruct, LockingSpSession->TperSessionId, LockingSpSession->HostSessionId, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartComPacket (
+      &CreateStruct,
+      LockingSpSession->OpalBaseComId,
+      LockingSpSession->ComIdExtension
+      )
+    );
+  ERROR_CHECK (
+    TcgStartPacket (
+      &CreateStruct,
+      LockingSpSession->TperSessionId,
+      LockingSpSession->HostSessionId,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (&CreateStruct, 0x0));
-  ERROR_CHECK (TcgStartMethodCall (&CreateStruct, TCG_UID_THIS_SP, OPAL_LOCKING_SP_REVERTSP_METHOD));
+  ERROR_CHECK (
+    TcgStartMethodCall (
+      &CreateStruct,
+      TCG_UID_THIS_SP,
+      OPAL_LOCKING_SP_REVERTSP_METHOD
+      )
+    );
   ERROR_CHECK (TcgStartParameters (&CreateStruct));
 
   if (KeepUserData) {
@@ -913,7 +1161,17 @@ OpalPyrite2AdminRevert (
   //
   // Send RevertSP method call
   //
-  ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, EstimateTimeCost));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      LockingSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      EstimateTimeCost
+      )
+    );
 
   //
   // Session is immediately ended by device after successful revertsp, so no need to end Session
@@ -962,10 +1220,31 @@ OpalActivateLockingSp (
   // Call Activate method on Locking SP
   //
   ERROR_CHECK (TcgInitTcgCreateStruct (&CreateStruct, Buf, sizeof (Buf)));
-  ERROR_CHECK (TcgStartComPacket (&CreateStruct, AdminSpSession->OpalBaseComId, AdminSpSession->ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (&CreateStruct, AdminSpSession->TperSessionId, AdminSpSession->HostSessionId, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartComPacket (
+      &CreateStruct,
+      AdminSpSession->OpalBaseComId,
+      AdminSpSession->ComIdExtension
+      )
+    );
+  ERROR_CHECK (
+    TcgStartPacket (
+      &CreateStruct,
+      AdminSpSession->TperSessionId,
+      AdminSpSession->HostSessionId,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (&CreateStruct, 0x0));
-  ERROR_CHECK (TcgStartMethodCall (&CreateStruct, OPAL_UID_LOCKING_SP, OPAL_ADMIN_SP_ACTIVATE_METHOD));
+  ERROR_CHECK (
+    TcgStartMethodCall (
+      &CreateStruct,
+      OPAL_UID_LOCKING_SP,
+      OPAL_ADMIN_SP_ACTIVATE_METHOD
+      )
+    );
   ERROR_CHECK (TcgStartParameters (&CreateStruct));
   ERROR_CHECK (TcgEndParameters (&CreateStruct));
   ERROR_CHECK (TcgEndMethodCall (&CreateStruct));
@@ -976,7 +1255,17 @@ OpalActivateLockingSp (
   //
   // Send Activate method call
   //
-  ERROR_CHECK (OpalPerformMethod (AdminSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      AdminSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
   METHOD_STATUS_ERROR_CHECK (*MethodStatus, TcgResultSuccess); // exit with success on method failure - user must inspect MethodStatus
 
   return TcgResultSuccess;
@@ -1027,7 +1316,17 @@ OpalSetPassword (
       )
     );
 
-  ERROR_CHECK (OpalPerformMethod (Session, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      Session,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
   // exit with success on method failure - user must inspect MethodStatus
   METHOD_STATUS_ERROR_CHECK (*MethodStatus, TcgResultSuccess);
 
@@ -1083,7 +1382,17 @@ OpalSetLockingSpAuthorityEnabledAndPin (
       )
     );
 
-  ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      LockingSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
 
   if (*MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS) {
     DEBUG ((DEBUG_INFO, "Send Set Authority error\n"));
@@ -1106,7 +1415,17 @@ OpalSetLockingSpAuthorityEnabledAndPin (
       )
     );
 
-  ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      LockingSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
 
   //
   // allow user1 to set global range to unlocked/locked by modifying ACE_Locking_GlobalRange_SetRdLocked/SetWrLocked
@@ -1127,7 +1446,17 @@ OpalSetLockingSpAuthorityEnabledAndPin (
       )
     );
 
-  ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      LockingSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
 
   if (*MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS) {
     DEBUG ((DEBUG_INFO, "Update ACE for RDLOCKED failed\n"));
@@ -1150,7 +1479,17 @@ OpalSetLockingSpAuthorityEnabledAndPin (
       )
     );
 
-  ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      LockingSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
 
   if (*MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS) {
     DEBUG ((DEBUG_INFO, "Update ACE for WRLOCKED failed\n"));
@@ -1158,8 +1497,24 @@ OpalSetLockingSpAuthorityEnabledAndPin (
   }
 
   ERROR_CHECK (TcgInitTcgCreateStruct (&CreateStruct, Buf, sizeof (Buf)));
-  ERROR_CHECK (OpalCreateRetrieveGlobalLockingRangeActiveKey (LockingSpSession, &CreateStruct, &Size));
-  ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalCreateRetrieveGlobalLockingRangeActiveKey (
+      LockingSpSession,
+      &CreateStruct,
+      &Size
+      )
+    );
+  ERROR_CHECK (
+    OpalPerformMethod (
+      LockingSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
 
   //
   // For Pyrite type SSC, it not supports Active Key.
@@ -1176,14 +1531,26 @@ OpalSetLockingSpAuthorityEnabledAndPin (
         LockingSpSession->ComIdExtension,
         LockingSpSession->TperSessionId,
         LockingSpSession->HostSessionId,
-        (ActiveKey == OPAL_LOCKING_SP_K_AES_256_GLOBALRANGE_KEY) ? OPAL_LOCKING_SP_ACE_K_AES_256_GLOBALRANGE_GENKEY : OPAL_LOCKING_SP_ACE_K_AES_128_GLOBALRANGE_GENKEY,
+        (ActiveKey == OPAL_LOCKING_SP_K_AES_256_GLOBALRANGE_KEY) ?
+        OPAL_LOCKING_SP_ACE_K_AES_256_GLOBALRANGE_GENKEY :
+        OPAL_LOCKING_SP_ACE_K_AES_128_GLOBALRANGE_GENKEY,
         OPAL_LOCKING_SP_USER1_AUTHORITY,
         TCG_ACE_EXPRESSION_OR,
         OPAL_LOCKING_SP_ADMINS_AUTHORITY
         )
       );
 
-    ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+    ERROR_CHECK (
+      OpalPerformMethod (
+        LockingSpSession,
+        Size,
+        Buf,
+        sizeof (Buf),
+        &ParseStruct,
+        MethodStatus,
+        0
+        )
+      );
 
     if (*MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS) {
       DEBUG ((DEBUG_INFO, "Update ACE for GLOBALRANGE_GENKEY failed\n"));
@@ -1210,10 +1577,23 @@ OpalSetLockingSpAuthorityEnabledAndPin (
       )
     );
 
-  ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      LockingSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
 
   if (*MethodStatus != TCG_METHOD_STATUS_CODE_SUCCESS) {
-    DEBUG ((DEBUG_INFO, "Update ACE for OPAL_LOCKING_SP_ACE_LOCKING_GLOBALRANGE_GET_ALL failed\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "Update ACE for OPAL_LOCKING_SP_ACE_LOCKING_GLOBALRANGE_GET_ALL failed\n"
+      ));
     return TcgResultFailure;
   }
 
@@ -1257,7 +1637,17 @@ OpalDisableUser (
       )
     );
 
-  ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      LockingSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
 
   return TcgResultSuccess;
 }
@@ -1291,21 +1681,63 @@ OpalGlobalLockingRangeGenKey (
   //
   // retrieve the activekey in order to know which globalrange key to generate
   //
-  ERROR_CHECK (OpalCreateRetrieveGlobalLockingRangeActiveKey (LockingSpSession, &CreateStruct, &Size));
-  ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalCreateRetrieveGlobalLockingRangeActiveKey (
+      LockingSpSession,
+      &CreateStruct,
+      &Size
+      )
+    );
+  ERROR_CHECK (
+    OpalPerformMethod (
+      LockingSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
 
   METHOD_STATUS_ERROR_CHECK (*MethodStatus, TcgResultSuccess);
 
-  ERROR_CHECK (OpalParseRetrieveGlobalLockingRangeActiveKey (&ParseStruct, &ActiveKey));
+  ERROR_CHECK (
+    OpalParseRetrieveGlobalLockingRangeActiveKey (
+      &ParseStruct,
+      &ActiveKey
+      )
+    );
 
   //
   // call genkey on ActiveKey UID
   //
   ERROR_CHECK (TcgInitTcgCreateStruct (&CreateStruct, Buf, sizeof (Buf)));
-  ERROR_CHECK (TcgStartComPacket (&CreateStruct, LockingSpSession->OpalBaseComId, LockingSpSession->ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (&CreateStruct, LockingSpSession->TperSessionId, LockingSpSession->HostSessionId, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartComPacket (
+      &CreateStruct,
+      LockingSpSession->OpalBaseComId,
+      LockingSpSession->ComIdExtension
+      )
+    );
+  ERROR_CHECK (
+    TcgStartPacket (
+      &CreateStruct,
+      LockingSpSession->TperSessionId,
+      LockingSpSession->HostSessionId,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (&CreateStruct, 0x0));
-  ERROR_CHECK (TcgStartMethodCall (&CreateStruct, ActiveKey, TCG_UID_METHOD_GEN_KEY));
+  ERROR_CHECK (
+    TcgStartMethodCall (
+      &CreateStruct,
+      ActiveKey,
+      TCG_UID_METHOD_GEN_KEY
+      )
+    );
   ERROR_CHECK (TcgStartParameters (&CreateStruct));
   ERROR_CHECK (TcgEndParameters (&CreateStruct));
   ERROR_CHECK (TcgEndMethodCall (&CreateStruct));
@@ -1313,7 +1745,17 @@ OpalGlobalLockingRangeGenKey (
   ERROR_CHECK (TcgEndPacket (&CreateStruct));
   ERROR_CHECK (TcgEndComPacket (&CreateStruct, &Size));
 
-  ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      LockingSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
 
   return TcgResultSuccess;
 }
@@ -1352,10 +1794,31 @@ OpalUpdateGlobalLockingRange (
   //
   // set global locking range values
   //
-  ERROR_CHECK (TcgStartComPacket (&CreateStruct, LockingSpSession->OpalBaseComId, LockingSpSession->ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (&CreateStruct, LockingSpSession->TperSessionId, LockingSpSession->HostSessionId, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartComPacket (
+      &CreateStruct,
+      LockingSpSession->OpalBaseComId,
+      LockingSpSession->ComIdExtension
+      )
+    );
+  ERROR_CHECK (
+    TcgStartPacket (
+      &CreateStruct,
+      LockingSpSession->TperSessionId,
+      LockingSpSession->HostSessionId,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (&CreateStruct, 0x0));
-  ERROR_CHECK (TcgStartMethodCall (&CreateStruct, OPAL_LOCKING_SP_LOCKING_GLOBALRANGE, TCG_UID_METHOD_SET));
+  ERROR_CHECK (
+    TcgStartMethodCall (
+      &CreateStruct,
+      OPAL_LOCKING_SP_LOCKING_GLOBALRANGE,
+      TCG_UID_METHOD_SET
+      )
+    );
   ERROR_CHECK (TcgStartParameters (&CreateStruct));
   ERROR_CHECK (TcgAddStartName (&CreateStruct));
   ERROR_CHECK (TcgAddUINT8 (&CreateStruct, 0x01));                       // "Values"
@@ -1379,7 +1842,17 @@ OpalUpdateGlobalLockingRange (
   ERROR_CHECK (TcgEndPacket (&CreateStruct));
   ERROR_CHECK (TcgEndComPacket (&CreateStruct, &Size));
 
-  ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      LockingSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
   METHOD_STATUS_ERROR_CHECK (*MethodStatus, TcgResultSuccess);
 
   return TcgResultSuccess;
@@ -1428,10 +1901,31 @@ OpalSetLockingRange (
   //
   // set locking range values
   //
-  ERROR_CHECK (TcgStartComPacket (&CreateStruct, LockingSpSession->OpalBaseComId, LockingSpSession->ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (&CreateStruct, LockingSpSession->TperSessionId, LockingSpSession->HostSessionId, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartComPacket (
+      &CreateStruct,
+      LockingSpSession->OpalBaseComId,
+      LockingSpSession->ComIdExtension
+      )
+    );
+  ERROR_CHECK (
+    TcgStartPacket (
+      &CreateStruct,
+      LockingSpSession->TperSessionId,
+      LockingSpSession->HostSessionId,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (&CreateStruct, 0x0));
-  ERROR_CHECK (TcgStartMethodCall (&CreateStruct, LockingRangeUid, TCG_UID_METHOD_SET));
+  ERROR_CHECK (
+    TcgStartMethodCall (
+      &CreateStruct,
+      LockingRangeUid,
+      TCG_UID_METHOD_SET
+      )
+    );
   ERROR_CHECK (TcgStartParameters (&CreateStruct));
   ERROR_CHECK (TcgAddStartName (&CreateStruct));
   ERROR_CHECK (TcgAddUINT8 (&CreateStruct, 0x01));                        // "Values"
@@ -1480,7 +1974,17 @@ OpalSetLockingRange (
   ERROR_CHECK (TcgEndPacket (&CreateStruct));
   ERROR_CHECK (TcgEndComPacket (&CreateStruct, &Size));
 
-  ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      LockingSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      MethodStatus,
+      0
+      )
+    );
   // Exit with success on method failure - user must inspect MethodStatus
   METHOD_STATUS_ERROR_CHECK (*MethodStatus, TcgResultSuccess);
 
@@ -1511,10 +2015,31 @@ OpalCreateRetrieveGlobalLockingRangeActiveKey (
   NULL_CHECK (Size);
 
   // Retrieve the activekey in order to know which globalrange key to generate
-  ERROR_CHECK (TcgStartComPacket (CreateStruct, Session->OpalBaseComId, Session->ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (CreateStruct, Session->TperSessionId, Session->HostSessionId, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartComPacket (
+      CreateStruct,
+      Session->OpalBaseComId,
+      Session->ComIdExtension
+      )
+    );
+  ERROR_CHECK (
+    TcgStartPacket (
+      CreateStruct,
+      Session->TperSessionId,
+      Session->HostSessionId,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (CreateStruct, 0x0));
-  ERROR_CHECK (TcgStartMethodCall (CreateStruct, OPAL_LOCKING_SP_LOCKING_GLOBALRANGE, TCG_UID_METHOD_GET));
+  ERROR_CHECK (
+    TcgStartMethodCall (
+      CreateStruct,
+      OPAL_LOCKING_SP_LOCKING_GLOBALRANGE,
+      TCG_UID_METHOD_GET
+      )
+    );
   ERROR_CHECK (TcgStartParameters (CreateStruct));
   ERROR_CHECK (TcgAddStartList (CreateStruct));
   ERROR_CHECK (TcgAddStartName (CreateStruct));
@@ -1571,8 +2096,16 @@ OpalParseRetrieveGlobalLockingRangeActiveKey (
     return TcgResultFailure;
   }
 
-  if ((*ActiveKey != OPAL_LOCKING_SP_K_AES_256_GLOBALRANGE_KEY) && (*ActiveKey != OPAL_LOCKING_SP_K_AES_128_GLOBALRANGE_KEY)) {
-    DEBUG ((DEBUG_INFO, "Unexpected gen key %u (exp %u or %u)\n", *ActiveKey, OPAL_LOCKING_SP_K_AES_256_GLOBALRANGE_KEY, OPAL_LOCKING_SP_K_AES_128_GLOBALRANGE_KEY));
+  if ((*ActiveKey != OPAL_LOCKING_SP_K_AES_256_GLOBALRANGE_KEY) &&
+      (*ActiveKey != OPAL_LOCKING_SP_K_AES_128_GLOBALRANGE_KEY))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "Unexpected gen key %u (exp %u or %u)\n",
+      *ActiveKey,
+      OPAL_LOCKING_SP_K_AES_256_GLOBALRANGE_KEY,
+      OPAL_LOCKING_SP_K_AES_128_GLOBALRANGE_KEY
+      ));
     return TcgResultFailure;
   }
 
@@ -1607,8 +2140,23 @@ OpalGetTryLimit (
   NULL_CHECK (TryLimit);
 
   ERROR_CHECK (TcgInitTcgCreateStruct (&CreateStruct, Buf, sizeof (Buf)));
-  ERROR_CHECK (TcgStartComPacket (&CreateStruct, LockingSpSession->OpalBaseComId, LockingSpSession->ComIdExtension));
-  ERROR_CHECK (TcgStartPacket (&CreateStruct, LockingSpSession->TperSessionId, LockingSpSession->HostSessionId, 0x0, 0x0, 0x0));
+  ERROR_CHECK (
+    TcgStartComPacket (
+      &CreateStruct,
+      LockingSpSession->OpalBaseComId,
+      LockingSpSession->ComIdExtension
+      )
+    );
+  ERROR_CHECK (
+    TcgStartPacket (
+      &CreateStruct,
+      LockingSpSession->TperSessionId,
+      LockingSpSession->HostSessionId,
+      0x0,
+      0x0,
+      0x0
+      )
+    );
   ERROR_CHECK (TcgStartSubPacket (&CreateStruct, 0x0));
   ERROR_CHECK (TcgStartMethodCall (&CreateStruct, RowUid, TCG_UID_METHOD_GET));
   ERROR_CHECK (TcgStartParameters (&CreateStruct));
@@ -1628,7 +2176,17 @@ OpalGetTryLimit (
   ERROR_CHECK (TcgEndPacket (&CreateStruct));
   ERROR_CHECK (TcgEndComPacket (&CreateStruct, &Size));
 
-  ERROR_CHECK (OpalPerformMethod (LockingSpSession, Size, Buf, sizeof (Buf), &ParseStruct, &MethodStatus, 0));
+  ERROR_CHECK (
+    OpalPerformMethod (
+      LockingSpSession,
+      Size,
+      Buf,
+      sizeof (Buf),
+      &ParseStruct,
+      &MethodStatus,
+      0
+      )
+    );
   METHOD_STATUS_ERROR_CHECK (MethodStatus, TcgResultFailure);
 
   ERROR_CHECK (TcgGetNextStartList (&ParseStruct));
@@ -1642,7 +2200,12 @@ OpalGetTryLimit (
   ERROR_CHECK (TcgGetNextEndOfData (&ParseStruct));
 
   if (Col != OPAL_LOCKING_SP_C_PIN_TRYLIMIT_COL) {
-    DEBUG ((DEBUG_INFO, "ERROR: got col %u, expected %u\n", Col, OPAL_LOCKING_SP_C_PIN_TRYLIMIT_COL));
+    DEBUG ((
+      DEBUG_INFO,
+      "ERROR: got col %u, expected %u\n",
+      Col,
+      OPAL_LOCKING_SP_C_PIN_TRYLIMIT_COL
+      ));
     return TcgResultFailure;
   }
 
@@ -1690,14 +2253,29 @@ OpalGetSupportedAttributesInfo (
   //
   // Get list of supported protocols
   //
-  if (OpalRetrieveSupportedProtocolList (Session, sizeof (TCG_SUPPORTED_SECURITY_PROTOCOLS), SupportedProtocols) == TcgResultFailure) {
+  if (OpalRetrieveSupportedProtocolList (
+        Session,
+        sizeof (TCG_SUPPORTED_SECURITY_PROTOCOLS),
+        SupportedProtocols
+        ) ==
+      TcgResultFailure)
+  {
     DEBUG ((DEBUG_INFO, "OpalRetrieveSupportedProtocolList failed\n"));
     return TcgResultFailure;
   }
 
-  SupportedAttributes->Sp1        = TcgIsProtocolSupported (SupportedProtocols, TCG_OPAL_SECURITY_PROTOCOL_1);
-  SupportedAttributes->Sp2        = TcgIsProtocolSupported (SupportedProtocols, TCG_OPAL_SECURITY_PROTOCOL_2);
-  SupportedAttributes->SpIeee1667 = TcgIsProtocolSupported (SupportedProtocols, TCG_SECURITY_PROTOCOL_IEEE_1667);
+  SupportedAttributes->Sp1 = TcgIsProtocolSupported (
+                               SupportedProtocols,
+                               TCG_OPAL_SECURITY_PROTOCOL_1
+                               );
+  SupportedAttributes->Sp2 = TcgIsProtocolSupported (
+                               SupportedProtocols,
+                               TCG_OPAL_SECURITY_PROTOCOL_2
+                               );
+  SupportedAttributes->SpIeee1667 = TcgIsProtocolSupported (
+                                      SupportedProtocols,
+                                      TCG_SECURITY_PROTOCOL_IEEE_1667
+                                      );
 
   DEBUG ((
     DEBUG_INFO,
@@ -1711,7 +2289,9 @@ OpalGetSupportedAttributesInfo (
   // Perform level 0 discovery and assign desired feature info to Opal Disk structure
   //
   ZeroMem (Buffer, BUFFER_SIZE);
-  if (OpalRetrieveLevel0DiscoveryHeader (Session, BUFFER_SIZE, Buffer) == TcgResultFailure) {
+  if (OpalRetrieveLevel0DiscoveryHeader (Session, BUFFER_SIZE, Buffer) ==
+      TcgResultFailure)
+  {
     DEBUG ((DEBUG_INFO, "OpalRetrieveLevel0DiscoveryHeader failed\n"));
     return TcgResultFailure;
   }
@@ -1721,8 +2301,13 @@ OpalGetSupportedAttributesInfo (
   //
   DiscoveryHeader = (TCG_LEVEL0_DISCOVERY_HEADER *)Buffer;
 
-  Size                          = 0;
-  Feat                          = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (DiscoveryHeader, TCG_FEATURE_OPAL_SSC_V2_0_0, &Size);
+  Size = 0;
+  Feat =
+    (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (
+                                        DiscoveryHeader,
+                                        TCG_FEATURE_OPAL_SSC_V2_0_0,
+                                        &Size
+                                        );
   SupportedAttributes->OpalSsc2 = (Feat != NULL);
 
   *OpalBaseComId = TCG_RESERVED_COMID;
@@ -1730,12 +2315,16 @@ OpalGetSupportedAttributesInfo (
   //
   // Check Opal SCC V2 has valid settings for SID C_PIN on revert
   //
-  if (SupportedAttributes->OpalSsc2 && (Size >= sizeof (OPAL_SSCV2_FEATURE_DESCRIPTOR))) {
+  if (SupportedAttributes->OpalSsc2 && (Size >=
+                                        sizeof (OPAL_SSCV2_FEATURE_DESCRIPTOR)))
+  {
     //
     // Want opposite polarity b/c Value is greater than a bit, but we only care about non-zero vs zero
     //
-    SupportedAttributes->InitCpinIndicator = (Feat->OpalSscV2.InitialCPINSIDPIN == 0);
-    SupportedAttributes->CpinUponRevert    = (Feat->OpalSscV2.CPINSIDPINRevertBehavior == 0);
+    SupportedAttributes->InitCpinIndicator =
+      (Feat->OpalSscV2.InitialCPINSIDPIN == 0);
+    SupportedAttributes->CpinUponRevert =
+      (Feat->OpalSscV2.CPINSIDPINRevertBehavior == 0);
     DEBUG ((
       DEBUG_INFO,
       "Opal SSC V2 InitCpinIndicator %d  CpinUponRevert %d \n",
@@ -1745,8 +2334,13 @@ OpalGetSupportedAttributesInfo (
     *OpalBaseComId = SwapBytes16 (Feat->OpalSscV2.BaseComdIdBE);
   }
 
-  Size                             = 0;
-  Feat                             = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (DiscoveryHeader, TCG_FEATURE_OPAL_SSC_LITE, &Size);
+  Size = 0;
+  Feat =
+    (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (
+                                        DiscoveryHeader,
+                                        TCG_FEATURE_OPAL_SSC_LITE,
+                                        &Size
+                                        );
   SupportedAttributes->OpalSscLite = (Feat != NULL);
 
   if ((Feat != NULL) && (Size >= sizeof (OPAL_SSCLITE_FEATURE_DESCRIPTOR))) {
@@ -1754,9 +2348,13 @@ OpalGetSupportedAttributesInfo (
       //
       // Pin values used always match up with ComId used
       //
-      *OpalBaseComId                         = SwapBytes16 (Feat->OpalSscLite.BaseComdIdBE);
-      SupportedAttributes->InitCpinIndicator = (Feat->OpalSscV2.InitialCPINSIDPIN == 0);
-      SupportedAttributes->CpinUponRevert    = (Feat->OpalSscV2.CPINSIDPINRevertBehavior == 0);
+      *OpalBaseComId = SwapBytes16 (
+                         Feat->OpalSscLite.BaseComdIdBE
+                         );
+      SupportedAttributes->InitCpinIndicator =
+        (Feat->OpalSscV2.InitialCPINSIDPIN == 0);
+      SupportedAttributes->CpinUponRevert =
+        (Feat->OpalSscV2.CPINSIDPINRevertBehavior == 0);
       DEBUG ((
         DEBUG_INFO,
         "Opal SSC Lite InitCpinIndicator %d  CpinUponRevert %d \n",
@@ -1770,16 +2368,28 @@ OpalGetSupportedAttributesInfo (
   // For some pyrite 2.0 device, it contains both pyrite 1.0 and 2.0 feature data.
   // so here try to get data from pyrite 2.0 feature data first.
   //
-  Size  = 0;
-  Feat  = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (DiscoveryHeader, TCG_FEATURE_PYRITE_SSC, &Size);
+  Size = 0;
+  Feat = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (
+                                             DiscoveryHeader,
+                                             TCG_FEATURE_PYRITE_SSC,
+                                             &Size
+                                             );
   Size2 = 0;
-  Feat2 = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (DiscoveryHeader, TCG_FEATURE_PYRITE_SSC_V2_0_0, &Size2);
+  Feat2 = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (
+                                              DiscoveryHeader,
+                                              TCG_FEATURE_PYRITE_SSC_V2_0_0,
+                                              &Size2
+                                              );
   if ((Feat2 != NULL) && (Size2 >= sizeof (PYRITE_SSCV2_FEATURE_DESCRIPTOR))) {
     SupportedAttributes->PyriteSscV2 = TRUE;
     if (*OpalBaseComId == TCG_RESERVED_COMID) {
-      *OpalBaseComId                         = SwapBytes16 (Feat2->PyriteSscV2.BaseComdIdBE);
-      SupportedAttributes->InitCpinIndicator = (Feat2->PyriteSscV2.InitialCPINSIDPIN == 0);
-      SupportedAttributes->CpinUponRevert    = (Feat2->PyriteSscV2.CPINSIDPINRevertBehavior == 0);
+      *OpalBaseComId = SwapBytes16 (
+                         Feat2->PyriteSscV2.BaseComdIdBE
+                         );
+      SupportedAttributes->InitCpinIndicator =
+        (Feat2->PyriteSscV2.InitialCPINSIDPIN == 0);
+      SupportedAttributes->CpinUponRevert =
+        (Feat2->PyriteSscV2.CPINSIDPINRevertBehavior == 0);
       DEBUG ((
         DEBUG_INFO,
         "Pyrite SSC V2 InitCpinIndicator %d  CpinUponRevert %d \n",
@@ -1791,9 +2401,13 @@ OpalGetSupportedAttributesInfo (
     SupportedAttributes->PyriteSsc = (Feat != NULL);
     if ((Feat != NULL) && (Size >= sizeof (PYRITE_SSC_FEATURE_DESCRIPTOR))) {
       if (*OpalBaseComId == TCG_RESERVED_COMID) {
-        *OpalBaseComId                         = SwapBytes16 (Feat->PyriteSsc.BaseComdIdBE);
-        SupportedAttributes->InitCpinIndicator = (Feat->PyriteSsc.InitialCPINSIDPIN == 0);
-        SupportedAttributes->CpinUponRevert    = (Feat->PyriteSsc.CPINSIDPINRevertBehavior == 0);
+        *OpalBaseComId = SwapBytes16 (
+                           Feat->PyriteSsc.BaseComdIdBE
+                           );
+        SupportedAttributes->InitCpinIndicator =
+          (Feat->PyriteSsc.InitialCPINSIDPIN == 0);
+        SupportedAttributes->CpinUponRevert =
+          (Feat->PyriteSsc.CPINSIDPINRevertBehavior == 0);
         DEBUG ((
           DEBUG_INFO,
           "Pyrite SSC InitCpinIndicator %d  CpinUponRevert %d \n",
@@ -1804,8 +2418,13 @@ OpalGetSupportedAttributesInfo (
     }
   }
 
-  Size                          = 0;
-  Feat                          = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (DiscoveryHeader, TCG_FEATURE_OPAL_SSC_V1_0_0, &Size);
+  Size = 0;
+  Feat =
+    (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (
+                                        DiscoveryHeader,
+                                        TCG_FEATURE_OPAL_SSC_V1_0_0,
+                                        &Size
+                                        );
   SupportedAttributes->OpalSsc1 = (Feat != NULL);
   if ((Feat != NULL) && (Size >= sizeof (OPAL_SSCV1_FEATURE_DESCRIPTOR))) {
     if (*OpalBaseComId == TCG_RESERVED_COMID) {
@@ -1814,33 +2433,86 @@ OpalGetSupportedAttributesInfo (
   }
 
   Size = 0;
-  Feat = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (DiscoveryHeader, TCG_FEATURE_LOCKING, &Size);
+  Feat = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (
+                                             DiscoveryHeader,
+                                             TCG_FEATURE_LOCKING,
+                                             &Size
+                                             );
   if ((Feat != NULL) && (Size >= sizeof (TCG_LOCKING_FEATURE_DESCRIPTOR))) {
     SupportedAttributes->MediaEncryption = Feat->Locking.MediaEncryption;
-    DEBUG ((DEBUG_INFO, "SupportedAttributes->MediaEncryption 0x%X \n", SupportedAttributes->MediaEncryption));
+    DEBUG ((
+      DEBUG_INFO,
+      "SupportedAttributes->MediaEncryption 0x%X \n",
+      SupportedAttributes->MediaEncryption
+      ));
   }
 
   Size = 0;
-  Feat = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (DiscoveryHeader, TCG_FEATURE_BLOCK_SID, &Size);
+  Feat = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (
+                                             DiscoveryHeader,
+                                             TCG_FEATURE_BLOCK_SID,
+                                             &Size
+                                             );
   if ((Feat != NULL) && (Size >= sizeof (TCG_BLOCK_SID_FEATURE_DESCRIPTOR))) {
     SupportedAttributes->BlockSid = TRUE;
-    DEBUG ((DEBUG_INFO, "BlockSid Supported!!! Current Status is 0x%X \n", Feat->BlockSid.SIDBlockedState));
+    DEBUG ((
+      DEBUG_INFO,
+      "BlockSid Supported!!! Current Status is 0x%X \n",
+      Feat->BlockSid.SIDBlockedState
+      ));
   } else {
     DEBUG ((DEBUG_INFO, "BlockSid Unsupported!!!"));
   }
 
   Size = 0;
-  Feat = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (DiscoveryHeader, TCG_FEATURE_DATA_REMOVAL, &Size);
+  Feat = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (
+                                             DiscoveryHeader,
+                                             TCG_FEATURE_DATA_REMOVAL,
+                                             &Size
+                                             );
   if ((Feat != NULL) && (Size >= sizeof (DATA_REMOVAL_FEATURE_DESCRIPTOR))) {
     SupportedAttributes->DataRemoval = TRUE;
     DEBUG ((DEBUG_INFO, "DataRemoval Feature Supported!\n"));
-    DEBUG ((DEBUG_INFO, "Operation Processing = 0x%x\n", Feat->DataRemoval.OperationProcessing));
-    DEBUG ((DEBUG_INFO, "RemovalMechanism = 0x%x\n", Feat->DataRemoval.RemovalMechanism));
-    DEBUG ((DEBUG_INFO, "BIT0 :: Format = 0x%x, Time = 0x%x\n", Feat->DataRemoval.FormatBit0, SwapBytes16 (Feat->DataRemoval.TimeBit0)));
-    DEBUG ((DEBUG_INFO, "BIT1 :: Format = 0x%x, Time = 0x%x\n", Feat->DataRemoval.FormatBit1, SwapBytes16 (Feat->DataRemoval.TimeBit1)));
-    DEBUG ((DEBUG_INFO, "BIT2 :: Format = 0x%x, Time = 0x%x\n", Feat->DataRemoval.FormatBit2, SwapBytes16 (Feat->DataRemoval.TimeBit2)));
-    DEBUG ((DEBUG_INFO, "BIT3 :: Format = 0x%x, Time = 0x%x\n", Feat->DataRemoval.FormatBit3, SwapBytes16 (Feat->DataRemoval.TimeBit3)));
-    DEBUG ((DEBUG_INFO, "BIT4 :: Format = 0x%x, Time = 0x%x\n", Feat->DataRemoval.FormatBit4, SwapBytes16 (Feat->DataRemoval.TimeBit4)));
+    DEBUG ((
+      DEBUG_INFO,
+      "Operation Processing = 0x%x\n",
+      Feat->DataRemoval.OperationProcessing
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "RemovalMechanism = 0x%x\n",
+      Feat->DataRemoval.RemovalMechanism
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "BIT0 :: Format = 0x%x, Time = 0x%x\n",
+      Feat->DataRemoval.FormatBit0,
+      SwapBytes16 (Feat->DataRemoval.TimeBit0)
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "BIT1 :: Format = 0x%x, Time = 0x%x\n",
+      Feat->DataRemoval.FormatBit1,
+      SwapBytes16 (Feat->DataRemoval.TimeBit1)
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "BIT2 :: Format = 0x%x, Time = 0x%x\n",
+      Feat->DataRemoval.FormatBit2,
+      SwapBytes16 (Feat->DataRemoval.TimeBit2)
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "BIT3 :: Format = 0x%x, Time = 0x%x\n",
+      Feat->DataRemoval.FormatBit3,
+      SwapBytes16 (Feat->DataRemoval.TimeBit3)
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "BIT4 :: Format = 0x%x, Time = 0x%x\n",
+      Feat->DataRemoval.FormatBit4,
+      SwapBytes16 (Feat->DataRemoval.TimeBit4)
+      ));
   }
 
   DEBUG ((DEBUG_INFO, "Base COMID 0x%04X \n", *OpalBaseComId));
@@ -1874,7 +2546,9 @@ OpalGetLockingInfo (
   ZeroMem (Buffer, BUFFER_SIZE);
   ASSERT (sizeof (Buffer) >= sizeof (TCG_SUPPORTED_SECURITY_PROTOCOLS));
 
-  if (OpalRetrieveLevel0DiscoveryHeader (Session, BUFFER_SIZE, Buffer) == TcgResultFailure) {
+  if (OpalRetrieveLevel0DiscoveryHeader (Session, BUFFER_SIZE, Buffer) ==
+      TcgResultFailure)
+  {
     DEBUG ((DEBUG_INFO, "OpalRetrieveLevel0DiscoveryHeader failed\n"));
     return TcgResultFailure;
   }
@@ -1882,9 +2556,17 @@ OpalGetLockingInfo (
   DiscoveryHeader = (TCG_LEVEL0_DISCOVERY_HEADER *)Buffer;
 
   Size = 0;
-  Feat = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (DiscoveryHeader, TCG_FEATURE_LOCKING, &Size);
+  Feat = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (
+                                             DiscoveryHeader,
+                                             TCG_FEATURE_LOCKING,
+                                             &Size
+                                             );
   if ((Feat != NULL) && (Size >= sizeof (TCG_LOCKING_FEATURE_DESCRIPTOR))) {
-    CopyMem (LockingFeature, &Feat->Locking, sizeof (TCG_LOCKING_FEATURE_DESCRIPTOR));
+    CopyMem (
+      LockingFeature,
+      &Feat->Locking,
+      sizeof (TCG_LOCKING_FEATURE_DESCRIPTOR)
+      );
   }
 
   return TcgResultSuccess;
@@ -1920,7 +2602,9 @@ OpalGetFeatureDescriptor (
   ZeroMem (Buffer, BUFFER_SIZE);
   ASSERT (sizeof (Buffer) >= sizeof (TCG_SUPPORTED_SECURITY_PROTOCOLS));
 
-  if (OpalRetrieveLevel0DiscoveryHeader (Session, BUFFER_SIZE, Buffer) == TcgResultFailure) {
+  if (OpalRetrieveLevel0DiscoveryHeader (Session, BUFFER_SIZE, Buffer) ==
+      TcgResultFailure)
+  {
     DEBUG ((DEBUG_INFO, "OpalRetrieveLevel0DiscoveryHeader failed\n"));
     return TcgResultFailure;
   }
@@ -1928,7 +2612,11 @@ OpalGetFeatureDescriptor (
   DiscoveryHeader = (TCG_LEVEL0_DISCOVERY_HEADER *)Buffer;
 
   Size = 0;
-  Feat = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (DiscoveryHeader, FeatureCode, &Size);
+  Feat = (OPAL_LEVEL0_FEATURE_DESCRIPTOR *)TcgGetFeature (
+                                             DiscoveryHeader,
+                                             FeatureCode,
+                                             &Size
+                                             );
   if (Feat != NULL) {
     if (Size > *DataSize) {
       *DataSize = Size;

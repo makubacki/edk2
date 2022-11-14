@@ -32,7 +32,11 @@ TcgConfigDriverEntryPoint (
   TCG_CONFIG_PRIVATE_DATA  *PrivateData;
   EFI_TCG_PROTOCOL         *TcgProtocol;
 
-  if (!CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm12Guid)) {
+  if (!CompareGuid (
+         PcdGetPtr (PcdTpmInstanceGuid),
+         &gEfiTpmDeviceInstanceTpm12Guid
+         ))
+  {
     DEBUG ((DEBUG_ERROR, "No TPM12 instance required!\n"));
     return EFI_UNSUPPORTED;
   }
@@ -43,7 +47,11 @@ TcgConfigDriverEntryPoint (
     return Status;
   }
 
-  Status = gBS->LocateProtocol (&gEfiTcgProtocolGuid, NULL, (VOID **)&TcgProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiTcgProtocolGuid,
+                  NULL,
+                  (VOID **)&TcgProtocol
+                  );
   if (EFI_ERROR (Status)) {
     TcgProtocol = NULL;
   }
@@ -63,7 +71,10 @@ TcgConfigDriverEntryPoint (
   //
   // Create a private data structure.
   //
-  PrivateData = AllocateCopyPool (sizeof (TCG_CONFIG_PRIVATE_DATA), &mTcgConfigPrivateDateTemplate);
+  PrivateData = AllocateCopyPool (
+                  sizeof (TCG_CONFIG_PRIVATE_DATA),
+                  &mTcgConfigPrivateDateTemplate
+                  );
   if (PrivateData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

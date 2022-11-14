@@ -74,7 +74,12 @@ Tcg2ConfigPeimEntryPoint (
   UINTN                            Index;
   UINT8                            TpmDevice;
 
-  Status = PeiServicesLocatePpi (&gEfiPeiReadOnlyVariable2PpiGuid, 0, NULL, (VOID **)&VariablePpi);
+  Status = PeiServicesLocatePpi (
+             &gEfiPeiReadOnlyVariable2PpiGuid,
+             0,
+             NULL,
+             (VOID **)&VariablePpi
+             );
   ASSERT_EFI_ERROR (Status);
 
   Size   = sizeof (Tcg2Configuration);
@@ -96,14 +101,20 @@ Tcg2ConfigPeimEntryPoint (
   //
   // Validation
   //
-  if ((Tcg2Configuration.TpmDevice > TPM_DEVICE_MAX) || (Tcg2Configuration.TpmDevice < TPM_DEVICE_MIN)) {
+  if ((Tcg2Configuration.TpmDevice > TPM_DEVICE_MAX) ||
+      (Tcg2Configuration.TpmDevice < TPM_DEVICE_MIN))
+  {
     Tcg2Configuration.TpmDevice = TPM_DEVICE_DEFAULT;
   }
 
   //
   // Although we have SetupVariable info, we still need detect TPM device manually.
   //
-  DEBUG ((DEBUG_INFO, "Tcg2Configuration.TpmDevice from Setup: %x\n", Tcg2Configuration.TpmDevice));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tcg2Configuration.TpmDevice from Setup: %x\n",
+    Tcg2Configuration.TpmDevice
+    ));
 
   if (PcdGetBool (PcdTpmAutoDetection)) {
     TpmDevice = DetectTpmDevice (Tcg2Configuration.TpmDevice);
@@ -123,12 +134,22 @@ Tcg2ConfigPeimEntryPoint (
   // NOTE: Tcg2Configuration variable contains the desired TpmDevice type,
   // while PcdTpmInstanceGuid PCD contains the real detected TpmDevice type
   //
-  for (Index = 0; Index < sizeof (mTpmInstanceId)/sizeof (mTpmInstanceId[0]); Index++) {
+  for (Index = 0; Index < sizeof (mTpmInstanceId)/sizeof (mTpmInstanceId[0]);
+       Index++)
+  {
     if (TpmDevice == mTpmInstanceId[Index].TpmDevice) {
       Size   = sizeof (mTpmInstanceId[Index].TpmInstanceGuid);
-      Status = PcdSetPtrS (PcdTpmInstanceGuid, &Size, &mTpmInstanceId[Index].TpmInstanceGuid);
+      Status = PcdSetPtrS (
+                 PcdTpmInstanceGuid,
+                 &Size,
+                 &mTpmInstanceId[Index].TpmInstanceGuid
+                 );
       ASSERT_EFI_ERROR (Status);
-      DEBUG ((DEBUG_INFO, "TpmDevice PCD: %g\n", &mTpmInstanceId[Index].TpmInstanceGuid));
+      DEBUG ((
+        DEBUG_INFO,
+        "TpmDevice PCD: %g\n",
+        &mTpmInstanceId[Index].TpmInstanceGuid
+        ));
       break;
     }
   }
@@ -144,7 +165,11 @@ Tcg2ConfigPeimEntryPoint (
   // Because TcgPei or Tcg2Pei will not run, but we still need a way to notify other driver.
   // Other driver can know TPM initialization state by TpmInitializedPpi.
   //
-  if (CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceNoneGuid)) {
+  if (CompareGuid (
+        PcdGetPtr (PcdTpmInstanceGuid),
+        &gEfiTpmDeviceInstanceNoneGuid
+        ))
+  {
     Status2 = PeiServicesInstallPpi (&mTpmInitializationDonePpiList);
     ASSERT_EFI_ERROR (Status2);
   }

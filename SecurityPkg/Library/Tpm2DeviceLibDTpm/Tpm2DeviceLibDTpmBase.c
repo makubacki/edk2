@@ -55,12 +55,24 @@ InternalTpm2DeviceLibDTpmCommonConstructor (
   // Cache current active TpmInterfaceType only when needed
   //
   if (PcdGet8 (PcdActiveTpmInterfaceType) == 0xFF) {
-    PtpInterface = Tpm2GetPtpInterface ((VOID *)(UINTN)PcdGet64 (PcdTpmBaseAddress));
+    PtpInterface = Tpm2GetPtpInterface (
+                     (VOID *)(UINTN)PcdGet64 (
+                                      PcdTpmBaseAddress
+                                      )
+                     );
     PcdSet8S (PcdActiveTpmInterfaceType, PtpInterface);
   }
 
-  if ((PcdGet8 (PcdActiveTpmInterfaceType) == Tpm2PtpInterfaceCrb) && (PcdGet8 (PcdCRBIdleByPass) == 0xFF)) {
-    IdleByPass = Tpm2GetIdleByPass ((VOID *)(UINTN)PcdGet64 (PcdTpmBaseAddress));
+  if ((PcdGet8 (PcdActiveTpmInterfaceType) == Tpm2PtpInterfaceCrb) && (PcdGet8 (
+                                                                         PcdCRBIdleByPass
+                                                                         ) ==
+                                                                       0xFF))
+  {
+    IdleByPass = Tpm2GetIdleByPass (
+                   (VOID *)(UINTN)PcdGet64 (
+                                    PcdTpmBaseAddress
+                                    )
+                   );
     PcdSet8S (PcdCRBIdleByPass, IdleByPass);
   }
 

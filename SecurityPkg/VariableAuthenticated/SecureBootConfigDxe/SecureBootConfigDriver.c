@@ -48,7 +48,10 @@ SecureBootConfigDriverEntryPoint (
   //
   // Create a private data structure.
   //
-  PrivateData = AllocateCopyPool (sizeof (SECUREBOOT_CONFIG_PRIVATE_DATA), &mSecureBootConfigPrivateDateTemplate);
+  PrivateData = AllocateCopyPool (
+                  sizeof (SECUREBOOT_CONFIG_PRIVATE_DATA),
+                  &mSecureBootConfigPrivateDateTemplate
+                  );
   if (PrivateData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

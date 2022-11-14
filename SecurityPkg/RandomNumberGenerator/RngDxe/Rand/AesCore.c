@@ -84,9 +84,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED CONST UINT32  Rcon[] = {
 //
 // Loading & Storing 32-bit words in big-endian format: y[3..0] --> x; x --> y[3..0];
 //
-#define LOAD32H(x, y)   { x = ((UINT32)((y)[0] & 0xFF) << 24) | ((UINT32)((y)[1] & 0xFF) << 16) |   \
+#define LOAD32H(x, \
+                y)   \
+      { x = ((UINT32)((y)[0] & 0xFF) << 24) | ((UINT32)((y)[1] & 0xFF) << 16) |                     \
                                ((UINT32)((y)[2] & 0xFF) <<  8) | ((UINT32)((y)[3] & 0xFF)); }
-#define STORE32H(x, y)  { (y)[0] = (UINT8)(((x) >> 24) & 0xFF); (y)[1] = (UINT8)(((x) >> 16) & 0xFF);  \
+#define STORE32H(x, \
+                 y)  \
+      { (y)[0] = (UINT8)(((x) >> 24) & 0xFF); (y)[1] = (UINT8)(((x) >> 16) & 0xFF);                    \
                            (y)[2] = (UINT8)(((x) >>  8) & 0xFF); (y)[3] = (UINT8)((x)         & 0xFF); }
 
 //
@@ -162,7 +166,8 @@ AesExpandKey (
   //
   for (Index2 = Nk, Index3 = 0; Index2 < Nw; Index2 += Nk, Index3++) {
     Temp       = Ek[Index2 - 1];
-    Ek[Index2] = Ek[Index2 - Nk] ^ (AES_FT2 ((Temp >> 16) & 0xFF) & 0xFF000000) ^
+    Ek[Index2] = Ek[Index2 - Nk] ^ (AES_FT2 ((Temp >> 16) & 0xFF) &
+                                    0xFF000000) ^
                  (AES_FT3 ((Temp >>  8) & 0xFF) & 0x00FF0000) ^
                  (AES_FT0 ((Temp)       & 0xFF) & 0x0000FF00) ^
                  (AES_FT1 ((Temp >> 24) & 0xFF) & 0x000000FF) ^
@@ -172,26 +177,30 @@ AesExpandKey (
       // If AES Cipher Key is 128 or 192 bits
       //
       for (Index1 = 1; Index1 < Nk && (Index1 + Index2) < Nw; Index1++) {
-        Ek[Index1 + Index2] = Ek[Index1 + Index2 - Nk] ^ Ek[Index1 + Index2 - 1];
+        Ek[Index1 + Index2] = Ek[Index1 + Index2 - Nk] ^ Ek[Index1 + Index2 -
+                                                            1];
       }
     } else {
       //
       // Different routine for key expansion If Cipher Key is 256 bits,
       //
       for (Index1 = 1; Index1 < 4 && (Index1 + Index2) < Nw; Index1++) {
-        Ek[Index1 + Index2] = Ek[Index1 + Index2 - Nk] ^ Ek[Index1 + Index2 - 1];
+        Ek[Index1 + Index2] = Ek[Index1 + Index2 - Nk] ^ Ek[Index1 + Index2 -
+                                                            1];
       }
 
       if (Index2 + 4 < Nw) {
         Temp           = Ek[Index2 + 3];
-        Ek[Index2 + 4] = Ek[Index2 + 4 - Nk] ^ (AES_FT2 ((Temp >> 24) & 0xFF) & 0xFF000000) ^
+        Ek[Index2 + 4] = Ek[Index2 + 4 - Nk] ^ (AES_FT2 ((Temp >> 24) & 0xFF) &
+                                                0xFF000000) ^
                          (AES_FT3 ((Temp >> 16) & 0xFF) & 0x00FF0000) ^
                          (AES_FT0 ((Temp >>  8) & 0xFF) & 0x0000FF00) ^
                          (AES_FT1 ((Temp)       & 0xFF) & 0x000000FF);
       }
 
       for (Index1 = 5; Index1 < Nk && (Index1 + Index2) < Nw; Index1++) {
-        Ek[Index1 + Index2] = Ek[Index1 + Index2 - Nk] ^ Ek[Index1 + Index2 - 1];
+        Ek[Index1 + Index2] = Ek[Index1 + Index2 - Nk] ^ Ek[Index1 + Index2 -
+                                                            1];
       }
     }
   }
@@ -260,14 +269,38 @@ AesEncrypt (
   // table lookups to speed up the execution.
   //
   for (Round = 1; Round < Nr; Round++) {
-    StateY[0] = AES_FT0 ((StateX[0] >> 24)) ^ AES_FT1 ((StateX[1] >> 16) & 0xFF) ^
-                AES_FT2 ((StateX[2] >>  8) & 0xFF) ^ AES_FT3 ((StateX[3]) & 0xFF) ^ Ek[NbIndex];
-    StateY[1] = AES_FT0 ((StateX[1] >> 24)) ^ AES_FT1 ((StateX[2] >> 16) & 0xFF) ^
-                AES_FT2 ((StateX[3] >>  8) & 0xFF) ^ AES_FT3 ((StateX[0]) & 0xFF) ^ Ek[NbIndex + 1];
-    StateY[2] = AES_FT0 ((StateX[2] >> 24)) ^ AES_FT1 ((StateX[3] >> 16) & 0xFF) ^
-                AES_FT2 ((StateX[0] >>  8) & 0xFF) ^ AES_FT3 ((StateX[1]) & 0xFF) ^ Ek[NbIndex + 2];
-    StateY[3] = AES_FT0 ((StateX[3] >> 24)) ^ AES_FT1 ((StateX[0] >> 16) & 0xFF) ^
-                AES_FT2 ((StateX[1] >>  8) & 0xFF) ^ AES_FT3 ((StateX[2]) & 0xFF) ^ Ek[NbIndex + 3];
+    StateY[0] = AES_FT0 ((StateX[0] >> 24)) ^ AES_FT1 (
+                                                (StateX[1] >> 16) &
+                                                0xFF
+                                                ) ^
+                AES_FT2 ((StateX[2] >>  8) & 0xFF) ^ AES_FT3 (
+                                                       (StateX[3]) &
+                                                       0xFF
+                                                       ) ^ Ek[NbIndex];
+    StateY[1] = AES_FT0 ((StateX[1] >> 24)) ^ AES_FT1 (
+                                                (StateX[2] >> 16) &
+                                                0xFF
+                                                ) ^
+                AES_FT2 ((StateX[3] >>  8) & 0xFF) ^ AES_FT3 (
+                                                       (StateX[0]) &
+                                                       0xFF
+                                                       ) ^ Ek[NbIndex + 1];
+    StateY[2] = AES_FT0 ((StateX[2] >> 24)) ^ AES_FT1 (
+                                                (StateX[3] >> 16) &
+                                                0xFF
+                                                ) ^
+                AES_FT2 ((StateX[0] >>  8) & 0xFF) ^ AES_FT3 (
+                                                       (StateX[1]) &
+                                                       0xFF
+                                                       ) ^ Ek[NbIndex + 2];
+    StateY[3] = AES_FT0 ((StateX[3] >> 24)) ^ AES_FT1 (
+                                                (StateX[0] >> 16) &
+                                                0xFF
+                                                ) ^
+                AES_FT2 ((StateX[1] >>  8) & 0xFF) ^ AES_FT3 (
+                                                       (StateX[2]) &
+                                                       0xFF
+                                                       ) ^ Ek[NbIndex + 3];
 
     NbIndex += 4;
     Temp     = StateX;
@@ -278,17 +311,45 @@ AesEncrypt (
   //
   // Apply the final round, which does not include MixColumns() transformation
   //
-  StateY[0] = (AES_FT2 ((StateX[0] >> 24)) & 0xFF000000) ^ (AES_FT3 ((StateX[1] >> 16) & 0xFF) & 0x00FF0000) ^
-              (AES_FT0 ((StateX[2] >>  8) & 0xFF) & 0x0000FF00) ^ (AES_FT1 ((StateX[3]) & 0xFF) & 0x000000FF) ^
+  StateY[0] = (AES_FT2 ((StateX[0] >> 24)) & 0xFF000000) ^ (AES_FT3 (
+                                                              (StateX[1] >>
+                                                               16) & 0xFF
+                                                              ) & 0x00FF0000) ^
+              (AES_FT0 ((StateX[2] >>  8) & 0xFF) & 0x0000FF00) ^ (AES_FT1 (
+                                                                     (StateX[3])
+                                                                     & 0xFF
+                                                                     ) &
+                                                                   0x000000FF) ^
               Ek[NbIndex];
-  StateY[1] = (AES_FT2 ((StateX[1] >> 24)) & 0xFF000000) ^ (AES_FT3 ((StateX[2] >> 16) & 0xFF) & 0x00FF0000) ^
-              (AES_FT0 ((StateX[3] >>  8) & 0xFF) & 0x0000FF00) ^ (AES_FT1 ((StateX[0]) & 0xFF) & 0x000000FF) ^
+  StateY[1] = (AES_FT2 ((StateX[1] >> 24)) & 0xFF000000) ^ (AES_FT3 (
+                                                              (StateX[2] >>
+                                                               16) & 0xFF
+                                                              ) & 0x00FF0000) ^
+              (AES_FT0 ((StateX[3] >>  8) & 0xFF) & 0x0000FF00) ^ (AES_FT1 (
+                                                                     (StateX[0])
+                                                                     & 0xFF
+                                                                     ) &
+                                                                   0x000000FF) ^
               Ek[NbIndex + 1];
-  StateY[2] = (AES_FT2 ((StateX[2] >> 24)) & 0xFF000000) ^ (AES_FT3 ((StateX[3] >> 16) & 0xFF) & 0x00FF0000) ^
-              (AES_FT0 ((StateX[0] >>  8) & 0xFF) & 0x0000FF00) ^ (AES_FT1 ((StateX[1]) & 0xFF) & 0x000000FF) ^
+  StateY[2] = (AES_FT2 ((StateX[2] >> 24)) & 0xFF000000) ^ (AES_FT3 (
+                                                              (StateX[3] >>
+                                                               16) & 0xFF
+                                                              ) & 0x00FF0000) ^
+              (AES_FT0 ((StateX[0] >>  8) & 0xFF) & 0x0000FF00) ^ (AES_FT1 (
+                                                                     (StateX[1])
+                                                                     & 0xFF
+                                                                     ) &
+                                                                   0x000000FF) ^
               Ek[NbIndex + 2];
-  StateY[3] = (AES_FT2 ((StateX[3] >> 24)) & 0xFF000000) ^ (AES_FT3 ((StateX[0] >> 16) & 0xFF) & 0x00FF0000) ^
-              (AES_FT0 ((StateX[1] >>  8) & 0xFF) & 0x0000FF00) ^ (AES_FT1 ((StateX[2]) & 0xFF) & 0x000000FF) ^
+  StateY[3] = (AES_FT2 ((StateX[3] >> 24)) & 0xFF000000) ^ (AES_FT3 (
+                                                              (StateX[0] >>
+                                                               16) & 0xFF
+                                                              ) & 0x00FF0000) ^
+              (AES_FT0 ((StateX[1] >>  8) & 0xFF) & 0x0000FF00) ^ (AES_FT1 (
+                                                                     (StateX[2])
+                                                                     & 0xFF
+                                                                     ) &
+                                                                   0x000000FF) ^
               Ek[NbIndex + 3];
 
   //

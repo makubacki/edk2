@@ -62,7 +62,9 @@ typedef struct {
 extern TCG_CONFIG_PRIVATE_DATA  mTcgConfigPrivateDateTemplate;
 
 #define TCG_CONFIG_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('T', 'C', 'G', 'D')
-#define TCG_CONFIG_PRIVATE_DATA_FROM_THIS(a)  CR (a, TCG_CONFIG_PRIVATE_DATA, ConfigAccess, TCG_CONFIG_PRIVATE_DATA_SIGNATURE)
+#define TCG_CONFIG_PRIVATE_DATA_FROM_THIS( \
+                                         a)  \
+  CR (a, TCG_CONFIG_PRIVATE_DATA, ConfigAccess, TCG_CONFIG_PRIVATE_DATA_SIGNATURE)
 
 /**
   This function publish the TCG configuration Form for TPM device.

@@ -63,13 +63,22 @@ Tpm12Extend (
   Command.PcrIndex      = SwapBytes32 (PcrIndex);
   CopyMem (&Command.TpmDigest, DigestToExtend, sizeof (Command.TpmDigest));
   Length = sizeof (Response);
-  Status = Tpm12SubmitCommand (sizeof (Command), (UINT8 *)&Command, &Length, (UINT8 *)&Response);
+  Status = Tpm12SubmitCommand (
+             sizeof (Command),
+             (UINT8 *)&Command,
+             &Length,
+             (UINT8 *)&Response
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (SwapBytes32 (Response.Hdr.returnCode) != TPM_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm12Extend: Response Code error! 0x%08x\r\n", SwapBytes32 (Response.Hdr.returnCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm12Extend: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (Response.Hdr.returnCode)
+      ));
     return EFI_DEVICE_ERROR;
   }
 

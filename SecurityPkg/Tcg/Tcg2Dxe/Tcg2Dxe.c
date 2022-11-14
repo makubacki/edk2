@@ -61,8 +61,8 @@ typedef struct {
 } TCG2_EVENT_INFO_STRUCT;
 
 TCG2_EVENT_INFO_STRUCT  mTcg2EventInfo[] = {
-  { &gTcgEventEntryHobGuid,  EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 },
-  { &gTcgEvent2EntryHobGuid, EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   },
+  { &gTcgEventEntryHobGuid,  EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2     },
+  { &gTcgEvent2EntryHobGuid, EFI_TCG2_EVENT_LOG_FORMAT_TCG_2       },
 };
 
 #define TCG_EVENT_LOG_AREA_COUNT_MAX  2
@@ -80,10 +80,18 @@ typedef struct {
 
 typedef struct _TCG_DXE_DATA {
   EFI_TCG2_BOOT_SERVICE_CAPABILITY    BsCap;
-  TCG_EVENT_LOG_AREA_STRUCT           EventLogAreaStruct[TCG_EVENT_LOG_AREA_COUNT_MAX];
-  BOOLEAN                             GetEventLogCalled[TCG_EVENT_LOG_AREA_COUNT_MAX];
-  TCG_EVENT_LOG_AREA_STRUCT           FinalEventLogAreaStruct[TCG_EVENT_LOG_AREA_COUNT_MAX];
-  EFI_TCG2_FINAL_EVENTS_TABLE         *FinalEventsTable[TCG_EVENT_LOG_AREA_COUNT_MAX];
+  TCG_EVENT_LOG_AREA_STRUCT           EventLogAreaStruct[
+                                                         TCG_EVENT_LOG_AREA_COUNT_MAX
+  ];
+  BOOLEAN                             GetEventLogCalled[
+                                                        TCG_EVENT_LOG_AREA_COUNT_MAX
+  ];
+  TCG_EVENT_LOG_AREA_STRUCT           FinalEventLogAreaStruct[
+                                                              TCG_EVENT_LOG_AREA_COUNT_MAX
+  ];
+  EFI_TCG2_FINAL_EVENTS_TABLE         *FinalEventsTable[
+                                                        TCG_EVENT_LOG_AREA_COUNT_MAX
+  ];
 } TCG_DXE_DATA;
 
 TCG_DXE_DATA  mTcgDxeData = {
@@ -106,11 +114,16 @@ UINTN   mBootAttempts  = 0;
 CHAR16  mBootVarName[] = L"BootOrder";
 
 VARIABLE_TYPE  mVariableType[] = {
-  { EFI_SECURE_BOOT_MODE_NAME,    &gEfiGlobalVariableGuid        },
-  { EFI_PLATFORM_KEY_NAME,        &gEfiGlobalVariableGuid        },
-  { EFI_KEY_EXCHANGE_KEY_NAME,    &gEfiGlobalVariableGuid        },
-  { EFI_IMAGE_SECURITY_DATABASE,  &gEfiImageSecurityDatabaseGuid },
-  { EFI_IMAGE_SECURITY_DATABASE1, &gEfiImageSecurityDatabaseGuid },
+  { EFI_SECURE_BOOT_MODE_NAME,
+    &gEfiGlobalVariableGuid                      },
+  { EFI_PLATFORM_KEY_NAME,
+    &gEfiGlobalVariableGuid                      },
+  { EFI_KEY_EXCHANGE_KEY_NAME,
+    &gEfiGlobalVariableGuid                      },
+  { EFI_IMAGE_SECURITY_DATABASE,
+    &gEfiImageSecurityDatabaseGuid               },
+  { EFI_IMAGE_SECURITY_DATABASE1,
+    &gEfiImageSecurityDatabaseGuid               },
 };
 
 EFI_HANDLE  mImageHandle;
@@ -221,7 +234,9 @@ InitNoActionEvent (
     DigestListCount++;
   }
 
-  if ((mTcgDxeData.BsCap.ActivePcrBanks & EFI_TCG2_BOOT_HASH_ALG_SM3_256) != 0) {
+  if ((mTcgDxeData.BsCap.ActivePcrBanks & EFI_TCG2_BOOT_HASH_ALG_SM3_256) !=
+      0)
+  {
     HashAlgId = TPM_ALG_SM3_256;
     CopyMem (DigestBuffer, &HashAlgId, sizeof (TPMI_ALG_HASH));
     DigestBuffer += sizeof (TPMI_ALG_HASH) + GetHashSizeFromAlgo (HashAlgId);
@@ -299,7 +314,11 @@ GetProcessorsCpuLocation (
   EFI_CPU_PHYSICAL_LOCATION  *ProcessorLocBuf;
   UINTN                      Index;
 
-  Status = gBS->LocateProtocol (&gEfiMpServiceProtocolGuid, NULL, (VOID **)&MpProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiMpServiceProtocolGuid,
+                  NULL,
+                  (VOID **)&MpProtocol
+                  );
   if (EFI_ERROR (Status)) {
     //
     // MP protocol is not installed
@@ -388,23 +407,40 @@ Tcg2GetCapability (
   }
 
   DEBUG ((DEBUG_VERBOSE, "Size - 0x%x\n", ProtocolCapability->Size));
-  DEBUG ((DEBUG_VERBOSE, " 1.1 - 0x%x, 1.0 - 0x%x\n", sizeof (EFI_TCG2_BOOT_SERVICE_CAPABILITY), sizeof (TREE_BOOT_SERVICE_CAPABILITY_1_0)));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    " 1.1 - 0x%x, 1.0 - 0x%x\n",
+    sizeof (EFI_TCG2_BOOT_SERVICE_CAPABILITY),
+    sizeof (TREE_BOOT_SERVICE_CAPABILITY_1_0)
+    ));
 
   if (ProtocolCapability->Size < mTcgDxeData.BsCap.Size) {
     //
     // Handle the case that firmware support 1.1 but OS only support 1.0.
     //
     if ((mTcgDxeData.BsCap.ProtocolVersion.Major > 0x01) ||
-        ((mTcgDxeData.BsCap.ProtocolVersion.Major == 0x01) && ((mTcgDxeData.BsCap.ProtocolVersion.Minor > 0x00))))
+        ((mTcgDxeData.BsCap.ProtocolVersion.Major == 0x01) &&
+         ((mTcgDxeData.BsCap.ProtocolVersion.Minor > 0x00))))
     {
-      if (ProtocolCapability->Size >= sizeof (TREE_BOOT_SERVICE_CAPABILITY_1_0)) {
-        CopyMem (ProtocolCapability, &mTcgDxeData.BsCap, sizeof (TREE_BOOT_SERVICE_CAPABILITY_1_0));
-        ProtocolCapability->Size                   = sizeof (TREE_BOOT_SERVICE_CAPABILITY_1_0);
+      if (ProtocolCapability->Size >=
+          sizeof (TREE_BOOT_SERVICE_CAPABILITY_1_0))
+      {
+        CopyMem (
+          ProtocolCapability,
+          &mTcgDxeData.BsCap,
+          sizeof (TREE_BOOT_SERVICE_CAPABILITY_1_0)
+          );
+        ProtocolCapability->Size =
+          sizeof (TREE_BOOT_SERVICE_CAPABILITY_1_0);
         ProtocolCapability->StructureVersion.Major = 1;
         ProtocolCapability->StructureVersion.Minor = 0;
         ProtocolCapability->ProtocolVersion.Major  = 1;
         ProtocolCapability->ProtocolVersion.Minor  = 0;
-        DEBUG ((DEBUG_ERROR, "TreeGetCapability (Compatible) - %r\n", EFI_SUCCESS));
+        DEBUG ((
+          DEBUG_ERROR,
+          "TreeGetCapability (Compatible) - %r\n",
+          EFI_SUCCESS
+          ));
         return EFI_SUCCESS;
       }
     }
@@ -461,23 +497,54 @@ DumpTcgEfiSpecIdEventStruct (
 
   DEBUG ((DEBUG_INFO, "  TCG_EfiSpecIDEventStruct:\n"));
   DEBUG ((DEBUG_INFO, "    signature          - '"));
-  for (Index = 0; Index < sizeof (TcgEfiSpecIdEventStruct->signature); Index++) {
+  for (Index = 0; Index < sizeof (TcgEfiSpecIdEventStruct->signature);
+       Index++)
+  {
     DEBUG ((DEBUG_INFO, "%c", TcgEfiSpecIdEventStruct->signature[Index]));
   }
 
   DEBUG ((DEBUG_INFO, "'\n"));
-  DEBUG ((DEBUG_INFO, "    platformClass      - 0x%08x\n", TcgEfiSpecIdEventStruct->platformClass));
-  DEBUG ((DEBUG_INFO, "    specVersion        - %d.%d%d\n", TcgEfiSpecIdEventStruct->specVersionMajor, TcgEfiSpecIdEventStruct->specVersionMinor, TcgEfiSpecIdEventStruct->specErrata));
-  DEBUG ((DEBUG_INFO, "    uintnSize          - 0x%02x\n", TcgEfiSpecIdEventStruct->uintnSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "    platformClass      - 0x%08x\n",
+    TcgEfiSpecIdEventStruct->platformClass
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "    specVersion        - %d.%d%d\n",
+    TcgEfiSpecIdEventStruct->specVersionMajor,
+    TcgEfiSpecIdEventStruct->specVersionMinor,
+    TcgEfiSpecIdEventStruct->specErrata
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "    uintnSize          - 0x%02x\n",
+    TcgEfiSpecIdEventStruct->uintnSize
+    ));
 
-  CopyMem (&NumberOfAlgorithms, TcgEfiSpecIdEventStruct + 1, sizeof (NumberOfAlgorithms));
+  CopyMem (
+    &NumberOfAlgorithms,
+    TcgEfiSpecIdEventStruct + 1,
+    sizeof (NumberOfAlgorithms)
+    );
   DEBUG ((DEBUG_INFO, "    NumberOfAlgorithms - 0x%08x\n", NumberOfAlgorithms));
 
-  DigestSize = (TCG_EfiSpecIdEventAlgorithmSize *)((UINT8 *)TcgEfiSpecIdEventStruct + sizeof (*TcgEfiSpecIdEventStruct) + sizeof (NumberOfAlgorithms));
+  DigestSize =
+    (TCG_EfiSpecIdEventAlgorithmSize *)((UINT8 *)TcgEfiSpecIdEventStruct +
+                                        sizeof (*TcgEfiSpecIdEventStruct) +
+                                        sizeof (NumberOfAlgorithms));
   for (Index = 0; Index < NumberOfAlgorithms; Index++) {
     DEBUG ((DEBUG_INFO, "    digest(%d)\n", Index));
-    DEBUG ((DEBUG_INFO, "      algorithmId      - 0x%04x\n", DigestSize[Index].algorithmId));
-    DEBUG ((DEBUG_INFO, "      digestSize       - 0x%04x\n", DigestSize[Index].digestSize));
+    DEBUG ((
+      DEBUG_INFO,
+      "      algorithmId      - 0x%04x\n",
+      DigestSize[Index].algorithmId
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "      digestSize       - 0x%04x\n",
+      DigestSize[Index].digestSize
+      ));
   }
 
   VendorInfoSize = (UINT8 *)&DigestSize[NumberOfAlgorithms];
@@ -505,11 +572,20 @@ GetTcgEfiSpecIdEventStructSize (
   UINT8                            *VendorInfoSize;
   UINT32                           NumberOfAlgorithms;
 
-  CopyMem (&NumberOfAlgorithms, TcgEfiSpecIdEventStruct + 1, sizeof (NumberOfAlgorithms));
+  CopyMem (
+    &NumberOfAlgorithms,
+    TcgEfiSpecIdEventStruct + 1,
+    sizeof (NumberOfAlgorithms)
+    );
 
-  DigestSize     = (TCG_EfiSpecIdEventAlgorithmSize *)((UINT8 *)TcgEfiSpecIdEventStruct + sizeof (*TcgEfiSpecIdEventStruct) + sizeof (NumberOfAlgorithms));
+  DigestSize =
+    (TCG_EfiSpecIdEventAlgorithmSize *)((UINT8 *)TcgEfiSpecIdEventStruct +
+                                        sizeof (*TcgEfiSpecIdEventStruct) +
+                                        sizeof (NumberOfAlgorithms));
   VendorInfoSize = (UINT8 *)&DigestSize[NumberOfAlgorithms];
-  return sizeof (TCG_EfiSpecIDEventStruct) + sizeof (UINT32) + (NumberOfAlgorithms * sizeof (TCG_EfiSpecIdEventAlgorithmSize)) + sizeof (UINT8) + (*VendorInfoSize);
+  return sizeof (TCG_EfiSpecIDEventStruct) + sizeof (UINT32) +
+         (NumberOfAlgorithms * sizeof (TCG_EfiSpecIdEventAlgorithmSize)) +
+         sizeof (UINT8) + (*VendorInfoSize);
 }
 
 /**
@@ -634,20 +710,34 @@ DumpEventLog (
       EventHdr = (TCG_PCR_EVENT_HDR *)(UINTN)EventLogLocation;
       while ((UINTN)EventHdr <= EventLogLastEntry) {
         DumpEvent (EventHdr);
-        EventHdr = (TCG_PCR_EVENT_HDR *)((UINTN)EventHdr + sizeof (TCG_PCR_EVENT_HDR) + EventHdr->EventSize);
+        EventHdr = (TCG_PCR_EVENT_HDR *)((UINTN)EventHdr +
+                                         sizeof (TCG_PCR_EVENT_HDR) +
+                                         EventHdr->EventSize);
       }
 
       if (FinalEventsTable == NULL) {
         DEBUG ((DEBUG_INFO, "FinalEventsTable: NOT FOUND\n"));
       } else {
         DEBUG ((DEBUG_INFO, "FinalEventsTable:    (0x%x)\n", FinalEventsTable));
-        DEBUG ((DEBUG_INFO, "  Version:           (0x%x)\n", FinalEventsTable->Version));
-        DEBUG ((DEBUG_INFO, "  NumberOfEvents:    (0x%x)\n", FinalEventsTable->NumberOfEvents));
+        DEBUG ((
+          DEBUG_INFO,
+          "  Version:           (0x%x)\n",
+          FinalEventsTable->Version
+          ));
+        DEBUG ((
+          DEBUG_INFO,
+          "  NumberOfEvents:    (0x%x)\n",
+          FinalEventsTable->NumberOfEvents
+          ));
 
         EventHdr = (TCG_PCR_EVENT_HDR *)(UINTN)(FinalEventsTable + 1);
-        for (NumberOfEvents = 0; NumberOfEvents < FinalEventsTable->NumberOfEvents; NumberOfEvents++) {
+        for (NumberOfEvents = 0; NumberOfEvents <
+             FinalEventsTable->NumberOfEvents; NumberOfEvents++)
+        {
           DumpEvent (EventHdr);
-          EventHdr = (TCG_PCR_EVENT_HDR *)((UINTN)EventHdr + sizeof (TCG_PCR_EVENT_HDR) + EventHdr->EventSize);
+          EventHdr = (TCG_PCR_EVENT_HDR *)((UINTN)EventHdr +
+                                           sizeof (TCG_PCR_EVENT_HDR) +
+                                           EventHdr->EventSize);
         }
       }
 
@@ -662,23 +752,37 @@ DumpEventLog (
       TcgEfiSpecIdEventStruct = (TCG_EfiSpecIDEventStruct *)(EventHdr + 1);
       DumpTcgEfiSpecIdEventStruct (TcgEfiSpecIdEventStruct);
 
-      TcgPcrEvent2 = (TCG_PCR_EVENT2 *)((UINTN)TcgEfiSpecIdEventStruct + GetTcgEfiSpecIdEventStructSize (TcgEfiSpecIdEventStruct));
+      TcgPcrEvent2 = (TCG_PCR_EVENT2 *)((UINTN)TcgEfiSpecIdEventStruct +
+                                        GetTcgEfiSpecIdEventStructSize (
+                                          TcgEfiSpecIdEventStruct));
       while ((UINTN)TcgPcrEvent2 <= EventLogLastEntry) {
         DumpEvent2 (TcgPcrEvent2);
-        TcgPcrEvent2 = (TCG_PCR_EVENT2 *)((UINTN)TcgPcrEvent2 + GetPcrEvent2Size (TcgPcrEvent2));
+        TcgPcrEvent2 = (TCG_PCR_EVENT2 *)((UINTN)TcgPcrEvent2 +
+                                          GetPcrEvent2Size (TcgPcrEvent2));
       }
 
       if (FinalEventsTable == NULL) {
         DEBUG ((DEBUG_INFO, "FinalEventsTable: NOT FOUND\n"));
       } else {
         DEBUG ((DEBUG_INFO, "FinalEventsTable:    (0x%x)\n", FinalEventsTable));
-        DEBUG ((DEBUG_INFO, "  Version:           (0x%x)\n", FinalEventsTable->Version));
-        DEBUG ((DEBUG_INFO, "  NumberOfEvents:    (0x%x)\n", FinalEventsTable->NumberOfEvents));
+        DEBUG ((
+          DEBUG_INFO,
+          "  Version:           (0x%x)\n",
+          FinalEventsTable->Version
+          ));
+        DEBUG ((
+          DEBUG_INFO,
+          "  NumberOfEvents:    (0x%x)\n",
+          FinalEventsTable->NumberOfEvents
+          ));
 
         TcgPcrEvent2 = (TCG_PCR_EVENT2 *)(UINTN)(FinalEventsTable + 1);
-        for (NumberOfEvents = 0; NumberOfEvents < FinalEventsTable->NumberOfEvents; NumberOfEvents++) {
+        for (NumberOfEvents = 0; NumberOfEvents <
+             FinalEventsTable->NumberOfEvents; NumberOfEvents++)
+        {
           DumpEvent2 (TcgPcrEvent2);
-          TcgPcrEvent2 = (TCG_PCR_EVENT2 *)((UINTN)TcgPcrEvent2 + GetPcrEvent2Size (TcgPcrEvent2));
+          TcgPcrEvent2 = (TCG_PCR_EVENT2 *)((UINTN)TcgPcrEvent2 +
+                                            GetPcrEvent2Size (TcgPcrEvent2));
         }
       }
 
@@ -723,7 +827,9 @@ Tcg2GetEventLog (
     return EFI_INVALID_PARAMETER;
   }
 
-  for (Index = 0; Index < sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]); Index++) {
+  for (Index = 0; Index < sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]);
+       Index++)
+  {
     if (EventLogFormat == mTcg2EventInfo[Index].LogFormat) {
       break;
     }
@@ -733,7 +839,9 @@ Tcg2GetEventLog (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((mTcg2EventInfo[Index].LogFormat & mTcgDxeData.BsCap.SupportedEventLogs) == 0) {
+  if ((mTcg2EventInfo[Index].LogFormat &
+       mTcgDxeData.BsCap.SupportedEventLogs) == 0)
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -755,29 +863,49 @@ Tcg2GetEventLog (
 
   if (EventLogLocation != NULL) {
     *EventLogLocation = mTcgDxeData.EventLogAreaStruct[Index].Lasa;
-    DEBUG ((DEBUG_INFO, "Tcg2GetEventLog (EventLogLocation - %x)\n", *EventLogLocation));
+    DEBUG ((
+      DEBUG_INFO,
+      "Tcg2GetEventLog (EventLogLocation - %x)\n",
+      *EventLogLocation
+      ));
   }
 
   if (EventLogLastEntry != NULL) {
     if (!mTcgDxeData.EventLogAreaStruct[Index].EventLogStarted) {
       *EventLogLastEntry = (EFI_PHYSICAL_ADDRESS)(UINTN)0;
     } else {
-      *EventLogLastEntry = (EFI_PHYSICAL_ADDRESS)(UINTN)mTcgDxeData.EventLogAreaStruct[Index].LastEvent;
+      *EventLogLastEntry =
+        (EFI_PHYSICAL_ADDRESS)(UINTN)mTcgDxeData.EventLogAreaStruct[Index].
+          LastEvent;
     }
 
-    DEBUG ((DEBUG_INFO, "Tcg2GetEventLog (EventLogLastEntry - %x)\n", *EventLogLastEntry));
+    DEBUG ((
+      DEBUG_INFO,
+      "Tcg2GetEventLog (EventLogLastEntry - %x)\n",
+      *EventLogLastEntry
+      ));
   }
 
   if (EventLogTruncated != NULL) {
-    *EventLogTruncated = mTcgDxeData.EventLogAreaStruct[Index].EventLogTruncated;
-    DEBUG ((DEBUG_INFO, "Tcg2GetEventLog (EventLogTruncated - %x)\n", *EventLogTruncated));
+    *EventLogTruncated =
+      mTcgDxeData.EventLogAreaStruct[Index].EventLogTruncated;
+    DEBUG ((
+      DEBUG_INFO,
+      "Tcg2GetEventLog (EventLogTruncated - %x)\n",
+      *EventLogTruncated
+      ));
   }
 
   DEBUG ((DEBUG_INFO, "Tcg2GetEventLog - %r\n", EFI_SUCCESS));
 
   // Dump Event Log for debug purpose
   if ((EventLogLocation != NULL) && (EventLogLastEntry != NULL)) {
-    DumpEventLog (EventLogFormat, *EventLogLocation, *EventLogLastEntry, mTcgDxeData.FinalEventsTable[Index]);
+    DumpEventLog (
+      EventLogFormat,
+      *EventLogLocation,
+      *EventLogLastEntry,
+      mTcgDxeData.FinalEventsTable[Index]
+      );
   }
 
   //
@@ -858,10 +986,16 @@ TcgCommLogEvent (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  if (NewLogSize + EventLogAreaStruct->EventLogSize > EventLogAreaStruct->Laml) {
+  if (NewLogSize + EventLogAreaStruct->EventLogSize >
+      EventLogAreaStruct->Laml)
+  {
     DEBUG ((DEBUG_INFO, "  Laml       - 0x%x\n", EventLogAreaStruct->Laml));
     DEBUG ((DEBUG_INFO, "  NewLogSize - 0x%x\n", NewLogSize));
-    DEBUG ((DEBUG_INFO, "  LogSize    - 0x%x\n", EventLogAreaStruct->EventLogSize));
+    DEBUG ((
+      DEBUG_INFO,
+      "  LogSize    - 0x%x\n",
+      EventLogAreaStruct->EventLogSize
+      ));
     DEBUG ((DEBUG_INFO, "TcgCommLogEvent - %r\n", EFI_OUT_OF_RESOURCES));
     return EFI_OUT_OF_RESOURCES;
   }
@@ -871,22 +1005,32 @@ TcgCommLogEvent (
   // Record to 800-155 event offset only.
   // If the offset is 0, no need to record.
   //
-  Record800155Event = Is800155Event (NewEventHdr, NewEventHdrSize, NewEventData, NewEventSize);
+  Record800155Event = Is800155Event (
+                        NewEventHdr,
+                        NewEventHdrSize,
+                        NewEventData,
+                        NewEventSize
+                        );
   if (Record800155Event) {
     if (EventLogAreaStruct->Next800155EventOffset != 0) {
       CopyMem (
-        (UINT8 *)(UINTN)EventLogAreaStruct->Lasa + EventLogAreaStruct->Next800155EventOffset + NewLogSize,
-        (UINT8 *)(UINTN)EventLogAreaStruct->Lasa + EventLogAreaStruct->Next800155EventOffset,
-        EventLogAreaStruct->EventLogSize - EventLogAreaStruct->Next800155EventOffset
+        (UINT8 *)(UINTN)EventLogAreaStruct->Lasa +
+        EventLogAreaStruct->Next800155EventOffset + NewLogSize,
+        (UINT8 *)(UINTN)EventLogAreaStruct->Lasa +
+        EventLogAreaStruct->Next800155EventOffset,
+        EventLogAreaStruct->EventLogSize -
+        EventLogAreaStruct->Next800155EventOffset
         );
 
       CopyMem (
-        (UINT8 *)(UINTN)EventLogAreaStruct->Lasa + EventLogAreaStruct->Next800155EventOffset,
+        (UINT8 *)(UINTN)EventLogAreaStruct->Lasa +
+        EventLogAreaStruct->Next800155EventOffset,
         NewEventHdr,
         NewEventHdrSize
         );
       CopyMem (
-        (UINT8 *)(UINTN)EventLogAreaStruct->Lasa + EventLogAreaStruct->Next800155EventOffset + NewEventHdrSize,
+        (UINT8 *)(UINTN)EventLogAreaStruct->Lasa +
+        EventLogAreaStruct->Next800155EventOffset + NewEventHdrSize,
         NewEventData,
         NewEventSize
         );
@@ -899,7 +1043,8 @@ TcgCommLogEvent (
     return EFI_SUCCESS;
   }
 
-  EventLogAreaStruct->LastEvent     = (UINT8 *)(UINTN)EventLogAreaStruct->Lasa + EventLogAreaStruct->EventLogSize;
+  EventLogAreaStruct->LastEvent = (UINT8 *)(UINTN)EventLogAreaStruct->Lasa +
+                                  EventLogAreaStruct->EventLogSize;
   EventLogAreaStruct->EventLogSize += NewLogSize;
   CopyMem (EventLogAreaStruct->LastEvent, NewEventHdr, NewEventHdrSize);
   CopyMem (
@@ -936,7 +1081,9 @@ TcgDxeLogEvent (
   UINTN                      Index;
   TCG_EVENT_LOG_AREA_STRUCT  *EventLogAreaStruct;
 
-  for (Index = 0; Index < sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]); Index++) {
+  for (Index = 0; Index < sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]);
+       Index++)
+  {
     if (EventLogFormat == mTcg2EventInfo[Index].LogFormat) {
       break;
     }
@@ -1003,8 +1150,16 @@ TcgDxeLogEvent (
       // Increase the NumberOfEvents in FinalEventsTable
       //
       (mTcgDxeData.FinalEventsTable[Index])->NumberOfEvents++;
-      DEBUG ((DEBUG_INFO, "FinalEventsTable->NumberOfEvents - 0x%x\n", (mTcgDxeData.FinalEventsTable[Index])->NumberOfEvents));
-      DEBUG ((DEBUG_INFO, "  Size - 0x%x\n", (UINTN)EventLogAreaStruct->EventLogSize));
+      DEBUG ((
+        DEBUG_INFO,
+        "FinalEventsTable->NumberOfEvents - 0x%x\n",
+        (mTcgDxeData.FinalEventsTable[Index])->NumberOfEvents
+        ));
+      DEBUG ((
+        DEBUG_INFO,
+        "  Size - 0x%x\n",
+        (UINTN)EventLogAreaStruct->EventLogSize
+        ));
     }
   }
 
@@ -1090,7 +1245,11 @@ CopyDigestListBinToBuffer (
       DigestListCount++;
       (*HashAlgorithmMaskCopied) |= GetHashMaskFromAlgo (HashAlg);
     } else {
-      DEBUG ((DEBUG_ERROR, "WARNING: CopyDigestListBinToBuffer Event log has HashAlg unsupported by PCR bank (0x%x)\n", HashAlg));
+      DEBUG ((
+        DEBUG_ERROR,
+        "WARNING: CopyDigestListBinToBuffer Event log has HashAlg unsupported by PCR bank (0x%x)\n",
+        HashAlg
+        ));
     }
 
     DigestListBin = (UINT8 *)DigestListBin + DigestSize;
@@ -1126,15 +1285,31 @@ TcgDxeLogHashEvent (
   UINT8           *DigestBuffer;
   UINT32          *EventSizePtr;
 
-  DEBUG ((DEBUG_INFO, "SupportedEventLogs - 0x%08x\n", mTcgDxeData.BsCap.SupportedEventLogs));
+  DEBUG ((
+    DEBUG_INFO,
+    "SupportedEventLogs - 0x%08x\n",
+    mTcgDxeData.BsCap.SupportedEventLogs
+    ));
 
   RetStatus = EFI_SUCCESS;
-  for (Index = 0; Index < sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]); Index++) {
-    if ((mTcgDxeData.BsCap.SupportedEventLogs & mTcg2EventInfo[Index].LogFormat) != 0) {
-      DEBUG ((DEBUG_INFO, "  LogFormat - 0x%08x\n", mTcg2EventInfo[Index].LogFormat));
+  for (Index = 0; Index < sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]);
+       Index++)
+  {
+    if ((mTcgDxeData.BsCap.SupportedEventLogs &
+         mTcg2EventInfo[Index].LogFormat) != 0)
+    {
+      DEBUG ((
+        DEBUG_INFO,
+        "  LogFormat - 0x%08x\n",
+        mTcg2EventInfo[Index].LogFormat
+        ));
       switch (mTcg2EventInfo[Index].LogFormat) {
         case EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2:
-          Status = GetDigestFromDigestList (TPM_ALG_SHA1, DigestList, &NewEventHdr->Digest);
+          Status = GetDigestFromDigestList (
+                     TPM_ALG_SHA1,
+                     DigestList,
+                     &NewEventHdr->Digest
+                     );
           if (!EFI_ERROR (Status)) {
             //
             // Enter critical region
@@ -1163,8 +1338,16 @@ TcgDxeLogHashEvent (
           TcgPcrEvent2.PCRIndex  = NewEventHdr->PCRIndex;
           TcgPcrEvent2.EventType = NewEventHdr->EventType;
           DigestBuffer           = (UINT8 *)&TcgPcrEvent2.Digest;
-          EventSizePtr           = CopyDigestListToBuffer (DigestBuffer, DigestList, mTcgDxeData.BsCap.ActivePcrBanks);
-          CopyMem (EventSizePtr, &NewEventHdr->EventSize, sizeof (NewEventHdr->EventSize));
+          EventSizePtr           = CopyDigestListToBuffer (
+                                     DigestBuffer,
+                                     DigestList,
+                                     mTcgDxeData.BsCap.ActivePcrBanks
+                                     );
+          CopyMem (
+            EventSizePtr,
+            &NewEventHdr->EventSize,
+            sizeof (NewEventHdr->EventSize)
+            );
 
           //
           // Enter critical region
@@ -1173,7 +1356,10 @@ TcgDxeLogHashEvent (
           Status = TcgDxeLogEvent (
                      mTcg2EventInfo[Index].LogFormat,
                      &TcgPcrEvent2,
-                     sizeof (TcgPcrEvent2.PCRIndex) + sizeof (TcgPcrEvent2.EventType) + GetDigestListBinSize (DigestBuffer) + sizeof (TcgPcrEvent2.EventSize),
+                     sizeof (TcgPcrEvent2.PCRIndex) +
+                     sizeof (TcgPcrEvent2.EventType) + GetDigestListBinSize (
+                                                         DigestBuffer) +
+                     sizeof (TcgPcrEvent2.EventSize),
                      NewEventData,
                      NewEventHdr->EventSize
                      );
@@ -1233,7 +1419,11 @@ TcgDxeHashLogExtendEvent (
     Status = EFI_SUCCESS;
     InitNoActionEvent (&NoActionEvent, NewEventHdr->EventSize);
     if ((Flags & EFI_TCG2_EXTEND_ONLY) == 0) {
-      Status = TcgDxeLogHashEvent (&(NoActionEvent.Digests), NewEventHdr, NewEventData);
+      Status = TcgDxeLogHashEvent (
+                 &(NoActionEvent.Digests),
+                 NewEventHdr,
+                 NewEventData
+                 );
     }
 
     return Status;
@@ -1252,7 +1442,11 @@ TcgDxeHashLogExtendEvent (
   }
 
   if (Status == EFI_DEVICE_ERROR) {
-    DEBUG ((DEBUG_ERROR, "TcgDxeHashLogExtendEvent - %r. Disable TPM.\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "TcgDxeHashLogExtendEvent - %r. Disable TPM.\n",
+      Status
+      ));
     mTcgDxeData.BsCap.TPMPresentFlag = FALSE;
     REPORT_STATUS_CODE (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
@@ -1323,7 +1517,8 @@ Tcg2HashLogExtendEvent (
 
   NewEventHdr.PCRIndex  = Event->Header.PCRIndex;
   NewEventHdr.EventType = Event->Header.EventType;
-  NewEventHdr.EventSize = Event->Size - sizeof (UINT32) - Event->Header.HeaderSize;
+  NewEventHdr.EventSize = Event->Size - sizeof (UINT32) -
+                          Event->Header.HeaderSize;
   if ((Flags & PE_COFF_IMAGE) != 0) {
     Status = MeasurePeImageAndExtend (
                NewEventHdr.PCRIndex,
@@ -1338,7 +1533,11 @@ Tcg2HashLogExtendEvent (
     }
 
     if (Status == EFI_DEVICE_ERROR) {
-      DEBUG ((DEBUG_ERROR, "MeasurePeImageAndExtend - %r. Disable TPM.\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "MeasurePeImageAndExtend - %r. Disable TPM.\n",
+        Status
+        ));
       mTcgDxeData.BsCap.TPMPresentFlag = FALSE;
       REPORT_STATUS_CODE (
         EFI_ERROR_CODE | EFI_ERROR_MINOR,
@@ -1473,9 +1672,15 @@ Tcg2SetActivePCRBanks (
     //
     // Need clear previous SET_PCR_BANKS setting
     //
-    ReturnCode = Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (TCG2_PHYSICAL_PRESENCE_NO_ACTION, 0);
+    ReturnCode = Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (
+                   TCG2_PHYSICAL_PRESENCE_NO_ACTION,
+                   0
+                   );
   } else {
-    ReturnCode = Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (TCG2_PHYSICAL_PRESENCE_SET_PCR_BANKS, ActivePcrBanks);
+    ReturnCode = Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (
+                   TCG2_PHYSICAL_PRESENCE_SET_PCR_BANKS,
+                   ActivePcrBanks
+                   );
   }
 
   if (ReturnCode == TCG_PP_SUBMIT_REQUEST_TO_PREOS_SUCCESS) {
@@ -1517,7 +1722,10 @@ Tcg2GetResultOfSetActivePcrBanks (
     return EFI_INVALID_PARAMETER;
   }
 
-  ReturnCode = Tcg2PhysicalPresenceLibReturnOperationResponseToOsFunction (OperationPresent, Response);
+  ReturnCode = Tcg2PhysicalPresenceLibReturnOperationResponseToOsFunction (
+                 OperationPresent,
+                 Response
+                 );
   if (ReturnCode == TCG_PP_RETURN_TPM_OPERATION_RESPONSE_SUCCESS) {
     return EFI_SUCCESS;
   } else {
@@ -1547,20 +1755,25 @@ SetupEventLog (
   VOID
   )
 {
-  EFI_STATUS                       Status;
-  VOID                             *TcgEvent;
-  EFI_PEI_HOB_POINTERS             GuidHob;
-  EFI_PHYSICAL_ADDRESS             Lasa;
-  UINTN                            Index;
-  VOID                             *DigestListBin;
-  TPML_DIGEST_VALUES               TempDigestListBin;
-  UINT32                           DigestListBinSize;
-  UINT8                            *Event;
-  UINT32                           EventSize;
-  UINT32                           *EventSizePtr;
-  UINT32                           HashAlgorithmMaskCopied;
-  TCG_EfiSpecIDEventStruct         *TcgEfiSpecIdEventStruct;
-  UINT8                            TempBuf[sizeof (TCG_EfiSpecIDEventStruct) + sizeof (UINT32) + (HASH_COUNT * sizeof (TCG_EfiSpecIdEventAlgorithmSize)) + sizeof (UINT8)];
+  EFI_STATUS                Status;
+  VOID                      *TcgEvent;
+  EFI_PEI_HOB_POINTERS      GuidHob;
+  EFI_PHYSICAL_ADDRESS      Lasa;
+  UINTN                     Index;
+  VOID                      *DigestListBin;
+  TPML_DIGEST_VALUES        TempDigestListBin;
+  UINT32                    DigestListBinSize;
+  UINT8                     *Event;
+  UINT32                    EventSize;
+  UINT32                    *EventSizePtr;
+  UINT32                    HashAlgorithmMaskCopied;
+  TCG_EfiSpecIDEventStruct  *TcgEfiSpecIdEventStruct;
+  UINT8                     TempBuf[sizeof (TCG_EfiSpecIDEventStruct) +
+                                    sizeof (UINT32) + (HASH_COUNT *
+                                                       sizeof (
+                                                                                                                      TCG_EfiSpecIdEventAlgorithmSize))
+                                    +
+                                    sizeof (UINT8)];
   TCG_PCR_EVENT_HDR                SpecIdEvent;
   TCG_PCR_EVENT2_HDR               NoActionEvent;
   TCG_EfiSpecIdEventAlgorithmSize  *DigestSize;
@@ -1574,9 +1787,14 @@ SetupEventLog (
   //
   // 1. Create Log Area
   //
-  for (Index = 0; Index < sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]); Index++) {
-    if ((mTcgDxeData.BsCap.SupportedEventLogs & mTcg2EventInfo[Index].LogFormat) != 0) {
-      mTcgDxeData.EventLogAreaStruct[Index].EventLogFormat = mTcg2EventInfo[Index].LogFormat;
+  for (Index = 0; Index < sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]);
+       Index++)
+  {
+    if ((mTcgDxeData.BsCap.SupportedEventLogs &
+         mTcg2EventInfo[Index].LogFormat) != 0)
+    {
+      mTcgDxeData.EventLogAreaStruct[Index].EventLogFormat =
+        mTcg2EventInfo[Index].LogFormat;
       if (PcdGet8 (PcdTpm2AcpiTableRev) >= 4) {
         Status = gBS->AllocatePages (
                         AllocateAnyPages,
@@ -1597,8 +1815,10 @@ SetupEventLog (
         return Status;
       }
 
-      mTcgDxeData.EventLogAreaStruct[Index].Lasa                  = Lasa;
-      mTcgDxeData.EventLogAreaStruct[Index].Laml                  = PcdGet32 (PcdTcgLogAreaMinLen);
+      mTcgDxeData.EventLogAreaStruct[Index].Lasa = Lasa;
+      mTcgDxeData.EventLogAreaStruct[Index].Laml = PcdGet32 (
+                                                     PcdTcgLogAreaMinLen
+                                                     );
       mTcgDxeData.EventLogAreaStruct[Index].Next800155EventOffset = 0;
 
       if ((PcdGet8 (PcdTpm2AcpiTableRev) >= 4) ||
@@ -1608,8 +1828,14 @@ SetupEventLog (
         // Report TCG2 event log address and length, so that they can be reported in TPM2 ACPI table.
         // Ignore the return status, because those fields are optional.
         //
-        PcdSet32S (PcdTpm2AcpiTableLaml, (UINT32)mTcgDxeData.EventLogAreaStruct[Index].Laml);
-        PcdSet64S (PcdTpm2AcpiTableLasa, mTcgDxeData.EventLogAreaStruct[Index].Lasa);
+        PcdSet32S (
+          PcdTpm2AcpiTableLaml,
+          (UINT32)mTcgDxeData.EventLogAreaStruct[Index].Laml
+          );
+        PcdSet64S (
+          PcdTpm2AcpiTableLasa,
+          mTcgDxeData.EventLogAreaStruct[Index].Lasa
+          );
       }
 
       //
@@ -1620,20 +1846,38 @@ SetupEventLog (
       //
       // Create first entry for Log Header Entry Data
       //
-      if (mTcg2EventInfo[Index].LogFormat != EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2) {
+      if (mTcg2EventInfo[Index].LogFormat !=
+          EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2)
+      {
         //
         // TcgEfiSpecIdEventStruct
         //
         TcgEfiSpecIdEventStruct = (TCG_EfiSpecIDEventStruct *)TempBuf;
-        CopyMem (TcgEfiSpecIdEventStruct->signature, TCG_EfiSpecIDEventStruct_SIGNATURE_03, sizeof (TcgEfiSpecIdEventStruct->signature));
-        TcgEfiSpecIdEventStruct->platformClass    = PcdGet8 (PcdTpmPlatformClass);
-        TcgEfiSpecIdEventStruct->specVersionMajor = TCG_EfiSpecIDEventStruct_SPEC_VERSION_MAJOR_TPM2;
-        TcgEfiSpecIdEventStruct->specVersionMinor = TCG_EfiSpecIDEventStruct_SPEC_VERSION_MINOR_TPM2;
-        TcgEfiSpecIdEventStruct->specErrata       = (UINT8)PcdGet32 (PcdTcgPfpMeasurementRevision);
-        TcgEfiSpecIdEventStruct->uintnSize        = sizeof (UINTN)/sizeof (UINT32);
-        NumberOfAlgorithms                        = 0;
-        DigestSize                                = (TCG_EfiSpecIdEventAlgorithmSize *)((UINT8 *)TcgEfiSpecIdEventStruct + sizeof (*TcgEfiSpecIdEventStruct) + sizeof (NumberOfAlgorithms));
-        if ((mTcgDxeData.BsCap.ActivePcrBanks & EFI_TCG2_BOOT_HASH_ALG_SHA1) != 0) {
+        CopyMem (
+          TcgEfiSpecIdEventStruct->signature,
+          TCG_EfiSpecIDEventStruct_SIGNATURE_03,
+          sizeof (TcgEfiSpecIdEventStruct->signature)
+          );
+        TcgEfiSpecIdEventStruct->platformClass = PcdGet8 (
+                                                   PcdTpmPlatformClass
+                                                   );
+        TcgEfiSpecIdEventStruct->specVersionMajor =
+          TCG_EfiSpecIDEventStruct_SPEC_VERSION_MAJOR_TPM2;
+        TcgEfiSpecIdEventStruct->specVersionMinor =
+          TCG_EfiSpecIDEventStruct_SPEC_VERSION_MINOR_TPM2;
+        TcgEfiSpecIdEventStruct->specErrata = (UINT8)PcdGet32 (
+                                                       PcdTcgPfpMeasurementRevision
+                                                       );
+        TcgEfiSpecIdEventStruct->uintnSize = sizeof (UINTN)/
+                                             sizeof (UINT32);
+        NumberOfAlgorithms = 0;
+        DigestSize         =
+          (TCG_EfiSpecIdEventAlgorithmSize *)((UINT8 *)TcgEfiSpecIdEventStruct +
+                                              sizeof (*TcgEfiSpecIdEventStruct)
+                                              + sizeof (NumberOfAlgorithms));
+        if ((mTcgDxeData.BsCap.ActivePcrBanks & EFI_TCG2_BOOT_HASH_ALG_SHA1) !=
+            0)
+        {
           TempDigestSize              = DigestSize;
           TempDigestSize             += NumberOfAlgorithms;
           TempDigestSize->algorithmId = TPM_ALG_SHA1;
@@ -1641,7 +1885,9 @@ SetupEventLog (
           NumberOfAlgorithms++;
         }
 
-        if ((mTcgDxeData.BsCap.ActivePcrBanks & EFI_TCG2_BOOT_HASH_ALG_SHA256) != 0) {
+        if ((mTcgDxeData.BsCap.ActivePcrBanks &
+             EFI_TCG2_BOOT_HASH_ALG_SHA256) != 0)
+        {
           TempDigestSize              = DigestSize;
           TempDigestSize             += NumberOfAlgorithms;
           TempDigestSize->algorithmId = TPM_ALG_SHA256;
@@ -1649,7 +1895,9 @@ SetupEventLog (
           NumberOfAlgorithms++;
         }
 
-        if ((mTcgDxeData.BsCap.ActivePcrBanks & EFI_TCG2_BOOT_HASH_ALG_SHA384) != 0) {
+        if ((mTcgDxeData.BsCap.ActivePcrBanks &
+             EFI_TCG2_BOOT_HASH_ALG_SHA384) != 0)
+        {
           TempDigestSize              = DigestSize;
           TempDigestSize             += NumberOfAlgorithms;
           TempDigestSize->algorithmId = TPM_ALG_SHA384;
@@ -1657,7 +1905,9 @@ SetupEventLog (
           NumberOfAlgorithms++;
         }
 
-        if ((mTcgDxeData.BsCap.ActivePcrBanks & EFI_TCG2_BOOT_HASH_ALG_SHA512) != 0) {
+        if ((mTcgDxeData.BsCap.ActivePcrBanks &
+             EFI_TCG2_BOOT_HASH_ALG_SHA512) != 0)
+        {
           TempDigestSize              = DigestSize;
           TempDigestSize             += NumberOfAlgorithms;
           TempDigestSize->algorithmId = TPM_ALG_SHA512;
@@ -1665,7 +1915,9 @@ SetupEventLog (
           NumberOfAlgorithms++;
         }
 
-        if ((mTcgDxeData.BsCap.ActivePcrBanks & EFI_TCG2_BOOT_HASH_ALG_SM3_256) != 0) {
+        if ((mTcgDxeData.BsCap.ActivePcrBanks &
+             EFI_TCG2_BOOT_HASH_ALG_SM3_256) != 0)
+        {
           TempDigestSize              = DigestSize;
           TempDigestSize             += NumberOfAlgorithms;
           TempDigestSize->algorithmId = TPM_ALG_SM3_256;
@@ -1673,7 +1925,11 @@ SetupEventLog (
           NumberOfAlgorithms++;
         }
 
-        CopyMem (TcgEfiSpecIdEventStruct + 1, &NumberOfAlgorithms, sizeof (NumberOfAlgorithms));
+        CopyMem (
+          TcgEfiSpecIdEventStruct + 1,
+          &NumberOfAlgorithms,
+          sizeof (NumberOfAlgorithms)
+          );
         TempDigestSize  = DigestSize;
         TempDigestSize += NumberOfAlgorithms;
         VendorInfoSize  = (UINT8 *)TempDigestSize;
@@ -1682,7 +1938,9 @@ SetupEventLog (
         SpecIdEvent.PCRIndex  = 0;
         SpecIdEvent.EventType = EV_NO_ACTION;
         ZeroMem (&SpecIdEvent.Digest, sizeof (SpecIdEvent.Digest));
-        SpecIdEvent.EventSize = (UINT32)GetTcgEfiSpecIdEventStructSize (TcgEfiSpecIdEventStruct);
+        SpecIdEvent.EventSize = (UINT32)GetTcgEfiSpecIdEventStructSize (
+                                          TcgEfiSpecIdEventStruct
+                                          );
 
         //
         // Log TcgEfiSpecIdEventStruct as the first Event. Event format is TCG_PCR_EVENT.
@@ -1708,18 +1966,30 @@ SetupEventLog (
         //
         GuidHob.Guid = GetFirstGuidHob (&gTcg800155PlatformIdEventHobGuid);
         while (GuidHob.Guid != NULL) {
-          InitNoActionEvent (&NoActionEvent, GET_GUID_HOB_DATA_SIZE (GuidHob.Guid));
+          InitNoActionEvent (
+            &NoActionEvent,
+            GET_GUID_HOB_DATA_SIZE (
+              GuidHob.Guid
+              )
+            );
 
           Status = TcgDxeLogEvent (
                      mTcg2EventInfo[Index].LogFormat,
                      &NoActionEvent,
-                     sizeof (NoActionEvent.PCRIndex) + sizeof (NoActionEvent.EventType) + GetDigestListBinSize (&NoActionEvent.Digests) + sizeof (NoActionEvent.EventSize),
+                     sizeof (NoActionEvent.PCRIndex) +
+                     sizeof (NoActionEvent.EventType) + GetDigestListBinSize (
+                                                          &NoActionEvent.Digests
+                                                          ) +
+                     sizeof (NoActionEvent.EventSize),
                      GET_GUID_HOB_DATA (GuidHob.Guid),
                      GET_GUID_HOB_DATA_SIZE (GuidHob.Guid)
                      );
 
           GuidHob.Guid = GET_NEXT_HOB (GuidHob);
-          GuidHob.Guid = GetNextGuidHob (&gTcg800155PlatformIdEventHobGuid, GuidHob.Guid);
+          GuidHob.Guid = GetNextGuidHob (
+                           &gTcg800155PlatformIdEventHobGuid,
+                           GuidHob.Guid
+                           );
         }
 
         //
@@ -1730,9 +2000,19 @@ SetupEventLog (
           //
           // Get Locality Indicator from StartupLocality HOB
           //
-          StartupLocalityEvent.StartupLocality = *(UINT8 *)(GET_GUID_HOB_DATA (GuidHob.Guid));
-          CopyMem (StartupLocalityEvent.Signature, TCG_EfiStartupLocalityEvent_SIGNATURE, sizeof (StartupLocalityEvent.Signature));
-          DEBUG ((DEBUG_INFO, "SetupEventLog: Set Locality from HOB into StartupLocalityEvent 0x%02x\n", StartupLocalityEvent.StartupLocality));
+          StartupLocalityEvent.StartupLocality = *(UINT8 *)(GET_GUID_HOB_DATA (
+                                                              GuidHob.Guid
+                                                              ));
+          CopyMem (
+            StartupLocalityEvent.Signature,
+            TCG_EfiStartupLocalityEvent_SIGNATURE,
+            sizeof (StartupLocalityEvent.Signature)
+            );
+          DEBUG ((
+            DEBUG_INFO,
+            "SetupEventLog: Set Locality from HOB into StartupLocalityEvent 0x%02x\n",
+            StartupLocalityEvent.StartupLocality
+            ));
 
           //
           // Initialize StartupLocalityEvent
@@ -1746,7 +2026,11 @@ SetupEventLog (
           Status = TcgDxeLogEvent (
                      mTcg2EventInfo[Index].LogFormat,
                      &NoActionEvent,
-                     sizeof (NoActionEvent.PCRIndex) + sizeof (NoActionEvent.EventType) + GetDigestListBinSize (&NoActionEvent.Digests) + sizeof (NoActionEvent.EventSize),
+                     sizeof (NoActionEvent.PCRIndex) +
+                     sizeof (NoActionEvent.EventType) + GetDigestListBinSize (
+                                                          &NoActionEvent.Digests
+                                                          ) +
+                     sizeof (NoActionEvent.EventSize),
                      (UINT8 *)&StartupLocalityEvent,
                      sizeof (StartupLocalityEvent)
                      );
@@ -1758,8 +2042,12 @@ SetupEventLog (
   //
   // 2. Create Final Log Area
   //
-  for (Index = 0; Index < sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]); Index++) {
-    if ((mTcgDxeData.BsCap.SupportedEventLogs & mTcg2EventInfo[Index].LogFormat) != 0) {
+  for (Index = 0; Index < sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]);
+       Index++)
+  {
+    if ((mTcgDxeData.BsCap.SupportedEventLogs &
+         mTcg2EventInfo[Index].LogFormat) != 0)
+    {
       if (mTcg2EventInfo[Index].LogFormat == EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
         Status = gBS->AllocatePages (
                         AllocateAnyPages,
@@ -1776,23 +2064,35 @@ SetupEventLog (
         //
         // Initialize
         //
-        mTcgDxeData.FinalEventsTable[Index]                   = (VOID *)(UINTN)Lasa;
-        (mTcgDxeData.FinalEventsTable[Index])->Version        = EFI_TCG2_FINAL_EVENTS_TABLE_VERSION;
+        mTcgDxeData.FinalEventsTable[Index] =
+          (VOID *)(UINTN)Lasa;
+        (mTcgDxeData.FinalEventsTable[Index])->Version =
+          EFI_TCG2_FINAL_EVENTS_TABLE_VERSION;
         (mTcgDxeData.FinalEventsTable[Index])->NumberOfEvents = 0;
 
-        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogFormat        = mTcg2EventInfo[Index].LogFormat;
-        mTcgDxeData.FinalEventLogAreaStruct[Index].Lasa                  = Lasa + sizeof (EFI_TCG2_FINAL_EVENTS_TABLE);
-        mTcgDxeData.FinalEventLogAreaStruct[Index].Laml                  = PcdGet32 (PcdTcg2FinalLogAreaLen) - sizeof (EFI_TCG2_FINAL_EVENTS_TABLE);
-        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogSize          = 0;
-        mTcgDxeData.FinalEventLogAreaStruct[Index].LastEvent             = (VOID *)(UINTN)mTcgDxeData.FinalEventLogAreaStruct[Index].Lasa;
-        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogStarted       = FALSE;
-        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogTruncated     = FALSE;
+        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogFormat =
+          mTcg2EventInfo[Index].LogFormat;
+        mTcgDxeData.FinalEventLogAreaStruct[Index].Lasa =
+          Lasa + sizeof (EFI_TCG2_FINAL_EVENTS_TABLE);
+        mTcgDxeData.FinalEventLogAreaStruct[Index].Laml =
+          PcdGet32 (PcdTcg2FinalLogAreaLen) -
+          sizeof (EFI_TCG2_FINAL_EVENTS_TABLE);
+        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogSize = 0;
+        mTcgDxeData.FinalEventLogAreaStruct[Index].LastEvent    =
+          (VOID *)(UINTN)mTcgDxeData.FinalEventLogAreaStruct[Index].Lasa;
+        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogStarted =
+          FALSE;
+        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogTruncated =
+          FALSE;
         mTcgDxeData.FinalEventLogAreaStruct[Index].Next800155EventOffset = 0;
 
         //
         // Install to configuration table for EFI_TCG2_EVENT_LOG_FORMAT_TCG_2
         //
-        Status = gBS->InstallConfigurationTable (&gEfiTcg2FinalEventsTableGuid, (VOID *)mTcgDxeData.FinalEventsTable[Index]);
+        Status = gBS->InstallConfigurationTable (
+                        &gEfiTcg2FinalEventsTableGuid,
+                        (VOID *)mTcgDxeData.FinalEventsTable[Index]
+                        );
         if (EFI_ERROR (Status)) {
           return Status;
         }
@@ -1800,14 +2100,17 @@ SetupEventLog (
         //
         // No need to handle EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2
         //
-        mTcgDxeData.FinalEventsTable[Index]                              = NULL;
-        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogFormat        = mTcg2EventInfo[Index].LogFormat;
-        mTcgDxeData.FinalEventLogAreaStruct[Index].Lasa                  = 0;
-        mTcgDxeData.FinalEventLogAreaStruct[Index].Laml                  = 0;
-        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogSize          = 0;
-        mTcgDxeData.FinalEventLogAreaStruct[Index].LastEvent             = 0;
-        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogStarted       = FALSE;
-        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogTruncated     = FALSE;
+        mTcgDxeData.FinalEventsTable[Index]                       = NULL;
+        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogFormat =
+          mTcg2EventInfo[Index].LogFormat;
+        mTcgDxeData.FinalEventLogAreaStruct[Index].Lasa            = 0;
+        mTcgDxeData.FinalEventLogAreaStruct[Index].Laml            = 0;
+        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogSize    = 0;
+        mTcgDxeData.FinalEventLogAreaStruct[Index].LastEvent       = 0;
+        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogStarted =
+          FALSE;
+        mTcgDxeData.FinalEventLogAreaStruct[Index].EventLogTruncated =
+          FALSE;
         mTcgDxeData.FinalEventLogAreaStruct[Index].Next800155EventOffset = 0;
       }
     }
@@ -1817,14 +2120,24 @@ SetupEventLog (
   // 3. Sync data from PEI to DXE
   //
   Status = EFI_SUCCESS;
-  for (Index = 0; Index < sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]); Index++) {
-    if ((mTcgDxeData.BsCap.SupportedEventLogs & mTcg2EventInfo[Index].LogFormat) != 0) {
+  for (Index = 0; Index < sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]);
+       Index++)
+  {
+    if ((mTcgDxeData.BsCap.SupportedEventLogs &
+         mTcg2EventInfo[Index].LogFormat) != 0)
+    {
       GuidHob.Raw = GetHobList ();
       Status      = EFI_SUCCESS;
       while (!EFI_ERROR (Status) &&
-             (GuidHob.Raw = GetNextGuidHob (mTcg2EventInfo[Index].EventGuid, GuidHob.Raw)) != NULL)
+             (GuidHob.Raw = GetNextGuidHob (
+                              mTcg2EventInfo[Index].EventGuid,
+                              GuidHob.Raw
+                              )) != NULL)
       {
-        TcgEvent = AllocateCopyPool (GET_GUID_HOB_DATA_SIZE (GuidHob.Guid), GET_GUID_HOB_DATA (GuidHob.Guid));
+        TcgEvent = AllocateCopyPool (
+                     GET_GUID_HOB_DATA_SIZE (GuidHob.Guid),
+                     GET_GUID_HOB_DATA (GuidHob.Guid)
+                     );
         ASSERT (TcgEvent != NULL);
         GuidHob.Raw = GET_NEXT_HOB (GuidHob);
         switch (mTcg2EventInfo[Index].LogFormat) {
@@ -1838,17 +2151,29 @@ SetupEventLog (
                        );
             break;
           case EFI_TCG2_EVENT_LOG_FORMAT_TCG_2:
-            DigestListBin     = (UINT8 *)TcgEvent + sizeof (TCG_PCRINDEX) + sizeof (TCG_EVENTTYPE);
+            DigestListBin = (UINT8 *)TcgEvent + sizeof (TCG_PCRINDEX) +
+                            sizeof (TCG_EVENTTYPE);
             DigestListBinSize = GetDigestListBinSize (DigestListBin);
             //
             // Save event size.
             //
-            CopyMem (&EventSize, (UINT8 *)DigestListBin + DigestListBinSize, sizeof (UINT32));
-            Event = (UINT8 *)DigestListBin + DigestListBinSize + sizeof (UINT32);
+            CopyMem (
+              &EventSize,
+              (UINT8 *)DigestListBin + DigestListBinSize,
+              sizeof (UINT32)
+              );
+            Event = (UINT8 *)DigestListBin + DigestListBinSize +
+                    sizeof (UINT32);
             //
             // Filter inactive digest in the event2 log from PEI HOB.
             //
-            CopyMem (&TempDigestListBin, DigestListBin, GetDigestListBinSize (DigestListBin));
+            CopyMem (
+              &TempDigestListBin,
+              DigestListBin,
+              GetDigestListBinSize (
+                DigestListBin
+                )
+              );
             EventSizePtr = CopyDigestListBinToBuffer (
                              DigestListBin,
                              &TempDigestListBin,
@@ -1873,7 +2198,8 @@ SetupEventLog (
             Status = TcgDxeLogEvent (
                        mTcg2EventInfo[Index].LogFormat,
                        TcgEvent,
-                       sizeof (TCG_PCRINDEX) + sizeof (TCG_EVENTTYPE) + DigestListBinSize + sizeof (UINT32),
+                       sizeof (TCG_PCRINDEX) + sizeof (TCG_EVENTTYPE) +
+                       DigestListBinSize + sizeof (UINT32),
                        Event,
                        EventSize
                        );
@@ -2032,15 +2358,27 @@ MeasureVariable (
   UINTN               VarNameLength;
   UEFI_VARIABLE_DATA  *VarLog;
 
-  DEBUG ((DEBUG_INFO, "Tcg2Dxe: MeasureVariable (Pcr - %x, EventType - %x, ", (UINTN)PCRIndex, (UINTN)EventType));
-  DEBUG ((DEBUG_INFO, "VariableName - %s, VendorGuid - %g)\n", VarName, VendorGuid));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tcg2Dxe: MeasureVariable (Pcr - %x, EventType - %x, ",
+    (UINTN)PCRIndex,
+    (UINTN)EventType
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "VariableName - %s, VendorGuid - %g)\n",
+    VarName,
+    VendorGuid
+    ));
 
   VarNameLength      = StrLen (VarName);
   TcgEvent.PCRIndex  = PCRIndex;
   TcgEvent.EventType = EventType;
 
-  TcgEvent.EventSize = (UINT32)(sizeof (*VarLog) + VarNameLength * sizeof (*VarName) + VarSize
-                                - sizeof (VarLog->UnicodeName) - sizeof (VarLog->VariableData));
+  TcgEvent.EventSize = (UINT32)(sizeof (*VarLog) + VarNameLength *
+                                sizeof (*VarName) + VarSize
+                                - sizeof (VarLog->UnicodeName) -
+                                sizeof (VarLog->VariableData));
 
   VarLog = (UEFI_VARIABLE_DATA *)AllocatePool (TcgEvent.EventSize);
   if (VarLog == NULL) {
@@ -2250,7 +2588,12 @@ MeasureAllBootVariables (
 
   BootCount /= sizeof (*BootOrder);
   for (Index = 0; Index < BootCount; Index++) {
-    UnicodeSPrint (mBootVarName, sizeof (mBootVarName), L"Boot%04x", BootOrder[Index]);
+    UnicodeSPrint (
+      mBootVarName,
+      sizeof (mBootVarName),
+      L"Boot%04x",
+      BootOrder[Index]
+      );
     Status = ReadAndMeasureBootVariable (
                mBootVarName,
                &gEfiGlobalVariableGuid,
@@ -2287,7 +2630,9 @@ MeasureAllSecureVariables (
   UINTN       Index;
 
   Status = EFI_NOT_FOUND;
-  for (Index = 0; Index < sizeof (mVariableType)/sizeof (mVariableType[0]); Index++) {
+  for (Index = 0; Index < sizeof (mVariableType)/sizeof (mVariableType[0]);
+       Index++)
+  {
     Status = ReadAndMeasureSecureVariable (
                mVariableType[Index].VariableName,
                mVariableType[Index].VendorGuid,
@@ -2304,7 +2649,12 @@ MeasureAllSecureVariables (
   //
   // Measure DBT if present and not empty
   //
-  Status = GetVariable2 (EFI_IMAGE_SECURITY_DATABASE2, &gEfiImageSecurityDatabaseGuid, &Data, &DataSize);
+  Status = GetVariable2 (
+             EFI_IMAGE_SECURITY_DATABASE2,
+             &gEfiImageSecurityDatabaseGuid,
+             &Data,
+             &DataSize
+             );
   if (!EFI_ERROR (Status)) {
     Status = MeasureVariable (
                7,
@@ -2316,7 +2666,11 @@ MeasureAllSecureVariables (
                );
     FreePool (Data);
   } else {
-    DEBUG ((DEBUG_INFO, "Skip measuring variable %s since it's deleted\n", EFI_IMAGE_SECURITY_DATABASE2));
+    DEBUG ((
+      DEBUG_INFO,
+      "Skip measuring variable %s since it's deleted\n",
+      EFI_IMAGE_SECURITY_DATABASE2
+      ));
   }
 
   return EFI_SUCCESS;
@@ -2377,7 +2731,11 @@ MeasureSecureBootPolicy (
   EFI_STATUS  Status;
   VOID        *Protocol;
 
-  Status = gBS->LocateProtocol (&gEfiVariableWriteArchProtocolGuid, NULL, (VOID **)&Protocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiVariableWriteArchProtocolGuid,
+                  NULL,
+                  (VOID **)&Protocol
+                  );
   if (EFI_ERROR (Status)) {
     return;
   }
@@ -2446,7 +2804,11 @@ OnReadyToBoot (
                EFI_CALLING_EFI_APPLICATION
                );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a not Measured. Error!\n", EFI_CALLING_EFI_APPLICATION));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a not Measured. Error!\n",
+        EFI_CALLING_EFI_APPLICATION
+        ));
     }
 
     //
@@ -2480,7 +2842,11 @@ OnReadyToBoot (
                EFI_RETURNING_FROM_EFI_APPLICATION
                );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a not Measured. Error!\n", EFI_RETURNING_FROM_EFI_APPLICATION));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a not Measured. Error!\n",
+        EFI_RETURNING_FROM_EFI_APPLICATION
+        ));
     }
 
     //
@@ -2492,7 +2858,11 @@ OnReadyToBoot (
                EFI_CALLING_EFI_APPLICATION
                );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a not Measured. Error!\n", EFI_CALLING_EFI_APPLICATION));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a not Measured. Error!\n",
+        EFI_CALLING_EFI_APPLICATION
+        ));
     }
   }
 
@@ -2530,7 +2900,11 @@ OnExitBootServices (
              EFI_EXIT_BOOT_SERVICES_INVOCATION
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a not Measured. Error!\n", EFI_EXIT_BOOT_SERVICES_INVOCATION));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a not Measured. Error!\n",
+      EFI_EXIT_BOOT_SERVICES_INVOCATION
+      ));
   }
 
   //
@@ -2541,7 +2915,11 @@ OnExitBootServices (
              EFI_EXIT_BOOT_SERVICES_SUCCEEDED
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a not Measured. Error!\n", EFI_EXIT_BOOT_SERVICES_SUCCEEDED));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a not Measured. Error!\n",
+      EFI_EXIT_BOOT_SERVICES_SUCCEEDED
+      ));
   }
 }
 
@@ -2571,7 +2949,11 @@ OnExitBootServicesFailed (
              EFI_EXIT_BOOT_SERVICES_FAILED
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a not Measured. Error!\n", EFI_EXIT_BOOT_SERVICES_FAILED));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a not Measured. Error!\n",
+      EFI_EXIT_BOOT_SERVICES_FAILED
+      ));
   }
 }
 
@@ -2625,11 +3007,18 @@ OnResetNotificationInstall (
   EFI_STATUS                       Status;
   EFI_RESET_NOTIFICATION_PROTOCOL  *ResetNotify;
 
-  Status = gBS->LocateProtocol (&gEfiResetNotificationProtocolGuid, NULL, (VOID **)&ResetNotify);
+  Status = gBS->LocateProtocol (
+                  &gEfiResetNotificationProtocolGuid,
+                  NULL,
+                  (VOID **)&ResetNotify
+                  );
   if (!EFI_ERROR (Status)) {
     Status = ResetNotify->RegisterResetNotify (ResetNotify, ShutdownTpmOnReset);
     ASSERT_EFI_ERROR (Status);
-    DEBUG ((DEBUG_VERBOSE, "TCG2: Hook system reset to properly shutdown TPM.\n"));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "TCG2: Hook system reset to properly shutdown TPM.\n"
+      ));
 
     gBS->CloseEvent (Event);
   }
@@ -2687,8 +3076,14 @@ DriverEntry (
 
   mImageHandle = ImageHandle;
 
-  if (CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceNoneGuid) ||
-      CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm12Guid))
+  if (CompareGuid (
+        PcdGetPtr (PcdTpmInstanceGuid),
+        &gEfiTpmDeviceInstanceNoneGuid
+        ) ||
+      CompareGuid (
+        PcdGetPtr (PcdTpmInstanceGuid),
+        &gEfiTpmDeviceInstanceTpm12Guid
+        ))
   {
     DEBUG ((DEBUG_INFO, "No TPM2 instance required!\n"));
     return EFI_UNSUPPORTED;
@@ -2708,54 +3103,95 @@ DriverEntry (
   //
   // Fill information
   //
-  ASSERT (TCG_EVENT_LOG_AREA_COUNT_MAX == sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]));
+  ASSERT (
+    TCG_EVENT_LOG_AREA_COUNT_MAX == sizeof (mTcg2EventInfo)/
+    sizeof (mTcg2EventInfo[0])
+    );
 
-  mTcgDxeData.BsCap.Size                   = sizeof (EFI_TCG2_BOOT_SERVICE_CAPABILITY);
+  mTcgDxeData.BsCap.Size =
+    sizeof (EFI_TCG2_BOOT_SERVICE_CAPABILITY);
   mTcgDxeData.BsCap.ProtocolVersion.Major  = 1;
   mTcgDxeData.BsCap.ProtocolVersion.Minor  = 1;
   mTcgDxeData.BsCap.StructureVersion.Major = 1;
   mTcgDxeData.BsCap.StructureVersion.Minor = 1;
 
-  DEBUG ((DEBUG_INFO, "Tcg2.ProtocolVersion  - %02x.%02x\n", mTcgDxeData.BsCap.ProtocolVersion.Major, mTcgDxeData.BsCap.ProtocolVersion.Minor));
-  DEBUG ((DEBUG_INFO, "Tcg2.StructureVersion - %02x.%02x\n", mTcgDxeData.BsCap.StructureVersion.Major, mTcgDxeData.BsCap.StructureVersion.Minor));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tcg2.ProtocolVersion  - %02x.%02x\n",
+    mTcgDxeData.BsCap.ProtocolVersion.Major,
+    mTcgDxeData.BsCap.ProtocolVersion.Minor
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tcg2.StructureVersion - %02x.%02x\n",
+    mTcgDxeData.BsCap.StructureVersion.Major,
+    mTcgDxeData.BsCap.StructureVersion.Minor
+    ));
 
   Status = Tpm2GetCapabilityManufactureID (&mTcgDxeData.BsCap.ManufacturerID);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Tpm2GetCapabilityManufactureID fail!\n"));
   } else {
-    DEBUG ((DEBUG_INFO, "Tpm2GetCapabilityManufactureID - %08x\n", mTcgDxeData.BsCap.ManufacturerID));
+    DEBUG ((
+      DEBUG_INFO,
+      "Tpm2GetCapabilityManufactureID - %08x\n",
+      mTcgDxeData.BsCap.ManufacturerID
+      ));
   }
 
   DEBUG_CODE_BEGIN ();
   UINT32  FirmwareVersion1;
   UINT32  FirmwareVersion2;
 
-  Status = Tpm2GetCapabilityFirmwareVersion (&FirmwareVersion1, &FirmwareVersion2);
+  Status = Tpm2GetCapabilityFirmwareVersion (
+             &FirmwareVersion1,
+             &FirmwareVersion2
+             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Tpm2GetCapabilityFirmwareVersion fail!\n"));
   } else {
-    DEBUG ((DEBUG_INFO, "Tpm2GetCapabilityFirmwareVersion - %08x %08x\n", FirmwareVersion1, FirmwareVersion2));
+    DEBUG ((
+      DEBUG_INFO,
+      "Tpm2GetCapabilityFirmwareVersion - %08x %08x\n",
+      FirmwareVersion1,
+      FirmwareVersion2
+      ));
   }
 
   DEBUG_CODE_END ();
 
-  Status = Tpm2GetCapabilityMaxCommandResponseSize (&MaxCommandSize, &MaxResponseSize);
+  Status = Tpm2GetCapabilityMaxCommandResponseSize (
+             &MaxCommandSize,
+             &MaxResponseSize
+             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Tpm2GetCapabilityMaxCommandResponseSize fail!\n"));
   } else {
     mTcgDxeData.BsCap.MaxCommandSize  = (UINT16)MaxCommandSize;
     mTcgDxeData.BsCap.MaxResponseSize = (UINT16)MaxResponseSize;
-    DEBUG ((DEBUG_INFO, "Tpm2GetCapabilityMaxCommandResponseSize - %08x, %08x\n", MaxCommandSize, MaxResponseSize));
+    DEBUG ((
+      DEBUG_INFO,
+      "Tpm2GetCapabilityMaxCommandResponseSize - %08x, %08x\n",
+      MaxCommandSize,
+      MaxResponseSize
+      ));
   }
 
   //
   // Get supported PCR and current Active PCRs
   //
-  Status = Tpm2GetCapabilitySupportedAndActivePcrs (&TpmHashAlgorithmBitmap, &ActivePCRBanks);
+  Status = Tpm2GetCapabilitySupportedAndActivePcrs (
+             &TpmHashAlgorithmBitmap,
+             &ActivePCRBanks
+             );
   ASSERT_EFI_ERROR (Status);
 
-  mTcgDxeData.BsCap.HashAlgorithmBitmap = TpmHashAlgorithmBitmap & PcdGet32 (PcdTcg2HashAlgorithmBitmap);
-  mTcgDxeData.BsCap.ActivePcrBanks      = ActivePCRBanks & PcdGet32 (PcdTcg2HashAlgorithmBitmap);
+  mTcgDxeData.BsCap.HashAlgorithmBitmap = TpmHashAlgorithmBitmap & PcdGet32 (
+                                                                     PcdTcg2HashAlgorithmBitmap
+                                                                     );
+  mTcgDxeData.BsCap.ActivePcrBanks = ActivePCRBanks & PcdGet32 (
+                                                        PcdTcg2HashAlgorithmBitmap
+                                                        );
 
   //
   // Need calculate NumberOfPCRBanks here, because HashAlgorithmBitmap might be removed by PCD.
@@ -2772,12 +3208,18 @@ DriverEntry (
   } else {
     mTcgDxeData.BsCap.NumberOfPCRBanks = PcdGet32 (PcdTcg2NumberOfPCRBanks);
     if (PcdGet32 (PcdTcg2NumberOfPCRBanks) > NumberOfPCRBanks) {
-      DEBUG ((DEBUG_ERROR, "ERROR: PcdTcg2NumberOfPCRBanks(0x%x) > NumberOfPCRBanks(0x%x)\n", PcdGet32 (PcdTcg2NumberOfPCRBanks), NumberOfPCRBanks));
+      DEBUG ((
+        DEBUG_ERROR,
+        "ERROR: PcdTcg2NumberOfPCRBanks(0x%x) > NumberOfPCRBanks(0x%x)\n",
+        PcdGet32 (PcdTcg2NumberOfPCRBanks),
+        NumberOfPCRBanks
+        ));
       mTcgDxeData.BsCap.NumberOfPCRBanks = NumberOfPCRBanks;
     }
   }
 
-  mTcgDxeData.BsCap.SupportedEventLogs = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 | EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
+  mTcgDxeData.BsCap.SupportedEventLogs = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 |
+                                         EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
   if ((mTcgDxeData.BsCap.ActivePcrBanks & EFI_TCG2_BOOT_HASH_ALG_SHA1) == 0) {
     //
     // No need to expose TCG1.2 event log if SHA1 bank does not exist.
@@ -2785,10 +3227,26 @@ DriverEntry (
     mTcgDxeData.BsCap.SupportedEventLogs &= ~EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
   }
 
-  DEBUG ((DEBUG_INFO, "Tcg2.SupportedEventLogs - 0x%08x\n", mTcgDxeData.BsCap.SupportedEventLogs));
-  DEBUG ((DEBUG_INFO, "Tcg2.HashAlgorithmBitmap - 0x%08x\n", mTcgDxeData.BsCap.HashAlgorithmBitmap));
-  DEBUG ((DEBUG_INFO, "Tcg2.NumberOfPCRBanks      - 0x%08x\n", mTcgDxeData.BsCap.NumberOfPCRBanks));
-  DEBUG ((DEBUG_INFO, "Tcg2.ActivePcrBanks        - 0x%08x\n", mTcgDxeData.BsCap.ActivePcrBanks));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tcg2.SupportedEventLogs - 0x%08x\n",
+    mTcgDxeData.BsCap.SupportedEventLogs
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tcg2.HashAlgorithmBitmap - 0x%08x\n",
+    mTcgDxeData.BsCap.HashAlgorithmBitmap
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tcg2.NumberOfPCRBanks      - 0x%08x\n",
+    mTcgDxeData.BsCap.NumberOfPCRBanks
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tcg2.ActivePcrBanks        - 0x%08x\n",
+    mTcgDxeData.BsCap.ActivePcrBanks
+    ));
 
   if (mTcgDxeData.BsCap.TPMPresentFlag) {
     //
@@ -2833,12 +3291,24 @@ DriverEntry (
     // We should use VariableWriteArch instead of VariableArch, because Variable driver
     // may update SecureBoot value based on last setting.
     //
-    EfiCreateProtocolNotifyEvent (&gEfiVariableWriteArchProtocolGuid, TPL_CALLBACK, MeasureSecureBootPolicy, NULL, &Registration);
+    EfiCreateProtocolNotifyEvent (
+      &gEfiVariableWriteArchProtocolGuid,
+      TPL_CALLBACK,
+      MeasureSecureBootPolicy,
+      NULL,
+      &Registration
+      );
 
     //
     // Hook the system reset to properly shutdown TPM.
     //
-    EfiCreateProtocolNotifyEvent (&gEfiResetNotificationProtocolGuid, TPL_CALLBACK, OnResetNotificationInstall, NULL, &Registration);
+    EfiCreateProtocolNotifyEvent (
+      &gEfiResetNotificationProtocolGuid,
+      TPL_CALLBACK,
+      OnResetNotificationInstall,
+      NULL,
+      &Registration
+      );
   }
 
   //

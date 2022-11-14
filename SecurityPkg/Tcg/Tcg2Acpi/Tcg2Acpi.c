@@ -144,7 +144,12 @@ AssignOpRegion (
         (OpRegion->DWordPrefix == AML_DWORD_PREFIX) &&
         (OpRegion->BytePrefix  == AML_BYTE_PREFIX))
     {
-      Status = gBS->AllocatePages (AllocateMaxAddress, EfiACPIMemoryNVS, EFI_SIZE_TO_PAGES (Size), &MemoryAddress);
+      Status = gBS->AllocatePages (
+                      AllocateMaxAddress,
+                      EfiACPIMemoryNVS,
+                      EFI_SIZE_TO_PAGES (Size),
+                      &MemoryAddress
+                      );
       ASSERT_EFI_ERROR (Status);
       ZeroMem ((VOID *)(UINTN)MemoryAddress, Size);
       OpRegion->RegionOffset = (UINT32)(UINTN)MemoryAddress;
@@ -193,36 +198,63 @@ ExchangeCommonBuffer (
   }
 
   // Step 1: Grab the common buffer header
-  Status = EfiGetSystemConfigurationTable (&gEdkiiPiSmmCommunicationRegionTableGuid, (VOID **)&PiSmmCommunicationRegionTable);
+  Status = EfiGetSystemConfigurationTable (
+             &gEdkiiPiSmmCommunicationRegionTableGuid,
+             (VOID **)&PiSmmCommunicationRegionTable
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - Failed to locate SMM communciation common buffer - %r!\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Failed to locate SMM communciation common buffer - %r!\n",
+      __FUNCTION__,
+      Status
+      ));
     return Status;
   }
 
   // Step 2: Grab one that is large enough to hold TPM_NVS_MM_COMM_BUFFER, the IPL one should be sufficient
   CommBufferSize  = 0;
-  MmCommMemRegion = (EFI_MEMORY_DESCRIPTOR *)(PiSmmCommunicationRegionTable + 1);
-  for (Index = 0; Index < PiSmmCommunicationRegionTable->NumberOfEntries; Index++) {
+  MmCommMemRegion = (EFI_MEMORY_DESCRIPTOR *)(PiSmmCommunicationRegionTable +
+                                              1);
+  for (Index = 0; Index < PiSmmCommunicationRegionTable->NumberOfEntries;
+       Index++)
+  {
     if (MmCommMemRegion->Type == EfiConventionalMemory) {
-      CommBufferSize = EFI_PAGES_TO_SIZE ((UINTN)MmCommMemRegion->NumberOfPages);
-      if (CommBufferSize >= (sizeof (TPM_NVS_MM_COMM_BUFFER) + OFFSET_OF (EFI_MM_COMMUNICATE_HEADER, Data))) {
+      CommBufferSize = EFI_PAGES_TO_SIZE (
+                         (UINTN)MmCommMemRegion->NumberOfPages
+                         );
+      if (CommBufferSize >= (sizeof (TPM_NVS_MM_COMM_BUFFER) + OFFSET_OF (
+                                                                 EFI_MM_COMMUNICATE_HEADER,
+                                                                 Data
+                                                                 )))
+      {
         break;
       }
     }
 
-    MmCommMemRegion = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MmCommMemRegion + PiSmmCommunicationRegionTable->DescriptorSize);
+    MmCommMemRegion = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MmCommMemRegion +
+                                                PiSmmCommunicationRegionTable->
+                                                  DescriptorSize);
   }
 
   if (Index >= PiSmmCommunicationRegionTable->NumberOfEntries) {
     // Could not find one that meets our goal...
-    DEBUG ((DEBUG_ERROR, "%a - Could not find a common buffer that is big enough for NVS!\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Could not find a common buffer that is big enough for NVS!\n",
+      __FUNCTION__
+      ));
     return EFI_OUT_OF_RESOURCES;
   }
 
   // Step 3: Start to populate contents
   // Step 3.1: MM Communication common header
-  CommHeader     = (EFI_MM_COMMUNICATE_HEADER *)(UINTN)MmCommMemRegion->PhysicalStart;
-  CommBufferSize = sizeof (TPM_NVS_MM_COMM_BUFFER) + OFFSET_OF (EFI_MM_COMMUNICATE_HEADER, Data);
+  CommHeader =
+    (EFI_MM_COMMUNICATE_HEADER *)(UINTN)MmCommMemRegion->PhysicalStart;
+  CommBufferSize = sizeof (TPM_NVS_MM_COMM_BUFFER) + OFFSET_OF (
+                                                       EFI_MM_COMMUNICATE_HEADER,
+                                                       Data
+                                                       );
   ZeroMem (CommHeader, CommBufferSize);
   CopyGuid (&CommHeader->HeaderGuid, &gTpmNvsMmGuid);
   CommHeader->MessageLength = sizeof (TPM_NVS_MM_COMM_BUFFER);
@@ -233,20 +265,35 @@ ExchangeCommonBuffer (
   CommBuffer->TargetAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)TcgNvs;
 
   // Step 4: Locate the protocol and signal Mmi.
-  Status = gBS->LocateProtocol (&gEfiMmCommunicationProtocolGuid, NULL, (VOID **)&MmCommunication);
+  Status = gBS->LocateProtocol (
+                  &gEfiMmCommunicationProtocolGuid,
+                  NULL,
+                  (VOID **)&MmCommunication
+                  );
   if (!EFI_ERROR (Status)) {
-    Status = MmCommunication->Communicate (MmCommunication, CommHeader, &CommBufferSize);
+    Status = MmCommunication->Communicate (
+                                MmCommunication,
+                                CommHeader,
+                                &CommBufferSize
+                                );
     DEBUG ((DEBUG_INFO, "%a - Communicate() = %r\n", __FUNCTION__, Status));
   } else {
-    DEBUG ((DEBUG_ERROR, "%a - Failed to locate MmCommunication protocol - %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Failed to locate MmCommunication protocol - %r\n",
+      __FUNCTION__,
+      Status
+      ));
     return Status;
   }
 
   // Step 5: If everything goes well, populate the channel number
   if (!EFI_ERROR (CommBuffer->ReturnStatus)) {
     // Need to demote to UINT8 according to SMI value definition
-    TcgNvs->PhysicalPresence.SoftwareSmi = (UINT8)CommBuffer->RegisteredPpSwiValue;
-    TcgNvs->MemoryClear.SoftwareSmi      = (UINT8)CommBuffer->RegisteredMcSwiValue;
+    TcgNvs->PhysicalPresence.SoftwareSmi =
+      (UINT8)CommBuffer->RegisteredPpSwiValue;
+    TcgNvs->MemoryClear.SoftwareSmi =
+      (UINT8)CommBuffer->RegisteredMcSwiValue;
     DEBUG ((
       DEBUG_INFO,
       "%a Communication returned software SMI value. PP: 0x%x; MC: 0x%x.\n",
@@ -282,12 +329,21 @@ UpdatePPVersion (
   // Patch some pointers for the ASL code before loading the SSDT.
   //
   for (DataPtr  = (UINT8 *)(Table + 1);
-       DataPtr <= (UINT8 *)((UINT8 *)Table + Table->Length - PHYSICAL_PRESENCE_VERSION_SIZE);
+       DataPtr <= (UINT8 *)((UINT8 *)Table + Table->Length -
+                            PHYSICAL_PRESENCE_VERSION_SIZE);
        DataPtr += 1)
   {
     if (AsciiStrCmp ((CHAR8 *)DataPtr, PHYSICAL_PRESENCE_VERSION_TAG) == 0) {
-      Status = AsciiStrCpyS ((CHAR8 *)DataPtr, PHYSICAL_PRESENCE_VERSION_SIZE, PPVer);
-      DEBUG ((DEBUG_INFO, "TPM2 Physical Presence Interface Version update status 0x%x\n", Status));
+      Status = AsciiStrCpyS (
+                 (CHAR8 *)DataPtr,
+                 PHYSICAL_PRESENCE_VERSION_SIZE,
+                 PPVer
+                 );
+      DEBUG ((
+        DEBUG_INFO,
+        "TPM2 Physical Presence Interface Version update status 0x%x\n",
+        Status
+        ));
       return Status;
     }
   }
@@ -363,7 +419,9 @@ UpdatePossibleResource (
   // 1. Check TPM_PRS_RESS with PkgLength <=63 can hold the input interrupt number buffer for patching
   //
   for (DataPtr  = (UINT8 *)(Table + 1);
-       DataPtr < (UINT8 *)((UINT8 *)Table + Table->Length - (TPM_PRS_RES_NAME_SIZE + TPM_POS_RES_TEMPLATE_MIN_SIZE));
+       DataPtr < (UINT8 *)((UINT8 *)Table + Table->Length -
+                           (TPM_PRS_RES_NAME_SIZE +
+                            TPM_POS_RES_TEMPLATE_MIN_SIZE));
        DataPtr += 1)
   {
     if (CompareMem (DataPtr, TPM_PRS_RESS, TPM_PRS_RES_NAME_SIZE) == 0) {
@@ -439,7 +497,9 @@ UpdatePossibleResource (
     NewPkgLength     = 0;
     OrignalPkgLength = 0;
     for (DataPtr  = (UINT8 *)(Table + 1);
-         DataPtr < (UINT8 *)((UINT8 *)Table + Table->Length - (TPM_PRS_RES_NAME_SIZE + TPM_POS_RES_TEMPLATE_MIN_SIZE));
+         DataPtr < (UINT8 *)((UINT8 *)Table + Table->Length -
+                             (TPM_PRS_RES_NAME_SIZE +
+                              TPM_POS_RES_TEMPLATE_MIN_SIZE));
          DataPtr += 1)
     {
       if (CompareMem (DataPtr, TPM_PRS_RESL, TPM_PRS_RES_NAME_SIZE) == 0) {
@@ -494,7 +554,8 @@ UpdatePossibleResource (
         // 2.2 Patch BufferSize = sizeof(Memory32Fixed Descriptor + Interrupt Descriptor + End Tag).
         //     It is Little endian. Only patch lowest byte of BufferSize due to current interrupt number limit.
         //
-        *(DataPtr + 2 + ((*DataPtr & (BIT7|BIT6)) >> 6)) = (UINT8)(IrqBuffserSize + 19);
+        *(DataPtr + 2 + ((*DataPtr & (BIT7|BIT6)) >> 6)) =
+          (UINT8)(IrqBuffserSize + 19);
 
         //
         // Notify _PRS to report long formed ResourceTemplate
@@ -505,7 +566,10 @@ UpdatePossibleResource (
     }
   }
 
-  if (DataPtr >= (UINT8 *)((UINT8 *)Table + Table->Length - (TPM_PRS_RES_NAME_SIZE + TPM_POS_RES_TEMPLATE_MIN_SIZE))) {
+  if (DataPtr >= (UINT8 *)((UINT8 *)Table + Table->Length -
+                           (TPM_PRS_RES_NAME_SIZE +
+                            TPM_POS_RES_TEMPLATE_MIN_SIZE)))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -603,7 +667,10 @@ UpdateHID (
     return Status;
   }
 
-  Status = Tpm2GetCapabilityFirmwareVersion (&FirmwareVersion1, &FirmwareVersion2);
+  Status = Tpm2GetCapabilityFirmwareVersion (
+             &FirmwareVersion1,
+             &FirmwareVersion2
+             );
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "TPM_PT_FIRMWARE_VERSION_1 0x%x\n", FirmwareVersion1));
     DEBUG ((DEBUG_INFO, "TPM_PT_FIRMWARE_VERSION_2 0x%x\n", FirmwareVersion2));
@@ -611,9 +678,21 @@ UpdateHID (
     //   #### is Firmware Version 1
     //
     if (PnpHID) {
-      AsciiSPrint (Hid + 3, TPM_HID_PNP_SIZE - 3, "%02d%02d", ((FirmwareVersion1 & 0xFFFF0000) >> 16), (FirmwareVersion1 & 0x0000FFFF));
+      AsciiSPrint (
+        Hid + 3,
+        TPM_HID_PNP_SIZE - 3,
+        "%02d%02d",
+        ((FirmwareVersion1 & 0xFFFF0000) >> 16),
+        (FirmwareVersion1 & 0x0000FFFF)
+        );
     } else {
-      AsciiSPrint (Hid + 4, TPM_HID_ACPI_SIZE - 4, "%02d%02d", ((FirmwareVersion1 & 0xFFFF0000) >> 16), (FirmwareVersion1 & 0x0000FFFF));
+      AsciiSPrint (
+        Hid + 4,
+        TPM_HID_ACPI_SIZE - 4,
+        "%02d%02d",
+        ((FirmwareVersion1 & 0xFFFF0000) >> 16),
+        (FirmwareVersion1 & 0x0000FFFF)
+        );
     }
   } else {
     DEBUG ((DEBUG_ERROR, "Get TPM_PT_FIRMWARE_VERSION_X failed %x!\n", Status));
@@ -699,7 +778,12 @@ PublishAcpiTable (
   //
   // Update Table version before measuring it to PCR
   //
-  Status = UpdatePPVersion (Table, (CHAR8 *)PcdGetPtr (PcdTcgPhysicalPresenceInterfaceVer));
+  Status = UpdatePPVersion (
+             Table,
+             (CHAR8 *)PcdGetPtr (
+                        PcdTcgPhysicalPresenceInterfaceVer
+                        )
+             );
   ASSERT_EFI_ERROR (Status);
 
   DEBUG ((
@@ -723,8 +807,15 @@ PublishAcpiTable (
     PossibleIrqNumBuf     = (UINT32 *)PcdGetPtr (PcdTpm2PossibleIrqNumBuf);
     PossibleIrqNumBufSize = (UINT32)PcdGetSize (PcdTpm2PossibleIrqNumBuf);
 
-    if ((PossibleIrqNumBufSize <= MAX_PRS_INT_BUF_SIZE) && ((PossibleIrqNumBufSize % sizeof (UINT32)) == 0)) {
-      Status = UpdatePossibleResource (Table, PossibleIrqNumBuf, PossibleIrqNumBufSize, &IsShortFormPkgLength);
+    if ((PossibleIrqNumBufSize <= MAX_PRS_INT_BUF_SIZE) &&
+        ((PossibleIrqNumBufSize % sizeof (UINT32)) == 0))
+    {
+      Status = UpdatePossibleResource (
+                 Table,
+                 PossibleIrqNumBuf,
+                 PossibleIrqNumBufSize,
+                 &IsShortFormPkgLength
+                 );
       DEBUG ((
         DEBUG_INFO,
         "UpdatePossibleResource status - %x. TPM2 service may not ready in OS.\n",
@@ -739,9 +830,28 @@ PublishAcpiTable (
     }
   }
 
-  ASSERT (Table->OemTableId == SIGNATURE_64 ('T', 'p', 'm', '2', 'T', 'a', 'b', 'l'));
-  CopyMem (Table->OemId, PcdGetPtr (PcdAcpiDefaultOemId), sizeof (Table->OemId));
-  mTcgNvs = AssignOpRegion (Table, SIGNATURE_32 ('T', 'N', 'V', 'S'), (UINT16)sizeof (TCG_NVS));
+  ASSERT (
+    Table->OemTableId == SIGNATURE_64 (
+                           'T',
+                           'p',
+                           'm',
+                           '2',
+                           'T',
+                           'a',
+                           'b',
+                           'l'
+                           )
+    );
+  CopyMem (
+    Table->OemId,
+    PcdGetPtr (PcdAcpiDefaultOemId),
+    sizeof (Table->OemId)
+    );
+  mTcgNvs = AssignOpRegion (
+              Table,
+              SIGNATURE_32 ('T', 'N', 'V', 'S'),
+              (UINT16)sizeof (TCG_NVS)
+              );
   ASSERT (mTcgNvs != NULL);
   mTcgNvs->TpmIrqNum            = PcdGet32 (PcdTpm2CurrentIrqNum);
   mTcgNvs->IsShortFormPkgLength = IsShortFormPkgLength;
@@ -751,7 +861,11 @@ PublishAcpiTable (
   //
   // Publish the TPM ACPI table. Table is re-checksummed.
   //
-  Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID **)&AcpiTable);
+  Status = gBS->LocateProtocol (
+                  &gEfiAcpiTableProtocolGuid,
+                  NULL,
+                  (VOID **)&AcpiTable
+                  );
   ASSERT_EFI_ERROR (Status);
 
   TableKey = 0;
@@ -801,7 +915,11 @@ PublishTpm2 (
     );
 
   mTpm2AcpiTemplate.Header.Revision = PcdGet8 (PcdTpm2AcpiTableRev);
-  DEBUG ((DEBUG_INFO, "Tpm2 ACPI table revision is %d\n", mTpm2AcpiTemplate.Header.Revision));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tpm2 ACPI table revision is %d\n",
+    mTpm2AcpiTemplate.Header.Revision
+    ));
 
   //
   // PlatformClass is only valid for version 4 and above
@@ -809,8 +927,14 @@ PublishTpm2 (
   //    BIT16~31: Reserved
   //
   if (mTpm2AcpiTemplate.Header.Revision >= EFI_TPM2_ACPI_TABLE_REVISION_4) {
-    mTpm2AcpiTemplate.Flags = (mTpm2AcpiTemplate.Flags & 0xFFFF0000) | PcdGet8 (PcdTpmPlatformClass);
-    DEBUG ((DEBUG_INFO, "Tpm2 ACPI table PlatformClass is %d\n", (mTpm2AcpiTemplate.Flags & 0x0000FFFF)));
+    mTpm2AcpiTemplate.Flags = (mTpm2AcpiTemplate.Flags & 0xFFFF0000) | PcdGet8 (
+                                                                         PcdTpmPlatformClass
+                                                                         );
+    DEBUG ((
+      DEBUG_INFO,
+      "Tpm2 ACPI table PlatformClass is %d\n",
+      (mTpm2AcpiTemplate.Flags & 0x0000FFFF)
+      ));
   }
 
   mTpm2AcpiTemplate.Laml = PcdGet32 (PcdTpm2AcpiTableLaml);
@@ -827,33 +951,55 @@ PublishTpm2 (
   InterfaceType = PcdGet8 (PcdActiveTpmInterfaceType);
   switch (InterfaceType) {
     case Tpm2PtpInterfaceCrb:
-      mTpm2AcpiTemplate.StartMethod          = EFI_TPM2_ACPI_TABLE_START_METHOD_COMMAND_RESPONSE_BUFFER_INTERFACE;
-      mTpm2AcpiTemplate.AddressOfControlArea = PcdGet64 (PcdTpmBaseAddress) + 0x40;
-      ControlArea                            = (EFI_TPM2_ACPI_CONTROL_AREA *)(UINTN)mTpm2AcpiTemplate.AddressOfControlArea;
-      ControlArea->CommandSize               = 0xF80;
-      ControlArea->ResponseSize              = 0xF80;
-      ControlArea->Command                   = PcdGet64 (PcdTpmBaseAddress) + 0x80;
-      ControlArea->Response                  = PcdGet64 (PcdTpmBaseAddress) + 0x80;
+      mTpm2AcpiTemplate.StartMethod =
+        EFI_TPM2_ACPI_TABLE_START_METHOD_COMMAND_RESPONSE_BUFFER_INTERFACE;
+      mTpm2AcpiTemplate.AddressOfControlArea = PcdGet64 (PcdTpmBaseAddress) +
+                                               0x40;
+      ControlArea =
+        (EFI_TPM2_ACPI_CONTROL_AREA *)(UINTN)mTpm2AcpiTemplate.
+          AddressOfControlArea;
+      ControlArea->CommandSize  = 0xF80;
+      ControlArea->ResponseSize = 0xF80;
+      ControlArea->Command      = PcdGet64 (PcdTpmBaseAddress) +
+                                  0x80;
+      ControlArea->Response = PcdGet64 (PcdTpmBaseAddress) +
+                              0x80;
       break;
     case Tpm2PtpInterfaceFifo:
     case Tpm2PtpInterfaceTis:
       break;
     default:
-      DEBUG ((DEBUG_ERROR, "TPM2 InterfaceType get error! %d\n", InterfaceType));
+      DEBUG ((
+        DEBUG_ERROR,
+        "TPM2 InterfaceType get error! %d\n",
+        InterfaceType
+        ));
       break;
   }
 
-  CopyMem (mTpm2AcpiTemplate.Header.OemId, PcdGetPtr (PcdAcpiDefaultOemId), sizeof (mTpm2AcpiTemplate.Header.OemId));
+  CopyMem (
+    mTpm2AcpiTemplate.Header.OemId,
+    PcdGetPtr (PcdAcpiDefaultOemId),
+    sizeof (mTpm2AcpiTemplate.Header.OemId)
+    );
   OemTableId = PcdGet64 (PcdAcpiDefaultOemTableId);
   CopyMem (&mTpm2AcpiTemplate.Header.OemTableId, &OemTableId, sizeof (UINT64));
-  mTpm2AcpiTemplate.Header.OemRevision     = PcdGet32 (PcdAcpiDefaultOemRevision);
+  mTpm2AcpiTemplate.Header.OemRevision = PcdGet32 (
+                                           PcdAcpiDefaultOemRevision
+                                           );
   mTpm2AcpiTemplate.Header.CreatorId       = PcdGet32 (PcdAcpiDefaultCreatorId);
-  mTpm2AcpiTemplate.Header.CreatorRevision = PcdGet32 (PcdAcpiDefaultCreatorRevision);
+  mTpm2AcpiTemplate.Header.CreatorRevision = PcdGet32 (
+                                               PcdAcpiDefaultCreatorRevision
+                                               );
 
   //
   // Construct ACPI table
   //
-  Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID **)&AcpiTable);
+  Status = gBS->LocateProtocol (
+                  &gEfiAcpiTableProtocolGuid,
+                  NULL,
+                  (VOID **)&AcpiTable
+                  );
   ASSERT_EFI_ERROR (Status);
 
   Status = AcpiTable->InstallAcpiTable (
@@ -889,7 +1035,11 @@ InitializeTcgAcpi (
 {
   EFI_STATUS  Status;
 
-  if (!CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm20DtpmGuid)) {
+  if (!CompareGuid (
+         PcdGetPtr (PcdTpmInstanceGuid),
+         &gEfiTpmDeviceInstanceTpm20DtpmGuid
+         ))
+  {
     DEBUG ((DEBUG_ERROR, "No TPM2 DTPM instance required!\n"));
     return EFI_UNSUPPORTED;
   }

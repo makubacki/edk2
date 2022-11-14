@@ -304,7 +304,10 @@ Tpm2TisTpmCommand (
     // dataAvail check timeout. Cancel the currently executing command by writing commandCancel,
     // Expect TPM_RC_CANCELLED or successfully completed response.
     //
-    DEBUG ((DEBUG_ERROR, "Wait for Tpm2 response data time out. Trying to cancel the command!!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Wait for Tpm2 response data time out. Trying to cancel the command!!\n"
+      ));
 
     MmioWrite32 ((UINTN)&TisReg->Status, TIS_PC_STS_CANCEL);
     Status = TisPcWaitRegisterBits (
@@ -450,5 +453,9 @@ DTpm2TisRequestUseTpm (
   VOID
   )
 {
-  return TisPcRequestUseTpm ((TIS_PC_REGISTERS_PTR)(UINTN)PcdGet64 (PcdTpmBaseAddress));
+  return TisPcRequestUseTpm (
+           (TIS_PC_REGISTERS_PTR)(UINTN)PcdGet64 (
+                                          PcdTpmBaseAddress
+                                          )
+           );
 }

@@ -35,21 +35,32 @@ UpdateDefaultPCRBanks (
   switch (HiiPackageHeader->Type) {
     case EFI_HII_PACKAGE_FORMS:
       IfrOpCodeHeader = (EFI_IFR_OP_HEADER *)(HiiPackageHeader + 1);
-      while ((UINTN)IfrOpCodeHeader < (UINTN)HiiPackageHeader + HiiPackageHeader->Length) {
+      while ((UINTN)IfrOpCodeHeader < (UINTN)HiiPackageHeader +
+             HiiPackageHeader->Length)
+      {
         switch (IfrOpCodeHeader->OpCode) {
           case EFI_IFR_CHECKBOX_OP:
             IfrCheckBox = (EFI_IFR_CHECKBOX *)IfrOpCodeHeader;
-            if ((IfrCheckBox->Question.QuestionId >= KEY_TPM2_PCR_BANKS_REQUEST_0) && (IfrCheckBox->Question.QuestionId <= KEY_TPM2_PCR_BANKS_REQUEST_4)) {
+            if ((IfrCheckBox->Question.QuestionId >=
+                 KEY_TPM2_PCR_BANKS_REQUEST_0) &&
+                (IfrCheckBox->Question.QuestionId <=
+                 KEY_TPM2_PCR_BANKS_REQUEST_4))
+            {
               IfrDefault = (EFI_IFR_DEFAULT *)(IfrCheckBox + 1);
               ASSERT (IfrDefault->Header.OpCode == EFI_IFR_DEFAULT_OP);
               ASSERT (IfrDefault->Type == EFI_IFR_TYPE_BOOLEAN);
-              IfrDefault->Value.b = (BOOLEAN)((PCRBanks >> (IfrCheckBox->Question.QuestionId - KEY_TPM2_PCR_BANKS_REQUEST_0)) & 0x1);
+              IfrDefault->Value.b = (BOOLEAN)((PCRBanks >>
+                                               (IfrCheckBox->Question.QuestionId
+                                                - KEY_TPM2_PCR_BANKS_REQUEST_0))
+                                              &
+                                              0x1);
             }
 
             break;
         }
 
-        IfrOpCodeHeader = (EFI_IFR_OP_HEADER *)((UINTN)IfrOpCodeHeader + IfrOpCodeHeader->Length);
+        IfrOpCodeHeader = (EFI_IFR_OP_HEADER *)((UINTN)IfrOpCodeHeader +
+                                                IfrOpCodeHeader->Length);
       }
 
       break;
@@ -121,7 +132,10 @@ InitializeTcg2VersionInfo (
       //
       // Current configuration is invalid, reset to defaults.
       //
-      ActionFlag = HiiSetToDefaults (ConfigRequestHdr, EFI_HII_DEFAULT_CLASS_STANDARD);
+      ActionFlag = HiiSetToDefaults (
+                     ConfigRequestHdr,
+                     EFI_HII_DEFAULT_CLASS_STANDARD
+                     );
       ASSERT (ActionFlag);
       //
       // Get the default values from variable.
@@ -152,13 +166,19 @@ InitializeTcg2VersionInfo (
                     &Tcg2Version
                     );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Tcg2ConfigDriver: Fail to set TCG2_VERSION_NAME\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Tcg2ConfigDriver: Fail to set TCG2_VERSION_NAME\n"
+        ));
       return;
     } else {
       //
       // Build this variable based on default values stored in IFR.
       //
-      ActionFlag = HiiSetToDefaults (ConfigRequestHdr, EFI_HII_DEFAULT_CLASS_STANDARD);
+      ActionFlag = HiiSetToDefaults (
+                     ConfigRequestHdr,
+                     EFI_HII_DEFAULT_CLASS_STANDARD
+                     );
       ASSERT (ActionFlag);
       //
       // Get the default values from variable.
@@ -173,13 +193,25 @@ InitializeTcg2VersionInfo (
                         );
       ASSERT_EFI_ERROR (Status);
       if (PcdTcg2PpiVersion != Tcg2Version.PpiVersion) {
-        DEBUG ((DEBUG_WARN, "WARNING: PcdTcgPhysicalPresenceInterfaceVer default value is not same with the default value in VFR\n"));
-        DEBUG ((DEBUG_WARN, "WARNING: The default value in VFR has be chosen\n"));
+        DEBUG ((
+          DEBUG_WARN,
+          "WARNING: PcdTcgPhysicalPresenceInterfaceVer default value is not same with the default value in VFR\n"
+          ));
+        DEBUG ((
+          DEBUG_WARN,
+          "WARNING: The default value in VFR has be chosen\n"
+          ));
       }
 
       if (PcdTpm2AcpiTableRev != Tcg2Version.Tpm2AcpiTableRev) {
-        DEBUG ((DEBUG_WARN, "WARNING: PcdTpm2AcpiTableRev default value is not same with the default value in VFR\n"));
-        DEBUG ((DEBUG_WARN, "WARNING: The default value in VFR has be chosen\n"));
+        DEBUG ((
+          DEBUG_WARN,
+          "WARNING: PcdTpm2AcpiTableRev default value is not same with the default value in VFR\n"
+          ));
+        DEBUG ((
+          DEBUG_WARN,
+          "WARNING: The default value in VFR has be chosen\n"
+          ));
       }
     }
   }
@@ -198,16 +230,36 @@ InitializeTcg2VersionInfo (
     AsciiStrSize ((CHAR8 *)PcdGetPtr (PcdTcgPhysicalPresenceInterfaceVer))
     );
   if (PcdTcg2PpiVersion != Tcg2Version.PpiVersion) {
-    DEBUG ((DEBUG_WARN, "WARNING: PcdTcgPhysicalPresenceInterfaceVer is not DynamicHii type and does not map to TCG2_VERSION.PpiVersion\n"));
-    DEBUG ((DEBUG_WARN, "WARNING: The TCG2 PPI version configuring from setup page will not work\n"));
+    DEBUG ((
+      DEBUG_WARN,
+      "WARNING: PcdTcgPhysicalPresenceInterfaceVer is not DynamicHii type and does not map to TCG2_VERSION.PpiVersion\n"
+      ));
+    DEBUG ((
+      DEBUG_WARN,
+      "WARNING: The TCG2 PPI version configuring from setup page will not work\n"
+      ));
   }
 
   switch (PcdTcg2PpiVersion) {
     case TCG2_PPI_VERSION_1_2:
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_PPI_VERSION_STATE_CONTENT), L"1.2", NULL);
+      HiiSetString (
+        PrivateData->HiiHandle,
+        STRING_TOKEN (
+          STR_TCG2_PPI_VERSION_STATE_CONTENT
+          ),
+        L"1.2",
+        NULL
+        );
       break;
     case TCG2_PPI_VERSION_1_3:
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TCG2_PPI_VERSION_STATE_CONTENT), L"1.3", NULL);
+      HiiSetString (
+        PrivateData->HiiHandle,
+        STRING_TOKEN (
+          STR_TCG2_PPI_VERSION_STATE_CONTENT
+          ),
+        L"1.3",
+        NULL
+        );
       break;
     default:
       ASSERT (FALSE);
@@ -221,16 +273,36 @@ InitializeTcg2VersionInfo (
   //
   PcdTpm2AcpiTableRev = PcdGet8 (PcdTpm2AcpiTableRev);
   if (PcdTpm2AcpiTableRev != Tcg2Version.Tpm2AcpiTableRev) {
-    DEBUG ((DEBUG_WARN, "WARNING: PcdTpm2AcpiTableRev is not DynamicHii type and does not map to TCG2_VERSION.Tpm2AcpiTableRev\n"));
-    DEBUG ((DEBUG_WARN, "WARNING: The Tpm2 ACPI Revision configuring from setup page will not work\n"));
+    DEBUG ((
+      DEBUG_WARN,
+      "WARNING: PcdTpm2AcpiTableRev is not DynamicHii type and does not map to TCG2_VERSION.Tpm2AcpiTableRev\n"
+      ));
+    DEBUG ((
+      DEBUG_WARN,
+      "WARNING: The Tpm2 ACPI Revision configuring from setup page will not work\n"
+      ));
   }
 
   switch (PcdTpm2AcpiTableRev) {
     case EFI_TPM2_ACPI_TABLE_REVISION_3:
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TPM2_ACPI_REVISION_STATE_CONTENT), L"Rev 3", NULL);
+      HiiSetString (
+        PrivateData->HiiHandle,
+        STRING_TOKEN (
+          STR_TPM2_ACPI_REVISION_STATE_CONTENT
+          ),
+        L"Rev 3",
+        NULL
+        );
       break;
     case EFI_TPM2_ACPI_TABLE_REVISION_4:
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TPM2_ACPI_REVISION_STATE_CONTENT), L"Rev 4", NULL);
+      HiiSetString (
+        PrivateData->HiiHandle,
+        STRING_TOKEN (
+          STR_TPM2_ACPI_REVISION_STATE_CONTENT
+          ),
+        L"Rev 4",
+        NULL
+        );
       break;
     default:
       ASSERT (FALSE);
@@ -281,7 +353,10 @@ Tcg2ConfigDriverEntryPoint (
   //
   // Create a private data structure.
   //
-  PrivateData = AllocateCopyPool (sizeof (TCG2_CONFIG_PRIVATE_DATA), &mTcg2ConfigPrivateDateTemplate);
+  PrivateData = AllocateCopyPool (
+                  sizeof (TCG2_CONFIG_PRIVATE_DATA),
+                  &mTcg2ConfigPrivateDateTemplate
+                  );
   ASSERT (PrivateData != NULL);
   mTcg2ConfigPrivateDate = PrivateData;
   //
@@ -295,14 +370,22 @@ Tcg2ConfigDriverEntryPoint (
                   );
   ASSERT_EFI_ERROR (Status);
 
-  Status = gBS->LocateProtocol (&gEfiTcg2ProtocolGuid, NULL, (VOID **)&PrivateData->Tcg2Protocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiTcg2ProtocolGuid,
+                  NULL,
+                  (VOID **)&PrivateData->Tcg2Protocol
+                  );
   ASSERT_EFI_ERROR (Status);
 
-  PrivateData->ProtocolCapability.Size = sizeof (PrivateData->ProtocolCapability);
-  Status                               = PrivateData->Tcg2Protocol->GetCapability (
-                                                                      PrivateData->Tcg2Protocol,
-                                                                      &PrivateData->ProtocolCapability
-                                                                      );
+  PrivateData->ProtocolCapability.Size =
+    sizeof (PrivateData->ProtocolCapability);
+  Status =
+    PrivateData->Tcg2Protocol->GetCapability (
+                                 PrivateData
+                                   ->Tcg2Protocol,
+                                 &
+                                 PrivateData->ProtocolCapability
+                                 );
   ASSERT_EFI_ERROR (Status);
 
   DataSize = sizeof (Tcg2Configuration);
@@ -323,7 +406,9 @@ Tcg2ConfigDriverEntryPoint (
   //
   // Validation
   //
-  if ((Tcg2Configuration.TpmDevice > TPM_DEVICE_MAX) || (Tcg2Configuration.TpmDevice < TPM_DEVICE_MIN)) {
+  if ((Tcg2Configuration.TpmDevice > TPM_DEVICE_MAX) ||
+      (Tcg2Configuration.TpmDevice < TPM_DEVICE_MIN))
+  {
     Tcg2Configuration.TpmDevice = TPM_DEVICE_DEFAULT;
   }
 
@@ -331,17 +416,32 @@ Tcg2ConfigDriverEntryPoint (
   // Set value for Tcg2CurrentActivePCRBanks
   // Search Tcg2ConfigBin[] and update default value there
   //
-  Status = PrivateData->Tcg2Protocol->GetActivePcrBanks (PrivateData->Tcg2Protocol, &CurrentActivePCRBanks);
+  Status = PrivateData->Tcg2Protocol->GetActivePcrBanks (
+                                        PrivateData->Tcg2Protocol,
+                                        &CurrentActivePCRBanks
+                                        );
   ASSERT_EFI_ERROR (Status);
   PrivateData->PCRBanksDesired = CurrentActivePCRBanks;
-  UpdateDefaultPCRBanks (Tcg2ConfigBin + sizeof (UINT32), ReadUnaligned32 ((UINT32 *)Tcg2ConfigBin) - sizeof (UINT32), CurrentActivePCRBanks);
+  UpdateDefaultPCRBanks (
+    Tcg2ConfigBin + sizeof (UINT32),
+    ReadUnaligned32 (
+      (UINT32 *)Tcg2ConfigBin
+      ) - sizeof (UINT32),
+    CurrentActivePCRBanks
+    );
 
   //
   // Sync data from PCD to variable, so that we do not need detect again in S3 phase.
   //
   Tcg2DeviceDetection.TpmDeviceDetected = TPM_DEVICE_NULL;
-  for (Index = 0; Index < sizeof (mTpmInstanceId)/sizeof (mTpmInstanceId[0]); Index++) {
-    if (CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &mTpmInstanceId[Index].TpmInstanceGuid)) {
+  for (Index = 0; Index < sizeof (mTpmInstanceId)/sizeof (mTpmInstanceId[0]);
+       Index++)
+  {
+    if (CompareGuid (
+          PcdGetPtr (PcdTpmInstanceGuid),
+          &mTpmInstanceId[Index].TpmInstanceGuid
+          ))
+    {
       Tcg2DeviceDetection.TpmDeviceDetected = mTpmInstanceId[Index].TpmDevice;
       break;
     }
@@ -361,7 +461,10 @@ Tcg2ConfigDriverEntryPoint (
                   &Tcg2DeviceDetection
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Tcg2ConfigDriver: Fail to set TCG2_DEVICE_DETECTION_NAME\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tcg2ConfigDriver: Fail to set TCG2_DEVICE_DETECTION_NAME\n"
+      ));
     Status = gRT->SetVariable (
                     TCG2_DEVICE_DETECTION_NAME,
                     &gTcg2ConfigFormSetGuid,
@@ -389,7 +492,11 @@ Tcg2ConfigDriverEntryPoint (
   //
   // We should lock Tcg2DeviceDetection, because it contains information needed at S3.
   //
-  Status = gBS->LocateProtocol (&gEdkiiVariableLockProtocolGuid, NULL, (VOID **)&VariableLockProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEdkiiVariableLockProtocolGuid,
+                  NULL,
+                  (VOID **)&VariableLockProtocol
+                  );
   if (!EFI_ERROR (Status)) {
     Status = VariableLockProtocol->RequestToLock (
                                      VariableLockProtocol,

@@ -89,11 +89,16 @@ GetTpmState (
                             CmdBuf
                             );
     TpmRsp = (TPM_RSP_COMMAND_HDR *)&CmdBuf[0];
-    if (EFI_ERROR (Status) || (TpmRsp->tag != SwapBytes16 (TPM_TAG_RSP_COMMAND)) || (TpmRsp->returnCode != 0)) {
+    if (EFI_ERROR (Status) || (TpmRsp->tag != SwapBytes16 (
+                                                TPM_TAG_RSP_COMMAND
+                                                )) || (TpmRsp->returnCode != 0))
+    {
       return EFI_DEVICE_ERROR;
     }
 
-    TpmPermanentFlags = (TPM_PERMANENT_FLAGS *)&CmdBuf[sizeof (TPM_RSP_COMMAND_HDR) + sizeof (UINT32)];
+    TpmPermanentFlags =
+      (TPM_PERMANENT_FLAGS *)&CmdBuf[sizeof (TPM_RSP_COMMAND_HDR) +
+                                     sizeof (UINT32)];
 
     if (TpmEnable != NULL) {
       *TpmEnable = (BOOLEAN) !TpmPermanentFlags->disable;
@@ -156,7 +161,12 @@ TcgExtractConfig (
   }
 
   *Progress = Request;
-  if ((Request != NULL) && !HiiIsConfigHdrMatch (Request, &gTcgConfigFormSetGuid, mTcgStorageName)) {
+  if ((Request != NULL) && !HiiIsConfigHdrMatch (
+                              Request,
+                              &gTcgConfigFormSetGuid,
+                              mTcgStorageName
+                              ))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -192,12 +202,22 @@ TcgExtractConfig (
     // Allocate and fill a buffer large enough to hold the <ConfigHdr> template
     // followed by "&OFFSET=0&WIDTH=WWWWWWWWWWWWWWWW" followed by a Null-terminator
     //
-    ConfigRequestHdr = HiiConstructConfigHdr (&gTcgConfigFormSetGuid, mTcgStorageName, PrivateData->DriverHandle);
-    Size             = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
-    ConfigRequest    = AllocateZeroPool (Size);
+    ConfigRequestHdr = HiiConstructConfigHdr (
+                         &gTcgConfigFormSetGuid,
+                         mTcgStorageName,
+                         PrivateData->DriverHandle
+                         );
+    Size          = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
+    ConfigRequest = AllocateZeroPool (Size);
     ASSERT (ConfigRequest != NULL);
     AllocatedRequest = TRUE;
-    UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, sizeof (TCG_CONFIGURATION));
+    UnicodeSPrint (
+      ConfigRequest,
+      Size,
+      L"%s&OFFSET=0&WIDTH=%016LX",
+      ConfigRequestHdr,
+      sizeof (TCG_CONFIGURATION)
+      );
     FreePool (ConfigRequestHdr);
   }
 
@@ -263,7 +283,12 @@ TcgRouteConfig (
   }
 
   *Progress = Configuration;
-  if (!HiiIsConfigHdrMatch (Configuration, &gTcgConfigFormSetGuid, mTcgStorageName)) {
+  if (!HiiIsConfigHdrMatch (
+         Configuration,
+         &gTcgConfigFormSetGuid,
+         mTcgStorageName
+         ))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -322,7 +347,9 @@ SavePpRequest (
   Status           = gRT->SetVariable (
                             PHYSICAL_PRESENCE_VARIABLE,
                             &gEfiPhysicalPresenceGuid,
-                            EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            EFI_VARIABLE_NON_VOLATILE |
+                            EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                            EFI_VARIABLE_RUNTIME_ACCESS,
                             DataSize,
                             &PpData
                             );
@@ -383,13 +410,22 @@ TcgCallback (
         PrivateData->Configuration->TpmEnable   ? L"Enabled"   : L"Disabled",
         PrivateData->Configuration->TpmActivate ? L"Activated" : L"Deactivated"
         );
-      HiiSetString (PrivateData->HiiHandle, STRING_TOKEN (STR_TPM_STATE_CONTENT), State, NULL);
+      HiiSetString (
+        PrivateData->HiiHandle,
+        STRING_TOKEN (
+          STR_TPM_STATE_CONTENT
+          ),
+        State,
+        NULL
+        );
     }
 
     return EFI_SUCCESS;
   }
 
-  if ((Action != EFI_BROWSER_ACTION_CHANGED) || (QuestionId != KEY_TPM_ACTION)) {
+  if ((Action != EFI_BROWSER_ACTION_CHANGED) || (QuestionId !=
+                                                 KEY_TPM_ACTION))
+  {
     return EFI_UNSUPPORTED;
   }
 

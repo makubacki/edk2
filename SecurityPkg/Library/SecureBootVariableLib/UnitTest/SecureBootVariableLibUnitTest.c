@@ -27,9 +27,10 @@
 #include <Library/UnitTestLib.h>
 #include <Library/SecureBootVariableLib.h>
 
-#define UNIT_TEST_APP_NAME     "SecureBootVariableLib Unit Tests"
-#define UNIT_TEST_APP_VERSION  "1.0"
-#define VAR_AUTH_DESC_SIZE     OFFSET_OF (EFI_VARIABLE_AUTHENTICATION_2, AuthInfo) + OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData)
+#define UNIT_TEST_APP_NAME       "SecureBootVariableLib Unit Tests"
+#define UNIT_TEST_APP_VERSION    "1.0"
+#define VAR_AUTH_DESC_SIZE     \
+                                 OFFSET_OF (EFI_VARIABLE_AUTHENTICATION_2, AuthInfo) + OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData)
 
 extern EFI_TIME  mMaxTimestamp;
 extern EFI_TIME  mDefaultPayloadTimestamp;
@@ -221,11 +222,26 @@ SetSecureBootModeShouldSetVar (
   EFI_STATUS  Status;
 
   SecureBootMode = 0xAB; // Any random magic number...
-  expect_memory (MockSetVariable, VariableName, EFI_CUSTOM_MODE_NAME, sizeof (EFI_CUSTOM_MODE_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_CUSTOM_MODE_NAME,
+    sizeof (EFI_CUSTOM_MODE_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiCustomModeEnableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_BOOTSERVICE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, sizeof (SecureBootMode));
-  expect_memory (MockSetVariable, Data, &SecureBootMode, sizeof (SecureBootMode));
+  expect_memory (
+    MockSetVariable,
+    Data,
+    &SecureBootMode,
+    sizeof (SecureBootMode)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
@@ -262,7 +278,12 @@ GetSetupModeShouldGetVar (
   UINT8       SetupMode;
 
   TargetMode = 0xAB; // Any random magic number...
-  expect_memory (MockGetVariable, VariableName, EFI_SETUP_MODE_NAME, sizeof (EFI_SETUP_MODE_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_SETUP_MODE_NAME,
+    sizeof (EFI_SETUP_MODE_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, sizeof (SetupMode));
 
@@ -303,14 +324,24 @@ IsSecureBootEnableShouldGetVar (
   UINT8    TargetMode;
 
   TargetMode = SECURE_BOOT_MODE_ENABLE;
-  expect_memory (MockGetVariable, VariableName, EFI_SECURE_BOOT_MODE_NAME, sizeof (EFI_SECURE_BOOT_MODE_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_SECURE_BOOT_MODE_NAME,
+    sizeof (EFI_SECURE_BOOT_MODE_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, TRUE);
   will_return (MockGetVariable, sizeof (TargetMode));
 
-  expect_memory (MockGetVariable, VariableName, EFI_SECURE_BOOT_MODE_NAME, sizeof (EFI_SECURE_BOOT_MODE_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_SECURE_BOOT_MODE_NAME,
+    sizeof (EFI_SECURE_BOOT_MODE_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, sizeof (TargetMode));
 
@@ -362,13 +393,27 @@ SecureBootCreateDataFromInputSimple (
 
   UT_ASSERT_NOT_NULL (SigList);
   UT_ASSERT_TRUE (CompareGuid (&SigList->SignatureType, &gEfiCertX509Guid));
-  UT_ASSERT_EQUAL (SigList->SignatureSize, sizeof (EFI_SIGNATURE_DATA) - 1 + sizeof (TestData));
+  UT_ASSERT_EQUAL (
+    SigList->SignatureSize,
+    sizeof (EFI_SIGNATURE_DATA) - 1 +
+    sizeof (TestData)
+    );
   UT_ASSERT_EQUAL (SigList->SignatureHeaderSize, 0);
-  UT_ASSERT_EQUAL (SigList->SignatureListSize, sizeof (EFI_SIGNATURE_LIST) + sizeof (EFI_SIGNATURE_DATA) - 1 + sizeof (TestData));
+  UT_ASSERT_EQUAL (
+    SigList->SignatureListSize,
+    sizeof (EFI_SIGNATURE_LIST) +
+    sizeof (EFI_SIGNATURE_DATA) - 1 + sizeof (TestData)
+    );
   UT_ASSERT_EQUAL (SigList->SignatureListSize, SigListSize);
 
-  SigData = (EFI_SIGNATURE_DATA *)((UINTN)SigList + sizeof (EFI_SIGNATURE_LIST));
-  UT_ASSERT_TRUE (CompareGuid (&SigData->SignatureOwner, &gEfiGlobalVariableGuid));
+  SigData = (EFI_SIGNATURE_DATA *)((UINTN)SigList +
+                                   sizeof (EFI_SIGNATURE_LIST));
+  UT_ASSERT_TRUE (
+    CompareGuid (
+      &SigData->SignatureOwner,
+      &gEfiGlobalVariableGuid
+      )
+    );
   UT_ASSERT_MEM_EQUAL (SigData->SignatureData, TestData, sizeof (TestData));
 
   return UNIT_TEST_PASSED;
@@ -461,15 +506,34 @@ SecureBootCreateDataFromInputMultiple (
     UT_ASSERT_TRUE (SigListSize > TotalSize);
 
     UT_ASSERT_TRUE (CompareGuid (&SigList->SignatureType, &gEfiCertX509Guid));
-    UT_ASSERT_EQUAL (SigList->SignatureSize, sizeof (EFI_SIGNATURE_DATA) - 1 + KeyInfo[Index].DataSize);
+    UT_ASSERT_EQUAL (
+      SigList->SignatureSize,
+      sizeof (EFI_SIGNATURE_DATA) - 1 +
+      KeyInfo[Index].DataSize
+      );
     UT_ASSERT_EQUAL (SigList->SignatureHeaderSize, 0);
-    UT_ASSERT_EQUAL (SigList->SignatureListSize, sizeof (EFI_SIGNATURE_LIST) + sizeof (EFI_SIGNATURE_DATA) - 1 + KeyInfo[Index].DataSize);
+    UT_ASSERT_EQUAL (
+      SigList->SignatureListSize,
+      sizeof (EFI_SIGNATURE_LIST) +
+      sizeof (EFI_SIGNATURE_DATA) - 1 + KeyInfo[Index].DataSize
+      );
 
-    SigData = (EFI_SIGNATURE_DATA *)((UINTN)SigList + sizeof (EFI_SIGNATURE_LIST));
-    UT_ASSERT_TRUE (CompareGuid (&SigData->SignatureOwner, &gEfiGlobalVariableGuid));
-    UT_ASSERT_MEM_EQUAL (SigData->SignatureData, KeyInfo[Index].Data, KeyInfo[Index].DataSize);
+    SigData = (EFI_SIGNATURE_DATA *)((UINTN)SigList +
+                                     sizeof (EFI_SIGNATURE_LIST));
+    UT_ASSERT_TRUE (
+      CompareGuid (
+        &SigData->SignatureOwner,
+        &gEfiGlobalVariableGuid
+        )
+      );
+    UT_ASSERT_MEM_EQUAL (
+      SigData->SignatureData,
+      KeyInfo[Index].Data,
+      KeyInfo[Index].DataSize
+      );
     TotalSize = TotalSize + SigList->SignatureListSize;
-    SigList   = (EFI_SIGNATURE_LIST *)((UINTN)SigList + SigList->SignatureListSize);
+    SigList   = (EFI_SIGNATURE_LIST *)((UINTN)SigList +
+                                       SigList->SignatureListSize);
   }
 
   UT_ASSERT_EQUAL (SigListSize, TotalSize);
@@ -530,10 +594,24 @@ CreateTimeBasedPayloadShouldPopulateDescriptor (
   VarAuth = (EFI_VARIABLE_AUTHENTICATION_2 *)CheckData;
   UT_ASSERT_MEM_EQUAL (&(VarAuth->TimeStamp), &Time, sizeof (EFI_TIME));
 
-  UT_ASSERT_EQUAL (VarAuth->AuthInfo.Hdr.dwLength, OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData));
+  UT_ASSERT_EQUAL (
+    VarAuth->AuthInfo.Hdr.dwLength,
+    OFFSET_OF (
+      WIN_CERTIFICATE_UEFI_GUID,
+      CertData
+      )
+    );
   UT_ASSERT_EQUAL (VarAuth->AuthInfo.Hdr.wRevision, 0x0200);
-  UT_ASSERT_EQUAL (VarAuth->AuthInfo.Hdr.wCertificateType, WIN_CERT_TYPE_EFI_GUID);
-  UT_ASSERT_TRUE (CompareGuid (&VarAuth->AuthInfo.CertType, &gEfiCertPkcs7Guid));
+  UT_ASSERT_EQUAL (
+    VarAuth->AuthInfo.Hdr.wCertificateType,
+    WIN_CERT_TYPE_EFI_GUID
+    );
+  UT_ASSERT_TRUE (
+    CompareGuid (
+      &VarAuth->AuthInfo.CertType,
+      &gEfiCertPkcs7Guid
+      )
+    );
 
   UT_ASSERT_MEM_EQUAL (VarAuth->AuthInfo.CertData, Data, sizeof (Data));
 
@@ -604,14 +682,24 @@ DeleteDbShouldDelete (
   UINT8       *Payload    = NULL;
   UINTN       PayloadSize = 0;
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE, sizeof (EFI_IMAGE_SECURITY_DATABASE));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, TRUE);
   will_return (MockGetVariable, sizeof (Dummy));
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE, sizeof (EFI_IMAGE_SECURITY_DATABASE));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, sizeof (Dummy));
 
@@ -623,9 +711,20 @@ DeleteDbShouldDelete (
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE);
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE, sizeof (EFI_IMAGE_SECURITY_DATABASE));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE);
   expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE);
 
@@ -663,14 +762,24 @@ DeleteDbxShouldDelete (
   UINT8       *Payload    = NULL;
   UINTN       PayloadSize = 0;
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE1, sizeof (EFI_IMAGE_SECURITY_DATABASE1));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE1,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE1)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, TRUE);
   will_return (MockGetVariable, sizeof (Dummy));
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE1, sizeof (EFI_IMAGE_SECURITY_DATABASE1));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE1,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE1)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, sizeof (Dummy));
 
@@ -682,9 +791,20 @@ DeleteDbxShouldDelete (
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE);
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE1, sizeof (EFI_IMAGE_SECURITY_DATABASE1));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE1,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE1)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE);
   expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE);
 
@@ -722,14 +842,24 @@ DeleteDbtShouldDelete (
   UINT8       *Payload    = NULL;
   UINTN       PayloadSize = 0;
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE2, sizeof (EFI_IMAGE_SECURITY_DATABASE2));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE2,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE2)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, TRUE);
   will_return (MockGetVariable, sizeof (Dummy));
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE2, sizeof (EFI_IMAGE_SECURITY_DATABASE2));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE2,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE2)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, sizeof (Dummy));
 
@@ -741,9 +871,20 @@ DeleteDbtShouldDelete (
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE);
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE2, sizeof (EFI_IMAGE_SECURITY_DATABASE2));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE2,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE2)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE);
   expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE);
 
@@ -781,14 +922,24 @@ DeleteKEKShouldDelete (
   UINT8       *Payload    = NULL;
   UINTN       PayloadSize = 0;
 
-  expect_memory (MockGetVariable, VariableName, EFI_KEY_EXCHANGE_KEY_NAME, sizeof (EFI_KEY_EXCHANGE_KEY_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_KEY_EXCHANGE_KEY_NAME,
+    sizeof (EFI_KEY_EXCHANGE_KEY_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, TRUE);
   will_return (MockGetVariable, sizeof (Dummy));
 
-  expect_memory (MockGetVariable, VariableName, EFI_KEY_EXCHANGE_KEY_NAME, sizeof (EFI_KEY_EXCHANGE_KEY_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_KEY_EXCHANGE_KEY_NAME,
+    sizeof (EFI_KEY_EXCHANGE_KEY_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, sizeof (Dummy));
 
@@ -800,9 +951,20 @@ DeleteKEKShouldDelete (
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE);
 
-  expect_memory (MockSetVariable, VariableName, EFI_KEY_EXCHANGE_KEY_NAME, sizeof (EFI_KEY_EXCHANGE_KEY_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_KEY_EXCHANGE_KEY_NAME,
+    sizeof (EFI_KEY_EXCHANGE_KEY_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiGlobalVariableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE);
   expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE);
 
@@ -841,22 +1003,42 @@ DeletePKShouldDelete (
   UINTN       PayloadSize = 0;
   UINT8       BootMode    = CUSTOM_SECURE_BOOT_MODE;
 
-  expect_memory (MockSetVariable, VariableName, EFI_CUSTOM_MODE_NAME, sizeof (EFI_CUSTOM_MODE_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_CUSTOM_MODE_NAME,
+    sizeof (EFI_CUSTOM_MODE_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiCustomModeEnableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_BOOTSERVICE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, sizeof (BootMode));
   expect_memory (MockSetVariable, Data, &BootMode, sizeof (BootMode));
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
-  expect_memory (MockGetVariable, VariableName, EFI_PLATFORM_KEY_NAME, sizeof (EFI_PLATFORM_KEY_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_PLATFORM_KEY_NAME,
+    sizeof (EFI_PLATFORM_KEY_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, TRUE);
   will_return (MockGetVariable, sizeof (Dummy));
 
-  expect_memory (MockGetVariable, VariableName, EFI_PLATFORM_KEY_NAME, sizeof (EFI_PLATFORM_KEY_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_PLATFORM_KEY_NAME,
+    sizeof (EFI_PLATFORM_KEY_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, sizeof (Dummy));
 
@@ -868,9 +1050,20 @@ DeletePKShouldDelete (
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE);
 
-  expect_memory (MockSetVariable, VariableName, EFI_PLATFORM_KEY_NAME, sizeof (EFI_PLATFORM_KEY_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_PLATFORM_KEY_NAME,
+    sizeof (EFI_PLATFORM_KEY_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiGlobalVariableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE);
   expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE);
 
@@ -915,22 +1108,42 @@ DeleteSecureBootVariablesShouldDelete (
 
   will_return (DisablePKProtection, EFI_SUCCESS);
 
-  expect_memory (MockSetVariable, VariableName, EFI_CUSTOM_MODE_NAME, sizeof (EFI_CUSTOM_MODE_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_CUSTOM_MODE_NAME,
+    sizeof (EFI_CUSTOM_MODE_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiCustomModeEnableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_BOOTSERVICE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, sizeof (BootMode));
   expect_memory (MockSetVariable, Data, &BootMode, sizeof (BootMode));
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
-  expect_memory (MockGetVariable, VariableName, EFI_PLATFORM_KEY_NAME, sizeof (EFI_PLATFORM_KEY_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_PLATFORM_KEY_NAME,
+    sizeof (EFI_PLATFORM_KEY_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, TRUE);
   will_return (MockGetVariable, sizeof (Dummy));
 
-  expect_memory (MockGetVariable, VariableName, EFI_PLATFORM_KEY_NAME, sizeof (EFI_PLATFORM_KEY_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_PLATFORM_KEY_NAME,
+    sizeof (EFI_PLATFORM_KEY_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, sizeof (Dummy));
 
@@ -938,22 +1151,43 @@ DeleteSecureBootVariablesShouldDelete (
   will_return (MockGetVariable, sizeof (Dummy));
   will_return (MockGetVariable, &Dummy);
 
-  expect_memory (MockSetVariable, VariableName, EFI_PLATFORM_KEY_NAME, sizeof (EFI_PLATFORM_KEY_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_PLATFORM_KEY_NAME,
+    sizeof (EFI_PLATFORM_KEY_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiGlobalVariableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE);
   expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE);
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
-  expect_memory (MockGetVariable, VariableName, EFI_KEY_EXCHANGE_KEY_NAME, sizeof (EFI_KEY_EXCHANGE_KEY_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_KEY_EXCHANGE_KEY_NAME,
+    sizeof (EFI_KEY_EXCHANGE_KEY_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, TRUE);
   will_return (MockGetVariable, sizeof (Dummy));
 
-  expect_memory (MockGetVariable, VariableName, EFI_KEY_EXCHANGE_KEY_NAME, sizeof (EFI_KEY_EXCHANGE_KEY_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_KEY_EXCHANGE_KEY_NAME,
+    sizeof (EFI_KEY_EXCHANGE_KEY_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, sizeof (Dummy));
 
@@ -961,22 +1195,43 @@ DeleteSecureBootVariablesShouldDelete (
   will_return (MockGetVariable, sizeof (Dummy));
   will_return (MockGetVariable, &Dummy);
 
-  expect_memory (MockSetVariable, VariableName, EFI_KEY_EXCHANGE_KEY_NAME, sizeof (EFI_KEY_EXCHANGE_KEY_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_KEY_EXCHANGE_KEY_NAME,
+    sizeof (EFI_KEY_EXCHANGE_KEY_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiGlobalVariableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE);
   expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE);
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE, sizeof (EFI_IMAGE_SECURITY_DATABASE));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, TRUE);
   will_return (MockGetVariable, sizeof (Dummy));
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE, sizeof (EFI_IMAGE_SECURITY_DATABASE));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, sizeof (Dummy));
 
@@ -984,22 +1239,43 @@ DeleteSecureBootVariablesShouldDelete (
   will_return (MockGetVariable, sizeof (Dummy));
   will_return (MockGetVariable, &Dummy);
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE, sizeof (EFI_IMAGE_SECURITY_DATABASE));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE);
   expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE);
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE1, sizeof (EFI_IMAGE_SECURITY_DATABASE1));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE1,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE1)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, TRUE);
   will_return (MockGetVariable, sizeof (Dummy));
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE1, sizeof (EFI_IMAGE_SECURITY_DATABASE1));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE1,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE1)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, sizeof (Dummy));
 
@@ -1007,22 +1283,43 @@ DeleteSecureBootVariablesShouldDelete (
   will_return (MockGetVariable, sizeof (Dummy));
   will_return (MockGetVariable, &Dummy);
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE1, sizeof (EFI_IMAGE_SECURITY_DATABASE1));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE1,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE1)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE);
   expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE);
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE2, sizeof (EFI_IMAGE_SECURITY_DATABASE2));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE2,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE2)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, TRUE);
   will_return (MockGetVariable, sizeof (Dummy));
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE2, sizeof (EFI_IMAGE_SECURITY_DATABASE2));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE2,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE2)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, sizeof (Dummy));
 
@@ -1030,9 +1327,20 @@ DeleteSecureBootVariablesShouldDelete (
   will_return (MockGetVariable, sizeof (Dummy));
   will_return (MockGetVariable, &Dummy);
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE2, sizeof (EFI_IMAGE_SECURITY_DATABASE2));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE2,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE2)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE);
   expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE);
 
@@ -1101,39 +1409,74 @@ DeleteSecureBootVariablesShouldProceedWithNotFound (
 
   will_return (DisablePKProtection, EFI_SUCCESS);
 
-  expect_memory (MockSetVariable, VariableName, EFI_CUSTOM_MODE_NAME, sizeof (EFI_CUSTOM_MODE_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_CUSTOM_MODE_NAME,
+    sizeof (EFI_CUSTOM_MODE_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiCustomModeEnableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_BOOTSERVICE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, sizeof (BootMode));
   expect_memory (MockSetVariable, Data, &BootMode, sizeof (BootMode));
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
-  expect_memory (MockGetVariable, VariableName, EFI_PLATFORM_KEY_NAME, sizeof (EFI_PLATFORM_KEY_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_PLATFORM_KEY_NAME,
+    sizeof (EFI_PLATFORM_KEY_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, FALSE);
 
-  expect_memory (MockGetVariable, VariableName, EFI_KEY_EXCHANGE_KEY_NAME, sizeof (EFI_KEY_EXCHANGE_KEY_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_KEY_EXCHANGE_KEY_NAME,
+    sizeof (EFI_KEY_EXCHANGE_KEY_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, FALSE);
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE, sizeof (EFI_IMAGE_SECURITY_DATABASE));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, FALSE);
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE1, sizeof (EFI_IMAGE_SECURITY_DATABASE1));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE1,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE1)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, FALSE);
 
-  expect_memory (MockGetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE2, sizeof (EFI_IMAGE_SECURITY_DATABASE2));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE2,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE2)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
@@ -1172,19 +1515,45 @@ EnrollFromInputShouldComplete (
   UINTN       PayloadSize = sizeof (Dummy);
 
   Payload = AllocateCopyPool (sizeof (Dummy), &Dummy);
-  Status  = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status  = CreateTimeBasedPayload (
+              &PayloadSize,
+              &Payload,
+              &mDefaultPayloadTimestamp
+              );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (Dummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_PLATFORM_KEY_NAME, sizeof (EFI_PLATFORM_KEY_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_PLATFORM_KEY_NAME,
+    sizeof (EFI_PLATFORM_KEY_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiGlobalVariableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
   expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (Dummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (Dummy));
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (Dummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
-  Status = EnrollFromInput (EFI_PLATFORM_KEY_NAME, &gEfiGlobalVariableGuid, sizeof (Dummy), &Dummy);
+  Status = EnrollFromInput (
+             EFI_PLATFORM_KEY_NAME,
+             &gEfiGlobalVariableGuid,
+             sizeof (Dummy),
+             &Dummy
+             );
   UT_ASSERT_NOT_EFI_ERROR (Status);
 
   return UNIT_TEST_PASSED;
@@ -1233,78 +1602,213 @@ SetSecureBootVariablesShouldComplete (
     .SecureBootKeyName = L"Food"
   };
 
-  expect_memory (MockGetVariable, VariableName, EFI_SECURE_BOOT_MODE_NAME, sizeof (EFI_SECURE_BOOT_MODE_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_SECURE_BOOT_MODE_NAME,
+    sizeof (EFI_SECURE_BOOT_MODE_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, FALSE);
 
   Payload = AllocateCopyPool (sizeof (DbxDummy), &DbxDummy);
-  Status  = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status  = CreateTimeBasedPayload (
+              &PayloadSize,
+              &Payload,
+              &mDefaultPayloadTimestamp
+              );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE1, sizeof (EFI_IMAGE_SECURITY_DATABASE1));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE1,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE1)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbxDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbxDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &DbDummy, sizeof (DbDummy));
   PayloadSize = sizeof (DbDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE, sizeof (EFI_IMAGE_SECURITY_DATABASE));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &DbtDummy, sizeof (DbtDummy));
   PayloadSize = sizeof (DbtDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbtDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE2, sizeof (EFI_IMAGE_SECURITY_DATABASE2));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE2,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE2)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbtDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbtDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbtDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbtDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &KekDummy, sizeof (KekDummy));
   PayloadSize = sizeof (KekDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (KekDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_KEY_EXCHANGE_KEY_NAME, sizeof (EFI_KEY_EXCHANGE_KEY_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_KEY_EXCHANGE_KEY_NAME,
+    sizeof (EFI_KEY_EXCHANGE_KEY_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiGlobalVariableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (KekDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (KekDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (KekDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (KekDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &PkDummy, sizeof (PkDummy));
   PayloadSize = sizeof (PkDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (PkDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_PLATFORM_KEY_NAME, sizeof (EFI_PLATFORM_KEY_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_PLATFORM_KEY_NAME,
+    sizeof (EFI_PLATFORM_KEY_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiGlobalVariableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (PkDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (PkDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (PkDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (PkDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
@@ -1339,14 +1843,24 @@ SetSecureBootVariablesShouldStopWhenSecure (
   UINT8                     TargetMode = SECURE_BOOT_MODE_ENABLE;
   SECURE_BOOT_PAYLOAD_INFO  PayloadInfo;
 
-  expect_memory (MockGetVariable, VariableName, EFI_SECURE_BOOT_MODE_NAME, sizeof (EFI_SECURE_BOOT_MODE_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_SECURE_BOOT_MODE_NAME,
+    sizeof (EFI_SECURE_BOOT_MODE_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, TRUE);
   will_return (MockGetVariable, sizeof (TargetMode));
 
-  expect_memory (MockGetVariable, VariableName, EFI_SECURE_BOOT_MODE_NAME, sizeof (EFI_SECURE_BOOT_MODE_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_SECURE_BOOT_MODE_NAME,
+    sizeof (EFI_SECURE_BOOT_MODE_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, sizeof (TargetMode));
 
@@ -1391,22 +1905,53 @@ SetSecureBootVariablesShouldStopFailDBX (
     .SecureBootKeyName = L"Fail DBX"
   };
 
-  expect_memory (MockGetVariable, VariableName, EFI_SECURE_BOOT_MODE_NAME, sizeof (EFI_SECURE_BOOT_MODE_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_SECURE_BOOT_MODE_NAME,
+    sizeof (EFI_SECURE_BOOT_MODE_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, FALSE);
 
   Payload = AllocateCopyPool (sizeof (DbxDummy), &DbxDummy);
-  Status  = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status  = CreateTimeBasedPayload (
+              &PayloadSize,
+              &Payload,
+              &mDefaultPayloadTimestamp
+              );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE1, sizeof (EFI_IMAGE_SECURITY_DATABASE1));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE1,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE1)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbxDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbxDummy)
+    );
 
   will_return (MockSetVariable, EFI_WRITE_PROTECTED);
 
@@ -1450,36 +1995,93 @@ SetSecureBootVariablesShouldStopFailDB (
     .SecureBootKeyName = L"Fail DB"
   };
 
-  expect_memory (MockGetVariable, VariableName, EFI_SECURE_BOOT_MODE_NAME, sizeof (EFI_SECURE_BOOT_MODE_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_SECURE_BOOT_MODE_NAME,
+    sizeof (EFI_SECURE_BOOT_MODE_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, FALSE);
 
   Payload = AllocateCopyPool (sizeof (DbxDummy), &DbxDummy);
-  Status  = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status  = CreateTimeBasedPayload (
+              &PayloadSize,
+              &Payload,
+              &mDefaultPayloadTimestamp
+              );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE1, sizeof (EFI_IMAGE_SECURITY_DATABASE1));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE1,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE1)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbxDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbxDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &DbDummy, sizeof (DbDummy));
   PayloadSize = sizeof (DbDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE, sizeof (EFI_IMAGE_SECURITY_DATABASE));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbDummy)
+    );
 
   will_return (MockSetVariable, EFI_WRITE_PROTECTED);
 
@@ -1526,50 +2128,133 @@ SetSecureBootVariablesShouldStopFailDBT (
     .SecureBootKeyName = L"Fail DBT"
   };
 
-  expect_memory (MockGetVariable, VariableName, EFI_SECURE_BOOT_MODE_NAME, sizeof (EFI_SECURE_BOOT_MODE_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_SECURE_BOOT_MODE_NAME,
+    sizeof (EFI_SECURE_BOOT_MODE_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, FALSE);
 
   Payload = AllocateCopyPool (sizeof (DbxDummy), &DbxDummy);
-  Status  = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status  = CreateTimeBasedPayload (
+              &PayloadSize,
+              &Payload,
+              &mDefaultPayloadTimestamp
+              );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE1, sizeof (EFI_IMAGE_SECURITY_DATABASE1));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE1,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE1)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbxDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbxDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &DbDummy, sizeof (DbDummy));
   PayloadSize = sizeof (DbDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE, sizeof (EFI_IMAGE_SECURITY_DATABASE));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &DbtDummy, sizeof (DbtDummy));
   PayloadSize = sizeof (DbtDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbtDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE2, sizeof (EFI_IMAGE_SECURITY_DATABASE2));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE2,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE2)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbtDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbtDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbtDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbtDummy)
+    );
 
   will_return (MockSetVariable, EFI_ACCESS_DENIED);
 
@@ -1622,64 +2307,173 @@ SetSecureBootVariablesShouldStopFailKEK (
     .SecureBootKeyName = L"Food"
   };
 
-  expect_memory (MockGetVariable, VariableName, EFI_SECURE_BOOT_MODE_NAME, sizeof (EFI_SECURE_BOOT_MODE_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_SECURE_BOOT_MODE_NAME,
+    sizeof (EFI_SECURE_BOOT_MODE_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, FALSE);
 
   Payload = AllocateCopyPool (sizeof (DbxDummy), &DbxDummy);
-  Status  = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status  = CreateTimeBasedPayload (
+              &PayloadSize,
+              &Payload,
+              &mDefaultPayloadTimestamp
+              );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE1, sizeof (EFI_IMAGE_SECURITY_DATABASE1));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE1,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE1)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbxDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbxDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &DbDummy, sizeof (DbDummy));
   PayloadSize = sizeof (DbDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE, sizeof (EFI_IMAGE_SECURITY_DATABASE));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &DbtDummy, sizeof (DbtDummy));
   PayloadSize = sizeof (DbtDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbtDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE2, sizeof (EFI_IMAGE_SECURITY_DATABASE2));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE2,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE2)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbtDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbtDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbtDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbtDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &KekDummy, sizeof (KekDummy));
   PayloadSize = sizeof (KekDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (KekDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_KEY_EXCHANGE_KEY_NAME, sizeof (EFI_KEY_EXCHANGE_KEY_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_KEY_EXCHANGE_KEY_NAME,
+    sizeof (EFI_KEY_EXCHANGE_KEY_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiGlobalVariableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (KekDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (KekDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (KekDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (KekDummy)
+    );
 
   will_return (MockSetVariable, EFI_DEVICE_ERROR);
 
@@ -1732,78 +2526,213 @@ SetSecureBootVariablesShouldStopFailPK (
     .SecureBootKeyName = L"Food"
   };
 
-  expect_memory (MockGetVariable, VariableName, EFI_SECURE_BOOT_MODE_NAME, sizeof (EFI_SECURE_BOOT_MODE_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_SECURE_BOOT_MODE_NAME,
+    sizeof (EFI_SECURE_BOOT_MODE_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, FALSE);
 
   Payload = AllocateCopyPool (sizeof (DbxDummy), &DbxDummy);
-  Status  = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status  = CreateTimeBasedPayload (
+              &PayloadSize,
+              &Payload,
+              &mDefaultPayloadTimestamp
+              );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE1, sizeof (EFI_IMAGE_SECURITY_DATABASE1));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE1,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE1)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbxDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbxDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &DbDummy, sizeof (DbDummy));
   PayloadSize = sizeof (DbDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE, sizeof (EFI_IMAGE_SECURITY_DATABASE));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &DbtDummy, sizeof (DbtDummy));
   PayloadSize = sizeof (DbtDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbtDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE2, sizeof (EFI_IMAGE_SECURITY_DATABASE2));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE2,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE2)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbtDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbtDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbtDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbtDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &KekDummy, sizeof (KekDummy));
   PayloadSize = sizeof (KekDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (KekDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_KEY_EXCHANGE_KEY_NAME, sizeof (EFI_KEY_EXCHANGE_KEY_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_KEY_EXCHANGE_KEY_NAME,
+    sizeof (EFI_KEY_EXCHANGE_KEY_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiGlobalVariableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (KekDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (KekDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (KekDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (KekDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &PkDummy, sizeof (PkDummy));
   PayloadSize = sizeof (PkDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (PkDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_PLATFORM_KEY_NAME, sizeof (EFI_PLATFORM_KEY_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_PLATFORM_KEY_NAME,
+    sizeof (EFI_PLATFORM_KEY_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiGlobalVariableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (PkDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (PkDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (PkDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (PkDummy)
+    );
 
   will_return (MockSetVariable, EFI_INVALID_PARAMETER);
 
@@ -1855,64 +2784,173 @@ SetSecureBootVariablesDBTOptional (
     .SecureBootKeyName = L"Food"
   };
 
-  expect_memory (MockGetVariable, VariableName, EFI_SECURE_BOOT_MODE_NAME, sizeof (EFI_SECURE_BOOT_MODE_NAME));
+  expect_memory (
+    MockGetVariable,
+    VariableName,
+    EFI_SECURE_BOOT_MODE_NAME,
+    sizeof (EFI_SECURE_BOOT_MODE_NAME)
+    );
   expect_value (MockGetVariable, VendorGuid, &gEfiGlobalVariableGuid);
   expect_value (MockGetVariable, *DataSize, 0);
 
   will_return (MockGetVariable, FALSE);
 
   Payload = AllocateCopyPool (sizeof (DbxDummy), &DbxDummy);
-  Status  = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status  = CreateTimeBasedPayload (
+              &PayloadSize,
+              &Payload,
+              &mDefaultPayloadTimestamp
+              );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE1, sizeof (EFI_IMAGE_SECURITY_DATABASE1));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE1,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE1)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbxDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbxDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbxDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &DbDummy, sizeof (DbDummy));
   PayloadSize = sizeof (DbDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_IMAGE_SECURITY_DATABASE, sizeof (EFI_IMAGE_SECURITY_DATABASE));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_IMAGE_SECURITY_DATABASE,
+    sizeof (EFI_IMAGE_SECURITY_DATABASE)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiImageSecurityDatabaseGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (DbDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (DbDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &KekDummy, sizeof (KekDummy));
   PayloadSize = sizeof (KekDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (KekDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_KEY_EXCHANGE_KEY_NAME, sizeof (EFI_KEY_EXCHANGE_KEY_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_KEY_EXCHANGE_KEY_NAME,
+    sizeof (EFI_KEY_EXCHANGE_KEY_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiGlobalVariableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (KekDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (KekDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (KekDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (KekDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
   CopyMem (Payload, &PkDummy, sizeof (PkDummy));
   PayloadSize = sizeof (PkDummy);
-  Status      = CreateTimeBasedPayload (&PayloadSize, &Payload, &mDefaultPayloadTimestamp);
+  Status      = CreateTimeBasedPayload (
+                  &PayloadSize,
+                  &Payload,
+                  &mDefaultPayloadTimestamp
+                  );
   UT_ASSERT_NOT_EFI_ERROR (Status);
   UT_ASSERT_EQUAL (PayloadSize, VAR_AUTH_DESC_SIZE + sizeof (PkDummy));
 
-  expect_memory (MockSetVariable, VariableName, EFI_PLATFORM_KEY_NAME, sizeof (EFI_PLATFORM_KEY_NAME));
+  expect_memory (
+    MockSetVariable,
+    VariableName,
+    EFI_PLATFORM_KEY_NAME,
+    sizeof (EFI_PLATFORM_KEY_NAME)
+    );
   expect_value (MockSetVariable, VendorGuid, &gEfiGlobalVariableGuid);
-  expect_value (MockSetVariable, Attributes, EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS);
-  expect_value (MockSetVariable, DataSize, VAR_AUTH_DESC_SIZE + sizeof (PkDummy));
-  expect_memory (MockSetVariable, Data, Payload, VAR_AUTH_DESC_SIZE + sizeof (PkDummy));
+  expect_value (
+    MockSetVariable,
+    Attributes,
+    EFI_VARIABLE_NON_VOLATILE |
+    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+    EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS
+    );
+  expect_value (
+    MockSetVariable,
+    DataSize,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (PkDummy)
+    );
+  expect_memory (
+    MockSetVariable,
+    Data,
+    Payload,
+    VAR_AUTH_DESC_SIZE +
+    sizeof (PkDummy)
+    );
 
   will_return (MockSetVariable, EFI_SUCCESS);
 
@@ -1950,32 +2988,71 @@ UnitTestingEntry (
   //
   // Start setting up the test framework for running the tests.
   //
-  Status = InitUnitTestFramework (&Framework, UNIT_TEST_APP_NAME, gEfiCallerBaseName, UNIT_TEST_APP_VERSION);
+  Status = InitUnitTestFramework (
+             &Framework,
+             UNIT_TEST_APP_NAME,
+             gEfiCallerBaseName,
+             UNIT_TEST_APP_VERSION
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in InitUnitTestFramework. Status = %r\n",
+      Status
+      ));
     goto EXIT;
   }
 
   //
   // Populate the SecureBootVariableLib Unit Test Suite.
   //
-  Status = CreateUnitTestSuite (&SecureBootVarMiscTests, Framework, "SecureBootVariableLib Miscellaneous Tests", "SecureBootVariableLib.Miscellaneous", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &SecureBootVarMiscTests,
+             Framework,
+             "SecureBootVariableLib Miscellaneous Tests",
+             "SecureBootVariableLib.Miscellaneous",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for SecureBootVariableLib\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for SecureBootVariableLib\n"
+      ));
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
 
-  Status = CreateUnitTestSuite (&SecureBootVarDeleteTests, Framework, "SecureBootVariableLib Deletion Tests", "SecureBootVariableLib.Deletion", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &SecureBootVarDeleteTests,
+             Framework,
+             "SecureBootVariableLib Deletion Tests",
+             "SecureBootVariableLib.Deletion",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for SecureBootVariableLib\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for SecureBootVariableLib\n"
+      ));
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
 
-  Status = CreateUnitTestSuite (&SecureBootVarEnrollTests, Framework, "SecureBootVariableLib Enrollment Tests", "SecureBootVariableLib.Enrollment", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &SecureBootVarEnrollTests,
+             Framework,
+             "SecureBootVariableLib Enrollment Tests",
+             "SecureBootVariableLib.Enrollment",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for SecureBootVariableLib\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for SecureBootVariableLib\n"
+      ));
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
@@ -1983,33 +3060,233 @@ UnitTestingEntry (
   //
   // --------------Suite-----------Description--------------Name----------Function--------Pre---Post-------------------Context-----------
   //
-  AddTestCase (SecureBootVarMiscTests, "SetSecureBootMode should propagate to set variable", "SetSecureBootMode", SetSecureBootModeShouldSetVar, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarMiscTests, "GetSetupMode should propagate to get variable", "GetSetupMode", GetSetupModeShouldGetVar, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarMiscTests, "IsSecureBootEnabled should propagate to get variable", "IsSecureBootEnabled", IsSecureBootEnableShouldGetVar, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarMiscTests, "SecureBootCreateDataFromInput with one input cert", "SecureBootCreateDataFromInput One Cert", SecureBootCreateDataFromInputSimple, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarMiscTests, "SecureBootCreateDataFromInput with no input cert", "SecureBootCreateDataFromInput No Cert", SecureBootCreateDataFromInputNull, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarMiscTests, "SecureBootCreateDataFromInput with multiple input cert", "SecureBootCreateDataFromInput No Cert", SecureBootCreateDataFromInputMultiple, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarMiscTests, "CreateTimeBasedPayload should populate descriptor data", "CreateTimeBasedPayload Normal", CreateTimeBasedPayloadShouldPopulateDescriptor, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarMiscTests, "CreateTimeBasedPayload should fail on NULL inputs", "CreateTimeBasedPayload NULL", CreateTimeBasedPayloadShouldCheckInput, NULL, NULL, NULL);
+  AddTestCase (
+    SecureBootVarMiscTests,
+    "SetSecureBootMode should propagate to set variable",
+    "SetSecureBootMode",
+    SetSecureBootModeShouldSetVar,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarMiscTests,
+    "GetSetupMode should propagate to get variable",
+    "GetSetupMode",
+    GetSetupModeShouldGetVar,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarMiscTests,
+    "IsSecureBootEnabled should propagate to get variable",
+    "IsSecureBootEnabled",
+    IsSecureBootEnableShouldGetVar,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarMiscTests,
+    "SecureBootCreateDataFromInput with one input cert",
+    "SecureBootCreateDataFromInput One Cert",
+    SecureBootCreateDataFromInputSimple,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarMiscTests,
+    "SecureBootCreateDataFromInput with no input cert",
+    "SecureBootCreateDataFromInput No Cert",
+    SecureBootCreateDataFromInputNull,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarMiscTests,
+    "SecureBootCreateDataFromInput with multiple input cert",
+    "SecureBootCreateDataFromInput No Cert",
+    SecureBootCreateDataFromInputMultiple,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarMiscTests,
+    "CreateTimeBasedPayload should populate descriptor data",
+    "CreateTimeBasedPayload Normal",
+    CreateTimeBasedPayloadShouldPopulateDescriptor,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarMiscTests,
+    "CreateTimeBasedPayload should fail on NULL inputs",
+    "CreateTimeBasedPayload NULL",
+    CreateTimeBasedPayloadShouldCheckInput,
+    NULL,
+    NULL,
+    NULL
+    );
 
-  AddTestCase (SecureBootVarDeleteTests, "DeleteDb should delete DB with auth info", "DeleteDb", DeleteDbShouldDelete, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarDeleteTests, "DeleteDbx should delete DBX with auth info", "DeleteDbx", DeleteDbxShouldDelete, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarDeleteTests, "DeleteDbt should delete DBT with auth info", "DeleteDbt", DeleteDbtShouldDelete, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarDeleteTests, "DeleteKEK should delete KEK with auth info", "DeleteKEK", DeleteKEKShouldDelete, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarDeleteTests, "DeletePlatformKey should delete PK with auth info", "DeletePlatformKey", DeletePKShouldDelete, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarDeleteTests, "DeleteSecureBootVariables should delete properly", "DeleteSecureBootVariables Normal", DeleteSecureBootVariablesShouldDelete, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarDeleteTests, "DeleteSecureBootVariables should fail if protection disable fails", "DeleteSecureBootVariables Fail", DeleteSecureBootVariablesShouldCheckProtection, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarDeleteTests, "DeleteSecureBootVariables should continue if any variable is not found", "DeleteSecureBootVariables Proceed", DeleteSecureBootVariablesShouldProceedWithNotFound, NULL, NULL, NULL);
+  AddTestCase (
+    SecureBootVarDeleteTests,
+    "DeleteDb should delete DB with auth info",
+    "DeleteDb",
+    DeleteDbShouldDelete,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarDeleteTests,
+    "DeleteDbx should delete DBX with auth info",
+    "DeleteDbx",
+    DeleteDbxShouldDelete,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarDeleteTests,
+    "DeleteDbt should delete DBT with auth info",
+    "DeleteDbt",
+    DeleteDbtShouldDelete,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarDeleteTests,
+    "DeleteKEK should delete KEK with auth info",
+    "DeleteKEK",
+    DeleteKEKShouldDelete,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarDeleteTests,
+    "DeletePlatformKey should delete PK with auth info",
+    "DeletePlatformKey",
+    DeletePKShouldDelete,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarDeleteTests,
+    "DeleteSecureBootVariables should delete properly",
+    "DeleteSecureBootVariables Normal",
+    DeleteSecureBootVariablesShouldDelete,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarDeleteTests,
+    "DeleteSecureBootVariables should fail if protection disable fails",
+    "DeleteSecureBootVariables Fail",
+    DeleteSecureBootVariablesShouldCheckProtection,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarDeleteTests,
+    "DeleteSecureBootVariables should continue if any variable is not found",
+    "DeleteSecureBootVariables Proceed",
+    DeleteSecureBootVariablesShouldProceedWithNotFound,
+    NULL,
+    NULL,
+    NULL
+    );
 
-  AddTestCase (SecureBootVarEnrollTests, "EnrollFromInput should supply with authenticated payload", "EnrollFromInput Normal", EnrollFromInputShouldComplete, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarEnrollTests, "SetSecureBootVariablesToDefault should complete", "SetSecureBootVariablesToDefault Normal", SetSecureBootVariablesShouldComplete, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarEnrollTests, "SetSecureBootVariablesToDefault should stop when already enabled", "SetSecureBootVariablesToDefault Already Started", SetSecureBootVariablesShouldStopWhenSecure, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarEnrollTests, "SetSecureBootVariablesToDefault should stop when DB failed", "SetSecureBootVariablesToDefault Fails DB", SetSecureBootVariablesShouldStopFailDB, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarEnrollTests, "SetSecureBootVariablesToDefault should stop when DBT failed", "SetSecureBootVariablesToDefault Fails DBT", SetSecureBootVariablesShouldStopFailDBT, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarEnrollTests, "SetSecureBootVariablesToDefault should stop when DBX failed", "SetSecureBootVariablesToDefault Fails DBX", SetSecureBootVariablesShouldStopFailDBX, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarEnrollTests, "SetSecureBootVariablesToDefault should stop when KEK failed", "SetSecureBootVariablesToDefault Fails KEK", SetSecureBootVariablesShouldStopFailKEK, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarEnrollTests, "SetSecureBootVariablesToDefault should stop when PK failed", "SetSecureBootVariablesToDefault Fails PK", SetSecureBootVariablesShouldStopFailPK, NULL, NULL, NULL);
-  AddTestCase (SecureBootVarEnrollTests, "SetSecureBootVariablesToDefault should only be optional", "SetSecureBootVariablesToDefault DBT Optional", SetSecureBootVariablesDBTOptional, NULL, NULL, NULL);
+  AddTestCase (
+    SecureBootVarEnrollTests,
+    "EnrollFromInput should supply with authenticated payload",
+    "EnrollFromInput Normal",
+    EnrollFromInputShouldComplete,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarEnrollTests,
+    "SetSecureBootVariablesToDefault should complete",
+    "SetSecureBootVariablesToDefault Normal",
+    SetSecureBootVariablesShouldComplete,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarEnrollTests,
+    "SetSecureBootVariablesToDefault should stop when already enabled",
+    "SetSecureBootVariablesToDefault Already Started",
+    SetSecureBootVariablesShouldStopWhenSecure,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarEnrollTests,
+    "SetSecureBootVariablesToDefault should stop when DB failed",
+    "SetSecureBootVariablesToDefault Fails DB",
+    SetSecureBootVariablesShouldStopFailDB,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarEnrollTests,
+    "SetSecureBootVariablesToDefault should stop when DBT failed",
+    "SetSecureBootVariablesToDefault Fails DBT",
+    SetSecureBootVariablesShouldStopFailDBT,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarEnrollTests,
+    "SetSecureBootVariablesToDefault should stop when DBX failed",
+    "SetSecureBootVariablesToDefault Fails DBX",
+    SetSecureBootVariablesShouldStopFailDBX,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarEnrollTests,
+    "SetSecureBootVariablesToDefault should stop when KEK failed",
+    "SetSecureBootVariablesToDefault Fails KEK",
+    SetSecureBootVariablesShouldStopFailKEK,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarEnrollTests,
+    "SetSecureBootVariablesToDefault should stop when PK failed",
+    "SetSecureBootVariablesToDefault Fails PK",
+    SetSecureBootVariablesShouldStopFailPK,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SecureBootVarEnrollTests,
+    "SetSecureBootVariablesToDefault should only be optional",
+    "SetSecureBootVariablesToDefault DBT Optional",
+    SetSecureBootVariablesDBTOptional,
+    NULL,
+    NULL,
+    NULL
+    );
 
   //
   // Execute the tests.

@@ -38,7 +38,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define TWO_BYTE_ENCODE                    0x82
 
 #define ALIGNMENT_SIZE  8
-#define ALIGN_SIZE(a)  (((a) % ALIGNMENT_SIZE) ? ALIGNMENT_SIZE - ((a) % ALIGNMENT_SIZE) : 0)
+#define ALIGN_SIZE( \
+                  a)  \
+  (((a) % ALIGNMENT_SIZE) ? ALIGNMENT_SIZE - ((a) % ALIGNMENT_SIZE) : 0)
 
 //
 // Image type definitions

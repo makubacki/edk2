@@ -81,7 +81,11 @@ Tpm2CommandClear (
     ZeroMem (&LocalAuthSession, sizeof (LocalAuthSession));
     LocalAuthSession.sessionHandle = TPM_RS_PW;
     LocalAuthSession.hmac.size     = PlatformAuth->size;
-    CopyMem (LocalAuthSession.hmac.buffer, PlatformAuth->buffer, PlatformAuth->size);
+    CopyMem (
+      LocalAuthSession.hmac.buffer,
+      PlatformAuth->buffer,
+      PlatformAuth->size
+      );
   }
 
   DEBUG ((DEBUG_INFO, "Tpm2ClearControl ... \n"));
@@ -123,7 +127,11 @@ Tpm2CommandChangeEps (
     ZeroMem (&LocalAuthSession, sizeof (LocalAuthSession));
     LocalAuthSession.sessionHandle = TPM_RS_PW;
     LocalAuthSession.hmac.size     = PlatformAuth->size;
-    CopyMem (LocalAuthSession.hmac.buffer, PlatformAuth->buffer, PlatformAuth->size);
+    CopyMem (
+      LocalAuthSession.hmac.buffer,
+      PlatformAuth->buffer,
+      PlatformAuth->size
+      );
   }
 
   Status = Tpm2ChangeEPS (TPM_RH_PLATFORM, AuthSession);
@@ -179,7 +187,10 @@ Tcg2ExecutePhysicalPresence (
       return TCG_PP_OPERATION_RESPONSE_SUCCESS;
 
     case TCG2_PHYSICAL_PRESENCE_SET_PCR_BANKS:
-      Status = Tpm2GetCapabilitySupportedAndActivePcrs (&TpmHashAlgorithmBitmap, &ActivePcrBanks);
+      Status = Tpm2GetCapabilitySupportedAndActivePcrs (
+                 &TpmHashAlgorithmBitmap,
+                 &ActivePcrBanks
+                 );
       ASSERT_EFI_ERROR (Status);
 
       //
@@ -188,12 +199,22 @@ Tcg2ExecutePhysicalPresence (
       //    Firmware has to ensure that at least one PCR banks is active.
       // If not, an error is returned and no action is taken.
       //
-      if ((CommandParameter == 0) || ((CommandParameter & (~TpmHashAlgorithmBitmap)) != 0)) {
-        DEBUG ((DEBUG_ERROR, "PCR banks %x to allocate are not supported by TPM. Skip operation\n", CommandParameter));
+      if ((CommandParameter == 0) || ((CommandParameter &
+                                       (~TpmHashAlgorithmBitmap)) != 0))
+      {
+        DEBUG ((
+          DEBUG_ERROR,
+          "PCR banks %x to allocate are not supported by TPM. Skip operation\n",
+          CommandParameter
+          ));
         return TCG_PP_OPERATION_RESPONSE_BIOS_FAILURE;
       }
 
-      Status = Tpm2PcrAllocateBanks (PlatformAuth, TpmHashAlgorithmBitmap, CommandParameter);
+      Status = Tpm2PcrAllocateBanks (
+                 PlatformAuth,
+                 TpmHashAlgorithmBitmap,
+                 CommandParameter
+                 );
       if (EFI_ERROR (Status)) {
         return TCG_PP_OPERATION_RESPONSE_BIOS_FAILURE;
       } else {
@@ -209,9 +230,16 @@ Tcg2ExecutePhysicalPresence (
       }
 
     case TCG2_PHYSICAL_PRESENCE_LOG_ALL_DIGESTS:
-      Status = Tpm2GetCapabilitySupportedAndActivePcrs (&TpmHashAlgorithmBitmap, &ActivePcrBanks);
+      Status = Tpm2GetCapabilitySupportedAndActivePcrs (
+                 &TpmHashAlgorithmBitmap,
+                 &ActivePcrBanks
+                 );
       ASSERT_EFI_ERROR (Status);
-      Status = Tpm2PcrAllocateBanks (PlatformAuth, TpmHashAlgorithmBitmap, TpmHashAlgorithmBitmap);
+      Status = Tpm2PcrAllocateBanks (
+                 PlatformAuth,
+                 TpmHashAlgorithmBitmap,
+                 TpmHashAlgorithmBitmap
+                 );
       if (EFI_ERROR (Status)) {
         return TCG_PP_OPERATION_RESPONSE_BIOS_FAILURE;
       } else {
@@ -227,19 +255,24 @@ Tcg2ExecutePhysicalPresence (
       return TCG_PP_OPERATION_RESPONSE_SUCCESS;
 
     case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_ENABLE_BLOCK_SID_FUNC_TRUE:
-      PpiFlags->PPFlags |= TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_ENABLE_BLOCK_SID;
+      PpiFlags->PPFlags |=
+        TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_ENABLE_BLOCK_SID;
       return TCG_PP_OPERATION_RESPONSE_SUCCESS;
 
     case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_ENABLE_BLOCK_SID_FUNC_FALSE:
-      PpiFlags->PPFlags &= ~TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_ENABLE_BLOCK_SID;
+      PpiFlags->PPFlags &=
+        ~TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_ENABLE_BLOCK_SID;
       return TCG_PP_OPERATION_RESPONSE_SUCCESS;
 
     case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_DISABLE_BLOCK_SID_FUNC_TRUE:
-      PpiFlags->PPFlags |= TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_DISABLE_BLOCK_SID;
+      PpiFlags->PPFlags |=
+        TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_DISABLE_BLOCK_SID;
       return TCG_PP_OPERATION_RESPONSE_SUCCESS;
 
-    case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_DISABLE_BLOCK_SID_FUNC_FALSE:
-      PpiFlags->PPFlags &= ~TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_DISABLE_BLOCK_SID;
+    case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_DISABLE_BLOCK_SID_FUNC_FALSE
+      :
+      PpiFlags->PPFlags &=
+        ~TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_DISABLE_BLOCK_SID;
       return TCG_PP_OPERATION_RESPONSE_SUCCESS;
 
     default:
@@ -313,42 +346,102 @@ Tcg2FillBufferWithBootHashAlg (
   Buffer[0] = 0;
   if ((BootHashAlg & EFI_TCG2_BOOT_HASH_ALG_SHA1) != 0) {
     if (Buffer[0] != 0) {
-      StrnCatS (Buffer, BufferSize / sizeof (CHAR16), L", ", (BufferSize / sizeof (CHAR16)) - StrLen (Buffer) - 1);
+      StrnCatS (
+        Buffer,
+        BufferSize / sizeof (CHAR16),
+        L", ",
+        (BufferSize /
+         sizeof (CHAR16)) - StrLen (Buffer) - 1
+        );
     }
 
-    StrnCatS (Buffer, BufferSize / sizeof (CHAR16), L"SHA1", (BufferSize / sizeof (CHAR16)) - StrLen (Buffer) - 1);
+    StrnCatS (
+      Buffer,
+      BufferSize / sizeof (CHAR16),
+      L"SHA1",
+      (BufferSize /
+       sizeof (CHAR16)) - StrLen (Buffer) - 1
+      );
   }
 
   if ((BootHashAlg & EFI_TCG2_BOOT_HASH_ALG_SHA256) != 0) {
     if (Buffer[0] != 0) {
-      StrnCatS (Buffer, BufferSize / sizeof (CHAR16), L", ", (BufferSize / sizeof (CHAR16)) - StrLen (Buffer) - 1);
+      StrnCatS (
+        Buffer,
+        BufferSize / sizeof (CHAR16),
+        L", ",
+        (BufferSize /
+         sizeof (CHAR16)) - StrLen (Buffer) - 1
+        );
     }
 
-    StrnCatS (Buffer, BufferSize / sizeof (CHAR16), L"SHA256", (BufferSize / sizeof (CHAR16)) - StrLen (Buffer) - 1);
+    StrnCatS (
+      Buffer,
+      BufferSize / sizeof (CHAR16),
+      L"SHA256",
+      (BufferSize /
+       sizeof (CHAR16)) - StrLen (Buffer) - 1
+      );
   }
 
   if ((BootHashAlg & EFI_TCG2_BOOT_HASH_ALG_SHA384) != 0) {
     if (Buffer[0] != 0) {
-      StrnCatS (Buffer, BufferSize / sizeof (CHAR16), L", ", (BufferSize / sizeof (CHAR16)) - StrLen (Buffer) - 1);
+      StrnCatS (
+        Buffer,
+        BufferSize / sizeof (CHAR16),
+        L", ",
+        (BufferSize /
+         sizeof (CHAR16)) - StrLen (Buffer) - 1
+        );
     }
 
-    StrnCatS (Buffer, BufferSize / sizeof (CHAR16), L"SHA384", (BufferSize / sizeof (CHAR16)) - StrLen (Buffer) - 1);
+    StrnCatS (
+      Buffer,
+      BufferSize / sizeof (CHAR16),
+      L"SHA384",
+      (BufferSize /
+       sizeof (CHAR16)) - StrLen (Buffer) - 1
+      );
   }
 
   if ((BootHashAlg & EFI_TCG2_BOOT_HASH_ALG_SHA512) != 0) {
     if (Buffer[0] != 0) {
-      StrnCatS (Buffer, BufferSize / sizeof (CHAR16), L", ", (BufferSize / sizeof (CHAR16)) - StrLen (Buffer) - 1);
+      StrnCatS (
+        Buffer,
+        BufferSize / sizeof (CHAR16),
+        L", ",
+        (BufferSize /
+         sizeof (CHAR16)) - StrLen (Buffer) - 1
+        );
     }
 
-    StrnCatS (Buffer, BufferSize / sizeof (CHAR16), L"SHA512", (BufferSize / sizeof (CHAR16)) - StrLen (Buffer) - 1);
+    StrnCatS (
+      Buffer,
+      BufferSize / sizeof (CHAR16),
+      L"SHA512",
+      (BufferSize /
+       sizeof (CHAR16)) - StrLen (Buffer) - 1
+      );
   }
 
   if ((BootHashAlg & EFI_TCG2_BOOT_HASH_ALG_SM3_256) != 0) {
     if (Buffer[0] != 0) {
-      StrnCatS (Buffer, BufferSize / sizeof (CHAR16), L", ", (BufferSize / sizeof (CHAR16)) - StrLen (Buffer) - 1);
+      StrnCatS (
+        Buffer,
+        BufferSize / sizeof (CHAR16),
+        L", ",
+        (BufferSize /
+         sizeof (CHAR16)) - StrLen (Buffer) - 1
+        );
     }
 
-    StrnCatS (Buffer, BufferSize / sizeof (CHAR16), L"SM3_256", (BufferSize / sizeof (CHAR16)) - StrLen (Buffer) - 1);
+    StrnCatS (
+      Buffer,
+      BufferSize / sizeof (CHAR16),
+      L"SM3_256",
+      (BufferSize /
+       sizeof (CHAR16)) - StrLen (Buffer) - 1
+      );
   }
 }
 
@@ -389,7 +482,12 @@ Tcg2UserConfirm (
   ConfirmText = AllocateZeroPool (BufSize);
   ASSERT (ConfirmText != NULL);
 
-  mTcg2PpStringPackHandle = HiiAddPackages (&gEfiTcg2PhysicalPresenceGuid, gImageHandle, DxeTcg2PhysicalPresenceLibStrings, NULL);
+  mTcg2PpStringPackHandle = HiiAddPackages (
+                              &gEfiTcg2PhysicalPresenceGuid,
+                              gImageHandle,
+                              DxeTcg2PhysicalPresenceLibStrings,
+                              NULL
+                              );
   ASSERT (mTcg2PpStringPackHandle != NULL);
 
   switch (TpmPpCommand) {
@@ -404,9 +502,25 @@ Tcg2UserConfirm (
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_CLEAR));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), L" \n\n", (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_CLEAR
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        L" \n\n",
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       break;
@@ -416,23 +530,57 @@ Tcg2UserConfirm (
       NoPpiInfo  = TRUE;
       TmpStr2    = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_CLEAR));
 
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_PPI_HEAD_STR));
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_PPI_HEAD_STR
+                    )
+                  );
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_NOTE_CLEAR));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_NOTE_CLEAR
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_CLEAR));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), L" \n\n", (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_CLEAR
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        L" \n\n",
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       break;
 
     case TCG2_PHYSICAL_PRESENCE_SET_PCR_BANKS:
-      Status = gBS->LocateProtocol (&gEfiTcg2ProtocolGuid, NULL, (VOID **)&Tcg2Protocol);
+      Status = gBS->LocateProtocol (
+                      &gEfiTcg2ProtocolGuid,
+                      NULL,
+                      (VOID **)&Tcg2Protocol
+                      );
       ASSERT_EFI_ERROR (Status);
 
       ProtocolCapability.Size = sizeof (ProtocolCapability);
@@ -449,81 +597,190 @@ Tcg2UserConfirm (
       ASSERT_EFI_ERROR (Status);
 
       CautionKey = TRUE;
-      TmpStr2    = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_SET_PCR_BANKS));
+      TmpStr2    = Tcg2PhysicalPresenceGetStringById (
+                     STRING_TOKEN (
+                       TPM_SET_PCR_BANKS
+                       )
+                     );
 
       TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_HEAD_STR));
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_SET_PCR_BANKS_1));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_SET_PCR_BANKS_1
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_SET_PCR_BANKS_2));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_SET_PCR_BANKS_2
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
-      Tcg2FillBufferWithBootHashAlg (TempBuffer, sizeof (TempBuffer), TpmPpCommandParameter);
-      Tcg2FillBufferWithBootHashAlg (TempBuffer2, sizeof (TempBuffer2), CurrentPCRBanks);
+      Tcg2FillBufferWithBootHashAlg (
+        TempBuffer,
+        sizeof (TempBuffer),
+        TpmPpCommandParameter
+        );
+      Tcg2FillBufferWithBootHashAlg (
+        TempBuffer2,
+        sizeof (TempBuffer2),
+        CurrentPCRBanks
+        );
 
       TmpStr1 = AllocateZeroPool (BufSize);
       ASSERT (TmpStr1 != NULL);
-      UnicodeSPrint (TmpStr1, BufSize, L"Current PCRBanks is 0x%x. (%s)\nNew PCRBanks is 0x%x. (%s)\n", CurrentPCRBanks, TempBuffer2, TpmPpCommandParameter, TempBuffer);
+      UnicodeSPrint (
+        TmpStr1,
+        BufSize,
+        L"Current PCRBanks is 0x%x. (%s)\nNew PCRBanks is 0x%x. (%s)\n",
+        CurrentPCRBanks,
+        TempBuffer2,
+        TpmPpCommandParameter,
+        TempBuffer
+        );
 
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), L" \n", (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        L" \n",
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       break;
 
     case TCG2_PHYSICAL_PRESENCE_CHANGE_EPS:
       CautionKey = TRUE;
-      TmpStr2    = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_CHANGE_EPS));
+      TmpStr2    = Tcg2PhysicalPresenceGetStringById (
+                     STRING_TOKEN (
+                       TPM_CHANGE_EPS
+                       )
+                     );
 
       TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_HEAD_STR));
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
 
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_CHANGE_EPS_1));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_CHANGE_EPS_1
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_WARNING_CHANGE_EPS_2));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_WARNING_CHANGE_EPS_2
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
 
       break;
 
     case TCG2_PHYSICAL_PRESENCE_ENABLE_BLOCK_SID:
-      TmpStr2 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TCG_STORAGE_ENABLE_BLOCK_SID));
+      TmpStr2 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TCG_STORAGE_ENABLE_BLOCK_SID
+                    )
+                  );
 
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TCG_STORAGE_HEAD_STR));
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TCG_STORAGE_HEAD_STR
+                    )
+                  );
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
       break;
 
     case TCG2_PHYSICAL_PRESENCE_DISABLE_BLOCK_SID:
-      TmpStr2 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TCG_STORAGE_DISABLE_BLOCK_SID));
+      TmpStr2 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TCG_STORAGE_DISABLE_BLOCK_SID
+                    )
+                  );
 
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TCG_STORAGE_HEAD_STR));
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TCG_STORAGE_HEAD_STR
+                    )
+                  );
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
       break;
 
     case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_ENABLE_BLOCK_SID_FUNC_FALSE:
       NoPpiInfo = TRUE;
-      TmpStr2   = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TCG_STORAGE_PP_ENABLE_BLOCK_SID));
+      TmpStr2   = Tcg2PhysicalPresenceGetStringById (
+                    STRING_TOKEN (
+                      TCG_STORAGE_PP_ENABLE_BLOCK_SID
+                      )
+                    );
 
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TCG_STORAGE_PPI_HEAD_STR));
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TCG_STORAGE_PPI_HEAD_STR
+                    )
+                  );
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
       break;
 
-    case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_DISABLE_BLOCK_SID_FUNC_FALSE:
+    case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_DISABLE_BLOCK_SID_FUNC_FALSE
+      :
       NoPpiInfo = TRUE;
-      TmpStr2   = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TCG_STORAGE_PP_DISABLE_BLOCK_SID));
+      TmpStr2   = Tcg2PhysicalPresenceGetStringById (
+                    STRING_TOKEN (
+                      TCG_STORAGE_PP_DISABLE_BLOCK_SID
+                      )
+                    );
 
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TCG_STORAGE_PPI_HEAD_STR));
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TCG_STORAGE_PPI_HEAD_STR
+                    )
+                  );
       UnicodeSPrint (ConfirmText, BufSize, TmpStr1, TmpStr2);
       FreePool (TmpStr1);
       break;
@@ -539,38 +796,90 @@ Tcg2UserConfirm (
 
   if (TpmPpCommand < TCG2_PHYSICAL_PRESENCE_STORAGE_MANAGEMENT_BEGIN) {
     if (CautionKey) {
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_CAUTION_KEY));
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_CAUTION_KEY
+                    )
+                  );
     } else {
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_ACCEPT_KEY));
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_ACCEPT_KEY
+                    )
+                  );
     }
 
-    StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+    StrnCatS (
+      ConfirmText,
+      BufSize / sizeof (CHAR16),
+      TmpStr1,
+      (BufSize /
+       sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+      );
     FreePool (TmpStr1);
 
     if (NoPpiInfo) {
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_NO_PPI_INFO));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TPM_NO_PPI_INFO
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
     }
 
     TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TPM_REJECT_KEY));
   } else {
     if (CautionKey) {
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TCG_STORAGE_CAUTION_KEY));
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TCG_STORAGE_CAUTION_KEY
+                    )
+                  );
     } else {
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TCG_STORAGE_ACCEPT_KEY));
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TCG_STORAGE_ACCEPT_KEY
+                    )
+                  );
     }
 
-    StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+    StrnCatS (
+      ConfirmText,
+      BufSize / sizeof (CHAR16),
+      TmpStr1,
+      (BufSize /
+       sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+      );
     FreePool (TmpStr1);
 
     if (NoPpiInfo) {
-      TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TCG_STORAGE_NO_PPI_INFO));
-      StrnCatS (ConfirmText, BufSize / sizeof (CHAR16), TmpStr1, (BufSize / sizeof (CHAR16)) - StrLen (ConfirmText) - 1);
+      TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                  STRING_TOKEN (
+                    TCG_STORAGE_NO_PPI_INFO
+                    )
+                  );
+      StrnCatS (
+        ConfirmText,
+        BufSize / sizeof (CHAR16),
+        TmpStr1,
+        (BufSize /
+         sizeof (CHAR16)) - StrLen (ConfirmText) - 1
+        );
       FreePool (TmpStr1);
     }
 
-    TmpStr1 = Tcg2PhysicalPresenceGetStringById (STRING_TOKEN (TCG_STORAGE_REJECT_KEY));
+    TmpStr1 = Tcg2PhysicalPresenceGetStringById (
+                STRING_TOKEN (
+                  TCG_STORAGE_REJECT_KEY
+                  )
+                );
   }
 
   BufSize -= StrSize (ConfirmText);
@@ -578,7 +887,12 @@ Tcg2UserConfirm (
 
   DstStr[80] = L'\0';
   for (Index = 0; Index < StrLen (ConfirmText); Index += 80) {
-    StrnCpyS (DstStr, sizeof (DstStr) / sizeof (CHAR16), ConfirmText + Index, sizeof (DstStr) / sizeof (CHAR16) - 1);
+    StrnCpyS (
+      DstStr,
+      sizeof (DstStr) / sizeof (CHAR16),
+      ConfirmText + Index,
+      sizeof (DstStr) / sizeof (CHAR16) - 1
+      );
     Print (DstStr);
   }
 
@@ -626,7 +940,11 @@ Tcg2HaveValidTpmRequest  (
     //
     // Need TCG2 protocol.
     //
-    Status = gBS->LocateProtocol (&gEfiTcg2ProtocolGuid, NULL, (VOID **)&Tcg2Protocol);
+    Status = gBS->LocateProtocol (
+                    &gEfiTcg2ProtocolGuid,
+                    NULL,
+                    (VOID **)&Tcg2Protocol
+                    );
     if (EFI_ERROR (Status)) {
       return FALSE;
     }
@@ -641,7 +959,9 @@ Tcg2HaveValidTpmRequest  (
     case TCG2_PHYSICAL_PRESENCE_ENABLE_CLEAR:
     case TCG2_PHYSICAL_PRESENCE_ENABLE_CLEAR_2:
     case TCG2_PHYSICAL_PRESENCE_ENABLE_CLEAR_3:
-      if ((Flags.PPFlags & TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_CLEAR) == 0) {
+      if ((Flags.PPFlags &
+           TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_CLEAR) == 0)
+      {
         *RequestConfirmed = TRUE;
       }
 
@@ -655,14 +975,18 @@ Tcg2HaveValidTpmRequest  (
       break;
 
     case TCG2_PHYSICAL_PRESENCE_SET_PCR_BANKS:
-      if ((Flags.PPFlags & TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_CHANGE_PCRS) == 0) {
+      if ((Flags.PPFlags &
+           TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_CHANGE_PCRS) == 0)
+      {
         *RequestConfirmed = TRUE;
       }
 
       break;
 
     case TCG2_PHYSICAL_PRESENCE_CHANGE_EPS:
-      if ((Flags.PPFlags & TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_CHANGE_EPS) == 0) {
+      if ((Flags.PPFlags &
+           TCG2_BIOS_TPM_MANAGEMENT_FLAG_PP_REQUIRED_FOR_CHANGE_EPS) == 0)
+      {
         *RequestConfirmed = TRUE;
       }
 
@@ -673,14 +997,20 @@ Tcg2HaveValidTpmRequest  (
       break;
 
     case TCG2_PHYSICAL_PRESENCE_ENABLE_BLOCK_SID:
-      if ((Flags.PPFlags & TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_ENABLE_BLOCK_SID) == 0) {
+      if ((Flags.PPFlags &
+           TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_ENABLE_BLOCK_SID)
+          == 0)
+      {
         *RequestConfirmed = TRUE;
       }
 
       break;
 
     case TCG2_PHYSICAL_PRESENCE_DISABLE_BLOCK_SID:
-      if ((Flags.PPFlags & TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_DISABLE_BLOCK_SID) == 0) {
+      if ((Flags.PPFlags &
+           TCG2_BIOS_STORAGE_MANAGEMENT_FLAG_PP_REQUIRED_FOR_DISABLE_BLOCK_SID)
+          == 0)
+      {
         *RequestConfirmed = TRUE;
       }
 
@@ -692,12 +1022,19 @@ Tcg2HaveValidTpmRequest  (
       break;
 
     case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_ENABLE_BLOCK_SID_FUNC_FALSE:
-    case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_DISABLE_BLOCK_SID_FUNC_FALSE:
+    case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_DISABLE_BLOCK_SID_FUNC_FALSE
+      :
       break;
 
     default:
-      if (TcgPpData->PPRequest >= TCG2_PHYSICAL_PRESENCE_VENDOR_SPECIFIC_OPERATION) {
-        IsRequestValid = Tcg2PpVendorLibHasValidRequest (TcgPpData->PPRequest, Flags.PPFlags, RequestConfirmed);
+      if (TcgPpData->PPRequest >=
+          TCG2_PHYSICAL_PRESENCE_VENDOR_SPECIFIC_OPERATION)
+      {
+        IsRequestValid = Tcg2PpVendorLibHasValidRequest (
+                           TcgPpData->PPRequest,
+                           Flags.PPFlags,
+                           RequestConfirmed
+                           );
         if (!IsRequestValid) {
           return FALSE;
         } else {
@@ -774,7 +1111,9 @@ Tcg2ExecutePendingTpmRequest (
     Status   = gRT->SetVariable (
                       TCG2_PHYSICAL_PRESENCE_VARIABLE,
                       &gEfiTcg2PhysicalPresenceGuid,
-                      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                      EFI_VARIABLE_NON_VOLATILE |
+                      EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                      EFI_VARIABLE_RUNTIME_ACCESS,
                       DataSize,
                       TcgPpData
                       );
@@ -782,17 +1121,27 @@ Tcg2ExecutePendingTpmRequest (
   }
 
   ResetRequired = FALSE;
-  if (TcgPpData->PPRequest >= TCG2_PHYSICAL_PRESENCE_VENDOR_SPECIFIC_OPERATION) {
+  if (TcgPpData->PPRequest >=
+      TCG2_PHYSICAL_PRESENCE_VENDOR_SPECIFIC_OPERATION)
+  {
     NewFlags              = *Flags;
     NewPPFlags            = NewFlags.PPFlags;
-    TcgPpData->PPResponse = Tcg2PpVendorLibExecutePendingRequest (PlatformAuth, TcgPpData->PPRequest, &NewPPFlags, &ResetRequired);
-    NewFlags.PPFlags      = NewPPFlags;
+    TcgPpData->PPResponse = Tcg2PpVendorLibExecutePendingRequest (
+                              PlatformAuth,
+                              TcgPpData->PPRequest,
+                              &NewPPFlags,
+                              &ResetRequired
+                              );
+    NewFlags.PPFlags = NewPPFlags;
   } else {
     if (!RequestConfirmed) {
       //
       // Print confirm text and wait for approval.
       //
-      RequestConfirmed = Tcg2UserConfirm (TcgPpData->PPRequest, TcgPpData->PPRequestParameter);
+      RequestConfirmed = Tcg2UserConfirm (
+                           TcgPpData->PPRequest,
+                           TcgPpData->PPRequestParameter
+                           );
     }
 
     //
@@ -813,12 +1162,19 @@ Tcg2ExecutePendingTpmRequest (
   //
   // Save the flags if it is updated.
   //
-  if (CompareMem (Flags, &NewFlags, sizeof (EFI_TCG2_PHYSICAL_PRESENCE_FLAGS)) != 0) {
+  if (CompareMem (
+        Flags,
+        &NewFlags,
+        sizeof (EFI_TCG2_PHYSICAL_PRESENCE_FLAGS)
+        ) != 0)
+  {
     *Flags = NewFlags;
     Status = gRT->SetVariable (
                     TCG2_PHYSICAL_PRESENCE_FLAGS_VARIABLE,
                     &gEfiTcg2PhysicalPresenceGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                    EFI_VARIABLE_NON_VOLATILE |
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS,
                     sizeof (EFI_TCG2_PHYSICAL_PRESENCE_FLAGS),
                     &NewFlags
                     );
@@ -840,7 +1196,9 @@ Tcg2ExecutePendingTpmRequest (
   Status   = gRT->SetVariable (
                     TCG2_PHYSICAL_PRESENCE_VARIABLE,
                     &gEfiTcg2PhysicalPresenceGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                    EFI_VARIABLE_NON_VOLATILE |
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS,
                     DataSize,
                     TcgPpData
                     );
@@ -872,11 +1230,14 @@ Tcg2ExecutePendingTpmRequest (
     case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_ENABLE_BLOCK_SID_FUNC_TRUE:
     case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_DISABLE_BLOCK_SID_FUNC_TRUE:
     case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_ENABLE_BLOCK_SID_FUNC_FALSE:
-    case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_DISABLE_BLOCK_SID_FUNC_FALSE:
+    case TCG2_PHYSICAL_PRESENCE_SET_PP_REQUIRED_FOR_DISABLE_BLOCK_SID_FUNC_FALSE
+      :
       return;
 
     default:
-      if (TcgPpData->LastPPRequest >= TCG2_PHYSICAL_PRESENCE_VENDOR_SPECIFIC_OPERATION) {
+      if (TcgPpData->LastPPRequest >=
+          TCG2_PHYSICAL_PRESENCE_VENDOR_SPECIFIC_OPERATION)
+      {
         if (ResetRequired) {
           break;
         } else {
@@ -925,7 +1286,11 @@ Tcg2PhysicalPresenceLibProcessRequest (
   // This flags variable controls whether physical presence is required for TPM command.
   // It should be protected from malicious software. We set it as read-only variable here.
   //
-  Status = gBS->LocateProtocol (&gEdkiiVariableLockProtocolGuid, NULL, (VOID **)&VariableLockProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEdkiiVariableLockProtocolGuid,
+                  NULL,
+                  (VOID **)&VariableLockProtocol
+                  );
   if (!EFI_ERROR (Status)) {
     Status = VariableLockProtocol->RequestToLock (
                                      VariableLockProtocol,
@@ -933,7 +1298,12 @@ Tcg2PhysicalPresenceLibProcessRequest (
                                      &gEfiTcg2PhysicalPresenceGuid
                                      );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "[TPM2] Error when lock variable %s, Status = %r\n", TCG2_PHYSICAL_PRESENCE_FLAGS_VARIABLE, Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "[TPM2] Error when lock variable %s, Status = %r\n",
+        TCG2_PHYSICAL_PRESENCE_FLAGS_VARIABLE,
+        Status
+        ));
       ASSERT_EFI_ERROR (Status);
     }
   }
@@ -962,16 +1332,26 @@ Tcg2PhysicalPresenceLibProcessRequest (
     Status           = gRT->SetVariable (
                               TCG2_PHYSICAL_PRESENCE_FLAGS_VARIABLE,
                               &gEfiTcg2PhysicalPresenceGuid,
-                              EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                              EFI_VARIABLE_NON_VOLATILE |
+                              EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                              EFI_VARIABLE_RUNTIME_ACCESS,
                               sizeof (EFI_TCG2_PHYSICAL_PRESENCE_FLAGS),
                               &PpiFlags
                               );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "[TPM2] Set physical presence flag failed, Status = %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "[TPM2] Set physical presence flag failed, Status = %r\n",
+        Status
+        ));
       return;
     }
 
-    DEBUG ((DEBUG_INFO, "[TPM2] Initial physical presence flags value is 0x%x\n", PpiFlags.PPFlags));
+    DEBUG ((
+      DEBUG_INFO,
+      "[TPM2] Initial physical presence flags value is 0x%x\n",
+      PpiFlags.PPFlags
+      ));
   }
 
   //
@@ -991,23 +1371,41 @@ Tcg2PhysicalPresenceLibProcessRequest (
     Status   = gRT->SetVariable (
                       TCG2_PHYSICAL_PRESENCE_VARIABLE,
                       &gEfiTcg2PhysicalPresenceGuid,
-                      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                      EFI_VARIABLE_NON_VOLATILE |
+                      EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                      EFI_VARIABLE_RUNTIME_ACCESS,
                       DataSize,
                       &TcgPpData
                       );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "[TPM2] Set physical presence variable failed, Status = %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "[TPM2] Set physical presence variable failed, Status = %r\n",
+        Status
+        ));
       return;
     }
   }
 
-  DEBUG ((DEBUG_INFO, "[TPM2] Flags=%x, PPRequest=%x (LastPPRequest=%x)\n", PpiFlags.PPFlags, TcgPpData.PPRequest, TcgPpData.LastPPRequest));
+  DEBUG ((
+    DEBUG_INFO,
+    "[TPM2] Flags=%x, PPRequest=%x (LastPPRequest=%x)\n",
+    PpiFlags.PPFlags,
+    TcgPpData.PPRequest,
+    TcgPpData.LastPPRequest
+    ));
 
   //
   // Execute pending TPM request.
   //
   Tcg2ExecutePendingTpmRequest (PlatformAuth, &TcgPpData, &PpiFlags);
-  DEBUG ((DEBUG_INFO, "[TPM2] PPResponse = %x (LastPPRequest=%x, Flags=%x)\n", TcgPpData.PPResponse, TcgPpData.LastPPRequest, PpiFlags.PPFlags));
+  DEBUG ((
+    DEBUG_INFO,
+    "[TPM2] PPResponse = %x (LastPPRequest=%x, Flags=%x)\n",
+    TcgPpData.PPResponse,
+    TcgPpData.LastPPRequest,
+    PpiFlags.PPFlags
+    ));
 }
 
 /**
@@ -1127,7 +1525,11 @@ Tcg2PhysicalPresenceLibReturnOperationResponseToOsFunction (
   if (EFI_ERROR (Status)) {
     *MostRecentRequest = 0;
     *Response          = 0;
-    DEBUG ((DEBUG_ERROR, "[TPM2] Get PP variable failure! Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[TPM2] Get PP variable failure! Status = %r\n",
+      Status
+      ));
     return TCG_PP_RETURN_TPM_OPERATION_RESPONSE_FAILURE;
   }
 
@@ -1162,7 +1564,12 @@ Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (
   EFI_TCG2_PHYSICAL_PRESENCE        PpData;
   EFI_TCG2_PHYSICAL_PRESENCE_FLAGS  Flags;
 
-  DEBUG ((DEBUG_INFO, "[TPM2] SubmitRequestToPreOSFunction, Request = %x, %x\n", OperationRequest, RequestParameter));
+  DEBUG ((
+    DEBUG_INFO,
+    "[TPM2] SubmitRequestToPreOSFunction, Request = %x, %x\n",
+    OperationRequest,
+    RequestParameter
+    ));
 
   //
   // Get the Physical Presence variable
@@ -1176,7 +1583,11 @@ Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (
                     &PpData
                     );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[TPM2] Get PP variable failure! Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[TPM2] Get PP variable failure! Status = %r\n",
+      Status
+      ));
     return TCG_PP_SUBMIT_REQUEST_TO_PREOS_GENERAL_FAILURE;
   }
 
@@ -1195,12 +1606,18 @@ Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (
     Status                    = gRT->SetVariable (
                                        TCG2_PHYSICAL_PRESENCE_VARIABLE,
                                        &gEfiTcg2PhysicalPresenceGuid,
-                                       EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                                       EFI_VARIABLE_NON_VOLATILE |
+                                       EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                                       EFI_VARIABLE_RUNTIME_ACCESS,
                                        DataSize,
                                        &PpData
                                        );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "[TPM2] Set PP variable failure! Status = %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "[TPM2] Set PP variable failure! Status = %r\n",
+        Status
+        ));
       return TCG_PP_SUBMIT_REQUEST_TO_PREOS_GENERAL_FAILURE;
     }
   }
@@ -1218,7 +1635,11 @@ Tcg2PhysicalPresenceLibSubmitRequestToPreOSFunction (
       Flags.PPFlags = PcdGet32 (PcdTcg2PhysicalPresenceFlags);
     }
 
-    return Tcg2PpVendorLibSubmitRequestToPreOSFunction (OperationRequest, Flags.PPFlags, RequestParameter);
+    return Tcg2PpVendorLibSubmitRequestToPreOSFunction (
+             OperationRequest,
+             Flags.PPFlags,
+             RequestParameter
+             );
   }
 
   return TCG_PP_SUBMIT_REQUEST_TO_PREOS_SUCCESS;

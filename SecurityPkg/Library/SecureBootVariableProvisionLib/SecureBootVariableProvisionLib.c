@@ -81,7 +81,12 @@ SecureBootFetchData (
     if (Status == EFI_SUCCESS) {
       RsaPubKey = NULL;
       if (RsaGetPublicKeyFromX509 (Buffer, Size, &RsaPubKey) == FALSE) {
-        DEBUG ((DEBUG_ERROR, "%a: Invalid key format: %d\n", __FUNCTION__, KeyIndex));
+        DEBUG ((
+          DEBUG_ERROR,
+          "%a: Invalid key format: %d\n",
+          __FUNCTION__,
+          KeyIndex
+          ));
         if (EfiSig != NULL) {
           FreePool (EfiSig);
         }
@@ -117,7 +122,12 @@ SecureBootFetchData (
   }
 
   // Now that we collected all certs from FV, convert it into sig list
-  Status = SecureBootCreateDataFromInput (SigListsSize, SigListOut, KeyIndex, CertInfo);
+  Status = SecureBootCreateDataFromInput (
+             SigListsSize,
+             SigListOut,
+             KeyIndex,
+             CertInfo
+             );
   if (EFI_ERROR (Status)) {
     goto Cleanup;
   }
@@ -160,9 +170,19 @@ EnrollFromDefault (
   Status = EFI_SUCCESS;
 
   DataSize = 0;
-  Status   = GetVariable2 (DefaultName, &gEfiGlobalVariableGuid, &Data, &DataSize);
+  Status   = GetVariable2 (
+               DefaultName,
+               &gEfiGlobalVariableGuid,
+               &Data,
+               &DataSize
+               );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "error: GetVariable (\"%s): %r\n", DefaultName, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "error: GetVariable (\"%s): %r\n",
+      DefaultName,
+      Status
+      ));
     return Status;
   }
 
@@ -194,9 +214,18 @@ SecureBootInitPKDefault (
   //
   // Check if variable exists, if so do not change it
   //
-  Status = GetVariable2 (EFI_PK_DEFAULT_VARIABLE_NAME, &gEfiGlobalVariableGuid, (VOID **)&Data, &DataSize);
+  Status = GetVariable2 (
+             EFI_PK_DEFAULT_VARIABLE_NAME,
+             &gEfiGlobalVariableGuid,
+             (VOID **)&Data,
+             &DataSize
+             );
   if (Status == EFI_SUCCESS) {
-    DEBUG ((DEBUG_INFO, "Variable %s exists. Old value is preserved\n", EFI_PK_DEFAULT_VARIABLE_NAME));
+    DEBUG ((
+      DEBUG_INFO,
+      "Variable %s exists. Old value is preserved\n",
+      EFI_PK_DEFAULT_VARIABLE_NAME
+      ));
     FreePool (Data);
     return EFI_UNSUPPORTED;
   }
@@ -208,11 +237,19 @@ SecureBootInitPKDefault (
   //
   // Variable does not exist, can be initialized
   //
-  DEBUG ((DEBUG_INFO, "Variable %s does not exist.\n", EFI_PK_DEFAULT_VARIABLE_NAME));
+  DEBUG ((
+    DEBUG_INFO,
+    "Variable %s does not exist.\n",
+    EFI_PK_DEFAULT_VARIABLE_NAME
+    ));
 
   Status = SecureBootFetchData (&gDefaultPKFileGuid, &SigListsSize, &EfiSig);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Content for %s not found\n", EFI_PK_DEFAULT_VARIABLE_NAME));
+    DEBUG ((
+      DEBUG_INFO,
+      "Content for %s not found\n",
+      EFI_PK_DEFAULT_VARIABLE_NAME
+      ));
     return Status;
   }
 
@@ -251,9 +288,18 @@ SecureBootInitKEKDefault (
   //
   // Check if variable exists, if so do not change it
   //
-  Status = GetVariable2 (EFI_KEK_DEFAULT_VARIABLE_NAME, &gEfiGlobalVariableGuid, (VOID **)&Data, &DataSize);
+  Status = GetVariable2 (
+             EFI_KEK_DEFAULT_VARIABLE_NAME,
+             &gEfiGlobalVariableGuid,
+             (VOID **)&Data,
+             &DataSize
+             );
   if (Status == EFI_SUCCESS) {
-    DEBUG ((DEBUG_INFO, "Variable %s exists. Old value is preserved\n", EFI_KEK_DEFAULT_VARIABLE_NAME));
+    DEBUG ((
+      DEBUG_INFO,
+      "Variable %s exists. Old value is preserved\n",
+      EFI_KEK_DEFAULT_VARIABLE_NAME
+      ));
     FreePool (Data);
     return EFI_UNSUPPORTED;
   }
@@ -265,11 +311,19 @@ SecureBootInitKEKDefault (
   //
   // Variable does not exist, can be initialized
   //
-  DEBUG ((DEBUG_INFO, "Variable %s does not exist.\n", EFI_KEK_DEFAULT_VARIABLE_NAME));
+  DEBUG ((
+    DEBUG_INFO,
+    "Variable %s does not exist.\n",
+    EFI_KEK_DEFAULT_VARIABLE_NAME
+    ));
 
   Status = SecureBootFetchData (&gDefaultKEKFileGuid, &SigListsSize, &EfiSig);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Content for %s not found\n", EFI_KEK_DEFAULT_VARIABLE_NAME));
+    DEBUG ((
+      DEBUG_INFO,
+      "Content for %s not found\n",
+      EFI_KEK_DEFAULT_VARIABLE_NAME
+      ));
     return Status;
   }
 
@@ -305,9 +359,18 @@ SecureBootInitDbDefault (
   UINT8               *Data;
   UINTN               DataSize;
 
-  Status = GetVariable2 (EFI_DB_DEFAULT_VARIABLE_NAME, &gEfiGlobalVariableGuid, (VOID **)&Data, &DataSize);
+  Status = GetVariable2 (
+             EFI_DB_DEFAULT_VARIABLE_NAME,
+             &gEfiGlobalVariableGuid,
+             (VOID **)&Data,
+             &DataSize
+             );
   if (Status == EFI_SUCCESS) {
-    DEBUG ((DEBUG_INFO, "Variable %s exists. Old value is preserved\n", EFI_DB_DEFAULT_VARIABLE_NAME));
+    DEBUG ((
+      DEBUG_INFO,
+      "Variable %s exists. Old value is preserved\n",
+      EFI_DB_DEFAULT_VARIABLE_NAME
+      ));
     FreePool (Data);
     return EFI_UNSUPPORTED;
   }
@@ -316,7 +379,11 @@ SecureBootInitDbDefault (
     return Status;
   }
 
-  DEBUG ((DEBUG_INFO, "Variable %s does not exist.\n", EFI_DB_DEFAULT_VARIABLE_NAME));
+  DEBUG ((
+    DEBUG_INFO,
+    "Variable %s does not exist.\n",
+    EFI_DB_DEFAULT_VARIABLE_NAME
+    ));
 
   Status = SecureBootFetchData (&gDefaultdbFileGuid, &SigListsSize, &EfiSig);
   if (EFI_ERROR (Status)) {
@@ -358,9 +425,18 @@ SecureBootInitDbxDefault (
   //
   // Check if variable exists, if so do not change it
   //
-  Status = GetVariable2 (EFI_DBX_DEFAULT_VARIABLE_NAME, &gEfiGlobalVariableGuid, (VOID **)&Data, &DataSize);
+  Status = GetVariable2 (
+             EFI_DBX_DEFAULT_VARIABLE_NAME,
+             &gEfiGlobalVariableGuid,
+             (VOID **)&Data,
+             &DataSize
+             );
   if (Status == EFI_SUCCESS) {
-    DEBUG ((DEBUG_INFO, "Variable %s exists. Old value is preserved\n", EFI_DBX_DEFAULT_VARIABLE_NAME));
+    DEBUG ((
+      DEBUG_INFO,
+      "Variable %s exists. Old value is preserved\n",
+      EFI_DBX_DEFAULT_VARIABLE_NAME
+      ));
     FreePool (Data);
     return EFI_UNSUPPORTED;
   }
@@ -372,11 +448,19 @@ SecureBootInitDbxDefault (
   //
   // Variable does not exist, can be initialized
   //
-  DEBUG ((DEBUG_INFO, "Variable %s does not exist.\n", EFI_DBX_DEFAULT_VARIABLE_NAME));
+  DEBUG ((
+    DEBUG_INFO,
+    "Variable %s does not exist.\n",
+    EFI_DBX_DEFAULT_VARIABLE_NAME
+    ));
 
   Status = SecureBootFetchData (&gDefaultdbxFileGuid, &SigListsSize, &EfiSig);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Content for %s not found\n", EFI_DBX_DEFAULT_VARIABLE_NAME));
+    DEBUG ((
+      DEBUG_INFO,
+      "Content for %s not found\n",
+      EFI_DBX_DEFAULT_VARIABLE_NAME
+      ));
     return Status;
   }
 
@@ -415,9 +499,18 @@ SecureBootInitDbtDefault (
   //
   // Check if variable exists, if so do not change it
   //
-  Status = GetVariable2 (EFI_DBT_DEFAULT_VARIABLE_NAME, &gEfiGlobalVariableGuid, (VOID **)&Data, &DataSize);
+  Status = GetVariable2 (
+             EFI_DBT_DEFAULT_VARIABLE_NAME,
+             &gEfiGlobalVariableGuid,
+             (VOID **)&Data,
+             &DataSize
+             );
   if (Status == EFI_SUCCESS) {
-    DEBUG ((DEBUG_INFO, "Variable %s exists. Old value is preserved\n", EFI_DBT_DEFAULT_VARIABLE_NAME));
+    DEBUG ((
+      DEBUG_INFO,
+      "Variable %s exists. Old value is preserved\n",
+      EFI_DBT_DEFAULT_VARIABLE_NAME
+      ));
     FreePool (Data);
     return EFI_UNSUPPORTED;
   }
@@ -429,7 +522,11 @@ SecureBootInitDbtDefault (
   //
   // Variable does not exist, can be initialized
   //
-  DEBUG ((DEBUG_INFO, "Variable %s does not exist.\n", EFI_DBT_DEFAULT_VARIABLE_NAME));
+  DEBUG ((
+    DEBUG_INFO,
+    "Variable %s does not exist.\n",
+    EFI_DBT_DEFAULT_VARIABLE_NAME
+    ));
 
   Status = SecureBootFetchData (&gDefaultdbtFileGuid, &SigListsSize, &EfiSig);
   if (EFI_ERROR (Status)) {

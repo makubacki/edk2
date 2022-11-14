@@ -156,7 +156,8 @@ IsContentHashRevokedByHash (
     //
     // Search the signature database to search the revoked content hash
     //
-    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList + sizeof (EFI_SIGNATURE_LIST) +
+    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList +
+                                     sizeof (EFI_SIGNATURE_LIST) +
                                      SigList->SignatureHeaderSize);
     EntryCount = (SigList->SignatureListSize - SigList->SignatureHeaderSize -
                   sizeof (EFI_SIGNATURE_LIST)) / SigList->SignatureSize;
@@ -176,7 +177,8 @@ IsContentHashRevokedByHash (
         }
       }
 
-      SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigData + SigList->SignatureSize);
+      SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigData +
+                                       SigList->SignatureSize);
     }
   }
 
@@ -233,7 +235,13 @@ IsContentHashRevoked (
     //
     // Calculate the digest of supplied data based on the signature hash type.
     //
-    if (!CalculateDataHash (Content, ContentSize, &SigList->SignatureType, HashVal)) {
+    if (!CalculateDataHash (
+           Content,
+           ContentSize,
+           &SigList->SignatureType,
+           HashVal
+           ))
+    {
       //
       // Un-matched Hash GUID or other failure.
       //
@@ -243,7 +251,8 @@ IsContentHashRevoked (
     //
     // Search the signature database to search the revoked content hash
     //
-    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList + sizeof (EFI_SIGNATURE_LIST) +
+    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList +
+                                     sizeof (EFI_SIGNATURE_LIST) +
                                      SigList->SignatureHeaderSize);
     EntryCount = (SigList->SignatureListSize - SigList->SignatureHeaderSize -
                   sizeof (EFI_SIGNATURE_LIST)) / SigList->SignatureSize;
@@ -251,12 +260,19 @@ IsContentHashRevoked (
       //
       // Compare Data Hash with Signature Data
       //
-      if (CompareMem (SigData->SignatureData, HashVal, (SigList->SignatureSize - sizeof (EFI_GUID))) == 0) {
+      if (CompareMem (
+            SigData->SignatureData,
+            HashVal,
+            (SigList->SignatureSize -
+             sizeof (EFI_GUID))
+            ) == 0)
+      {
         Status = TRUE;
         goto _Exit;
       }
 
-      SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigData + SigList->SignatureSize);
+      SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigData +
+                                       SigList->SignatureSize);
     }
   }
 
@@ -322,11 +338,26 @@ IsCertHashRevoked (
     // calculate the certificate hash.
     //
     if (CompareGuid (&SigList->SignatureType, &gEfiCertX509Sha256Guid)) {
-      Status = CalculateDataHash (TBSCert, TBSCertSize, &gEfiCertSha256Guid, CertHashVal);
+      Status = CalculateDataHash (
+                 TBSCert,
+                 TBSCertSize,
+                 &gEfiCertSha256Guid,
+                 CertHashVal
+                 );
     } else if (CompareGuid (&SigList->SignatureType, &gEfiCertX509Sha384Guid)) {
-      Status = CalculateDataHash (TBSCert, TBSCertSize, &gEfiCertSha384Guid, CertHashVal);
+      Status = CalculateDataHash (
+                 TBSCert,
+                 TBSCertSize,
+                 &gEfiCertSha384Guid,
+                 CertHashVal
+                 );
     } else if (CompareGuid (&SigList->SignatureType, &gEfiCertX509Sha512Guid)) {
-      Status = CalculateDataHash (TBSCert, TBSCertSize, &gEfiCertSha512Guid, CertHashVal);
+      Status = CalculateDataHash (
+                 TBSCert,
+                 TBSCertSize,
+                 &gEfiCertSha512Guid,
+                 CertHashVal
+                 );
     } else {
       //
       // Un-matched Cert Hash GUID
@@ -338,7 +369,8 @@ IsCertHashRevoked (
       continue;
     }
 
-    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList + sizeof (EFI_SIGNATURE_LIST) +
+    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList +
+                                     sizeof (EFI_SIGNATURE_LIST) +
                                      SigList->SignatureHeaderSize);
     EntryCount = (SigList->SignatureListSize - SigList->SignatureHeaderSize -
                   sizeof (EFI_SIGNATURE_LIST)) / SigList->SignatureSize;
@@ -358,13 +390,15 @@ IsCertHashRevoked (
         //
         CopyMem (
           RevocationTime,
-          (EFI_TIME *)((UINT8 *)SigData + SigList->SignatureSize - sizeof (EFI_TIME)),
+          (EFI_TIME *)((UINT8 *)SigData + SigList->SignatureSize -
+                       sizeof (EFI_TIME)),
           sizeof (EFI_TIME)
           );
         goto _Exit;
       }
 
-      SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigData + SigList->SignatureSize);
+      SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigData +
+                                       SigList->SignatureSize);
     }
   }
 
@@ -489,7 +523,8 @@ IsValidTimestamp (
       continue;
     }
 
-    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList + sizeof (EFI_SIGNATURE_LIST) +
+    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList +
+                                     sizeof (EFI_SIGNATURE_LIST) +
                                      SigList->SignatureHeaderSize);
     TsaCert     = SigData->SignatureData;
     TsaCertSize = SigList->SignatureSize - sizeof (EFI_GUID);
@@ -498,7 +533,14 @@ IsValidTimestamp (
     // Each TSA Certificate will normally be in a separate EFI_SIGNATURE_LIST
     // Leverage ImageTimestampVerify interface for Timestamp counterSignature Verification
     //
-    if (ImageTimestampVerify (SignedData, SignedDataSize, TsaCert, TsaCertSize, &SigningTime)) {
+    if (ImageTimestampVerify (
+          SignedData,
+          SignedDataSize,
+          TsaCert,
+          TsaCertSize,
+          &SigningTime
+          ))
+    {
       //
       // The signer signature is valid only when the signing time is earlier than revocation time.
       //
@@ -601,7 +643,8 @@ P7CheckRevocationByHash (
       continue;
     }
 
-    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList + sizeof (EFI_SIGNATURE_LIST) +
+    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList +
+                                     sizeof (EFI_SIGNATURE_LIST) +
                                      SigList->SignatureHeaderSize);
 
     RevokedCert     = SigData->SignatureData;
@@ -610,7 +653,15 @@ P7CheckRevocationByHash (
     //
     // Verifying the PKCS#7 SignedData with the revoked certificate in RevokedDb
     //
-    if (AuthenticodeVerify (SignedData, SignedDataSize, RevokedCert, RevokedCertSize, InHash, InHashSize)) {
+    if (AuthenticodeVerify (
+          SignedData,
+          SignedDataSize,
+          RevokedCert,
+          RevokedCertSize,
+          InHash,
+          InHashSize
+          ))
+    {
       //
       // The signedData was verified by one entry in Revoked Database
       //
@@ -633,7 +684,14 @@ P7CheckRevocationByHash (
     goto _Exit;
   }
 
-  Pkcs7GetSigners (SignedData, SignedDataSize, &CertBuffer, &BufferLength, &TrustedCert, &TrustedCertLength);
+  Pkcs7GetSigners (
+    SignedData,
+    SignedDataSize,
+    &CertBuffer,
+    &BufferLength,
+    &TrustedCert,
+    &TrustedCertLength
+    );
   if ((BufferLength == 0) || (CertBuffer == NULL)) {
     Status = EFI_SUCCESS;
     goto _Exit;
@@ -656,7 +714,13 @@ P7CheckRevocationByHash (
       // Check the timestamp signature and signing time to determine if p7 data can be trusted.
       //
       Status = EFI_SUCCESS;
-      if (IsValidTimestamp (SignedData, SignedDataSize, TimeStampDb, &RevocationTime)) {
+      if (IsValidTimestamp (
+            SignedData,
+            SignedDataSize,
+            TimeStampDb,
+            &RevocationTime
+            ))
+      {
         //
         // Use EFI_NOT_READY to identify the P7Data is not revoked, because the timestamping
         // occurred prior to the time of certificate revocation.
@@ -766,7 +830,8 @@ P7CheckRevocation (
       continue;
     }
 
-    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList + sizeof (EFI_SIGNATURE_LIST) +
+    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList +
+                                     sizeof (EFI_SIGNATURE_LIST) +
                                      SigList->SignatureHeaderSize);
 
     RevokedCert     = SigData->SignatureData;
@@ -775,7 +840,15 @@ P7CheckRevocation (
     //
     // Verifying the PKCS#7 SignedData with the revoked certificate in RevokedDb
     //
-    if (Pkcs7Verify (SignedData, SignedDataSize, RevokedCert, RevokedCertSize, InData, InDataSize)) {
+    if (Pkcs7Verify (
+          SignedData,
+          SignedDataSize,
+          RevokedCert,
+          RevokedCertSize,
+          InData,
+          InDataSize
+          ))
+    {
       //
       // The signedData was verified by one entry in Revoked Database
       //
@@ -798,7 +871,14 @@ P7CheckRevocation (
     goto _Exit;
   }
 
-  Pkcs7GetSigners (SignedData, SignedDataSize, &CertBuffer, &BufferLength, &TrustedCert, &TrustedCertLength);
+  Pkcs7GetSigners (
+    SignedData,
+    SignedDataSize,
+    &CertBuffer,
+    &BufferLength,
+    &TrustedCert,
+    &TrustedCertLength
+    );
   if ((BufferLength == 0) || (CertBuffer == NULL)) {
     Status = EFI_SUCCESS;
     goto _Exit;
@@ -821,7 +901,13 @@ P7CheckRevocation (
       // Check the timestamp signature and signing time to determine if p7 data can be trusted.
       //
       Status = EFI_SUCCESS;
-      if (IsValidTimestamp (SignedData, SignedDataSize, TimeStampDb, &RevocationTime)) {
+      if (IsValidTimestamp (
+            SignedData,
+            SignedDataSize,
+            TimeStampDb,
+            &RevocationTime
+            ))
+      {
         //
         // Use EFI_NOT_READY to identify the P7Data is not revoked, because the timestamping
         // occurred prior to the time of certificate revocation.
@@ -915,7 +1001,8 @@ P7CheckTrustByHash (
       continue;
     }
 
-    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList + sizeof (EFI_SIGNATURE_LIST) +
+    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList +
+                                     sizeof (EFI_SIGNATURE_LIST) +
                                      SigList->SignatureHeaderSize);
 
     TrustCert     = SigData->SignatureData;
@@ -924,7 +1011,15 @@ P7CheckTrustByHash (
     //
     // Verifying the PKCS#7 SignedData with the trusted certificate from AllowedDb
     //
-    if (AuthenticodeVerify (SignedData, SignedDataSize, TrustCert, TrustCertSize, InHash, InHashSize)) {
+    if (AuthenticodeVerify (
+          SignedData,
+          SignedDataSize,
+          TrustCert,
+          TrustCertSize,
+          InHash,
+          InHashSize
+          ))
+    {
       //
       // The SignedData was verified successfully by one entry in Trusted Database
       //
@@ -1009,7 +1104,8 @@ P7CheckTrust (
       continue;
     }
 
-    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList + sizeof (EFI_SIGNATURE_LIST) +
+    SigData = (EFI_SIGNATURE_DATA *)((UINT8 *)SigList +
+                                     sizeof (EFI_SIGNATURE_LIST) +
                                      SigList->SignatureHeaderSize);
 
     TrustCert     = SigData->SignatureData;
@@ -1018,7 +1114,15 @@ P7CheckTrust (
     //
     // Verifying the PKCS#7 SignedData with the trusted certificate from AllowedDb
     //
-    if (Pkcs7Verify (SignedData, SignedDataSize, TrustCert, TrustCertSize, InData, InDataSize)) {
+    if (Pkcs7Verify (
+          SignedData,
+          SignedDataSize,
+          TrustCert,
+          TrustCertSize,
+          InData,
+          InDataSize
+          ))
+    {
       //
       // The SignedData was verified successfully by one entry in Trusted Database
       //
@@ -1478,7 +1582,11 @@ Pkcs7VerifyDriverEntry (
   //
   // Avoid loading a second copy if this is built as an external module
   //
-  Status = gBS->LocateProtocol (&gEfiPkcs7VerifyProtocolGuid, NULL, (VOID **)&Useless);
+  Status = gBS->LocateProtocol (
+                  &gEfiPkcs7VerifyProtocolGuid,
+                  NULL,
+                  (VOID **)&Useless
+                  );
   if (!EFI_ERROR (Status)) {
     return EFI_ABORTED;
   }

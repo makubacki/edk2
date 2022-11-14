@@ -34,7 +34,12 @@ Tcg2PhysicalPresenceLibGetManagementFlags (
   EFI_TCG2_PHYSICAL_PRESENCE_FLAGS  PpiFlags;
   UINTN                             DataSize;
 
-  Status = PeiServicesLocatePpi (&gEfiPeiReadOnlyVariable2PpiGuid, 0, NULL, (VOID **)&VariablePpi);
+  Status = PeiServicesLocatePpi (
+             &gEfiPeiReadOnlyVariable2PpiGuid,
+             0,
+             NULL,
+             (VOID **)&VariablePpi
+             );
   ASSERT_EFI_ERROR (Status);
 
   DataSize = sizeof (EFI_TCG2_PHYSICAL_PRESENCE_FLAGS);

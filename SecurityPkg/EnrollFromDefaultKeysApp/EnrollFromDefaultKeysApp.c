@@ -43,7 +43,10 @@ UefiMain (
 
   Status = GetSetupMode (&SetupMode);
   if (EFI_ERROR (Status)) {
-    AsciiPrint ("EnrollFromDefaultKeysApp: Cannot get SetupMode variable: %r\n", Status);
+    AsciiPrint (
+      "EnrollFromDefaultKeysApp: Cannot get SetupMode variable: %r\n",
+      Status
+      );
     return 1;
   }
 
@@ -54,7 +57,10 @@ UefiMain (
 
   Status = SetSecureBootMode (CUSTOM_SECURE_BOOT_MODE);
   if (EFI_ERROR (Status)) {
-    AsciiPrint ("EnrollFromDefaultKeysApp: Cannot set CUSTOM_SECURE_BOOT_MODE: %r\n", Status);
+    AsciiPrint (
+      "EnrollFromDefaultKeysApp: Cannot set CUSTOM_SECURE_BOOT_MODE: %r\n",
+      Status
+      );
     return 1;
   }
 

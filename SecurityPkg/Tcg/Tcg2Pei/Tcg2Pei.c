@@ -49,8 +49,8 @@ typedef struct {
 } TCG2_EVENT_INFO_STRUCT;
 
 TCG2_EVENT_INFO_STRUCT  mTcg2EventInfo[] = {
-  { &gTcgEventEntryHobGuid,  EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 },
-  { &gTcgEvent2EntryHobGuid, EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   },
+  { &gTcgEventEntryHobGuid,  EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2   },
+  { &gTcgEvent2EntryHobGuid, EFI_TCG2_EVENT_LOG_FORMAT_TCG_2     },
 };
 
 BOOLEAN              mImageInMemory = FALSE;
@@ -185,7 +185,8 @@ EFI_PEI_NOTIFY_DESCRIPTOR  mNotifyList[] = {
     FirmwareVolumeInfoPpiNotifyCallback
   },
   {
-    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+     EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
     &gEfiEndOfPeiSignalPpiGuid,
     EndofPeiSignalNotifyCallBack
   }
@@ -225,7 +226,8 @@ EndofPeiSignalNotifyCallBack (
   //
   MeasuredHobData = BuildGuidHob (
                       &gMeasuredFvHobGuid,
-                      sizeof (UINTN) + sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * (mMeasuredBaseFvIndex + mMeasuredChildFvIndex)
+                      sizeof (UINTN) + sizeof (EFI_PLATFORM_FIRMWARE_BLOB) *
+                      (mMeasuredBaseFvIndex + mMeasuredChildFvIndex)
                       );
 
   if (MeasuredHobData != NULL) {
@@ -237,12 +239,21 @@ EndofPeiSignalNotifyCallBack (
     //
     // Save measured base Fv info
     //
-    CopyMem (MeasuredHobData->MeasuredFvBuf, mMeasuredBaseFvInfo, sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * (mMeasuredBaseFvIndex));
+    CopyMem (
+      MeasuredHobData->MeasuredFvBuf,
+      mMeasuredBaseFvInfo,
+      sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * (mMeasuredBaseFvIndex)
+      );
 
     //
     // Save measured child Fv info
     //
-    CopyMem (&MeasuredHobData->MeasuredFvBuf[mMeasuredBaseFvIndex], mMeasuredChildFvInfo, sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * (mMeasuredChildFvIndex));
+    CopyMem (
+      &MeasuredHobData->MeasuredFvBuf[mMeasuredBaseFvIndex],
+      mMeasuredChildFvInfo,
+      sizeof (EFI_PLATFORM_FIRMWARE_BLOB) *
+      (mMeasuredChildFvIndex)
+      );
   }
 
   PERF_CALLBACK_END (&gEfiEndOfPeiSignalPpiGuid);
@@ -272,11 +283,22 @@ SyncPcrAllocationsAndPcrMask (
   //
   // Determine the current TPM support and the Platform PCR mask.
   //
-  Status = Tpm2GetCapabilitySupportedAndActivePcrs (&TpmHashAlgorithmBitmap, &TpmActivePcrBanks);
+  Status = Tpm2GetCapabilitySupportedAndActivePcrs (
+             &TpmHashAlgorithmBitmap,
+             &TpmActivePcrBanks
+             );
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "Tpm2GetCapabilitySupportedAndActivePcrs - TpmHashAlgorithmBitmap: 0x%08x\n", TpmHashAlgorithmBitmap));
-  DEBUG ((DEBUG_INFO, "Tpm2GetCapabilitySupportedAndActivePcrs - TpmActivePcrBanks 0x%08x\n", TpmActivePcrBanks));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tpm2GetCapabilitySupportedAndActivePcrs - TpmHashAlgorithmBitmap: 0x%08x\n",
+    TpmHashAlgorithmBitmap
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tpm2GetCapabilitySupportedAndActivePcrs - TpmActivePcrBanks 0x%08x\n",
+    TpmActivePcrBanks
+    ));
 
   Tpm2PcrMask = PcdGet32 (PcdTpm2HashMask);
   if (Tpm2PcrMask == 0) {
@@ -300,31 +322,66 @@ SyncPcrAllocationsAndPcrMask (
   // Note: When the HashLibBaseCryptoRouter solution is used, the hash algorithm support from BIOS is reported
   //       by Tcg2HashAlgorithmBitmap, which is populated by HashLib instances at runtime.
   BiosHashAlgorithmBitmap = PcdGet32 (PcdTcg2HashAlgorithmBitmap);
-  DEBUG ((DEBUG_INFO, "Tcg2HashAlgorithmBitmap: 0x%08x\n", BiosHashAlgorithmBitmap));
+  DEBUG ((
+    DEBUG_INFO,
+    "Tcg2HashAlgorithmBitmap: 0x%08x\n",
+    BiosHashAlgorithmBitmap
+    ));
 
   if (((TpmActivePcrBanks & Tpm2PcrMask) != TpmActivePcrBanks) ||
       ((TpmActivePcrBanks & BiosHashAlgorithmBitmap) != TpmActivePcrBanks))
   {
-    DEBUG ((DEBUG_INFO, "TpmActivePcrBanks & Tpm2PcrMask = 0x%08x\n", (TpmActivePcrBanks & Tpm2PcrMask)));
-    DEBUG ((DEBUG_INFO, "TpmActivePcrBanks & BiosHashAlgorithmBitmap = 0x%08x\n", (TpmActivePcrBanks & BiosHashAlgorithmBitmap)));
+    DEBUG ((
+      DEBUG_INFO,
+      "TpmActivePcrBanks & Tpm2PcrMask = 0x%08x\n",
+      (TpmActivePcrBanks & Tpm2PcrMask)
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "TpmActivePcrBanks & BiosHashAlgorithmBitmap = 0x%08x\n",
+      (TpmActivePcrBanks & BiosHashAlgorithmBitmap)
+      ));
     NewTpmActivePcrBanks  = TpmActivePcrBanks;
     NewTpmActivePcrBanks &= Tpm2PcrMask;
     NewTpmActivePcrBanks &= BiosHashAlgorithmBitmap;
     DEBUG ((DEBUG_INFO, "NewTpmActivePcrBanks 0x%08x\n", NewTpmActivePcrBanks));
 
-    DEBUG ((DEBUG_INFO, "%a - Reallocating PCR banks from 0x%X to 0x%X.\n", __FUNCTION__, TpmActivePcrBanks, NewTpmActivePcrBanks));
+    DEBUG ((
+      DEBUG_INFO,
+      "%a - Reallocating PCR banks from 0x%X to 0x%X.\n",
+      __FUNCTION__,
+      TpmActivePcrBanks,
+      NewTpmActivePcrBanks
+      ));
 
     if (NewTpmActivePcrBanks == 0) {
-      DEBUG ((DEBUG_ERROR, "%a - No viable PCRs active! Please set a less restrictive value for PcdTpm2HashMask!\n", __FUNCTION__));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a - No viable PCRs active! Please set a less restrictive value for PcdTpm2HashMask!\n",
+        __FUNCTION__
+        ));
       ASSERT (FALSE);
     } else {
-      DEBUG ((DEBUG_ERROR, "Tpm2PcrAllocateBanks (TpmHashAlgorithmBitmap: 0x%08x, NewTpmActivePcrBanks: 0x%08x)\n", TpmHashAlgorithmBitmap, NewTpmActivePcrBanks));
-      Status = Tpm2PcrAllocateBanks (NULL, (UINT32)TpmHashAlgorithmBitmap, NewTpmActivePcrBanks);
+      DEBUG ((
+        DEBUG_ERROR,
+        "Tpm2PcrAllocateBanks (TpmHashAlgorithmBitmap: 0x%08x, NewTpmActivePcrBanks: 0x%08x)\n",
+        TpmHashAlgorithmBitmap,
+        NewTpmActivePcrBanks
+        ));
+      Status = Tpm2PcrAllocateBanks (
+                 NULL,
+                 (UINT32)TpmHashAlgorithmBitmap,
+                 NewTpmActivePcrBanks
+                 );
       if (EFI_ERROR (Status)) {
         //
         // We can't do much here, but we hope that this doesn't happen.
         //
-        DEBUG ((DEBUG_ERROR, "%a - Failed to reallocate PCRs!\n", __FUNCTION__));
+        DEBUG ((
+          DEBUG_ERROR,
+          "%a - Failed to reallocate PCRs!\n",
+          __FUNCTION__
+          ));
         ASSERT_EFI_ERROR (Status);
       }
 
@@ -342,9 +399,19 @@ SyncPcrAllocationsAndPcrMask (
   if ((Tpm2PcrMask & TpmHashAlgorithmBitmap) != Tpm2PcrMask) {
     NewTpm2PcrMask = Tpm2PcrMask & TpmHashAlgorithmBitmap;
 
-    DEBUG ((DEBUG_INFO, "%a - Updating PcdTpm2HashMask from 0x%X to 0x%X.\n", __FUNCTION__, Tpm2PcrMask, NewTpm2PcrMask));
+    DEBUG ((
+      DEBUG_INFO,
+      "%a - Updating PcdTpm2HashMask from 0x%X to 0x%X.\n",
+      __FUNCTION__,
+      Tpm2PcrMask,
+      NewTpm2PcrMask
+      ));
     if (NewTpm2PcrMask == 0) {
-      DEBUG ((DEBUG_ERROR, "%a - No viable PCRs supported! Please set a less restrictive value for PcdTpm2HashMask!\n", __FUNCTION__));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a - No viable PCRs supported! Please set a less restrictive value for PcdTpm2HashMask!\n",
+        __FUNCTION__
+        ));
       ASSERT (FALSE);
     }
 
@@ -379,15 +446,26 @@ LogHashEvent (
   TCG_PCR_EVENT2  *TcgPcrEvent2;
   UINT8           *DigestBuffer;
 
-  SupportedEventLogs = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 | EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
+  SupportedEventLogs = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 |
+                       EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
 
   RetStatus = EFI_SUCCESS;
-  for (Index = 0; Index < sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]); Index++) {
+  for (Index = 0; Index < sizeof (mTcg2EventInfo)/sizeof (mTcg2EventInfo[0]);
+       Index++)
+  {
     if ((SupportedEventLogs & mTcg2EventInfo[Index].LogFormat) != 0) {
-      DEBUG ((DEBUG_INFO, "  LogFormat - 0x%08x\n", mTcg2EventInfo[Index].LogFormat));
+      DEBUG ((
+        DEBUG_INFO,
+        "  LogFormat - 0x%08x\n",
+        mTcg2EventInfo[Index].LogFormat
+        ));
       switch (mTcg2EventInfo[Index].LogFormat) {
         case EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2:
-          Status = GetDigestFromDigestList (TPM_ALG_SHA1, DigestList, &NewEventHdr->Digest);
+          Status = GetDigestFromDigestList (
+                     TPM_ALG_SHA1,
+                     DigestList,
+                     &NewEventHdr->Digest
+                     );
           if (!EFI_ERROR (Status)) {
             HobData = BuildGuidHob (
                         &gTcgEventEntryHobGuid,
@@ -411,7 +489,10 @@ LogHashEvent (
           //
           HobData = BuildGuidHob (
                       &gTcgEvent2EntryHobGuid,
-                      sizeof (TcgPcrEvent2->PCRIndex) + sizeof (TcgPcrEvent2->EventType) + GetDigestListSize (DigestList) + sizeof (TcgPcrEvent2->EventSize) + NewEventHdr->EventSize
+                      sizeof (TcgPcrEvent2->PCRIndex) +
+                      sizeof (TcgPcrEvent2->EventType) + GetDigestListSize (
+                                                           DigestList) +
+                      sizeof (TcgPcrEvent2->EventSize) + NewEventHdr->EventSize
                       );
           if (HobData == NULL) {
             RetStatus = EFI_OUT_OF_RESOURCES;
@@ -422,8 +503,16 @@ LogHashEvent (
           TcgPcrEvent2->PCRIndex  = NewEventHdr->PCRIndex;
           TcgPcrEvent2->EventType = NewEventHdr->EventType;
           DigestBuffer            = (UINT8 *)&TcgPcrEvent2->Digest;
-          DigestBuffer            = CopyDigestListToBuffer (DigestBuffer, DigestList, PcdGet32 (PcdTpm2HashMask));
-          CopyMem (DigestBuffer, &NewEventHdr->EventSize, sizeof (TcgPcrEvent2->EventSize));
+          DigestBuffer            = CopyDigestListToBuffer (
+                                      DigestBuffer,
+                                      DigestList,
+                                      PcdGet32 (PcdTpm2HashMask)
+                                      );
+          CopyMem (
+            DigestBuffer,
+            &NewEventHdr->EventSize,
+            sizeof (TcgPcrEvent2->EventSize)
+            );
           DigestBuffer = DigestBuffer + sizeof (TcgPcrEvent2->EventSize);
           CopyMem (DigestBuffer, NewEventData, NewEventHdr->EventSize);
           break;
@@ -473,7 +562,10 @@ HashLogExtendEvent (
     return EFI_DEVICE_ERROR;
   }
 
-  if (((Flags & EDKII_TCG_PRE_HASH) != 0) || ((Flags & EDKII_TCG_PRE_HASH_LOG_ONLY) != 0)) {
+  if (((Flags & EDKII_TCG_PRE_HASH) != 0) || ((Flags &
+                                               EDKII_TCG_PRE_HASH_LOG_ONLY) !=
+                                              0))
+  {
     ZeroMem (&DigestList, sizeof (DigestList));
     CopyMem (&DigestList, HashData, sizeof (DigestList));
     Status = EFI_SUCCESS;
@@ -530,7 +622,11 @@ MeasureCRTMVersion (
 
   TcgEventHdr.PCRIndex  = 0;
   TcgEventHdr.EventType = EV_S_CRTM_VERSION;
-  TcgEventHdr.EventSize = (UINT32)StrSize ((CHAR16 *)PcdGetPtr (PcdFirmwareVersionString));
+  TcgEventHdr.EventSize = (UINT32)StrSize (
+                                    (CHAR16 *)PcdGetPtr (
+                                                PcdFirmwareVersionString
+                                                )
+                                    );
 
   return HashLogExtendEvent (
            &mEdkiiTcgPpi,
@@ -579,11 +675,15 @@ GetFvName (
     return NULL;
   }
 
-  if (FvHeader->ExtHeaderOffset + sizeof (EFI_FIRMWARE_VOLUME_EXT_HEADER) > FvLength) {
+  if (FvHeader->ExtHeaderOffset + sizeof (EFI_FIRMWARE_VOLUME_EXT_HEADER) >
+      FvLength)
+  {
     return NULL;
   }
 
-  FvExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)(UINTN)(FvBase + FvHeader->ExtHeaderOffset);
+  FvExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)(UINTN)(FvBase +
+                                                          FvHeader->
+                                                            ExtHeaderOffset);
 
   return &FvExtHeader->FvName;
 }
@@ -607,25 +707,26 @@ MeasureFvImage (
   IN UINT64                FvLength
   )
 {
-  UINT32                                                 Index;
-  EFI_STATUS                                             Status;
-  EFI_PLATFORM_FIRMWARE_BLOB                             FvBlob;
-  FV_HANDOFF_TABLE_POINTERS2                             FvBlob2;
-  VOID                                                   *EventData;
-  VOID                                                   *FvName;
-  TCG_PCR_EVENT_HDR                                      TcgEventHdr;
-  UINT32                                                 Instance;
-  UINT32                                                 Tpm2HashMask;
-  TPML_DIGEST_VALUES                                     DigestList;
-  UINT32                                                 DigestCount;
-  EFI_PEI_FIRMWARE_VOLUME_INFO_MEASUREMENT_EXCLUDED_PPI  *MeasurementExcludedFvPpi;
-  EDKII_PEI_FIRMWARE_VOLUME_INFO_PREHASHED_FV_PPI        *PrehashedFvPpi;
-  HASH_INFO                                              *PreHashInfo;
-  UINT32                                                 HashAlgoMask;
-  EFI_PHYSICAL_ADDRESS                                   FvOrgBase;
-  EFI_PHYSICAL_ADDRESS                                   FvDataBase;
-  EFI_PEI_HOB_POINTERS                                   Hob;
-  EDKII_MIGRATED_FV_INFO                                 *MigratedFvInfo;
+  UINT32                      Index;
+  EFI_STATUS                  Status;
+  EFI_PLATFORM_FIRMWARE_BLOB  FvBlob;
+  FV_HANDOFF_TABLE_POINTERS2  FvBlob2;
+  VOID                        *EventData;
+  VOID                        *FvName;
+  TCG_PCR_EVENT_HDR           TcgEventHdr;
+  UINT32                      Instance;
+  UINT32                      Tpm2HashMask;
+  TPML_DIGEST_VALUES          DigestList;
+  UINT32                      DigestCount;
+  EFI_PEI_FIRMWARE_VOLUME_INFO_MEASUREMENT_EXCLUDED_PPI  *
+                                                   MeasurementExcludedFvPpi;
+  EDKII_PEI_FIRMWARE_VOLUME_INFO_PREHASHED_FV_PPI  *PrehashedFvPpi;
+  HASH_INFO                                        *PreHashInfo;
+  UINT32                                           HashAlgoMask;
+  EFI_PHYSICAL_ADDRESS                             FvOrgBase;
+  EFI_PHYSICAL_ADDRESS                             FvDataBase;
+  EFI_PEI_HOB_POINTERS                             Hob;
+  EDKII_MIGRATED_FV_INFO                           *MigratedFvInfo;
 
   //
   // Check Excluded FV list
@@ -643,8 +744,16 @@ MeasureFvImage (
         if (  (MeasurementExcludedFvPpi->Fv[Index].FvBase == FvBase)
            && (MeasurementExcludedFvPpi->Fv[Index].FvLength == FvLength))
         {
-          DEBUG ((DEBUG_INFO, "The FV which is excluded by Tcg2Pei starts at: 0x%x\n", FvBase));
-          DEBUG ((DEBUG_INFO, "The FV which is excluded by Tcg2Pei has the size: 0x%x\n", FvLength));
+          DEBUG ((
+            DEBUG_INFO,
+            "The FV which is excluded by Tcg2Pei starts at: 0x%x\n",
+            FvBase
+            ));
+          DEBUG ((
+            DEBUG_INFO,
+            "The FV which is excluded by Tcg2Pei has the size: 0x%x\n",
+            FvLength
+            ));
           return EFI_SUCCESS;
         }
       }
@@ -657,9 +766,19 @@ MeasureFvImage (
   // Check measured FV list
   //
   for (Index = 0; Index < mMeasuredBaseFvIndex; Index++) {
-    if ((mMeasuredBaseFvInfo[Index].BlobBase == FvBase) && (mMeasuredBaseFvInfo[Index].BlobLength == FvLength)) {
-      DEBUG ((DEBUG_INFO, "The FV which is already measured by Tcg2Pei starts at: 0x%x\n", FvBase));
-      DEBUG ((DEBUG_INFO, "The FV which is already measured by Tcg2Pei has the size: 0x%x\n", FvLength));
+    if ((mMeasuredBaseFvInfo[Index].BlobBase == FvBase) &&
+        (mMeasuredBaseFvInfo[Index].BlobLength == FvLength))
+    {
+      DEBUG ((
+        DEBUG_INFO,
+        "The FV which is already measured by Tcg2Pei starts at: 0x%x\n",
+        FvBase
+        ));
+      DEBUG ((
+        DEBUG_INFO,
+        "The FV which is already measured by Tcg2Pei has the size: 0x%x\n",
+        FvLength
+        ));
       return EFI_SUCCESS;
     }
   }
@@ -676,7 +795,9 @@ MeasureFvImage (
                NULL,
                (VOID **)&PrehashedFvPpi
                );
-    if (!EFI_ERROR (Status) && (PrehashedFvPpi->FvBase == FvBase) && (PrehashedFvPpi->FvLength == FvLength)) {
+    if (!EFI_ERROR (Status) && (PrehashedFvPpi->FvBase == FvBase) &&
+        (PrehashedFvPpi->FvLength == FvLength))
+    {
       ZeroMem (&DigestList, sizeof (TPML_DIGEST_VALUES));
 
       //
@@ -684,13 +805,20 @@ MeasureFvImage (
       //
       PreHashInfo = (HASH_INFO *)(PrehashedFvPpi + 1);
       for (Index = 0, DigestCount = 0; Index < PrehashedFvPpi->Count; Index++) {
-        DEBUG ((DEBUG_INFO, "Hash Algo ID in PrehashedFvPpi=0x%x\n", PreHashInfo->HashAlgoId));
+        DEBUG ((
+          DEBUG_INFO,
+          "Hash Algo ID in PrehashedFvPpi=0x%x\n",
+          PreHashInfo->HashAlgoId
+          ));
         HashAlgoMask = GetHashMaskFromAlgo (PreHashInfo->HashAlgoId);
         if ((Tpm2HashMask & HashAlgoMask) != 0 ) {
           //
           // Hash is required, copy it to DigestList
           //
-          WriteUnaligned16 (&(DigestList.digests[DigestCount].hashAlg), PreHashInfo->HashAlgoId);
+          WriteUnaligned16 (
+            &(DigestList.digests[DigestCount].hashAlg),
+            PreHashInfo->HashAlgoId
+            );
           CopyMem (
             &DigestList.digests[DigestCount].digest,
             PreHashInfo + 1,
@@ -703,7 +831,8 @@ MeasureFvImage (
           Tpm2HashMask &= ~HashAlgoMask;
         }
 
-        PreHashInfo = (HASH_INFO *)((UINT8 *)(PreHashInfo + 1) + PreHashInfo->HashSize);
+        PreHashInfo = (HASH_INFO *)((UINT8 *)(PreHashInfo + 1) +
+                                    PreHashInfo->HashSize);
       }
 
       WriteUnaligned32 (&DigestList.count, DigestCount);
@@ -722,7 +851,9 @@ MeasureFvImage (
   Hob.Raw    = GetFirstGuidHob (&gEdkiiMigratedFvInfoGuid);
   while (Hob.Raw != NULL) {
     MigratedFvInfo = GET_GUID_HOB_DATA (Hob);
-    if ((MigratedFvInfo->FvNewBase == (UINT32)FvBase) && (MigratedFvInfo->FvLength == (UINT32)FvLength)) {
+    if ((MigratedFvInfo->FvNewBase == (UINT32)FvBase) &&
+        (MigratedFvInfo->FvLength == (UINT32)FvLength))
+    {
       //
       // Found the migrated FV info
       //
@@ -738,12 +869,23 @@ MeasureFvImage (
   //
   // Init the log event for FV measurement
   //
-  if (PcdGet32 (PcdTcgPfpMeasurementRevision) >= TCG_EfiSpecIDEventStruct_SPEC_ERRATA_TPM2_REV_105) {
+  if (PcdGet32 (PcdTcgPfpMeasurementRevision) >=
+      TCG_EfiSpecIDEventStruct_SPEC_ERRATA_TPM2_REV_105)
+  {
     FvBlob2.BlobDescriptionSize = sizeof (FvBlob2.BlobDescription);
-    CopyMem (FvBlob2.BlobDescription, FV_HANDOFF_TABLE_DESC, sizeof (FvBlob2.BlobDescription));
+    CopyMem (
+      FvBlob2.BlobDescription,
+      FV_HANDOFF_TABLE_DESC,
+      sizeof (FvBlob2.BlobDescription)
+      );
     FvName = GetFvName (FvBase, FvLength);
     if (FvName != NULL) {
-      AsciiSPrint ((CHAR8 *)FvBlob2.BlobDescription, sizeof (FvBlob2.BlobDescription), "Fv(%g)", FvName);
+      AsciiSPrint (
+        (CHAR8 *)FvBlob2.BlobDescription,
+        sizeof (FvBlob2.BlobDescription),
+        "Fv(%g)",
+        FvName
+        );
     }
 
     FvBlob2.BlobBase      = FvOrgBase;
@@ -774,8 +916,16 @@ MeasureFvImage (
                &TcgEventHdr,                // EventHdr
                EventData                    // EventData
                );
-    DEBUG ((DEBUG_INFO, "The pre-hashed FV which is extended & logged by Tcg2Pei starts at: 0x%x\n", FvBase));
-    DEBUG ((DEBUG_INFO, "The pre-hashed FV which is extended & logged by Tcg2Pei has the size: 0x%x\n", FvLength));
+    DEBUG ((
+      DEBUG_INFO,
+      "The pre-hashed FV which is extended & logged by Tcg2Pei starts at: 0x%x\n",
+      FvBase
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "The pre-hashed FV which is extended & logged by Tcg2Pei has the size: 0x%x\n",
+      FvLength
+      ));
   } else {
     //
     // Hash the FV, extend digest to the TPM and log TCG event
@@ -788,12 +938,24 @@ MeasureFvImage (
                &TcgEventHdr,               // EventHdr
                EventData                   // EventData
                );
-    DEBUG ((DEBUG_INFO, "The FV which is measured by Tcg2Pei starts at: 0x%x\n", FvBase));
-    DEBUG ((DEBUG_INFO, "The FV which is measured by Tcg2Pei has the size: 0x%x\n", FvLength));
+    DEBUG ((
+      DEBUG_INFO,
+      "The FV which is measured by Tcg2Pei starts at: 0x%x\n",
+      FvBase
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "The FV which is measured by Tcg2Pei has the size: 0x%x\n",
+      FvLength
+      ));
   }
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "The FV which failed to be measured starts at: 0x%x\n", FvBase));
+    DEBUG ((
+      DEBUG_ERROR,
+      "The FV which failed to be measured starts at: 0x%x\n",
+      FvBase
+      ));
     return Status;
   }
 
@@ -802,12 +964,16 @@ MeasureFvImage (
   //
   if (mMeasuredBaseFvIndex >= mMeasuredMaxBaseFvIndex) {
     mMeasuredBaseFvInfo = ReallocatePool (
-                            sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * mMeasuredMaxBaseFvIndex,
-                            sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * (mMeasuredMaxBaseFvIndex + FIRMWARE_BLOB_GROWTH_STEP),
+                            sizeof (EFI_PLATFORM_FIRMWARE_BLOB) *
+                            mMeasuredMaxBaseFvIndex,
+                            sizeof (EFI_PLATFORM_FIRMWARE_BLOB) *
+                            (mMeasuredMaxBaseFvIndex +
+                             FIRMWARE_BLOB_GROWTH_STEP),
                             mMeasuredBaseFvInfo
                             );
     ASSERT (mMeasuredBaseFvInfo != NULL);
-    mMeasuredMaxBaseFvIndex = mMeasuredMaxBaseFvIndex + FIRMWARE_BLOB_GROWTH_STEP;
+    mMeasuredMaxBaseFvIndex = mMeasuredMaxBaseFvIndex +
+                              FIRMWARE_BLOB_GROWTH_STEP;
   }
 
   mMeasuredBaseFvInfo[mMeasuredBaseFvIndex].BlobBase   = FvBase;
@@ -864,7 +1030,10 @@ MeasureMainBios (
              );
   ASSERT_EFI_ERROR (Status);
 
-  Status = MeasureFvImage ((EFI_PHYSICAL_ADDRESS)(UINTN)VolumeInfo.FvStart, VolumeInfo.FvSize);
+  Status = MeasureFvImage (
+             (EFI_PHYSICAL_ADDRESS)(UINTN)VolumeInfo.FvStart,
+             VolumeInfo.FvSize
+             );
 
   PERF_END_EX (mFileHandle, "EventRec", "Tcg2Pei", 0, PERF_ID_TCG2_PEI + 1);
 
@@ -917,30 +1086,40 @@ FirmwareVolumeInfoPpiNotifyCallback (
   if ((Fv->ParentFvName != NULL) || (Fv->ParentFileName != NULL)) {
     if (mMeasuredChildFvIndex >= mMeasuredMaxChildFvIndex) {
       mMeasuredChildFvInfo = ReallocatePool (
-                               sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * mMeasuredMaxChildFvIndex,
-                               sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * (mMeasuredMaxChildFvIndex + FIRMWARE_BLOB_GROWTH_STEP),
+                               sizeof (EFI_PLATFORM_FIRMWARE_BLOB) *
+                               mMeasuredMaxChildFvIndex,
+                               sizeof (EFI_PLATFORM_FIRMWARE_BLOB) *
+                               (mMeasuredMaxChildFvIndex +
+                                FIRMWARE_BLOB_GROWTH_STEP),
                                mMeasuredChildFvInfo
                                );
       ASSERT (mMeasuredChildFvInfo != NULL);
-      mMeasuredMaxChildFvIndex = mMeasuredMaxChildFvIndex + FIRMWARE_BLOB_GROWTH_STEP;
+      mMeasuredMaxChildFvIndex = mMeasuredMaxChildFvIndex +
+                                 FIRMWARE_BLOB_GROWTH_STEP;
     }
 
     //
     // Check whether FV is in the measured child FV list.
     //
     for (Index = 0; Index < mMeasuredChildFvIndex; Index++) {
-      if (mMeasuredChildFvInfo[Index].BlobBase == (EFI_PHYSICAL_ADDRESS)(UINTN)Fv->FvInfo) {
+      if (mMeasuredChildFvInfo[Index].BlobBase ==
+          (EFI_PHYSICAL_ADDRESS)(UINTN)Fv->FvInfo)
+      {
         return EFI_SUCCESS;
       }
     }
 
-    mMeasuredChildFvInfo[mMeasuredChildFvIndex].BlobBase   = (EFI_PHYSICAL_ADDRESS)(UINTN)Fv->FvInfo;
+    mMeasuredChildFvInfo[mMeasuredChildFvIndex].BlobBase =
+      (EFI_PHYSICAL_ADDRESS)(UINTN)Fv->FvInfo;
     mMeasuredChildFvInfo[mMeasuredChildFvIndex].BlobLength = Fv->FvInfoSize;
     mMeasuredChildFvIndex++;
     return EFI_SUCCESS;
   }
 
-  return MeasureFvImage ((EFI_PHYSICAL_ADDRESS)(UINTN)Fv->FvInfo, Fv->FvInfoSize);
+  return MeasureFvImage (
+           (EFI_PHYSICAL_ADDRESS)(UINTN)Fv->FvInfo,
+           Fv->FvInfoSize
+           );
 }
 
 /**
@@ -1010,7 +1189,14 @@ MeasureSeparatorEventWithError (
   TcgEvent.PCRIndex  = PCRIndex;
   TcgEvent.EventType = EV_SEPARATOR;
   TcgEvent.EventSize = (UINT32)sizeof (EventData);
-  return HashLogExtendEvent (&mEdkiiTcgPpi, 0, (UINT8 *)&EventData, TcgEvent.EventSize, &TcgEvent, (UINT8 *)&EventData);
+  return HashLogExtendEvent (
+           &mEdkiiTcgPpi,
+           0,
+           (UINT8 *)&EventData,
+           TcgEvent.EventSize,
+           &TcgEvent,
+           (UINT8 *)&EventData
+           );
 }
 
 /**
@@ -1035,8 +1221,14 @@ PeimEntryMA (
   TPM_PCRINDEX   PcrIndex;
   BOOLEAN        S3ErrorReport;
 
-  if (CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceNoneGuid) ||
-      CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm12Guid))
+  if (CompareGuid (
+        PcdGetPtr (PcdTpmInstanceGuid),
+        &gEfiTpmDeviceInstanceNoneGuid
+        ) ||
+      CompareGuid (
+        PcdGetPtr (PcdTpmInstanceGuid),
+        &gEfiTpmDeviceInstanceTpm12Guid
+        ))
   {
     DEBUG ((DEBUG_INFO, "No TPM2 instance required!\n"));
     return EFI_UNSUPPORTED;
@@ -1108,7 +1300,10 @@ PeimEntryMA (
       for (PcrIndex = 0; PcrIndex < 8; PcrIndex++) {
         Status = MeasureSeparatorEventWithError (PcrIndex);
         if (EFI_ERROR (Status)) {
-          DEBUG ((DEBUG_ERROR, "Separator Event with Error not Measured. Error!\n"));
+          DEBUG ((
+            DEBUG_ERROR,
+            "Separator Event with Error not Measured. Error!\n"
+            ));
         }
       }
     }

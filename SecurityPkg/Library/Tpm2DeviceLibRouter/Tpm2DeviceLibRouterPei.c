@@ -115,8 +115,16 @@ Tpm2RegisterTpm2DeviceLib (
 {
   TPM2_DEVICE_INTERFACE  *Tpm2DeviceInterface;
 
-  if (!CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &Tpm2Device->ProviderGuid)) {
-    DEBUG ((DEBUG_WARN, "WARNING: Tpm2RegisterTpm2DeviceLib - does not support %g registration\n", &Tpm2Device->ProviderGuid));
+  if (!CompareGuid (
+         PcdGetPtr (PcdTpmInstanceGuid),
+         &Tpm2Device->ProviderGuid
+         ))
+  {
+    DEBUG ((
+      DEBUG_WARN,
+      "WARNING: Tpm2RegisterTpm2DeviceLib - does not support %g registration\n",
+      &Tpm2Device->ProviderGuid
+      ));
     return EFI_UNSUPPORTED;
   }
 
@@ -129,7 +137,11 @@ Tpm2RegisterTpm2DeviceLib (
     CopyMem (Tpm2DeviceInterface, Tpm2Device, sizeof (*Tpm2Device));
     return EFI_SUCCESS;
   } else {
-    Tpm2Device = BuildGuidDataHob (&mInternalTpm2DeviceInterfaceGuid, Tpm2Device, sizeof (*Tpm2Device));
+    Tpm2Device = BuildGuidDataHob (
+                   &mInternalTpm2DeviceInterfaceGuid,
+                   Tpm2Device,
+                   sizeof (*Tpm2Device)
+                   );
     if (Tpm2Device != NULL) {
       return EFI_SUCCESS;
     } else {

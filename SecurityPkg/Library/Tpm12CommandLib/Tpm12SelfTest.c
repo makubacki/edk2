@@ -40,13 +40,24 @@ Tpm12ContinueSelfTest (
   Command.paramSize = SwapBytes32 (sizeof (Command));
   Command.ordinal   = SwapBytes32 (TPM_ORD_ContinueSelfTest);
   Length            = sizeof (Response);
-  Status            = Tpm12SubmitCommand (sizeof (Command), (UINT8 *)&Command, &Length, (UINT8 *)&Response);
+  Status            = Tpm12SubmitCommand (
+                        sizeof (Command),
+                        (UINT8 *)&Command,
+                        &Length,
+                        (UINT8 *)&Response
+                        );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (SwapBytes32 (Response.returnCode) != TPM_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm12ContinueSelfTest: Response Code error! 0x%08x\r\n", SwapBytes32 (Response.returnCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm12ContinueSelfTest: Response Code error! 0x%08x\r\n",
+      SwapBytes32 (
+        Response.returnCode
+        )
+      ));
     return EFI_DEVICE_ERROR;
   }
 

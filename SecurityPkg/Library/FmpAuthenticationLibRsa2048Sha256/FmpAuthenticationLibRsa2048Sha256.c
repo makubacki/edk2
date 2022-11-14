@@ -76,16 +76,45 @@ FmpAuthenticatedHandlerRsa2048Sha256 (
   VOID                            *HashContext;
   VOID                            *Rsa;
 
-  DEBUG ((DEBUG_INFO, "FmpAuthenticatedHandlerRsa2048Sha256 - Image: 0x%08x - 0x%08x\n", (UINTN)Image, (UINTN)ImageSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "FmpAuthenticatedHandlerRsa2048Sha256 - Image: 0x%08x - 0x%08x\n",
+    (UINTN)Image,
+    (UINTN)ImageSize
+    ));
 
-  if (Image->AuthInfo.Hdr.dwLength != OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData) + sizeof (EFI_CERT_BLOCK_RSA_2048_SHA256)) {
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256 - dwLength: 0x%04x, dwLength - 0x%04x\n", (UINTN)Image->AuthInfo.Hdr.dwLength, (UINTN)OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData) + sizeof (EFI_CERT_BLOCK_RSA_2048_SHA256)));
+  if (Image->AuthInfo.Hdr.dwLength != OFFSET_OF (
+                                        WIN_CERTIFICATE_UEFI_GUID,
+                                        CertData
+                                        ) +
+      sizeof (EFI_CERT_BLOCK_RSA_2048_SHA256))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256 - dwLength: 0x%04x, dwLength - 0x%04x\n",
+      (UINTN)Image->AuthInfo.Hdr.dwLength,
+      (UINTN)OFFSET_OF (
+               WIN_CERTIFICATE_UEFI_GUID,
+               CertData
+               ) +
+      sizeof (EFI_CERT_BLOCK_RSA_2048_SHA256)
+      ));
     return RETURN_INVALID_PARAMETER;
   }
 
-  CertBlockRsa2048Sha256 = (EFI_CERT_BLOCK_RSA_2048_SHA256 *)Image->AuthInfo.CertData;
-  if (!CompareGuid (&CertBlockRsa2048Sha256->HashType, &gEfiHashAlgorithmSha256Guid)) {
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256 - HashType: %g, expect - %g\n", &CertBlockRsa2048Sha256->HashType, &gEfiHashAlgorithmSha256Guid));
+  CertBlockRsa2048Sha256 =
+    (EFI_CERT_BLOCK_RSA_2048_SHA256 *)Image->AuthInfo.CertData;
+  if (!CompareGuid (
+         &CertBlockRsa2048Sha256->HashType,
+         &gEfiHashAlgorithmSha256Guid
+         ))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256 - HashType: %g, expect - %g\n",
+      &CertBlockRsa2048Sha256->HashType,
+      &gEfiHashAlgorithmSha256Guid
+      ));
     return RETURN_INVALID_PARAMETER;
   }
 
@@ -98,7 +127,10 @@ FmpAuthenticatedHandlerRsa2048Sha256 (
   HashContext = AllocatePool (Sha256GetContextSize ());
   if (HashContext == NULL) {
     CryptoStatus = FALSE;
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256: Can not allocate hash context\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256: Can not allocate hash context\n"
+      ));
     Status = RETURN_OUT_OF_RESOURCES;
     goto Done;
   }
@@ -109,21 +141,34 @@ FmpAuthenticatedHandlerRsa2048Sha256 (
   ZeroMem (Digest, SHA256_DIGEST_SIZE);
   CryptoStatus = Sha256Init (HashContext);
   if (!CryptoStatus) {
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256: Sha256Init() failed\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256: Sha256Init() failed\n"
+      ));
     Status = RETURN_OUT_OF_RESOURCES;
     goto Done;
   }
 
-  CryptoStatus = Sha256Update (HashContext, &CertBlockRsa2048Sha256->PublicKey, sizeof (CertBlockRsa2048Sha256->PublicKey));
+  CryptoStatus = Sha256Update (
+                   HashContext,
+                   &CertBlockRsa2048Sha256->PublicKey,
+                   sizeof (CertBlockRsa2048Sha256->PublicKey)
+                   );
   if (!CryptoStatus) {
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256: Sha256Update() failed\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256: Sha256Update() failed\n"
+      ));
     Status = RETURN_OUT_OF_RESOURCES;
     goto Done;
   }
 
   CryptoStatus = Sha256Final (HashContext, Digest);
   if (!CryptoStatus) {
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256: Sha256Final() failed\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256: Sha256Final() failed\n"
+      ));
     Status = RETURN_OUT_OF_RESOURCES;
     goto Done;
   }
@@ -145,7 +190,10 @@ FmpAuthenticatedHandlerRsa2048Sha256 (
   }
 
   if (!CryptoStatus) {
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256: Public key in section is not supported\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256: Public key in section is not supported\n"
+      ));
     Status = RETURN_SECURITY_VIOLATION;
     goto Done;
   }
@@ -156,7 +204,10 @@ FmpAuthenticatedHandlerRsa2048Sha256 (
   Rsa = RsaNew ();
   if (Rsa == NULL) {
     CryptoStatus = FALSE;
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256: RsaNew() failed\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256: RsaNew() failed\n"
+      ));
     Status = RETURN_OUT_OF_RESOURCES;
     goto Done;
   }
@@ -165,16 +216,27 @@ FmpAuthenticatedHandlerRsa2048Sha256 (
   // Set RSA Key Components.
   // NOTE: Only N and E are needed to be set as RSA public key for signature verification.
   //
-  CryptoStatus = RsaSetKey (Rsa, RsaKeyN, CertBlockRsa2048Sha256->PublicKey, sizeof (CertBlockRsa2048Sha256->PublicKey));
+  CryptoStatus = RsaSetKey (
+                   Rsa,
+                   RsaKeyN,
+                   CertBlockRsa2048Sha256->PublicKey,
+                   sizeof (CertBlockRsa2048Sha256->PublicKey)
+                   );
   if (!CryptoStatus) {
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256: RsaSetKey(RsaKeyN) failed\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256: RsaSetKey(RsaKeyN) failed\n"
+      ));
     Status = RETURN_OUT_OF_RESOURCES;
     goto Done;
   }
 
   CryptoStatus = RsaSetKey (Rsa, RsaKeyE, mRsaE, sizeof (mRsaE));
   if (!CryptoStatus) {
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256: RsaSetKey(RsaKeyE) failed\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256: RsaSetKey(RsaKeyE) failed\n"
+      ));
     Status = RETURN_OUT_OF_RESOURCES;
     goto Done;
   }
@@ -185,7 +247,10 @@ FmpAuthenticatedHandlerRsa2048Sha256 (
   ZeroMem (Digest, SHA256_DIGEST_SIZE);
   CryptoStatus = Sha256Init (HashContext);
   if (!CryptoStatus) {
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256: Sha256Init() failed\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256: Sha256Init() failed\n"
+      ));
     Status = RETURN_OUT_OF_RESOURCES;
     goto Done;
   }
@@ -193,11 +258,16 @@ FmpAuthenticatedHandlerRsa2048Sha256 (
   // It is a signature across the variable data and the Monotonic Count value.
   CryptoStatus = Sha256Update (
                    HashContext,
-                   (UINT8 *)Image + sizeof (Image->MonotonicCount) + Image->AuthInfo.Hdr.dwLength,
-                   ImageSize - sizeof (Image->MonotonicCount) - Image->AuthInfo.Hdr.dwLength
+                   (UINT8 *)Image + sizeof (Image->MonotonicCount) +
+                   Image->AuthInfo.Hdr.dwLength,
+                   ImageSize - sizeof (Image->MonotonicCount) -
+                   Image->AuthInfo.Hdr.dwLength
                    );
   if (!CryptoStatus) {
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256: Sha256Update() failed\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256: Sha256Update() failed\n"
+      ));
     Status = RETURN_OUT_OF_RESOURCES;
     goto Done;
   }
@@ -208,14 +278,20 @@ FmpAuthenticatedHandlerRsa2048Sha256 (
                    sizeof (Image->MonotonicCount)
                    );
   if (!CryptoStatus) {
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256: Sha256Update() failed\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256: Sha256Update() failed\n"
+      ));
     Status = RETURN_OUT_OF_RESOURCES;
     goto Done;
   }
 
   CryptoStatus = Sha256Final (HashContext, Digest);
   if (!CryptoStatus) {
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256: Sha256Final() failed\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256: Sha256Final() failed\n"
+      ));
     Status = RETURN_OUT_OF_RESOURCES;
     goto Done;
   }
@@ -234,12 +310,18 @@ FmpAuthenticatedHandlerRsa2048Sha256 (
     //
     // If RSA 2048 SHA 256 signature verification fails, AUTH tested failed bit is set.
     //
-    DEBUG ((DEBUG_ERROR, "FmpAuthenticatedHandlerRsa2048Sha256: RsaPkcs1Verify() failed\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpAuthenticatedHandlerRsa2048Sha256: RsaPkcs1Verify() failed\n"
+      ));
     Status = RETURN_SECURITY_VIOLATION;
     goto Done;
   }
 
-  DEBUG ((DEBUG_INFO, "FmpAuthenticatedHandlerRsa2048Sha256: PASS verification\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "FmpAuthenticatedHandlerRsa2048Sha256: PASS verification\n"
+    ));
 
   Status = RETURN_SUCCESS;
 
@@ -319,7 +401,11 @@ AuthenticateFmpImage (
     return RETURN_INVALID_PARAMETER;
   }
 
-  if (Image->AuthInfo.Hdr.dwLength <= OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData)) {
+  if (Image->AuthInfo.Hdr.dwLength <= OFFSET_OF (
+                                        WIN_CERTIFICATE_UEFI_GUID,
+                                        CertData
+                                        ))
+  {
     DEBUG ((DEBUG_ERROR, "AuthenticateFmpImage - dwLength too small\n"));
     return RETURN_INVALID_PARAMETER;
   }
@@ -329,18 +415,30 @@ AuthenticateFmpImage (
     return RETURN_INVALID_PARAMETER;
   }
 
-  if (ImageSize <= sizeof (Image->MonotonicCount) + Image->AuthInfo.Hdr.dwLength) {
+  if (ImageSize <= sizeof (Image->MonotonicCount) +
+      Image->AuthInfo.Hdr.dwLength)
+  {
     DEBUG ((DEBUG_ERROR, "AuthenticateFmpImage - ImageSize too small\n"));
     return RETURN_INVALID_PARAMETER;
   }
 
   if (Image->AuthInfo.Hdr.wRevision != 0x0200) {
-    DEBUG ((DEBUG_ERROR, "AuthenticateFmpImage - wRevision: 0x%02x, expect - 0x%02x\n", (UINTN)Image->AuthInfo.Hdr.wRevision, (UINTN)0x0200));
+    DEBUG ((
+      DEBUG_ERROR,
+      "AuthenticateFmpImage - wRevision: 0x%02x, expect - 0x%02x\n",
+      (UINTN)Image->AuthInfo.Hdr.wRevision,
+      (UINTN)0x0200
+      ));
     return RETURN_INVALID_PARAMETER;
   }
 
   if (Image->AuthInfo.Hdr.wCertificateType != WIN_CERT_TYPE_EFI_GUID) {
-    DEBUG ((DEBUG_ERROR, "AuthenticateFmpImage - wCertificateType: 0x%02x, expect - 0x%02x\n", (UINTN)Image->AuthInfo.Hdr.wCertificateType, (UINTN)WIN_CERT_TYPE_EFI_GUID));
+    DEBUG ((
+      DEBUG_ERROR,
+      "AuthenticateFmpImage - wCertificateType: 0x%02x, expect - 0x%02x\n",
+      (UINTN)Image->AuthInfo.Hdr.wCertificateType,
+      (UINTN)WIN_CERT_TYPE_EFI_GUID
+      ));
     return RETURN_INVALID_PARAMETER;
   }
 

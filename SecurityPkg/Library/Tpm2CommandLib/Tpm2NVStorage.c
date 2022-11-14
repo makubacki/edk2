@@ -194,19 +194,34 @@ Tpm2NvReadPublic (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvReadPublic - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvReadPublic - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
   ResponseCode = SwapBytes32 (RecvBuffer.Header.responseCode);
   if (ResponseCode != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvReadPublic - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvReadPublic - responseCode - %x\n",
+      SwapBytes32 (
+        RecvBuffer.Header.responseCode
+        )
+      ));
   }
 
   switch (ResponseCode) {
@@ -221,8 +236,14 @@ Tpm2NvReadPublic (
       return EFI_DEVICE_ERROR;
   }
 
-  if (RecvBufferSize <= sizeof (TPM2_RESPONSE_HEADER) + sizeof (UINT16) + sizeof (UINT16)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvReadPublic - RecvBufferSize Error - %x\n", RecvBufferSize));
+  if (RecvBufferSize <= sizeof (TPM2_RESPONSE_HEADER) + sizeof (UINT16) +
+      sizeof (UINT16))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvReadPublic - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     return EFI_NOT_FOUND;
   }
 
@@ -231,18 +252,38 @@ Tpm2NvReadPublic (
   //
   NvPublicSize = SwapBytes16 (RecvBuffer.NvPublic.size);
   if (NvPublicSize > sizeof (TPMS_NV_PUBLIC)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvReadPublic - NvPublic.size error %x\n", NvPublicSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvReadPublic - NvPublic.size error %x\n",
+      NvPublicSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
-  NvNameSize = SwapBytes16 (ReadUnaligned16 ((UINT16 *)((UINT8 *)&RecvBuffer + sizeof (TPM2_RESPONSE_HEADER) + sizeof (UINT16) + NvPublicSize)));
+  NvNameSize = SwapBytes16 (
+                 ReadUnaligned16 (
+                   (UINT16 *)((UINT8 *)&RecvBuffer +
+                              sizeof (TPM2_RESPONSE_HEADER) + sizeof (UINT16) +
+                              NvPublicSize)
+                   )
+                 );
   if (NvNameSize > sizeof (TPMU_NAME)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvReadPublic - NvNameSize error %x\n", NvNameSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvReadPublic - NvNameSize error %x\n",
+      NvNameSize
+      ));
     return EFI_DEVICE_ERROR;
   }
 
-  if (RecvBufferSize != sizeof (TPM2_RESPONSE_HEADER) + sizeof (UINT16) + NvPublicSize + sizeof (UINT16) + NvNameSize) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvReadPublic - RecvBufferSize Error - NvPublicSize %x\n", RecvBufferSize));
+  if (RecvBufferSize != sizeof (TPM2_RESPONSE_HEADER) + sizeof (UINT16) +
+      NvPublicSize + sizeof (UINT16) + NvNameSize)
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvReadPublic - RecvBufferSize Error - NvPublicSize %x\n",
+      RecvBufferSize
+      ));
     return EFI_NOT_FOUND;
   }
 
@@ -253,13 +294,31 @@ Tpm2NvReadPublic (
   NvPublic->size             = NvPublicSize;
   NvPublic->nvPublic.nvIndex = SwapBytes32 (NvPublic->nvPublic.nvIndex);
   NvPublic->nvPublic.nameAlg = SwapBytes16 (NvPublic->nvPublic.nameAlg);
-  WriteUnaligned32 ((UINT32 *)&NvPublic->nvPublic.attributes, SwapBytes32 (ReadUnaligned32 ((UINT32 *)&NvPublic->nvPublic.attributes)));
-  NvPublic->nvPublic.authPolicy.size = SwapBytes16 (NvPublic->nvPublic.authPolicy.size);
-  Buffer                             = (UINT8 *)&RecvBuffer.NvPublic.nvPublic.authPolicy;
-  Buffer                            += sizeof (UINT16) + NvPublic->nvPublic.authPolicy.size;
-  NvPublic->nvPublic.dataSize        = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
+  WriteUnaligned32 (
+    (UINT32 *)&NvPublic->nvPublic.attributes,
+    SwapBytes32 (
+      ReadUnaligned32 ((UINT32 *)&NvPublic->nvPublic.attributes)
+      )
+    );
+  NvPublic->nvPublic.authPolicy.size = SwapBytes16 (
+                                         NvPublic->nvPublic.authPolicy.size
+                                         );
+  Buffer =
+    (UINT8 *)&RecvBuffer.NvPublic.nvPublic.authPolicy;
+  Buffer += sizeof (UINT16) +
+            NvPublic->nvPublic.authPolicy.size;
+  NvPublic->nvPublic.dataSize = SwapBytes16 (
+                                  ReadUnaligned16 (
+                                    (UINT16 *)Buffer
+                                    )
+                                  );
 
-  CopyMem (NvName->name, (UINT8 *)&RecvBuffer + sizeof (TPM2_RESPONSE_HEADER) + sizeof (UINT16) + NvPublicSize + sizeof (UINT16), NvNameSize);
+  CopyMem (
+    NvName->name,
+    (UINT8 *)&RecvBuffer + sizeof (TPM2_RESPONSE_HEADER) +
+    sizeof (UINT16) + NvPublicSize + sizeof (UINT16),
+    NvNameSize
+    );
   NvName->size = NvNameSize;
 
   return EFI_SUCCESS;
@@ -334,13 +393,34 @@ Tpm2NvDefineSpace (
   Buffer += sizeof (UINT32);
   WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (NvPublic->nvPublic.nameAlg));
   Buffer += sizeof (UINT16);
-  WriteUnaligned32 ((UINT32 *)Buffer, SwapBytes32 (ReadUnaligned32 ((UINT32 *)&NvPublic->nvPublic.attributes)));
+  WriteUnaligned32 (
+    (UINT32 *)Buffer,
+    SwapBytes32 (
+      ReadUnaligned32 (
+        (UINT32 *)&NvPublic->nvPublic.attributes
+        )
+      )
+    );
   Buffer += sizeof (UINT32);
-  WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (NvPublic->nvPublic.authPolicy.size));
+  WriteUnaligned16 (
+    (UINT16 *)Buffer,
+    SwapBytes16 (
+      NvPublic->nvPublic.authPolicy.size
+      )
+    );
   Buffer += sizeof (UINT16);
-  CopyMem (Buffer, NvPublic->nvPublic.authPolicy.buffer, NvPublic->nvPublic.authPolicy.size);
+  CopyMem (
+    Buffer,
+    NvPublic->nvPublic.authPolicy.buffer,
+    NvPublic->nvPublic.authPolicy.size
+    );
   Buffer += NvPublic->nvPublic.authPolicy.size;
-  WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (NvPublic->nvPublic.dataSize));
+  WriteUnaligned16 (
+    (UINT16 *)Buffer,
+    SwapBytes16 (
+      NvPublic->nvPublic.dataSize
+      )
+    );
   Buffer += sizeof (UINT16);
 
   SendBufferSize              = (UINT32)(Buffer - (UINT8 *)&SendBuffer);
@@ -350,20 +430,33 @@ Tpm2NvDefineSpace (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvDefineSpace - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvDefineSpace - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
 
   ResponseCode = SwapBytes32 (RecvBuffer.Header.responseCode);
   if (ResponseCode != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvDefineSpace - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvDefineSpace - responseCode - %x\n",
+      SwapBytes32 (RecvBuffer.Header.responseCode)
+      ));
   }
 
   switch (ResponseCode) {
@@ -459,20 +552,33 @@ Tpm2NvUndefineSpace (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvUndefineSpace - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvUndefineSpace - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
 
   ResponseCode = SwapBytes32 (RecvBuffer.Header.responseCode);
   if (ResponseCode != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvUndefineSpace - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvUndefineSpace - responseCode - %x\n",
+      SwapBytes32 (RecvBuffer.Header.responseCode)
+      ));
   }
 
   switch (ResponseCode) {
@@ -575,13 +681,22 @@ Tpm2NvRead (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvRead - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvRead - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
@@ -643,7 +758,11 @@ Tpm2NvRead (
   //
   OutData->size = SwapBytes16 (RecvBuffer.Data.size);
   if (OutData->size > MAX_DIGEST_BUFFER) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvRead - OutData->size error %x\n", OutData->size));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvRead - OutData->size error %x\n",
+      OutData->size
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
@@ -724,13 +843,22 @@ Tpm2NvWrite (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvWrite - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvWrite - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
@@ -846,20 +974,35 @@ Tpm2NvReadLock (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvReadLock - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvReadLock - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
 
   ResponseCode = SwapBytes32 (RecvBuffer.Header.responseCode);
   if (ResponseCode != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvReadLock - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvReadLock - responseCode - %x\n",
+      SwapBytes32 (
+        RecvBuffer.Header.responseCode
+        )
+      ));
   }
 
   switch (ResponseCode) {
@@ -934,20 +1077,35 @@ Tpm2NvWriteLock (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvWriteLock - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvWriteLock - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
 
   ResponseCode = SwapBytes32 (RecvBuffer.Header.responseCode);
   if (ResponseCode != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvWriteLock - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvWriteLock - responseCode - %x\n",
+      SwapBytes32 (
+        RecvBuffer.Header.responseCode
+        )
+      ));
   }
 
   switch (ResponseCode) {
@@ -1019,20 +1177,33 @@ Tpm2NvGlobalWriteLock (
   // send Tpm command
   //
   RecvBufferSize = sizeof (RecvBuffer);
-  Status         = Tpm2SubmitCommand (SendBufferSize, (UINT8 *)&SendBuffer, &RecvBufferSize, (UINT8 *)&RecvBuffer);
+  Status         = Tpm2SubmitCommand (
+                     SendBufferSize,
+                     (UINT8 *)&SendBuffer,
+                     &RecvBufferSize,
+                     (UINT8 *)&RecvBuffer
+                     );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
   if (RecvBufferSize < sizeof (TPM2_RESPONSE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvGlobalWriteLock - RecvBufferSize Error - %x\n", RecvBufferSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvGlobalWriteLock - RecvBufferSize Error - %x\n",
+      RecvBufferSize
+      ));
     Status = EFI_DEVICE_ERROR;
     goto Done;
   }
 
   ResponseCode = SwapBytes32 (RecvBuffer.Header.responseCode);
   if (ResponseCode != TPM_RC_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "Tpm2NvGlobalWriteLock - responseCode - %x\n", SwapBytes32 (RecvBuffer.Header.responseCode)));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Tpm2NvGlobalWriteLock - responseCode - %x\n",
+      SwapBytes32 (RecvBuffer.Header.responseCode)
+      ));
   }
 
   switch (ResponseCode) {

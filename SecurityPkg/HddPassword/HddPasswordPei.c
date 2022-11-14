@@ -68,7 +68,8 @@ UnlockDevice (
   ZeroMem (&Acb, sizeof (Acb));
   ZeroMem (Asb, sizeof (EFI_ATA_STATUS_BLOCK));
   Acb.AtaCommand    = ATA_SECURITY_UNLOCK_CMD;
-  Acb.AtaDeviceHead = (UINT8)(PortMultiplierPort == 0xFFFF ? 0 : (PortMultiplierPort << 4));
+  Acb.AtaDeviceHead = (UINT8)(PortMultiplierPort == 0xFFFF ? 0 :
+                              (PortMultiplierPort << 4));
 
   //
   // Prepare for ATA pass through packet.
@@ -159,7 +160,8 @@ FreezeLockDevice (
   ZeroMem (&Acb, sizeof (Acb));
   ZeroMem (Asb, sizeof (EFI_ATA_STATUS_BLOCK));
   Acb.AtaCommand    = ATA_SECURITY_FREEZE_LOCK_CMD;
-  Acb.AtaDeviceHead = (UINT8)(PortMultiplierPort == 0xFFFF ? 0 : (PortMultiplierPort << 4));
+  Acb.AtaDeviceHead = (UINT8)(PortMultiplierPort == 0xFFFF ? 0 :
+                              (PortMultiplierPort << 4));
 
   //
   // Prepare for ATA pass through packet.
@@ -231,8 +233,14 @@ UnlockHddPassword (
     return;
   }
 
-  Status = AtaPassThruPpi->GetDevicePath (AtaPassThruPpi, &DevicePathLength, &DevicePath);
-  if (EFI_ERROR (Status) || (DevicePathLength <= sizeof (EFI_DEVICE_PATH_PROTOCOL))) {
+  Status = AtaPassThruPpi->GetDevicePath (
+                             AtaPassThruPpi,
+                             &DevicePathLength,
+                             &DevicePath
+                             );
+  if (EFI_ERROR (Status) || (DevicePathLength <=
+                             sizeof (EFI_DEVICE_PATH_PROTOCOL)))
+  {
     goto Exit;
   }
 
@@ -251,7 +259,11 @@ UnlockHddPassword (
 
     PortMultiplierPort = 0xFFFF;
     while (TRUE) {
-      Status = AtaPassThruPpi->GetNextDevice (AtaPassThruPpi, Port, &PortMultiplierPort);
+      Status = AtaPassThruPpi->GetNextDevice (
+                                 AtaPassThruPpi,
+                                 Port,
+                                 &PortMultiplierPort
+                                 );
       if (EFI_ERROR (Status)) {
         //
         // We cannot find more legal port multiplier port number for ATA device
@@ -281,7 +293,13 @@ UnlockHddPassword (
           // If device locked, unlock first.
           //
           if (!IsZeroBuffer (DevInfo->Password, HDD_PASSWORD_MAX_LENGTH)) {
-            UnlockDevice (AtaPassThruPpi, Port, PortMultiplierPort, 0, DevInfo->Password);
+            UnlockDevice (
+              AtaPassThruPpi,
+              Port,
+              PortMultiplierPort,
+              0,
+              DevInfo->Password
+              );
           }
 
           //
@@ -292,7 +310,8 @@ UnlockHddPassword (
         }
 
         DevInfo = (HDD_PASSWORD_DEVICE_INFO *)
-                  ((UINTN)DevInfo + sizeof (HDD_PASSWORD_DEVICE_INFO) + DevInfo->DevicePathLength);
+                  ((UINTN)DevInfo + sizeof (HDD_PASSWORD_DEVICE_INFO) +
+                   DevInfo->DevicePathLength);
       }
     }
   }
@@ -331,7 +350,8 @@ HddPasswordAtaPassThruNotify (
 }
 
 EFI_PEI_NOTIFY_DESCRIPTOR  mHddPasswordAtaPassThruPpiNotifyDesc = {
-  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+   EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEdkiiPeiAtaPassThruPpiGuid,
   HddPasswordAtaPassThruNotify
 };

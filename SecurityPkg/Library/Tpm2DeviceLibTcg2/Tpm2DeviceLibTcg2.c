@@ -41,7 +41,11 @@ Tpm2SubmitCommand (
   TPM2_RESPONSE_HEADER  *Header;
 
   if (mTcg2Protocol == NULL) {
-    Status = gBS->LocateProtocol (&gEfiTcg2ProtocolGuid, NULL, (VOID **)&mTcg2Protocol);
+    Status = gBS->LocateProtocol (
+                    &gEfiTcg2ProtocolGuid,
+                    NULL,
+                    (VOID **)&mTcg2Protocol
+                    );
     if (EFI_ERROR (Status)) {
       //
       // Tcg2 protocol is not installed. So, TPM2 is not present.
@@ -87,7 +91,11 @@ Tpm2RequestUseTpm (
   EFI_STATUS  Status;
 
   if (mTcg2Protocol == NULL) {
-    Status = gBS->LocateProtocol (&gEfiTcg2ProtocolGuid, NULL, (VOID **)&mTcg2Protocol);
+    Status = gBS->LocateProtocol (
+                    &gEfiTcg2ProtocolGuid,
+                    NULL,
+                    (VOID **)&mTcg2Protocol
+                    );
     if (EFI_ERROR (Status)) {
       //
       // Tcg2 protocol is not installed. So, TPM2 is not present.

@@ -23,8 +23,10 @@ typedef struct {
 } VARIABLE_TYPE;
 
 VARIABLE_TYPE  mMorVariableType[] = {
-  { MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,     &gEfiMemoryOverwriteControlDataGuid        },
-  { MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME, &gEfiMemoryOverwriteRequestControlLockGuid },
+  { MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
+    &gEfiMemoryOverwriteControlDataGuid            },
+  { MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME,
+    &gEfiMemoryOverwriteRequestControlLockGuid      },
 };
 
 /**
@@ -44,7 +46,8 @@ IsAnyMorVariable (
 {
   UINTN  Index;
 
-  for (Index = 0; Index < sizeof (mMorVariableType)/sizeof (mMorVariableType[0]); Index++) {
+  for (Index = 0; Index < sizeof (mMorVariableType)/
+       sizeof (mMorVariableType[0]); Index++) {
     if ((StrCmp (VariableName, mMorVariableType[Index].VariableName) == 0) &&
         (CompareGuid (VendorGuid, mMorVariableType[Index].VendorGuid)))
     {
@@ -70,7 +73,8 @@ IsMorLockVariable (
   IN EFI_GUID  *VendorGuid
   )
 {
-  if ((StrCmp (VariableName, MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME) == 0) &&
+  if ((StrCmp (VariableName, MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME) ==
+       0) &&
       (CompareGuid (VendorGuid, &gEfiMemoryOverwriteRequestControlLockGuid)))
   {
     return TRUE;
@@ -188,7 +192,8 @@ MorLockDriverInit (
   Status = InternalSetVariable (
              MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME,
              &gEfiMemoryOverwriteRequestControlLockGuid,
-             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+             EFI_VARIABLE_RUNTIME_ACCESS,
              1,
              &Data
              );

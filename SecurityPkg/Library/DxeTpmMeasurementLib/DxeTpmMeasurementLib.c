@@ -59,12 +59,19 @@ Tpm12MeasureAndLogData (
   //
   // Tpm activation state is checked in HashLogExtendEvent
   //
-  Status = gBS->LocateProtocol (&gEfiTcgProtocolGuid, NULL, (VOID **)&TcgProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiTcgProtocolGuid,
+                  NULL,
+                  (VOID **)&TcgProtocol
+                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  TcgEvent = (TCG_PCR_EVENT *)AllocateZeroPool (sizeof (TCG_PCR_EVENT_HDR) + LogLen);
+  TcgEvent = (TCG_PCR_EVENT *)AllocateZeroPool (
+                                sizeof (TCG_PCR_EVENT_HDR) +
+                                LogLen
+                                );
   if (TcgEvent == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -122,17 +129,25 @@ Tpm20MeasureAndLogData (
   //
   // TPMPresentFlag is checked in HashLogExtendEvent
   //
-  Status = gBS->LocateProtocol (&gEfiTcg2ProtocolGuid, NULL, (VOID **)&Tcg2Protocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiTcg2ProtocolGuid,
+                  NULL,
+                  (VOID **)&Tcg2Protocol
+                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Tcg2Event = (EFI_TCG2_EVENT *)AllocateZeroPool (LogLen + sizeof (EFI_TCG2_EVENT));
+  Tcg2Event = (EFI_TCG2_EVENT *)AllocateZeroPool (
+                                  LogLen +
+                                  sizeof (EFI_TCG2_EVENT)
+                                  );
   if (Tcg2Event == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Tcg2Event->Size                 = (UINT32)LogLen + sizeof (EFI_TCG2_EVENT) - sizeof (Tcg2Event->Event);
+  Tcg2Event->Size = (UINT32)LogLen + sizeof (EFI_TCG2_EVENT) -
+                    sizeof (Tcg2Event->Event);
   Tcg2Event->Header.HeaderSize    = sizeof (EFI_TCG2_EVENT_HEADER);
   Tcg2Event->Header.HeaderVersion = EFI_TCG2_EVENT_HEADER_VERSION;
   Tcg2Event->Header.PCRIndex      = PcrIndex;
@@ -194,12 +209,16 @@ CcMeasureAndLogData (
     return Status;
   }
 
-  EfiCcEvent = (EFI_CC_EVENT *)AllocateZeroPool (LogLen + sizeof (EFI_CC_EVENT));
+  EfiCcEvent = (EFI_CC_EVENT *)AllocateZeroPool (
+                                 LogLen +
+                                 sizeof (EFI_CC_EVENT)
+                                 );
   if (EfiCcEvent == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  EfiCcEvent->Size                 = (UINT32)LogLen + sizeof (EFI_CC_EVENT) - sizeof (EfiCcEvent->Event);
+  EfiCcEvent->Size = (UINT32)LogLen + sizeof (EFI_CC_EVENT) -
+                     sizeof (EfiCcEvent->Event);
   EfiCcEvent->Header.HeaderSize    = sizeof (EFI_CC_EVENT_HEADER);
   EfiCcEvent->Header.HeaderVersion = EFI_CC_EVENT_HEADER_VERSION;
   EfiCcEvent->Header.MrIndex       = MrIndex;
@@ -247,7 +266,11 @@ TpmMeasureAndLogData (
   EFI_STATUS                   Status;
   EFI_CC_MEASUREMENT_PROTOCOL  *CcProtocol;
 
-  Status = gBS->LocateProtocol (&gEfiCcMeasurementProtocolGuid, NULL, (VOID **)&CcProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiCcMeasurementProtocolGuid,
+                  NULL,
+                  (VOID **)&CcProtocol
+                  );
   if (!EFI_ERROR (Status)) {
     //
     // Try to measure using Cc measurement protocol

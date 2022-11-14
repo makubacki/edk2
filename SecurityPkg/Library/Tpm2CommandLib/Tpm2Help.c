@@ -20,11 +20,11 @@ typedef struct {
 } INTERNAL_HASH_INFO;
 
 STATIC INTERNAL_HASH_INFO  mHashInfo[] = {
-  { TPM_ALG_SHA1,    SHA1_DIGEST_SIZE,    HASH_ALG_SHA1    },
-  { TPM_ALG_SHA256,  SHA256_DIGEST_SIZE,  HASH_ALG_SHA256  },
-  { TPM_ALG_SM3_256, SM3_256_DIGEST_SIZE, HASH_ALG_SM3_256 },
-  { TPM_ALG_SHA384,  SHA384_DIGEST_SIZE,  HASH_ALG_SHA384  },
-  { TPM_ALG_SHA512,  SHA512_DIGEST_SIZE,  HASH_ALG_SHA512  },
+  { TPM_ALG_SHA1,    SHA1_DIGEST_SIZE,    HASH_ALG_SHA1       },
+  { TPM_ALG_SHA256,  SHA256_DIGEST_SIZE,  HASH_ALG_SHA256     },
+  { TPM_ALG_SM3_256, SM3_256_DIGEST_SIZE, HASH_ALG_SM3_256    },
+  { TPM_ALG_SHA384,  SHA384_DIGEST_SIZE,  HASH_ALG_SHA384     },
+  { TPM_ALG_SHA512,  SHA512_DIGEST_SIZE,  HASH_ALG_SHA512     },
 };
 
 /**
@@ -99,11 +99,21 @@ CopyAuthSessionCommand (
   //
   if (AuthSessionIn != NULL) {
     //  sessionHandle
-    WriteUnaligned32 ((UINT32 *)Buffer, SwapBytes32 (AuthSessionIn->sessionHandle));
+    WriteUnaligned32 (
+      (UINT32 *)Buffer,
+      SwapBytes32 (
+        AuthSessionIn->sessionHandle
+        )
+      );
     Buffer += sizeof (UINT32);
 
     // nonce
-    WriteUnaligned16 ((UINT16 *)Buffer, SwapBytes16 (AuthSessionIn->nonce.size));
+    WriteUnaligned16 (
+      (UINT16 *)Buffer,
+      SwapBytes16 (
+        AuthSessionIn->nonce.size
+        )
+      );
     Buffer += sizeof (UINT16);
 
     CopyMem (Buffer, AuthSessionIn->nonce.buffer, AuthSessionIn->nonce.size);
@@ -169,7 +179,11 @@ CopyAuthSessionResponse (
   AuthSessionOut->nonce.size = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
   Buffer                    += sizeof (UINT16);
   if (AuthSessionOut->nonce.size > sizeof (TPMU_HA)) {
-    DEBUG ((DEBUG_ERROR, "CopyAuthSessionResponse - nonce.size error %x\n", AuthSessionOut->nonce.size));
+    DEBUG ((
+      DEBUG_ERROR,
+      "CopyAuthSessionResponse - nonce.size error %x\n",
+      AuthSessionOut->nonce.size
+      ));
     return 0;
   }
 
@@ -184,7 +198,11 @@ CopyAuthSessionResponse (
   AuthSessionOut->hmac.size = SwapBytes16 (ReadUnaligned16 ((UINT16 *)Buffer));
   Buffer                   += sizeof (UINT16);
   if (AuthSessionOut->hmac.size > sizeof (TPMU_HA)) {
-    DEBUG ((DEBUG_ERROR, "CopyAuthSessionResponse - hmac.size error %x\n", AuthSessionOut->hmac.size));
+    DEBUG ((
+      DEBUG_ERROR,
+      "CopyAuthSessionResponse - hmac.size error %x\n",
+      AuthSessionOut->hmac.size
+      ));
     return 0;
   }
 
@@ -272,12 +290,24 @@ CopyDigestListToBuffer (
   DigestListCount    = 0;
   Buffer             = (UINT8 *)Buffer + sizeof (DigestList->count);
   for (Index = 0; Index < DigestList->count; Index++) {
-    if (!IsHashAlgSupportedInHashAlgorithmMask (DigestList->digests[Index].hashAlg, HashAlgorithmMask)) {
-      DEBUG ((DEBUG_ERROR, "WARNING: TPM2 Event log has HashAlg unsupported by PCR bank (0x%x)\n", DigestList->digests[Index].hashAlg));
+    if (!IsHashAlgSupportedInHashAlgorithmMask (
+           DigestList->digests[Index].hashAlg,
+           HashAlgorithmMask
+           ))
+    {
+      DEBUG ((
+        DEBUG_ERROR,
+        "WARNING: TPM2 Event log has HashAlg unsupported by PCR bank (0x%x)\n",
+        DigestList->digests[Index].hashAlg
+        ));
       continue;
     }
 
-    CopyMem (Buffer, &DigestList->digests[Index].hashAlg, sizeof (DigestList->digests[Index].hashAlg));
+    CopyMem (
+      Buffer,
+      &DigestList->digests[Index].hashAlg,
+      sizeof (DigestList->digests[Index].hashAlg)
+      );
     Buffer     = (UINT8 *)Buffer + sizeof (DigestList->digests[Index].hashAlg);
     DigestSize = GetHashSizeFromAlgo (DigestList->digests[Index].hashAlg);
     CopyMem (Buffer, &DigestList->digests[Index].digest, DigestSize);

@@ -141,12 +141,20 @@ TcgMeasureGptTable (
     return EFI_SUCCESS;
   }
 
-  Status = gBS->HandleProtocol (GptHandle, &gEfiBlockIoProtocolGuid, (VOID **)&BlockIo);
+  Status = gBS->HandleProtocol (
+                  GptHandle,
+                  &gEfiBlockIoProtocolGuid,
+                  (VOID **)&BlockIo
+                  );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
 
-  Status = gBS->HandleProtocol (GptHandle, &gEfiDiskIoProtocolGuid, (VOID **)&DiskIo);
+  Status = gBS->HandleProtocol (
+                  GptHandle,
+                  &gEfiDiskIoProtocolGuid,
+                  (VOID **)&DiskIo
+                  );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -154,7 +162,9 @@ TcgMeasureGptTable (
   //
   // Read the EFI Partition Table Header
   //
-  PrimaryHeader = (EFI_PARTITION_TABLE_HEADER *)AllocatePool (BlockIo->Media->BlockSize);
+  PrimaryHeader = (EFI_PARTITION_TABLE_HEADER *)AllocatePool (
+                                                  BlockIo->Media->BlockSize
+                                                  );
   if (PrimaryHeader == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -175,7 +185,10 @@ TcgMeasureGptTable (
   //
   // Read the partition entry.
   //
-  EntryPtr = (UINT8 *)AllocatePool (PrimaryHeader->NumberOfPartitionEntries * PrimaryHeader->SizeOfPartitionEntry);
+  EntryPtr = (UINT8 *)AllocatePool (
+                        PrimaryHeader->NumberOfPartitionEntries *
+                        PrimaryHeader->SizeOfPartitionEntry
+                        );
   if (EntryPtr == NULL) {
     FreePool (PrimaryHeader);
     return EFI_OUT_OF_RESOURCES;
@@ -184,8 +197,12 @@ TcgMeasureGptTable (
   Status = DiskIo->ReadDisk (
                      DiskIo,
                      BlockIo->Media->MediaId,
-                     MultU64x32 (PrimaryHeader->PartitionEntryLBA, BlockIo->Media->BlockSize),
-                     PrimaryHeader->NumberOfPartitionEntries * PrimaryHeader->SizeOfPartitionEntry,
+                     MultU64x32 (
+                       PrimaryHeader->PartitionEntryLBA,
+                       BlockIo->Media->BlockSize
+                       ),
+                     PrimaryHeader->NumberOfPartitionEntries *
+                     PrimaryHeader->SizeOfPartitionEntry,
                      EntryPtr
                      );
   if (EFI_ERROR (Status)) {
@@ -204,15 +221,20 @@ TcgMeasureGptTable (
       NumberOfPartition++;
     }
 
-    PartitionEntry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartitionEntry + PrimaryHeader->SizeOfPartitionEntry);
+    PartitionEntry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartitionEntry +
+                                             PrimaryHeader->SizeOfPartitionEntry);
   }
 
   //
   // Prepare Data for Measurement
   //
   EventSize = (UINT32)(sizeof (EFI_GPT_DATA) - sizeof (GptData->Partitions)
-                       + NumberOfPartition * PrimaryHeader->SizeOfPartitionEntry);
-  TcgEvent = (TCG_PCR_EVENT *)AllocateZeroPool (EventSize + sizeof (TCG_PCR_EVENT_HDR));
+                       + NumberOfPartition *
+                       PrimaryHeader->SizeOfPartitionEntry);
+  TcgEvent = (TCG_PCR_EVENT *)AllocateZeroPool (
+                                EventSize +
+                                sizeof (TCG_PCR_EVENT_HDR)
+                                );
   if (TcgEvent == NULL) {
     FreePool (PrimaryHeader);
     FreePool (EntryPtr);
@@ -227,7 +249,11 @@ TcgMeasureGptTable (
   //
   // Copy the EFI_PARTITION_TABLE_HEADER and NumberOfPartition
   //
-  CopyMem ((UINT8 *)GptData, (UINT8 *)PrimaryHeader, sizeof (EFI_PARTITION_TABLE_HEADER));
+  CopyMem (
+    (UINT8 *)GptData,
+    (UINT8 *)PrimaryHeader,
+    sizeof (EFI_PARTITION_TABLE_HEADER)
+    );
   GptData->NumberOfPartitions = NumberOfPartition;
   //
   // Copy the valid partition entry
@@ -237,14 +263,16 @@ TcgMeasureGptTable (
   for (Index = 0; Index < PrimaryHeader->NumberOfPartitionEntries; Index++) {
     if (!IsZeroGuid (&PartitionEntry->PartitionTypeGUID)) {
       CopyMem (
-        (UINT8 *)&GptData->Partitions + NumberOfPartition * PrimaryHeader->SizeOfPartitionEntry,
+        (UINT8 *)&GptData->Partitions + NumberOfPartition *
+        PrimaryHeader->SizeOfPartitionEntry,
         (UINT8 *)PartitionEntry,
         PrimaryHeader->SizeOfPartitionEntry
         );
       NumberOfPartition++;
     }
 
-    PartitionEntry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartitionEntry + PrimaryHeader->SizeOfPartitionEntry);
+    PartitionEntry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartitionEntry +
+                                             PrimaryHeader->SizeOfPartitionEntry);
   }
 
   //
@@ -338,8 +366,9 @@ TcgMeasurePeImage (
   //
   // Determine destination PCR by BootPolicy
   //
-  EventSize = sizeof (*ImageLoad) - sizeof (ImageLoad->DevicePath) + FilePathSize;
-  TcgEvent  = AllocateZeroPool (EventSize + sizeof (TCG_PCR_EVENT));
+  EventSize = sizeof (*ImageLoad) - sizeof (ImageLoad->DevicePath) +
+              FilePathSize;
+  TcgEvent = AllocateZeroPool (EventSize + sizeof (TCG_PCR_EVENT));
   if (TcgEvent == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -386,7 +415,8 @@ TcgMeasurePeImage (
     PeCoffHeaderOffset = DosHdr->e_lfanew;
   }
 
-  Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINT8 *)(UINTN)ImageAddress + PeCoffHeaderOffset);
+  Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINT8 *)(UINTN)ImageAddress +
+                                        PeCoffHeaderOffset);
   if (Hdr.Pe32->Signature != EFI_IMAGE_NT_SIGNATURE) {
     goto Finish;
   }
@@ -429,13 +459,15 @@ TcgMeasurePeImage (
     // Use PE32 offset
     //
     NumberOfRvaAndSizes = Hdr.Pe32->OptionalHeader.NumberOfRvaAndSizes;
-    HashSize            = (UINTN)(&Hdr.Pe32->OptionalHeader.CheckSum) - (UINTN)HashBase;
+    HashSize            = (UINTN)(&Hdr.Pe32->OptionalHeader.CheckSum) -
+                          (UINTN)HashBase;
   } else {
     //
     // Use PE32+ offset
     //
     NumberOfRvaAndSizes = Hdr.Pe32Plus->OptionalHeader.NumberOfRvaAndSizes;
-    HashSize            = (UINTN)(&Hdr.Pe32Plus->OptionalHeader.CheckSum) - (UINTN)HashBase;
+    HashSize            = (UINTN)(&Hdr.Pe32Plus->OptionalHeader.CheckSum) -
+                          (UINTN)HashBase;
   }
 
   HashStatus = Sha1Update (Sha1Ctx, HashBase, HashSize);
@@ -456,13 +488,16 @@ TcgMeasurePeImage (
       // Use PE32 offset.
       //
       HashBase = (UINT8 *)&Hdr.Pe32->OptionalHeader.CheckSum + sizeof (UINT32);
-      HashSize = Hdr.Pe32->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase - ImageAddress);
+      HashSize = Hdr.Pe32->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase -
+                                                                  ImageAddress);
     } else {
       //
       // Use PE32+ offset.
       //
-      HashBase = (UINT8 *)&Hdr.Pe32Plus->OptionalHeader.CheckSum + sizeof (UINT32);
-      HashSize = Hdr.Pe32Plus->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase - ImageAddress);
+      HashBase = (UINT8 *)&Hdr.Pe32Plus->OptionalHeader.CheckSum +
+                 sizeof (UINT32);
+      HashSize = Hdr.Pe32Plus->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase -
+                                                                      ImageAddress);
     }
 
     if (HashSize != 0) {
@@ -480,13 +515,20 @@ TcgMeasurePeImage (
       // Use PE32 offset
       //
       HashBase = (UINT8 *)&Hdr.Pe32->OptionalHeader.CheckSum + sizeof (UINT32);
-      HashSize = (UINTN)(&Hdr.Pe32->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY]) - (UINTN)HashBase;
+      HashSize =
+        (UINTN)(&Hdr.Pe32->OptionalHeader.DataDirectory[
+                                                                EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                ]) - (UINTN)HashBase;
     } else {
       //
       // Use PE32+ offset
       //
-      HashBase = (UINT8 *)&Hdr.Pe32Plus->OptionalHeader.CheckSum + sizeof (UINT32);
-      HashSize = (UINTN)(&Hdr.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY]) - (UINTN)HashBase;
+      HashBase = (UINT8 *)&Hdr.Pe32Plus->OptionalHeader.CheckSum +
+                 sizeof (UINT32);
+      HashSize =
+        (UINTN)(&Hdr.Pe32Plus->OptionalHeader.DataDirectory[
+                                                                    EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                ]) - (UINTN)HashBase;
     }
 
     if (HashSize != 0) {
@@ -504,14 +546,22 @@ TcgMeasurePeImage (
       //
       // Use PE32 offset
       //
-      HashBase = (UINT8 *)&Hdr.Pe32->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY + 1];
-      HashSize = Hdr.Pe32->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase - ImageAddress);
+      HashBase =
+        (UINT8 *)&Hdr.Pe32->OptionalHeader.DataDirectory[
+                                                                 EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                                 + 1];
+      HashSize = Hdr.Pe32->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase -
+                                                                  ImageAddress);
     } else {
       //
       // Use PE32+ offset
       //
-      HashBase = (UINT8 *)&Hdr.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY + 1];
-      HashSize = Hdr.Pe32Plus->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase - ImageAddress);
+      HashBase =
+        (UINT8 *)&Hdr.Pe32Plus->OptionalHeader.DataDirectory[
+                                                                     EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                                     + 1];
+      HashSize = Hdr.Pe32Plus->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase -
+                                                                      ImageAddress);
     }
 
     if (HashSize != 0) {
@@ -543,7 +593,11 @@ TcgMeasurePeImage (
   //     header indicates how big the table should be. Do not include any
   //     IMAGE_SECTION_HEADERs in the table whose 'SizeOfRawData' field is zero.
   //
-  SectionHeader = (EFI_IMAGE_SECTION_HEADER *)AllocateZeroPool (sizeof (EFI_IMAGE_SECTION_HEADER) * Hdr.Pe32->FileHeader.NumberOfSections);
+  SectionHeader = (EFI_IMAGE_SECTION_HEADER *)AllocateZeroPool (
+                                                sizeof (EFI_IMAGE_SECTION_HEADER)
+                                                * Hdr.Pe32->FileHeader.
+                                                  NumberOfSections
+                                                );
   if (SectionHeader == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Finish;
@@ -560,12 +614,20 @@ TcgMeasurePeImage (
                                          PeCoffHeaderOffset +
                                          sizeof (UINT32) +
                                          sizeof (EFI_IMAGE_FILE_HEADER) +
-                                         Hdr.Pe32->FileHeader.SizeOfOptionalHeader
+                                         Hdr.Pe32->FileHeader.
+                                           SizeOfOptionalHeader
                                          );
   for (Index = 0; Index < Hdr.Pe32->FileHeader.NumberOfSections; Index++) {
     Pos = Index;
-    while ((Pos > 0) && (Section->PointerToRawData < SectionHeader[Pos - 1].PointerToRawData)) {
-      CopyMem (&SectionHeader[Pos], &SectionHeader[Pos - 1], sizeof (EFI_IMAGE_SECTION_HEADER));
+    while ((Pos > 0) && (Section->PointerToRawData < SectionHeader[Pos -
+                                                                   1].
+                           PointerToRawData))
+    {
+      CopyMem (
+        &SectionHeader[Pos],
+        &SectionHeader[Pos - 1],
+        sizeof (EFI_IMAGE_SECTION_HEADER)
+        );
       Pos--;
     }
 
@@ -613,12 +675,18 @@ TcgMeasurePeImage (
         //
         // Use PE32 offset.
         //
-        CertSize = Hdr.Pe32->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY].Size;
+        CertSize =
+          Hdr.Pe32->OptionalHeader.DataDirectory[
+                                                         EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+          ].Size;
       } else {
         //
         // Use PE32+ offset.
         //
-        CertSize = Hdr.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY].Size;
+        CertSize =
+          Hdr.Pe32Plus->OptionalHeader.DataDirectory[
+                                                             EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+          ].Size;
       }
     }
 
@@ -742,7 +810,11 @@ DxeTpmMeasureBootHandler (
   EFI_PHYSICAL_ADDRESS                FvAddress;
   UINT32                              Index;
 
-  Status = gBS->LocateProtocol (&gEfiTcgProtocolGuid, NULL, (VOID **)&TcgProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiTcgProtocolGuid,
+                  NULL,
+                  (VOID **)&TcgProtocol
+                  );
   if (EFI_ERROR (Status)) {
     //
     // TCG protocol is not installed. So, TPM is not present.
@@ -759,7 +831,9 @@ DxeTpmMeasureBootHandler (
                                            &EventLogLocation,
                                            &EventLogLastEntry
                                            );
-  if (EFI_ERROR (Status) || ProtocolCapability.TPMDeactivatedFlag || (!ProtocolCapability.TPMPresentFlag)) {
+  if (EFI_ERROR (Status) || ProtocolCapability.TPMDeactivatedFlag ||
+      (!ProtocolCapability.TPMPresentFlag))
+  {
     //
     // TPM device doesn't work or activate.
     //
@@ -776,7 +850,11 @@ DxeTpmMeasureBootHandler (
   // Is so, this device path may be a GPT device path.
   //
   DevicePathNode = OrigDevicePathNode;
-  Status         = gBS->LocateDevicePath (&gEfiBlockIoProtocolGuid, &DevicePathNode, &Handle);
+  Status         = gBS->LocateDevicePath (
+                          &gEfiBlockIoProtocolGuid,
+                          &DevicePathNode,
+                          &Handle
+                          );
   if (!EFI_ERROR (Status) && !mMeasureGptTableFlag) {
     //
     // Find the gpt partition on the given devicepath
@@ -793,8 +871,10 @@ DxeTpmMeasureBootHandler (
         //
         // Check whether it is a gpt partition or not
         //
-        if ((((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->MBRType == MBR_TYPE_EFI_PARTITION_TABLE_HEADER) &&
-            (((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->SignatureType == SIGNATURE_TYPE_GUID))
+        if ((((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->MBRType ==
+             MBR_TYPE_EFI_PARTITION_TABLE_HEADER) &&
+            (((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->SignatureType ==
+             SIGNATURE_TYPE_GUID))
         {
           //
           // Change the partition device path to its parent device path (disk) and get the handle.
@@ -840,7 +920,11 @@ DxeTpmMeasureBootHandler (
   // Check whether this device path support FVB protocol.
   //
   DevicePathNode = OrigDevicePathNode;
-  Status         = gBS->LocateDevicePath (&gEfiFirmwareVolumeBlockProtocolGuid, &DevicePathNode, &Handle);
+  Status         = gBS->LocateDevicePath (
+                          &gEfiFirmwareVolumeBlockProtocolGuid,
+                          &DevicePathNode,
+                          &Handle
+                          );
   if (!EFI_ERROR (Status)) {
     //
     // Don't check FV image, and directly return EFI_SUCCESS.
@@ -912,7 +996,8 @@ DxeTpmMeasureBootHandler (
   DevicePathNode = OrigDevicePathNode;
   ZeroMem (&ImageContext, sizeof (ImageContext));
   ImageContext.Handle    = (VOID *)FileBuffer;
-  ImageContext.ImageRead = (PE_COFF_LOADER_READ_FILE)DxeTpmMeasureBootLibImageRead;
+  ImageContext.ImageRead =
+    (PE_COFF_LOADER_READ_FILE)DxeTpmMeasureBootLibImageRead;
 
   //
   // Get information about the image being loaded
@@ -937,7 +1022,8 @@ DxeTpmMeasureBootHandler (
   // Measure drivers and applications if Application flag is not set
   //
   if ((!ApplicationRequired) ||
-      (ApplicationRequired && (ImageContext.ImageType == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION)))
+      (ApplicationRequired && (ImageContext.ImageType ==
+                               EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION)))
   {
     //
     // Print the image path to be measured.

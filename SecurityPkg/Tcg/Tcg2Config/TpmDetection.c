@@ -48,7 +48,12 @@ DetectTpmDevice (
   if (BootMode == BOOT_ON_S3_RESUME) {
     DEBUG ((DEBUG_INFO, "DetectTpmDevice: S3 mode\n"));
 
-    Status = PeiServicesLocatePpi (&gEfiPeiReadOnlyVariable2PpiGuid, 0, NULL, (VOID **)&VariablePpi);
+    Status = PeiServicesLocatePpi (
+               &gEfiPeiReadOnlyVariable2PpiGuid,
+               0,
+               NULL,
+               (VOID **)&VariablePpi
+               );
     ASSERT_EFI_ERROR (Status);
 
     Size = sizeof (TCG2_DEVICE_DETECTION);
@@ -65,7 +70,11 @@ DetectTpmDevice (
         (Tcg2DeviceDetection.TpmDeviceDetected >= TPM_DEVICE_MIN) &&
         (Tcg2DeviceDetection.TpmDeviceDetected <= TPM_DEVICE_MAX))
     {
-      DEBUG ((DEBUG_ERROR, "TpmDevice from DeviceDetection: %x\n", Tcg2DeviceDetection.TpmDeviceDetected));
+      DEBUG ((
+        DEBUG_ERROR,
+        "TpmDevice from DeviceDetection: %x\n",
+        Tcg2DeviceDetection.TpmDeviceDetected
+        ));
       return Tcg2DeviceDetection.TpmDeviceDetected;
     }
   }

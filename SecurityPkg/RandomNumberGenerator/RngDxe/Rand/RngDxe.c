@@ -175,10 +175,18 @@ RngGetInfo (
     return EFI_INVALID_PARAMETER;
   }
 
-  CopyMem (&RNGAlgorithmList[0], &gEfiRngAlgorithmSp80090Ctr256Guid, sizeof (EFI_RNG_ALGORITHM));
+  CopyMem (
+    &RNGAlgorithmList[0],
+    &gEfiRngAlgorithmSp80090Ctr256Guid,
+    sizeof (EFI_RNG_ALGORITHM)
+    );
 
   // x86 platforms also support EFI_RNG_ALGORITHM_RAW via RDSEED
-  CopyMem (&RNGAlgorithmList[1], &gEfiRngAlgorithmRaw, sizeof (EFI_RNG_ALGORITHM));
+  CopyMem (
+    &RNGAlgorithmList[1],
+    &gEfiRngAlgorithmRaw,
+    sizeof (EFI_RNG_ALGORITHM)
+    );
 
   *RNGAlgorithmListSize = RequiredSize;
   return EFI_SUCCESS;

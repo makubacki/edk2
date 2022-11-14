@@ -105,7 +105,8 @@ EFI_PLATFORM_FIRMWARE_BLOB  *mMeasuredChildFvInfo;
 UINT32                      mMeasuredMaxChildFvIndex = 0;
 UINT32                      mMeasuredChildFvIndex    = 0;
 
-EFI_PEI_FIRMWARE_VOLUME_INFO_MEASUREMENT_EXCLUDED_PPI  *mMeasurementExcludedFvPpi;
+EFI_PEI_FIRMWARE_VOLUME_INFO_MEASUREMENT_EXCLUDED_PPI  *
+  mMeasurementExcludedFvPpi;
 
 /**
   Lock physical presence if needed.
@@ -180,7 +181,8 @@ EFI_PEI_NOTIFY_DESCRIPTOR  mNotifyList[] = {
     FirmwareVolumeInfoPpiNotifyCallback
   },
   {
-    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+     EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
     &gEfiEndOfPeiSignalPpiGuid,
     EndofPeiSignalNotifyCallBack
   }
@@ -220,7 +222,8 @@ EndofPeiSignalNotifyCallBack (
   //
   MeasuredHobData = BuildGuidHob (
                       &gMeasuredFvHobGuid,
-                      sizeof (UINTN) + sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * (mMeasuredBaseFvIndex + mMeasuredChildFvIndex)
+                      sizeof (UINTN) + sizeof (EFI_PLATFORM_FIRMWARE_BLOB) *
+                      (mMeasuredBaseFvIndex + mMeasuredChildFvIndex)
                       );
 
   if (MeasuredHobData != NULL) {
@@ -232,12 +235,21 @@ EndofPeiSignalNotifyCallBack (
     //
     // Save measured base Fv info
     //
-    CopyMem (MeasuredHobData->MeasuredFvBuf, mMeasuredBaseFvInfo, sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * (mMeasuredBaseFvIndex));
+    CopyMem (
+      MeasuredHobData->MeasuredFvBuf,
+      mMeasuredBaseFvInfo,
+      sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * (mMeasuredBaseFvIndex)
+      );
 
     //
     // Save measured child Fv info
     //
-    CopyMem (&MeasuredHobData->MeasuredFvBuf[mMeasuredBaseFvIndex], mMeasuredChildFvInfo, sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * (mMeasuredChildFvIndex));
+    CopyMem (
+      &MeasuredHobData->MeasuredFvBuf[mMeasuredBaseFvIndex],
+      mMeasuredChildFvInfo,
+      sizeof (EFI_PLATFORM_FIRMWARE_BLOB) *
+      (mMeasuredChildFvIndex)
+      );
   }
 
   PERF_CALLBACK_END (&gEfiEndOfPeiSignalPpiGuid);
@@ -388,7 +400,11 @@ MeasureCRTMVersion (
 
   TcgEventHdr.PCRIndex  = 0;
   TcgEventHdr.EventType = EV_S_CRTM_VERSION;
-  TcgEventHdr.EventSize = (UINT32)StrSize ((CHAR16 *)PcdGetPtr (PcdFirmwareVersionString));
+  TcgEventHdr.EventSize = (UINT32)StrSize (
+                                    (CHAR16 *)PcdGetPtr (
+                                                PcdFirmwareVersionString
+                                                )
+                                    );
 
   return HashLogExtendEvent (
            &mEdkiiTcgPpi,
@@ -435,8 +451,16 @@ MeasureFvImage (
   if (mMeasurementExcludedFvPpi != NULL) {
     for (Index = 0; Index < mMeasurementExcludedFvPpi->Count; Index++) {
       if (mMeasurementExcludedFvPpi->Fv[Index].FvBase == FvBase) {
-        DEBUG ((DEBUG_INFO, "The FV which is excluded by TcgPei starts at: 0x%x\n", FvBase));
-        DEBUG ((DEBUG_INFO, "The FV which is excluded by TcgPei has the size: 0x%x\n", FvLength));
+        DEBUG ((
+          DEBUG_INFO,
+          "The FV which is excluded by TcgPei starts at: 0x%x\n",
+          FvBase
+          ));
+        DEBUG ((
+          DEBUG_INFO,
+          "The FV which is excluded by TcgPei has the size: 0x%x\n",
+          FvLength
+          ));
         return EFI_SUCCESS;
       }
     }
@@ -459,7 +483,9 @@ MeasureFvImage (
   Hob.Raw    = GetFirstGuidHob (&gEdkiiMigratedFvInfoGuid);
   while (Hob.Raw != NULL) {
     MigratedFvInfo = GET_GUID_HOB_DATA (Hob);
-    if ((MigratedFvInfo->FvNewBase == (UINT32)FvBase) && (MigratedFvInfo->FvLength == (UINT32)FvLength)) {
+    if ((MigratedFvInfo->FvNewBase == (UINT32)FvBase) &&
+        (MigratedFvInfo->FvLength == (UINT32)FvLength))
+    {
       //
       // Found the migrated FV info
       //
@@ -478,8 +504,16 @@ MeasureFvImage (
   FvBlob.BlobBase   = FvOrgBase;
   FvBlob.BlobLength = FvLength;
 
-  DEBUG ((DEBUG_INFO, "The FV which is measured by TcgPei starts at: 0x%x\n", FvBlob.BlobBase));
-  DEBUG ((DEBUG_INFO, "The FV which is measured by TcgPei has the size: 0x%x\n", FvBlob.BlobLength));
+  DEBUG ((
+    DEBUG_INFO,
+    "The FV which is measured by TcgPei starts at: 0x%x\n",
+    FvBlob.BlobBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "The FV which is measured by TcgPei has the size: 0x%x\n",
+    FvBlob.BlobLength
+    ));
 
   TcgEventHdr.PCRIndex  = 0;
   TcgEventHdr.EventType = EV_EFI_PLATFORM_FIRMWARE_BLOB;
@@ -499,12 +533,16 @@ MeasureFvImage (
   //
   if (mMeasuredBaseFvIndex >= mMeasuredMaxBaseFvIndex) {
     mMeasuredBaseFvInfo = ReallocatePool (
-                            sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * mMeasuredMaxBaseFvIndex,
-                            sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * (mMeasuredMaxBaseFvIndex + FIRMWARE_BLOB_GROWTH_STEP),
+                            sizeof (EFI_PLATFORM_FIRMWARE_BLOB) *
+                            mMeasuredMaxBaseFvIndex,
+                            sizeof (EFI_PLATFORM_FIRMWARE_BLOB) *
+                            (mMeasuredMaxBaseFvIndex +
+                             FIRMWARE_BLOB_GROWTH_STEP),
                             mMeasuredBaseFvInfo
                             );
     ASSERT (mMeasuredBaseFvInfo != NULL);
-    mMeasuredMaxBaseFvIndex = mMeasuredMaxBaseFvIndex + FIRMWARE_BLOB_GROWTH_STEP;
+    mMeasuredMaxBaseFvIndex = mMeasuredMaxBaseFvIndex +
+                              FIRMWARE_BLOB_GROWTH_STEP;
   }
 
   mMeasuredBaseFvInfo[mMeasuredBaseFvIndex].BlobBase   = FvBase;
@@ -563,7 +601,10 @@ MeasureMainBios (
                (VOID **)&FvPpi
                );
     if (!EFI_ERROR (Status)) {
-      MeasureFvImage ((EFI_PHYSICAL_ADDRESS)(UINTN)VolumeInfo.FvStart, VolumeInfo.FvSize);
+      MeasureFvImage (
+        (EFI_PHYSICAL_ADDRESS)(UINTN)VolumeInfo.FvStart,
+        VolumeInfo.FvSize
+        );
     }
 
     FvInstances++;
@@ -618,30 +659,40 @@ FirmwareVolumeInfoPpiNotifyCallback (
   if ((Fv->ParentFvName != NULL) || (Fv->ParentFileName != NULL)) {
     if (mMeasuredChildFvIndex >= mMeasuredMaxChildFvIndex) {
       mMeasuredChildFvInfo = ReallocatePool (
-                               sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * mMeasuredMaxChildFvIndex,
-                               sizeof (EFI_PLATFORM_FIRMWARE_BLOB) * (mMeasuredMaxChildFvIndex + FIRMWARE_BLOB_GROWTH_STEP),
+                               sizeof (EFI_PLATFORM_FIRMWARE_BLOB) *
+                               mMeasuredMaxChildFvIndex,
+                               sizeof (EFI_PLATFORM_FIRMWARE_BLOB) *
+                               (mMeasuredMaxChildFvIndex +
+                                FIRMWARE_BLOB_GROWTH_STEP),
                                mMeasuredChildFvInfo
                                );
       ASSERT (mMeasuredChildFvInfo != NULL);
-      mMeasuredMaxChildFvIndex = mMeasuredMaxChildFvIndex + FIRMWARE_BLOB_GROWTH_STEP;
+      mMeasuredMaxChildFvIndex = mMeasuredMaxChildFvIndex +
+                                 FIRMWARE_BLOB_GROWTH_STEP;
     }
 
     //
     // Check whether FV is in the measured child FV list.
     //
     for (Index = 0; Index < mMeasuredChildFvIndex; Index++) {
-      if (mMeasuredChildFvInfo[Index].BlobBase == (EFI_PHYSICAL_ADDRESS)(UINTN)Fv->FvInfo) {
+      if (mMeasuredChildFvInfo[Index].BlobBase ==
+          (EFI_PHYSICAL_ADDRESS)(UINTN)Fv->FvInfo)
+      {
         return EFI_SUCCESS;
       }
     }
 
-    mMeasuredChildFvInfo[mMeasuredChildFvIndex].BlobBase   = (EFI_PHYSICAL_ADDRESS)(UINTN)Fv->FvInfo;
+    mMeasuredChildFvInfo[mMeasuredChildFvIndex].BlobBase =
+      (EFI_PHYSICAL_ADDRESS)(UINTN)Fv->FvInfo;
     mMeasuredChildFvInfo[mMeasuredChildFvIndex].BlobLength = Fv->FvInfoSize;
     mMeasuredChildFvIndex++;
     return EFI_SUCCESS;
   }
 
-  return MeasureFvImage ((EFI_PHYSICAL_ADDRESS)(UINTN)Fv->FvInfo, Fv->FvInfoSize);
+  return MeasureFvImage (
+           (EFI_PHYSICAL_ADDRESS)(UINTN)Fv->FvInfo,
+           Fv->FvInfoSize
+           );
 }
 
 /**
@@ -678,18 +729,23 @@ PhysicalPresencePpiNotifyCallback (
   //
   // 1. Set physicalPresenceLifetimeLock, physicalPresenceHWEnable and physicalPresenceCMDEnable bit by PCDs.
   //
-  if (PcdGetBool (PcdPhysicalPresenceLifetimeLock) && !TpmPermanentFlags.physicalPresenceLifetimeLock) {
+  if (PcdGetBool (PcdPhysicalPresenceLifetimeLock) &&
+      !TpmPermanentFlags.physicalPresenceLifetimeLock)
+  {
     //
     // Lock TPM LifetimeLock is required, and LifetimeLock is not locked yet.
     //
-    PhysicalPresenceValue                          = TPM_PHYSICAL_PRESENCE_LIFETIME_LOCK;
+    PhysicalPresenceValue =
+      TPM_PHYSICAL_PRESENCE_LIFETIME_LOCK;
     TpmPermanentFlags.physicalPresenceLifetimeLock = TRUE;
 
     if (PcdGetBool (PcdPhysicalPresenceCmdEnable)) {
-      PhysicalPresenceValue                      |= TPM_PHYSICAL_PRESENCE_CMD_ENABLE;
+      PhysicalPresenceValue |=
+        TPM_PHYSICAL_PRESENCE_CMD_ENABLE;
       TpmPermanentFlags.physicalPresenceCMDEnable = TRUE;
     } else {
-      PhysicalPresenceValue                      |= TPM_PHYSICAL_PRESENCE_CMD_DISABLE;
+      PhysicalPresenceValue |=
+        TPM_PHYSICAL_PRESENCE_CMD_DISABLE;
       TpmPermanentFlags.physicalPresenceCMDEnable = FALSE;
     }
 
@@ -711,7 +767,11 @@ PhysicalPresencePpiNotifyCallback (
   // 2. Lock physical presence if it is required.
   //
   LockPhysicalPresencePpi = (PEI_LOCK_PHYSICAL_PRESENCE_PPI *)Ppi;
-  if (!LockPhysicalPresencePpi->LockPhysicalPresence ((CONST EFI_PEI_SERVICES **)PeiServices)) {
+  if (!LockPhysicalPresencePpi->LockPhysicalPresence (
+                                  (CONST
+                                   EFI_PEI_SERVICES **)PeiServices
+                                  ))
+  {
     return EFI_SUCCESS;
   }
 
@@ -847,7 +907,11 @@ PeimEntryMA (
   EFI_STATUS     Status2;
   EFI_BOOT_MODE  BootMode;
 
-  if (!CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm12Guid)) {
+  if (!CompareGuid (
+         PcdGetPtr (PcdTpmInstanceGuid),
+         &gEfiTpmDeviceInstanceTpm12Guid
+         ))
+  {
     DEBUG ((DEBUG_ERROR, "No TPM12 instance required!\n"));
     return EFI_UNSUPPORTED;
   }
