@@ -120,7 +120,14 @@ LegacyBiosFarCall86 (
   Regs->X.Flags.TF        = 0;
   Regs->X.Flags.CF        = 0;
 
-  return InternalLegacyBiosFarCall (This, Segment, Offset, Regs, Stack, StackSize);
+  return InternalLegacyBiosFarCall (
+           This,
+           Segment,
+           Offset,
+           Regs,
+           Stack,
+           StackSize
+           );
 }
 
 /**
@@ -194,13 +201,18 @@ InternalLegacyBiosFarCall (
   ThunkRegSet.E.DS  = Regs->X.DS;
   ThunkRegSet.E.ES  = Regs->X.ES;
 
-  CopyMem (&(ThunkRegSet.E.EFLAGS.UintN), &(Regs->X.Flags), sizeof (Regs->X.Flags));
+  CopyMem (
+    &(ThunkRegSet.E.EFLAGS.UintN),
+    &(Regs->X.Flags),
+    sizeof (Regs->X.Flags)
+    );
 
   //
   // Clear the error flag; thunk code may set it. Stack16 should be the high address
   // Make Statk16 address the low 16 bit must be not zero.
   //
-  Stack16 = (UINT16 *)((UINT8 *)mThunkContext.RealModeBuffer + mThunkContext.RealModeBufferSize - sizeof (UINT16));
+  Stack16 = (UINT16 *)((UINT8 *)mThunkContext.RealModeBuffer +
+                       mThunkContext.RealModeBufferSize - sizeof (UINT16));
 
   //
   // Save current rate of DXE Timer
@@ -233,7 +245,11 @@ InternalLegacyBiosFarCall (
   UINTN  Count;
 
   for (Vector = 0x20, Count = 0; Vector < 0x100; Vector++) {
-    Status = Private->Cpu->RegisterInterruptHandler (Private->Cpu, Vector, LegacyBiosNullInterruptHandler);
+    Status = Private->Cpu->RegisterInterruptHandler (
+                             Private->Cpu,
+                             Vector,
+                             LegacyBiosNullInterruptHandler
+                             );
     if (Status == EFI_ALREADY_STARTED) {
       Count++;
     }
@@ -244,7 +260,10 @@ InternalLegacyBiosFarCall (
   }
 
   if (Count >= 2) {
-    DEBUG ((DEBUG_ERROR, "ERROR: More than one HW interrupt active with CSM enabled\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ERROR: More than one HW interrupt active with CSM enabled\n"
+      ));
   }
 
   ASSERT (Count < 2);
@@ -277,7 +296,12 @@ InternalLegacyBiosFarCall (
   //
   // Set Legacy16 state. 0x08, 0x70 is legacy 8259 vector bases.
   //
-  Status = Private->Legacy8259->SetMode (Private->Legacy8259, Efi8259LegacyMode, NULL, NULL);
+  Status = Private->Legacy8259->SetMode (
+                                  Private->Legacy8259,
+                                  Efi8259LegacyMode,
+                                  NULL,
+                                  NULL
+                                  );
   ASSERT_EFI_ERROR (Status);
 
   AsmThunk16 (&mThunkContext);
@@ -292,7 +316,12 @@ InternalLegacyBiosFarCall (
   //
   // Restore protected mode interrupt state
   //
-  Status = Private->Legacy8259->SetMode (Private->Legacy8259, Efi8259ProtectedMode, NULL, NULL);
+  Status = Private->Legacy8259->SetMode (
+                                  Private->Legacy8259,
+                                  Efi8259ProtectedMode,
+                                  NULL,
+                                  NULL
+                                  );
   ASSERT_EFI_ERROR (Status);
 
   mThunkContext.RealModeState = NULL;
@@ -344,7 +373,11 @@ InternalLegacyBiosFarCall (
   Regs->X.DS  = ThunkRegSet.E.DS;
   Regs->X.ES  = ThunkRegSet.E.ES;
 
-  CopyMem (&(Regs->X.Flags), &(ThunkRegSet.E.EFLAGS.UintN), sizeof (Regs->X.Flags));
+  CopyMem (
+    &(Regs->X.Flags),
+    &(ThunkRegSet.E.EFLAGS.UintN),
+    sizeof (Regs->X.Flags)
+    );
 
   return (BOOLEAN)(Regs->X.Flags.CF == 1);
 }
@@ -369,9 +402,13 @@ LegacyBiosInitializeThunk (
 
   MemoryAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)Private->IntThunk;
 
-  mThunkContext.RealModeBuffer     = (VOID *)(UINTN)(MemoryAddress + ((sizeof (LOW_MEMORY_THUNK) / EFI_PAGE_SIZE) + 1) * EFI_PAGE_SIZE);
+  mThunkContext.RealModeBuffer     = (VOID *)(UINTN)(MemoryAddress +
+                                                     ((sizeof (LOW_MEMORY_THUNK)
+                                                       / EFI_PAGE_SIZE) + 1) *
+                                                     EFI_PAGE_SIZE);
   mThunkContext.RealModeBufferSize = EFI_PAGE_SIZE;
-  mThunkContext.ThunkAttributes    = THUNK_ATTRIBUTE_BIG_REAL_MODE | THUNK_ATTRIBUTE_DISABLE_A20_MASK_INT_15;
+  mThunkContext.ThunkAttributes    = THUNK_ATTRIBUTE_BIG_REAL_MODE |
+                                     THUNK_ATTRIBUTE_DISABLE_A20_MASK_INT_15;
 
   AsmPrepareThunk16 (&mThunkContext);
 
@@ -379,7 +416,11 @@ LegacyBiosInitializeThunk (
   // Get the interrupt vector number corresponding to IRQ0 from the 8259 driver
   //
   TimerVector = 0;
-  Status      = Private->Legacy8259->GetVector (Private->Legacy8259, Efi8259Irq0, &TimerVector);
+  Status      = Private->Legacy8259->GetVector (
+                                       Private->Legacy8259,
+                                       Efi8259Irq0,
+                                       &TimerVector
+                                       );
   ASSERT_EFI_ERROR (Status);
 
   //

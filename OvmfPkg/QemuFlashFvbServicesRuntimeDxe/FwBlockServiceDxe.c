@@ -126,7 +126,8 @@ FvbVirtualAddressChangeEvent (
                   (
                    (UINTN)((UINT8 *)FwhInstance) +
                    FwhInstance->VolumeHeader.HeaderLength +
-                   (sizeof (EFI_FW_VOL_INSTANCE) - sizeof (EFI_FIRMWARE_VOLUME_HEADER))
+                   (sizeof (EFI_FW_VOL_INSTANCE) -
+                    sizeof (EFI_FIRMWARE_VOLUME_HEADER))
                   );
     Index++;
   }

@@ -90,7 +90,8 @@ InitializeVirtioFdtDxe (
     DevicePath = (VIRTIO_TRANSPORT_DEVICE_PATH *)CreateDeviceNode (
                                                    HARDWARE_DEVICE_PATH,
                                                    HW_VENDOR_DP,
-                                                   sizeof (VIRTIO_TRANSPORT_DEVICE_PATH)
+                                                   sizeof (
+                                                          VIRTIO_TRANSPORT_DEVICE_PATH)
                                                    );
     if (DevicePath == NULL) {
       DEBUG ((DEBUG_ERROR, "%a: Out of memory\n", __FUNCTION__));

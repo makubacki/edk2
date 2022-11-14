@@ -74,6 +74,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
     )
 
 /// A simple macro defined as the set of all FV Block Attribute bits that indicate status.
-#define EFI_FVB_STATUS  (EFI_FVB_READ_STATUS | EFI_FVB_WRITE_STATUS | EFI_FVB_LOCK_STATUS)
+#define EFI_FVB_STATUS  \
+  (EFI_FVB_READ_STATUS | EFI_FVB_WRITE_STATUS | EFI_FVB_LOCK_STATUS)
 
 #endif /* __EFI_FIRMWARE_VOLUME_HEADER_H__ */

@@ -58,7 +58,10 @@ Interrupt8259WriteMask (
   IoWrite8 (LEGACY_8259_MASK_REGISTER_MASTER, (UINT8)Mask);
   IoWrite8 (LEGACY_8259_MASK_REGISTER_SLAVE, (UINT8)(Mask >> 8));
   IoWrite8 (LEGACY_8259_EDGE_LEVEL_TRIGGERED_REGISTER_MASTER, (UINT8)EdgeLevel);
-  IoWrite8 (LEGACY_8259_EDGE_LEVEL_TRIGGERED_REGISTER_SLAVE, (UINT8)(EdgeLevel >> 8));
+  IoWrite8 (
+    LEGACY_8259_EDGE_LEVEL_TRIGGERED_REGISTER_SLAVE,
+    (UINT8)(EdgeLevel >> 8)
+    );
 }
 
 /**
@@ -602,7 +605,11 @@ Install8259 (
   //
   // Set the 8259 Master base to 0x68 and the 8259 Slave base to 0x70
   //
-  Status = Interrupt8259SetVectorBase (&mInterrupt8259, PROTECTED_MODE_BASE_VECTOR_MASTER, PROTECTED_MODE_BASE_VECTOR_SLAVE);
+  Status = Interrupt8259SetVectorBase (
+             &mInterrupt8259,
+             PROTECTED_MODE_BASE_VECTOR_MASTER,
+             PROTECTED_MODE_BASE_VECTOR_SLAVE
+             );
 
   //
   // Set all 8259 interrupts to edge triggered and disabled

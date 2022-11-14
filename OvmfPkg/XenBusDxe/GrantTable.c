@@ -22,8 +22,9 @@
 
 #define NR_RESERVED_ENTRIES  8
 
-#define NR_GRANT_FRAMES   (FixedPcdGet32 (PcdXenGrantFrames))
-#define NR_GRANT_ENTRIES  (NR_GRANT_FRAMES * EFI_PAGE_SIZE / sizeof(grant_entry_v1_t))
+#define NR_GRANT_FRAMES    (FixedPcdGet32 (PcdXenGrantFrames))
+#define NR_GRANT_ENTRIES  \
+                           (NR_GRANT_FRAMES * EFI_PAGE_SIZE / sizeof(grant_entry_v1_t))
 
 STATIC grant_entry_v1_t  *GrantTable = NULL;
 STATIC grant_ref_t       GrantList[NR_GRANT_ENTRIES];
@@ -142,7 +143,10 @@ XenGrantTableInit (
     Parameters.idx   = Index;
     Parameters.space = XENMAPSPACE_grant_table;
     Parameters.gpfn  = (xen_pfn_t)((UINTN)GrantTable >> EFI_PAGE_SHIFT) + Index;
-    ReturnCode       = XenHypercallMemoryOp (XENMEM_add_to_physmap, &Parameters);
+    ReturnCode       = XenHypercallMemoryOp (
+                         XENMEM_add_to_physmap,
+                         &Parameters
+                         );
     if (ReturnCode != 0) {
       DEBUG ((
         DEBUG_ERROR,

@@ -15,14 +15,14 @@
 
 STATIC
 EFI_UNICODE_STRING_TABLE  mVirtioNetDriverNameTable[] = {
-  { "eng;en", L"Virtio Network Driver" },
-  { NULL,     NULL                     }
+  { "eng;en", L"Virtio Network Driver"     },
+  { NULL,     NULL                         }
 };
 
 STATIC
 EFI_UNICODE_STRING_TABLE  mVirtioNetControllerNameTable[] = {
-  { "eng;en", L"Virtio Network Device" },
-  { NULL,     NULL                     }
+  { "eng;en", L"Virtio Network Device"     },
+  { NULL,     NULL                         }
 };
 
 /**
@@ -125,7 +125,9 @@ VirtioNetGetControllerName (
 {
   EFI_STATUS  Status;
 
-  if ((ControllerHandle == NULL) || (Language == NULL) || (ControllerName == NULL)) {
+  if ((ControllerHandle == NULL) || (Language == NULL) || (ControllerName ==
+                                                           NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 

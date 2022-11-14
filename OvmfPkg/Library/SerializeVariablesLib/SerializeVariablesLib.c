@@ -785,7 +785,11 @@ SerializeVariablesAddVariable (
   //
   // Add name size (UINT32)
   //
-  AppendToBuffer (Instance, (VOID *)&SerializedNameSize, sizeof (SerializedNameSize));
+  AppendToBuffer (
+    Instance,
+    (VOID *)&SerializedNameSize,
+    sizeof (SerializedNameSize)
+    );
 
   //
   // Add variable unicode name string
@@ -806,7 +810,11 @@ SerializeVariablesAddVariable (
   // Add variable data size (UINT32)
   //
   SerializedDataSize = (UINT32)DataSize;
-  AppendToBuffer (Instance, (VOID *)&SerializedDataSize, sizeof (SerializedDataSize));
+  AppendToBuffer (
+    Instance,
+    (VOID *)&SerializedDataSize,
+    sizeof (SerializedDataSize)
+    );
 
   //
   // Add variable data

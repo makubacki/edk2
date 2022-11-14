@@ -59,7 +59,8 @@ GetCompatEntryPoint (
   }
 
   PeCoffHeaderOffset = DosHdr->e_lfanew;
-  Pe32               = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)ImageBase + PeCoffHeaderOffset);
+  Pe32               = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)ImageBase +
+                                                  PeCoffHeaderOffset);
 
   Section = (EFI_IMAGE_SECTION_HEADER *)((UINTN)&Pe32->OptionalHeader +
                                          Pe32->FileHeader.SizeOfOptionalHeader);
@@ -70,7 +71,8 @@ GetCompatEntryPoint (
       //
       // Dereference the section contents to find the mixed mode entry point
       //
-      PeCompat    = (PE_COMPAT_TYPE1 *)((UINTN)ImageBase + Section->VirtualAddress);
+      PeCompat    = (PE_COMPAT_TYPE1 *)((UINTN)ImageBase +
+                                        Section->VirtualAddress);
       PeCompatEnd = (UINTN)(VOID *)PeCompat + Section->Misc.VirtualSize;
 
       while (PeCompat->Type != 0 && (UINTN)(VOID *)PeCompat < PeCompatEnd) {
@@ -78,7 +80,8 @@ GetCompatEntryPoint (
             (PeCompat->Size >= sizeof (PE_COMPAT_TYPE1)) &&
             EFI_IMAGE_MACHINE_TYPE_SUPPORTED (PeCompat->MachineType))
         {
-          return (EFI_IMAGE_ENTRY_POINT)((UINTN)ImageBase + PeCompat->EntryPoint);
+          return (EFI_IMAGE_ENTRY_POINT)((UINTN)ImageBase +
+                                         PeCompat->EntryPoint);
         }
 
         PeCompat = (PE_COMPAT_TYPE1 *)((UINTN)PeCompat + PeCompat->Size);

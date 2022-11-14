@@ -269,8 +269,11 @@ InsertPciCap (
     // we don't bump the instance count maintained in Instance#0 just yet, to
     // keep rollback on errors simple.
     //
-    InstanceZero                           = OrderedCollectionUserStruct (PciCapEntry);
-    PciCap->Key.Instance                   = InstanceZero->NumInstancesUnion.NumInstances;
+    InstanceZero = OrderedCollectionUserStruct (
+                     PciCapEntry
+                     );
+    PciCap->Key.Instance =
+      InstanceZero->NumInstancesUnion.NumInstances;
     PciCap->NumInstancesUnion.InstanceZero = InstanceZero;
 
     ASSERT (PciCap->Key.Instance > 0);

@@ -198,13 +198,23 @@ GetTimeInNanoSecond (
   // Time = --------- x 1,000,000,000
   //        Frequency
   //
-  NanoSeconds = MultU64x32 (DivU64x32Remainder (Ticks, ACPI_TIMER_FREQUENCY, &Remainder), 1000000000u);
+  NanoSeconds = MultU64x32 (
+                  DivU64x32Remainder (
+                    Ticks,
+                    ACPI_TIMER_FREQUENCY,
+                    &Remainder
+                    ),
+                  1000000000u
+                  );
 
   //
   // Frequency < 0x100000000, so Remainder < 0x100000000, then (Remainder * 1,000,000,000)
   // will not overflow 64-bit.
   //
-  NanoSeconds += DivU64x32 (MultU64x32 ((UINT64)Remainder, 1000000000u), ACPI_TIMER_FREQUENCY);
+  NanoSeconds += DivU64x32 (
+                   MultU64x32 ((UINT64)Remainder, 1000000000u),
+                   ACPI_TIMER_FREQUENCY
+                   );
 
   return NanoSeconds;
 }

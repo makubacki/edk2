@@ -115,7 +115,8 @@ HandleStatusCode (
   if (((Value == mLoadFail) || (Value == mStartFail)) &&
       ((Data == NULL) ||
        (Data->HeaderSize != sizeof *Data) ||
-       (Data->Size != sizeof (EFI_RETURN_STATUS_EXTENDED_DATA) - sizeof *Data) ||
+       (Data->Size != sizeof (EFI_RETURN_STATUS_EXTENDED_DATA) -
+        sizeof *Data) ||
        !CompareGuid (&Data->Type, &gEfiStatusCodeSpecificDataGuid)))
   {
     DEBUG ((

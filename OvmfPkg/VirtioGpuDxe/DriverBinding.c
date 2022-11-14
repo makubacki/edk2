@@ -809,7 +809,10 @@ VirtioGpuDriverBindingStart (
       goto CloseExitBoot;
     }
 
-    if ((RemainingDevicePath != NULL) && IsDevicePathEnd (RemainingDevicePath)) {
+    if ((RemainingDevicePath != NULL) && IsDevicePathEnd (
+                                           RemainingDevicePath
+                                           ))
+    {
       //
       // No child handle should be produced; we're done.
       //

@@ -465,7 +465,8 @@ Split1GPageTo2M (
       //
       // Fill in the Page Directory entries
       //
-      PageDirectoryEntry->Uint64         = (UINT64)PhysicalAddress2M | AddressEncMask;
+      PageDirectoryEntry->Uint64 = (UINT64)PhysicalAddress2M |
+                                   AddressEncMask;
       PageDirectoryEntry->Bits.ReadWrite = 1;
       PageDirectoryEntry->Bits.Present   = 1;
       PageDirectoryEntry->Bits.MustBe1   = 1;
@@ -614,7 +615,8 @@ InternalMemEncryptSevCreateIdentityMap1G (
     }
 
     PageDirectory1GEntry = (VOID *)(
-                                    (PageMapLevel4Entry->Bits.PageTableBaseAddress <<
+                                    (PageMapLevel4Entry->Bits.
+                                       PageTableBaseAddress <<
                                      12) & ~PgTableMask
                                     );
     PageDirectory1GEntry += PDP_OFFSET (PhysicalAddress);
@@ -623,7 +625,8 @@ InternalMemEncryptSevCreateIdentityMap1G (
       PageDirectory1GEntry->Bits.MustBe1    = 1;
       PageDirectory1GEntry->Bits.MustBeZero = 0;
       PageDirectory1GEntry->Bits.ReadWrite  = 1;
-      PageDirectory1GEntry->Uint64         |= (UINT64)PhysicalAddress | AddressEncMask;
+      PageDirectory1GEntry->Uint64         |= (UINT64)PhysicalAddress |
+                                              AddressEncMask;
     }
 
     if (Length <= BIT30) {
@@ -762,7 +765,12 @@ SetMemoryEncDec (
   // The InternalSetPageState() is used for setting the page state in the RMP table.
   //
   if (!Mmio && (Mode == ClearCBit) && MemEncryptSevSnpIsEnabled ()) {
-    InternalSetPageState (PhysicalAddress, EFI_SIZE_TO_PAGES (Length), SevSnpPageShared, FALSE);
+    InternalSetPageState (
+      PhysicalAddress,
+      EFI_SIZE_TO_PAGES (Length),
+      SevSnpPageShared,
+      FALSE
+      );
   }
 
   //
@@ -794,7 +802,8 @@ SetMemoryEncDec (
     }
 
     PageDirectory1GEntry = (VOID *)(
-                                    (PageMapLevel4Entry->Bits.PageTableBaseAddress <<
+                                    (PageMapLevel4Entry->Bits.
+                                       PageTableBaseAddress <<
                                      12) & ~PgTableMask
                                     );
     PageDirectory1GEntry += PDP_OFFSET (PhysicalAddress);

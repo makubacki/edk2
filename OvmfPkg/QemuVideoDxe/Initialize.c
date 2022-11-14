@@ -139,10 +139,10 @@ UINT16  Seq_1024_768_32bpp_60[15] = {
 QEMU_VIDEO_CIRRUS_MODES  QemuVideoCirrusModes[] = {
   //  {  640, 480, 8, Crtc_640_480_256_60,  Seq_640_480_256_60,  0xe3 },
   //  {  800, 600, 8, Crtc_800_600_256_60,  Seq_800_600_256_60,  0xef },
-  { 640,  480, 32, Crtc_640_480_32bpp_60,  Seq_640_480_32bpp_60,  0xef },
-  { 800,  600, 32, Crtc_800_600_32bpp_60,  Seq_800_600_32bpp_60,  0xef },
+  { 640,  480,  32, Crtc_640_480_32bpp_60,  Seq_640_480_32bpp_60,  0xef  },
+  { 800,  600,  32, Crtc_800_600_32bpp_60,  Seq_800_600_32bpp_60,  0xef  },
   //  { 1024, 768, 8, Crtc_1024_768_256_60, Seq_1024_768_256_60, 0xef }
-  { 1024, 768, 24, Crtc_1024_768_24bpp_60, Seq_1024_768_24bpp_60, 0xef }
+  { 1024, 768,  24, Crtc_1024_768_24bpp_60, Seq_1024_768_24bpp_60, 0xef  }
   //  { 1024, 768, 32, Crtc_1024_768_32bpp_60, Seq_1024_768_32bpp_60, 0xef }
   //  { 960, 720, 32, Crtc_960_720_32bpp_60, Seq_1024_768_32bpp_60, 0xef }
 };
@@ -167,7 +167,8 @@ QemuVideoCirrusModeSetup (
   // Setup Video Modes
   //
   Private->ModeData = AllocatePool (
-                        sizeof (Private->ModeData[0]) * QEMU_VIDEO_CIRRUS_MODE_COUNT
+                        sizeof (Private->ModeData[0]) *
+                        QEMU_VIDEO_CIRRUS_MODE_COUNT
                         );
   if (Private->ModeData == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -203,43 +204,43 @@ QemuVideoCirrusModeSetup (
 /// Table of supported video modes
 ///
 STATIC QEMU_VIDEO_BOCHS_MODES  QemuVideoBochsModes[] = {
-  { 640,  480  },
-  { 800,  480  },
-  { 800,  600  },
-  { 832,  624  },
-  { 960,  640  },
-  { 1024, 600  },
-  { 1024, 768  },
-  { 1152, 864  },
-  { 1152, 870  },
-  { 1280, 720  },
-  { 1280, 760  },
-  { 1280, 768  },
-  { 1280, 800  },
-  { 1280, 960  },
-  { 1280, 1024 },
-  { 1360, 768  },
-  { 1366, 768  },
-  { 1400, 1050 },
-  { 1440, 900  },
-  { 1600, 900  },
-  { 1600, 1200 },
-  { 1680, 1050 },
-  { 1920, 1080 },
-  { 1920, 1200 },
-  { 1920, 1440 },
-  { 2000, 2000 },
-  { 2048, 1536 },
-  { 2048, 2048 },
-  { 2560, 1440 },
-  { 2560, 1600 },
-  { 2560, 2048 },
-  { 2800, 2100 },
-  { 3200, 2400 },
-  { 3840, 2160 },
-  { 4096, 2160 },
-  { 7680, 4320 },
-  { 8192, 4320 }
+  { 640,  480   },
+  { 800,  480   },
+  { 800,  600   },
+  { 832,  624   },
+  { 960,  640   },
+  { 1024, 600   },
+  { 1024, 768   },
+  { 1152, 864   },
+  { 1152, 870   },
+  { 1280, 720   },
+  { 1280, 760   },
+  { 1280, 768   },
+  { 1280, 800   },
+  { 1280, 960   },
+  { 1280, 1024  },
+  { 1360, 768   },
+  { 1366, 768   },
+  { 1400, 1050  },
+  { 1440, 900   },
+  { 1600, 900   },
+  { 1600, 1200  },
+  { 1680, 1050  },
+  { 1920, 1080  },
+  { 1920, 1200  },
+  { 1920, 1440  },
+  { 2000, 2000  },
+  { 2048, 1536  },
+  { 2048, 2048  },
+  { 2560, 1440  },
+  { 2560, 1600  },
+  { 2560, 2048  },
+  { 2800, 2100  },
+  { 3200, 2400  },
+  { 3840, 2160  },
+  { 4096, 2160  },
+  { 7680, 4320  },
+  { 8192, 4320  }
 };
 
 #define QEMU_VIDEO_BOCHS_MODE_COUNT \
@@ -456,7 +457,8 @@ QemuVideoBochsModeSetup (
   // Setup Video Modes
   //
   Private->ModeData = AllocatePool (
-                        sizeof (Private->ModeData[0]) * (QEMU_VIDEO_BOCHS_MODE_COUNT+1)
+                        sizeof (Private->ModeData[0]) *
+                        (QEMU_VIDEO_BOCHS_MODE_COUNT+1)
                         );
   if (Private->ModeData == NULL) {
     return EFI_OUT_OF_RESOURCES;

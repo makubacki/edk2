@@ -155,7 +155,11 @@ QemuVideoControllerDriverSupported (
     goto Done;
   }
 
-  Card = QemuVideoDetect (Pci.Hdr.ClassCode[1], Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+  Card = QemuVideoDetect (
+           Pci.Hdr.ClassCode[1],
+           Pci.Hdr.VendorId,
+           Pci.Hdr.DeviceId
+           );
   if (Card != NULL) {
     DEBUG ((DEBUG_INFO, "QemuVideo: %s detected\n", Card->Name));
     Status = EFI_SUCCESS;
@@ -255,7 +259,11 @@ QemuVideoControllerDriverStart (
   //
   // Determine card variant.
   //
-  Card = QemuVideoDetect (Pci.Hdr.ClassCode[1], Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+  Card = QemuVideoDetect (
+           Pci.Hdr.ClassCode[1],
+           Pci.Hdr.VendorId,
+           Pci.Hdr.DeviceId
+           );
   if (Card == NULL) {
     Status = EFI_DEVICE_ERROR;
     goto ClosePciIo;
@@ -296,7 +304,8 @@ QemuVideoControllerDriverStart (
     goto ClosePciIo;
   }
 
-  SupportedVgaIo &= (UINT64)(EFI_PCI_IO_ATTRIBUTE_VGA_IO | EFI_PCI_IO_ATTRIBUTE_VGA_IO_16);
+  SupportedVgaIo &= (UINT64)(EFI_PCI_IO_ATTRIBUTE_VGA_IO |
+                             EFI_PCI_IO_ATTRIBUTE_VGA_IO_16);
   if ((SupportedVgaIo == 0) && IS_PCI_VGA (&Pci)) {
     Status = EFI_UNSUPPORTED;
     goto ClosePciIo;
@@ -308,7 +317,8 @@ QemuVideoControllerDriverStart (
   Status = Private->PciIo->Attributes (
                              Private->PciIo,
                              EfiPciIoAttributeOperationEnable,
-                             EFI_PCI_DEVICE_ENABLE | EFI_PCI_IO_ATTRIBUTE_VGA_MEMORY | SupportedVgaIo,
+                             EFI_PCI_DEVICE_ENABLE |
+                             EFI_PCI_IO_ATTRIBUTE_VGA_MEMORY | SupportedVgaIo,
                              NULL
                              );
   if (EFI_ERROR (Status)) {
@@ -386,8 +396,20 @@ QemuVideoControllerDriverStart (
   ZeroMem (&AcpiDeviceNode, sizeof (ACPI_ADR_DEVICE_PATH));
   AcpiDeviceNode.Header.Type    = ACPI_DEVICE_PATH;
   AcpiDeviceNode.Header.SubType = ACPI_ADR_DP;
-  AcpiDeviceNode.ADR            = ACPI_DISPLAY_ADR (1, 0, 0, 1, 0, ACPI_ADR_DISPLAY_TYPE_VGA, 0, 0);
-  SetDevicePathNodeLength (&AcpiDeviceNode.Header, sizeof (ACPI_ADR_DEVICE_PATH));
+  AcpiDeviceNode.ADR            = ACPI_DISPLAY_ADR (
+                                    1,
+                                    0,
+                                    0,
+                                    1,
+                                    0,
+                                    ACPI_ADR_DISPLAY_TYPE_VGA,
+                                    0,
+                                    0
+                                    );
+  SetDevicePathNodeLength (
+    &AcpiDeviceNode.Header,
+    sizeof (ACPI_ADR_DEVICE_PATH)
+    );
 
   Private->GopDevicePath = AppendDevicePathNode (
                              ParentDevicePath,
@@ -796,7 +818,13 @@ SetDefaultPalette (
   for (RedIndex = 0; RedIndex < 8; RedIndex++) {
     for (GreenIndex = 0; GreenIndex < 8; GreenIndex++) {
       for (BlueIndex = 0; BlueIndex < 4; BlueIndex++) {
-        SetPaletteColor (Private, Index, (UINT8)(RedIndex << 5), (UINT8)(GreenIndex << 5), (UINT8)(BlueIndex << 6));
+        SetPaletteColor (
+          Private,
+          Index,
+          (UINT8)(RedIndex << 5),
+          (UINT8)(GreenIndex << 5),
+          (UINT8)(BlueIndex << 6)
+          );
         Index++;
       }
     }
@@ -883,11 +911,19 @@ InitializeCirrusGraphicsMode (
   outw (Private, CRTC_ADDRESS_REGISTER, 0x2011);
 
   for (Index = 0; Index < 28; Index++) {
-    outw (Private, CRTC_ADDRESS_REGISTER, (UINT16)((ModeData->CrtcSettings[Index] << 8) | Index));
+    outw (
+      Private,
+      CRTC_ADDRESS_REGISTER,
+      (UINT16)((ModeData->CrtcSettings[Index] << 8) | Index)
+      );
   }
 
   for (Index = 0; Index < 9; Index++) {
-    outw (Private, GRAPH_ADDRESS_REGISTER, (UINT16)((GraphicsController[Index] << 8) | Index));
+    outw (
+      Private,
+      GRAPH_ADDRESS_REGISTER,
+      (UINT16)((GraphicsController[Index] << 8) | Index)
+      );
   }
 
   inb (Private, INPUT_STATUS_1_REGISTER);
@@ -1039,10 +1075,26 @@ InitializeBochsGraphicsMode (
   BochsWrite (Private, VBE_DISPI_INDEX_Y_OFFSET, 0);
 
   BochsWrite (Private, VBE_DISPI_INDEX_BPP, (UINT16)ModeData->ColorDepth);
-  BochsWrite (Private, VBE_DISPI_INDEX_XRES, (UINT16)ModeData->HorizontalResolution);
-  BochsWrite (Private, VBE_DISPI_INDEX_VIRT_WIDTH, (UINT16)ModeData->HorizontalResolution);
-  BochsWrite (Private, VBE_DISPI_INDEX_YRES, (UINT16)ModeData->VerticalResolution);
-  BochsWrite (Private, VBE_DISPI_INDEX_VIRT_HEIGHT, (UINT16)ModeData->VerticalResolution);
+  BochsWrite (
+    Private,
+    VBE_DISPI_INDEX_XRES,
+    (UINT16)ModeData->HorizontalResolution
+    );
+  BochsWrite (
+    Private,
+    VBE_DISPI_INDEX_VIRT_WIDTH,
+    (UINT16)ModeData->HorizontalResolution
+    );
+  BochsWrite (
+    Private,
+    VBE_DISPI_INDEX_YRES,
+    (UINT16)ModeData->VerticalResolution
+    );
+  BochsWrite (
+    Private,
+    VBE_DISPI_INDEX_VIRT_HEIGHT,
+    (UINT16)ModeData->VerticalResolution
+    );
 
   BochsWrite (
     Private,

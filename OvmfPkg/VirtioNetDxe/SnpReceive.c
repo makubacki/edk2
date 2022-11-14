@@ -168,7 +168,8 @@ RecycleDesc:
   //
   // virtio-0.9.5, 2.4.1 Supplying Buffers to The Device
   //
-  AvailIdx                                                   = *Dev->RxRing.Avail.Idx;
+  AvailIdx =
+    *Dev->RxRing.Avail.Idx;
   Dev->RxRing.Avail.Ring[AvailIdx++ % Dev->RxRing.QueueSize] =
     (UINT16)DescIdx;
 

@@ -81,8 +81,16 @@ GetXenSmbiosTables (
   {
     XenSmbiosEntryPointStructure = (SMBIOS_TABLE_ENTRY_POINT *)XenSmbiosPtr;
 
-    if (!AsciiStrnCmp ((CHAR8 *)XenSmbiosEntryPointStructure->AnchorString, "_SM_", 4) &&
-        !AsciiStrnCmp ((CHAR8 *)XenSmbiosEntryPointStructure->IntermediateAnchorString, "_DMI_", 5) &&
+    if (!AsciiStrnCmp (
+           (CHAR8 *)XenSmbiosEntryPointStructure->AnchorString,
+           "_SM_",
+           4
+           ) &&
+        !AsciiStrnCmp (
+           (CHAR8 *)XenSmbiosEntryPointStructure->IntermediateAnchorString,
+           "_DMI_",
+           5
+           ) &&
         IsEntryPointStructureValid (XenSmbiosEntryPointStructure))
     {
       return XenSmbiosEntryPointStructure;

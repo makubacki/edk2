@@ -73,7 +73,8 @@ DetectSmbiosVersion (
       if ((QemuAnchor.V2.MajorVersion != 2) ||
           (QemuAnchor.V2.TableLength != TablesSize) ||
           (CompareMem (QemuAnchor.V2.AnchorString, "_SM_", 4) != 0) ||
-          (CompareMem (QemuAnchor.V2.IntermediateAnchorString, "_DMI_", 5) != 0))
+          (CompareMem (QemuAnchor.V2.IntermediateAnchorString, "_DMI_", 5) !=
+           0))
       {
         return RETURN_SUCCESS;
       }

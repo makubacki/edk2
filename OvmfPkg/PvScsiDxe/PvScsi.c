@@ -749,7 +749,9 @@ PvScsiGetTargetLun (
   SCSI_DEVICE_PATH  *ScsiDevicePath;
   PVSCSI_DEV        *Dev;
 
-  if ((DevicePath == NULL) || (Target == NULL) || (*Target == NULL) || (Lun == NULL)) {
+  if ((DevicePath == NULL) || (Target == NULL) || (*Target == NULL) || (Lun ==
+                                                                        NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1498,8 +1500,8 @@ STATIC EFI_DRIVER_BINDING_PROTOCOL  mPvScsiDriverBinding = {
 //
 
 STATIC EFI_UNICODE_STRING_TABLE  mDriverNameTable[] = {
-  { "eng;en", L"PVSCSI Host Driver" },
-  { NULL,     NULL                  }
+  { "eng;en", L"PVSCSI Host Driver"     },
+  { NULL,     NULL                      }
 };
 
 STATIC EFI_COMPONENT_NAME_PROTOCOL  mComponentName;

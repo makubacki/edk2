@@ -544,7 +544,8 @@ SetupGraphicsFromGop (
       );
     Si->lfb_depth = Si->red_size + Si->green_size +
                     Si->blue_size + Si->rsvd_size;
-    Si->lfb_linelength = (UINT16)((Info->PixelsPerScanLine * Si->lfb_depth) / 8);
+    Si->lfb_linelength = (UINT16)((Info->PixelsPerScanLine * Si->lfb_depth) /
+                                  8);
   } else {
     Si->lfb_depth      = 4;
     Si->red_size       = 0;
@@ -649,7 +650,11 @@ LoadLinux (
   if ((Bp->hdr.version >= 0x20c) && Bp->hdr.handover_offset &&
       (Bp->hdr.xloadflags & ((sizeof (UINTN) == 4) ? BIT2 : BIT3)))
   {
-    DEBUG ((DEBUG_INFO, "Jumping to kernel EFI handover point at ofs %x\n", Bp->hdr.handover_offset));
+    DEBUG ((
+      DEBUG_INFO,
+      "Jumping to kernel EFI handover point at ofs %x\n",
+      Bp->hdr.handover_offset
+      ));
 
     DisableInterrupts ();
     JumpToUefiKernel ((VOID *)gImageHandle, (VOID *)gST, KernelSetup, Kernel);

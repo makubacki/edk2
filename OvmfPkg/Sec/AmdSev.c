@@ -136,7 +136,8 @@ HypervisorSnpFeatureCheck (
 
   Features =  RShiftU64 (Msr.GhcbPhysicalAddress, 12);
 
-  if ((Msr.GhcbHypervisorFeatures.Function != GHCB_HYPERVISOR_FEATURES_RESPONSE) ||
+  if ((Msr.GhcbHypervisorFeatures.Function !=
+       GHCB_HYPERVISOR_FEATURES_RESPONSE) ||
       (!(Features & GHCB_HV_FEATURES_SNP)))
   {
     return FALSE;
@@ -204,7 +205,11 @@ SevEsProtocolCheck (
     // using the new VMGEXIT defined in the GHCB v2. Register the GPA
     // before it is used.
     //
-    SevSnpGhcbRegister ((EFI_PHYSICAL_ADDRESS)(UINTN)FixedPcdGet32 (PcdOvmfSecGhcbBase));
+    SevSnpGhcbRegister (
+      (EFI_PHYSICAL_ADDRESS)(UINTN)FixedPcdGet32 (
+                                     PcdOvmfSecGhcbBase
+                                     )
+      );
   }
 
   //
@@ -219,8 +224,11 @@ SevEsProtocolCheck (
   //
   // Set the version to the maximum that can be supported
   //
-  Ghcb->ProtocolVersion = MIN (Msr.GhcbProtocol.SevEsProtocolMax, GHCB_VERSION_MAX);
-  Ghcb->GhcbUsage       = GHCB_STANDARD_USAGE;
+  Ghcb->ProtocolVersion = MIN (
+                            Msr.GhcbProtocol.SevEsProtocolMax,
+                            GHCB_VERSION_MAX
+                            );
+  Ghcb->GhcbUsage = GHCB_STANDARD_USAGE;
 }
 
 /**
@@ -251,7 +259,8 @@ IsSevGuest (
 
   WorkArea = (OVMF_WORK_AREA *)FixedPcdGet32 (PcdOvmfWorkAreaBase);
 
-  return ((WorkArea != NULL) && (WorkArea->Header.GuestType == CcGuestTypeAmdSev));
+  return ((WorkArea != NULL) && (WorkArea->Header.GuestType ==
+                                 CcGuestTypeAmdSev));
 }
 
 /**
@@ -298,6 +307,11 @@ SecValidateSystemRam (
     Start = (EFI_PHYSICAL_ADDRESS)(UINTN)PcdGet32 (PcdOvmfSecValidatedStart);
     End   = (EFI_PHYSICAL_ADDRESS)(UINTN)PcdGet32 (PcdOvmfSecValidatedEnd);
 
-    MemEncryptSevSnpPreValidateSystemRam (Start, EFI_SIZE_TO_PAGES ((UINTN)(End - Start)));
+    MemEncryptSevSnpPreValidateSystemRam (
+      Start,
+      EFI_SIZE_TO_PAGES (
+        (UINTN)(End - Start)
+        )
+      );
   }
 }

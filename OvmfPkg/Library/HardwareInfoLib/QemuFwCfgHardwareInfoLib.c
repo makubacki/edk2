@@ -60,7 +60,9 @@ QemuFwCfgReadNextHardwareInfoByType (
     QemuFwCfgReadBytes (sizeof (Header), &Header);
     *ReadIndex += sizeof (Header);
 
-    if ((Header.Size > MAX_UINTN) || (((UINT64)*ReadIndex + Header.Size) > TotalFileSize)) {
+    if ((Header.Size > MAX_UINTN) || (((UINT64)*ReadIndex + Header.Size) >
+                                      TotalFileSize))
+    {
       *ReadIndex = TotalFileSize;
       return EFI_ABORTED;
     }

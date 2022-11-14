@@ -809,9 +809,11 @@ FvbInitialize (
   //
   // Setup FVB device path
   //
-  Address                                              = (EFI_PHYSICAL_ADDRESS)(UINTN)Ptr;
+  Address =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)Ptr;
   mEmuVarsFvb.DevicePath.MemMapDevPath.StartingAddress = Address;
-  mEmuVarsFvb.DevicePath.MemMapDevPath.EndingAddress   = Address + EMU_FVB_SIZE - 1;
+  mEmuVarsFvb.DevicePath.MemMapDevPath.EndingAddress   = Address +
+                                                         EMU_FVB_SIZE - 1;
 
   //
   // Install the protocols

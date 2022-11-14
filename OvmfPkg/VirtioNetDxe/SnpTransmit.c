@@ -167,7 +167,8 @@ VirtioNetTransmit (
   // the available index is never written by the host, we can read it back
   // without a barrier
   //
-  AvailIdx                                                   = *Dev->TxRing.Avail.Idx;
+  AvailIdx =
+    *Dev->TxRing.Avail.Idx;
   Dev->TxRing.Avail.Ring[AvailIdx++ % Dev->TxRing.QueueSize] = DescIdx;
 
   MemoryFence ();

@@ -496,7 +496,8 @@ Split1GPageTo2M (
       //
       // Fill in the Page Directory entries
       //
-      PageDirectoryEntry->Uint64         = (UINT64)PhysicalAddress2M | ActiveAddressEncMask;
+      PageDirectoryEntry->Uint64 = (UINT64)PhysicalAddress2M |
+                                   ActiveAddressEncMask;
       PageDirectoryEntry->Bits.ReadWrite = 1;
       PageDirectoryEntry->Bits.Present   = 1;
       PageDirectoryEntry->Bits.MustBe1   = 1;
@@ -542,9 +543,17 @@ SetOrClearSharedBit (
   // If changing shared to private, must accept-page again
   //
   if (Mode == ClearSharedBit) {
-    Status = gBS->LocateProtocol (&gEdkiiMemoryAcceptProtocolGuid, NULL, (VOID **)&MemoryAcceptProtocol);
+    Status = gBS->LocateProtocol (
+                    &gEdkiiMemoryAcceptProtocolGuid,
+                    NULL,
+                    (VOID **)&MemoryAcceptProtocol
+                    );
     ASSERT (!EFI_ERROR (Status));
-    Status = MemoryAcceptProtocol->AcceptMemory (MemoryAcceptProtocol, PhysicalAddress, Length);
+    Status = MemoryAcceptProtocol->AcceptMemory (
+                                     MemoryAcceptProtocol,
+                                     PhysicalAddress,
+                                     Length
+                                     );
     ASSERT (!EFI_ERROR (Status));
   }
 
@@ -722,7 +731,8 @@ SetMemorySharedOrPrivate (
     }
 
     PageDirectory1GEntry = (VOID *)(
-                                    (PageMapLevel4Entry->Bits.PageTableBaseAddress <<
+                                    (PageMapLevel4Entry->Bits.
+                                       PageTableBaseAddress <<
                                      12) & ~PgTableMask
                                     );
     PageDirectory1GEntry += PDP_OFFSET (PhysicalAddress);
@@ -747,7 +757,12 @@ SetMemorySharedOrPrivate (
       // If we have at least 1GB to go, we can just update this entry
       //
       if (!(PhysicalAddress & (BIT30 - 1)) && (Length >= BIT30)) {
-        SetOrClearSharedBit (&PageDirectory1GEntry->Uint64, Mode, PhysicalAddress, BIT30);
+        SetOrClearSharedBit (
+          &PageDirectory1GEntry->Uint64,
+          Mode,
+          PhysicalAddress,
+          BIT30
+          );
         DEBUG ((
           DEBUG_VERBOSE,
           "%a:%a: updated 1GB entry for Physical=0x%Lx\n",
@@ -809,7 +824,12 @@ SetMemorySharedOrPrivate (
         // If we have at least 2MB left to go, we can just update this entry
         //
         if (!(PhysicalAddress & (BIT21-1)) && (Length >= BIT21)) {
-          SetOrClearSharedBit (&PageDirectory2MEntry->Uint64, Mode, PhysicalAddress, BIT21);
+          SetOrClearSharedBit (
+            &PageDirectory2MEntry->Uint64,
+            Mode,
+            PhysicalAddress,
+            BIT21
+            );
           PhysicalAddress += BIT21;
           Length          -= BIT21;
         } else {
@@ -856,7 +876,12 @@ SetMemorySharedOrPrivate (
           goto Done;
         }
 
-        SetOrClearSharedBit (&PageTableEntry->Uint64, Mode, PhysicalAddress, EFI_PAGE_SIZE);
+        SetOrClearSharedBit (
+          &PageTableEntry->Uint64,
+          Mode,
+          PhysicalAddress,
+          EFI_PAGE_SIZE
+          );
         PhysicalAddress += EFI_PAGE_SIZE;
         Length          -= EFI_PAGE_SIZE;
       }

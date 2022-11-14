@@ -123,7 +123,8 @@ CpuS3DataOnEndOfDxe (
                                                     AllocateMaxAddress,
                                                     EfiReservedMemoryType,
                                                     1,
-                                                    &AcpiCpuDataEx->AcpiCpuData.StartupVector
+                                                    &AcpiCpuDataEx->AcpiCpuData.
+                                                      StartupVector
                                                     );
   ASSERT_EFI_ERROR (Status);
 
@@ -219,9 +220,12 @@ CpuS3DataInitialize (
   AcpiCpuData->StackSize                 = PcdGet32 (PcdCpuApStackSize);
   AcpiCpuData->ApMachineCheckHandlerBase = 0;
   AcpiCpuData->ApMachineCheckHandlerSize = 0;
-  AcpiCpuData->GdtrProfile               = (EFI_PHYSICAL_ADDRESS)(UINTN)&AcpiCpuDataEx->GdtrProfile;
-  AcpiCpuData->IdtrProfile               = (EFI_PHYSICAL_ADDRESS)(UINTN)&AcpiCpuDataEx->IdtrProfile;
-  AcpiCpuData->MtrrTable                 = (EFI_PHYSICAL_ADDRESS)(UINTN)&AcpiCpuDataEx->MtrrTable;
+  AcpiCpuData->GdtrProfile               =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)&AcpiCpuDataEx->GdtrProfile;
+  AcpiCpuData->IdtrProfile =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)&AcpiCpuDataEx->IdtrProfile;
+  AcpiCpuData->MtrrTable =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)&AcpiCpuDataEx->MtrrTable;
 
   //
   // Allocate stack space for all CPUs.
@@ -254,7 +258,11 @@ CpuS3DataInitialize (
   AcpiCpuDataEx->IdtrProfile.Base = (UINTN)Idt;
 
   if (OldAcpiCpuData != NULL) {
-    CopyMem (&AcpiCpuData->CpuFeatureInitData, &OldAcpiCpuData->CpuFeatureInitData, sizeof (CPU_FEATURE_INIT_DATA));
+    CopyMem (
+      &AcpiCpuData->CpuFeatureInitData,
+      &OldAcpiCpuData->CpuFeatureInitData,
+      sizeof (CPU_FEATURE_INIT_DATA)
+      );
   }
 
   //

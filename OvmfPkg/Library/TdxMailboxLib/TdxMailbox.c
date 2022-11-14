@@ -107,7 +107,12 @@ MpSerializeStart (
   NumOfCpus = GetCpusNum ();
   MailBox   = (volatile MP_WAKEUP_MAILBOX *)GetTdxMailBox ();
 
-  DEBUG ((DEBUG_VERBOSE, "Waiting for APs to arriving. NumOfCpus=%d, MailBox=%p\n", NumOfCpus, MailBox));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "Waiting for APs to arriving. NumOfCpus=%d, MailBox=%p\n",
+    NumOfCpus,
+    MailBox
+    ));
   while (MailBox->NumCpusArriving != (NumOfCpus -1)) {
     CpuPause ();
   }

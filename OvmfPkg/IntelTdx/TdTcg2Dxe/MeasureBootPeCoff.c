@@ -136,7 +136,10 @@ MeasurePeImageAndExtend (
     //
     // The information can't be got from the invalid PeImage
     //
-    DEBUG ((DEBUG_INFO, "Tcg2Dxe: PeImage invalid. Cannot retrieve image information.\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "Tcg2Dxe: PeImage invalid. Cannot retrieve image information.\n"
+      ));
     goto Finish;
   }
 
@@ -146,7 +149,8 @@ MeasurePeImageAndExtend (
     PeCoffHeaderOffset = DosHdr->e_lfanew;
   }
 
-  Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINT8 *)(UINTN)ImageAddress + PeCoffHeaderOffset);
+  Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINT8 *)(UINTN)ImageAddress +
+                                        PeCoffHeaderOffset);
   if (Hdr.Pe32->Signature != EFI_IMAGE_NT_SIGNATURE) {
     Status = EFI_UNSUPPORTED;
     goto Finish;
@@ -184,13 +188,15 @@ MeasurePeImageAndExtend (
     // Use PE32 offset
     //
     NumberOfRvaAndSizes = Hdr.Pe32->OptionalHeader.NumberOfRvaAndSizes;
-    HashSize            = (UINTN)(&Hdr.Pe32->OptionalHeader.CheckSum) - (UINTN)HashBase;
+    HashSize            = (UINTN)(&Hdr.Pe32->OptionalHeader.CheckSum) -
+                          (UINTN)HashBase;
   } else {
     //
     // Use PE32+ offset
     //
     NumberOfRvaAndSizes = Hdr.Pe32Plus->OptionalHeader.NumberOfRvaAndSizes;
-    HashSize            = (UINTN)(&Hdr.Pe32Plus->OptionalHeader.CheckSum) - (UINTN)HashBase;
+    HashSize            = (UINTN)(&Hdr.Pe32Plus->OptionalHeader.CheckSum) -
+                          (UINTN)HashBase;
   }
 
   Status = HashUpdate (HashHandle, HashBase, HashSize);
@@ -211,13 +217,16 @@ MeasurePeImageAndExtend (
       // Use PE32 offset.
       //
       HashBase = (UINT8 *)&Hdr.Pe32->OptionalHeader.CheckSum + sizeof (UINT32);
-      HashSize = Hdr.Pe32->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase - ImageAddress);
+      HashSize = Hdr.Pe32->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase -
+                                                                  ImageAddress);
     } else {
       //
       // Use PE32+ offset.
       //
-      HashBase = (UINT8 *)&Hdr.Pe32Plus->OptionalHeader.CheckSum + sizeof (UINT32);
-      HashSize = Hdr.Pe32Plus->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase - ImageAddress);
+      HashBase = (UINT8 *)&Hdr.Pe32Plus->OptionalHeader.CheckSum +
+                 sizeof (UINT32);
+      HashSize = Hdr.Pe32Plus->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase -
+                                                                      ImageAddress);
     }
 
     if (HashSize != 0) {
@@ -235,13 +244,20 @@ MeasurePeImageAndExtend (
       // Use PE32 offset
       //
       HashBase = (UINT8 *)&Hdr.Pe32->OptionalHeader.CheckSum + sizeof (UINT32);
-      HashSize = (UINTN)(&Hdr.Pe32->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY]) - (UINTN)HashBase;
+      HashSize =
+        (UINTN)(&Hdr.Pe32->OptionalHeader.DataDirectory[
+                                                                EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                ]) - (UINTN)HashBase;
     } else {
       //
       // Use PE32+ offset
       //
-      HashBase = (UINT8 *)&Hdr.Pe32Plus->OptionalHeader.CheckSum + sizeof (UINT32);
-      HashSize = (UINTN)(&Hdr.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY]) - (UINTN)HashBase;
+      HashBase = (UINT8 *)&Hdr.Pe32Plus->OptionalHeader.CheckSum +
+                 sizeof (UINT32);
+      HashSize =
+        (UINTN)(&Hdr.Pe32Plus->OptionalHeader.DataDirectory[
+                                                                    EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                ]) - (UINTN)HashBase;
     }
 
     if (HashSize != 0) {
@@ -259,14 +275,22 @@ MeasurePeImageAndExtend (
       //
       // Use PE32 offset
       //
-      HashBase = (UINT8 *)&Hdr.Pe32->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY + 1];
-      HashSize = Hdr.Pe32->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase - ImageAddress);
+      HashBase =
+        (UINT8 *)&Hdr.Pe32->OptionalHeader.DataDirectory[
+                                                                 EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                                 + 1];
+      HashSize = Hdr.Pe32->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase -
+                                                                  ImageAddress);
     } else {
       //
       // Use PE32+ offset
       //
-      HashBase = (UINT8 *)&Hdr.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY + 1];
-      HashSize = Hdr.Pe32Plus->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase - ImageAddress);
+      HashBase =
+        (UINT8 *)&Hdr.Pe32Plus->OptionalHeader.DataDirectory[
+                                                                     EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+                                                                     + 1];
+      HashSize = Hdr.Pe32Plus->OptionalHeader.SizeOfHeaders - (UINTN)(HashBase -
+                                                                      ImageAddress);
     }
 
     if (HashSize != 0) {
@@ -298,7 +322,11 @@ MeasurePeImageAndExtend (
   //     header indicates how big the table should be. Do not include any
   //     IMAGE_SECTION_HEADERs in the table whose 'SizeOfRawData' field is zero.
   //
-  SectionHeader = (EFI_IMAGE_SECTION_HEADER *)AllocateZeroPool (sizeof (EFI_IMAGE_SECTION_HEADER) * Hdr.Pe32->FileHeader.NumberOfSections);
+  SectionHeader = (EFI_IMAGE_SECTION_HEADER *)AllocateZeroPool (
+                                                sizeof (EFI_IMAGE_SECTION_HEADER)
+                                                * Hdr.Pe32->FileHeader.
+                                                  NumberOfSections
+                                                );
   if (SectionHeader == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Finish;
@@ -315,12 +343,20 @@ MeasurePeImageAndExtend (
                                          PeCoffHeaderOffset +
                                          sizeof (UINT32) +
                                          sizeof (EFI_IMAGE_FILE_HEADER) +
-                                         Hdr.Pe32->FileHeader.SizeOfOptionalHeader
+                                         Hdr.Pe32->FileHeader.
+                                           SizeOfOptionalHeader
                                          );
   for (Index = 0; Index < Hdr.Pe32->FileHeader.NumberOfSections; Index++) {
     Pos = Index;
-    while ((Pos > 0) && (Section->PointerToRawData < SectionHeader[Pos - 1].PointerToRawData)) {
-      CopyMem (&SectionHeader[Pos], &SectionHeader[Pos - 1], sizeof (EFI_IMAGE_SECTION_HEADER));
+    while ((Pos > 0) && (Section->PointerToRawData < SectionHeader[Pos -
+                                                                   1].
+                           PointerToRawData))
+    {
+      CopyMem (
+        &SectionHeader[Pos],
+        &SectionHeader[Pos - 1],
+        sizeof (EFI_IMAGE_SECTION_HEADER)
+        );
       Pos--;
     }
 
@@ -368,12 +404,18 @@ MeasurePeImageAndExtend (
         //
         // Use PE32 offset.
         //
-        CertSize = Hdr.Pe32->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY].Size;
+        CertSize =
+          Hdr.Pe32->OptionalHeader.DataDirectory[
+                                                         EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+          ].Size;
       } else {
         //
         // Use PE32+ offset.
         //
-        CertSize = Hdr.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY].Size;
+        CertSize =
+          Hdr.Pe32Plus->OptionalHeader.DataDirectory[
+                                                             EFI_IMAGE_DIRECTORY_ENTRY_SECURITY
+          ].Size;
       }
     }
 

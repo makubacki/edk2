@@ -59,10 +59,16 @@ HandOffToDxeCore (
   // Compute the top of the stack we were allocated. Pre-allocate a UINTN
   // for safety.
   //
-  TopOfStack = (VOID *)((UINTN)BaseOfStack + EFI_SIZE_TO_PAGES (STACK_SIZE) * EFI_PAGE_SIZE - CPU_STACK_ALIGNMENT);
+  TopOfStack = (VOID *)((UINTN)BaseOfStack + EFI_SIZE_TO_PAGES (STACK_SIZE) *
+                        EFI_PAGE_SIZE - CPU_STACK_ALIGNMENT);
   TopOfStack = ALIGN_POINTER (TopOfStack, CPU_STACK_ALIGNMENT);
 
-  DEBUG ((DEBUG_INFO, "BaseOfStack=0x%x, TopOfStack=0x%x\n", BaseOfStack, TopOfStack));
+  DEBUG ((
+    DEBUG_INFO,
+    "BaseOfStack=0x%x, TopOfStack=0x%x\n",
+    BaseOfStack,
+    TopOfStack
+    ));
 
   //
   // Create page table and save PageMapLevel4 to CR3
@@ -123,13 +129,21 @@ FindDxeCore (
   //
   Status = FfsFindNextVolume (FvInstance, &VolumeHandle);
   if (!EFI_ERROR (Status)) {
-    Status = FfsFindNextFile (EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE, VolumeHandle, FileHandle);
+    Status = FfsFindNextFile (
+               EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE,
+               VolumeHandle,
+               FileHandle
+               );
     if (*FileHandle) {
       // Assume the FV that contains multiple compressed FVs.
       // So decompress the compressed FVs
       Status = FfsProcessFvFile (*FileHandle);
       ASSERT_EFI_ERROR (Status);
-      Status = FfsAnyFvFindFirstFile (EFI_FV_FILETYPE_DXE_CORE, &VolumeHandle, FileHandle);
+      Status = FfsAnyFvFindFirstFile (
+                 EFI_FV_FILETYPE_DXE_CORE,
+                 &VolumeHandle,
+                 FileHandle
+                 );
     }
   }
 
@@ -176,7 +190,12 @@ DxeLoadCore (
     return Status;
   }
 
-  Status = LoadPeCoffImage (PeCoffImage, &DxeCoreAddress, &DxeCoreSize, &DxeCoreEntryPoint);
+  Status = LoadPeCoffImage (
+             PeCoffImage,
+             &DxeCoreAddress,
+             &DxeCoreSize,
+             &DxeCoreEntryPoint
+             );
   ASSERT_EFI_ERROR (Status);
 
   //

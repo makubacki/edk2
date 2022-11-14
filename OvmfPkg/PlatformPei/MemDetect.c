@@ -289,7 +289,8 @@ PublishPeiMemory (
   //
   if (mPlatformInfoHob.S3Supported) {
     S3AcpiReservedMemorySize = SIZE_512KB +
-                               mPlatformInfoHob.PcdCpuMaxLogicalProcessorNumber *
+                               mPlatformInfoHob.PcdCpuMaxLogicalProcessorNumber
+                               *
                                PcdGet32 (PcdCpuApStackSize);
     S3AcpiReservedMemoryBase = LowerMemorySize - S3AcpiReservedMemorySize;
     LowerMemorySize          = S3AcpiReservedMemoryBase;
@@ -321,9 +322,12 @@ PublishPeiMemory (
     // allocation HOB, and other allocations served from the permanent PEI RAM
     // shouldn't overlap with that HOB.
     //
-    MemoryBase = mPlatformInfoHob.S3Supported && mPlatformInfoHob.SmmSmramRequire ?
+    MemoryBase = mPlatformInfoHob.S3Supported &&
+                 mPlatformInfoHob.SmmSmramRequire ?
                  PcdGet32 (PcdOvmfDecompressionScratchEnd) :
-                 PcdGet32 (PcdOvmfDxeMemFvBase) + PcdGet32 (PcdOvmfDxeMemFvSize);
+                 PcdGet32 (PcdOvmfDxeMemFvBase) + PcdGet32 (
+                                                    PcdOvmfDxeMemFvSize
+                                                    );
     MemorySize = LowerMemorySize - MemoryBase;
     if (MemorySize > PeiMemoryCap) {
       MemoryBase = LowerMemorySize - PeiMemoryCap;
@@ -336,7 +340,9 @@ PublishPeiMemory (
   // normal boot permanent PEI RAM. Regarding the S3 boot path, the S3
   // permanent PEI RAM is located even higher.
   //
-  if (mPlatformInfoHob.SmmSmramRequire && mPlatformInfoHob.Q35SmramAtDefaultSmbase) {
+  if (mPlatformInfoHob.SmmSmramRequire &&
+      mPlatformInfoHob.Q35SmramAtDefaultSmbase)
+  {
     ASSERT (SMM_DEFAULT_SMBASE + MCH_DEFAULT_SMBASE_SIZE <= MemoryBase);
   }
 

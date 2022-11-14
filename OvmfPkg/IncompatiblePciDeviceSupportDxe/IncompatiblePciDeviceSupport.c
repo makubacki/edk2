@@ -49,7 +49,9 @@ STATIC EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_PROTOCOL
 STATIC CONST EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  mMmio64Configuration = {
   ACPI_ADDRESS_SPACE_DESCRIPTOR,                   // Desc
   (UINT16)(                                        // Len
-                                                   sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) -
+                                                   sizeof (
+                                                          EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR)
+                                                   -
                                                    OFFSET_OF (
                                                      EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR,
                                                      ResType
@@ -83,7 +85,9 @@ STATIC CONST EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  mMmio64Configuration = {
 STATIC CONST EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  mOptionRomConfiguration =   {
   ACPI_ADDRESS_SPACE_DESCRIPTOR,                   // Desc
   (UINT16)(                                        // Len
-                                                   sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) -
+                                                   sizeof (
+                                                          EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR)
+                                                   -
                                                    OFFSET_OF (
                                                      EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR,
                                                      ResType
@@ -288,7 +292,11 @@ CheckDevice (
   Length = sizeof mMmio64Configuration;
 
   if (CcProbe ()) {
-    CopyMem (Ptr + Length, &mOptionRomConfiguration, sizeof mOptionRomConfiguration);
+    CopyMem (
+      Ptr + Length,
+      &mOptionRomConfiguration,
+      sizeof mOptionRomConfiguration
+      );
     Length += sizeof mOptionRomConfiguration;
   }
 
@@ -386,12 +394,15 @@ DriverInitialize (
   ASSERT_EFI_ERROR (Status);
 
   mIncompatiblePciDeviceSupport.CheckDevice = CheckDevice;
-  Status                                    = gBS->InstallMultipleProtocolInterfaces (
-                                                     &ImageHandle,
-                                                     &gEfiIncompatiblePciDeviceSupportProtocolGuid,
-                                                     &mIncompatiblePciDeviceSupport,
-                                                     NULL
-                                                     );
+  Status                                    =
+    gBS->InstallMultipleProtocolInterfaces (
+           &ImageHandle,
+           &
+           gEfiIncompatiblePciDeviceSupportProtocolGuid,
+           &
+           mIncompatiblePciDeviceSupport,
+           NULL
+           );
   if (EFI_ERROR (Status)) {
     goto CloseEvent;
   }

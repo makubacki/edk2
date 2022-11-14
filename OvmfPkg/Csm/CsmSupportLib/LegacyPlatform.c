@@ -10,14 +10,14 @@
 #include "LegacyPlatform.h"
 
 EFI_SETUP_BBS_MAP  mSetupBbsMap[] = {
-  { 1, 2,    1, 1 },      // ATA HardDrive
-  { 2, 3,    1, 1 },      // ATAPI CDROM
-  { 3, 0x80, 2, 0 },      // PXE
-  { 4, 1,    0, 6 },      // USB Floppy
-  { 4, 2,    0, 6 },      // USB HDD
-  { 4, 3,    0, 6 },      // USB CD
-  { 4, 1,    0, 0 },      // USB ZIP Bugbug since Class/SubClass code is uninitialized
-  { 4, 2,    0, 0 }       // USB ZIP Bugbug since Class/SubClass code is uninitialized
+  { 1, 2,    1,    1                      }, // ATA HardDrive
+  { 2, 3,    1,    1                      }, // ATAPI CDROM
+  { 3, 0x80, 2,    0                      }, // PXE
+  { 4, 1,    0,    6                      }, // USB Floppy
+  { 4, 2,    0,    6                      }, // USB HDD
+  { 4, 3,    0,    6                      }, // USB CD
+  { 4, 1,    0,    0                      }, // USB ZIP Bugbug since Class/SubClass code is uninitialized
+  { 4, 2,    0,    0                      } // USB ZIP Bugbug since Class/SubClass code is uninitialized
 };
 
 //
@@ -30,15 +30,16 @@ EFI_SETUP_BBS_MAP  mSetupBbsMap[] = {
 { 0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }
 
 SYSTEM_ROM_TABLE  mSystemRomTable[] = {
-  { SYSTEM_ROM_FILE_GUID, 1 },
-  { NULL_ROM_FILE_GUID,   0 }
+  { SYSTEM_ROM_FILE_GUID, 1                 },
+  { NULL_ROM_FILE_GUID,   0                 }
 };
 
 EFI_HANDLE  mVgaHandles[0x20];
 EFI_HANDLE  mDiskHandles[0x20];
 EFI_HANDLE  mIsaHandles[0x20];
 
-EFI_LEGACY_IRQ_PRIORITY_TABLE_ENTRY  IrqPriorityTable[MAX_IRQ_PRIORITY_ENTRIES] = {
+EFI_LEGACY_IRQ_PRIORITY_TABLE_ENTRY  IrqPriorityTable[MAX_IRQ_PRIORITY_ENTRIES]
+  = {
   { 0x0B, 0 },
   { 0x09, 0 },
   { 0x0A, 0 },
@@ -46,7 +47,7 @@ EFI_LEGACY_IRQ_PRIORITY_TABLE_ENTRY  IrqPriorityTable[MAX_IRQ_PRIORITY_ENTRIES] 
   { 0x07, 0 },
   { 0x00, 0 },
   { 0x00, 0 }
-};
+  };
 
 //
 // PIRQ Table
@@ -77,23 +78,42 @@ EFI_LEGACY_PIRQ_TABLE  PirqTableHead = {
     // Bus  Dev   Reg   Map     Reg   Map     Reg   Map     Reg   Map
     //
     { 0x00, 0x08, {
-            { 0x60, 0xDEB8 }, { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 }, { 0x63, 0xDEB8 }
-          }, 0x00, 0x00 },
+                                            { 0x60, 0xDEB8 }, { 0x61, 0xDEB8 },
+                                            { 0x62,
+                                          0xDEB8 },
+                                            { 0x63,
+                                          0xDEB8 }
+                                          }, 0x00, 0x00 },
     { 0x00, 0x10, {
-            { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 }, { 0x63, 0xDEB8 }, { 0x60, 0xDEB8 }
-          }, 0x01, 0x00 },
+                                            { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 },
+                                            { 0x63,
+                                          0xDEB8 },
+                                            { 0x60, 0xDEB8 }
+                                          }, 0x01, 0x00 },
     { 0x00, 0x18, {
-            { 0x62, 0xDEB8 }, { 0x63, 0xDEB8 }, { 0x60, 0xDEB8 }, { 0x61, 0xDEB8 }
-          }, 0x02, 0x00 },
+                                            { 0x62, 0xDEB8 }, { 0x63, 0xDEB8 },
+                                            { 0x60,
+                                          0xDEB8 },
+                                            { 0x61, 0xDEB8 }
+                                          }, 0x02, 0x00 },
     { 0x00, 0x20, {
-            { 0x63, 0xDEB8 }, { 0x60, 0xDEB8 }, { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 }
-          }, 0x03, 0x00 },
+                                            { 0x63, 0xDEB8 }, { 0x60, 0xDEB8 },
+                                            { 0x61,
+                                          0xDEB8 },
+                                            { 0x62, 0xDEB8 }
+                                          }, 0x03, 0x00 },
     { 0x00, 0x28, {
-            { 0x60, 0xDEB8 }, { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 }, { 0x63, 0xDEB8 }
-          }, 0x04, 0x00 },
+                                            { 0x60, 0xDEB8 }, { 0x61, 0xDEB8 },
+                                            { 0x62,
+                                          0xDEB8 },
+                                            { 0x63, 0xDEB8 }
+                                          }, 0x04, 0x00 },
     { 0x00, 0x30, {
-            { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 }, { 0x63, 0xDEB8 }, { 0x60, 0xDEB8 }
-          }, 0x05, 0x00 },
+                                            { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 },
+                                            { 0x63,
+                                          0xDEB8 },
+                                            { 0x60, 0xDEB8 }
+                                          }, 0x05, 0x00 },
   }
 };
 
@@ -185,7 +205,8 @@ FindAllDeviceTypes (
         //
         if (
             ((DeviceFlags != 0) && (Flags == NO_ROM)) ||
-            ((Flags & (ROM_FOUND | VALID_LEGACY_ROM)) == (ROM_FOUND | VALID_LEGACY_ROM))
+            ((Flags & (ROM_FOUND | VALID_LEGACY_ROM)) == (ROM_FOUND |
+                                                          VALID_LEGACY_ROM))
             )
         {
           DeviceTable->Handle = HandleBuffer[Index];
@@ -293,7 +314,11 @@ GetSelectedVgaDeviceInfo (
   }
 
   for (Index = 0; Index < HandleCount; Index++) {
-    Status = gBS->HandleProtocol (HandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID **)&PciIo);
+    Status = gBS->HandleProtocol (
+                    HandleBuffer[Index],
+                    &gEfiPciIoProtocolGuid,
+                    (VOID **)&PciIo
+                    );
     if (!EFI_ERROR (Status)) {
       //
       // Determine if this is in the correct bus range.
@@ -491,7 +516,9 @@ GetPlatformHandle (
       //
       // Log all onboard controllers.
       //
-      for (Index = 0; (Index < LocalIndex) && (AdditionalData != NULL); Index++) {
+      for (Index = 0; (Index < LocalIndex) && (AdditionalData != NULL);
+           Index++)
+      {
         if ((LocalDevice[Index].Handle != NULL) &&
             (LocalDevice[Index].Handle == IdeHandle))
         {
@@ -583,7 +610,12 @@ GetPlatformHandle (
       //
       // Locate all found block io devices
       //
-      FindAllDeviceTypes (ClassLists, LocalDevice, (UINT16 *)(&LocalIndex), TRUE);
+      FindAllDeviceTypes (
+        ClassLists,
+        LocalDevice,
+        (UINT16 *)(&LocalIndex),
+        TRUE
+        );
       if (LocalIndex == 0) {
         return EFI_NOT_FOUND;
       }
@@ -715,7 +747,8 @@ GetRoutingTable (
 
   if (LocalPirqTable != NULL) {
     PTableSize = sizeof (EFI_LEGACY_PIRQ_TABLE_HEADER) +
-                 sizeof (EFI_LEGACY_IRQ_ROUTING_ENTRY) * MAX_IRQ_ROUTING_ENTRIES;
+                 sizeof (EFI_LEGACY_IRQ_ROUTING_ENTRY) *
+                 MAX_IRQ_ROUTING_ENTRIES;
 
     Status = gBS->LocateProtocol (
                     &gEfiLegacyInterruptProtocolGuid,
@@ -881,7 +914,9 @@ TranslatePirq (
     if ((PirqTableHead.IrqRoutingEntry[Index].Bus == PciBus) &&
         (PirqTableHead.IrqRoutingEntry[Index].Device == PciDevice))
     {
-      LocalPirq = (UINT8)(PirqTableHead.IrqRoutingEntry[Index].PirqEntry[LocalPirq].Pirq & 0x0f);
+      LocalPirq =
+        (UINT8)(PirqTableHead.IrqRoutingEntry[Index].PirqEntry[LocalPirq].Pirq &
+                0x0f);
       if (LocalPirq > 4) {
         LocalPirq -= 4;
       }
@@ -956,7 +991,8 @@ PrepareToBoot (
   // Initialize values
   //
   Priority          = 0;
-  Legacy16BootTable = (EFI_TO_COMPATIBILITY16_BOOT_TABLE *)EfiToLegacy16BootTable;
+  Legacy16BootTable =
+    (EFI_TO_COMPATIBILITY16_BOOT_TABLE *)EfiToLegacy16BootTable;
 
   //
   // Set how Gate A20 is gated by hardware
@@ -1062,7 +1098,8 @@ LegacyBiosPlatformInstall (
   //
   // Grab a copy of all the protocols we depend on.
   //
-  Private->Signature                            = LEGACY_BIOS_PLATFORM_INSTANCE_SIGNATURE;
+  Private->Signature =
+    LEGACY_BIOS_PLATFORM_INSTANCE_SIGNATURE;
   Private->LegacyBiosPlatform.GetPlatformInfo   = GetPlatformInfo;
   Private->LegacyBiosPlatform.GetPlatformHandle = GetPlatformHandle;
   Private->LegacyBiosPlatform.SmmInit           = SmmInit;

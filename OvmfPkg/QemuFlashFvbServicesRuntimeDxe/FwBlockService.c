@@ -140,8 +140,10 @@ GetFvbInstance (
   while (Instance > 0) {
     FwhRecord = (EFI_FW_VOL_INSTANCE *)
                 (
-                 (UINTN)((UINT8 *)FwhRecord) + FwhRecord->VolumeHeader.HeaderLength +
-                 (sizeof (EFI_FW_VOL_INSTANCE) - sizeof (EFI_FIRMWARE_VOLUME_HEADER))
+                 (UINTN)((UINT8 *)FwhRecord) +
+                 FwhRecord->VolumeHeader.HeaderLength +
+                 (sizeof (EFI_FW_VOL_INSTANCE) -
+                  sizeof (EFI_FIRMWARE_VOLUME_HEADER))
                 );
     Instance--;
   }
@@ -1121,7 +1123,8 @@ FvbInitialize (
   FwhInstance = (EFI_FW_VOL_INSTANCE *)
                 (
                  (UINTN)((UINT8 *)FwhInstance) + FwVolHeader->HeaderLength +
-                 (sizeof (EFI_FW_VOL_INSTANCE) - sizeof (EFI_FIRMWARE_VOLUME_HEADER))
+                 (sizeof (EFI_FW_VOL_INSTANCE) -
+                  sizeof (EFI_FIRMWARE_VOLUME_HEADER))
                 );
 
   //

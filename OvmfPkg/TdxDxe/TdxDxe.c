@@ -129,7 +129,10 @@ SetPcdSettings (
 {
   RETURN_STATUS  PcdStatus;
 
-  PcdStatus = PcdSet64S (PcdConfidentialComputingGuestAttr, PlatformInfoHob->PcdConfidentialComputingGuestAttr);
+  PcdStatus = PcdSet64S (
+                PcdConfidentialComputingGuestAttr,
+                PlatformInfoHob->PcdConfidentialComputingGuestAttr
+                );
   ASSERT_RETURN_ERROR (PcdStatus);
   PcdStatus = PcdSetBoolS (PcdSetNxForStack, PlatformInfoHob->PcdSetNxForStack);
   ASSERT_RETURN_ERROR (PcdStatus);
@@ -142,9 +145,15 @@ SetPcdSettings (
     PlatformInfoHob->PcdSetNxForStack
     ));
 
-  PcdStatus = PcdSet32S (PcdCpuBootLogicalProcessorNumber, PlatformInfoHob->PcdCpuBootLogicalProcessorNumber);
+  PcdStatus = PcdSet32S (
+                PcdCpuBootLogicalProcessorNumber,
+                PlatformInfoHob->PcdCpuBootLogicalProcessorNumber
+                );
   ASSERT_RETURN_ERROR (PcdStatus);
-  PcdStatus = PcdSet32S (PcdCpuMaxLogicalProcessorNumber, PlatformInfoHob->PcdCpuMaxLogicalProcessorNumber);
+  PcdStatus = PcdSet32S (
+                PcdCpuMaxLogicalProcessorNumber,
+                PlatformInfoHob->PcdCpuMaxLogicalProcessorNumber
+                );
   ASSERT_RETURN_ERROR (PcdStatus);
 
   DEBUG ((
@@ -154,12 +163,21 @@ SetPcdSettings (
     PlatformInfoHob->PcdCpuBootLogicalProcessorNumber
     ));
 
-  PcdSet64S (PcdEmuVariableNvStoreReserved, PlatformInfoHob->PcdEmuVariableNvStoreReserved);
+  PcdSet64S (
+    PcdEmuVariableNvStoreReserved,
+    PlatformInfoHob->PcdEmuVariableNvStoreReserved
+    );
 
   if (TdIsEnabled ()) {
     PcdStatus = PcdSet64S (PcdTdxSharedBitMask, TdSharedPageMask ());
     ASSERT_RETURN_ERROR (PcdStatus);
-    DEBUG ((DEBUG_INFO, "TdxSharedBitMask=0x%llx\n", PcdGet64 (PcdTdxSharedBitMask)));
+    DEBUG ((
+      DEBUG_INFO,
+      "TdxSharedBitMask=0x%llx\n",
+      PcdGet64 (
+        PcdTdxSharedBitMask
+        )
+      ));
   }
 
   PcdStatus = PcdSet64S (PcdPciMmio64Base, PlatformInfoHob->PcdPciMmio64Base);
@@ -210,7 +228,8 @@ GetResourceDescriptor (
 
     if ((Hob.ResourceDescriptor->ResourceType == Type) &&
         (Hob.ResourceDescriptor->PhysicalStart >= Start) &&
-        ((Hob.ResourceDescriptor->PhysicalStart + Hob.ResourceDescriptor->ResourceLength) < End))
+        ((Hob.ResourceDescriptor->PhysicalStart +
+          Hob.ResourceDescriptor->ResourceLength) < End))
     {
       ResourceDescriptor = Hob.ResourceDescriptor;
       break;
@@ -248,7 +267,8 @@ GetHighestResourceDescriptor (
         (Hob.ResourceDescriptor->PhysicalStart < End))
     {
       if (!ResourceDescriptor ||
-          (ResourceDescriptor->PhysicalStart < Hob.ResourceDescriptor->PhysicalStart))
+          (ResourceDescriptor->PhysicalStart <
+           Hob.ResourceDescriptor->PhysicalStart))
       {
         ResourceDescriptor = Hob.ResourceDescriptor;
       }
@@ -286,7 +306,8 @@ SetMmioSharedBit (
   //
   while (!END_OF_HOB_LIST (Hob)) {
     if (  (Hob.Header->HobType == EFI_HOB_TYPE_RESOURCE_DESCRIPTOR)
-       && (Hob.ResourceDescriptor->ResourceType == EFI_RESOURCE_MEMORY_MAPPED_IO))
+       && (Hob.ResourceDescriptor->ResourceType ==
+           EFI_RESOURCE_MEMORY_MAPPED_IO))
     {
       MemEncryptTdxSetPageSharedBit (
         0,
@@ -330,7 +351,10 @@ TdxDxeEntryPoint (
   //
   PlatformInfo = (EFI_HOB_PLATFORM_INFO *)GET_GUID_HOB_DATA (GuidHob);
   ASSERT (PlatformInfo->HostBridgeDevId != 0);
-  PcdStatus = PcdSet16S (PcdOvmfHostBridgePciDevId, PlatformInfo->HostBridgeDevId);
+  PcdStatus = PcdSet16S (
+                PcdOvmfHostBridgePciDevId,
+                PlatformInfo->HostBridgeDevId
+                );
   ASSERT_RETURN_ERROR (PcdStatus);
 
  #ifdef TDX_PEI_LESS_BOOT
@@ -395,7 +419,10 @@ TdxDxeEntryPoint (
   // more than number of reported cpus, update.
   //
   if (CpuMaxLogicalProcessorNumber > TdReturnData.TdInfo.NumVcpus) {
-    PcdStatus = PcdSet32S (PcdCpuMaxLogicalProcessorNumber, TdReturnData.TdInfo.NumVcpus);
+    PcdStatus = PcdSet32S (
+                  PcdCpuMaxLogicalProcessorNumber,
+                  TdReturnData.TdInfo.NumVcpus
+                  );
     ASSERT_RETURN_ERROR (PcdStatus);
   }
 
@@ -428,7 +455,12 @@ TdxDxeEntryPoint (
   if (PlatformInfo) {
     PcdSet16S (PcdOvmfHostBridgePciDevId, PlatformInfo->HostBridgeDevId);
 
-    if ((Res = GetResourceDescriptor (EFI_RESOURCE_MEMORY_MAPPED_IO, (EFI_PHYSICAL_ADDRESS)0x100000000, (EFI_PHYSICAL_ADDRESS)-1)) != NULL) {
+    if ((Res = GetResourceDescriptor (
+                 EFI_RESOURCE_MEMORY_MAPPED_IO,
+                 (EFI_PHYSICAL_ADDRESS)0x100000000,
+                 (EFI_PHYSICAL_ADDRESS)-1
+                 )) != NULL)
+    {
       INIT_PCDSET (PcdPciMmio64, Res);
     }
 
@@ -439,8 +471,17 @@ TdxDxeEntryPoint (
     //
     // To find low mmio, first find top of low memory, and then search for io space.
     //
-    if ((MemRes = GetHighestResourceDescriptor (EFI_RESOURCE_SYSTEM_MEMORY, 0xffc00000)) != NULL) {
-      if ((Res = GetResourceDescriptor (EFI_RESOURCE_MEMORY_MAPPED_IO, MemRes->PhysicalStart, 0x100000000)) != NULL) {
+    if ((MemRes = GetHighestResourceDescriptor (
+                    EFI_RESOURCE_SYSTEM_MEMORY,
+                    0xffc00000
+                    )) != NULL)
+    {
+      if ((Res = GetResourceDescriptor (
+                   EFI_RESOURCE_MEMORY_MAPPED_IO,
+                   MemRes->PhysicalStart,
+                   0x100000000
+                   )) != NULL)
+      {
         INIT_PCDSET (PcdPciMmio32, Res);
       }
     }

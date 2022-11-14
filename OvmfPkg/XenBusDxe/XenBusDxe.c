@@ -41,8 +41,10 @@ EFI_DRIVER_BINDING_PROTOCOL  gXenBusDxeDriverBinding = {
   NULL
 };
 
-STATIC EFI_LOCK       mMyDeviceLock = EFI_INITIALIZE_LOCK_VARIABLE (TPL_CALLBACK);
-STATIC XENBUS_DEVICE  *mMyDevice    = NULL;
+STATIC EFI_LOCK  mMyDeviceLock = EFI_INITIALIZE_LOCK_VARIABLE (
+                                   TPL_CALLBACK
+                                   );
+STATIC XENBUS_DEVICE  *mMyDevice = NULL;
 
 /**
   Map the shared_info_t page into memory.
@@ -461,7 +463,11 @@ XenBusDxeDriverBindingStop (
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "XenBusDxe: get children protocol failed: %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "XenBusDxe: get children protocol failed: %r\n",
+        Status
+        ));
       continue;
     }
 

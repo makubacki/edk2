@@ -45,7 +45,8 @@ PeiFvInitialization (
   //
   BuildFvHob (PcdGet32 (PcdOvmfDxeMemFvBase), PcdGet32 (PcdOvmfDxeMemFvSize));
 
-  SecureS3Needed = mPlatformInfoHob.S3Supported && mPlatformInfoHob.SmmSmramRequire;
+  SecureS3Needed = mPlatformInfoHob.S3Supported &&
+                   mPlatformInfoHob.SmmSmramRequire;
 
   //
   // Create a memory allocation HOB for the DXE FV.

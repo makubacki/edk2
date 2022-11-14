@@ -562,7 +562,9 @@ PciHostBridgeUtilityGetRootBridgesHostProvided (
       goto FreeBridges;
     }
 
-    if ((RootBridgeNumber > LastRootBridgeNumber) || (LastRootBridgeNumber > PCI_MAX_BUS)) {
+    if ((RootBridgeNumber > LastRootBridgeNumber) || (LastRootBridgeNumber >
+                                                      PCI_MAX_BUS))
+    {
       DEBUG ((
         DEBUG_ERROR,
         "%a: invalid bus range with BusMin %Lu and BusMax "
@@ -812,7 +814,9 @@ PciHostBridgeUtilityResourceConflict (
     //
     ASSERT (Descriptor->Desc == ACPI_END_TAG_DESCRIPTOR);
     Descriptor = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)(
-                                                       (EFI_ACPI_END_TAG_DESCRIPTOR *)Descriptor + 1
+                                                       (
+                                                       EFI_ACPI_END_TAG_DESCRIPTOR
+                                                       *)Descriptor + 1
                                                        );
   }
 }

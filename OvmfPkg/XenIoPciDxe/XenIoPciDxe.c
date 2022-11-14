@@ -180,7 +180,12 @@ XenIoPciDeviceBindingStart (
   // look like MMIO. The address space of the BAR1 will be used to map the
   // Grant Table.
   //
-  Status = PciIo->GetBarAttributes (PciIo, PCI_BAR_IDX1, NULL, (VOID **)&BarDesc);
+  Status = PciIo->GetBarAttributes (
+                    PciIo,
+                    PCI_BAR_IDX1,
+                    NULL,
+                    (VOID **)&BarDesc
+                    );
   ASSERT_EFI_ERROR (Status);
   ASSERT (BarDesc->ResType == ACPI_ADDRESS_SPACE_TYPE_MEM);
 
@@ -311,8 +316,8 @@ STATIC EFI_DRIVER_BINDING_PROTOCOL  gDriverBinding = {
 //
 STATIC
 EFI_UNICODE_STRING_TABLE  mDriverNameTable[] = {
-  { "eng;en", L"XenIo PCI Driver" },
-  { NULL,     NULL                }
+  { "eng;en", L"XenIo PCI Driver"     },
+  { NULL,     NULL                    }
 };
 
 STATIC

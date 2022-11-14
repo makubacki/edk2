@@ -44,9 +44,12 @@ LockBoxLibInitialize (
     return RETURN_UNSUPPORTED;
   }
 
-  mLockBoxGlobal = (LOCK_BOX_GLOBAL *)(UINTN)PcdGet32 (PcdOvmfLockBoxStorageBase);
+  mLockBoxGlobal = (LOCK_BOX_GLOBAL *)(UINTN)PcdGet32 (
+                                               PcdOvmfLockBoxStorageBase
+                                               );
   StartOfEntries = ((LOCK_BOX_ENTRY *)(mLockBoxGlobal + 1));
-  NumEntries     = ((PcdGet32 (PcdOvmfLockBoxStorageSize) - sizeof (LOCK_BOX_GLOBAL)) /
+  NumEntries     = ((PcdGet32 (PcdOvmfLockBoxStorageSize) -
+                     sizeof (LOCK_BOX_GLOBAL)) /
                     sizeof (LOCK_BOX_ENTRY));
   EndOfEntries = StartOfEntries + NumEntries;
   if (mLockBoxGlobal->Signature != LOCK_BOX_GLOBAL_SIGNATURE) {

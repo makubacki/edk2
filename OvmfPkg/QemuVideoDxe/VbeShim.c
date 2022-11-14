@@ -96,7 +96,8 @@ InstallVbeShim (
   // The allocation request may fail, eg. if LegacyBiosDxe has already run.
   //
   Segment0Pages            = 1;
-  Int0x10                  = (IVT_ENTRY *)(UINTN)(Segment0 + 0x10 * sizeof (IVT_ENTRY));
+  Int0x10                  = (IVT_ENTRY *)(UINTN)(Segment0 + 0x10 *
+                                                  sizeof (IVT_ENTRY));
   Segment0AllocationStatus = gBS->AllocatePages (
                                     AllocateAddress,
                                     EfiBootServicesCode,
@@ -225,7 +226,9 @@ InstallVbeShim (
   VbeInfo->ProductNameAddress = (UINT32)SegmentC << 12 | (UINT16)(UINTN)Ptr;
   Printed                     = AsciiSPrint (
                                   (CHAR8 *)Ptr,
-                                  sizeof VbeInfoFull->Buffer - (Ptr - VbeInfoFull->Buffer),
+                                  sizeof VbeInfoFull->Buffer - (Ptr -
+                                                                VbeInfoFull->
+                                                                  Buffer),
                                   "%s",
                                   CardName
                                   );

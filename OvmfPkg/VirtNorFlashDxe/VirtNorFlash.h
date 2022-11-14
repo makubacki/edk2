@@ -31,17 +31,26 @@
 #define LOW_16_BITS   0x0000FFFF
 #define LOW_8_BITS    0x000000FF
 
-#define FOLD_32BIT_INTO_16BIT(value)  ( ( value >> 16 ) | ( value & LOW_16_BITS ) )
+#define FOLD_32BIT_INTO_16BIT( \
+                             value)  \
+  ( ( value >> 16 ) | ( value & LOW_16_BITS ) )
 
 #define GET_LOW_BYTE(value)   ( value & LOW_8_BITS )
 #define GET_HIGH_BYTE(value)  ( GET_LOW_BYTE( value >> 16 ) )
 
 // Each command must be sent simultaneously to both chips,
 // i.e. at the lower 16 bits AND at the higher 16 bits
-#define CREATE_NOR_ADDRESS(BaseAddr, OffsetAddr)       ((BaseAddr) + ((OffsetAddr) << 2))
-#define CREATE_DUAL_CMD(Cmd)                           ( ( Cmd << 16) | ( Cmd & LOW_16_BITS) )
-#define SEND_NOR_COMMAND(BaseAddr, Offset, Cmd)        MmioWrite32 (CREATE_NOR_ADDRESS(BaseAddr,Offset), CREATE_DUAL_CMD(Cmd))
-#define GET_NOR_BLOCK_ADDRESS(BaseAddr, Lba, LbaSize)  ( BaseAddr + (UINTN)((Lba) * LbaSize) )
+#define CREATE_NOR_ADDRESS(BaseAddr, \
+                           OffsetAddr)        ((BaseAddr) + ((OffsetAddr) << 2))
+#define CREATE_DUAL_CMD( \
+                       Cmd)                           \
+                                              ( ( Cmd << 16) | ( Cmd & LOW_16_BITS) )
+#define SEND_NOR_COMMAND(BaseAddr, Offset, \
+                         Cmd)        \
+                                              MmioWrite32 (CREATE_NOR_ADDRESS(BaseAddr,Offset), CREATE_DUAL_CMD(Cmd))
+#define GET_NOR_BLOCK_ADDRESS(BaseAddr, Lba, \
+                              LbaSize)  \
+                                              ( BaseAddr + (UINTN)((Lba) * LbaSize) )
 
 // Status Register Bits
 #define P30_SR_BIT_WRITE            (BIT7 << 16 | BIT7)
@@ -107,7 +116,9 @@
 #define P30_CMD_READ_CONFIGURATION_REGISTER        0x0003
 
 #define NOR_FLASH_SIGNATURE  SIGNATURE_32('n', 'o', 'r', '0')
-#define INSTANCE_FROM_FVB_THIS(a)  CR(a, NOR_FLASH_INSTANCE, FvbProtocol, NOR_FLASH_SIGNATURE)
+#define INSTANCE_FROM_FVB_THIS( \
+                              a)  \
+  CR(a, NOR_FLASH_INSTANCE, FvbProtocol, NOR_FLASH_SIGNATURE)
 
 typedef struct _NOR_FLASH_INSTANCE NOR_FLASH_INSTANCE;
 

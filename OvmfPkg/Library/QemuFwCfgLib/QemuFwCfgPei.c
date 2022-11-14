@@ -34,8 +34,11 @@ QemuFwCfgIsTdxGuest (
 {
   CONFIDENTIAL_COMPUTING_WORK_AREA_HEADER  *CcWorkAreaHeader;
 
-  CcWorkAreaHeader = (CONFIDENTIAL_COMPUTING_WORK_AREA_HEADER *)FixedPcdGet32 (PcdOvmfWorkAreaBase);
-  return (CcWorkAreaHeader != NULL && CcWorkAreaHeader->GuestType == CcGuestTypeIntelTdx);
+  CcWorkAreaHeader = (CONFIDENTIAL_COMPUTING_WORK_AREA_HEADER *)FixedPcdGet32 (
+                                                                  PcdOvmfWorkAreaBase
+                                                                  );
+  return (CcWorkAreaHeader != NULL && CcWorkAreaHeader->GuestType ==
+          CcGuestTypeIntelTdx);
 }
 
 /**

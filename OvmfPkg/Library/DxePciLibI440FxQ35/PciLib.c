@@ -418,7 +418,13 @@ PciBitFieldAndThenOr8 (
   )
 {
   return mRunningOnQ35 ?
-         PciExpressBitFieldAndThenOr8 (Address, StartBit, EndBit, AndData, OrData) :
+         PciExpressBitFieldAndThenOr8 (
+           Address,
+           StartBit,
+           EndBit,
+           AndData,
+           OrData
+           ) :
          PciCf8BitFieldAndThenOr8 (Address, StartBit, EndBit, AndData, OrData);
 }
 
@@ -781,7 +787,13 @@ PciBitFieldAndThenOr16 (
   )
 {
   return mRunningOnQ35 ?
-         PciExpressBitFieldAndThenOr16 (Address, StartBit, EndBit, AndData, OrData) :
+         PciExpressBitFieldAndThenOr16 (
+           Address,
+           StartBit,
+           EndBit,
+           AndData,
+           OrData
+           ) :
          PciCf8BitFieldAndThenOr16 (Address, StartBit, EndBit, AndData, OrData);
 }
 
@@ -1144,7 +1156,13 @@ PciBitFieldAndThenOr32 (
   )
 {
   return mRunningOnQ35 ?
-         PciExpressBitFieldAndThenOr32 (Address, StartBit, EndBit, AndData, OrData) :
+         PciExpressBitFieldAndThenOr32 (
+           Address,
+           StartBit,
+           EndBit,
+           AndData,
+           OrData
+           ) :
          PciCf8BitFieldAndThenOr32 (Address, StartBit, EndBit, AndData, OrData);
 }
 

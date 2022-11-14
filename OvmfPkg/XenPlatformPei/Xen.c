@@ -416,7 +416,8 @@ PhysicalAddressIdentityMapping (
 
   // L3 / Next level Page Directory Pointers
 
-  L3    = (VOID *)(EFI_PHYSICAL_ADDRESS)(L4[Index].Bits.PageTableBaseAddress << 12);
+  L3    = (VOID *)(EFI_PHYSICAL_ADDRESS)(L4[Index].Bits.PageTableBaseAddress <<
+                                         12);
   Index = PDP_OFFSET (AddressToMap);
 
   if (!L3[Index].Bits.Present) {
@@ -435,8 +436,9 @@ PhysicalAddressIdentityMapping (
 
   // L2 / Page Table Entries
 
-  PageTable = (VOID *)(EFI_PHYSICAL_ADDRESS)(L3[Index].Bits.PageTableBaseAddress << 12);
-  Index     = PDE_OFFSET (AddressToMap);
+  PageTable =
+    (VOID *)(EFI_PHYSICAL_ADDRESS)(L3[Index].Bits.PageTableBaseAddress << 12);
+  Index = PDE_OFFSET (AddressToMap);
 
   if (!PageTable[Index].Bits.Present) {
     PageTable[Index].Bits.ReadWrite            = 1;
@@ -484,7 +486,10 @@ UnmapXenPage (
 
   Parameters.domid = DOMID_SELF;
   Parameters.gpfn  = (UINTN)PagePtr >> EFI_PAGE_SHIFT;
-  ReturnCode       = XenHypercallMemoryOp (XENMEM_remove_from_physmap, &Parameters);
+  ReturnCode       = XenHypercallMemoryOp (
+                       XENMEM_remove_from_physmap,
+                       &Parameters
+                       );
   ASSERT (ReturnCode == 0);
 }
 
@@ -583,8 +588,11 @@ CalibrateLapicTimer (
   UINT64              Dividend;
   EFI_STATUS          Status;
 
-  SharedInfo = (VOID *)((UINTN)PcdGet32 (PcdCpuLocalApicBaseAddress) + SIZE_1MB);
-  Status     = PhysicalAddressIdentityMapping ((EFI_PHYSICAL_ADDRESS)SharedInfo);
+  SharedInfo = (VOID *)((UINTN)PcdGet32 (PcdCpuLocalApicBaseAddress) +
+                        SIZE_1MB);
+  Status     = PhysicalAddressIdentityMapping (
+                 (EFI_PHYSICAL_ADDRESS)SharedInfo
+                 );
   if (EFI_ERROR (Status)) {
     DEBUG ((
       DEBUG_ERROR,

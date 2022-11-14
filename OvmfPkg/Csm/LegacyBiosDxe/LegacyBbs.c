@@ -197,9 +197,12 @@ LegacyBiosBuildBbs (
   for (HddIndex = 0; HddIndex < MAX_IDE_CONTROLLER; HddIndex++) {
     BbsIndex = HddIndex * 2 + 1;
     for (Index = 0; Index < 2; ++Index) {
-      BbsTable[BbsIndex + Index].Bus                      = HddInfo[HddIndex].Bus;
-      BbsTable[BbsIndex + Index].Device                   = HddInfo[HddIndex].Device;
-      BbsTable[BbsIndex + Index].Function                 = HddInfo[HddIndex].Function;
+      BbsTable[BbsIndex + Index].Bus =
+        HddInfo[HddIndex].Bus;
+      BbsTable[BbsIndex + Index].Device =
+        HddInfo[HddIndex].Device;
+      BbsTable[BbsIndex + Index].Function =
+        HddInfo[HddIndex].Function;
       BbsTable[BbsIndex + Index].Class                    = 01;
       BbsTable[BbsIndex + Index].SubClass                 = 01;
       BbsTable[BbsIndex + Index].StatusFlags.OldPosition  = 0;
@@ -217,11 +220,16 @@ LegacyBiosBuildBbs (
         BbsTable[BbsIndex + Index].BootPriority = BBS_IGNORE_ENTRY;
       } else {
         if (Index == 0) {
-          if ((HddInfo[HddIndex].Status & (HDD_MASTER_IDE | HDD_MASTER_ATAPI_CDROM | HDD_MASTER_ATAPI_ZIPDISK)) != 0) {
+          if ((HddInfo[HddIndex].Status & (HDD_MASTER_IDE |
+                                           HDD_MASTER_ATAPI_CDROM |
+                                           HDD_MASTER_ATAPI_ZIPDISK)) != 0)
+          {
             BbsTable[BbsIndex + Index].BootPriority = BBS_UNPRIORITIZED_ENTRY;
             if ((HddInfo[HddIndex].Status & HDD_MASTER_IDE) != 0) {
               BbsTable[BbsIndex + Index].DeviceType = BBS_HARDDISK;
-            } else if ((HddInfo[HddIndex].Status & HDD_MASTER_ATAPI_CDROM) != 0) {
+            } else if ((HddInfo[HddIndex].Status & HDD_MASTER_ATAPI_CDROM) !=
+                       0)
+            {
               BbsTable[BbsIndex + Index].DeviceType = BBS_CDROM;
             } else {
               //
@@ -233,11 +241,16 @@ LegacyBiosBuildBbs (
             BbsTable[BbsIndex + Index].BootPriority = BBS_IGNORE_ENTRY;
           }
         } else {
-          if ((HddInfo[HddIndex].Status & (HDD_SLAVE_IDE | HDD_SLAVE_ATAPI_CDROM | HDD_SLAVE_ATAPI_ZIPDISK)) != 0) {
+          if ((HddInfo[HddIndex].Status & (HDD_SLAVE_IDE |
+                                           HDD_SLAVE_ATAPI_CDROM |
+                                           HDD_SLAVE_ATAPI_ZIPDISK)) != 0)
+          {
             BbsTable[BbsIndex + Index].BootPriority = BBS_UNPRIORITIZED_ENTRY;
             if ((HddInfo[HddIndex].Status & HDD_SLAVE_IDE) != 0) {
               BbsTable[BbsIndex + Index].DeviceType = BBS_HARDDISK;
-            } else if ((HddInfo[HddIndex].Status & HDD_SLAVE_ATAPI_CDROM) != 0) {
+            } else if ((HddInfo[HddIndex].Status & HDD_SLAVE_ATAPI_CDROM) !=
+                       0)
+            {
               BbsTable[BbsIndex + Index].DeviceType = BBS_CDROM;
             } else {
               //
@@ -486,7 +499,12 @@ LegacyBiosGetBbsInfo (
 
     LegacyBiosBuildBbs (Private, mBbsTable);
 
-    Private->LegacyRegion->UnLock (Private->LegacyRegion, 0xe0000, 0x20000, &Granularity);
+    Private->LegacyRegion->UnLock (
+                             Private->LegacyRegion,
+                             0xe0000,
+                             0x20000,
+                             &Granularity
+                             );
 
     //
     // Call into Legacy16 code to add to BBS table for non BBS compliant OPROMs.
@@ -510,8 +528,18 @@ LegacyBiosGetBbsInfo (
                           0
                           );
 
-    Private->Cpu->FlushDataCache (Private->Cpu, 0xE0000, 0x20000, EfiCpuFlushTypeWriteBackInvalidate);
-    Private->LegacyRegion->Lock (Private->LegacyRegion, 0xe0000, 0x20000, &Granularity);
+    Private->Cpu->FlushDataCache (
+                    Private->Cpu,
+                    0xE0000,
+                    0x20000,
+                    EfiCpuFlushTypeWriteBackInvalidate
+                    );
+    Private->LegacyRegion->Lock (
+                             Private->LegacyRegion,
+                             0xe0000,
+                             0x20000,
+                             &Granularity
+                             );
 
     if (Regs.X.AX != 0) {
       return EFI_DEVICE_ERROR;
@@ -525,6 +553,7 @@ LegacyBiosGetBbsInfo (
   *HddCount = MAX_IDE_CONTROLLER;
   *HddInfo  = EfiToLegacy16BootTable->HddInfo;
   *BbsTable = (BBS_TABLE *)(UINTN)EfiToLegacy16BootTable->BbsTable;
-  *BbsCount = (UINT16)(sizeof (Private->IntThunk->BbsTable) / sizeof (BBS_TABLE));
+  *BbsCount = (UINT16)(sizeof (Private->IntThunk->BbsTable) /
+                       sizeof (BBS_TABLE));
   return EFI_SUCCESS;
 }

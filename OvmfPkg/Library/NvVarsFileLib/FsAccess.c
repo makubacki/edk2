@@ -223,7 +223,10 @@ ReadNvVarsFile (
 
   Status = GetNvVarsFile (FsHandle, TRUE, &File);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "FsAccess.c: Could not open NV Variables file on this file system\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "FsAccess.c: Could not open NV Variables file on this file system\n"
+      ));
     return Status;
   }
 
@@ -460,7 +463,10 @@ SaveNvVarsToFs (
   //
   Status = GetNvVarsFile (FsHandle, FALSE, &File);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "FsAccess.c: Unable to open file to saved NV Variables\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "FsAccess.c: Unable to open file to saved NV Variables\n"
+      ));
     return Status;
   }
 

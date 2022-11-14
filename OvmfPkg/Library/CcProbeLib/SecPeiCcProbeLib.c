@@ -27,5 +27,6 @@ CcProbe (
 
   WorkArea = (OVMF_WORK_AREA *)FixedPcdGet32 (PcdOvmfWorkAreaBase);
 
-  return WorkArea != NULL ? WorkArea->Header.GuestType : CcGuestTypeNonEncrypted;
+  return WorkArea != NULL ? WorkArea->Header.GuestType :
+         CcGuestTypeNonEncrypted;
 }

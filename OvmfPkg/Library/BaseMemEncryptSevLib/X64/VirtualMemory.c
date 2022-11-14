@@ -122,7 +122,8 @@ InternalMemEncryptSevGetAddressRangeState (
     }
 
     PageDirectory1GEntry = (VOID *)(
-                                    (PageMapLevel4Entry->Bits.PageTableBaseAddress <<
+                                    (PageMapLevel4Entry->Bits.
+                                       PageTableBaseAddress <<
                                      12) & ~PgTableMask
                                     );
     PageDirectory1GEntry += PDP_OFFSET (Address);

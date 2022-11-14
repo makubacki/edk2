@@ -178,7 +178,10 @@ XenBusAddDevice (
       goto out;
     }
 
-    Private                    = AllocateCopyPool (sizeof (*Private), &gXenBusPrivateData);
+    Private = AllocateCopyPool (
+                sizeof (*Private),
+                &gXenBusPrivateData
+                );
     Private->XenBusIo.Type     = AsciiStrDup (Type);
     Private->XenBusIo.Node     = AsciiStrDup (DevicePath);
     Private->XenBusIo.Backend  = BackendPath;
@@ -196,7 +199,8 @@ XenBusAddDevice (
     TempXenBusPath->DeviceId = Private->XenBusIo.DeviceId;
     Private->DevicePath      = (XENBUS_DEVICE_PATH *)AppendDevicePathNode (
                                                        Dev->DevicePath,
-                                                       &TempXenBusPath->Vendor.Header
+                                                       &TempXenBusPath->Vendor.
+                                                         Header
                                                        );
     FreePool (TempXenBusPath);
 
@@ -354,7 +358,13 @@ XenBusSetState (
 
   DEBUG ((DEBUG_INFO, "XenBus: Set state to %d\n", NewState));
 
-  Status = XenStoreRead (Transaction, This->Node, "state", NULL, (VOID **)&Temp);
+  Status = XenStoreRead (
+             Transaction,
+             This->Node,
+             "state",
+             NULL,
+             (VOID **)&Temp
+             );
   if (Status != XENSTORE_STATUS_SUCCESS) {
     goto Out;
   }

@@ -697,7 +697,9 @@ GetResourcePadding (
         // successful, reserve the rounded value. Fall back to the default
         // otherwise.
         //
-        HighBit = HighBitSetRoundUp32 (ReservationHint.NonPrefetchable32BitMmio);
+        HighBit = HighBitSetRoundUp32 (
+                    ReservationHint.NonPrefetchable32BitMmio
+                    );
         if (HighBit != -1) {
           SetMmioPadding (--FirstResource, FALSE, TRUE, (UINTN)HighBit);
           DefaultMmio = FALSE;

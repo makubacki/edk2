@@ -56,7 +56,10 @@ VirtioGpuInit (
   // 2. Set the ACKNOWLEDGE status bit [...]
   //
   NextDevStat |= VSTAT_ACK;
-  Status       = VgpuDev->VirtIo->SetDeviceStatus (VgpuDev->VirtIo, NextDevStat);
+  Status       = VgpuDev->VirtIo->SetDeviceStatus (
+                                    VgpuDev->VirtIo,
+                                    NextDevStat
+                                    );
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
@@ -65,7 +68,10 @@ VirtioGpuInit (
   // 3. Set the DRIVER status bit [...]
   //
   NextDevStat |= VSTAT_DRIVER;
-  Status       = VgpuDev->VirtIo->SetDeviceStatus (VgpuDev->VirtIo, NextDevStat);
+  Status       = VgpuDev->VirtIo->SetDeviceStatus (
+                                    VgpuDev->VirtIo,
+                                    NextDevStat
+                                    );
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
@@ -162,7 +168,10 @@ VirtioGpuInit (
   // 8. Set the DRIVER_OK status bit.
   //
   NextDevStat |= VSTAT_DRIVER_OK;
-  Status       = VgpuDev->VirtIo->SetDeviceStatus (VgpuDev->VirtIo, NextDevStat);
+  Status       = VgpuDev->VirtIo->SetDeviceStatus (
+                                    VgpuDev->VirtIo,
+                                    NextDevStat
+                                    );
   if (EFI_ERROR (Status)) {
     goto UnmapQueue;
   }

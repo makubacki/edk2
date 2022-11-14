@@ -492,7 +492,12 @@ BhyveGetGraphicsMode (
   *Height = BhyveRegs.Height;
   *Depth  = BhyveRegs.Depth;
 
-  DEBUG ((DEBUG_INFO, "BHYVE Get Graphics Mode: w %d, h %d\n", *Width, *Height));
+  DEBUG ((
+    DEBUG_INFO,
+    "BHYVE Get Graphics Mode: w %d, h %d\n",
+    *Width,
+    *Height
+    ));
 
   ASSERT_EFI_ERROR (Status);
 }

@@ -514,7 +514,9 @@ ConnectVirtioPciRng (
       (RevisionId >= 0x01))
   {
     Virtio10 = TRUE;
-  } else if ((DeviceId >= 0x1000) && (DeviceId <= 0x103F) && (RevisionId == 0x00)) {
+  } else if ((DeviceId >= 0x1000) && (DeviceId <= 0x103F) && (RevisionId ==
+                                                              0x00))
+  {
     Virtio10 = FALSE;
   } else {
     return EFI_SUCCESS;

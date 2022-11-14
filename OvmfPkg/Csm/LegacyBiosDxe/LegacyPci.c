@@ -302,12 +302,14 @@ GetPciLegacyRom (
   while (RomHeader.Generic->Signature == PCI_EXPANSION_ROM_HEADER_SIGNATURE) {
     if ((RomHeader.Generic->PcirOffset == 0) ||
         ((RomHeader.Generic->PcirOffset & 3) != 0) ||
-        (*ImageSize < RomHeader.Raw - (UINT8 *)*Rom + RomHeader.Generic->PcirOffset + sizeof (PCI_DATA_STRUCTURE)))
+        (*ImageSize < RomHeader.Raw - (UINT8 *)*Rom +
+         RomHeader.Generic->PcirOffset + sizeof (PCI_DATA_STRUCTURE)))
     {
       break;
     }
 
-    Pcir = (PCI_3_0_DATA_STRUCTURE *)(RomHeader.Raw + RomHeader.Generic->PcirOffset);
+    Pcir = (PCI_3_0_DATA_STRUCTURE *)(RomHeader.Raw +
+                                      RomHeader.Generic->PcirOffset);
     //
     // Check signature in the PCI Data Structure.
     //
@@ -315,7 +317,9 @@ GetPciLegacyRom (
       break;
     }
 
-    if (((UINTN)RomHeader.Raw - (UINTN)*Rom) + Pcir->ImageLength * 512 > *ImageSize) {
+    if (((UINTN)RomHeader.Raw - (UINTN)*Rom) + Pcir->ImageLength * 512 >
+        *ImageSize)
+    {
       break;
     }
 
@@ -379,7 +383,12 @@ GetPciLegacyRom (
           }
         }
       } else {
-        DEBUG ((DEBUG_ERROR, "GetPciLegacyRom - OpRom not match (%04x-%04x)\n", (UINTN)VendorId, (UINTN)DeviceId));
+        DEBUG ((
+          DEBUG_ERROR,
+          "GetPciLegacyRom - OpRom not match (%04x-%04x)\n",
+          (UINTN)VendorId,
+          (UINTN)DeviceId
+          ));
       }
     }
 
@@ -402,7 +411,8 @@ GetPciLegacyRom (
   }
 
   RomHeader.Raw = BestImage;
-  Pcir          = (PCI_3_0_DATA_STRUCTURE *)(RomHeader.Raw + RomHeader.Generic->PcirOffset);
+  Pcir          = (PCI_3_0_DATA_STRUCTURE *)(RomHeader.Raw +
+                                             RomHeader.Generic->PcirOffset);
   *Rom          = BestImage;
   *ImageSize    = Pcir->ImageLength * 512;
 
@@ -432,7 +442,8 @@ GetPciLegacyRom (
     if ((Pcir->Revision < 3) || (Pcir->ConfigUtilityCodeHeaderOffset == 0)) {
       *ConfigUtilityCodeHeader = NULL;
     } else {
-      *ConfigUtilityCodeHeader = RomHeader.Raw + Pcir->ConfigUtilityCodeHeaderOffset;
+      *ConfigUtilityCodeHeader = RomHeader.Raw +
+                                 Pcir->ConfigUtilityCodeHeaderOffset;
     }
   }
 
@@ -514,17 +525,24 @@ CreateBridgeTable (
 
       Bridges[BridgeIndex].SecondaryBus = PciConfigHeader.Bridge.SecondaryBus;
 
-      Bridges[BridgeIndex].SubordinateBus = PciConfigHeader.Bridge.SubordinateBus;
+      Bridges[BridgeIndex].SubordinateBus =
+        PciConfigHeader.Bridge.SubordinateBus;
 
       for (Index1 = 0; Index1 < RoutingTableEntries; Index1++) {
         //
         // Test whether we have found the Bridge in the slot, must be the one that directly interfaced to the board
         // Once we find one, store it in the SlotBridges[]
         //
-        if (  (RoutingTable[Index1].Slot != 0) && (Bridges[BridgeIndex].PrimaryBus == RoutingTable[Index1].Bus)
-           && ((Bridges[BridgeIndex].PciDevice << 3) == RoutingTable[Index1].Device))
+        if (  (RoutingTable[Index1].Slot != 0) &&
+              (Bridges[BridgeIndex].PrimaryBus == RoutingTable[Index1].Bus)
+           && ((Bridges[BridgeIndex].PciDevice << 3) ==
+               RoutingTable[Index1].Device))
         {
-          CopyMem (&SlotBridges[SlotBridgeIndex], &Bridges[BridgeIndex], sizeof (BRIDGE_TABLE));
+          CopyMem (
+            &SlotBridges[SlotBridgeIndex],
+            &Bridges[BridgeIndex],
+            sizeof (BRIDGE_TABLE)
+            );
           SlotBridgeIndex++;
 
           break;
@@ -540,8 +558,10 @@ CreateBridgeTable (
   //
   for (Index = 0; Index < BridgeIndex;) {
     for (Index1 = 0; Index1 < SlotBridgeIndex; Index1++) {
-      if (((Bridges[Index].PciBus == SlotBridges[Index1].PrimaryBus) && (Bridges[Index].PciDevice == SlotBridges[Index1].PciDevice)) ||
-          ((Bridges[Index].PciBus >= SlotBridges[Index1].SecondaryBus) && (Bridges[Index].PciBus <= SlotBridges[Index1].SubordinateBus)))
+      if (((Bridges[Index].PciBus == SlotBridges[Index1].PrimaryBus) &&
+           (Bridges[Index].PciDevice == SlotBridges[Index1].PciDevice)) ||
+          ((Bridges[Index].PciBus >= SlotBridges[Index1].SecondaryBus) &&
+           (Bridges[Index].PciBus <= SlotBridges[Index1].SubordinateBus)))
       {
         //
         // We have found one that meets our criteria
@@ -555,7 +575,9 @@ CreateBridgeTable (
     // This one doesn't meet criteria, pack it
     //
     if (Index1 >= SlotBridgeIndex) {
-      for (Index1 = Index; BridgeIndex > 1 && Index1 < BridgeIndex - 1; Index1++) {
+      for (Index1 = Index; BridgeIndex > 1 && Index1 < BridgeIndex - 1;
+           Index1++)
+      {
         CopyMem (&Bridges[Index1], &Bridges[Index1 + 1], sizeof (BRIDGE_TABLE));
       }
 
@@ -622,7 +644,9 @@ GetBaseBus (
   UINTN  Index;
 
   for (Index = 0; Index < RoutingTableEntries; Index++) {
-    if ((RoutingTable[Index].Bus == PciBus) && (RoutingTable[Index].Device == (PciDevice << 3))) {
+    if ((RoutingTable[Index].Bus == PciBus) && (RoutingTable[Index].Device ==
+                                                (PciDevice << 3)))
+    {
       return EFI_SUCCESS;
     }
   }
@@ -734,7 +758,11 @@ Rotate (B,C,D,A) by 1 giving C,D,A,B. Translated PIRQ is C.
     //
     // Check if device behind this bridge
     //
-    if ((LocalBus >= Bridges[SBridgeIndex].SecondaryBus) && (LocalBus <= Bridges[SBridgeIndex].SubordinateBus)) {
+    if ((LocalBus >= Bridges[SBridgeIndex].SecondaryBus) && (LocalBus <=
+                                                             Bridges[
+                                                                                SBridgeIndex
+                                                             ].SubordinateBus))
+    {
       //
       // If BaseIndexFlag = FALSE then have found base bridge, i.e
       // bridge in slot. Save info for use by IRQ routing table.
@@ -745,7 +773,8 @@ Rotate (B,C,D,A) by 1 giving C,D,A,B. Translated PIRQ is C.
         BaseFunction  = Bridges[SBridgeIndex].PciFunction;
         BaseIndexFlag = TRUE;
       } else {
-        LocalPirqIndex = (UINT8)((LocalPirqIndex + (UINT8)Bridges[SBridgeIndex].PciDevice)%4);
+        LocalPirqIndex = (UINT8)((LocalPirqIndex +
+                                  (UINT8)Bridges[SBridgeIndex].PciDevice)%4);
       }
 
       //
@@ -765,7 +794,13 @@ Rotate (B,C,D,A) by 1 giving C,D,A,B. Translated PIRQ is C.
   // In case we fail to find the Bridge just above us, this is some potential error and we want to warn the user
   //
   if (BridgeIndex >= NumberOfBridges) {
-    DEBUG ((DEBUG_ERROR, "Cannot Find IRQ Routing for Bus %d, Device %d, Function %d\n", *PciBus, *PciDevice, *PciFunction));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Cannot Find IRQ Routing for Bus %d, Device %d, Function %d\n",
+      *PciBus,
+      *PciDevice,
+      *PciFunction
+      ));
   }
 
   *PirqIndex   = LocalPirqIndex;
@@ -833,11 +868,20 @@ CopyPirqTable (
                           0
                           );
 
-    Private->Legacy16Table->IrqRoutingTablePointer = (UINT32)(Regs.X.DS * 16 + Regs.X.BX);
+    Private->Legacy16Table->IrqRoutingTablePointer = (UINT32)(Regs.X.DS * 16 +
+                                                              Regs.X.BX);
     if (Regs.X.AX != 0) {
-      DEBUG ((DEBUG_ERROR, "PIRQ table length insufficient - %x\n", PirqTableSize));
+      DEBUG ((
+        DEBUG_ERROR,
+        "PIRQ table length insufficient - %x\n",
+        PirqTableSize
+        ));
     } else {
-      DEBUG ((DEBUG_INFO, "PIRQ table in legacy region - %x\n", Private->Legacy16Table->IrqRoutingTablePointer));
+      DEBUG ((
+        DEBUG_INFO,
+        "PIRQ table in legacy region - %x\n",
+        Private->Legacy16Table->IrqRoutingTablePointer
+        ));
       Private->Legacy16Table->IrqRoutingTableLength = (UINT32)PirqTableSize;
       CopyMem (
         (VOID *)(UINTN)Private->Legacy16Table->IrqRoutingTablePointer,
@@ -846,7 +890,12 @@ CopyPirqTable (
         );
     }
 
-    Private->Cpu->FlushDataCache (Private->Cpu, 0xE0000, 0x20000, EfiCpuFlushTypeWriteBackInvalidate);
+    Private->Cpu->FlushDataCache (
+                    Private->Cpu,
+                    0xE0000,
+                    0x20000,
+                    EfiCpuFlushTypeWriteBackInvalidate
+                    );
     Private->LegacyRegion->Lock (
                              Private->LegacyRegion,
                              0xE0000,
@@ -871,23 +920,83 @@ DumpPciHandle (
   )
 {
   DEBUG ((DEBUG_INFO, "PciBus             - %02x\n", (UINTN)PciHandle->PciBus));
-  DEBUG ((DEBUG_INFO, "PciDeviceFun       - %02x\n", (UINTN)PciHandle->PciDeviceFun));
-  DEBUG ((DEBUG_INFO, "PciSegment         - %02x\n", (UINTN)PciHandle->PciSegment));
-  DEBUG ((DEBUG_INFO, "PciClass           - %02x\n", (UINTN)PciHandle->PciClass));
-  DEBUG ((DEBUG_INFO, "PciSubclass        - %02x\n", (UINTN)PciHandle->PciSubclass));
-  DEBUG ((DEBUG_INFO, "PciInterface       - %02x\n", (UINTN)PciHandle->PciInterface));
+  DEBUG ((
+    DEBUG_INFO,
+    "PciDeviceFun       - %02x\n",
+    (UINTN)PciHandle->PciDeviceFun
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "PciSegment         - %02x\n",
+    (UINTN)PciHandle->PciSegment
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "PciClass           - %02x\n",
+    (UINTN)PciHandle->PciClass
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "PciSubclass        - %02x\n",
+    (UINTN)PciHandle->PciSubclass
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "PciInterface       - %02x\n",
+    (UINTN)PciHandle->PciInterface
+    ));
 
-  DEBUG ((DEBUG_INFO, "PrimaryIrq         - %02x\n", (UINTN)PciHandle->PrimaryIrq));
-  DEBUG ((DEBUG_INFO, "PrimaryReserved    - %02x\n", (UINTN)PciHandle->PrimaryReserved));
-  DEBUG ((DEBUG_INFO, "PrimaryControl     - %04x\n", (UINTN)PciHandle->PrimaryControl));
-  DEBUG ((DEBUG_INFO, "PrimaryBase        - %04x\n", (UINTN)PciHandle->PrimaryBase));
-  DEBUG ((DEBUG_INFO, "PrimaryBusMaster   - %04x\n", (UINTN)PciHandle->PrimaryBusMaster));
+  DEBUG ((
+    DEBUG_INFO,
+    "PrimaryIrq         - %02x\n",
+    (UINTN)PciHandle->PrimaryIrq
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "PrimaryReserved    - %02x\n",
+    (UINTN)PciHandle->PrimaryReserved
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "PrimaryControl     - %04x\n",
+    (UINTN)PciHandle->PrimaryControl
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "PrimaryBase        - %04x\n",
+    (UINTN)PciHandle->PrimaryBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "PrimaryBusMaster   - %04x\n",
+    (UINTN)PciHandle->PrimaryBusMaster
+    ));
 
-  DEBUG ((DEBUG_INFO, "SecondaryIrq       - %02x\n", (UINTN)PciHandle->SecondaryIrq));
-  DEBUG ((DEBUG_INFO, "SecondaryReserved  - %02x\n", (UINTN)PciHandle->SecondaryReserved));
-  DEBUG ((DEBUG_INFO, "SecondaryControl   - %04x\n", (UINTN)PciHandle->SecondaryControl));
-  DEBUG ((DEBUG_INFO, "SecondaryBase      - %04x\n", (UINTN)PciHandle->SecondaryBase));
-  DEBUG ((DEBUG_INFO, "SecondaryBusMaster - %04x\n", (UINTN)PciHandle->SecondaryBusMaster));
+  DEBUG ((
+    DEBUG_INFO,
+    "SecondaryIrq       - %02x\n",
+    (UINTN)PciHandle->SecondaryIrq
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SecondaryReserved  - %02x\n",
+    (UINTN)PciHandle->SecondaryReserved
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SecondaryControl   - %04x\n",
+    (UINTN)PciHandle->SecondaryControl
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SecondaryBase      - %04x\n",
+    (UINTN)PciHandle->SecondaryBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SecondaryBusMaster - %04x\n",
+    (UINTN)PciHandle->SecondaryBusMaster
+    ));
   return;
 }
 
@@ -954,11 +1063,15 @@ InstallLegacyIrqHandler (
            &PciFunction
            );
   Private->IntThunk->PciHandler.PciBus       = (UINT8)PciBus;
-  Private->IntThunk->PciHandler.PciDeviceFun = (UINT8)((PciDevice << 3) + PciFunction);
+  Private->IntThunk->PciHandler.PciDeviceFun = (UINT8)((PciDevice << 3) +
+                                                       PciFunction);
   Private->IntThunk->PciHandler.PciSegment   = (UINT8)PciSegment;
-  Private->IntThunk->PciHandler.PciClass     = PciConfigHeader->Hdr.ClassCode[2];
-  Private->IntThunk->PciHandler.PciSubclass  = PciConfigHeader->Hdr.ClassCode[1];
-  Private->IntThunk->PciHandler.PciInterface = PciConfigHeader->Hdr.ClassCode[0];
+  Private->IntThunk->PciHandler.PciClass     =
+    PciConfigHeader->Hdr.ClassCode[2];
+  Private->IntThunk->PciHandler.PciSubclass =
+    PciConfigHeader->Hdr.ClassCode[1];
+  Private->IntThunk->PciHandler.PciInterface =
+    PciConfigHeader->Hdr.ClassCode[0];
 
   //
   // Use native mode base address registers in two cases:
@@ -966,11 +1079,16 @@ InstallLegacyIrqHandler (
   // in native mode OR
   // 2. PCI device Sub Class Code is not IDE
   //
-  Private->IntThunk->PciHandler.PrimaryBusMaster = (UINT16)(PciConfigHeader->Device.Bar[4] & 0xfffc);
-  if (((PciConfigHeader->Hdr.ClassCode[0] & 0x01) != 0) || (PciConfigHeader->Hdr.ClassCode[1] != PCI_CLASS_MASS_STORAGE_IDE)) {
-    Private->IntThunk->PciHandler.PrimaryIrq     = PciIrq;
-    Private->IntThunk->PciHandler.PrimaryBase    = (UINT16)(PciConfigHeader->Device.Bar[0] & 0xfffc);
-    Private->IntThunk->PciHandler.PrimaryControl = (UINT16)((PciConfigHeader->Device.Bar[1] & 0xfffc) + 2);
+  Private->IntThunk->PciHandler.PrimaryBusMaster =
+    (UINT16)(PciConfigHeader->Device.Bar[4] & 0xfffc);
+  if (((PciConfigHeader->Hdr.ClassCode[0] & 0x01) != 0) ||
+      (PciConfigHeader->Hdr.ClassCode[1] != PCI_CLASS_MASS_STORAGE_IDE))
+  {
+    Private->IntThunk->PciHandler.PrimaryIrq  = PciIrq;
+    Private->IntThunk->PciHandler.PrimaryBase =
+      (UINT16)(PciConfigHeader->Device.Bar[0] & 0xfffc);
+    Private->IntThunk->PciHandler.PrimaryControl =
+      (UINT16)((PciConfigHeader->Device.Bar[1] & 0xfffc) + 2);
   } else {
     Private->IntThunk->PciHandler.PrimaryIrq     = 14;
     Private->IntThunk->PciHandler.PrimaryBase    = 0x1f0;
@@ -981,9 +1099,12 @@ InstallLegacyIrqHandler (
   // Secondary controller data
   //
   if (Private->IntThunk->PciHandler.PrimaryBusMaster != 0) {
-    Private->IntThunk->PciHandler.SecondaryBusMaster = (UINT16)((PciConfigHeader->Device.Bar[4] & 0xfffc) + 8);
-    PrimaryMaster                                    = (UINT16)(Private->IntThunk->PciHandler.PrimaryBusMaster + 2);
-    SecondaryMaster                                  = (UINT16)(Private->IntThunk->PciHandler.SecondaryBusMaster + 2);
+    Private->IntThunk->PciHandler.SecondaryBusMaster =
+      (UINT16)((PciConfigHeader->Device.Bar[4] & 0xfffc) + 8);
+    PrimaryMaster =
+      (UINT16)(Private->IntThunk->PciHandler.PrimaryBusMaster + 2);
+    SecondaryMaster =
+      (UINT16)(Private->IntThunk->PciHandler.SecondaryBusMaster + 2);
 
     //
     // Clear pending interrupts in Bus Master registers
@@ -998,10 +1119,14 @@ InstallLegacyIrqHandler (
   // in native mode OR
   // 2. PCI device Sub Class Code is not IDE
   //
-  if (((PciConfigHeader->Hdr.ClassCode[0] & 0x04) != 0) || (PciConfigHeader->Hdr.ClassCode[1] != PCI_CLASS_MASS_STORAGE_IDE)) {
-    Private->IntThunk->PciHandler.SecondaryIrq     = PciIrq;
-    Private->IntThunk->PciHandler.SecondaryBase    = (UINT16)(PciConfigHeader->Device.Bar[2] & 0xfffc);
-    Private->IntThunk->PciHandler.SecondaryControl = (UINT16)((PciConfigHeader->Device.Bar[3] & 0xfffc) + 2);
+  if (((PciConfigHeader->Hdr.ClassCode[0] & 0x04) != 0) ||
+      (PciConfigHeader->Hdr.ClassCode[1] != PCI_CLASS_MASS_STORAGE_IDE))
+  {
+    Private->IntThunk->PciHandler.SecondaryIrq  = PciIrq;
+    Private->IntThunk->PciHandler.SecondaryBase =
+      (UINT16)(PciConfigHeader->Device.Bar[2] & 0xfffc);
+    Private->IntThunk->PciHandler.SecondaryControl =
+      (UINT16)((PciConfigHeader->Device.Bar[3] & 0xfffc) + 2);
   } else {
     Private->IntThunk->PciHandler.SecondaryIrq     = 15;
     Private->IntThunk->PciHandler.SecondaryBase    = 0x170;
@@ -1047,7 +1172,12 @@ InstallLegacyIrqHandler (
                         0
                         );
 
-  Private->Cpu->FlushDataCache (Private->Cpu, 0xE0000, 0x20000, EfiCpuFlushTypeWriteBackInvalidate);
+  Private->Cpu->FlushDataCache (
+                  Private->Cpu,
+                  0xE0000,
+                  0x20000,
+                  EfiCpuFlushTypeWriteBackInvalidate
+                  );
   Private->LegacyRegion->Lock (
                            Private->LegacyRegion,
                            0xE0000,
@@ -1218,7 +1348,9 @@ PciProgramAllInterruptLineRegisters (
 
     InterruptPin = PciConfigHeader.Device.InterruptPin;
 
-    if ((InterruptPin != 0) && (PciConfigHeader.Device.InterruptLine == PCI_INT_LINE_UNKNOWN)) {
+    if ((InterruptPin != 0) && (PciConfigHeader.Device.InterruptLine ==
+                                PCI_INT_LINE_UNKNOWN))
+    {
       PciIo->GetLocation (
                PciIo,
                &PciSegment,
@@ -1288,7 +1420,9 @@ PciProgramAllInterruptLineRegisters (
                  NULL,
                  &Flags
                  );
-      if ((EFI_ERROR (Status)) && (PciConfigHeader.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE)) {
+      if ((EFI_ERROR (Status)) && (PciConfigHeader.Hdr.ClassCode[2] ==
+                                   PCI_CLASS_MASS_STORAGE))
+      {
         //
         // Device has no OPROM associated with it and is a mass storage
         // device. It needs to have an PCI IRQ handler installed. To
@@ -1324,8 +1458,12 @@ PciProgramAllInterruptLineRegisters (
                      &PciConfigHeader
                      );
 
-        for (MassStorageHandleIndex = 0; MassStorageHandleIndex < MassStorageHandleCount; MassStorageHandleIndex++) {
-          if (MassStorageHandleBuffer[MassStorageHandleIndex] == HandleBuffer[Index]) {
+        for (MassStorageHandleIndex = 0; MassStorageHandleIndex <
+             MassStorageHandleCount; MassStorageHandleIndex++)
+        {
+          if (MassStorageHandleBuffer[MassStorageHandleIndex] ==
+              HandleBuffer[Index])
+          {
             //
             // InstallLegacyIrqHandler according to Platform requirement
             //
@@ -1350,7 +1488,9 @@ PciProgramAllInterruptLineRegisters (
                    1,
                    &PciIrq
                    );
-      Private->IntThunk->EfiToLegacy16BootTable.PciIrqMask = (UINT16)(Private->IntThunk->EfiToLegacy16BootTable.PciIrqMask | (UINT16)(1 << PciIrq));
+      Private->IntThunk->EfiToLegacy16BootTable.PciIrqMask =
+        (UINT16)(Private->IntThunk->EfiToLegacy16BootTable.PciIrqMask |
+                 (UINT16)(1 << PciIrq));
 
       Legacy8259->GetMask (
                     Legacy8259,
@@ -1414,7 +1554,8 @@ FindNextPnpExpansionHeader (
     TempData = (UINT16)LocalPnpPtr->NextHeader;
   }
 
-  LocalPnpPtr = (LEGACY_PNP_EXPANSION_HEADER *)(((UINT8 *)mBasePnpPtr + TempData));
+  LocalPnpPtr = (LEGACY_PNP_EXPANSION_HEADER *)(((UINT8 *)mBasePnpPtr +
+                                                 TempData));
 
   //
   // Search for PnP table in Shadowed ROM
@@ -1472,9 +1613,10 @@ UpdateBevBcvTable (
   //
   BbsIndex = Private->IntThunk->EfiToLegacy16BootTable.NumberBbsEntries;
 
-  BbsTable = (BBS_TABLE *)(UINTN)Private->IntThunk->EfiToLegacy16BootTable.BbsTable;
-  PnpPtr   = (LEGACY_PNP_EXPANSION_HEADER *)RomStart;
-  PciPtr   = (EFI_LEGACY_EXPANSION_ROM_HEADER *)RomStart;
+  BbsTable =
+    (BBS_TABLE *)(UINTN)Private->IntThunk->EfiToLegacy16BootTable.BbsTable;
+  PnpPtr = (LEGACY_PNP_EXPANSION_HEADER *)RomStart;
+  PciPtr = (EFI_LEGACY_EXPANSION_ROM_HEADER *)RomStart;
 
   RomEnd   = (VOID *)(PciPtr->Size512 * 512 + (UINTN)PciPtr);
   Instance = FIRST_INSTANCE;
@@ -1552,7 +1694,11 @@ UpdateBevBcvTable (
       ++BbsIndex;
     }
 
-    if ((PnpPtr == (LEGACY_PNP_EXPANSION_HEADER *)PciPtr) || (PnpPtr > (LEGACY_PNP_EXPANSION_HEADER *)RomEnd)) {
+    if ((PnpPtr == (LEGACY_PNP_EXPANSION_HEADER *)PciPtr) || (PnpPtr >
+                                                              (
+                                                                       LEGACY_PNP_EXPANSION_HEADER
+                                                                       *)RomEnd))
+    {
       break;
     }
   }
@@ -2021,7 +2167,9 @@ EnablePs2Keyboard (
       // Use the ISA I/O Protocol to see if Controller is the Keyboard
       // controller
       //
-      if ((IsaIo->ResourceList->Device.HID != EISA_PNP_ID (0x303)) || (IsaIo->ResourceList->Device.UID != 0)) {
+      if ((IsaIo->ResourceList->Device.HID != EISA_PNP_ID (0x303)) ||
+          (IsaIo->ResourceList->Device.UID != 0))
+      {
         Status = EFI_UNSUPPORTED;
       }
 
@@ -2165,7 +2313,10 @@ LegacyBiosInstallVgaRom (
                         &HandleBuffer
                         );
   ASSERT_EFI_ERROR (Status);
-  ConnectHandleBuffer = (EFI_HANDLE *)AllocatePool (sizeof (EFI_HANDLE) * (HandleCount + 1));
+  ConnectHandleBuffer = (EFI_HANDLE *)AllocatePool (
+                                        sizeof (EFI_HANDLE) *
+                                        (HandleCount + 1)
+                                        );
   ASSERT (ConnectHandleBuffer != NULL);
 
   CopyMem (
@@ -2201,8 +2352,10 @@ LegacyBiosInstallVgaRom (
                     &Supports
                     );
   if (!EFI_ERROR (Status)) {
-    Supports &= (UINT64)(EFI_PCI_DEVICE_ENABLE | EFI_PCI_IO_ATTRIBUTE_VGA_MEMORY | \
-                         EFI_PCI_IO_ATTRIBUTE_VGA_IO | EFI_PCI_IO_ATTRIBUTE_VGA_IO_16);
+    Supports &= (UINT64)(EFI_PCI_DEVICE_ENABLE |
+                         EFI_PCI_IO_ATTRIBUTE_VGA_MEMORY | \
+                         EFI_PCI_IO_ATTRIBUTE_VGA_IO |
+                         EFI_PCI_IO_ATTRIBUTE_VGA_IO_16);
     Status = PciIo->Attributes (
                       PciIo,
                       EfiPciIoAttributeOperationEnable,
@@ -2316,7 +2469,10 @@ LegacyBiosInstallRom (
   PhysicalAddress = 0;
   MaxRomAddr      = PcdGet32 (PcdEndOpromShadowAddress);
 
-  if ((Private->Legacy16Table->TableLength >= OFFSET_OF (EFI_COMPATIBILITY16_TABLE, HiPermanentMemoryAddress)) &&
+  if ((Private->Legacy16Table->TableLength >= OFFSET_OF (
+                                                EFI_COMPATIBILITY16_TABLE,
+                                                HiPermanentMemoryAddress
+                                                )) &&
       (Private->Legacy16Table->UmaAddress != 0) &&
       (Private->Legacy16Table->UmaSize != 0) &&
       (MaxRomAddr > (Private->Legacy16Table->UmaAddress)))
@@ -2340,7 +2496,11 @@ LegacyBiosInstallRom (
                              );
 
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "return LegacyBiosInstallRom(%d): EFI_OUT_OF_RESOURCES (no more space for OpROM)\n", DEBUG_LINE_NUMBER));
+      DEBUG ((
+        DEBUG_ERROR,
+        "return LegacyBiosInstallRom(%d): EFI_OUT_OF_RESOURCES (no more space for OpROM)\n",
+        DEBUG_LINE_NUMBER
+        ));
       //
       // Report Status Code to indicate that there is no enough space for OpROM
       //
@@ -2357,7 +2517,11 @@ LegacyBiosInstallRom (
     //
     RuntimeAddress = Private->OptionRom;
     if (RuntimeAddress + *RuntimeImageLength > MaxRomAddr) {
-      DEBUG ((DEBUG_ERROR, "return LegacyBiosInstallRom(%d): EFI_OUT_OF_RESOURCES (no more space for OpROM)\n", DEBUG_LINE_NUMBER));
+      DEBUG ((
+        DEBUG_ERROR,
+        "return LegacyBiosInstallRom(%d): EFI_OUT_OF_RESOURCES (no more space for OpROM)\n",
+        DEBUG_LINE_NUMBER
+        ));
       gBS->FreePages (PhysicalAddress, EFI_SIZE_TO_PAGES (ImageSize));
       //
       // Report Status Code to indicate that there is no enough space for OpROM
@@ -2375,7 +2539,11 @@ LegacyBiosInstallRom (
     //
     InitAddress = PCI_START_ADDRESS (Private->OptionRom);
     if (InitAddress + ImageSize > MaxRomAddr) {
-      DEBUG ((DEBUG_ERROR, "return LegacyBiosInstallRom(%d): EFI_OUT_OF_RESOURCES (no more space for OpROM)\n", DEBUG_LINE_NUMBER));
+      DEBUG ((
+        DEBUG_ERROR,
+        "return LegacyBiosInstallRom(%d): EFI_OUT_OF_RESOURCES (no more space for OpROM)\n",
+        DEBUG_LINE_NUMBER
+        ));
       //
       // Report Status Code to indicate that there is no enough space for OpROM
       //
@@ -2403,7 +2571,13 @@ LegacyBiosInstallRom (
                            &Granularity
                            );
 
-  DEBUG ((DEBUG_INFO, " Shadowing OpROM init/runtime/isize = %x/%x/%x\n", InitAddress, RuntimeAddress, ImageSize));
+  DEBUG ((
+    DEBUG_INFO,
+    " Shadowing OpROM init/runtime/isize = %x/%x/%x\n",
+    InitAddress,
+    RuntimeAddress,
+    ImageSize
+    ));
 
   CopyMem ((VOID *)InitAddress, RomImage, ImageSize);
 
@@ -2422,12 +2596,18 @@ LegacyBiosInstallRom (
     //
     // Update table since onboard IDE drives found
     //
-    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciSegment       = 0xff;
-    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciBus           = 0xff;
-    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciDevice        = 0xff;
-    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciFunction      = 0xff;
-    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].StartDriveNumber = (UINT8)(Private->Disk4075 + 0x80);
-    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].EndDriveNumber   = LocalDiskStart;
+    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciSegment
+      = 0xff;
+    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciBus
+      = 0xff;
+    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciDevice
+      = 0xff;
+    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciFunction
+      = 0xff;
+    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].StartDriveNumber
+      = (UINT8)(Private->Disk4075 + 0x80);
+    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].EndDriveNumber
+      = LocalDiskStart;
     Private->LegacyEfiHddTableIndex++;
     Private->Disk4075 = (UINT8)(LocalDiskStart & 0x7f);
     Private->DiskEnd  = LocalDiskStart;
@@ -2520,7 +2700,13 @@ LegacyBiosInstallRom (
              &Device,
              &Function
              );
-    DEBUG ((DEBUG_INFO, "Shadowing OpROM on the PCI device %x/%x/%x\n", Bus, Device, Function));
+    DEBUG ((
+      DEBUG_INFO,
+      "Shadowing OpROM on the PCI device %x/%x/%x\n",
+      Bus,
+      Device,
+      Function
+      ));
   }
 
   mIgnoreBbsUpdateFlag = FALSE;
@@ -2529,23 +2715,40 @@ LegacyBiosInstallRom (
   //
   // Generate DispatchOpRomTable data
   //
-  Private->IntThunk->DispatchOpromTable.PnPInstallationCheckSegment = Private->Legacy16Table->PnPInstallationCheckSegment;
-  Private->IntThunk->DispatchOpromTable.PnPInstallationCheckOffset  = Private->Legacy16Table->PnPInstallationCheckOffset;
-  Private->IntThunk->DispatchOpromTable.OpromSegment                = (UINT16)(InitAddress >> 4);
-  Private->IntThunk->DispatchOpromTable.PciBus                      = (UINT8)Bus;
-  Private->IntThunk->DispatchOpromTable.PciDeviceFunction           = (UINT8)((Device << 3) | Function);
-  Private->IntThunk->DispatchOpromTable.NumberBbsEntries            = (UINT8)Private->IntThunk->EfiToLegacy16BootTable.NumberBbsEntries;
-  Private->IntThunk->DispatchOpromTable.BbsTablePointer             = (UINT32)(UINTN)Private->BbsTablePtr;
-  Private->IntThunk->DispatchOpromTable.RuntimeSegment              = (UINT16)((OpromRevision < 3) ? 0xffff : (RuntimeAddress >> 4));
-  TempData                                                          = (UINTN)&Private->IntThunk->DispatchOpromTable;
-  Regs.X.ES                                                         = EFI_SEGMENT ((UINT32)TempData);
-  Regs.X.BX                                                         = EFI_OFFSET ((UINT32)TempData);
+  Private->IntThunk->DispatchOpromTable.PnPInstallationCheckSegment =
+    Private->Legacy16Table->PnPInstallationCheckSegment;
+  Private->IntThunk->DispatchOpromTable.PnPInstallationCheckOffset =
+    Private->Legacy16Table->PnPInstallationCheckOffset;
+  Private->IntThunk->DispatchOpromTable.OpromSegment =
+    (UINT16)(InitAddress >> 4);
+  Private->IntThunk->DispatchOpromTable.PciBus =
+    (UINT8)Bus;
+  Private->IntThunk->DispatchOpromTable.PciDeviceFunction =
+    (UINT8)((Device << 3) | Function);
+  Private->IntThunk->DispatchOpromTable.NumberBbsEntries =
+    (UINT8)Private->IntThunk->EfiToLegacy16BootTable.NumberBbsEntries;
+  Private->IntThunk->DispatchOpromTable.BbsTablePointer =
+    (UINT32)(UINTN)Private->BbsTablePtr;
+  Private->IntThunk->DispatchOpromTable.RuntimeSegment =
+    (UINT16)((OpromRevision < 3) ? 0xffff : (RuntimeAddress >> 4));
+  TempData =
+    (UINTN)&Private->IntThunk->DispatchOpromTable;
+  Regs.X.ES =
+    EFI_SEGMENT ((UINT32)TempData);
+  Regs.X.BX =
+    EFI_OFFSET ((UINT32)TempData);
   //
   // Skip dispatching ROM for those PCI devices that can not be enabled by PciIo->Attributes
   // Otherwise, it may cause the system to hang in some cases
   //
   if (!EFI_ERROR (PciEnableStatus)) {
-    DEBUG ((DEBUG_INFO, " Legacy16DispatchOprom - %02x/%02x/%02x\n", Bus, Device, Function));
+    DEBUG ((
+      DEBUG_INFO,
+      " Legacy16DispatchOprom - %02x/%02x/%02x\n",
+      Bus,
+      Device,
+      Function
+      ));
     Private->LegacyBios.FarCall86 (
                           &Private->LegacyBios,
                           Private->Legacy16CallSegment,
@@ -2558,24 +2761,36 @@ LegacyBiosInstallRom (
     Regs.X.BX = 0;
   }
 
-  if (Private->IntThunk->DispatchOpromTable.NumberBbsEntries != (UINT8)Private->IntThunk->EfiToLegacy16BootTable.NumberBbsEntries) {
-    Private->IntThunk->EfiToLegacy16BootTable.NumberBbsEntries = (UINT8)Private->IntThunk->DispatchOpromTable.NumberBbsEntries;
-    mIgnoreBbsUpdateFlag                                       = TRUE;
+  if (Private->IntThunk->DispatchOpromTable.NumberBbsEntries !=
+      (UINT8)Private->IntThunk->EfiToLegacy16BootTable.NumberBbsEntries)
+  {
+    Private->IntThunk->EfiToLegacy16BootTable.NumberBbsEntries =
+      (UINT8)Private->IntThunk->DispatchOpromTable.NumberBbsEntries;
+    mIgnoreBbsUpdateFlag = TRUE;
   }
 
   //
   // Check if non-BBS compliant drives found
   //
   if (Regs.X.BX != 0) {
-    LocalDiskEnd                                                                 = (UINT8)(LocalDiskStart + Regs.H.BL);
-    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciSegment       = (UINT8)Segment;
-    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciBus           = (UINT8)Bus;
-    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciDevice        = (UINT8)Device;
-    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciFunction      = (UINT8)Function;
-    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].StartDriveNumber = Private->DiskEnd;
-    Private->DiskEnd                                                             = LocalDiskEnd;
-    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].EndDriveNumber   = Private->DiskEnd;
-    Private->LegacyEfiHddTableIndex                                             += 1;
+    LocalDiskEnd
+      = (UINT8)(LocalDiskStart + Regs.H.BL);
+    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciSegment
+      = (UINT8)Segment;
+    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciBus
+      = (UINT8)Bus;
+    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciDevice
+      = (UINT8)Device;
+    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciFunction
+      = (UINT8)Function;
+    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].StartDriveNumber
+      = Private->DiskEnd;
+    Private->DiskEnd
+      = LocalDiskEnd;
+    Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].EndDriveNumber
+      = Private->DiskEnd;
+    Private->LegacyEfiHddTableIndex
+      += 1;
   }
 
   //
@@ -2608,14 +2823,17 @@ LegacyBiosInstallRom (
   //
   // The ROM could have updated its size so we need to read again.
   //
-  if (((EFI_LEGACY_EXPANSION_ROM_HEADER *)RuntimeAddress)->Signature != PCI_EXPANSION_ROM_HEADER_SIGNATURE) {
+  if (((EFI_LEGACY_EXPANSION_ROM_HEADER *)RuntimeAddress)->Signature !=
+      PCI_EXPANSION_ROM_HEADER_SIGNATURE)
+  {
     //
     // Now we check the signature (0xaa55) to judge whether the run-time code is truly generated by INIT function.
     // If signature is not valid, that means the INIT function didn't copy the run-time code to RuntimeAddress.
     //
     *RuntimeImageLength = 0;
   } else {
-    *RuntimeImageLength = ((EFI_LEGACY_EXPANSION_ROM_HEADER *)RuntimeAddress)->Size512 * 512;
+    *RuntimeImageLength =
+      ((EFI_LEGACY_EXPANSION_ROM_HEADER *)RuntimeAddress)->Size512 * 512;
   }
 
   DEBUG ((DEBUG_INFO, " fsize = %x\n", *RuntimeImageLength));
@@ -2628,7 +2846,12 @@ LegacyBiosInstallRom (
       //
       // Make area from end of shadowed rom to end of original rom all ffs
       //
-      gBS->SetMem ((VOID *)(InitAddress + *RuntimeImageLength), ImageSize - *RuntimeImageLength, 0xff);
+      gBS->SetMem (
+             (VOID *)(InitAddress + *RuntimeImageLength),
+             ImageSize -
+             *RuntimeImageLength,
+             0xff
+             );
     }
   }
 
@@ -2654,24 +2877,34 @@ LegacyBiosInstallRom (
     // If no PCI Handle then no header or Bevs.
     //
     if ((*RuntimeImageLength != 0) && (!mIgnoreBbsUpdateFlag)) {
-      StartBbsIndex = Private->IntThunk->EfiToLegacy16BootTable.NumberBbsEntries;
-      TempData      = RuntimeAddress;
+      StartBbsIndex =
+        Private->IntThunk->EfiToLegacy16BootTable.NumberBbsEntries;
+      TempData = RuntimeAddress;
       UpdateBevBcvTable (
         Private,
         (EFI_LEGACY_EXPANSION_ROM_HEADER *)TempData,
         PciIo
         );
       EndBbsIndex  = Private->IntThunk->EfiToLegacy16BootTable.NumberBbsEntries;
-      LocalDiskEnd = (UINT8)(LocalDiskStart + (UINT8)(EndBbsIndex - StartBbsIndex));
+      LocalDiskEnd = (UINT8)(LocalDiskStart + (UINT8)(EndBbsIndex -
+                                                      StartBbsIndex));
       if (LocalDiskEnd != LocalDiskStart) {
-        Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciSegment       = (UINT8)Segment;
-        Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciBus           = (UINT8)Bus;
-        Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciDevice        = (UINT8)Device;
-        Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciFunction      = (UINT8)Function;
-        Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].StartDriveNumber = Private->DiskEnd;
-        Private->DiskEnd                                                             = LocalDiskEnd;
-        Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].EndDriveNumber   = Private->DiskEnd;
-        Private->LegacyEfiHddTableIndex                                             += 1;
+        Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciSegment
+          = (UINT8)Segment;
+        Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciBus
+          = (UINT8)Bus;
+        Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciDevice
+          = (UINT8)Device;
+        Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].PciFunction
+          = (UINT8)Function;
+        Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].
+          StartDriveNumber = Private->DiskEnd;
+        Private->DiskEnd
+          = LocalDiskEnd;
+        Private->LegacyEfiHddTable[Private->LegacyEfiHddTableIndex].
+          EndDriveNumber = Private->DiskEnd;
+        Private->LegacyEfiHddTableIndex
+          += 1;
       }
     }
 
@@ -2923,10 +3156,10 @@ LegacyBiosInstallPciRom (
       if (
             (
                ((PciConfigHeader.Hdr.ClassCode[2] == PCI_CLASS_OLD) &&
-              (PciConfigHeader.Hdr.ClassCode[1] == PCI_CLASS_OLD_VGA))
+                (PciConfigHeader.Hdr.ClassCode[1] == PCI_CLASS_OLD_VGA))
             ||
-             ((PciConfigHeader.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
-              (PciConfigHeader.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA))
+               ((PciConfigHeader.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
+                (PciConfigHeader.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA))
             )
          &&
             (!Private->VgaInstalled)
@@ -3042,7 +3275,8 @@ LegacyBiosInstallPciRom (
     }
 
     LocalRomImage = *RomImage;
-    if ((((PCI_EXPANSION_ROM_HEADER *)LocalRomImage)->Signature != PCI_EXPANSION_ROM_HEADER_SIGNATURE) ||
+    if ((((PCI_EXPANSION_ROM_HEADER *)LocalRomImage)->Signature !=
+         PCI_EXPANSION_ROM_HEADER_SIGNATURE) ||
         (((PCI_EXPANSION_ROM_HEADER *)LocalRomImage)->PcirOffset == 0) ||
         ((((PCI_EXPANSION_ROM_HEADER *)LocalRomImage)->PcirOffset & 3) != 0))
     {
@@ -3051,9 +3285,12 @@ LegacyBiosInstallPciRom (
     }
 
     Pcir = (PCI_3_0_DATA_STRUCTURE *)
-           ((UINT8 *)LocalRomImage + ((PCI_EXPANSION_ROM_HEADER *)LocalRomImage)->PcirOffset);
+           ((UINT8 *)LocalRomImage +
+            ((PCI_EXPANSION_ROM_HEADER *)LocalRomImage)->PcirOffset);
 
-    if ((Pcir->Signature != PCI_DATA_STRUCTURE_SIGNATURE) || (Pcir->CodeType != PCI_CODE_TYPE_PCAT_IMAGE)) {
+    if ((Pcir->Signature != PCI_DATA_STRUCTURE_SIGNATURE) || (Pcir->CodeType !=
+                                                              PCI_CODE_TYPE_PCAT_IMAGE))
+    {
       mVgaInstallationInProgress = FALSE;
       return EFI_UNSUPPORTED;
     }

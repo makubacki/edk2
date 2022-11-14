@@ -51,7 +51,12 @@ CreateHardwareInfoList (
     HwComponent->Header.Size        = *((UINT64 *)(Index));
     Index                          += sizeof (HwComponent->Header.Size);
 
-    if ((HwComponent->Header.Size > MAX_UINTN) || (Index < Blob) || ((Index + HwComponent->Header.Size) > BlobEnd)) {
+    if ((HwComponent->Header.Size > MAX_UINTN) || (Index < Blob) || ((Index +
+                                                                      HwComponent
+                                                                        ->Header
+                                                                        .Size) >
+                                                                     BlobEnd))
+    {
       goto FreeResources;
     }
 

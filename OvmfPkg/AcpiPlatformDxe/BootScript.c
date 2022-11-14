@@ -219,7 +219,10 @@ AppendFwCfgBootScript (
     }
 
     ScratchBuffer->PointerValue = Condensed->PointerValue;
-    Status                      = QemuFwCfgS3ScriptWriteBytes (-1, Condensed->PointerSize);
+    Status                      = QemuFwCfgS3ScriptWriteBytes (
+                                    -1,
+                                    Condensed->PointerSize
+                                    );
     if (RETURN_ERROR (Status)) {
       goto FatalError;
     }

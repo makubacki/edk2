@@ -95,7 +95,9 @@ PcatPciRootBridgeParseBars (
     PCI_LIB_ADDRESS (Bus, Device, Function, PCI_COMMAND_OFFSET)
     );
 
-  for (Offset = BarOffsetBase; Offset < BarOffsetEnd; Offset += sizeof (UINT32)) {
+  for (Offset = BarOffsetBase; Offset < BarOffsetEnd; Offset +=
+         sizeof (UINT32))
+  {
     PcatPciRootBridgeBarExisted (
       PCI_LIB_ADDRESS (Bus, Device, Function, Offset),
       &OriginalValue,

@@ -806,7 +806,10 @@ TranslatePciOfwNodes (
                 Slave ? "Slave" : "Master"
                 );
   } else if ((NumNodes >= FirstNonBridge + 3) &&
-             SubstringEq (OfwNode[FirstNonBridge + 0].DriverName, "pci8086,2922") &&
+             SubstringEq (
+               OfwNode[FirstNonBridge + 0].DriverName,
+               "pci8086,2922"
+               ) &&
              SubstringEq (OfwNode[FirstNonBridge + 1].DriverName, "drive") &&
              SubstringEq (OfwNode[FirstNonBridge + 2].DriverName, "disk")
              )
@@ -979,7 +982,10 @@ TranslatePciOfwNodes (
                 TargetLun[1]
                 );
   } else if ((NumNodes >= FirstNonBridge + 2) &&
-             SubstringEq (OfwNode[FirstNonBridge + 0].DriverName, "pci8086,5845") &&
+             SubstringEq (
+               OfwNode[FirstNonBridge + 0].DriverName,
+               "pci8086,5845"
+               ) &&
              SubstringEq (OfwNode[FirstNonBridge + 1].DriverName, "namespace")
              )
   {
@@ -1512,7 +1518,12 @@ TranslateOfwPath (
              );
   switch (Status) {
     case RETURN_SUCCESS:
-      DEBUG ((DEBUG_VERBOSE, "%a: success: \"%s\"\n", __FUNCTION__, Translated));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "%a: success: \"%s\"\n",
+        __FUNCTION__,
+        Translated
+        ));
       break;
 
     case RETURN_BUFFER_TOO_SMALL:
@@ -1797,7 +1808,13 @@ StoreQemuBootOrder (
         L"VMMBootOrder%04x",
         VariableIndex++
         );
-      DEBUG ((DEBUG_INFO, "%a: %s = %s\n", __FUNCTION__, VariableName, Translated));
+      DEBUG ((
+        DEBUG_INFO,
+        "%a: %s = %s\n",
+        __FUNCTION__,
+        VariableName,
+        Translated
+        ));
       gRT->SetVariable (
              VariableName,
              &gVMMBootOrderGuid,

@@ -89,7 +89,11 @@ BhyveInstallAcpiMadtTable (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CopyMem (&(Madt->Header), AcpiTableBuffer, sizeof (EFI_ACPI_DESCRIPTION_HEADER));
+  CopyMem (
+    &(Madt->Header),
+    AcpiTableBuffer,
+    sizeof (EFI_ACPI_DESCRIPTION_HEADER)
+    );
   Madt->Header.Length    = (UINT32)NewBufferSize;
   Madt->LocalApicAddress = 0xFEE00000;
   Madt->Flags            = EFI_ACPI_1_0_PCAT_COMPAT;

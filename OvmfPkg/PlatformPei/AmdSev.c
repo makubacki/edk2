@@ -60,8 +60,13 @@ AmdSevSnpInitialize (
   //
   // Iterate through the system RAM and validate it.
   //
-  for (Hob.Raw = GetHobList (); !END_OF_HOB_LIST (Hob); Hob.Raw = GET_NEXT_HOB (Hob)) {
-    if ((Hob.Raw != NULL) && (GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_RESOURCE_DESCRIPTOR)) {
+  for (Hob.Raw = GetHobList (); !END_OF_HOB_LIST (Hob); Hob.Raw = GET_NEXT_HOB (
+                                                                    Hob
+                                                                    ))
+  {
+    if ((Hob.Raw != NULL) && (GET_HOB_TYPE (Hob) ==
+                              EFI_HOB_TYPE_RESOURCE_DESCRIPTOR))
+    {
       ResourceHob = Hob.ResourceDescriptor;
 
       if (ResourceHob->ResourceType == EFI_RESOURCE_SYSTEM_MEMORY) {
@@ -266,8 +271,9 @@ AmdSevEsInitialize (
   // Allocate #VC recursion backup pages. The number of backup pages needed is
   // one less than the maximum VC count.
   //
-  GhcbBackupPageCount = mPlatformInfoHob.PcdCpuMaxLogicalProcessorNumber * (VMGEXIT_MAXIMUM_VC_COUNT - 1);
-  GhcbBackupBase      = AllocatePages (GhcbBackupPageCount);
+  GhcbBackupPageCount = mPlatformInfoHob.PcdCpuMaxLogicalProcessorNumber *
+                        (VMGEXIT_MAXIMUM_VC_COUNT - 1);
+  GhcbBackupBase = AllocatePages (GhcbBackupPageCount);
   ASSERT (GhcbBackupBase != NULL);
 
   GhcbBackupPages = GhcbBackupBase;
@@ -345,7 +351,10 @@ AmdSevInitialize (
   // Set Memory Encryption Mask PCD
   //
   EncryptionMask = MemEncryptSevGetEncryptionMask ();
-  PcdStatus      = PcdSet64S (PcdPteMemoryEncryptionAddressOrMask, EncryptionMask);
+  PcdStatus      = PcdSet64S (
+                     PcdPteMemoryEncryptionAddressOrMask,
+                     EncryptionMask
+                     );
   ASSERT_RETURN_ERROR (PcdStatus);
 
   DEBUG ((DEBUG_INFO, "SEV is enabled (mask 0x%lx)\n", EncryptionMask));
@@ -367,7 +376,9 @@ AmdSevInitialize (
   // until after re-encryption, in order to prevent an information leak to the
   // hypervisor.
   //
-  if (mPlatformInfoHob.SmmSmramRequire && (mPlatformInfoHob.BootMode != BOOT_ON_S3_RESUME)) {
+  if (mPlatformInfoHob.SmmSmramRequire && (mPlatformInfoHob.BootMode !=
+                                           BOOT_ON_S3_RESUME))
+  {
     RETURN_STATUS  LocateMapStatus;
     UINTN          MapPagesBase;
     UINTN          MapPagesCount;

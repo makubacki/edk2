@@ -625,7 +625,10 @@ XenStoreProcessMessage (
 
   Message            = AllocateZeroPool (sizeof (XENSTORE_MESSAGE));
   Message->Signature = XENSTORE_MESSAGE_SIGNATURE;
-  Status             = XenStoreReadStore (&Message->Header, sizeof (Message->Header));
+  Status             = XenStoreReadStore (
+                         &Message->Header,
+                         sizeof (Message->Header)
+                         );
   if (Status != XENSTORE_STATUS_SUCCESS) {
     FreePool (Message);
     DEBUG ((DEBUG_ERROR, "XenStore: Error read store (%d)\n", Status));
@@ -703,21 +706,21 @@ typedef struct {
 } XenStoreErrors;
 
 static XenStoreErrors  gXenStoreErrors[] = {
-  { XENSTORE_STATUS_EINVAL,    "EINVAL"    },
-  { XENSTORE_STATUS_EACCES,    "EACCES"    },
-  { XENSTORE_STATUS_EEXIST,    "EEXIST"    },
-  { XENSTORE_STATUS_EISDIR,    "EISDIR"    },
-  { XENSTORE_STATUS_ENOENT,    "ENOENT"    },
-  { XENSTORE_STATUS_ENOMEM,    "ENOMEM"    },
-  { XENSTORE_STATUS_ENOSPC,    "ENOSPC"    },
-  { XENSTORE_STATUS_EIO,       "EIO"       },
-  { XENSTORE_STATUS_ENOTEMPTY, "ENOTEMPTY" },
-  { XENSTORE_STATUS_ENOSYS,    "ENOSYS"    },
-  { XENSTORE_STATUS_EROFS,     "EROFS"     },
-  { XENSTORE_STATUS_EBUSY,     "EBUSY"     },
-  { XENSTORE_STATUS_EAGAIN,    "EAGAIN"    },
-  { XENSTORE_STATUS_EISCONN,   "EISCONN"   },
-  { XENSTORE_STATUS_E2BIG,     "E2BIG"     }
+  { XENSTORE_STATUS_EINVAL,    "EINVAL"          },
+  { XENSTORE_STATUS_EACCES,    "EACCES"          },
+  { XENSTORE_STATUS_EEXIST,    "EEXIST"          },
+  { XENSTORE_STATUS_EISDIR,    "EISDIR"          },
+  { XENSTORE_STATUS_ENOENT,    "ENOENT"          },
+  { XENSTORE_STATUS_ENOMEM,    "ENOMEM"          },
+  { XENSTORE_STATUS_ENOSPC,    "ENOSPC"          },
+  { XENSTORE_STATUS_EIO,       "EIO"             },
+  { XENSTORE_STATUS_ENOTEMPTY, "ENOTEMPTY"       },
+  { XENSTORE_STATUS_ENOSYS,    "ENOSYS"          },
+  { XENSTORE_STATUS_EROFS,     "EROFS"           },
+  { XENSTORE_STATUS_EBUSY,     "EBUSY"           },
+  { XENSTORE_STATUS_EAGAIN,    "EAGAIN"          },
+  { XENSTORE_STATUS_EISCONN,   "EISCONN"         },
+  { XENSTORE_STATUS_E2BIG,     "E2BIG"           }
 };
 
 STATIC
@@ -760,7 +763,9 @@ XenStoreReadReply (
   while (IsListEmpty (&xs.ReplyList)) {
     XENSTORE_STATUS  Status;
     Status = XenStoreProcessMessage ();
-    if ((Status != XENSTORE_STATUS_SUCCESS) && (Status != XENSTORE_STATUS_EAGAIN)) {
+    if ((Status != XENSTORE_STATUS_SUCCESS) && (Status !=
+                                                XENSTORE_STATUS_EAGAIN))
+    {
       DEBUG ((
         DEBUG_ERROR,
         "XenStore, error while reading the ring (%d).",
@@ -837,14 +842,21 @@ XenStoreTalkv (
   }
 
   for (Index = 0; Index < NumRequests; Index++) {
-    Status = XenStoreWriteStore (WriteRequest[Index].Data, WriteRequest[Index].Len);
+    Status = XenStoreWriteStore (
+               WriteRequest[Index].Data,
+               WriteRequest[Index].Len
+               );
     if (Status != XENSTORE_STATUS_SUCCESS) {
       DEBUG ((DEBUG_ERROR, "XenStoreTalkv failed %d\n", Status));
       goto Error;
     }
   }
 
-  Status = XenStoreReadReply ((enum xsd_sockmsg_type *)&Message.type, LenPtr, &Return);
+  Status = XenStoreReadReply (
+             (enum xsd_sockmsg_type *)&Message.type,
+             LenPtr,
+             &Return
+             );
 
 Error:
   if (Status != XENSTORE_STATUS_SUCCESS) {
@@ -984,7 +996,9 @@ XenStoreWaitWatch (
     {
       EfiReleaseLock (&xs.WatchEventsLock);
       Status = XenStoreProcessMessage ();
-      if ((Status != XENSTORE_STATUS_SUCCESS) && (Status != XENSTORE_STATUS_EAGAIN)) {
+      if ((Status != XENSTORE_STATUS_SUCCESS) && (Status !=
+                                                  XENSTORE_STATUS_EAGAIN))
+      {
         return Status;
       }
 
@@ -1020,7 +1034,11 @@ NotifyEventChannelCheckForEvent (
   XENSTORE_PRIVATE  *xsp;
 
   xsp = (XENSTORE_PRIVATE *)Context;
-  if (TestAndClearBit (xsp->EventChannel, xsp->Dev->SharedInfo->evtchn_pending)) {
+  if (TestAndClearBit (
+        xsp->EventChannel,
+        xsp->Dev->SharedInfo->evtchn_pending
+        ))
+  {
     gBS->SignalEvent (Event);
   }
 }
@@ -1096,9 +1114,11 @@ XenStoreInit (
 
   xs.Dev = Dev;
 
-  xs.EventChannel = (evtchn_port_t)XenHypercallHvmGetParam (HVM_PARAM_STORE_EVTCHN);
-  XenStoreGpfn    = (UINTN)XenHypercallHvmGetParam (HVM_PARAM_STORE_PFN);
-  xs.XenStore     = (VOID *)(XenStoreGpfn << EFI_PAGE_SHIFT);
+  xs.EventChannel = (evtchn_port_t)XenHypercallHvmGetParam (
+                                     HVM_PARAM_STORE_EVTCHN
+                                     );
+  XenStoreGpfn = (UINTN)XenHypercallHvmGetParam (HVM_PARAM_STORE_PFN);
+  xs.XenStore  = (VOID *)(XenStoreGpfn << EFI_PAGE_SHIFT);
   DEBUG ((
     DEBUG_INFO,
     "XenBusInit: XenBus rings @%p, event channel %x\n",
@@ -1133,7 +1153,10 @@ XenStoreDeinit (
   if (!IsListEmpty (&xs.RegisteredWatches)) {
     XENSTORE_WATCH  *Watch;
     LIST_ENTRY      *Entry;
-    DEBUG ((DEBUG_WARN, "XenStore: RegisteredWatches is not empty, cleaning up..."));
+    DEBUG ((
+      DEBUG_WARN,
+      "XenStore: RegisteredWatches is not empty, cleaning up..."
+      ));
     Entry = GetFirstNode (&xs.RegisteredWatches);
     while (!IsNull (&xs.RegisteredWatches, Entry)) {
       Watch = XENSTORE_WATCH_FROM_LINK (Entry);
@@ -1179,7 +1202,10 @@ XenStoreDeinit (
     xs.XenStore->connection = XENSTORE_RECONNECT;
     XenEventChannelNotify (xs.Dev, xs.EventChannel);
     while (*(volatile UINT32 *)&xs.XenStore->connection == XENSTORE_RECONNECT) {
-      XenStoreWaitForEvent (xs.EventChannelEvent, EFI_TIMER_PERIOD_MILLISECONDS (100));
+      XenStoreWaitForEvent (
+        xs.EventChannelEvent,
+        EFI_TIMER_PERIOD_MILLISECONDS (100)
+        );
     }
   } else {
     /* If the backend reads the state while we're erasing it then the
@@ -1401,7 +1427,13 @@ XenStoreSPrint (
   XENSTORE_STATUS  Status;
 
   VA_START (Marker, FormatString);
-  Status = XenStoreVSPrint (Transaction, DirectoryPath, Node, FormatString, Marker);
+  Status = XenStoreVSPrint (
+             Transaction,
+             DirectoryPath,
+             Node,
+             FormatString,
+             Marker
+             );
   VA_END (Marker);
 
   return Status;
@@ -1573,7 +1605,13 @@ XenBusXenStoreSPrint (
   XENSTORE_STATUS  Status;
 
   VA_START (Marker, FormatString);
-  Status = XenStoreVSPrint (Transaction, DirectoryPath, Node, FormatString, Marker);
+  Status = XenStoreVSPrint (
+             Transaction,
+             DirectoryPath,
+             Node,
+             FormatString,
+             Marker
+             );
   VA_END (Marker);
 
   return Status;

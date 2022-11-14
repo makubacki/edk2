@@ -115,7 +115,11 @@ MicrovmInitialization (
 
   Status = QemuFwCfgFindFile ("etc/fdt", &FdtItem, &FdtSize);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "%a: no etc/fdt found in fw_cfg, using dummy\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_INFO,
+      "%a: no etc/fdt found in fw_cfg, using dummy\n",
+      __FUNCTION__
+      ));
     FdtItem = 0;
     FdtSize = sizeof (EmptyFdt);
   }
@@ -189,7 +193,10 @@ MiscInitialization (
 
   PlatformMiscInitialization (PlatformInfoHob);
 
-  PcdStatus = PcdSet16S (PcdOvmfHostBridgePciDevId, PlatformInfoHob->HostBridgeDevId);
+  PcdStatus = PcdSet16S (
+                PcdOvmfHostBridgePciDevId,
+                PlatformInfoHob->HostBridgeDevId
+                );
   ASSERT_RETURN_ERROR (PcdStatus);
 }
 
@@ -220,8 +227,9 @@ ReserveEmuVariableNvStore (
   EFI_PHYSICAL_ADDRESS  VariableStore;
   RETURN_STATUS         PcdStatus;
 
-  VariableStore = (EFI_PHYSICAL_ADDRESS)(UINTN)PlatformReserveEmuVariableNvStore ();
-  PcdStatus     = PcdSet64S (PcdEmuVariableNvStoreReserved, VariableStore);
+  VariableStore =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)PlatformReserveEmuVariableNvStore ();
+  PcdStatus = PcdSet64S (PcdEmuVariableNvStoreReserved, VariableStore);
 
  #ifdef SECURE_BOOT_FEATURE_ENABLED
   PlatformInitEmuVariableNvStore ((VOID *)(UINTN)VariableStore);
@@ -293,9 +301,15 @@ MaxCpuCountInitialization (
 
   PlatformMaxCpuCountInitialization (PlatformInfoHob);
 
-  PcdStatus = PcdSet32S (PcdCpuBootLogicalProcessorNumber, PlatformInfoHob->PcdCpuBootLogicalProcessorNumber);
+  PcdStatus = PcdSet32S (
+                PcdCpuBootLogicalProcessorNumber,
+                PlatformInfoHob->PcdCpuBootLogicalProcessorNumber
+                );
   ASSERT_RETURN_ERROR (PcdStatus);
-  PcdStatus = PcdSet32S (PcdCpuMaxLogicalProcessorNumber, PlatformInfoHob->PcdCpuMaxLogicalProcessorNumber);
+  PcdStatus = PcdSet32S (
+                PcdCpuMaxLogicalProcessorNumber,
+                PlatformInfoHob->PcdCpuMaxLogicalProcessorNumber
+                );
   ASSERT_RETURN_ERROR (PcdStatus);
 }
 
@@ -307,7 +321,11 @@ BuildPlatformInfoHob (
   VOID
   )
 {
-  BuildGuidDataHob (&gUefiOvmfPkgPlatformInfoGuid, &mPlatformInfoHob, sizeof (EFI_HOB_PLATFORM_INFO));
+  BuildGuidDataHob (
+    &gUefiOvmfPkgPlatformInfoGuid,
+    &mPlatformInfoHob,
+    sizeof (EFI_HOB_PLATFORM_INFO)
+    );
 }
 
 /**
@@ -333,7 +351,9 @@ InitializePlatform (
   mPlatformInfoHob.SmmSmramRequire     = FeaturePcdGet (PcdSmmSmramRequire);
   mPlatformInfoHob.SevEsIsEnabled      = MemEncryptSevEsIsEnabled ();
   mPlatformInfoHob.PcdPciMmio64Size    = PcdGet64 (PcdPciMmio64Size);
-  mPlatformInfoHob.DefaultMaxCpuNumber = PcdGet32 (PcdCpuMaxLogicalProcessorNumber);
+  mPlatformInfoHob.DefaultMaxCpuNumber = PcdGet32 (
+                                           PcdCpuMaxLogicalProcessorNumber
+                                           );
 
   PlatformDebugDumpCmos ();
 

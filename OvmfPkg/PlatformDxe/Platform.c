@@ -170,7 +170,8 @@ PlatformConfigToFormState (
         // that's fine.
         //
         for (ModeNumber = 0; ModeNumber < mNumGopModes; ++ModeNumber) {
-          if ((mGopModes[ModeNumber].X == PlatformConfig.HorizontalResolution) &&
+          if ((mGopModes[ModeNumber].X ==
+               PlatformConfig.HorizontalResolution) &&
               (mGopModes[ModeNumber].Y == PlatformConfig.VerticalResolution))
           {
             MainFormState->NextPreferredResolution = (UINT32)ModeNumber;

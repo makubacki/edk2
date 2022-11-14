@@ -185,9 +185,19 @@ XenPvBlockFrontInitialization (
   FreePool (DeviceType);
 
   if (Dev->MediaInfo.CdRom) {
-    Status = XenBusIo->XsBackendRead (XenBusIo, XST_NIL, "params", (VOID **)&Params);
+    Status = XenBusIo->XsBackendRead (
+                         XenBusIo,
+                         XST_NIL,
+                         "params",
+                         (VOID **)&Params
+                         );
     if (Status != XENSTORE_STATUS_SUCCESS) {
-      DEBUG ((DEBUG_ERROR, "%a: Failed to read params (%d)\n", __FUNCTION__, Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: Failed to read params (%d)\n",
+        __FUNCTION__,
+        Status
+        ));
       goto Error;
     }
 
@@ -311,7 +321,12 @@ Again:
     Dev->MediaInfo.ReadWrite = TRUE;
   }
 
-  Status = XenBusReadUint64 (XenBusIo, "sectors", TRUE, &Dev->MediaInfo.Sectors);
+  Status = XenBusReadUint64 (
+             XenBusIo,
+             "sectors",
+             TRUE,
+             &Dev->MediaInfo.Sectors
+             );
   if (Status != XENSTORE_STATUS_SUCCESS) {
     goto Error2;
   }
@@ -511,8 +526,9 @@ XenPvBlockAsyncIo (
   // Can't io non-sector-aligned buffer
   ASSERT (!((UINTN)IoData->Buffer & (Dev->MediaInfo.SectorSize - 1)));
 
-  Start          = (UINTN)IoData->Buffer & ~EFI_PAGE_MASK;
-  End            = ((UINTN)IoData->Buffer + IoData->Size + EFI_PAGE_SIZE - 1) & ~EFI_PAGE_MASK;
+  Start = (UINTN)IoData->Buffer & ~EFI_PAGE_MASK;
+  End   = ((UINTN)IoData->Buffer + IoData->Size + EFI_PAGE_SIZE - 1) &
+          ~EFI_PAGE_MASK;
   IoData->NumRef = NumSegments = (INT32)((End - Start) / EFI_PAGE_SIZE);
 
   ASSERT (NumSegments <= BLKIF_MAX_SEGMENTS_PER_REQUEST);
@@ -532,7 +548,8 @@ XenPvBlockAsyncIo (
     Request->seg[Index].last_sect  = EFI_PAGE_SIZE / 512 - 1;
   }
 
-  Request->seg[0].first_sect              = (UINT8)(((UINTN)IoData->Buffer & EFI_PAGE_MASK) / 512);
+  Request->seg[0].first_sect              = (UINT8)(((UINTN)IoData->Buffer &
+                                                     EFI_PAGE_MASK) / 512);
   Request->seg[NumSegments - 1].last_sect =
     (UINT8)((((UINTN)IoData->Buffer + IoData->Size - 1) & EFI_PAGE_MASK) / 512);
   for (Index = 0; Index < NumSegments; Index++) {
@@ -690,7 +707,10 @@ XenPvBlockAsyncIoPoll (
           }
 
           for (Index = 0; Index < IoData->NumRef; Index++) {
-            Dev->XenBusIo->GrantEndAccess (Dev->XenBusIo, IoData->GrantRef[Index]);
+            Dev->XenBusIo->GrantEndAccess (
+                             Dev->XenBusIo,
+                             IoData->GrantRef[Index]
+                             );
           }
 
           break;

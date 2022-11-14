@@ -53,18 +53,18 @@ STATIC KERNEL_BLOB  mKernelBlob[KernelBlobTypeMax] = {
   {
     L"kernel",
     {
-      { QemuFwCfgItemKernelSetupSize, QemuFwCfgItemKernelSetupData, },
-      { QemuFwCfgItemKernelSize,      QemuFwCfgItemKernelData,      },
+      { QemuFwCfgItemKernelSetupSize, QemuFwCfgItemKernelSetupData,      },
+      { QemuFwCfgItemKernelSize,      QemuFwCfgItemKernelData,           },
     }
   },  {
     L"initrd",
     {
-      { QemuFwCfgItemInitrdSize,      QemuFwCfgItemInitrdData,      },
+      { QemuFwCfgItemInitrdSize,      QemuFwCfgItemInitrdData,           },
     }
   },  {
     L"cmdline",
     {
-      { QemuFwCfgItemCommandLineSize, QemuFwCfgItemCommandLineData, },
+      { QemuFwCfgItemCommandLineSize, QemuFwCfgItemCommandLineData,      },
     }
   }
 };
@@ -632,7 +632,8 @@ StubFileGetInfo (
       return EFI_BUFFER_TOO_SMALL;
     }
 
-    FileSystemVolumeLabel                 = (EFI_FILE_SYSTEM_VOLUME_LABEL *)Buffer;
+    FileSystemVolumeLabel =
+      (EFI_FILE_SYSTEM_VOLUME_LABEL *)Buffer;
     FileSystemVolumeLabel->VolumeLabel[0] = L'\0';
 
     return EFI_SUCCESS;

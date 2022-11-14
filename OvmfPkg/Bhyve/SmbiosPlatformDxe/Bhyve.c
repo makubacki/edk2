@@ -30,8 +30,16 @@ GetBhyveSmbiosTables (
   {
     BhyveSmbiosEntryPointStructure = (SMBIOS_TABLE_ENTRY_POINT *)BhyveSmbiosPtr;
 
-    if (!AsciiStrnCmp ((CHAR8 *)BhyveSmbiosEntryPointStructure->AnchorString, "_SM_", 4) &&
-        !AsciiStrnCmp ((CHAR8 *)BhyveSmbiosEntryPointStructure->IntermediateAnchorString, "_DMI_", 5) &&
+    if (!AsciiStrnCmp (
+           (CHAR8 *)BhyveSmbiosEntryPointStructure->AnchorString,
+           "_SM_",
+           4
+           ) &&
+        !AsciiStrnCmp (
+           (CHAR8 *)BhyveSmbiosEntryPointStructure->IntermediateAnchorString,
+           "_DMI_",
+           5
+           ) &&
         IsEntryPointStructureValid (BhyveSmbiosEntryPointStructure))
     {
       return BhyveSmbiosEntryPointStructure;

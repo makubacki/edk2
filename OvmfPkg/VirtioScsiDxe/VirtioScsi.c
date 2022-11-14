@@ -815,7 +815,8 @@ VirtioScsiGetTargetLun (
   VSCSI_DEV         *Dev;
   UINT8             *Target;
 
-  if ((DevicePath == NULL) || (TargetPointer == NULL) || (*TargetPointer == NULL) ||
+  if ((DevicePath == NULL) || (TargetPointer == NULL) || (*TargetPointer ==
+                                                          NULL) ||
       (Lun == NULL))
   {
     return EFI_INVALID_PARAMETER;
@@ -1477,8 +1478,8 @@ STATIC EFI_DRIVER_BINDING_PROTOCOL  gDriverBinding = {
 
 STATIC
 EFI_UNICODE_STRING_TABLE  mDriverNameTable[] = {
-  { "eng;en", L"Virtio SCSI Host Driver" },
-  { NULL,     NULL                       }
+  { "eng;en", L"Virtio SCSI Host Driver"     },
+  { NULL,     NULL                           }
 };
 
 STATIC

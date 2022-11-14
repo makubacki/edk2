@@ -535,15 +535,18 @@ Error:
     // The target device is disconnected unexpectedly. According to UEFI spec,
     // this is TIMEOUT_COMMAND.
     //
-    Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_TIMEOUT_COMMAND;
+    Packet->HostAdapterStatus =
+      EFI_EXT_SCSI_STATUS_HOST_ADAPTER_TIMEOUT_COMMAND;
   } else if (SIst0 & LSI_SIST0_SGE) {
-    Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_DATA_OVERRUN_UNDERRUN;
+    Packet->HostAdapterStatus =
+      EFI_EXT_SCSI_STATUS_HOST_ADAPTER_DATA_OVERRUN_UNDERRUN;
   } else if (SIst1 & LSI_SIST1_HTH) {
     Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_TIMEOUT;
   } else if (SIst1 & LSI_SIST1_GEN) {
     Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_TIMEOUT;
   } else if (SIst1 & LSI_SIST1_STO) {
-    Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_SELECTION_TIMEOUT;
+    Packet->HostAdapterStatus =
+      EFI_EXT_SCSI_STATUS_HOST_ADAPTER_SELECTION_TIMEOUT;
   } else {
     Packet->HostAdapterStatus = EFI_EXT_SCSI_STATUS_HOST_ADAPTER_OTHER;
   }
@@ -694,7 +697,8 @@ LsiScsiGetTargetLun (
   LSI_SCSI_DEV      *Dev;
   UINT8             *Target;
 
-  if ((DevicePath == NULL) || (TargetPointer == NULL) || (*TargetPointer == NULL) ||
+  if ((DevicePath == NULL) || (TargetPointer == NULL) || (*TargetPointer ==
+                                                          NULL) ||
       (Lun == NULL))
   {
     return EFI_INVALID_PARAMETER;
@@ -1154,8 +1158,8 @@ EFI_DRIVER_BINDING_PROTOCOL  gDriverBinding = {
 
 STATIC
 EFI_UNICODE_STRING_TABLE  mDriverNameTable[] = {
-  { "eng;en", L"LSI 53C895A SCSI Controller Driver" },
-  { NULL,     NULL                                  }
+  { "eng;en", L"LSI 53C895A SCSI Controller Driver"     },
+  { NULL,     NULL                                      }
 };
 
 STATIC

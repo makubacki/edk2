@@ -331,11 +331,13 @@ GetEffectiveMemoryAddress (
       switch (InstructionData->AddrSize) {
         case Size16Bits:
           UpdateForDisplacement (InstructionData, 2);
-          EffectiveAddress += (UINT64)(*(INT16 *)(InstructionData->Displacement));
+          EffectiveAddress +=
+            (UINT64)(*(INT16 *)(InstructionData->Displacement));
           break;
         default:
           UpdateForDisplacement (InstructionData, 4);
-          EffectiveAddress += (UINT64)(*(INT32 *)(InstructionData->Displacement));
+          EffectiveAddress +=
+            (UINT64)(*(INT32 *)(InstructionData->Displacement));
           break;
       }
 
@@ -1865,7 +1867,9 @@ GetCpuidFw (
     {
       return FALSE;
     }
-  } else if ((EaxIn == CPUID_EXTENDED_STATE) && ((EcxIn == 0) || (EcxIn == 1))) {
+  } else if ((EaxIn == CPUID_EXTENDED_STATE) && ((EcxIn == 0) || (EcxIn ==
+                                                                  1)))
+  {
     MSR_IA32_XSS_REGISTER  XssMsr;
     BOOLEAN                Compacted;
     UINT32                 XSaveSize;

@@ -86,7 +86,9 @@ QemuFwCfgInitialize (
     DEBUG ((DEBUG_INFO, "QemuFwCfg interface (DMA) is supported.\n"));
   }
 
-  if (mQemuFwCfgDmaSupported && (MemEncryptSevIsEnabled () || (MemEncryptTdxIsEnabled ()))) {
+  if (mQemuFwCfgDmaSupported && (MemEncryptSevIsEnabled () ||
+                                 (MemEncryptTdxIsEnabled ())))
+  {
     EFI_STATUS  Status;
 
     //

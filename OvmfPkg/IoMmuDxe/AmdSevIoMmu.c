@@ -133,7 +133,8 @@ IoMmuMap (
     (UINT64)((NumberOfBytes == NULL) ? 0 : *NumberOfBytes)
     ));
 
-  if ((HostAddress == NULL) || (NumberOfBytes == NULL) || (DeviceAddress == NULL) ||
+  if ((HostAddress == NULL) || (NumberOfBytes == NULL) || (DeviceAddress ==
+                                                           NULL) ||
       (Mapping == NULL))
   {
     return EFI_INVALID_PARAMETER;
@@ -229,7 +230,9 @@ IoMmuMap (
       // Stash the crypted data.
       //
       CommonBufferHeader = (COMMON_BUFFER_HEADER *)(
-                                                    (UINTN)MapInfo->CryptedAddress - EFI_PAGE_SIZE
+                                                    (UINTN)MapInfo->
+                                                      CryptedAddress -
+                                                    EFI_PAGE_SIZE
                                                     );
       ASSERT (CommonBufferHeader->Signature == COMMON_BUFFER_SIG);
       CopyMem (
@@ -396,7 +399,9 @@ IoMmuUnmapWorker (
       ASSERT (MapInfo->PlainTextAddress == MapInfo->CryptedAddress);
 
       CommonBufferHeader = (COMMON_BUFFER_HEADER *)(
-                                                    (UINTN)MapInfo->PlainTextAddress - EFI_PAGE_SIZE
+                                                    (UINTN)MapInfo->
+                                                      PlainTextAddress -
+                                                    EFI_PAGE_SIZE
                                                     );
       ASSERT (CommonBufferHeader->Signature == COMMON_BUFFER_SIG);
       EncryptionTarget = CommonBufferHeader->StashBuffer;
@@ -686,7 +691,8 @@ IoMmuFreeBuffer (
 
   CommonBufferPages  = Pages + 1;
   CommonBufferHeader = (COMMON_BUFFER_HEADER *)(
-                                                (UINTN)HostAddress - EFI_PAGE_SIZE
+                                                (UINTN)HostAddress -
+                                                EFI_PAGE_SIZE
                                                 );
 
   //

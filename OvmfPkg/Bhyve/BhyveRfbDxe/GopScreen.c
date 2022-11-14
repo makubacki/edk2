@@ -25,10 +25,10 @@ Abstract:
 EFI_EVENT  mGopScreenExitBootServicesEvent;
 
 GOP_MODE_DATA  mGopModeData[] = {
-  { 0,    0,   32, 0 },        // Filled in with user-spec'd resolution
-  { 1024, 768, 32, 0 },
-  { 800,  600, 32, 0 },
-  { 640,  480, 32, 0 }
+  { 0,    0,    32,    0   },  // Filled in with user-spec'd resolution
+  { 1024, 768,  32,    0   },
+  { 800,  600,  32,    0   },
+  { 640,  480,  32,    0   }
 };
 
 STATIC
@@ -94,7 +94,9 @@ EmuGopQuerytMode (
 
   Private = GOP_PRIVATE_DATA_FROM_THIS (This);
 
-  if ((Info == NULL) || (SizeOfInfo == NULL) || ((UINTN)ModeNumber >= This->Mode->MaxMode)) {
+  if ((Info == NULL) || (SizeOfInfo == NULL) || ((UINTN)ModeNumber >=
+                                                 This->Mode->MaxMode))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -156,28 +158,44 @@ EmuGopSetMode (
 
   DEBUG ((DEBUG_INFO, "BHYVE GopSetMode %d\n", ModeNumber));
 
-  ModeData                                                 = &Private->ModeData[ModeNumber];
+  ModeData =
+    &Private->ModeData[ModeNumber];
   This->Mode->Mode                                         = ModeNumber;
-  Private->GraphicsOutput.Mode->Info->HorizontalResolution = ModeData->HorizontalResolution;
-  Private->GraphicsOutput.Mode->Info->VerticalResolution   = ModeData->VerticalResolution;
-  Private->GraphicsOutput.Mode->Info->PixelsPerScanLine    = ModeData->HorizontalResolution;
+  Private->GraphicsOutput.Mode->Info->HorizontalResolution =
+    ModeData->HorizontalResolution;
+  Private->GraphicsOutput.Mode->Info->VerticalResolution =
+    ModeData->VerticalResolution;
+  Private->GraphicsOutput.Mode->Info->PixelsPerScanLine =
+    ModeData->HorizontalResolution;
 
   Info = This->Mode->Info;
   BhyveGopCompleteModeInfo (ModeData, Info);
 
   This->Mode->Info->HorizontalResolution = ModeData->HorizontalResolution;
   This->Mode->Info->VerticalResolution   = ModeData->VerticalResolution;
-  This->Mode->SizeOfInfo                 = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
-  This->Mode->FrameBufferBase            = Private->GraphicsOutput.Mode->FrameBufferBase;
+  This->Mode->SizeOfInfo                 =
+    sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
+  This->Mode->FrameBufferBase =
+    Private->GraphicsOutput.Mode->FrameBufferBase;
 
   /*
   This->Mode->FrameBufferSize = Info->HorizontalResolution * Info->VerticalResolution
                                 * ((ModeData->ColorDepth + 7) / 8);
   */
   This->Mode->FrameBufferSize = Private->FbSize;
-  DEBUG ((DEBUG_INFO, "BHYVE GOP FrameBufferBase: 0x%x, FrameBufferSize: 0x%x\n", This->Mode->FrameBufferBase, This->Mode->FrameBufferSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "BHYVE GOP FrameBufferBase: 0x%x, FrameBufferSize: 0x%x\n",
+    This->Mode->FrameBufferBase,
+    This->Mode->FrameBufferSize
+    ));
 
-  BhyveSetGraphicsMode (Private, (UINT16)ModeData->HorizontalResolution, (UINT16)ModeData->VerticalResolution, (UINT16)ModeData->ColorDepth);
+  BhyveSetGraphicsMode (
+    Private,
+    (UINT16)ModeData->HorizontalResolution,
+    (UINT16)ModeData->VerticalResolution,
+    (UINT16)ModeData->ColorDepth
+    );
 
   RETURN_STATUS  ret = FrameBufferBltConfigure (
                          (VOID *)(UINTN)This->Mode->FrameBufferBase,
@@ -210,7 +228,8 @@ EmuGopSetMode (
           0,
           ModeData->HorizontalResolution,
           ModeData->VerticalResolution,
-          ModeData->HorizontalResolution * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+          ModeData->HorizontalResolution *
+          sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
           );
   return EFI_SUCCESS;
 }
@@ -307,8 +326,10 @@ EmuGopConstructor (
   )
 {
   // Set mode 0 to be the requested resolution
-  mGopModeData[0].HorizontalResolution = PcdGet32 (PcdVideoHorizontalResolution);
-  mGopModeData[0].VerticalResolution   = PcdGet32 (PcdVideoVerticalResolution);
+  mGopModeData[0].HorizontalResolution = PcdGet32 (
+                                           PcdVideoHorizontalResolution
+                                           );
+  mGopModeData[0].VerticalResolution = PcdGet32 (PcdVideoVerticalResolution);
 
   Private->ModeData = mGopModeData;
 
@@ -319,30 +340,39 @@ EmuGopConstructor (
   //
   // Allocate buffer for Graphics Output Protocol mode information
   //
-  Private->GraphicsOutput.Mode = AllocatePool (sizeof (EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE));
+  Private->GraphicsOutput.Mode = AllocatePool (
+                                   sizeof (EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE)
+                                   );
   if (Private->GraphicsOutput.Mode == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Private->GraphicsOutput.Mode->Info = AllocatePool (sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
+  Private->GraphicsOutput.Mode->Info = AllocatePool (
+                                         sizeof (
+                                                            EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
+                                         );
   if (Private->GraphicsOutput.Mode->Info == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
   DEBUG ((DEBUG_INFO, "BHYVE Gop Constructor\n"));
 
-  Private->GraphicsOutput.Mode->MaxMode = sizeof (mGopModeData) / sizeof (GOP_MODE_DATA);
+  Private->GraphicsOutput.Mode->MaxMode = sizeof (mGopModeData) /
+                                          sizeof (GOP_MODE_DATA);
   //
   // Till now, we have no idea about the window size.
   //
-  Private->GraphicsOutput.Mode->Mode                       = GRAPHICS_OUTPUT_INVALID_MODE_NUMBER;
+  Private->GraphicsOutput.Mode->Mode =
+    GRAPHICS_OUTPUT_INVALID_MODE_NUMBER;
   Private->GraphicsOutput.Mode->Info->Version              = 0;
   Private->GraphicsOutput.Mode->Info->HorizontalResolution = 0;
   Private->GraphicsOutput.Mode->Info->VerticalResolution   = 0;
   Private->GraphicsOutput.Mode->Info->PixelFormat          = PixelBitMask;
-  Private->GraphicsOutput.Mode->SizeOfInfo                 = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
-  Private->GraphicsOutput.Mode->FrameBufferBase            = (EFI_PHYSICAL_ADDRESS)Private->FbAddr;
-  Private->GraphicsOutput.Mode->FrameBufferSize            = Private->FbSize;
+  Private->GraphicsOutput.Mode->SizeOfInfo                 =
+    sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
+  Private->GraphicsOutput.Mode->FrameBufferBase =
+    (EFI_PHYSICAL_ADDRESS)Private->FbAddr;
+  Private->GraphicsOutput.Mode->FrameBufferSize = Private->FbSize;
 
   return EFI_SUCCESS;
 }

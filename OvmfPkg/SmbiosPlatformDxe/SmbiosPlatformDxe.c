@@ -146,7 +146,9 @@ InstallAllStructures (
     //
     // Get the next structure address
     //
-    SmbiosTable.Raw = (UINT8 *)(SmbiosTable.Raw + SmbiosTableLength (SmbiosTable));
+    SmbiosTable.Raw = (UINT8 *)(SmbiosTable.Raw + SmbiosTableLength (
+                                                    SmbiosTable
+                                                    ));
   }
 
   if (NeedSmbiosType0) {

@@ -91,8 +91,13 @@ PlatformQemuUc32BaseInitialization (
   // variable MTRR suffices by truncating the size to a whole power of two,
   // while keeping the end affixed to 4GB. This will round the base up.
   //
-  LowerMemorySize           = PlatformGetSystemMemorySizeBelow4gb (PlatformInfoHob);
-  PlatformInfoHob->Uc32Size = GetPowerOfTwo32 ((UINT32)(SIZE_4GB - LowerMemorySize));
+  LowerMemorySize = PlatformGetSystemMemorySizeBelow4gb (
+                      PlatformInfoHob
+                      );
+  PlatformInfoHob->Uc32Size = GetPowerOfTwo32 (
+                                (UINT32)(SIZE_4GB -
+                                         LowerMemorySize)
+                                );
   PlatformInfoHob->Uc32Base = (UINT32)(SIZE_4GB - PlatformInfoHob->Uc32Size);
   //
   // Assuming that LowerMemorySize is at least 1 byte, Uc32Size is at most 2GB.
@@ -258,7 +263,8 @@ GetPvhMemmapEntries (
 
   pvh_start_info = (struct hvm_start_info *)(UINTN)PVHResetVectorData[0];
 
-  *Entries = (struct hvm_memmap_table_entry *)(UINTN)pvh_start_info->memmap_paddr;
+  *Entries = (struct
+              hvm_memmap_table_entry *)(UINTN)pvh_start_info->memmap_paddr;
   *Count   = pvh_start_info->memmap_entries;
 
   return EFI_SUCCESS;
@@ -486,8 +492,14 @@ PlatformGetFirstNonAddress (
   // SeaBIOS aligns both boundaries of the 64-bit PCI host aperture to 1GB, so
   // that the host can map it with 1GB hugepages. Follow suit.
   //
-  PlatformInfoHob->PcdPciMmio64Base = ALIGN_VALUE (FirstNonAddress, (UINT64)SIZE_1GB);
-  PlatformInfoHob->PcdPciMmio64Size = ALIGN_VALUE (PlatformInfoHob->PcdPciMmio64Size, (UINT64)SIZE_1GB);
+  PlatformInfoHob->PcdPciMmio64Base = ALIGN_VALUE (
+                                        FirstNonAddress,
+                                        (UINT64)SIZE_1GB
+                                        );
+  PlatformInfoHob->PcdPciMmio64Size = ALIGN_VALUE (
+                                        PlatformInfoHob->PcdPciMmio64Size,
+                                        (UINT64)SIZE_1GB
+                                        );
 
   //
   // The 64-bit PCI host aperture should also be "naturally" aligned. The
@@ -495,12 +507,18 @@ PlatformGetFirstNonAddress (
   // next smaller or equal power of two. That is, align the aperture by the
   // largest BAR size that can fit into it.
   //
-  PlatformInfoHob->PcdPciMmio64Base = ALIGN_VALUE (PlatformInfoHob->PcdPciMmio64Base, GetPowerOfTwo64 (PlatformInfoHob->PcdPciMmio64Size));
+  PlatformInfoHob->PcdPciMmio64Base = ALIGN_VALUE (
+                                        PlatformInfoHob->PcdPciMmio64Base,
+                                        GetPowerOfTwo64 (
+                                          PlatformInfoHob->PcdPciMmio64Size
+                                          )
+                                        );
 
   //
   // The useful address space ends with the 64-bit PCI host aperture.
   //
-  FirstNonAddress = PlatformInfoHob->PcdPciMmio64Base + PlatformInfoHob->PcdPciMmio64Size;
+  FirstNonAddress = PlatformInfoHob->PcdPciMmio64Base +
+                    PlatformInfoHob->PcdPciMmio64Size;
   return FirstNonAddress;
 }
 
@@ -592,17 +610,29 @@ PlatformAddressWidthFromCpuid (
        * places in edk2 assume we have everything identity-mapped).
        * So the actual limit is 47.
        */
-      DEBUG ((DEBUG_INFO, "%a: limit PhysBits to 47 (avoid 5-level paging)\n", __func__));
+      DEBUG ((
+        DEBUG_INFO,
+        "%a: limit PhysBits to 47 (avoid 5-level paging)\n",
+        __func__
+        ));
       PhysBits = 47;
     }
 
     if (!Page1GSupport && (PhysBits > 40)) {
-      DEBUG ((DEBUG_INFO, "%a: limit PhysBits to 40 (no 1G pages available)\n", __func__));
+      DEBUG ((
+        DEBUG_INFO,
+        "%a: limit PhysBits to 40 (no 1G pages available)\n",
+        __func__
+        ));
       PhysBits = 40;
     }
 
     PlatformInfoHob->PhysMemAddressWidth = PhysBits;
-    PlatformInfoHob->FirstNonAddress     = LShiftU64 (1, PlatformInfoHob->PhysMemAddressWidth);
+    PlatformInfoHob->FirstNonAddress     = LShiftU64 (
+                                             1,
+                                             PlatformInfoHob->
+                                               PhysMemAddressWidth
+                                             );
   }
 }
 
@@ -621,16 +651,38 @@ PlatformDynamicMmioWindow (
       (PlatformInfoHob->PcdPciMmio64Base + MmioSpace < AddrSpace))
   {
     DEBUG ((DEBUG_INFO, "%a: using dynamic mmio window\n", __func__));
-    DEBUG ((DEBUG_INFO, "%a:   Addr Space 0x%Lx (%Ld GB)\n", __func__, AddrSpace, RShiftU64 (AddrSpace, 30)));
-    DEBUG ((DEBUG_INFO, "%a:   MMIO Space 0x%Lx (%Ld GB)\n", __func__, MmioSpace, RShiftU64 (MmioSpace, 30)));
+    DEBUG ((
+      DEBUG_INFO,
+      "%a:   Addr Space 0x%Lx (%Ld GB)\n",
+      __func__,
+      AddrSpace,
+      RShiftU64 (AddrSpace, 30)
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "%a:   MMIO Space 0x%Lx (%Ld GB)\n",
+      __func__,
+      MmioSpace,
+      RShiftU64 (MmioSpace, 30)
+      ));
     PlatformInfoHob->PcdPciMmio64Size = MmioSpace;
     PlatformInfoHob->PcdPciMmio64Base = AddrSpace - MmioSpace;
   } else {
     DEBUG ((DEBUG_INFO, "%a: using classic mmio window\n", __func__));
   }
 
-  DEBUG ((DEBUG_INFO, "%a:   Pci64 Base 0x%Lx\n", __func__, PlatformInfoHob->PcdPciMmio64Base));
-  DEBUG ((DEBUG_INFO, "%a:   Pci64 Size 0x%Lx\n", __func__, PlatformInfoHob->PcdPciMmio64Size));
+  DEBUG ((
+    DEBUG_INFO,
+    "%a:   Pci64 Base 0x%Lx\n",
+    __func__,
+    PlatformInfoHob->PcdPciMmio64Base
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "%a:   Pci64 Size 0x%Lx\n",
+    __func__,
+    PlatformInfoHob->PcdPciMmio64Size
+    ));
 }
 
 /**
@@ -848,7 +900,9 @@ QemuInitializeRamBelow1gb (
   IN EFI_HOB_PLATFORM_INFO  *PlatformInfoHob
   )
 {
-  if (PlatformInfoHob->SmmSmramRequire && PlatformInfoHob->Q35SmramAtDefaultSmbase) {
+  if (PlatformInfoHob->SmmSmramRequire &&
+      PlatformInfoHob->Q35SmramAtDefaultSmbase)
+  {
     PlatformAddMemoryRangeHob (0, SMM_DEFAULT_SMBASE);
     PlatformAddReservedMemoryBaseSizeHob (
       SMM_DEFAULT_SMBASE,
@@ -957,7 +1011,9 @@ PlatformQemuInitializeRam (
   // practically any alignment, and we may not have enough variable MTRRs to
   // cover it exactly.
   //
-  if (IsMtrrSupported () && (PlatformInfoHob->HostBridgeDevId != CLOUDHV_DEVICE_ID)) {
+  if (IsMtrrSupported () && (PlatformInfoHob->HostBridgeDevId !=
+                             CLOUDHV_DEVICE_ID))
+  {
     MtrrGetAllMtrrs (&MtrrSettings);
 
     //
@@ -1004,7 +1060,9 @@ PlatformQemuInitializeRamForS3 (
   IN EFI_HOB_PLATFORM_INFO  *PlatformInfoHob
   )
 {
-  if (PlatformInfoHob->S3Supported && (PlatformInfoHob->BootMode != BOOT_ON_S3_RESUME)) {
+  if (PlatformInfoHob->S3Supported && (PlatformInfoHob->BootMode !=
+                                       BOOT_ON_S3_RESUME))
+  {
     //
     // This is the memory range that will be used for PEI on S3 resume
     //

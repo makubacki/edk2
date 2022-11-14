@@ -220,7 +220,11 @@ QemuFwCfgParseUint64WithLimit (
   UINT64         Uint64;
 
   Uint64StringSize = sizeof Uint64String;
-  Status           = QemuFwCfgGetAsString (FileName, &Uint64StringSize, Uint64String);
+  Status           = QemuFwCfgGetAsString (
+                       FileName,
+                       &Uint64StringSize,
+                       Uint64String
+                       );
   if (RETURN_ERROR (Status)) {
     return Status;
   }
@@ -241,7 +245,9 @@ QemuFwCfgParseUint64WithLimit (
   // Report a wire protocol error if the subject sequence is empty, or trailing
   // garbage is present, or Limit is not honored.
   //
-  if ((EndPointer == Uint64String) || (*EndPointer != '\0') || (Uint64 > Limit)) {
+  if ((EndPointer == Uint64String) || (*EndPointer != '\0') || (Uint64 >
+                                                                Limit))
+  {
     return RETURN_PROTOCOL_ERROR;
   }
 

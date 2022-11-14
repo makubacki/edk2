@@ -61,9 +61,13 @@ SerialPortInitialize (
   }
 
   if (!mXenConsoleInterface) {
-    mXenConsoleEventChain.port = (UINT32)XenHypercallHvmGetParam (HVM_PARAM_CONSOLE_EVTCHN);
-    mXenConsoleInterface       = (struct xencons_interface *)(UINTN)
-                                 (XenHypercallHvmGetParam (HVM_PARAM_CONSOLE_PFN) << EFI_PAGE_SHIFT);
+    mXenConsoleEventChain.port = (UINT32)XenHypercallHvmGetParam (
+                                           HVM_PARAM_CONSOLE_EVTCHN
+                                           );
+    mXenConsoleInterface = (struct xencons_interface *)(UINTN)
+                           (XenHypercallHvmGetParam (
+                              HVM_PARAM_CONSOLE_PFN
+                              ) << EFI_PAGE_SHIFT);
 
     //
     // No point in ASSERT'ing here as we won't be seeing the output
@@ -117,8 +121,13 @@ SerialPortWrite (
 
     MemoryFence ();
 
-    while (Sent < NumberOfBytes && ((Producer - Consumer) < sizeof (mXenConsoleInterface->out))) {
-      mXenConsoleInterface->out[MASK_XENCONS_IDX (Producer++, mXenConsoleInterface->out)] = Buffer[Sent++];
+    while (Sent < NumberOfBytes && ((Producer - Consumer) <
+                                    sizeof (mXenConsoleInterface->out)))
+    {
+      mXenConsoleInterface->out[MASK_XENCONS_IDX (
+                                  Producer++,
+                                  mXenConsoleInterface->out
+                                  )] = Buffer[Sent++];
     }
 
     MemoryFence ();
@@ -173,7 +182,10 @@ SerialPortRead (
 
   Received = 0;
   while (Received < NumberOfBytes && Consumer < Producer) {
-    Buffer[Received++] = mXenConsoleInterface->in[MASK_XENCONS_IDX (Consumer++, mXenConsoleInterface->in)];
+    Buffer[Received++] = mXenConsoleInterface->in[MASK_XENCONS_IDX (
+                                                    Consumer++,
+                                                    mXenConsoleInterface->in
+                                                    )];
   }
 
   MemoryFence ();

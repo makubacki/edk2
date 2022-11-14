@@ -11,7 +11,8 @@
 
 #include "HardwareInfoPciHostBridgeLib.h"
 
-#define IS_RANGE_INVALID(Start, Size, MaxValue)  (Start >= MaxValue || Size == 0)
+#define IS_RANGE_INVALID(Start, Size, \
+                         MaxValue)  (Start >= MaxValue || Size == 0)
 
 /**
   Calculate the last (inclusive) address of a range.

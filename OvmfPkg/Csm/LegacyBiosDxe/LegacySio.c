@@ -66,7 +66,11 @@ LegacyBiosBuildSioDataFromSio (
   // Collect legacy information from each of the ISA controllers in the system
   //
   for (Index = 0; Index < HandleCount; Index++) {
-    Status = gBS->HandleProtocol (HandleBuffer[Index], &gEfiSioProtocolGuid, (VOID **)&Sio);
+    Status = gBS->HandleProtocol (
+                    HandleBuffer[Index],
+                    &gEfiSioProtocolGuid,
+                    (VOID **)&Sio
+                    );
     if (EFI_ERROR (Status)) {
       continue;
     }
@@ -87,8 +91,10 @@ LegacyBiosBuildSioDataFromSio (
             break;
 
           case ACPI_FIXED_LOCATION_IO_PORT_DESCRIPTOR:
-            FixedIoResource = (EFI_ACPI_FIXED_LOCATION_IO_PORT_DESCRIPTOR *)Resources.SmallHeader;
-            Address         = FixedIoResource->BaseAddress;
+            FixedIoResource =
+              (EFI_ACPI_FIXED_LOCATION_IO_PORT_DESCRIPTOR *)Resources.
+                SmallHeader;
+            Address = FixedIoResource->BaseAddress;
             break;
 
           case ACPI_DMA_DESCRIPTOR:
@@ -98,8 +104,9 @@ LegacyBiosBuildSioDataFromSio (
 
           case ACPI_IRQ_DESCRIPTOR:
           case ACPI_IRQ_NOFLAG_DESCRIPTOR:
-            IrqResource = (EFI_ACPI_IRQ_NOFLAG_DESCRIPTOR *)Resources.SmallHeader;
-            Irq         = (UINT8)LowBitSet32 (IrqResource->Mask);
+            IrqResource =
+              (EFI_ACPI_IRQ_NOFLAG_DESCRIPTOR *)Resources.SmallHeader;
+            Irq = (UINT8)LowBitSet32 (IrqResource->Mask);
             break;
 
           default:
@@ -107,18 +114,30 @@ LegacyBiosBuildSioDataFromSio (
         }
 
         if (Resources.SmallHeader->Bits.Type == 0) {
-          Resources.SmallHeader = (ACPI_SMALL_RESOURCE_HEADER *)((UINT8 *)Resources.SmallHeader
-                                                                 + Resources.SmallHeader->Bits.Length
-                                                                 + sizeof (*Resources.SmallHeader));
+          Resources.SmallHeader =
+            (ACPI_SMALL_RESOURCE_HEADER *)((UINT8 *)Resources.SmallHeader
+                                           + Resources.
+                                             SmallHeader->Bits.Length
+                                           + sizeof (*
+                                                     Resources.SmallHeader));
         } else {
-          Resources.LargeHeader = (ACPI_LARGE_RESOURCE_HEADER *)((UINT8 *)Resources.LargeHeader
-                                                                 + Resources.LargeHeader->Length
-                                                                 + sizeof (*Resources.LargeHeader));
+          Resources.LargeHeader =
+            (ACPI_LARGE_RESOURCE_HEADER *)((UINT8 *)Resources.LargeHeader
+                                           + Resources.
+                                             LargeHeader->Length
+                                           + sizeof (*
+                                                     Resources.LargeHeader));
         }
       }
     }
 
-    DEBUG ((DEBUG_INFO, "LegacySio: Address/Dma/Irq = %x/%d/%d\n", Address, Dma, Irq));
+    DEBUG ((
+      DEBUG_INFO,
+      "LegacySio: Address/Dma/Irq = %x/%d/%d\n",
+      Address,
+      Dma,
+      Irq
+      ));
 
     DevicePath = DevicePathFromHandle (HandleBuffer[Index]);
     if (DevicePath == NULL) {
@@ -132,7 +151,8 @@ LegacyBiosBuildSioDataFromSio (
     }
 
     if ((Acpi == NULL) || (DevicePathType (Acpi) != ACPI_DEVICE_PATH) ||
-        ((DevicePathSubType (Acpi) != ACPI_DP) && (DevicePathSubType (Acpi) != ACPI_EXTENDED_DP))
+        ((DevicePathSubType (Acpi) != ACPI_DP) && (DevicePathSubType (Acpi) !=
+                                                   ACPI_EXTENDED_DP))
         )
     {
       continue;
@@ -143,7 +163,10 @@ LegacyBiosBuildSioDataFromSio (
     //
     // Ignore DMA resource since it is always returned NULL
     //
-    if ((Acpi->HID == EISA_PNP_ID (0x500)) || (Acpi->HID == EISA_PNP_ID (0x501))) {
+    if ((Acpi->HID == EISA_PNP_ID (0x500)) || (Acpi->HID == EISA_PNP_ID (
+                                                              0x501
+                                                              )))
+    {
       if ((Acpi->UID < 4) && (Address != MAX_UINT16) && (Irq != MAX_UINT8)) {
         //
         // Get the handle of the child device that has opened the Super I/O Protocol
@@ -159,13 +182,20 @@ LegacyBiosBuildSioDataFromSio (
         }
 
         for (ChildIndex = 0; ChildIndex < EntryCount; ChildIndex++) {
-          if ((OpenInfoBuffer[ChildIndex].Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0) {
-            Status = gBS->HandleProtocol (OpenInfoBuffer[ChildIndex].ControllerHandle, &gEfiSerialIoProtocolGuid, (VOID **)&SerialIo);
+          if ((OpenInfoBuffer[ChildIndex].Attributes &
+               EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0)
+          {
+            Status = gBS->HandleProtocol (
+                            OpenInfoBuffer[ChildIndex].ControllerHandle,
+                            &gEfiSerialIoProtocolGuid,
+                            (VOID **)&SerialIo
+                            );
             if (!EFI_ERROR (Status)) {
               SioSerial          = &SioPtr->Serial[Acpi->UID];
               SioSerial->Address = Address;
               SioSerial->Irq     = Irq;
-              SioSerial->Mode    = DEVICE_SERIAL_MODE_NORMAL | DEVICE_SERIAL_MODE_DUPLEX_HALF;
+              SioSerial->Mode    = DEVICE_SERIAL_MODE_NORMAL |
+                                   DEVICE_SERIAL_MODE_DUPLEX_HALF;
               break;
             }
           }
@@ -181,8 +211,13 @@ LegacyBiosBuildSioDataFromSio (
     // Ignore DMA resource since it is always returned NULL, port
     // only used in output mode.
     //
-    if ((Acpi->HID == EISA_PNP_ID (0x400)) || (Acpi->HID == EISA_PNP_ID (0x401))) {
-      if ((Acpi->UID < 3) && (Address != MAX_UINT16) && (Irq != MAX_UINT8) && (Dma != MAX_UINT8)) {
+    if ((Acpi->HID == EISA_PNP_ID (0x400)) || (Acpi->HID == EISA_PNP_ID (
+                                                              0x401
+                                                              )))
+    {
+      if ((Acpi->UID < 3) && (Address != MAX_UINT16) && (Irq != MAX_UINT8) &&
+          (Dma != MAX_UINT8))
+      {
         SioParallel          = &SioPtr->Parallel[Acpi->UID];
         SioParallel->Address = Address;
         SioParallel->Irq     = Irq;
@@ -196,7 +231,11 @@ LegacyBiosBuildSioDataFromSio (
     //
     if (Acpi->HID == EISA_PNP_ID (0x604)) {
       if ((Address != MAX_UINT16) && (Irq != MAX_UINT8) && (Dma != MAX_UINT8)) {
-        Status = gBS->HandleProtocol (HandleBuffer[Index], &gEfiBlockIoProtocolGuid, (VOID **)&BlockIo);
+        Status = gBS->HandleProtocol (
+                        HandleBuffer[Index],
+                        &gEfiBlockIoProtocolGuid,
+                        (VOID **)&BlockIo
+                        );
         if (!EFI_ERROR (Status)) {
           SioFloppy          = &SioPtr->Floppy;
           SioFloppy->Address = Address;
@@ -283,7 +322,11 @@ LegacyBiosBuildSioDataFromIsaIo (
   // Collect legacy information from each of the ISA controllers in the system
   //
   for (Index = 0; Index < HandleCount; Index++) {
-    Status = gBS->HandleProtocol (HandleBuffer[Index], &gEfiIsaIoProtocolGuid, (VOID **)&IsaIo);
+    Status = gBS->HandleProtocol (
+                    HandleBuffer[Index],
+                    &gEfiIsaIoProtocolGuid,
+                    (VOID **)&IsaIo
+                    );
     if (EFI_ERROR (Status)) {
       continue;
     }
@@ -301,7 +344,8 @@ LegacyBiosBuildSioDataFromIsaIo (
     DmaResource       = NULL;
     InterruptResource = NULL;
     for (ResourceIndex = 0;
-         ResourceList->ResourceItem[ResourceIndex].Type != EfiIsaAcpiResourceEndOfList;
+         ResourceList->ResourceItem[ResourceIndex].Type !=
+         EfiIsaAcpiResourceEndOfList;
          ResourceIndex++
          )
     {
@@ -331,7 +375,9 @@ LegacyBiosBuildSioDataFromIsaIo (
     //
     // Ignore DMA resource since it is always returned NULL
     //
-    if ((ResourceList->Device.HID == EISA_PNP_ID (0x500)) || (ResourceList->Device.HID == EISA_PNP_ID (0x501))) {
+    if ((ResourceList->Device.HID == EISA_PNP_ID (0x500)) ||
+        (ResourceList->Device.HID == EISA_PNP_ID (0x501)))
+    {
       if ((ResourceList->Device.UID <= 3) &&
           (IoResource != NULL) &&
           (InterruptResource != NULL)
@@ -354,13 +400,20 @@ LegacyBiosBuildSioDataFromIsaIo (
         // We want resource for legacy even if no 32-bit driver installed
         //
         for (ChildIndex = 0; ChildIndex < EntryCount; ChildIndex++) {
-          if ((OpenInfoBuffer[ChildIndex].Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0) {
-            Status = gBS->HandleProtocol (OpenInfoBuffer[ChildIndex].ControllerHandle, &gEfiSerialIoProtocolGuid, (VOID **)&SerialIo);
+          if ((OpenInfoBuffer[ChildIndex].Attributes &
+               EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0)
+          {
+            Status = gBS->HandleProtocol (
+                            OpenInfoBuffer[ChildIndex].ControllerHandle,
+                            &gEfiSerialIoProtocolGuid,
+                            (VOID **)&SerialIo
+                            );
             if (!EFI_ERROR (Status)) {
               SioSerial          = &SioPtr->Serial[ResourceList->Device.UID];
               SioSerial->Address = (UINT16)IoResource->StartRange;
               SioSerial->Irq     = (UINT8)InterruptResource->StartRange;
-              SioSerial->Mode    = DEVICE_SERIAL_MODE_NORMAL | DEVICE_SERIAL_MODE_DUPLEX_HALF;
+              SioSerial->Mode    = DEVICE_SERIAL_MODE_NORMAL |
+                                   DEVICE_SERIAL_MODE_DUPLEX_HALF;
               break;
             }
           }
@@ -376,7 +429,9 @@ LegacyBiosBuildSioDataFromIsaIo (
     // Ignore DMA resource since it is always returned NULL, port
     // only used in output mode.
     //
-    if ((ResourceList->Device.HID == EISA_PNP_ID (0x400)) || (ResourceList->Device.HID == EISA_PNP_ID (0x401))) {
+    if ((ResourceList->Device.HID == EISA_PNP_ID (0x400)) ||
+        (ResourceList->Device.HID == EISA_PNP_ID (0x401)))
+    {
       if ((ResourceList->Device.UID <= 2) &&
           (IoResource != NULL) &&
           (InterruptResource != NULL) &&
@@ -395,8 +450,14 @@ LegacyBiosBuildSioDataFromIsaIo (
     // See if this is an ISA floppy controller
     //
     if (ResourceList->Device.HID == EISA_PNP_ID (0x604)) {
-      if ((IoResource != NULL) && (InterruptResource != NULL) && (DmaResource != NULL)) {
-        Status = gBS->HandleProtocol (HandleBuffer[Index], &gEfiBlockIoProtocolGuid, (VOID **)&BlockIo);
+      if ((IoResource != NULL) && (InterruptResource != NULL) && (DmaResource !=
+                                                                  NULL))
+      {
+        Status = gBS->HandleProtocol (
+                        HandleBuffer[Index],
+                        &gEfiBlockIoProtocolGuid,
+                        (VOID **)&BlockIo
+                        );
         if (!EFI_ERROR (Status)) {
           SioFloppy          = &SioPtr->Floppy;
           SioFloppy->Address = (UINT16)IoResource->StartRange;

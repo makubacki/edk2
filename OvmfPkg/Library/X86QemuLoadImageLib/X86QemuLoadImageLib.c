@@ -183,7 +183,10 @@ QemuLoadLegacyImage (
                                    )
                                  );
     if (LoadedImage->CommandLine == NULL) {
-      DEBUG ((DEBUG_ERROR, "Unable to allocate memory for kernel command line!\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Unable to allocate memory for kernel command line!\n"
+        ));
       Status = EFI_OUT_OF_RESOURCES;
       goto FreeImage;
     }

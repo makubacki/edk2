@@ -37,7 +37,12 @@ QemuVideoCompleteModeInfo (
     Info->PixelInformation.BlueMask     = 0;
     Info->PixelInformation.ReservedMask = 0;
   } else {
-    DEBUG ((DEBUG_ERROR, "%a: Invalid ColorDepth %u", __FUNCTION__, ModeData->ColorDepth));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Invalid ColorDepth %u",
+      __FUNCTION__,
+      ModeData->ColorDepth
+      ));
     ASSERT (FALSE);
   }
 
@@ -68,7 +73,8 @@ QemuVideoCompleteModeData (
 
   Mode->FrameBufferBase = FrameBufDesc->AddrRangeMin;
   Mode->FrameBufferSize = Info->HorizontalResolution * Info->VerticalResolution;
-  Mode->FrameBufferSize = Mode->FrameBufferSize * ((ModeData->ColorDepth + 7) / 8);
+  Mode->FrameBufferSize = Mode->FrameBufferSize * ((ModeData->ColorDepth + 7) /
+                                                   8);
   Mode->FrameBufferSize = EFI_PAGES_TO_SIZE (
                             EFI_SIZE_TO_PAGES (Mode->FrameBufferSize)
                             );
@@ -121,7 +127,9 @@ Routine Description:
 
   Private = QEMU_VIDEO_PRIVATE_DATA_FROM_GRAPHICS_OUTPUT_THIS (This);
 
-  if ((Info == NULL) || (SizeOfInfo == NULL) || (ModeNumber >= This->Mode->MaxMode)) {
+  if ((Info == NULL) || (SizeOfInfo == NULL) || (ModeNumber >=
+                                                 This->Mode->MaxMode))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -180,7 +188,10 @@ Routine Description:
   switch (Private->Variant) {
     case QEMU_VIDEO_CIRRUS_5430:
     case QEMU_VIDEO_CIRRUS_5446:
-      InitializeCirrusGraphicsMode (Private, &QemuVideoCirrusModes[ModeData->InternalModeIndex]);
+      InitializeCirrusGraphicsMode (
+        Private,
+        &QemuVideoCirrusModes[ModeData->InternalModeIndex]
+        );
       break;
     case QEMU_VIDEO_BOCHS_MMIO:
     case QEMU_VIDEO_BOCHS:
@@ -194,7 +205,8 @@ Routine Description:
   This->Mode->Mode                       = ModeNumber;
   This->Mode->Info->HorizontalResolution = ModeData->HorizontalResolution;
   This->Mode->Info->VerticalResolution   = ModeData->VerticalResolution;
-  This->Mode->SizeOfInfo                 = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
+  This->Mode->SizeOfInfo                 =
+    sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
 
   QemuVideoCompleteModeData (Private, This->Mode);
 

@@ -380,8 +380,12 @@ DecompressMemFvs (
     return Status;
   }
 
-  OutputBuffer  = (VOID *)((UINT8 *)(UINTN)PcdGet32 (PcdOvmfDxeMemFvBase) + SIZE_1MB);
-  ScratchBuffer = ALIGN_POINTER ((UINT8 *)OutputBuffer + OutputBufferSize, SIZE_1MB);
+  OutputBuffer  = (VOID *)((UINT8 *)(UINTN)PcdGet32 (PcdOvmfDxeMemFvBase) +
+                           SIZE_1MB);
+  ScratchBuffer = ALIGN_POINTER (
+                    (UINT8 *)OutputBuffer + OutputBufferSize,
+                    SIZE_1MB
+                    );
 
   DEBUG ((
     DEBUG_VERBOSE,
@@ -428,11 +432,17 @@ DecompressMemFvs (
     );
   ASSERT (FvSection->Type == EFI_SECTION_FIRMWARE_VOLUME_IMAGE);
 
-  PeiMemFv = (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)PcdGet32 (PcdOvmfPeiMemFvBase);
+  PeiMemFv = (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)PcdGet32 (
+                                                    PcdOvmfPeiMemFvBase
+                                                    );
   CopyMem (PeiMemFv, (VOID *)(FvSection + 1), PcdGet32 (PcdOvmfPeiMemFvSize));
 
   if (PeiMemFv->Signature != EFI_FVH_SIGNATURE) {
-    DEBUG ((DEBUG_ERROR, "Extracted FV at %p does not have FV header signature\n", PeiMemFv));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Extracted FV at %p does not have FV header signature\n",
+      PeiMemFv
+      ));
     CpuDeadLoop ();
     return EFI_VOLUME_CORRUPTED;
   }
@@ -461,11 +471,23 @@ DecompressMemFvs (
 
   ASSERT (FvSectionSize == (PcdGet32 (PcdOvmfDxeMemFvSize) + FvHeaderSize));
 
-  DxeMemFv = (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)PcdGet32 (PcdOvmfDxeMemFvBase);
-  CopyMem (DxeMemFv, (VOID *)((UINTN)FvSection + FvHeaderSize), PcdGet32 (PcdOvmfDxeMemFvSize));
+  DxeMemFv = (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)PcdGet32 (
+                                                    PcdOvmfDxeMemFvBase
+                                                    );
+  CopyMem (
+    DxeMemFv,
+    (VOID *)((UINTN)FvSection + FvHeaderSize),
+    PcdGet32 (
+      PcdOvmfDxeMemFvSize
+      )
+    );
 
   if (DxeMemFv->Signature != EFI_FVH_SIGNATURE) {
-    DEBUG ((DEBUG_ERROR, "Extracted FV at %p does not have FV header signature\n", DxeMemFv));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Extracted FV at %p does not have FV header signature\n",
+      DxeMemFv
+      ));
     CpuDeadLoop ();
     return EFI_VOLUME_CORRUPTED;
   }
@@ -675,7 +697,9 @@ FindImageBase (
       //
       // Look for executable sections
       //
-      if ((Section->Type == EFI_SECTION_PE32) || (Section->Type == EFI_SECTION_TE)) {
+      if ((Section->Type == EFI_SECTION_PE32) || (Section->Type ==
+                                                  EFI_SECTION_TE))
+      {
         if (File->Type == EFI_FV_FILETYPE_SECURITY_CORE) {
           *SecCoreImageBase = (PHYSICAL_ADDRESS)(UINTN)(Section + 1);
         }
@@ -724,20 +748,27 @@ FindAndReportEntryPoints (
   // Report SEC Core debug information when remote debug is enabled
   //
   ImageContext.ImageAddress = SecCoreImageBase;
-  ImageContext.PdbPointer   = PeCoffLoaderGetPdbPointer ((VOID *)(UINTN)ImageContext.ImageAddress);
+  ImageContext.PdbPointer   = PeCoffLoaderGetPdbPointer (
+                                (VOID *)(UINTN)ImageContext.ImageAddress
+                                );
   PeCoffLoaderRelocateImageExtraAction (&ImageContext);
 
   //
   // Report PEI Core debug information when remote debug is enabled
   //
   ImageContext.ImageAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)PeiCoreImageBase;
-  ImageContext.PdbPointer   = PeCoffLoaderGetPdbPointer ((VOID *)(UINTN)ImageContext.ImageAddress);
+  ImageContext.PdbPointer   = PeCoffLoaderGetPdbPointer (
+                                (VOID *)(UINTN)ImageContext.ImageAddress
+                                );
   PeCoffLoaderRelocateImageExtraAction (&ImageContext);
 
   //
   // Find PEI Core entry point
   //
-  Status = PeCoffLoaderGetEntryPoint ((VOID *)(UINTN)PeiCoreImageBase, (VOID **)PeiCoreEntryPoint);
+  Status = PeCoffLoaderGetEntryPoint (
+             (VOID *)(UINTN)PeiCoreImageBase,
+             (VOID **)PeiCoreEntryPoint
+             );
   if (EFI_ERROR (Status)) {
     *PeiCoreEntryPoint = 0;
   }
@@ -900,12 +931,14 @@ SecCoreStartupWithStack (
   SecCoreData.DataSize = sizeof (EFI_SEC_PEI_HAND_OFF);
 
   SecCoreData.TemporaryRamSize = (UINTN)PcdGet32 (PcdOvmfSecPeiTempRamSize);
-  SecCoreData.TemporaryRamBase = (VOID *)((UINT8 *)TopOfCurrentStack - SecCoreData.TemporaryRamSize);
+  SecCoreData.TemporaryRamBase = (VOID *)((UINT8 *)TopOfCurrentStack -
+                                          SecCoreData.TemporaryRamSize);
 
   SecCoreData.PeiTemporaryRamBase = SecCoreData.TemporaryRamBase;
   SecCoreData.PeiTemporaryRamSize = SecCoreData.TemporaryRamSize >> 1;
 
-  SecCoreData.StackBase = (UINT8 *)SecCoreData.TemporaryRamBase + SecCoreData.PeiTemporaryRamSize;
+  SecCoreData.StackBase = (UINT8 *)SecCoreData.TemporaryRamBase +
+                          SecCoreData.PeiTemporaryRamSize;
   SecCoreData.StackSize = SecCoreData.TemporaryRamSize >> 1;
 
   SecCoreData.BootFirmwareVolumeBase = BootFv;
@@ -933,7 +966,11 @@ SecCoreStartupWithStack (
   //
   // Initialize Debug Agent to support source level debug in SEC/PEI phases before memory ready.
   //
-  InitializeDebugAgent (DEBUG_AGENT_INIT_PREMEM_SEC, &SecCoreData, SecStartupPhase2);
+  InitializeDebugAgent (
+    DEBUG_AGENT_INIT_PREMEM_SEC,
+    &SecCoreData,
+    SecStartupPhase2
+    );
 }
 
 /**
@@ -1026,7 +1063,11 @@ TemporaryRamMigration (
   DebugAgentContext.StackMigrateOffset = (UINTN)NewStack - (UINTN)OldStack;
 
   OldStatus = SaveAndSetDebugTimerInterrupt (FALSE);
-  InitializeDebugAgent (DEBUG_AGENT_INIT_POSTMEM_SEC, (VOID *)&DebugAgentContext, NULL);
+  InitializeDebugAgent (
+    DEBUG_AGENT_INIT_POSTMEM_SEC,
+    (VOID *)&DebugAgentContext,
+    NULL
+    );
 
   //
   // Migrate Heap

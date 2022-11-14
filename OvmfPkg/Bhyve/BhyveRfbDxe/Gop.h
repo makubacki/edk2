@@ -48,10 +48,17 @@ typedef struct {
 #define PIXEL_GREEN_MASK  (BIT4 | BIT3 | BIT2)
 #define PIXEL_BLUE_MASK   (BIT1 | BIT0)
 
-#define PIXEL_TO_COLOR_BYTE(pixel, mask, shift)  ((UINT8) ((pixel & mask) << shift))
-#define PIXEL_TO_RED_BYTE(pixel)                 PIXEL_TO_COLOR_BYTE(pixel, PIXEL_RED_MASK, PIXEL_RED_SHIFT)
-#define PIXEL_TO_GREEN_BYTE(pixel)               PIXEL_TO_COLOR_BYTE(pixel, PIXEL_GREEN_MASK, PIXEL_GREEN_SHIFT)
-#define PIXEL_TO_BLUE_BYTE(pixel)                PIXEL_TO_COLOR_BYTE(pixel, PIXEL_BLUE_MASK, PIXEL_BLUE_SHIFT)
+#define PIXEL_TO_COLOR_BYTE(pixel, mask, \
+                            shift)    ((UINT8) ((pixel & mask) << shift))
+#define PIXEL_TO_RED_BYTE( \
+                         pixel)                 \
+                                      PIXEL_TO_COLOR_BYTE(pixel, PIXEL_RED_MASK, PIXEL_RED_SHIFT)
+#define PIXEL_TO_GREEN_BYTE( \
+                           pixel)               \
+                                      PIXEL_TO_COLOR_BYTE(pixel, PIXEL_GREEN_MASK, PIXEL_GREEN_SHIFT)
+#define PIXEL_TO_BLUE_BYTE( \
+                          pixel)                \
+                                      PIXEL_TO_COLOR_BYTE(pixel, PIXEL_BLUE_MASK, PIXEL_BLUE_SHIFT)
 
 #define RGB_BYTES_TO_PIXEL(Red, Green, Blue) \
   (UINT8) ( (((Red) >> PIXEL_RED_SHIFT) & PIXEL_RED_MASK) | \

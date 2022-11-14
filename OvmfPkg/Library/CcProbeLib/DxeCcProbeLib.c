@@ -29,8 +29,9 @@ ReadCcGuestType (
 
   if (!mCcProbed) {
     WorkArea          = (OVMF_WORK_AREA *)FixedPcdGet32 (PcdOvmfWorkAreaBase);
-    mCcProbeGuestType = WorkArea != NULL ? WorkArea->Header.GuestType : CcGuestTypeNonEncrypted;
-    mCcProbed         = TRUE;
+    mCcProbeGuestType = WorkArea != NULL ? WorkArea->Header.GuestType :
+                        CcGuestTypeNonEncrypted;
+    mCcProbed = TRUE;
   }
 
   return mCcProbeGuestType;

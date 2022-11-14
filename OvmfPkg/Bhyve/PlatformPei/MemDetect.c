@@ -409,7 +409,9 @@ PublishPeiMemory (
     //
     MemoryBase = mS3Supported && FeaturePcdGet (PcdSmmSmramRequire) ?
                  PcdGet32 (PcdOvmfDecompressionScratchEnd) :
-                 PcdGet32 (PcdOvmfDxeMemFvBase) + PcdGet32 (PcdOvmfDxeMemFvSize);
+                 PcdGet32 (PcdOvmfDxeMemFvBase) + PcdGet32 (
+                                                    PcdOvmfDxeMemFvSize
+                                                    );
     MemorySize = LowerMemorySize - MemoryBase;
     if (MemorySize > PeiMemoryCap) {
       MemoryBase = LowerMemorySize - PeiMemoryCap;

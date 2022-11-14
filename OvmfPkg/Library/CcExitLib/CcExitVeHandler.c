@@ -123,7 +123,14 @@ IoExit (
         Regs->Rsi += Size;
       }
 
-      Status = TdVmCall (EXIT_REASON_IO_INSTRUCTION, Size, Write, Port, Val, (Write ? NULL : &Val));
+      Status = TdVmCall (
+                 EXIT_REASON_IO_INSTRUCTION,
+                 Size,
+                 Write,
+                 Port,
+                 Val,
+                 (Write ? NULL : &Val)
+                 );
       if (Status != 0) {
         break;
       }
@@ -144,7 +151,14 @@ IoExit (
       CopyMem (&Val, (VOID *)&Regs->Rax, Size);
     }
 
-    Status = TdVmCall (EXIT_REASON_IO_INSTRUCTION, Size, Write, Port, Val, (Write ? NULL : &Val));
+    Status = TdVmCall (
+               EXIT_REASON_IO_INSTRUCTION,
+               Size,
+               Write,
+               Port,
+               Val,
+               (Write ? NULL : &Val)
+               );
     if ((Status == 0) && (Write == FALSE)) {
       CopyMem ((VOID *)&Regs->Rax, &Val, Size);
     }
@@ -330,7 +344,10 @@ MmioExit (
   }
 
   if ((Veinfo->GuestPA & TdSharedPageMask) == 0) {
-    DEBUG ((DEBUG_ERROR, "EPT-violation #VE on private memory is not allowed!"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EPT-violation #VE on private memory is not allowed!"
+      ));
     TdVmCall (TDVMCALL_HALT, 0, 0, 0, 0, 0);
     CpuDeadLoop ();
   }
@@ -383,7 +400,10 @@ MmioExit (
 
   /* Punt on AH/BH/CH/DH unless it shows up. */
   ModRm.Val = *Rip++;
-  TDX_DECODER_BUG_ON (MmioSize == 1 && ModRm.Bits.Reg > 4 && !SeenRex && OpCode != 0xB6);
+  TDX_DECODER_BUG_ON (
+    MmioSize == 1 && ModRm.Bits.Reg > 4 && !SeenRex &&
+    OpCode != 0xB6
+    );
   Reg = GetRegFromContext (Regs, ModRm.Bits.Reg | ((int)Rex.Bits.R << 3));
   TDX_DECODER_BUG_ON (!Reg);
 
@@ -391,7 +411,9 @@ MmioExit (
     ++Rip; /* SIB byte */
   }
 
-  if ((ModRm.Bits.Mod == 2) || ((ModRm.Bits.Mod == 0) && (ModRm.Bits.Rm == 5))) {
+  if ((ModRm.Bits.Mod == 2) || ((ModRm.Bits.Mod == 0) && (ModRm.Bits.Rm ==
+                                                          5)))
+  {
     Rip += 4; /* DISP32 */
   } else if (ModRm.Bits.Mod == 1) {
     ++Rip;  /* DISP8 */
@@ -477,7 +499,11 @@ CcExitHandleVe (
   Status = TdCall (TDCALL_TDGETVEINFO, 0, 0, 0, &ReturnData);
   ASSERT (Status == 0);
   if (Status != 0) {
-    DEBUG ((DEBUG_ERROR, "#VE happened. TDGETVEINFO failed with Status = 0x%llx\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "#VE happened. TDGETVEINFO failed with Status = 0x%llx\n",
+      Status
+      ));
     TdVmCall (TDVMCALL_HALT, 0, 0, 0, 0, 0);
   }
 
@@ -572,6 +598,7 @@ CcExitHandleVe (
     TdVmCall (TDVMCALL_HALT, 0, 0, 0, 0, 0);
   }
 
-  SystemContext.SystemContextX64->Rip += ReturnData.VeInfo.ExitInstructionLength;
+  SystemContext.SystemContextX64->Rip +=
+    ReturnData.VeInfo.ExitInstructionLength;
   return EFI_SUCCESS;
 }

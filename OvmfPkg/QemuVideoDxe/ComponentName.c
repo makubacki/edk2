@@ -12,7 +12,8 @@
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gQemuVideoComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gQemuVideoComponentName = {
   QemuVideoComponentNameGetDriverName,
   QemuVideoComponentNameGetControllerName,
   "eng"
@@ -21,20 +22,24 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gQemuVideoComponentNa
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gQemuVideoComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gQemuVideoComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)QemuVideoComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)QemuVideoComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  QemuVideoComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mQemuVideoDriverNameTable[] = {
-  { "eng;en", L"QEMU Video Driver" },
-  { NULL,     NULL                 }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mQemuVideoDriverNameTable[] = {
+  { "eng;en", L"QEMU Video Driver"     },
+  { NULL,     NULL                     }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mQemuVideoControllerNameTable[] = {
-  { "eng;en", L"QEMU Video PCI Adapter" },
-  { NULL,     NULL                      }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mQemuVideoControllerNameTable[] = {
+  { "eng;en", L"QEMU Video PCI Adapter"     },
+  { NULL,     NULL                          }
 };
 
 /**

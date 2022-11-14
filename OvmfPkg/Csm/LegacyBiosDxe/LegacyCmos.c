@@ -90,7 +90,11 @@ LegacyBiosInitCmos (
   //
   //  Clear all errors except RTC lost power
   //
-  LegacyWriteStandardCmos (CMOS_0E, (UINT8)(LegacyReadStandardCmos (CMOS_0E) & BIT7));
+  LegacyWriteStandardCmos (
+    CMOS_0E,
+    (UINT8)(LegacyReadStandardCmos (CMOS_0E) &
+            BIT7)
+    );
 
   //
   // Update CMOS locations 15,16,17,18,30,31 and 32
@@ -102,7 +106,9 @@ LegacyBiosInitCmos (
   LegacyWriteStandardCmos (CMOS_16, 0x02);
 
   Size = 15 * SIZE_1MB;
-  if (Private->IntThunk->EfiToLegacy16InitTable.OsMemoryAbove1Mb < (15 * SIZE_1MB)) {
+  if (Private->IntThunk->EfiToLegacy16InitTable.OsMemoryAbove1Mb < (15 *
+                                                                    SIZE_1MB))
+  {
     Size = Private->IntThunk->EfiToLegacy16InitTable.OsMemoryAbove1Mb >> 10;
   }
 

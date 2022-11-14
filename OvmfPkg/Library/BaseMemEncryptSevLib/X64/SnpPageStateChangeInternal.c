@@ -95,7 +95,9 @@ PvalidateRange (
     // smaller page size. This senario will occur if the backing page in
     // the RMP entry is 4K and we are validating it as a 2MB.
     //
-    if ((Ret == PVALIDATE_RET_SIZE_MISMATCH) && (RmpPageSize == PvalidatePageSize2MB)) {
+    if ((Ret == PVALIDATE_RET_SIZE_MISMATCH) && (RmpPageSize ==
+                                                 PvalidatePageSize2MB))
+    {
       for (i = 0; i < PAGES_PER_LARGE_ENTRY; i++) {
         Ret = AsmPvalidate (PvalidatePageSize4K, Validate, Address);
         if (Ret) {

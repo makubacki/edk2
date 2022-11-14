@@ -73,9 +73,16 @@ MeasureHobList (
   //
 
   HandoffTables.TableDescriptionSize = sizeof (HandoffTables.TableDescription);
-  CopyMem (HandoffTables.TableDescription, HANDOFF_TABLE_DESC, sizeof (HandoffTables.TableDescription));
+  CopyMem (
+    HandoffTables.TableDescription,
+    HANDOFF_TABLE_DESC,
+    sizeof (HandoffTables.TableDescription)
+    );
   HandoffTables.NumberOfTables = 1;
-  CopyGuid (&(HandoffTables.TableEntry[0].VendorGuid), &gUefiOvmfPkgTokenSpaceGuid);
+  CopyGuid (
+    &(HandoffTables.TableEntry[0].VendorGuid),
+    &gUefiOvmfPkgTokenSpaceGuid
+    );
   HandoffTables.TableEntry[0].VendorTable = (VOID *)VmmHobList;
 
   Status = TpmMeasureAndLogData (
@@ -131,11 +138,15 @@ GetFvName (
     return NULL;
   }
 
-  if (FvHeader->ExtHeaderOffset + sizeof (EFI_FIRMWARE_VOLUME_EXT_HEADER) > FvLength) {
+  if (FvHeader->ExtHeaderOffset + sizeof (EFI_FIRMWARE_VOLUME_EXT_HEADER) >
+      FvLength)
+  {
     return NULL;
   }
 
-  FvExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)(UINTN)(FvBase + FvHeader->ExtHeaderOffset);
+  FvExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)(UINTN)(FvBase +
+                                                          FvHeader->
+                                                            ExtHeaderOffset);
 
   return &FvExtHeader->FvName;
 }
@@ -169,10 +180,19 @@ MeasureFvImage (
   // Init the log event for FV measurement
   //
   FvBlob2.BlobDescriptionSize = sizeof (FvBlob2.BlobDescription);
-  CopyMem (FvBlob2.BlobDescription, FV_HANDOFF_TABLE_DESC, sizeof (FvBlob2.BlobDescription));
+  CopyMem (
+    FvBlob2.BlobDescription,
+    FV_HANDOFF_TABLE_DESC,
+    sizeof (FvBlob2.BlobDescription)
+    );
   FvName = GetFvName (FvBase, FvLength);
   if (FvName != NULL) {
-    AsciiSPrint ((CHAR8 *)FvBlob2.BlobDescription, sizeof (FvBlob2.BlobDescription), "Fv(%g)", FvName);
+    AsciiSPrint (
+      (CHAR8 *)FvBlob2.BlobDescription,
+      sizeof (FvBlob2.BlobDescription),
+      "Fv(%g)",
+      FvName
+      );
   }
 
   FvBlob2.BlobBase   = FvBase;
@@ -188,7 +208,11 @@ MeasureFvImage (
              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "The FV which failed to be measured starts at: 0x%x\n", FvBase));
+    DEBUG ((
+      DEBUG_ERROR,
+      "The FV which failed to be measured starts at: 0x%x\n",
+      FvBase
+      ));
     ASSERT (FALSE);
   }
 

@@ -42,12 +42,21 @@ ConstructSecHobList (
 
   ZeroMem (&PlatformInfoHob, sizeof (PlatformInfoHob));
   PlatformInfoHob.HostBridgeDevId = PciRead16 (OVMF_HOSTBRIDGE_DID);
-  LowMemorySize                   = PlatformGetSystemMemorySizeBelow4gb (&PlatformInfoHob);
+  LowMemorySize                   = PlatformGetSystemMemorySizeBelow4gb (
+                                      &PlatformInfoHob
+                                      );
   ASSERT (LowMemorySize != 0);
-  LowMemoryStart = FixedPcdGet32 (PcdOvmfDxeMemFvBase) + FixedPcdGet32 (PcdOvmfDxeMemFvSize);
+  LowMemoryStart = FixedPcdGet32 (PcdOvmfDxeMemFvBase) + FixedPcdGet32 (
+                                                           PcdOvmfDxeMemFvSize
+                                                           );
   LowMemorySize -= LowMemoryStart;
 
-  DEBUG ((DEBUG_INFO, "LowMemory Start and End: %x, %x\n", LowMemoryStart, LowMemoryStart + LowMemorySize));
+  DEBUG ((
+    DEBUG_INFO,
+    "LowMemory Start and End: %x, %x\n",
+    LowMemoryStart,
+    LowMemoryStart + LowMemorySize
+    ));
   HobList = HobConstructor (
               (VOID *)(UINTN)LowMemoryStart,
               LowMemorySize,
@@ -91,8 +100,11 @@ ConstructFwHobList (
   //
   while (!END_OF_HOB_LIST (Hob)) {
     if (Hob.Header->HobType == EFI_HOB_TYPE_RESOURCE_DESCRIPTOR) {
-      if (Hob.ResourceDescriptor->ResourceType == BZ3937_EFI_RESOURCE_MEMORY_UNACCEPTED) {
-        PhysicalEnd    = Hob.ResourceDescriptor->PhysicalStart + Hob.ResourceDescriptor->ResourceLength;
+      if (Hob.ResourceDescriptor->ResourceType ==
+          BZ3937_EFI_RESOURCE_MEMORY_UNACCEPTED)
+      {
+        PhysicalEnd = Hob.ResourceDescriptor->PhysicalStart +
+                      Hob.ResourceDescriptor->ResourceLength;
         ResourceLength = Hob.ResourceDescriptor->ResourceLength;
 
         if (PhysicalEnd <= BASE_4GB) {
@@ -110,7 +122,10 @@ ConstructFwHobList (
   }
 
   if (LowMemoryLength == 0) {
-    DEBUG ((DEBUG_ERROR, "Cannot find a memory region under 4GB for Fw hoblist.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Cannot find a memory region under 4GB for Fw hoblist.\n"
+      ));
     return EFI_NOT_FOUND;
   }
 
@@ -122,7 +137,12 @@ ConstructFwHobList (
     LowMemoryLength -= EFI_PAGE_SIZE;
   }
 
-  DEBUG ((DEBUG_INFO, "LowMemory Start and End: %x, %x\n", LowMemoryStart, LowMemoryStart + LowMemoryLength));
+  DEBUG ((
+    DEBUG_INFO,
+    "LowMemory Start and End: %x, %x\n",
+    LowMemoryStart,
+    LowMemoryStart + LowMemoryLength
+    ));
   HobConstructor (
     (VOID *)LowMemoryStart,
     LowMemoryLength,

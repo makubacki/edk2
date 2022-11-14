@@ -62,16 +62,29 @@ RelocateMailbox (
   // Add another page for mailbox
   //
   AsmGetRelocationMap (&RelocationMap);
-  if ((RelocationMap.RelocateApLoopFuncAddress == 0) || (RelocationMap.RelocateApLoopFuncSize == 0)) {
+  if ((RelocationMap.RelocateApLoopFuncAddress == 0) ||
+      (RelocationMap.RelocateApLoopFuncSize == 0))
+  {
     DEBUG ((DEBUG_ERROR, "Failed to get the RelocationMap.\n"));
     return 0;
   }
 
-  RelocationPages = EFI_SIZE_TO_PAGES ((UINT32)RelocationMap.RelocateApLoopFuncSize) + 1;
+  RelocationPages = EFI_SIZE_TO_PAGES (
+                      (UINT32)RelocationMap.RelocateApLoopFuncSize
+                      ) + 1;
 
-  Status = gBS->AllocatePages (AllocateAnyPages, EfiACPIMemoryNVS, RelocationPages, &Address);
+  Status = gBS->AllocatePages (
+                  AllocateAnyPages,
+                  EfiACPIMemoryNVS,
+                  RelocationPages,
+                  &Address
+                  );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to allocate pages for MailboxRelocation. %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed to allocate pages for MailboxRelocation. %r\n",
+      Status
+      ));
     return 0;
   }
 
@@ -149,7 +162,11 @@ AlterAcpiTable (
   NewMadtTable = NULL;
   MadtHeader   = NULL;
 
-  Status = gBS->LocateProtocol (&gEfiAcpiSdtProtocolGuid, NULL, (void **)&AcpiSdtProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEfiAcpiSdtProtocolGuid,
+                  NULL,
+                  (void **)&AcpiSdtProtocol
+                  );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Unable to locate ACPI SDT protocol.\n"));
     return;
@@ -163,40 +180,64 @@ AlterAcpiTable (
   }
 
   do {
-    Status = AcpiSdtProtocol->GetAcpiTable (Index, &Table, &Version, &OriginalTableKey);
+    Status = AcpiSdtProtocol->GetAcpiTable (
+                                Index,
+                                &Table,
+                                &Version,
+                                &OriginalTableKey
+                                );
 
-    if (!EFI_ERROR (Status) && (Table->Signature == EFI_ACPI_1_0_APIC_SIGNATURE)) {
-      Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (void **)&AcpiTableProtocol);
+    if (!EFI_ERROR (Status) && (Table->Signature ==
+                                EFI_ACPI_1_0_APIC_SIGNATURE))
+    {
+      Status = gBS->LocateProtocol (
+                      &gEfiAcpiTableProtocolGuid,
+                      NULL,
+                      (void **)&AcpiTableProtocol
+                      );
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "Unable to locate ACPI Table protocol.\n"));
         break;
       }
 
-      NewMadtTableLength = Table->Length + sizeof (EFI_ACPI_6_4_MULTIPROCESSOR_WAKEUP_STRUCTURE);
-      NewMadtTable       = AllocatePool (NewMadtTableLength);
+      NewMadtTableLength = Table->Length +
+                           sizeof (EFI_ACPI_6_4_MULTIPROCESSOR_WAKEUP_STRUCTURE);
+      NewMadtTable = AllocatePool (NewMadtTableLength);
       if (NewMadtTable == NULL) {
         DEBUG ((DEBUG_ERROR, "%a: OUT_OF_SOURCES error.\n", __FUNCTION__));
         break;
       }
 
       CopyMem (NewMadtTable, (UINT8 *)Table, Table->Length);
-      MadtHeader                = (EFI_ACPI_1_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER *)NewMadtTable;
+      MadtHeader =
+        (EFI_ACPI_1_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER *)NewMadtTable;
       MadtHeader->Header.Length = (UINT32)NewMadtTableLength;
 
-      MadtMpWk                 = (EFI_ACPI_6_4_MULTIPROCESSOR_WAKEUP_STRUCTURE *)(NewMadtTable + Table->Length);
-      MadtMpWk->Type           = EFI_ACPI_6_4_MULTIPROCESSOR_WAKEUP;
-      MadtMpWk->Length         = sizeof (EFI_ACPI_6_4_MULTIPROCESSOR_WAKEUP_STRUCTURE);
+      MadtMpWk =
+        (EFI_ACPI_6_4_MULTIPROCESSOR_WAKEUP_STRUCTURE *)(NewMadtTable +
+                                                         Table->Length);
+      MadtMpWk->Type   = EFI_ACPI_6_4_MULTIPROCESSOR_WAKEUP;
+      MadtMpWk->Length =
+        sizeof (EFI_ACPI_6_4_MULTIPROCESSOR_WAKEUP_STRUCTURE);
       MadtMpWk->MailBoxVersion = 1;
       MadtMpWk->Reserved       = 0;
       MadtMpWk->MailBoxAddress = RelocateMailboxAddress;
 
-      Status = AcpiTableProtocol->InstallAcpiTable (AcpiTableProtocol, NewMadtTable, NewMadtTableLength, &NewTableKey);
+      Status = AcpiTableProtocol->InstallAcpiTable (
+                                    AcpiTableProtocol,
+                                    NewMadtTable,
+                                    NewMadtTableLength,
+                                    &NewTableKey
+                                    );
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "Failed to install new MADT table. %r\n", Status));
         break;
       }
 
-      Status = AcpiTableProtocol->UninstallAcpiTable (AcpiTableProtocol, OriginalTableKey);
+      Status = AcpiTableProtocol->UninstallAcpiTable (
+                                    AcpiTableProtocol,
+                                    OriginalTableKey
+                                    );
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "Uninstall old MADT table error.\n"));
       }

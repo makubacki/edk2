@@ -29,7 +29,9 @@ STATIC EFI_LEGACY_INTERRUPT_PROTOCOL  mLegacyInterrupt = {
   WritePirq
 };
 
-STATIC UINT8  PirqReg[MAX_PIRQ_NUMBER] = { PIRQA, PIRQB, PIRQC, PIRQD, PIRQE, PIRQF, PIRQG, PIRQH };
+STATIC UINT8  PirqReg[MAX_PIRQ_NUMBER] = {
+  PIRQA, PIRQB, PIRQC, PIRQD, PIRQE, PIRQF, PIRQG, PIRQH
+};
 
 /**
   Return the number of PIRQs supported by this chipset.

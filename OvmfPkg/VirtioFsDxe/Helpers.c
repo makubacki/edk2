@@ -95,7 +95,10 @@ VirtioFsInit (
   // 1. Reset the device.
   //
   NextDevStat = 0;
-  Status      = VirtioFs->Virtio->SetDeviceStatus (VirtioFs->Virtio, NextDevStat);
+  Status      = VirtioFs->Virtio->SetDeviceStatus (
+                                    VirtioFs->Virtio,
+                                    NextDevStat
+                                    );
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
@@ -104,7 +107,10 @@ VirtioFsInit (
   // 2. Set the ACKNOWLEDGE status bit [...]
   //
   NextDevStat |= VSTAT_ACK;
-  Status       = VirtioFs->Virtio->SetDeviceStatus (VirtioFs->Virtio, NextDevStat);
+  Status       = VirtioFs->Virtio->SetDeviceStatus (
+                                     VirtioFs->Virtio,
+                                     NextDevStat
+                                     );
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
@@ -113,7 +119,10 @@ VirtioFsInit (
   // 3. Set the DRIVER status bit [...]
   //
   NextDevStat |= VSTAT_DRIVER;
-  Status       = VirtioFs->Virtio->SetDeviceStatus (VirtioFs->Virtio, NextDevStat);
+  Status       = VirtioFs->Virtio->SetDeviceStatus (
+                                     VirtioFs->Virtio,
+                                     NextDevStat
+                                     );
   if (EFI_ERROR (Status)) {
     goto Failed;
   }
@@ -244,7 +253,10 @@ VirtioFsInit (
   // 8. Set the DRIVER_OK status bit.
   //
   NextDevStat |= VSTAT_DRIVER_OK;
-  Status       = VirtioFs->Virtio->SetDeviceStatus (VirtioFs->Virtio, NextDevStat);
+  Status       = VirtioFs->Virtio->SetDeviceStatus (
+                                     VirtioFs->Virtio,
+                                     NextDevStat
+                                     );
   if (EFI_ERROR (Status)) {
     goto UnmapQueue;
   }
@@ -1528,7 +1540,12 @@ VirtioFsAppendPath (
         switch (Chr8) {
           case '\0':
             ParserStripSlash (SanitizedBuffer, &SanitizedPosition);
-            ParserCopy (SanitizedBuffer, &SanitizedPosition, SizeToSanitize, Chr8);
+            ParserCopy (
+              SanitizedBuffer,
+              &SanitizedPosition,
+              SizeToSanitize,
+              Chr8
+              );
             State = ParserEnd;
             break;
           case '/':
@@ -1537,11 +1554,21 @@ VirtioFsAppendPath (
             //
             break;
           case '.':
-            ParserCopy (SanitizedBuffer, &SanitizedPosition, SizeToSanitize, Chr8);
+            ParserCopy (
+              SanitizedBuffer,
+              &SanitizedPosition,
+              SizeToSanitize,
+              Chr8
+              );
             State = ParserDot;
             break;
           default:
-            ParserCopy (SanitizedBuffer, &SanitizedPosition, SizeToSanitize, Chr8);
+            ParserCopy (
+              SanitizedBuffer,
+              &SanitizedPosition,
+              SizeToSanitize,
+              Chr8
+              );
             State = ParserNormal;
             break;
         }
@@ -1553,7 +1580,12 @@ VirtioFsAppendPath (
           case '\0':
             ParserRewindDot (SanitizedBuffer, &SanitizedPosition);
             ParserStripSlash (SanitizedBuffer, &SanitizedPosition);
-            ParserCopy (SanitizedBuffer, &SanitizedPosition, SizeToSanitize, Chr8);
+            ParserCopy (
+              SanitizedBuffer,
+              &SanitizedPosition,
+              SizeToSanitize,
+              Chr8
+              );
             State = ParserEnd;
             break;
           case '/':
@@ -1561,11 +1593,21 @@ VirtioFsAppendPath (
             State = ParserSlash;
             break;
           case '.':
-            ParserCopy (SanitizedBuffer, &SanitizedPosition, SizeToSanitize, Chr8);
+            ParserCopy (
+              SanitizedBuffer,
+              &SanitizedPosition,
+              SizeToSanitize,
+              Chr8
+              );
             State = ParserDotDot;
             break;
           default:
-            ParserCopy (SanitizedBuffer, &SanitizedPosition, SizeToSanitize, Chr8);
+            ParserCopy (
+              SanitizedBuffer,
+              &SanitizedPosition,
+              SizeToSanitize,
+              Chr8
+              );
             State = ParserNormal;
             break;
         }
@@ -1575,13 +1617,26 @@ VirtioFsAppendPath (
       case ParserDotDot: // two dots seen since last slash
         switch (Chr8) {
           case '\0':
-            ParserRewindDotDot (SanitizedBuffer, &SanitizedPosition, RootEscape);
+            ParserRewindDotDot (
+              SanitizedBuffer,
+              &SanitizedPosition,
+              RootEscape
+              );
             ParserStripSlash (SanitizedBuffer, &SanitizedPosition);
-            ParserCopy (SanitizedBuffer, &SanitizedPosition, SizeToSanitize, Chr8);
+            ParserCopy (
+              SanitizedBuffer,
+              &SanitizedPosition,
+              SizeToSanitize,
+              Chr8
+              );
             State = ParserEnd;
             break;
           case '/':
-            ParserRewindDotDot (SanitizedBuffer, &SanitizedPosition, RootEscape);
+            ParserRewindDotDot (
+              SanitizedBuffer,
+              &SanitizedPosition,
+              RootEscape
+              );
             State = ParserSlash;
             break;
           case '.':
@@ -1589,7 +1644,12 @@ VirtioFsAppendPath (
           // fall through
           //
           default:
-            ParserCopy (SanitizedBuffer, &SanitizedPosition, SizeToSanitize, Chr8);
+            ParserCopy (
+              SanitizedBuffer,
+              &SanitizedPosition,
+              SizeToSanitize,
+              Chr8
+              );
             State = ParserNormal;
             break;
         }
@@ -1599,11 +1659,21 @@ VirtioFsAppendPath (
       case ParserNormal: // a different sequence seen
         switch (Chr8) {
           case '\0':
-            ParserCopy (SanitizedBuffer, &SanitizedPosition, SizeToSanitize, Chr8);
+            ParserCopy (
+              SanitizedBuffer,
+              &SanitizedPosition,
+              SizeToSanitize,
+              Chr8
+              );
             State = ParserEnd;
             break;
           case '/':
-            ParserCopy (SanitizedBuffer, &SanitizedPosition, SizeToSanitize, Chr8);
+            ParserCopy (
+              SanitizedBuffer,
+              &SanitizedPosition,
+              SizeToSanitize,
+              Chr8
+              );
             State = ParserSlash;
             break;
           case '.':
@@ -1614,7 +1684,12 @@ VirtioFsAppendPath (
             //
             // copy and stay in same state
             //
-            ParserCopy (SanitizedBuffer, &SanitizedPosition, SizeToSanitize, Chr8);
+            ParserCopy (
+              SanitizedBuffer,
+              &SanitizedPosition,
+              SizeToSanitize,
+              Chr8
+              );
             break;
         }
 
@@ -2176,7 +2251,9 @@ VirtioFsFuseAttrToEfiFileInfo (
   //
   // A hard link count greater than 1 is not supported for regular files.
   //
-  if (((FileInfo->Attribute & EFI_FILE_DIRECTORY) == 0) && (FuseAttr->Nlink > 1)) {
+  if (((FileInfo->Attribute & EFI_FILE_DIRECTORY) == 0) && (FuseAttr->Nlink >
+                                                            1))
+  {
     return EFI_UNSUPPORTED;
   }
 

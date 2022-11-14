@@ -50,7 +50,8 @@ AllocateMemoryBelow4G (
   //
   ASSERT (mLockBoxGlobal->Signature == LOCK_BOX_GLOBAL_SIGNATURE);
   if ((UINTN)mLockBoxGlobal->SubPageRemaining >= Size) {
-    Buffer                            = (VOID *)(UINTN)mLockBoxGlobal->SubPageBuffer;
+    Buffer =
+      (VOID *)(UINTN)mLockBoxGlobal->SubPageBuffer;
     mLockBoxGlobal->SubPageBuffer    += (UINT32)Size;
     mLockBoxGlobal->SubPageRemaining -= (UINT32)Size;
     return Buffer;

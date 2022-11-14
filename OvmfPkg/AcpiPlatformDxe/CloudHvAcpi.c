@@ -51,7 +51,9 @@ InstallCloudHvTables (
   }
 
   pvh_start_info       = (struct hvm_start_info *)(UINTN)PVHResetVectorData[0];
-  AcpiRsdpStructurePtr = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)(UINTN)pvh_start_info->rsdp_paddr;
+  AcpiRsdpStructurePtr =
+    (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)(UINTN)pvh_start_info->
+      rsdp_paddr;
 
   // If XSDT table is found, just install its tables.
   // Otherwise, try to find and install the RSDT tables.

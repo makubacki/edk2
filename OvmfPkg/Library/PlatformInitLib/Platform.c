@@ -86,7 +86,11 @@ PlatformAddIoMemoryRangeHob (
   IN EFI_PHYSICAL_ADDRESS  MemoryLimit
   )
 {
-  PlatformAddIoMemoryBaseSizeHob (MemoryBase, (UINT64)(MemoryLimit - MemoryBase));
+  PlatformAddIoMemoryBaseSizeHob (
+    MemoryBase,
+    (UINT64)(MemoryLimit -
+             MemoryBase)
+    );
 }
 
 VOID
@@ -218,7 +222,10 @@ PlatformMemMapInitialization (
       );
   }
 
-  PlatformAddIoMemoryBaseSizeHob (PcdGet32 (PcdCpuLocalApicBaseAddress), SIZE_1MB);
+  PlatformAddIoMemoryBaseSizeHob (
+    PcdGet32 (PcdCpuLocalApicBaseAddress),
+    SIZE_1MB
+    );
 
   //
   // On Q35, the IO Port space is available for PCI resource allocations from
@@ -257,7 +264,10 @@ PlatformNoexecDxeInitialization (
   IN OUT EFI_HOB_PLATFORM_INFO  *PlatformInfoHob
   )
 {
-  return QemuFwCfgParseBool ("opt/ovmf/PcdSetNxForStack", &PlatformInfoHob->PcdSetNxForStack);
+  return QemuFwCfgParseBool (
+           "opt/ovmf/PcdSetNxForStack",
+           &PlatformInfoHob->PcdSetNxForStack
+           );
 }
 
 VOID
@@ -664,7 +674,10 @@ PlatformValidateNvVarStore (
   //
   // Verify the header checksum
   //
-  Checksum = CalculateSum16 ((VOID *)NvVarStoreFvHeader, NvVarStoreFvHeader->HeaderLength);
+  Checksum = CalculateSum16 (
+               (VOID *)NvVarStoreFvHeader,
+               NvVarStoreFvHeader->HeaderLength
+               );
 
   if (Checksum != 0) {
     DEBUG ((DEBUG_ERROR, "NvVarStore FV checksum was invalid.\n"));
@@ -674,15 +687,20 @@ PlatformValidateNvVarStore (
   //
   // Verify the header signature, size, format, state
   //
-  NvVarStoreHeader = (VARIABLE_STORE_HEADER *)(NvVarStoreBase + NvVarStoreFvHeader->HeaderLength);
+  NvVarStoreHeader = (VARIABLE_STORE_HEADER *)(NvVarStoreBase +
+                                               NvVarStoreFvHeader->HeaderLength);
   if ((!CompareGuid (&VarStoreHdrGUID, &NvVarStoreHeader->Signature)) ||
       (NvVarStoreHeader->Format != VARIABLE_STORE_FORMATTED) ||
       (NvVarStoreHeader->State != VARIABLE_STORE_HEALTHY) ||
-      (NvVarStoreHeader->Size > (NvVarStoreFvHeader->FvLength - NvVarStoreFvHeader->HeaderLength)) ||
+      (NvVarStoreHeader->Size > (NvVarStoreFvHeader->FvLength -
+                                 NvVarStoreFvHeader->HeaderLength)) ||
       (NvVarStoreHeader->Size < sizeof (VARIABLE_STORE_HEADER))
       )
   {
-    DEBUG ((DEBUG_ERROR, "NvVarStore header signature/size/format/state were invalid.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "NvVarStore header signature/size/format/state were invalid.\n"
+      ));
     return FALSE;
   }
 
@@ -690,12 +708,24 @@ PlatformValidateNvVarStore (
   // Verify the header startId, state
   // Verify data to the end
   //
-  VariableBase = (UINTN)NvVarStoreBase + NvVarStoreFvHeader->HeaderLength + sizeof (VARIABLE_STORE_HEADER);
-  while (VariableOffset  < (NvVarStoreHeader->Size - sizeof (VARIABLE_STORE_HEADER))) {
-    VariableHeader = (AUTHENTICATED_VARIABLE_HEADER *)(VariableBase + VariableOffset);
+  VariableBase = (UINTN)NvVarStoreBase + NvVarStoreFvHeader->HeaderLength +
+                 sizeof (VARIABLE_STORE_HEADER);
+  while (VariableOffset  < (NvVarStoreHeader->Size -
+                            sizeof (VARIABLE_STORE_HEADER)))
+  {
+    VariableHeader = (AUTHENTICATED_VARIABLE_HEADER *)(VariableBase +
+                                                       VariableOffset);
     if (VariableHeader->StartId != VARIABLE_DATA) {
-      if (!CheckPaddingData ((UINT8 *)VariableHeader, NvVarStoreHeader->Size - sizeof (VARIABLE_STORE_HEADER) - VariableOffset)) {
-        DEBUG ((DEBUG_ERROR, "NvVarStore variable header StartId was invalid.\n"));
+      if (!CheckPaddingData (
+             (UINT8 *)VariableHeader,
+             NvVarStoreHeader->Size -
+             sizeof (VARIABLE_STORE_HEADER) - VariableOffset
+             ))
+      {
+        DEBUG ((
+          DEBUG_ERROR,
+          "NvVarStore variable header StartId was invalid.\n"
+          ));
         return FALSE;
       }
 
@@ -706,14 +736,23 @@ PlatformValidateNvVarStore (
             (VariableHeader->State == VAR_HEADER_VALID_ONLY) ||
             (VariableHeader->State == VAR_ADDED)))
       {
-        DEBUG ((DEBUG_ERROR, "NvVarStore Variable header State was invalid.\n"));
+        DEBUG ((
+          DEBUG_ERROR,
+          "NvVarStore Variable header State was invalid.\n"
+          ));
         return FALSE;
       }
 
-      VariableOffset += sizeof (AUTHENTICATED_VARIABLE_HEADER) + VariableHeader->NameSize + VariableHeader->DataSize;
+      VariableOffset += sizeof (AUTHENTICATED_VARIABLE_HEADER) +
+                        VariableHeader->NameSize + VariableHeader->DataSize;
       // Verify VariableOffset should be less than or equal NvVarStoreHeader->Size - sizeof(VARIABLE_STORE_HEADER)
-      if (VariableOffset > (NvVarStoreHeader->Size - sizeof (VARIABLE_STORE_HEADER))) {
-        DEBUG ((DEBUG_ERROR, "NvVarStore Variable header VariableOffset was invalid.\n"));
+      if (VariableOffset > (NvVarStoreHeader->Size -
+                            sizeof (VARIABLE_STORE_HEADER)))
+      {
+        DEBUG ((
+          DEBUG_ERROR,
+          "NvVarStore Variable header VariableOffset was invalid.\n"
+          ));
         return FALSE;
       }
 
@@ -721,8 +760,16 @@ PlatformValidateNvVarStore (
       // 4 byte align
       VariableOffset = (VariableOffset  + 3) & (UINTN)(~3);
 
-      if (!CheckPaddingData ((UINT8 *)(VariableBase + VariableOffsetBeforeAlign), VariableOffset - VariableOffsetBeforeAlign)) {
-        DEBUG ((DEBUG_ERROR, "NvVarStore Variable header PaddingData was invalid.\n"));
+      if (!CheckPaddingData (
+             (UINT8 *)(VariableBase +
+                       VariableOffsetBeforeAlign),
+             VariableOffset - VariableOffsetBeforeAlign
+             ))
+      {
+        DEBUG ((
+          DEBUG_ERROR,
+          "NvVarStore Variable header PaddingData was invalid.\n"
+          ));
         return FALSE;
       }
     }
@@ -808,7 +855,10 @@ PlatformInitEmuVariableNvStore (
     return EFI_INVALID_PARAMETER;
   }
 
-  DEBUG ((DEBUG_INFO, "Init EmuVariableNvStore with the content in FlashNvStorage\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "Init EmuVariableNvStore with the content in FlashNvStorage\n"
+    ));
 
   CopyMem (EmuVariableNvStore, Base, Size);
 

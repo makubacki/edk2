@@ -212,8 +212,12 @@ typedef struct {
   UINT8     WhiteX;                         // White-x Bits 9 - 2
   UINT8     WhiteY;                         // White-x Bits 9 - 2
   UINT8     EstablishedTimings[VESA_BIOS_EXTENSIONS_ESTABLISHED_TIMING_SIZE];
-  UINT8     StandardTimingIdentification[VESA_BIOS_EXTENSIONS_STANDARD_TIMING_SIZE];
-  UINT8     DetailedTimingDescriptions[VESA_BIOS_EXTENSIONS_DETAILED_TIMING_DESCRIPTOR_MAX_SIZE];
+  UINT8     StandardTimingIdentification[
+                                         VESA_BIOS_EXTENSIONS_STANDARD_TIMING_SIZE
+  ];
+  UINT8     DetailedTimingDescriptions[
+                                       VESA_BIOS_EXTENSIONS_DETAILED_TIMING_DESCRIPTOR_MAX_SIZE
+  ];
   UINT8     ExtensionFlag;                  // Number of (optional) 128-byte EDID extension blocks to follow
   UINT8     Checksum;
 } VESA_BIOS_EXTENSIONS_EDID_DATA_BLOCK;

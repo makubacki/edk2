@@ -25,14 +25,14 @@
 #define GET_GPAW_INIT_STATE(INFO)  ((UINT8) ((INFO) & 0x3f))
 
 EFI_MEMORY_TYPE_INFORMATION  mDefaultMemoryTypeInformation[] = {
-  { EfiACPIMemoryNVS,       0x004 },
-  { EfiACPIReclaimMemory,   0x008 },
-  { EfiReservedMemoryType,  0x004 },
-  { EfiRuntimeServicesData, 0x024 },
-  { EfiRuntimeServicesCode, 0x030 },
-  { EfiBootServicesCode,    0x180 },
-  { EfiBootServicesData,    0xF00 },
-  { EfiMaxMemoryType,       0x000 }
+  { EfiACPIMemoryNVS,       0x004       },
+  { EfiACPIReclaimMemory,   0x008       },
+  { EfiReservedMemoryType,  0x004       },
+  { EfiRuntimeServicesData, 0x024       },
+  { EfiRuntimeServicesCode, 0x030       },
+  { EfiBootServicesCode,    0x180       },
+  { EfiBootServicesData,    0xF00       },
+  { EfiMaxMemoryType,       0x000       }
 };
 
 EFI_STATUS
@@ -51,7 +51,11 @@ InitializePlatform (
   PlatformInfoHob->PcdPciMmio64Size    = 0x800000000;
 
   PlatformInfoHob->HostBridgeDevId = PciRead16 (OVMF_HOSTBRIDGE_DID);
-  DEBUG ((DEBUG_INFO, "HostBridgeDeviceId = 0x%x\n", PlatformInfoHob->HostBridgeDevId));
+  DEBUG ((
+    DEBUG_INFO,
+    "HostBridgeDeviceId = 0x%x\n",
+    PlatformInfoHob->HostBridgeDevId
+    ));
 
   PlatformAddressWidthInitialization (PlatformInfoHob);
   DEBUG ((
@@ -80,7 +84,8 @@ InitializePlatform (
     LowerMemorySize
     ));
 
-  VariableStore                                  = PlatformReserveEmuVariableNvStore ();
+  VariableStore =
+    PlatformReserveEmuVariableNvStore ();
   PlatformInfoHob->PcdEmuVariableNvStoreReserved = (UINT64)(UINTN)VariableStore;
  #ifdef SECURE_BOOT_FEATURE_ENABLED
   PlatformInitEmuVariableNvStore (VariableStore);
@@ -189,7 +194,11 @@ PeilessStartup (
     //
     // Measure Tdx CFV
     //
-    Status = MeasureFvImage ((EFI_PHYSICAL_ADDRESS)(UINTN)CfvBase, FixedPcdGet32 (PcdCfvRawDataSize), 1);
+    Status = MeasureFvImage (
+               (EFI_PHYSICAL_ADDRESS)(UINTN)CfvBase,
+               FixedPcdGet32 (PcdCfvRawDataSize),
+               1
+               );
     if (EFI_ERROR (Status)) {
       ASSERT (FALSE);
       CpuDeadLoop ();
@@ -205,7 +214,11 @@ PeilessStartup (
     CpuDeadLoop ();
   }
 
-  BuildGuidDataHob (&gUefiOvmfPkgPlatformInfoGuid, &PlatformInfoHob, sizeof (EFI_HOB_PLATFORM_INFO));
+  BuildGuidDataHob (
+    &gUefiOvmfPkgPlatformInfoGuid,
+    &PlatformInfoHob,
+    sizeof (EFI_HOB_PLATFORM_INFO)
+    );
 
   //
   // SecFV

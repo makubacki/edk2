@@ -304,7 +304,8 @@ SioCreateChildDevice (
   mAcpiDeviceNodeTemplate.UID = mDevicesInfo[DeviceIndex].Uid;
   SioDevice->DevicePath       = AppendDevicePathNode (
                                   ParentDevicePath,
-                                  (EFI_DEVICE_PATH_PROTOCOL *)&mAcpiDeviceNodeTemplate
+                                  (EFI_DEVICE_PATH_PROTOCOL *)&
+                                  mAcpiDeviceNodeTemplate
                                   );
   if (SioDevice->DevicePath == NULL) {
     Status = EFI_OUT_OF_RESOURCES;

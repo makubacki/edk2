@@ -126,7 +126,10 @@ LegacyRegionManipulationInternal (
   //
   StartIndex = 0;
   for (Index = 0; Index < ARRAY_SIZE (mSectionArray); Index++) {
-    if ((Start >= mSectionArray[Index].Start) && (Start < (mSectionArray[Index].Start + mSectionArray[Index].Length))) {
+    if ((Start >= mSectionArray[Index].Start) && (Start <
+                                                  (mSectionArray[Index].Start +
+                                                   mSectionArray[Index].Length)))
+    {
       StartIndex = Index;
       break;
     }
@@ -169,7 +172,12 @@ LegacyRegionManipulationInternal (
     //
     // If the end PAM is encountered, record its length as granularity and jump out.
     //
-    if ((EndAddress >= mSectionArray[Index].Start) && (EndAddress < (mSectionArray[Index].Start + mSectionArray[Index].Length))) {
+    if ((EndAddress >= mSectionArray[Index].Start) && (EndAddress <
+                                                       (mSectionArray[Index].
+                                                          Start +
+                                                        mSectionArray[Index].
+                                                          Length)))
+    {
       *Granularity = mSectionArray[Index].Length;
       break;
     }
@@ -202,7 +210,9 @@ LegacyRegionGetInfoInternal (
   //
   *DescriptorCount = sizeof (mSectionArray) / sizeof (mSectionArray[0]);
   for (Index = 0; Index < *DescriptorCount; Index++) {
-    PamValue                         = PciRead8 (mRegisterValues[Index].PAMRegPciLibAddress);
+    PamValue = PciRead8 (
+                 mRegisterValues[Index].PAMRegPciLibAddress
+                 );
     mSectionArray[Index].ReadEnabled = FALSE;
     if ((PamValue & mRegisterValues[Index].ReadEnableData) != 0) {
       mSectionArray[Index].ReadEnabled = TRUE;
@@ -252,7 +262,13 @@ LegacyRegion2Decode (
   IN  BOOLEAN                      *On
   )
 {
-  return LegacyRegionManipulationInternal (Start, Length, On, NULL, Granularity);
+  return LegacyRegionManipulationInternal (
+           Start,
+           Length,
+           On,
+           NULL,
+           Granularity
+           );
 }
 
 /**
@@ -328,7 +344,13 @@ LegacyRegion2Lock (
   BOOLEAN  WriteEnable;
 
   WriteEnable = FALSE;
-  return LegacyRegionManipulationInternal (Start, Length, NULL, &WriteEnable, Granularity);
+  return LegacyRegionManipulationInternal (
+           Start,
+           Length,
+           NULL,
+           &WriteEnable,
+           Granularity
+           );
 }
 
 /**
@@ -363,7 +385,13 @@ LegacyRegion2Unlock (
   BOOLEAN  WriteEnable;
 
   WriteEnable = TRUE;
-  return LegacyRegionManipulationInternal (Start, Length, NULL, &WriteEnable, Granularity);
+  return LegacyRegionManipulationInternal (
+           Start,
+           Length,
+           NULL,
+           &WriteEnable,
+           Granularity
+           );
 }
 
 /**
@@ -407,7 +435,10 @@ LegacyRegionGetInfo (
   //
   // Each section has 3 descriptors, corresponding to readability, writeability, and lock status.
   //
-  DescriptorArray = AllocatePool (sizeof (EFI_LEGACY_REGION_DESCRIPTOR) * SectionCount * 3);
+  DescriptorArray = AllocatePool (
+                      sizeof (EFI_LEGACY_REGION_DESCRIPTOR) *
+                      SectionCount * 3
+                      );
   if (DescriptorArray == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

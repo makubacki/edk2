@@ -43,7 +43,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // all these values are computed from the structure
 // defined below
 //
-#define VAR_OFFSET(Field)  ((UINT16) ((UINTN) &(((LEGACY_BOOT_NV_DATA *) 0)->Field)))
+#define VAR_OFFSET( \
+                  Field)  \
+  ((UINT16) ((UINTN) &(((LEGACY_BOOT_NV_DATA *) 0)->Field)))
 
 //
 // Question Id of Zero is invalid, so add an offset to it
@@ -95,9 +97,11 @@ typedef struct {
 //
 // Variable created with this flag will be "Efi:...."
 //
-#define VAR_FLAG  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE
+#define VAR_FLAG  \
+  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE
 
-#define LEGACY_BOOT_OPTION_CALLBACK_DATA_SIGNATURE  SIGNATURE_32 ('L', 'G', 'C', 'B')
+#define LEGACY_BOOT_OPTION_CALLBACK_DATA_SIGNATURE  \
+  SIGNATURE_32 ('L', 'G', 'C', 'B')
 
 typedef struct {
   UINTN                             Signature;

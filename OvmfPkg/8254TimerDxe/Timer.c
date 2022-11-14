@@ -207,7 +207,10 @@ TimerDriverSetTimerPeriod (
     //
     // Convert TimerPeriod into 8254 counts
     //
-    TimerCount = DivU64x32 (MultU64x32 (119318, (UINT32)TimerPeriod) + 500000, 1000000);
+    TimerCount = DivU64x32 (
+                   MultU64x32 (119318, (UINT32)TimerPeriod) + 500000,
+                   1000000
+                   );
 
     //
     // Check for overflow
@@ -361,7 +364,11 @@ TimerDriverInitialize (
   //
   // Find the Legacy8259 protocol.
   //
-  Status = gBS->LocateProtocol (&gEfiLegacy8259ProtocolGuid, NULL, (VOID **)&mLegacy8259);
+  Status = gBS->LocateProtocol (
+                  &gEfiLegacy8259ProtocolGuid,
+                  NULL,
+                  (VOID **)&mLegacy8259
+                  );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -374,13 +381,21 @@ TimerDriverInitialize (
   // Get the interrupt vector number corresponding to IRQ0 from the 8259 driver
   //
   TimerVector = 0;
-  Status      = mLegacy8259->GetVector (mLegacy8259, Efi8259Irq0, (UINT8 *)&TimerVector);
+  Status      = mLegacy8259->GetVector (
+                               mLegacy8259,
+                               Efi8259Irq0,
+                               (UINT8 *)&TimerVector
+                               );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Install interrupt handler for 8254 Timer #0 (ISA IRQ0)
   //
-  Status = mCpu->RegisterInterruptHandler (mCpu, TimerVector, TimerInterruptHandler);
+  Status = mCpu->RegisterInterruptHandler (
+                   mCpu,
+                   TimerVector,
+                   TimerInterruptHandler
+                   );
   ASSERT_EFI_ERROR (Status);
 
   //

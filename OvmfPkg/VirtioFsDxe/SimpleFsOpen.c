@@ -81,7 +81,9 @@ OpenRootDirectory (
     return Status;
   }
 
-  NewVirtioFsFile                   = VIRTIO_FS_FILE_FROM_SIMPLE_FILE (*NewHandle);
+  NewVirtioFsFile = VIRTIO_FS_FILE_FROM_SIMPLE_FILE (
+                      *NewHandle
+                      );
   NewVirtioFsFile->IsOpenForWriting = OpenForWriting;
   return EFI_SUCCESS;
 }

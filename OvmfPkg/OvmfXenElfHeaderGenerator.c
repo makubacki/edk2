@@ -200,7 +200,13 @@ main (
   fprintf (file, "\r\n");
   print_hdr (file, &hdr.e_entry, sizeof (hdr.e_entry), true);
   fprintf (file, " # hdr.e_entry\r\n");
-  print_hdr (file, &hdr.e_entry + 1, hdr_size - entry_off - sizeof (hdr.e_entry), true);
+  print_hdr (
+    file,
+    &hdr.e_entry + 1,
+    hdr_size - entry_off -
+    sizeof (hdr.e_entry),
+    true
+    );
 
   fprintf (file, "\r\n\r\n  # ELF Program segment headers\r\n");
   fprintf (file, "  # - Load segment\r\n");
@@ -217,7 +223,13 @@ main (
 
   fprintf (file, "\r\n  # XEN_ELFNOTE_PHYS32_ENTRY\r\n");
   for (i = 0; i < sizeof (xen_elf_note); i += 4) {
-    print_hdr (file, ((char *)&xen_elf_note) + i, 4, (sizeof (xen_elf_note) - i) > 4);
+    print_hdr (
+      file,
+      ((char *)&xen_elf_note) + i,
+      4,
+      (sizeof (xen_elf_note) -
+       i) > 4
+      );
     fprintf (file, "\r\n");
   }
 

@@ -19,7 +19,9 @@ Abstract:
 //
 // Fvb Protocol instance data
 //
-#define FVB_DEVICE_FROM_THIS(a)  CR (a, EFI_FW_VOL_BLOCK_DEVICE, FwVolBlockInstance, FVB_DEVICE_SIGNATURE)
+#define FVB_DEVICE_FROM_THIS( \
+                            a)  \
+  CR (a, EFI_FW_VOL_BLOCK_DEVICE, FwVolBlockInstance, FVB_DEVICE_SIGNATURE)
 #define FVB_DEVICE_SIGNATURE  SIGNATURE_32 ('F', 'V', 'B', 'N')
 
 #pragma pack (1)

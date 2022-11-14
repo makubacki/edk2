@@ -29,12 +29,18 @@ VirtioMmioGetDeviceFeatures (
   Device = VIRTIO_MMIO_DEVICE_FROM_VIRTIO_DEVICE (This);
 
   if (Device->Version == VIRTIO_MMIO_DEVICE_VERSION_0_95) {
-    *DeviceFeatures = VIRTIO_CFG_READ (Device, VIRTIO_MMIO_OFFSET_HOST_FEATURES);
+    *DeviceFeatures = VIRTIO_CFG_READ (
+                        Device,
+                        VIRTIO_MMIO_OFFSET_HOST_FEATURES
+                        );
   } else {
     VIRTIO_CFG_WRITE (Device, VIRTIO_MMIO_OFFSET_HOST_FEATURES_SEL, 0);
     LowBits = VIRTIO_CFG_READ (Device, VIRTIO_MMIO_OFFSET_HOST_FEATURES);
     VIRTIO_CFG_WRITE (Device, VIRTIO_MMIO_OFFSET_HOST_FEATURES_SEL, 1);
-    HighBits        = VIRTIO_CFG_READ (Device, VIRTIO_MMIO_OFFSET_HOST_FEATURES);
+    HighBits = VIRTIO_CFG_READ (
+                 Device,
+                 VIRTIO_MMIO_OFFSET_HOST_FEATURES
+                 );
     *DeviceFeatures = LShiftU64 (HighBits, 32) | LowBits;
   }
 
@@ -56,7 +62,8 @@ VirtioMmioGetQueueSize (
 
   Device = VIRTIO_MMIO_DEVICE_FROM_VIRTIO_DEVICE (This);
 
-  *QueueNumMax = VIRTIO_CFG_READ (Device, VIRTIO_MMIO_OFFSET_QUEUE_NUM_MAX) & 0xFFFF;
+  *QueueNumMax = VIRTIO_CFG_READ (Device, VIRTIO_MMIO_OFFSET_QUEUE_NUM_MAX) &
+                 0xFFFF;
 
   return EFI_SUCCESS;
 }
@@ -185,7 +192,10 @@ VirtioMmioSetQueueSel (
   VIRTIO_CFG_WRITE (Device, VIRTIO_MMIO_OFFSET_QUEUE_SEL, Sel);
 
   if (Device->Version == VIRTIO_MMIO_DEVICE_VERSION_0_95) {
-    Device->QueueNum = VIRTIO_CFG_READ (Device, VIRTIO_MMIO_OFFSET_QUEUE_NUM_MAX) & 0xFFFF;
+    Device->QueueNum = VIRTIO_CFG_READ (
+                         Device,
+                         VIRTIO_MMIO_OFFSET_QUEUE_NUM_MAX
+                         ) & 0xFFFF;
   }
 
   return EFI_SUCCESS;
@@ -323,7 +333,8 @@ VirtioMmioDeviceWrite (
   // Compute base address
   //
   DstBaseAddress = Device->BaseAddress +
-                   VIRTIO_DEVICE_SPECIFIC_CONFIGURATION_OFFSET_MMIO + FieldOffset;
+                   VIRTIO_DEVICE_SPECIFIC_CONFIGURATION_OFFSET_MMIO +
+                   FieldOffset;
 
   //
   // The device-specific memory area of Virtio-MMIO can only be written in
@@ -367,7 +378,8 @@ VirtioMmioDeviceRead (
   // Compute base address
   //
   SrcBaseAddress = Device->BaseAddress +
-                   VIRTIO_DEVICE_SPECIFIC_CONFIGURATION_OFFSET_MMIO + FieldOffset;
+                   VIRTIO_DEVICE_SPECIFIC_CONFIGURATION_OFFSET_MMIO +
+                   FieldOffset;
 
   //
   // The device-specific memory area of Virtio-MMIO can only be read in

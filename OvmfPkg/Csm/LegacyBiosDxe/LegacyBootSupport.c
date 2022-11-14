@@ -47,8 +47,14 @@ PrintBbsTable (
   CHAR8   *String;
 
   DEBUG ((DEBUG_INFO, "\n"));
-  DEBUG ((DEBUG_INFO, " NO  Prio bb/dd/ff cl/sc Type Stat segm:offs mfgs:mfgo dess:deso\n"));
-  DEBUG ((DEBUG_INFO, "=================================================================\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    " NO  Prio bb/dd/ff cl/sc Type Stat segm:offs mfgs:mfgo dess:deso\n"
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "=================================================================\n"
+    ));
   for (Index = 0; Index < MAX_BBS_ENTRIES; Index++) {
     //
     // Filter
@@ -84,7 +90,8 @@ PrintBbsTable (
     //
     // Print DescString
     //
-    String = (CHAR8 *)(((UINTN)BbsTable[Index].DescStringSegment << 4) + BbsTable[Index].DescStringOffset);
+    String = (CHAR8 *)(((UINTN)BbsTable[Index].DescStringSegment << 4) +
+                       BbsTable[Index].DescStringOffset);
     if (String != NULL) {
       DEBUG ((DEBUG_INFO, " ("));
       for (SubIndex = 0; String[SubIndex] != 0; SubIndex++) {
@@ -120,13 +127,39 @@ PrintHddInfo (
   for (Index = 0; Index < MAX_IDE_CONTROLLER; Index++) {
     DEBUG ((DEBUG_INFO, "Index - %04x\n", Index));
     DEBUG ((DEBUG_INFO, "  Status    - %04x\n", (UINTN)HddInfo[Index].Status));
-    DEBUG ((DEBUG_INFO, "  B/D/F     - %02x/%02x/%02x\n", (UINTN)HddInfo[Index].Bus, (UINTN)HddInfo[Index].Device, (UINTN)HddInfo[Index].Function));
-    DEBUG ((DEBUG_INFO, "  Command   - %04x\n", HddInfo[Index].CommandBaseAddress));
-    DEBUG ((DEBUG_INFO, "  Control   - %04x\n", HddInfo[Index].ControlBaseAddress));
-    DEBUG ((DEBUG_INFO, "  BusMaster - %04x\n", HddInfo[Index].BusMasterAddress));
+    DEBUG ((
+      DEBUG_INFO,
+      "  B/D/F     - %02x/%02x/%02x\n",
+      (UINTN)HddInfo[Index].Bus,
+      (UINTN)HddInfo[Index].Device,
+      (UINTN)HddInfo[Index].Function
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "  Command   - %04x\n",
+      HddInfo[Index].CommandBaseAddress
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "  Control   - %04x\n",
+      HddInfo[Index].ControlBaseAddress
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "  BusMaster - %04x\n",
+      HddInfo[Index].BusMasterAddress
+      ));
     DEBUG ((DEBUG_INFO, "  HddIrq    - %02x\n", HddInfo[Index].HddIrq));
-    DEBUG ((DEBUG_INFO, "  IdentifyDrive[0].Raw[0] - %x\n", HddInfo[Index].IdentifyDrive[0].Raw[0]));
-    DEBUG ((DEBUG_INFO, "  IdentifyDrive[1].Raw[0] - %x\n", HddInfo[Index].IdentifyDrive[1].Raw[0]));
+    DEBUG ((
+      DEBUG_INFO,
+      "  IdentifyDrive[0].Raw[0] - %x\n",
+      HddInfo[Index].IdentifyDrive[0].Raw[0]
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "  IdentifyDrive[1].Raw[0] - %x\n",
+      HddInfo[Index].IdentifyDrive[1].Raw[0]
+      ));
   }
 
   DEBUG ((DEBUG_INFO, "\n"));
@@ -169,7 +202,11 @@ PrintPciInterruptRegister (
   DEBUG ((DEBUG_INFO, " bb/dd/ff interrupt line interrupt pin\n"));
   DEBUG ((DEBUG_INFO, "======================================\n"));
   for (Index = 0; Index < HandleNum; Index++) {
-    Status = gBS->HandleProtocol (Handles[Index], &gEfiPciIoProtocolGuid, (VOID **)&PciIo);
+    Status = gBS->HandleProtocol (
+                    Handles[Index],
+                    &gEfiPciIoProtocolGuid,
+                    (VOID **)&PciIo
+                    );
     if (!EFI_ERROR (Status)) {
       Status = PciIo->Pci.Read (
                             PciIo,
@@ -266,7 +303,8 @@ UpdateSioData (
   }
 
   for (Index = 4; Index < 7; Index++) {
-    LegacyInterrupts[Index] = EfiToLegacy16BootTable->SioData.Parallel[Index - 4].Irq;
+    LegacyInterrupts[Index] = EfiToLegacy16BootTable->SioData.Parallel[Index -
+                                                                       4].Irq;
   }
 
   LegacyInterrupts[7] = EfiToLegacy16BootTable->SioData.Floppy.Irq;
@@ -417,7 +455,10 @@ UpdateIdentifyDriveData (
   // 0 if valid.
   //
   ReadInfo = (ATAPI_IDENTIFY *)IdentifyDriveData;
-  Status   = CalculateIdentifyDriveChecksum (IdentifyDriveData, &OriginalChecksum);
+  Status   = CalculateIdentifyDriveChecksum (
+               IdentifyDriveData,
+               &OriginalChecksum
+               );
   if (OriginalChecksum != 0) {
     Status = EFI_SECURITY_VIOLATION;
   }
@@ -439,7 +480,9 @@ UpdateIdentifyDriveData (
     // Copy Multisector info and set valid bit.
     //
     ReadInfo->Raw[59] = (UINT16)(ReadInfo->Raw[47] + 0x100);
-    CapacityInSectors = (UINT32)((UINT32)(NumberCylinders) * (UINT32)(NumberHeads) * (UINT32)(NumberSectorsTrack));
+    CapacityInSectors = (UINT32)((UINT32)(NumberCylinders) *
+                                 (UINT32)(NumberHeads) *
+                                 (UINT32)(NumberSectorsTrack));
     ReadInfo->Raw[57] = (UINT16)(CapacityInSectors >> 16);
     ReadInfo->Raw[58] = (UINT16)(CapacityInSectors & 0xffff);
     if (Status == EFI_SUCCESS) {
@@ -481,11 +524,15 @@ UpdateAllIdentifyDriveData (
     // Each controller can have 2 devices. Update for each device
     //
     if ((HddInfo[Index].Status & HDD_MASTER_IDE) != 0) {
-      UpdateIdentifyDriveData ((UINT8 *)(&HddInfo[Index].IdentifyDrive[0].Raw[0]));
+      UpdateIdentifyDriveData (
+        (UINT8 *)(&HddInfo[Index].IdentifyDrive[0].Raw[0])
+        );
     }
 
     if ((HddInfo[Index].Status & HDD_SLAVE_IDE) != 0) {
-      UpdateIdentifyDriveData ((UINT8 *)(&HddInfo[Index].IdentifyDrive[1].Raw[0]));
+      UpdateIdentifyDriveData (
+        (UINT8 *)(&HddInfo[Index].IdentifyDrive[1].Raw[0])
+        );
     }
   }
 }
@@ -614,7 +661,13 @@ EnableAllControllers (
     {
       PciConfigHeader.Hdr.Command |= 0x1f;
 
-      PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, 4, 1, &PciConfigHeader.Hdr.Command);
+      PciIo->Pci.Write (
+                   PciIo,
+                   EfiPciIoWidthUint32,
+                   4,
+                   1,
+                   &PciConfigHeader.Hdr.Command
+                   );
     }
   }
 }
@@ -677,8 +730,20 @@ LegacyGetDataOrTable (
                                        0,
                                        0
                                        );
-        DEBUG ((DEBUG_INFO, "LegacyGetDataOrTable - ID: %x, %r\n", (UINTN)Id, Status));
-        DEBUG ((DEBUG_INFO, "  Table - %x, Size - %x, Location - %x, Alignment - %x\n", (UINTN)Table, (UINTN)TableSize, (UINTN)Location, (UINTN)Alignment));
+        DEBUG ((
+          DEBUG_INFO,
+          "LegacyGetDataOrTable - ID: %x, %r\n",
+          (UINTN)Id,
+          Status
+          ));
+        DEBUG ((
+          DEBUG_INFO,
+          "  Table - %x, Size - %x, Location - %x, Alignment - %x\n",
+          (UINTN)Table,
+          (UINTN)TableSize,
+          (UINTN)Location,
+          (UINTN)Alignment
+          ));
         break;
       }
 
@@ -732,7 +797,11 @@ LegacyGetDataOrTable (
     {
       Legacy16Table->MpTablePtr    = (UINT32)(Regs.X.DS * 16 + Regs.X.BX);
       Legacy16Table->MpTableLength = (UINT32)TableSize;
-      DEBUG ((DEBUG_INFO, "MP table in legacy region - %x\n", (UINTN)Legacy16Table->MpTablePtr));
+      DEBUG ((
+        DEBUG_INFO,
+        "MP table in legacy region - %x\n",
+        (UINTN)Legacy16Table->MpTablePtr
+        ));
       break;
     }
 
@@ -740,7 +809,12 @@ LegacyGetDataOrTable (
     {
       Legacy16Table->OemIntSegment = Regs.X.DS;
       Legacy16Table->OemIntOffset  = Regs.X.BX;
-      DEBUG ((DEBUG_INFO, "OemInt table in legacy region - %04x:%04x\n", (UINTN)Legacy16Table->OemIntSegment, (UINTN)Legacy16Table->OemIntOffset));
+      DEBUG ((
+        DEBUG_INFO,
+        "OemInt table in legacy region - %04x:%04x\n",
+        (UINTN)Legacy16Table->OemIntSegment,
+        (UINTN)Legacy16Table->OemIntOffset
+        ));
       break;
     }
 
@@ -748,7 +822,12 @@ LegacyGetDataOrTable (
     {
       Legacy16Table->Oem32Segment = Regs.X.DS;
       Legacy16Table->Oem32Offset  = Regs.X.BX;
-      DEBUG ((DEBUG_INFO, "Oem32 table in legacy region - %04x:%04x\n", (UINTN)Legacy16Table->Oem32Segment, (UINTN)Legacy16Table->Oem32Offset));
+      DEBUG ((
+        DEBUG_INFO,
+        "Oem32 table in legacy region - %04x:%04x\n",
+        (UINTN)Legacy16Table->Oem32Segment,
+        (UINTN)Legacy16Table->Oem32Offset
+        ));
       break;
     }
 
@@ -757,7 +836,12 @@ LegacyGetDataOrTable (
       //
       //          Legacy16Table->Oem16Segment = Regs.X.DS;
       //          Legacy16Table->Oem16Offset  = Regs.X.BX;
-      DEBUG ((DEBUG_INFO, "Oem16 table in legacy region - %04x:%04x\n", (UINTN)Legacy16Table->Oem16Segment, (UINTN)Legacy16Table->Oem16Offset));
+      DEBUG ((
+        DEBUG_INFO,
+        "Oem16 table in legacy region - %04x:%04x\n",
+        (UINTN)Legacy16Table->Oem16Segment,
+        (UINTN)Legacy16Table->Oem16Offset
+        ));
       break;
     }
 
@@ -826,7 +910,8 @@ CreateSmbiosTableInReservedMemory (
   //
   // Update TableAddress in Entry Point Structure
   //
-  EntryPointStructure               = (SMBIOS_TABLE_ENTRY_POINT *)(UINTN)mReserveSmbiosEntryPoint;
+  EntryPointStructure =
+    (SMBIOS_TABLE_ENTRY_POINT *)(UINTN)mReserveSmbiosEntryPoint;
   EntryPointStructure->TableAddress = (UINT32)(UINTN)mStructureTableAddress;
 
   //
@@ -837,11 +922,20 @@ CreateSmbiosTableInReservedMemory (
 
   EntryPointStructure->IntermediateChecksum =
     CalculateCheckSum8 (
-      (UINT8 *)EntryPointStructure + OFFSET_OF (SMBIOS_TABLE_ENTRY_POINT, IntermediateAnchorString),
-      EntryPointStructure->EntryPointLength - OFFSET_OF (SMBIOS_TABLE_ENTRY_POINT, IntermediateAnchorString)
+      (UINT8 *)EntryPointStructure + OFFSET_OF (
+                                       SMBIOS_TABLE_ENTRY_POINT,
+                                       IntermediateAnchorString
+                                       ),
+      EntryPointStructure->EntryPointLength - OFFSET_OF (
+                                                SMBIOS_TABLE_ENTRY_POINT,
+                                                IntermediateAnchorString
+                                                )
       );
   EntryPointStructure->EntryPointStructureChecksum =
-    CalculateCheckSum8 ((UINT8 *)EntryPointStructure, EntryPointStructure->EntryPointLength);
+    CalculateCheckSum8 (
+      (UINT8 *)EntryPointStructure,
+      EntryPointStructure->EntryPointLength
+      );
 }
 
 /**
@@ -910,7 +1004,9 @@ GenericLegacyBoot (
   // A reconnect -r can force all HDDs back to native mode.
   //
   IdeController = NULL;
-  if ((mBootMode == BOOT_LEGACY_OS) || (mBootMode == BOOT_UNCONVENTIONAL_DEVICE)) {
+  if ((mBootMode == BOOT_LEGACY_OS) || (mBootMode ==
+                                        BOOT_UNCONVENTIONAL_DEVICE))
+  {
     Status = LegacyBiosPlatform->GetPlatformHandle (
                                    Private->LegacyBiosPlatform,
                                    EfiGetPlatformIdeHandle,
@@ -1047,7 +1143,9 @@ GenericLegacyBoot (
   //
   // Only do this code if booting legacy OS
   //
-  if ((mBootMode == BOOT_LEGACY_OS) || (mBootMode == BOOT_UNCONVENTIONAL_DEVICE)) {
+  if ((mBootMode == BOOT_LEGACY_OS) || (mBootMode ==
+                                        BOOT_UNCONVENTIONAL_DEVICE))
+  {
     UpdateSioData (Private);
   }
 
@@ -1104,7 +1202,12 @@ GenericLegacyBoot (
   //
   // Shadow PXE base code, BIS etc.
   //
-  Private->LegacyRegion->UnLock (Private->LegacyRegion, 0xc0000, 0x40000, &Granularity);
+  Private->LegacyRegion->UnLock (
+                           Private->LegacyRegion,
+                           0xc0000,
+                           0x40000,
+                           &Granularity
+                           );
   ShadowAddress = Private->OptionRom;
   Private->LegacyBiosPlatform->PlatformHooks (
                                  Private->LegacyBiosPlatform,
@@ -1179,7 +1282,9 @@ GenericLegacyBoot (
   //
   // If no boot device return to BDS
   //
-  if ((mBootMode == BOOT_LEGACY_OS) || (mBootMode == BOOT_UNCONVENTIONAL_DEVICE)) {
+  if ((mBootMode == BOOT_LEGACY_OS) || (mBootMode ==
+                                        BOOT_UNCONVENTIONAL_DEVICE))
+  {
     for (Index = 0; Index < BbsCount; Index++) {
       if ((LocalBbsTable[Index].BootPriority != BBS_DO_NOT_BOOT_FROM) &&
           (LocalBbsTable[Index].BootPriority != BBS_UNPRIORITIZED_ENTRY) &&
@@ -1262,8 +1367,12 @@ GenericLegacyBoot (
                            &Granularity
                            );
 
-  if ((Private->Legacy16Table->TableLength >= OFFSET_OF (EFI_COMPATIBILITY16_TABLE, HiPermanentMemoryAddress)) &&
-      ((Private->Legacy16Table->UmaAddress != 0) && (Private->Legacy16Table->UmaSize != 0)))
+  if ((Private->Legacy16Table->TableLength >= OFFSET_OF (
+                                                EFI_COMPATIBILITY16_TABLE,
+                                                HiPermanentMemoryAddress
+                                                )) &&
+      ((Private->Legacy16Table->UmaAddress != 0) &&
+       (Private->Legacy16Table->UmaSize != 0)))
   {
     //
     // Here we could reduce UmaAddress down as far as Private->OptionRom, taking into
@@ -1298,7 +1407,9 @@ GenericLegacyBoot (
   // Call into Legacy16 code to do the INT 19h
   //
   EnableAllControllers (Private);
-  if ((mBootMode == BOOT_LEGACY_OS) || (mBootMode == BOOT_UNCONVENTIONAL_DEVICE)) {
+  if ((mBootMode == BOOT_LEGACY_OS) || (mBootMode ==
+                                        BOOT_UNCONVENTIONAL_DEVICE))
+  {
     //
     // Signal all the events that are waiting on EVT_SIGNAL_LEGACY_BOOT
     //
@@ -1327,7 +1438,11 @@ GenericLegacyBoot (
     //
     // Put the 8259 into its legacy mode by reprogramming the vector bases
     //
-    Private->Legacy8259->SetVectorBase (Private->Legacy8259, LEGACY_MODE_BASE_VECTOR_MASTER, LEGACY_MODE_BASE_VECTOR_SLAVE);
+    Private->Legacy8259->SetVectorBase (
+                           Private->Legacy8259,
+                           LEGACY_MODE_BASE_VECTOR_MASTER,
+                           LEGACY_MODE_BASE_VECTOR_SLAVE
+                           );
     //
     // PC History
     //   The original PC used INT8-F for master PIC. Since these mapped over
@@ -1347,7 +1462,8 @@ GenericLegacyBoot (
     //
     //
     ACCESS_PAGE0_CODE (
-      BaseVectorMaster = (UINT32 *)(sizeof (UINT32) * PROTECTED_MODE_BASE_VECTOR_MASTER);
+      BaseVectorMaster = (UINT32 *)(sizeof (UINT32) *
+                                    PROTECTED_MODE_BASE_VECTOR_MASTER);
       for (Index = 0; Index < 8; Index++) {
       Private->ThunkSavedInt[Index] = BaseVectorMaster[Index];
       if (Private->ThunkSeg == (UINT16)(BaseVectorMaster[Index] >> 16)) {
@@ -1370,7 +1486,8 @@ GenericLegacyBoot (
                           );
 
     ACCESS_PAGE0_CODE (
-      BaseVectorMaster = (UINT32 *)(sizeof (UINT32) * PROTECTED_MODE_BASE_VECTOR_MASTER);
+      BaseVectorMaster = (UINT32 *)(sizeof (UINT32) *
+                                    PROTECTED_MODE_BASE_VECTOR_MASTER);
       for (Index = 0; Index < 8; Index++) {
       BaseVectorMaster[Index] = Private->ThunkSavedInt[Index];
     }
@@ -1379,7 +1496,9 @@ GenericLegacyBoot (
   }
 
   Private->LegacyBootEntered = TRUE;
-  if ((mBootMode == BOOT_LEGACY_OS) || (mBootMode == BOOT_UNCONVENTIONAL_DEVICE)) {
+  if ((mBootMode == BOOT_LEGACY_OS) || (mBootMode ==
+                                        BOOT_UNCONVENTIONAL_DEVICE))
+  {
     //
     // Should never return unless never passed control to 0:7c00(first stage
     // OS loader) and only then if no bootable device found.
@@ -1424,7 +1543,8 @@ LegacyBiosPrepareToBootEfi (
   mBbsDevicePathPtr      = NULL;
   Status                 = GenericLegacyBoot (This);
   *BbsTable              = (BBS_TABLE *)(UINTN)EfiToLegacy16BootTable->BbsTable;
-  *BbsCount              = (UINT16)(sizeof (Private->IntThunk->BbsTable) / sizeof (BBS_TABLE));
+  *BbsCount              = (UINT16)(sizeof (Private->IntThunk->BbsTable) /
+                                    sizeof (BBS_TABLE));
   return Status;
 }
 
@@ -1482,8 +1602,10 @@ LegacyBiosBootUnconventionalDevice (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (((Attributes.DirectoryServiceValidity != 0) && (ServiceAreaData == NULL)) ||
-      (((Attributes.DirectoryServiceValidity | Attributes.RabcaUsedFlag) != 0) && (BeerData == NULL))
+  if (((Attributes.DirectoryServiceValidity != 0) && (ServiceAreaData ==
+                                                      NULL)) ||
+      (((Attributes.DirectoryServiceValidity | Attributes.RabcaUsedFlag) !=
+        0) && (BeerData == NULL))
       )
   {
     return EFI_INVALID_PARAMETER;
@@ -1553,12 +1675,15 @@ LegacyBiosBootUnconventionalDevice (
 
     BbsTable[EfiToLegacy16BootTable->NumberBbsEntries].BootHandlerOffset  = 0;
     BbsTable[EfiToLegacy16BootTable->NumberBbsEntries].BootHandlerSegment = 0;
-    BbsTable[EfiToLegacy16BootTable->NumberBbsEntries].DeviceType         = 0x80;
+    BbsTable[EfiToLegacy16BootTable->NumberBbsEntries].DeviceType         =
+      0x80;
 
-    UcdTable->BbsTableEntryNumberForHddDiag = (UINT8)(EfiToLegacy16BootTable->NumberBbsEntries - 1);
+    UcdTable->BbsTableEntryNumberForHddDiag =
+      (UINT8)(EfiToLegacy16BootTable->NumberBbsEntries - 1);
 
-    BbsTable[EfiToLegacy16BootTable->NumberBbsEntries].BootPriority = BootPriority;
-    BootPriority                                                   += 1;
+    BbsTable[EfiToLegacy16BootTable->NumberBbsEntries].BootPriority =
+      BootPriority;
+    BootPriority += 1;
 
     //
     // Set device type as BBS_TYPE_DEV for PARTIES diagnostic
@@ -1576,9 +1701,12 @@ LegacyBiosBootUnconventionalDevice (
 
     BbsTable[EfiToLegacy16BootTable->NumberBbsEntries].BootHandlerOffset  = 0;
     BbsTable[EfiToLegacy16BootTable->NumberBbsEntries].BootHandlerSegment = 0;
-    BbsTable[EfiToLegacy16BootTable->NumberBbsEntries].DeviceType         = 0x01;
-    UcdTable->BbsTableEntryNumberForBoot                                  = (UINT8)(EfiToLegacy16BootTable->NumberBbsEntries - 1);
-    BbsTable[EfiToLegacy16BootTable->NumberBbsEntries].BootPriority       = BootPriority;
+    BbsTable[EfiToLegacy16BootTable->NumberBbsEntries].DeviceType         =
+      0x01;
+    UcdTable->BbsTableEntryNumberForBoot =
+      (UINT8)(EfiToLegacy16BootTable->NumberBbsEntries - 1);
+    BbsTable[EfiToLegacy16BootTable->NumberBbsEntries].BootPriority =
+      BootPriority;
 
     //
     // Set device type as BBS_TYPE_FLOPPY for PARTIES boot as floppy
@@ -1591,7 +1719,10 @@ LegacyBiosBootUnconventionalDevice (
   //
   mBbsDevicePathNode.Header.Type    = BBS_DEVICE_PATH;
   mBbsDevicePathNode.Header.SubType = BBS_BBS_DP;
-  SetDevicePathNodeLength (&mBbsDevicePathNode.Header, sizeof (BBS_BBS_DEVICE_PATH));
+  SetDevicePathNodeLength (
+    &mBbsDevicePathNode.Header,
+    sizeof (BBS_BBS_DEVICE_PATH)
+    );
   mBbsDevicePathNode.StatusFlag = 0;
   mBbsDevicePathNode.String[0]  = 0;
 
@@ -1808,7 +1939,8 @@ LegacyBiosBuildE820 (
   //
   EfiEntry        = EfiMemoryMap;
   NextEfiEntry    = NEXT_MEMORY_DESCRIPTOR (EfiEntry, EfiDescriptorSize);
-  EfiMemoryMapEnd = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)EfiMemoryMap + EfiMemoryMapSize);
+  EfiMemoryMapEnd = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)EfiMemoryMap +
+                                              EfiMemoryMapSize);
   while (EfiEntry < EfiMemoryMapEnd) {
     while (NextEfiEntry < EfiMemoryMapEnd) {
       if (EfiEntry->PhysicalStart > NextEfiEntry->PhysicalStart) {
@@ -1825,8 +1957,12 @@ LegacyBiosBuildE820 (
   }
 
   EfiEntry        = EfiMemoryMap;
-  EfiMemoryMapEnd = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)EfiMemoryMap + EfiMemoryMapSize);
-  for (Index = Above1MIndex; (EfiEntry < EfiMemoryMapEnd) && (Index < EFI_MAX_E820_ENTRY - 1); ) {
+  EfiMemoryMapEnd = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)EfiMemoryMap +
+                                              EfiMemoryMapSize);
+  for (Index = Above1MIndex; (EfiEntry < EfiMemoryMapEnd) && (Index <
+                                                              EFI_MAX_E820_ENTRY
+                                                              - 1); )
+  {
     MemoryBlockLength = (UINT64)(LShiftU64 (EfiEntry->NumberOfPages, 12));
     if ((EfiEntry->PhysicalStart + MemoryBlockLength) < 0x100000) {
       //
@@ -1846,7 +1982,10 @@ LegacyBiosBuildE820 (
       //
       TempType = EfiMemoryTypeToE820Type (EfiEntry->Type);
 
-      if ((E820Table[Index].Type == TempType) && (EfiEntry->PhysicalStart == (E820Table[Index].BaseAddr + E820Table[Index].Length))) {
+      if ((E820Table[Index].Type == TempType) && (EfiEntry->PhysicalStart ==
+                                                  (E820Table[Index].BaseAddr +
+                                                   E820Table[Index].Length)))
+      {
         //
         // Grow an existing entry
         //
@@ -1870,8 +2009,13 @@ LegacyBiosBuildE820 (
   //
   // Process the reserved memory map to produce E820 map ;
   //
-  for (Hob.Raw = GetHobList (); !END_OF_HOB_LIST (Hob); Hob.Raw = GET_NEXT_HOB (Hob)) {
-    if ((Hob.Raw != NULL) && (GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_RESOURCE_DESCRIPTOR)) {
+  for (Hob.Raw = GetHobList (); !END_OF_HOB_LIST (Hob); Hob.Raw = GET_NEXT_HOB (
+                                                                    Hob
+                                                                    ))
+  {
+    if ((Hob.Raw != NULL) && (GET_HOB_TYPE (Hob) ==
+                              EFI_HOB_TYPE_RESOURCE_DESCRIPTOR))
+    {
       ResourceHob = Hob.ResourceDescriptor;
       if (((ResourceHob->ResourceType == EFI_RESOURCE_MEMORY_MAPPED_IO) ||
            (ResourceHob->ResourceType == EFI_RESOURCE_FIRMWARE_DEVICE)  ||
@@ -1891,23 +2035,30 @@ LegacyBiosBuildE820 (
   Private->IntThunk->EfiToLegacy16InitTable.NumberE820Entries = (UINT32)Index;
   Private->IntThunk->EfiToLegacy16BootTable.NumberE820Entries = (UINT32)Index;
   Private->NumberE820Entries                                  = (UINT32)Index;
-  *Size                                                       = (UINTN)(Index * sizeof (EFI_E820_ENTRY64));
+  *Size                                                       = (UINTN)(Index *
+                                                                        sizeof (
+                                                                                       EFI_E820_ENTRY64));
 
   //
   // Sort E820Table from low to high
   //
   for (TempIndex = 0; TempIndex < Index; TempIndex++) {
     ChangedFlag = FALSE;
-    for (TempNextIndex = 1; TempNextIndex < Index - TempIndex; TempNextIndex++) {
-      if (E820Table[TempNextIndex - 1].BaseAddr > E820Table[TempNextIndex].BaseAddr) {
+    for (TempNextIndex = 1; TempNextIndex < Index - TempIndex;
+         TempNextIndex++)
+    {
+      if (E820Table[TempNextIndex - 1].BaseAddr >
+          E820Table[TempNextIndex].BaseAddr)
+      {
         ChangedFlag       = TRUE;
         TempE820.BaseAddr = E820Table[TempNextIndex - 1].BaseAddr;
         TempE820.Length   = E820Table[TempNextIndex - 1].Length;
         TempE820.Type     = E820Table[TempNextIndex - 1].Type;
 
-        E820Table[TempNextIndex - 1].BaseAddr = E820Table[TempNextIndex].BaseAddr;
-        E820Table[TempNextIndex - 1].Length   = E820Table[TempNextIndex].Length;
-        E820Table[TempNextIndex - 1].Type     = E820Table[TempNextIndex].Type;
+        E820Table[TempNextIndex - 1].BaseAddr =
+          E820Table[TempNextIndex].BaseAddr;
+        E820Table[TempNextIndex - 1].Length = E820Table[TempNextIndex].Length;
+        E820Table[TempNextIndex - 1].Type   = E820Table[TempNextIndex].Type;
 
         E820Table[TempNextIndex].BaseAddr = TempE820.BaseAddr;
         E820Table[TempNextIndex].Length   = TempE820.Length;
@@ -1925,7 +2076,8 @@ LegacyBiosBuildE820 (
   //
   for (TempIndex = 1; TempIndex < Index; TempIndex++) {
     if ((E820Table[TempIndex - 1].BaseAddr <= E820Table[TempIndex].BaseAddr) &&
-        ((E820Table[TempIndex - 1].BaseAddr + E820Table[TempIndex - 1].Length) >=
+        ((E820Table[TempIndex - 1].BaseAddr + E820Table[TempIndex -
+                                                        1].Length) >=
          (E820Table[TempIndex].BaseAddr +E820Table[TempIndex].Length)))
     {
       //
@@ -1954,27 +2106,35 @@ LegacyBiosBuildE820 (
   Private->IntThunk->EfiToLegacy16InitTable.NumberE820Entries = (UINT32)Index;
   Private->IntThunk->EfiToLegacy16BootTable.NumberE820Entries = (UINT32)Index;
   Private->NumberE820Entries                                  = (UINT32)Index;
-  *Size                                                       = (UINTN)(Index * sizeof (EFI_E820_ENTRY64));
+  *Size                                                       = (UINTN)(Index *
+                                                                        sizeof (
+                                                                                       EFI_E820_ENTRY64));
 
   //
   // Determine OS usable memory above 1MB
   //
   Private->IntThunk->EfiToLegacy16BootTable.OsMemoryAbove1Mb = 0x0000;
   for (TempIndex = Above1MIndex; TempIndex < Index; TempIndex++) {
-    if ((E820Table[TempIndex].BaseAddr >= 0x100000) && (E820Table[TempIndex].BaseAddr < 0x100000000ULL)) {
+    if ((E820Table[TempIndex].BaseAddr >= 0x100000) &&
+        (E820Table[TempIndex].BaseAddr < 0x100000000ULL))
+    {
       // not include above 4G memory
       //
       // ACPIReclaimMemory is also usable memory for ACPI OS, after OS dumps all ACPI tables.
       //
-      if ((E820Table[TempIndex].Type == EfiAcpiAddressRangeMemory) || (E820Table[TempIndex].Type == EfiAcpiAddressRangeACPI)) {
-        Private->IntThunk->EfiToLegacy16BootTable.OsMemoryAbove1Mb += (UINT32)(E820Table[TempIndex].Length);
+      if ((E820Table[TempIndex].Type == EfiAcpiAddressRangeMemory) ||
+          (E820Table[TempIndex].Type == EfiAcpiAddressRangeACPI))
+      {
+        Private->IntThunk->EfiToLegacy16BootTable.OsMemoryAbove1Mb +=
+          (UINT32)(E820Table[TempIndex].Length);
       } else {
         break; // break at first not normal memory, because SMM may use reserved memory.
       }
     }
   }
 
-  Private->IntThunk->EfiToLegacy16InitTable.OsMemoryAbove1Mb = Private->IntThunk->EfiToLegacy16BootTable.OsMemoryAbove1Mb;
+  Private->IntThunk->EfiToLegacy16InitTable.OsMemoryAbove1Mb =
+    Private->IntThunk->EfiToLegacy16BootTable.OsMemoryAbove1Mb;
 
   //
   // Print DEBUG information
@@ -2053,7 +2213,8 @@ LegacyBiosCompleteBdaBeforeBoot (
 
   Bda->NumberOfDrives = (UINT8)(Bda->NumberOfDrives + Private->IdeDriveCount);
   if (SioPtr->Floppy.NumberOfFloppy != 0x00) {
-    MachineConfig    = (UINT16)(MachineConfig + 0x01 + (SioPtr->Floppy.NumberOfFloppy - 1) * 0x40);
+    MachineConfig    = (UINT16)(MachineConfig + 0x01 +
+                                (SioPtr->Floppy.NumberOfFloppy - 1) * 0x40);
     Bda->FloppyXRate = 0x07;
   }
 
@@ -2065,7 +2226,8 @@ LegacyBiosCompleteBdaBeforeBoot (
   //
   // Force VGA and Coprocessor, indicate 101/102 keyboard
   //
-  MachineConfig      = (UINT16)(MachineConfig + 0x00 + 0x02 + (SioPtr->MousePresent * 0x04));
+  MachineConfig      = (UINT16)(MachineConfig + 0x00 + 0x02 +
+                                (SioPtr->MousePresent * 0x04));
   Bda->MachineConfig = MachineConfig;
 
   return EFI_SUCCESS;
@@ -2178,7 +2340,9 @@ LegacyBiosCompleteStandardCmosBeforeBoot (
   // redo memory size since it can change
   //
   Size = (15 * SIZE_1MB) >> 10;
-  if (Private->IntThunk->EfiToLegacy16InitTable.OsMemoryAbove1Mb < (15 * SIZE_1MB)) {
+  if (Private->IntThunk->EfiToLegacy16InitTable.OsMemoryAbove1Mb < (15 *
+                                                                    SIZE_1MB))
+  {
     Size = Private->IntThunk->EfiToLegacy16InitTable.OsMemoryAbove1Mb >> 10;
   }
 

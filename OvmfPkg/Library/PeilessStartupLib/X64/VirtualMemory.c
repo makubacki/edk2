@@ -94,7 +94,8 @@ ClearFirst4KPage (
                          RscHob.Raw
                          )) != NULL)
   {
-    if ((RscHob.ResourceDescriptor->ResourceType == EFI_RESOURCE_SYSTEM_MEMORY) &&
+    if ((RscHob.ResourceDescriptor->ResourceType ==
+         EFI_RESOURCE_SYSTEM_MEMORY) &&
         (RscHob.ResourceDescriptor->PhysicalStart == 0))
     {
       DoClear = TRUE;
@@ -350,7 +351,12 @@ AllocatePageTableMemory (
     return NULL;
   }
 
-  DEBUG ((DEBUG_INFO, "AllocatePageTableMemory. PageTablePool=%p, Pages=%d\n", *PageTablePool, Pages));
+  DEBUG ((
+    DEBUG_INFO,
+    "AllocatePageTableMemory. PageTablePool=%p, Pages=%d\n",
+    *PageTablePool,
+    Pages
+    ));
   //
   // Renew the pool if necessary.
   //
@@ -419,7 +425,10 @@ Split2MPageTo4K (
   *PageEntry2M = (UINT64)(UINTN)PageTableEntry | IA32_PG_P | IA32_PG_RW;
 
   PhysicalAddress4K = PhysicalAddress;
-  for (IndexOfPageTableEntries = 0; IndexOfPageTableEntries < 512; IndexOfPageTableEntries++, PageTableEntry++, PhysicalAddress4K += SIZE_4KB) {
+  for (IndexOfPageTableEntries = 0; IndexOfPageTableEntries < 512;
+       IndexOfPageTableEntries++, PageTableEntry++, PhysicalAddress4K +=
+         SIZE_4KB)
+  {
     //
     // Fill in the Page Table entries
     //
@@ -427,7 +436,8 @@ Split2MPageTo4K (
     PageTableEntry->Bits.ReadWrite = 1;
 
     if ((IsNullDetectionEnabled () && (PhysicalAddress4K == 0)) ||
-        (FixedPcdGetBool (PcdCpuStackGuard) && (PhysicalAddress4K == StackBase)))
+        (FixedPcdGetBool (PcdCpuStackGuard) && (PhysicalAddress4K ==
+                                                StackBase)))
     {
       PageTableEntry->Bits.Present = 0;
     } else {
@@ -484,12 +494,21 @@ Split1GPageTo2M (
   *PageEntry1G = (UINT64)(UINTN)PageDirectoryEntry | IA32_PG_P | IA32_PG_RW;
 
   PhysicalAddress2M = PhysicalAddress;
-  for (IndexOfPageDirectoryEntries = 0; IndexOfPageDirectoryEntries < 512; IndexOfPageDirectoryEntries++, PageDirectoryEntry++, PhysicalAddress2M += SIZE_2MB) {
+  for (IndexOfPageDirectoryEntries = 0; IndexOfPageDirectoryEntries < 512;
+       IndexOfPageDirectoryEntries++, PageDirectoryEntry++, PhysicalAddress2M +=
+         SIZE_2MB)
+  {
     if (ToSplitPageTable (PhysicalAddress2M, SIZE_2MB, StackBase, StackSize)) {
       //
       // Need to split this 2M page that covers NULL or stack range.
       //
-      Split2MPageTo4K (PhysicalAddress2M, (UINT64 *)PageDirectoryEntry, StackBase, StackSize, PageTablePool);
+      Split2MPageTo4K (
+        PhysicalAddress2M,
+        (UINT64 *)PageDirectoryEntry,
+        StackBase,
+        StackSize,
+        PageTablePool
+        );
     } else {
       //
       // Fill in the Page Directory entries
@@ -663,7 +682,12 @@ EnablePageTableProtection (
     // protection to them one by one.
     //
     while (PoolSize > 0) {
-      SetPageTablePoolReadOnly (PageTableBase, Address, Level4Paging, PageTablePool);
+      SetPageTablePoolReadOnly (
+        PageTableBase,
+        Address,
+        Level4Paging,
+        PageTablePool
+        );
       Address  += PAGE_TABLE_POOL_UNIT_SIZE;
       PoolSize -= PAGE_TABLE_POOL_UNIT_SIZE;
     }
@@ -781,9 +805,12 @@ CreateIdentityMappingPageTables (
   // Pre-allocate big pages to avoid later allocations.
   //
   if (!Page1GSupport) {
-    TotalPagesNum = ((NumberOfPdpEntriesNeeded + 1) * NumberOfPml4EntriesNeeded + 1) * NumberOfPml5EntriesNeeded + 1;
+    TotalPagesNum = ((NumberOfPdpEntriesNeeded + 1) *
+                     NumberOfPml4EntriesNeeded + 1) *
+                    NumberOfPml5EntriesNeeded + 1;
   } else {
-    TotalPagesNum = (NumberOfPml4EntriesNeeded + 1) * NumberOfPml5EntriesNeeded + 1;
+    TotalPagesNum = (NumberOfPml4EntriesNeeded + 1) *
+                    NumberOfPml5EntriesNeeded + 1;
   }
 
   //
@@ -803,13 +830,21 @@ CreateIdentityMappingPageTables (
     ));
 
   PageTablePool  = NULL;
-  BigPageAddress = (UINTN)AllocatePageTableMemory (TotalPagesNum, &PageTablePool);
+  BigPageAddress = (UINTN)AllocatePageTableMemory (
+                            TotalPagesNum,
+                            &PageTablePool
+                            );
   if (BigPageAddress == 0) {
     ASSERT (FALSE);
     return 0;
   }
 
-  DEBUG ((DEBUG_INFO, "BigPageAddress = 0x%llx, PageTablePool=%p\n", BigPageAddress, PageTablePool));
+  DEBUG ((
+    DEBUG_INFO,
+    "BigPageAddress = 0x%llx, PageTablePool=%p\n",
+    BigPageAddress,
+    PageTablePool
+    ));
 
   //
   // By architecture only one PageMapLevel4 exists - so lets allocate storage for it.
@@ -848,7 +883,8 @@ CreateIdentityMappingPageTables (
     }
 
     for ( IndexOfPml4Entries = 0
-          ; IndexOfPml4Entries < (NumberOfPml5EntriesNeeded == 1 ? NumberOfPml4EntriesNeeded : 512)
+          ; IndexOfPml4Entries < (NumberOfPml5EntriesNeeded == 1 ?
+                                  NumberOfPml4EntriesNeeded : 512)
           ; IndexOfPml4Entries++, PageMapLevel4Entry++)
     {
       //
@@ -861,14 +897,19 @@ CreateIdentityMappingPageTables (
       //
       // Make a PML4 Entry
       //
-      PageMapLevel4Entry->Uint64         = (UINT64)(UINTN)PageDirectoryPointerEntry;
+      PageMapLevel4Entry->Uint64 =
+        (UINT64)(UINTN)PageDirectoryPointerEntry;
       PageMapLevel4Entry->Bits.ReadWrite = 1;
       PageMapLevel4Entry->Bits.Present   = 1;
 
       if (Page1GSupport) {
         PageDirectory1GEntry = (VOID *)PageDirectoryPointerEntry;
 
-        for (IndexOfPageDirectoryEntries = 0; IndexOfPageDirectoryEntries < 512; IndexOfPageDirectoryEntries++, PageDirectory1GEntry++, PageAddress += SIZE_1GB) {
+        for (IndexOfPageDirectoryEntries = 0; IndexOfPageDirectoryEntries < 512;
+             IndexOfPageDirectoryEntries++, PageDirectory1GEntry++,
+             PageAddress +=
+               SIZE_1GB)
+        {
           if (ToSplitPageTable (PageAddress, SIZE_1GB, StackBase, StackSize)) {
             Split1GPageTo2M (
               PageAddress,
@@ -889,7 +930,8 @@ CreateIdentityMappingPageTables (
         }
       } else {
         for ( IndexOfPdpEntries = 0
-              ; IndexOfPdpEntries < (NumberOfPml4EntriesNeeded == 1 ? NumberOfPdpEntriesNeeded : 512)
+              ; IndexOfPdpEntries < (NumberOfPml4EntriesNeeded == 1 ?
+                                     NumberOfPdpEntriesNeeded : 512)
               ; IndexOfPdpEntries++, PageDirectoryPointerEntry++)
         {
           //
@@ -902,16 +944,32 @@ CreateIdentityMappingPageTables (
           //
           // Fill in a Page Directory Pointer Entries
           //
-          PageDirectoryPointerEntry->Uint64         = (UINT64)(UINTN)PageDirectoryEntry;
+          PageDirectoryPointerEntry->Uint64 =
+            (UINT64)(UINTN)PageDirectoryEntry;
           PageDirectoryPointerEntry->Bits.ReadWrite = 1;
           PageDirectoryPointerEntry->Bits.Present   = 1;
 
-          for (IndexOfPageDirectoryEntries = 0; IndexOfPageDirectoryEntries < 512; IndexOfPageDirectoryEntries++, PageDirectoryEntry++, PageAddress += SIZE_2MB) {
-            if (ToSplitPageTable (PageAddress, SIZE_2MB, StackBase, StackSize)) {
+          for (IndexOfPageDirectoryEntries = 0; IndexOfPageDirectoryEntries <
+               512; IndexOfPageDirectoryEntries++, PageDirectoryEntry++,
+               PageAddress += SIZE_2MB)
+          {
+            if (ToSplitPageTable (
+                  PageAddress,
+                  SIZE_2MB,
+                  StackBase,
+                  StackSize
+                  ))
+            {
               //
               // Need to split this 2M page that covers NULL or stack range.
               //
-              Split2MPageTo4K (PageAddress, (UINT64 *)PageDirectoryEntry, StackBase, StackSize, PageTablePool);
+              Split2MPageTo4K (
+                PageAddress,
+                (UINT64 *)PageDirectoryEntry,
+                StackBase,
+                StackSize,
+                PageTablePool
+                );
             } else {
               //
               // Fill in the Page Directory entries
@@ -927,21 +985,33 @@ CreateIdentityMappingPageTables (
         //
         // Fill with null entry for unused PDPTE
         //
-        ZeroMem (PageDirectoryPointerEntry, (512 - IndexOfPdpEntries) * sizeof (PAGE_MAP_AND_DIRECTORY_POINTER));
+        ZeroMem (
+          PageDirectoryPointerEntry,
+          (512 - IndexOfPdpEntries) *
+          sizeof (PAGE_MAP_AND_DIRECTORY_POINTER)
+          );
       }
     }
 
     //
     // For the PML4 entries we are not using fill in a null entry.
     //
-    ZeroMem (PageMapLevel4Entry, (512 - IndexOfPml4Entries) * sizeof (PAGE_MAP_AND_DIRECTORY_POINTER));
+    ZeroMem (
+      PageMapLevel4Entry,
+      (512 - IndexOfPml4Entries) *
+      sizeof (PAGE_MAP_AND_DIRECTORY_POINTER)
+      );
   }
 
   if (Page5LevelSupport) {
     //
     // For the PML5 entries we are not using fill in a null entry.
     //
-    ZeroMem (PageMapLevel5Entry, (512 - IndexOfPml5Entries) * sizeof (PAGE_MAP_AND_DIRECTORY_POINTER));
+    ZeroMem (
+      PageMapLevel5Entry,
+      (512 - IndexOfPml5Entries) *
+      sizeof (PAGE_MAP_AND_DIRECTORY_POINTER)
+      );
   }
 
   //

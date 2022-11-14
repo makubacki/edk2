@@ -178,7 +178,8 @@ LegacyBiosBuildIdeData (
         Size = sizeof (ATAPI_IDENTIFY);
         DiskInfo->Identify (
                     DiskInfo,
-                    &LocalHddInfo[PciIndex + IdeChannel].IdentifyDrive[IdeDevice],
+                    &LocalHddInfo[PciIndex +
+                                  IdeChannel].IdentifyDrive[IdeDevice],
                     &Size
                     );
         if (IdeChannel == 0) {
@@ -219,15 +220,19 @@ LegacyBiosBuildIdeData (
           //
           if (IdeDevice == 0) {
             if ((InquiryData[0] & 0x1f) == 0x05) {
-              LocalHddInfo[PciIndex + IdeChannel].Status |= HDD_MASTER_ATAPI_CDROM;
+              LocalHddInfo[PciIndex + IdeChannel].Status |=
+                HDD_MASTER_ATAPI_CDROM;
             } else if ((InquiryData[0] & 0x1f) == 0x00) {
-              LocalHddInfo[PciIndex + IdeChannel].Status |= HDD_MASTER_ATAPI_ZIPDISK;
+              LocalHddInfo[PciIndex + IdeChannel].Status |=
+                HDD_MASTER_ATAPI_ZIPDISK;
             }
           } else {
             if ((InquiryData[0] & 0x1f) == 0x05) {
-              LocalHddInfo[PciIndex + IdeChannel].Status |= HDD_SLAVE_ATAPI_CDROM;
+              LocalHddInfo[PciIndex + IdeChannel].Status |=
+                HDD_SLAVE_ATAPI_CDROM;
             } else if ((InquiryData[0] & 0x1f) == 0x00) {
-              LocalHddInfo[PciIndex + IdeChannel].Status |= HDD_SLAVE_ATAPI_ZIPDISK;
+              LocalHddInfo[PciIndex + IdeChannel].Status |=
+                HDD_SLAVE_ATAPI_ZIPDISK;
             }
           }
 
@@ -283,7 +288,13 @@ InitLegacyIdeController (
     return;
   }
 
-  Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0, sizeof (PciData), &PciData);
+  Status = PciIo->Pci.Read (
+                        PciIo,
+                        EfiPciIoWidthUint8,
+                        0,
+                        sizeof (PciData),
+                        &PciData
+                        );
   if (EFI_ERROR (Status)) {
     return;
   }

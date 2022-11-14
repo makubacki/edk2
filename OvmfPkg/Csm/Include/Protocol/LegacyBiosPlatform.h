@@ -27,7 +27,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
     0x783658a3, 0x4172, 0x4421, {0xa2, 0x99, 0xe0, 0x9, 0x7, 0x9c, 0xc, 0xb4 } \
   }
 
-typedef struct _EFI_LEGACY_BIOS_PLATFORM_PROTOCOL EFI_LEGACY_BIOS_PLATFORM_PROTOCOL;
+typedef struct _EFI_LEGACY_BIOS_PLATFORM_PROTOCOL
+EFI_LEGACY_BIOS_PLATFORM_PROTOCOL;
 
 /**
   This enum specifies the Mode param values for GetPlatformInfo()

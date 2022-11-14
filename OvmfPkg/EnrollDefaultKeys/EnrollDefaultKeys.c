@@ -167,7 +167,12 @@ GetPkKek1 (
   // Verify the base64 encoding, and determine the decoded size.
   //
   DecodedCertSize = 0;
-  Status          = Base64Decode (Base64Cert, Base64CertLen, NULL, &DecodedCertSize);
+  Status          = Base64Decode (
+                      Base64Cert,
+                      Base64CertLen,
+                      NULL,
+                      &DecodedCertSize
+                      );
   switch (Status) {
     case EFI_BUFFER_TOO_SMALL:
       ASSERT (DecodedCertSize > 0);
@@ -782,7 +787,8 @@ ShellAppMain (
   Status              = gRT->SetVariable (
                                EFI_CUSTOM_MODE_NAME,
                                &gEfiCustomModeEnableGuid,
-                               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+                               EFI_VARIABLE_NON_VOLATILE |
+                               EFI_VARIABLE_BOOTSERVICE_ACCESS,
                                sizeof Settings.CustomMode,
                                &Settings.CustomMode
                                );
