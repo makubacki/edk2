@@ -82,14 +82,20 @@ CallFspMultiPhaseEntry (
 
   FspMultiPhaseParamsPtr   = (FSP_MULTI_PHASE_PARAMS *)FspMultiPhaseParams;
   IsVariableServiceRequest = FALSE;
-  if ((FspMultiPhaseParamsPtr->MultiPhaseAction == EnumMultiPhaseGetVariableRequestInfo) ||
-      (FspMultiPhaseParamsPtr->MultiPhaseAction == EnumMultiPhaseCompleteVariableRequest))
+  if ((FspMultiPhaseParamsPtr->MultiPhaseAction ==
+       EnumMultiPhaseGetVariableRequestInfo) ||
+      (FspMultiPhaseParamsPtr->MultiPhaseAction ==
+       EnumMultiPhaseCompleteVariableRequest))
   {
     IsVariableServiceRequest = TRUE;
   }
 
   if (ComponentIndex == FspMultiPhaseMemInitApiIndex) {
-    FspHeader = (FSP_INFO_HEADER *)FspFindFspHeader (PcdGet32 (PcdFspmBaseAddress));
+    FspHeader = (FSP_INFO_HEADER *)FspFindFspHeader (
+                                     PcdGet32 (
+                                       PcdFspmBaseAddress
+                                       )
+                                     );
     if (FspHeader == NULL) {
       return EFI_DEVICE_ERROR;
     } else if (FspHeader->SpecVersion < 0x24) {
@@ -98,12 +104,18 @@ CallFspMultiPhaseEntry (
 
     FspMultiPhaseApiOffset = FspHeader->FspMultiPhaseMemInitEntryOffset;
   } else if (ComponentIndex == FspMultiPhaseSiInitApiIndex) {
-    FspHeader = (FSP_INFO_HEADER *)FspFindFspHeader (PcdGet32 (PcdFspsBaseAddress));
+    FspHeader = (FSP_INFO_HEADER *)FspFindFspHeader (
+                                     PcdGet32 (
+                                       PcdFspsBaseAddress
+                                       )
+                                     );
     if (FspHeader == NULL) {
       return EFI_DEVICE_ERROR;
     } else if (FspHeader->SpecVersion < 0x22) {
       return EFI_UNSUPPORTED;
-    } else if ((FspHeader->SpecVersion < 0x24) && (IsVariableServiceRequest == TRUE)) {
+    } else if ((FspHeader->SpecVersion < 0x24) && (IsVariableServiceRequest ==
+                                                   TRUE))
+    {
       return EFI_UNSUPPORTED;
     }
 
@@ -118,9 +130,17 @@ CallFspMultiPhaseEntry (
   InterruptState        = SaveAndDisableInterrupts ();
   if ((FspHeader->ImageAttribute & BIT2) == 0) {
     // BIT2: IMAGE_ATTRIBUTE_64BIT_MODE_SUPPORT
-    Status = Execute32BitCode ((UINTN)FspMultiPhaseApiEntry, (UINTN)FspMultiPhaseParams, (UINTN)NULL);
+    Status = Execute32BitCode (
+               (UINTN)FspMultiPhaseApiEntry,
+               (UINTN)FspMultiPhaseParams,
+               (UINTN)NULL
+               );
   } else {
-    Status = Execute64BitCode ((UINTN)FspMultiPhaseApiEntry, (UINTN)FspMultiPhaseParams, (UINTN)NULL);
+    Status = Execute64BitCode (
+               (UINTN)FspMultiPhaseApiEntry,
+               (UINTN)FspMultiPhaseParams,
+               (UINTN)NULL
+               );
   }
 
   SetInterruptState (InterruptState);
@@ -148,13 +168,14 @@ FspWrapperVariableRequestHandler (
   IN UINT8     ComponentIndex
   )
 {
-  EFI_STATUS                                        Status;
-  FSP_MULTI_PHASE_PARAMS                            FspMultiPhaseParams;
-  FSP_MULTI_PHASE_VARIABLE_REQUEST_INFO_PARAMS      *FspVariableRequestParams;
-  EFI_PEI_READ_ONLY_VARIABLE2_PPI                   *ReadOnlyVariablePpi;
-  EDKII_PEI_VARIABLE_PPI                            *VariablePpi;
-  BOOLEAN                                           WriteVariableSupport;
-  FSP_MULTI_PHASE_COMPLETE_VARIABLE_REQUEST_PARAMS  CompleteVariableRequestParams;
+  EFI_STATUS                                    Status;
+  FSP_MULTI_PHASE_PARAMS                        FspMultiPhaseParams;
+  FSP_MULTI_PHASE_VARIABLE_REQUEST_INFO_PARAMS  *FspVariableRequestParams;
+  EFI_PEI_READ_ONLY_VARIABLE2_PPI               *ReadOnlyVariablePpi;
+  EDKII_PEI_VARIABLE_PPI                        *VariablePpi;
+  BOOLEAN                                       WriteVariableSupport;
+  FSP_MULTI_PHASE_COMPLETE_VARIABLE_REQUEST_PARAMS
+    CompleteVariableRequestParams;
 
   WriteVariableSupport = TRUE;
   Status               = PeiServicesLocatePpi (
@@ -184,12 +205,18 @@ FspWrapperVariableRequestHandler (
     //
     FspMultiPhaseParams.MultiPhaseAction = EnumMultiPhaseGetVariableRequestInfo;
     FspMultiPhaseParams.PhaseIndex       = 0;
-    Status                               = CallFspMultiPhaseEntry (&FspMultiPhaseParams, FspHobListPtr, ComponentIndex);
+    Status                               = CallFspMultiPhaseEntry (
+                                             &FspMultiPhaseParams,
+                                             FspHobListPtr,
+                                             ComponentIndex
+                                             );
     ASSERT_EFI_ERROR (Status);
     //
     // FSP should output this pointer for variable request information.
     //
-    FspVariableRequestParams = (FSP_MULTI_PHASE_VARIABLE_REQUEST_INFO_PARAMS *)FspMultiPhaseParams.MultiPhaseParamPtr;
+    FspVariableRequestParams =
+      (FSP_MULTI_PHASE_VARIABLE_REQUEST_INFO_PARAMS *)FspMultiPhaseParams.
+        MultiPhaseParamPtr;
     switch (FspVariableRequestParams->VariableRequest) {
       case EnumFspVariableRequestGetVariable:
         if (WriteVariableSupport) {
@@ -207,15 +234,23 @@ FspWrapperVariableRequestHandler (
                                           FspVariableRequestParams->VariableName,
                                           FspVariableRequestParams->VariableGuid,
                                           FspVariableRequestParams->Attributes,
-                                          (UINTN *)FspVariableRequestParams->DataSize,
+                                          (UINTN *)FspVariableRequestParams->
+                                            DataSize,
                                           FspVariableRequestParams->Data
                                           );
         }
 
         CompleteVariableRequestParams.VariableRequestStatus = Status;
-        FspMultiPhaseParams.MultiPhaseParamPtr              = (VOID *)&CompleteVariableRequestParams;
-        FspMultiPhaseParams.MultiPhaseAction                = EnumMultiPhaseCompleteVariableRequest;
-        Status                                              = CallFspMultiPhaseEntry (&FspMultiPhaseParams, FspHobListPtr, ComponentIndex);
+        FspMultiPhaseParams.MultiPhaseParamPtr              =
+          (VOID *)&CompleteVariableRequestParams;
+        FspMultiPhaseParams.MultiPhaseAction =
+          EnumMultiPhaseCompleteVariableRequest;
+        Status =
+          CallFspMultiPhaseEntry (
+            &FspMultiPhaseParams,
+            FspHobListPtr,
+            ComponentIndex
+            );
         break;
 
       case EnumFspVariableRequestSetVariable:
@@ -233,32 +268,48 @@ FspWrapperVariableRequestHandler (
         }
 
         CompleteVariableRequestParams.VariableRequestStatus = Status;
-        FspMultiPhaseParams.MultiPhaseParamPtr              = (VOID *)&CompleteVariableRequestParams;
-        FspMultiPhaseParams.MultiPhaseAction                = EnumMultiPhaseCompleteVariableRequest;
-        Status                                              = CallFspMultiPhaseEntry (&FspMultiPhaseParams, FspHobListPtr, ComponentIndex);
+        FspMultiPhaseParams.MultiPhaseParamPtr              =
+          (VOID *)&CompleteVariableRequestParams;
+        FspMultiPhaseParams.MultiPhaseAction =
+          EnumMultiPhaseCompleteVariableRequest;
+        Status =
+          CallFspMultiPhaseEntry (
+            &FspMultiPhaseParams,
+            FspHobListPtr,
+            ComponentIndex
+            );
         break;
 
       case EnumFspVariableRequestGetNextVariableName:
         if (WriteVariableSupport) {
           Status = VariablePpi->GetNextVariableName (
                                   VariablePpi,
-                                  (UINTN *)FspVariableRequestParams->VariableNameSize,
+                                  (UINTN *)FspVariableRequestParams->
+                                    VariableNameSize,
                                   FspVariableRequestParams->VariableName,
                                   FspVariableRequestParams->VariableGuid
                                   );
         } else {
           Status = ReadOnlyVariablePpi->NextVariableName (
                                           ReadOnlyVariablePpi,
-                                          (UINTN *)FspVariableRequestParams->VariableNameSize,
+                                          (UINTN *)FspVariableRequestParams->
+                                            VariableNameSize,
                                           FspVariableRequestParams->VariableName,
                                           FspVariableRequestParams->VariableGuid
                                           );
         }
 
         CompleteVariableRequestParams.VariableRequestStatus = Status;
-        FspMultiPhaseParams.MultiPhaseParamPtr              = (VOID *)&CompleteVariableRequestParams;
-        FspMultiPhaseParams.MultiPhaseAction                = EnumMultiPhaseCompleteVariableRequest;
-        Status                                              = CallFspMultiPhaseEntry (&FspMultiPhaseParams, FspHobListPtr, ComponentIndex);
+        FspMultiPhaseParams.MultiPhaseParamPtr              =
+          (VOID *)&CompleteVariableRequestParams;
+        FspMultiPhaseParams.MultiPhaseAction =
+          EnumMultiPhaseCompleteVariableRequest;
+        Status =
+          CallFspMultiPhaseEntry (
+            &FspMultiPhaseParams,
+            FspHobListPtr,
+            ComponentIndex
+            );
         break;
 
       case EnumFspVariableRequestQueryVariableInfo:
@@ -266,8 +317,10 @@ FspWrapperVariableRequestHandler (
           Status = VariablePpi->QueryVariableInfo (
                                   VariablePpi,
                                   *FspVariableRequestParams->Attributes,
-                                  FspVariableRequestParams->MaximumVariableStorageSize,
-                                  FspVariableRequestParams->RemainingVariableStorageSize,
+                                  FspVariableRequestParams->
+                                    MaximumVariableStorageSize,
+                                  FspVariableRequestParams->
+                                    RemainingVariableStorageSize,
                                   FspVariableRequestParams->MaximumVariableSize
                                   );
         } else {
@@ -275,9 +328,16 @@ FspWrapperVariableRequestHandler (
         }
 
         CompleteVariableRequestParams.VariableRequestStatus = Status;
-        FspMultiPhaseParams.MultiPhaseParamPtr              = (VOID *)&CompleteVariableRequestParams;
-        FspMultiPhaseParams.MultiPhaseAction                = EnumMultiPhaseCompleteVariableRequest;
-        Status                                              = CallFspMultiPhaseEntry (&FspMultiPhaseParams, FspHobListPtr, ComponentIndex);
+        FspMultiPhaseParams.MultiPhaseParamPtr              =
+          (VOID *)&CompleteVariableRequestParams;
+        FspMultiPhaseParams.MultiPhaseAction =
+          EnumMultiPhaseCompleteVariableRequest;
+        Status =
+          CallFspMultiPhaseEntry (
+            &FspMultiPhaseParams,
+            FspHobListPtr,
+            ComponentIndex
+            );
         break;
 
       default:
@@ -290,8 +350,15 @@ FspWrapperVariableRequestHandler (
   //
   // Reset the system if FSP API returned FSP_STATUS_RESET_REQUIRED status
   //
-  if ((Status >= FSP_STATUS_RESET_REQUIRED_COLD) && (Status <= FSP_STATUS_RESET_REQUIRED_8)) {
-    DEBUG ((DEBUG_INFO, "FspMultiPhaseApi-0x%x requested reset %r\n", ComponentIndex, Status));
+  if ((Status >= FSP_STATUS_RESET_REQUIRED_COLD) && (Status <=
+                                                     FSP_STATUS_RESET_REQUIRED_8))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "FspMultiPhaseApi-0x%x requested reset %r\n",
+      ComponentIndex,
+      Status
+      ));
     CallFspWrapperResetSystem ((UINTN)Status);
   }
 
@@ -327,7 +394,11 @@ FspWrapperMultiPhaseHandler (
   FspMultiPhaseParams.MultiPhaseAction   = EnumMultiPhaseGetNumberOfPhases;
   FspMultiPhaseParams.PhaseIndex         = 0;
   FspMultiPhaseParams.MultiPhaseParamPtr = (VOID *)&FspMultiPhaseGetNumber;
-  Status                                 = CallFspMultiPhaseEntry (&FspMultiPhaseParams, FspHobListPtr, ComponentIndex);
+  Status                                 = CallFspMultiPhaseEntry (
+                                             &FspMultiPhaseParams,
+                                             FspHobListPtr,
+                                             ComponentIndex
+                                             );
   if (Status == EFI_UNSUPPORTED) {
     //
     // MultiPhase API was not supported
@@ -340,7 +411,12 @@ FspWrapperMultiPhaseHandler (
   NumOfPhases = FspMultiPhaseGetNumber.NumberOfPhases;
 
   for (Index = 1; Index <= NumOfPhases; Index++) {
-    DEBUG ((DEBUG_ERROR, "MultiPhase Index/NumOfPhases = %d of %d\n", Index, NumOfPhases));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MultiPhase Index/NumOfPhases = %d of %d\n",
+      Index,
+      NumOfPhases
+      ));
     //
     // Platform actions can be added in below function for each component and phase before returning control back to FSP.
     //
@@ -349,7 +425,11 @@ FspWrapperMultiPhaseHandler (
     FspMultiPhaseParams.MultiPhaseAction   = EnumMultiPhaseExecutePhase;
     FspMultiPhaseParams.PhaseIndex         = Index;
     FspMultiPhaseParams.MultiPhaseParamPtr = NULL;
-    Status                                 = CallFspMultiPhaseEntry (&FspMultiPhaseParams, FspHobListPtr, ComponentIndex);
+    Status                                 = CallFspMultiPhaseEntry (
+                                               &FspMultiPhaseParams,
+                                               FspHobListPtr,
+                                               ComponentIndex
+                                               );
 
     if (Status == FSP_STATUS_VARIABLE_REQUEST) {
       //
@@ -361,8 +441,15 @@ FspWrapperMultiPhaseHandler (
     //
     // Reset the system if FSP API returned FSP_STATUS_RESET_REQUIRED status
     //
-    if ((Status >= FSP_STATUS_RESET_REQUIRED_COLD) && (Status <= FSP_STATUS_RESET_REQUIRED_8)) {
-      DEBUG ((DEBUG_INFO, "FspMultiPhaseApi-0x%x requested reset %r\n", ComponentIndex, Status));
+    if ((Status >= FSP_STATUS_RESET_REQUIRED_COLD) && (Status <=
+                                                       FSP_STATUS_RESET_REQUIRED_8))
+    {
+      DEBUG ((
+        DEBUG_INFO,
+        "FspMultiPhaseApi-0x%x requested reset %r\n",
+        ComponentIndex,
+        Status
+        ));
       CallFspWrapperResetSystem ((UINTN)Status);
     }
 

@@ -102,14 +102,46 @@ SecPlatformMain (
 
   DEBUG ((DEBUG_INFO, "SecPlatformMain\n"));
 
-  DEBUG ((DEBUG_INFO, "BootFirmwareVolumeBase - 0x%x\n", SecCoreData->BootFirmwareVolumeBase));
-  DEBUG ((DEBUG_INFO, "BootFirmwareVolumeSize - 0x%x\n", SecCoreData->BootFirmwareVolumeSize));
-  DEBUG ((DEBUG_INFO, "TemporaryRamBase       - 0x%x\n", SecCoreData->TemporaryRamBase));
-  DEBUG ((DEBUG_INFO, "TemporaryRamSize       - 0x%x\n", SecCoreData->TemporaryRamSize));
-  DEBUG ((DEBUG_INFO, "PeiTemporaryRamBase    - 0x%x\n", SecCoreData->PeiTemporaryRamBase));
-  DEBUG ((DEBUG_INFO, "PeiTemporaryRamSize    - 0x%x\n", SecCoreData->PeiTemporaryRamSize));
-  DEBUG ((DEBUG_INFO, "StackBase              - 0x%x\n", SecCoreData->StackBase));
-  DEBUG ((DEBUG_INFO, "StackSize              - 0x%x\n", SecCoreData->StackSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "BootFirmwareVolumeBase - 0x%x\n",
+    SecCoreData->BootFirmwareVolumeBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "BootFirmwareVolumeSize - 0x%x\n",
+    SecCoreData->BootFirmwareVolumeSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "TemporaryRamBase       - 0x%x\n",
+    SecCoreData->TemporaryRamBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "TemporaryRamSize       - 0x%x\n",
+    SecCoreData->TemporaryRamSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "PeiTemporaryRamBase    - 0x%x\n",
+    SecCoreData->PeiTemporaryRamBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "PeiTemporaryRamSize    - 0x%x\n",
+    SecCoreData->PeiTemporaryRamSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "StackBase              - 0x%x\n",
+    SecCoreData->StackBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "StackSize              - 0x%x\n",
+    SecCoreData->StackSize
+    ));
 
   InitializeApicTimer (0, (UINT32)-1, TRUE, 5);
 
@@ -117,13 +149,15 @@ SecPlatformMain (
   // Use middle of Heap as temp buffer, it will be copied by caller.
   // Do not use Stack, because it will cause wrong calculation on stack by PeiCore
   //
-  PpiList = (VOID *)((UINTN)SecCoreData->PeiTemporaryRamBase + (UINTN)SecCoreData->PeiTemporaryRamSize/2);
+  PpiList = (VOID *)((UINTN)SecCoreData->PeiTemporaryRamBase +
+                     (UINTN)SecCoreData->PeiTemporaryRamSize/2);
   CopyMem (PpiList, mPeiSecPlatformPpi, sizeof (mPeiSecPlatformPpi));
 
   //
   // Patch TopOfTemporaryRamPpi
   //
-  PpiList[0].Ppi = (VOID *)((UINTN)SecCoreData->TemporaryRamBase + SecCoreData->TemporaryRamSize);
+  PpiList[0].Ppi = (VOID *)((UINTN)SecCoreData->TemporaryRamBase +
+                            SecCoreData->TemporaryRamSize);
 
   return PpiList;
 }

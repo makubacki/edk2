@@ -47,13 +47,20 @@ GetMemorySizeInMemoryTypeInformation (
   UINTN                        TempPageNum;
 
   MemoryData = NULL;
-  Status     = (*PeiServices)->GetHobList ((CONST EFI_PEI_SERVICES **)PeiServices, (VOID **)&Hob.Raw);
+  Status     = (*PeiServices)->GetHobList (
+                                 (CONST
+                                  EFI_PEI_SERVICES **)PeiServices,
+                                 (VOID **)&Hob.Raw
+                                 );
   ASSERT_EFI_ERROR (Status);
   while (!END_OF_HOB_LIST (Hob)) {
     if ((Hob.Header->HobType == EFI_HOB_TYPE_GUID_EXTENSION) &&
         CompareGuid (&Hob.Guid->Name, &gEfiMemoryTypeInformationGuid))
     {
-      MemoryData = (EFI_MEMORY_TYPE_INFORMATION *)(Hob.Raw + sizeof (EFI_HOB_GENERIC_HEADER) + sizeof (EFI_GUID));
+      MemoryData = (EFI_MEMORY_TYPE_INFORMATION *)(Hob.Raw +
+                                                   sizeof (
+                                                                    EFI_HOB_GENERIC_HEADER)
+                                                   + sizeof (EFI_GUID));
       break;
     }
 
@@ -175,20 +182,39 @@ PostFspmHobProcess (
   Hob.Raw = (UINT8 *)(UINTN)FspHobList;
   DEBUG ((DEBUG_INFO, "FspHobList - 0x%x\n", FspHobList));
 
-  while ((Hob.Raw = GetNextHob (EFI_HOB_TYPE_RESOURCE_DESCRIPTOR, Hob.Raw)) != NULL) {
-    DEBUG ((DEBUG_INFO, "\nResourceType: 0x%x\n", Hob.ResourceDescriptor->ResourceType));
+  while ((Hob.Raw = GetNextHob (EFI_HOB_TYPE_RESOURCE_DESCRIPTOR, Hob.Raw)) !=
+         NULL)
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "\nResourceType: 0x%x\n",
+      Hob.ResourceDescriptor->ResourceType
+      ));
     if ((Hob.ResourceDescriptor->ResourceType == EFI_RESOURCE_SYSTEM_MEMORY) ||
         (Hob.ResourceDescriptor->ResourceType == EFI_RESOURCE_MEMORY_RESERVED))
     {
-      DEBUG ((DEBUG_INFO, "ResourceAttribute: 0x%x\n", Hob.ResourceDescriptor->ResourceAttribute));
-      DEBUG ((DEBUG_INFO, "PhysicalStart: 0x%x\n", Hob.ResourceDescriptor->PhysicalStart));
-      DEBUG ((DEBUG_INFO, "ResourceLength: 0x%x\n", Hob.ResourceDescriptor->ResourceLength));
+      DEBUG ((
+        DEBUG_INFO,
+        "ResourceAttribute: 0x%x\n",
+        Hob.ResourceDescriptor->ResourceAttribute
+        ));
+      DEBUG ((
+        DEBUG_INFO,
+        "PhysicalStart: 0x%x\n",
+        Hob.ResourceDescriptor->PhysicalStart
+        ));
+      DEBUG ((
+        DEBUG_INFO,
+        "ResourceLength: 0x%x\n",
+        Hob.ResourceDescriptor->ResourceLength
+        ));
       DEBUG ((DEBUG_INFO, "Owner: %g\n\n", &Hob.ResourceDescriptor->Owner));
     }
 
     if (  (Hob.ResourceDescriptor->ResourceType == EFI_RESOURCE_SYSTEM_MEMORY) // Found the low memory length below 4G
        && (Hob.ResourceDescriptor->PhysicalStart >= BASE_1MB)
-       && (Hob.ResourceDescriptor->PhysicalStart + Hob.ResourceDescriptor->ResourceLength <= BASE_4GB))
+       && (Hob.ResourceDescriptor->PhysicalStart +
+           Hob.ResourceDescriptor->ResourceLength <= BASE_4GB))
     {
       LowMemorySize += Hob.ResourceDescriptor->ResourceLength;
       Hob.Raw        = GET_NEXT_HOB (Hob);
@@ -197,13 +223,22 @@ PostFspmHobProcess (
 
     if (  (Hob.ResourceDescriptor->ResourceType == EFI_RESOURCE_MEMORY_RESERVED) // Found the low memory length below 4G
        && (Hob.ResourceDescriptor->PhysicalStart >= BASE_1MB)
-       && (Hob.ResourceDescriptor->PhysicalStart + Hob.ResourceDescriptor->ResourceLength <= BASE_4GB)
-       && (CompareGuid (&Hob.ResourceDescriptor->Owner, &gFspReservedMemoryResourceHobGuid)))
+       && (Hob.ResourceDescriptor->PhysicalStart +
+           Hob.ResourceDescriptor->ResourceLength <= BASE_4GB)
+       && (CompareGuid (
+             &Hob.ResourceDescriptor->Owner,
+             &gFspReservedMemoryResourceHobGuid
+             )))
     {
       FoundFspMemHob = TRUE;
       FspMemoryBase  = Hob.ResourceDescriptor->PhysicalStart;
       FspMemorySize  = Hob.ResourceDescriptor->ResourceLength;
-      DEBUG ((DEBUG_INFO, "Find fsp mem hob, base 0x%x, len 0x%x\n", FspMemoryBase, FspMemorySize));
+      DEBUG ((
+        DEBUG_INFO,
+        "Find fsp mem hob, base 0x%x, len 0x%x\n",
+        FspMemoryBase,
+        FspMemorySize
+        ));
     }
 
     //
@@ -248,7 +283,12 @@ PostFspmHobProcess (
     S3PeiMemSize = 0;
     Status       = GetS3MemoryInfo (&S3PeiMemSize, &S3PeiMemBase);
     ASSERT_EFI_ERROR (Status);
-    DEBUG ((DEBUG_INFO, "S3 memory %Xh - %Xh bytes\n", S3PeiMemBase, S3PeiMemSize));
+    DEBUG ((
+      DEBUG_INFO,
+      "S3 memory %Xh - %Xh bytes\n",
+      S3PeiMemBase,
+      S3PeiMemSize
+      ));
 
     //
     // Make sure Stack and PeiMemory are not overlap
@@ -287,7 +327,11 @@ PostFspmHobProcess (
         //
         // Call the Capsule PPI Coalesce function to coalesce the capsule data.
         //
-        Status = Capsule->Coalesce (PeiServices, &CapsuleBuffer, &CapsuleBufferLength);
+        Status = Capsule->Coalesce (
+                            PeiServices,
+                            &CapsuleBuffer,
+                            &CapsuleBufferLength
+                            );
       }
     }
 
@@ -327,7 +371,11 @@ PostFspmHobProcess (
     ASSERT_EFI_ERROR (Status);
 
     if (Capsule != NULL) {
-      Status = Capsule->CreateState (PeiServices, CapsuleBuffer, CapsuleBufferLength);
+      Status = Capsule->CreateState (
+                          PeiServices,
+                          CapsuleBuffer,
+                          CapsuleBufferLength
+                          );
     }
   }
 

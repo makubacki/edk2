@@ -61,7 +61,8 @@ SecPlatformInformation (
   //
   TopOfTemporaryRam  = (UINT32)(UINTN)TopOfTemporaryRamPpi - sizeof (UINT32);
   TopOfTemporaryRam -= sizeof (UINT32) * 2;
-  Count              = *((UINT32 *)(UINTN)(TopOfTemporaryRam - sizeof (UINT32)));
+  Count              = *((UINT32 *)(UINTN)(TopOfTemporaryRam -
+                                           sizeof (UINT32)));
   Size               = Count * sizeof (IA32_HANDOFF_STATUS);
 
   if ((*StructureSize) < (UINT64)Size) {

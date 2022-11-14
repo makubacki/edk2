@@ -62,16 +62,22 @@ FspFindFspHeader (
 
   CheckPointer = (UINT8 *)(UINTN)FlashFvFspBase;
 
-  if (((EFI_FIRMWARE_VOLUME_HEADER *)CheckPointer)->Signature != EFI_FVH_SIGNATURE) {
+  if (((EFI_FIRMWARE_VOLUME_HEADER *)CheckPointer)->Signature !=
+      EFI_FVH_SIGNATURE)
+  {
     return NULL;
   }
 
   if (((EFI_FIRMWARE_VOLUME_HEADER *)CheckPointer)->ExtHeaderOffset != 0) {
-    CheckPointer = CheckPointer + ((EFI_FIRMWARE_VOLUME_HEADER *)CheckPointer)->ExtHeaderOffset;
-    CheckPointer = CheckPointer + ((EFI_FIRMWARE_VOLUME_EXT_HEADER *)CheckPointer)->ExtHeaderSize;
+    CheckPointer = CheckPointer +
+                   ((EFI_FIRMWARE_VOLUME_HEADER *)CheckPointer)->ExtHeaderOffset;
+    CheckPointer = CheckPointer +
+                   ((EFI_FIRMWARE_VOLUME_EXT_HEADER *)CheckPointer)->
+                     ExtHeaderSize;
     CheckPointer = (UINT8 *)ALIGN_POINTER (CheckPointer, 8);
   } else {
-    CheckPointer = CheckPointer + ((EFI_FIRMWARE_VOLUME_HEADER *)CheckPointer)->HeaderLength;
+    CheckPointer = CheckPointer +
+                   ((EFI_FIRMWARE_VOLUME_HEADER *)CheckPointer)->HeaderLength;
   }
 
   CheckPointer = CheckPointer + sizeof (EFI_FFS_FILE_HEADER);
@@ -103,17 +109,32 @@ CallFspNotifyPhase (
   EFI_STATUS        Status;
   BOOLEAN           InterruptState;
 
-  FspHeader = (FSP_INFO_HEADER *)FspFindFspHeader (PcdGet32 (PcdFspsBaseAddress));
+  FspHeader = (FSP_INFO_HEADER *)FspFindFspHeader (
+                                   PcdGet32 (
+                                     PcdFspsBaseAddress
+                                     )
+                                   );
   if (FspHeader == NULL) {
     return EFI_DEVICE_ERROR;
   }
 
-  NotifyPhaseApi = (FSP_NOTIFY_PHASE)((UINTN)FspHeader->ImageBase + FspHeader->NotifyPhaseEntryOffset);
+  NotifyPhaseApi = (FSP_NOTIFY_PHASE)((UINTN)FspHeader->ImageBase +
+                                      FspHeader->NotifyPhaseEntryOffset);
   InterruptState = SaveAndDisableInterrupts ();
-  if ((FspHeader->ImageAttribute & IMAGE_ATTRIBUTE_64BIT_MODE_SUPPORT) == FSP_IA32) {
-    Status = Execute32BitCode ((UINTN)NotifyPhaseApi, (UINTN)NotifyPhaseParams, (UINTN)NULL);
+  if ((FspHeader->ImageAttribute & IMAGE_ATTRIBUTE_64BIT_MODE_SUPPORT) ==
+      FSP_IA32)
+  {
+    Status = Execute32BitCode (
+               (UINTN)NotifyPhaseApi,
+               (UINTN)NotifyPhaseParams,
+               (UINTN)NULL
+               );
   } else {
-    Status = Execute64BitCode ((UINTN)NotifyPhaseApi, (UINTN)NotifyPhaseParams, (UINTN)NULL);
+    Status = Execute64BitCode (
+               (UINTN)NotifyPhaseApi,
+               (UINTN)NotifyPhaseParams,
+               (UINTN)NULL
+               );
   }
 
   SetInterruptState (InterruptState);
@@ -141,17 +162,32 @@ CallFspMemoryInit (
   EFI_STATUS       Status;
   BOOLEAN          InterruptState;
 
-  FspHeader = (FSP_INFO_HEADER *)FspFindFspHeader (PcdGet32 (PcdFspmBaseAddress));
+  FspHeader = (FSP_INFO_HEADER *)FspFindFspHeader (
+                                   PcdGet32 (
+                                     PcdFspmBaseAddress
+                                     )
+                                   );
   if (FspHeader == NULL) {
     return EFI_DEVICE_ERROR;
   }
 
-  FspMemoryInitApi = (FSP_MEMORY_INIT)((UINTN)FspHeader->ImageBase + FspHeader->FspMemoryInitEntryOffset);
+  FspMemoryInitApi = (FSP_MEMORY_INIT)((UINTN)FspHeader->ImageBase +
+                                       FspHeader->FspMemoryInitEntryOffset);
   InterruptState   = SaveAndDisableInterrupts ();
-  if ((FspHeader->ImageAttribute & IMAGE_ATTRIBUTE_64BIT_MODE_SUPPORT) == FSP_IA32) {
-    Status = Execute32BitCode ((UINTN)FspMemoryInitApi, (UINTN)FspmUpdDataPtr, (UINTN)HobListPtr);
+  if ((FspHeader->ImageAttribute & IMAGE_ATTRIBUTE_64BIT_MODE_SUPPORT) ==
+      FSP_IA32)
+  {
+    Status = Execute32BitCode (
+               (UINTN)FspMemoryInitApi,
+               (UINTN)FspmUpdDataPtr,
+               (UINTN)HobListPtr
+               );
   } else {
-    Status = Execute64BitCode ((UINTN)FspMemoryInitApi, (UINTN)FspmUpdDataPtr, (UINTN)HobListPtr);
+    Status = Execute64BitCode (
+               (UINTN)FspMemoryInitApi,
+               (UINTN)FspmUpdDataPtr,
+               (UINTN)HobListPtr
+               );
   }
 
   SetInterruptState (InterruptState);
@@ -177,17 +213,32 @@ CallTempRamExit (
   EFI_STATUS         Status;
   BOOLEAN            InterruptState;
 
-  FspHeader = (FSP_INFO_HEADER *)FspFindFspHeader (PcdGet32 (PcdFspmBaseAddress));
+  FspHeader = (FSP_INFO_HEADER *)FspFindFspHeader (
+                                   PcdGet32 (
+                                     PcdFspmBaseAddress
+                                     )
+                                   );
   if (FspHeader == NULL) {
     return EFI_DEVICE_ERROR;
   }
 
-  TempRamExitApi = (FSP_TEMP_RAM_EXIT)((UINTN)FspHeader->ImageBase + FspHeader->TempRamExitEntryOffset);
+  TempRamExitApi = (FSP_TEMP_RAM_EXIT)((UINTN)FspHeader->ImageBase +
+                                       FspHeader->TempRamExitEntryOffset);
   InterruptState = SaveAndDisableInterrupts ();
-  if ((FspHeader->ImageAttribute & IMAGE_ATTRIBUTE_64BIT_MODE_SUPPORT) == FSP_IA32) {
-    Status = Execute32BitCode ((UINTN)TempRamExitApi, (UINTN)TempRamExitParam, (UINTN)NULL);
+  if ((FspHeader->ImageAttribute & IMAGE_ATTRIBUTE_64BIT_MODE_SUPPORT) ==
+      FSP_IA32)
+  {
+    Status = Execute32BitCode (
+               (UINTN)TempRamExitApi,
+               (UINTN)TempRamExitParam,
+               (UINTN)NULL
+               );
   } else {
-    Status = Execute64BitCode ((UINTN)TempRamExitApi, (UINTN)TempRamExitParam, (UINTN)NULL);
+    Status = Execute64BitCode (
+               (UINTN)TempRamExitApi,
+               (UINTN)TempRamExitParam,
+               (UINTN)NULL
+               );
   }
 
   SetInterruptState (InterruptState);
@@ -213,17 +264,32 @@ CallFspSiliconInit (
   EFI_STATUS        Status;
   BOOLEAN           InterruptState;
 
-  FspHeader = (FSP_INFO_HEADER *)FspFindFspHeader (PcdGet32 (PcdFspsBaseAddress));
+  FspHeader = (FSP_INFO_HEADER *)FspFindFspHeader (
+                                   PcdGet32 (
+                                     PcdFspsBaseAddress
+                                     )
+                                   );
   if (FspHeader == NULL) {
     return EFI_DEVICE_ERROR;
   }
 
-  FspSiliconInitApi = (FSP_SILICON_INIT)((UINTN)FspHeader->ImageBase + FspHeader->FspSiliconInitEntryOffset);
+  FspSiliconInitApi = (FSP_SILICON_INIT)((UINTN)FspHeader->ImageBase +
+                                         FspHeader->FspSiliconInitEntryOffset);
   InterruptState    = SaveAndDisableInterrupts ();
-  if ((FspHeader->ImageAttribute & IMAGE_ATTRIBUTE_64BIT_MODE_SUPPORT) == FSP_IA32) {
-    Status = Execute32BitCode ((UINTN)FspSiliconInitApi, (UINTN)FspsUpdDataPtr, (UINTN)NULL);
+  if ((FspHeader->ImageAttribute & IMAGE_ATTRIBUTE_64BIT_MODE_SUPPORT) ==
+      FSP_IA32)
+  {
+    Status = Execute32BitCode (
+               (UINTN)FspSiliconInitApi,
+               (UINTN)FspsUpdDataPtr,
+               (UINTN)NULL
+               );
   } else {
-    Status = Execute64BitCode ((UINTN)FspSiliconInitApi, (UINTN)FspsUpdDataPtr, (UINTN)NULL);
+    Status = Execute64BitCode (
+               (UINTN)FspSiliconInitApi,
+               (UINTN)FspsUpdDataPtr,
+               (UINTN)NULL
+               );
   }
 
   SetInterruptState (InterruptState);

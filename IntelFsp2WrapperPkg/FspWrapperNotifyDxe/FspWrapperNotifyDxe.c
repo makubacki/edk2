@@ -88,20 +88,44 @@ OnPciEnumerationComplete (
   }
 
   NotifyPhaseParams.Phase = EnumInitPhaseAfterPciEnumeration;
-  PERF_START_EX (&gFspApiPerformanceGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_POST_PCIE_ENUM_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
+  PERF_START_EX (
+    &gFspApiPerformanceGuid,
+    "EventRec",
+    NULL,
+    0,
+    FSP_STATUS_CODE_POST_PCIE_ENUM_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE |
+    FSP_STATUS_CODE_API_ENTRY
+    );
   Status = CallFspNotifyPhase (&NotifyPhaseParams);
-  PERF_END_EX (&gFspApiPerformanceGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_POST_PCIE_ENUM_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
+  PERF_END_EX (
+    &gFspApiPerformanceGuid,
+    "EventRec",
+    NULL,
+    0,
+    FSP_STATUS_CODE_POST_PCIE_ENUM_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE |
+    FSP_STATUS_CODE_API_EXIT
+    );
 
   //
   // Reset the system if FSP API returned FSP_STATUS_RESET_REQUIRED status
   //
-  if ((Status >= FSP_STATUS_RESET_REQUIRED_COLD) && (Status <= FSP_STATUS_RESET_REQUIRED_8)) {
-    DEBUG ((DEBUG_INFO, "FSP NotifyPhase AfterPciEnumeration requested reset 0x%x\n", Status));
+  if ((Status >= FSP_STATUS_RESET_REQUIRED_COLD) && (Status <=
+                                                     FSP_STATUS_RESET_REQUIRED_8))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "FSP NotifyPhase AfterPciEnumeration requested reset 0x%x\n",
+      Status
+      ));
     CallFspWrapperResetSystem (Status);
   }
 
   if (Status != EFI_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "FSP NotifyPhase AfterPciEnumeration failed, status: 0x%x\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FSP NotifyPhase AfterPciEnumeration failed, status: 0x%x\n",
+      Status
+      ));
   } else {
     DEBUG ((DEBUG_INFO, "FSP NotifyPhase AfterPciEnumeration Success.\n"));
   }
@@ -131,20 +155,44 @@ OnReadyToBoot (
   gBS->CloseEvent (Event);
 
   NotifyPhaseParams.Phase = EnumInitPhaseReadyToBoot;
-  PERF_START_EX (&gFspApiPerformanceGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_READY_TO_BOOT_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
+  PERF_START_EX (
+    &gFspApiPerformanceGuid,
+    "EventRec",
+    NULL,
+    0,
+    FSP_STATUS_CODE_READY_TO_BOOT_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE |
+    FSP_STATUS_CODE_API_ENTRY
+    );
   Status = CallFspNotifyPhase (&NotifyPhaseParams);
-  PERF_END_EX (&gFspApiPerformanceGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_READY_TO_BOOT_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
+  PERF_END_EX (
+    &gFspApiPerformanceGuid,
+    "EventRec",
+    NULL,
+    0,
+    FSP_STATUS_CODE_READY_TO_BOOT_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE |
+    FSP_STATUS_CODE_API_EXIT
+    );
 
   //
   // Reset the system if FSP API returned FSP_STATUS_RESET_REQUIRED status
   //
-  if ((Status >= FSP_STATUS_RESET_REQUIRED_COLD) && (Status <= FSP_STATUS_RESET_REQUIRED_8)) {
-    DEBUG ((DEBUG_INFO, "FSP NotifyPhase ReadyToBoot requested reset 0x%x\n", Status));
+  if ((Status >= FSP_STATUS_RESET_REQUIRED_COLD) && (Status <=
+                                                     FSP_STATUS_RESET_REQUIRED_8))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "FSP NotifyPhase ReadyToBoot requested reset 0x%x\n",
+      Status
+      ));
     CallFspWrapperResetSystem (Status);
   }
 
   if (Status != EFI_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "FSP NotifyPhase ReadyToBoot failed, status: 0x%x\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FSP NotifyPhase ReadyToBoot failed, status: 0x%x\n",
+      Status
+      ));
   } else {
     DEBUG ((DEBUG_INFO, "FSP NotifyPhase ReadyToBoot Success.\n"));
   }
@@ -175,20 +223,44 @@ OnEndOfFirmware (
   gBS->CloseEvent (Event);
 
   NotifyPhaseParams.Phase = EnumInitPhaseEndOfFirmware;
-  PERF_START_EX (&gFspApiPerformanceGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_END_OF_FIRMWARE_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_ENTRY);
+  PERF_START_EX (
+    &gFspApiPerformanceGuid,
+    "EventRec",
+    NULL,
+    0,
+    FSP_STATUS_CODE_END_OF_FIRMWARE_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE |
+    FSP_STATUS_CODE_API_ENTRY
+    );
   Status = CallFspNotifyPhase (&NotifyPhaseParams);
-  PERF_END_EX (&gFspApiPerformanceGuid, "EventRec", NULL, 0, FSP_STATUS_CODE_END_OF_FIRMWARE_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE | FSP_STATUS_CODE_API_EXIT);
+  PERF_END_EX (
+    &gFspApiPerformanceGuid,
+    "EventRec",
+    NULL,
+    0,
+    FSP_STATUS_CODE_END_OF_FIRMWARE_NOTIFICATION | FSP_STATUS_CODE_COMMON_CODE |
+    FSP_STATUS_CODE_API_EXIT
+    );
 
   //
   // Reset the system if FSP API returned FSP_STATUS_RESET_REQUIRED status
   //
-  if ((Status >= FSP_STATUS_RESET_REQUIRED_COLD) && (Status <= FSP_STATUS_RESET_REQUIRED_8)) {
-    DEBUG ((DEBUG_INFO, "FSP NotifyPhase EndOfFirmware requested reset 0x%x\n", Status));
+  if ((Status >= FSP_STATUS_RESET_REQUIRED_COLD) && (Status <=
+                                                     FSP_STATUS_RESET_REQUIRED_8))
+  {
+    DEBUG ((
+      DEBUG_INFO,
+      "FSP NotifyPhase EndOfFirmware requested reset 0x%x\n",
+      Status
+      ));
     CallFspWrapperResetSystem (Status);
   }
 
   if (Status != EFI_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "FSP NotifyPhase EndOfFirmware failed, status: 0x%x\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FSP NotifyPhase EndOfFirmware failed, status: 0x%x\n",
+      Status
+      ));
   } else {
     DEBUG ((DEBUG_INFO, "FSP NotifyPhase EndOfFirmware Success.\n"));
   }
@@ -199,13 +271,19 @@ OnEndOfFirmware (
                   (VOID **)&AddPerfRecordInterface
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "gAddPerfRecordProtocolGuid - Locate protocol failed\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "gAddPerfRecordProtocolGuid - Locate protocol failed\n"
+      ));
     return;
   } else {
     Hob.Raw = GetFirstGuidHob (&gFspHobGuid);
     if (Hob.Raw != NULL) {
       FspHobListPtr = GET_GUID_HOB_DATA (Hob.Raw);
-      AddPerfRecordInterface->AddPerformanceRecords ((VOID *)(UINTN)(((UINT32)(UINTN)*FspHobListPtr) & 0xFFFFFFFF));
+      AddPerfRecordInterface->AddPerformanceRecords (
+                                (VOID *)(UINTN)(((UINT32)(UINTN)*FspHobListPtr)
+                                                & 0xFFFFFFFF)
+                                );
     }
   }
 }

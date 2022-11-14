@@ -37,10 +37,21 @@ TestFspMemoryInitApiOutput (
       break;
     }
 
-    if ((CompareGuid (&Hob.ResourceDescriptor->Owner, &gFspBootLoaderTolumHobGuid))) {
+    if ((CompareGuid (
+           &Hob.ResourceDescriptor->Owner,
+           &gFspBootLoaderTolumHobGuid
+           )))
+    {
       DEBUG ((DEBUG_INFO, "gFspBootLoaderTolumHobGuid Found\n"));
-      DEBUG ((DEBUG_INFO, "Fill Boot Loader reserved memory range with 0x5A for testing purpose\n"));
-      SetMem ((VOID *)(UINTN)Hob.ResourceDescriptor->PhysicalStart, (UINTN)Hob.ResourceDescriptor->ResourceLength, 0x5A);
+      DEBUG ((
+        DEBUG_INFO,
+        "Fill Boot Loader reserved memory range with 0x5A for testing purpose\n"
+        ));
+      SetMem (
+        (VOID *)(UINTN)Hob.ResourceDescriptor->PhysicalStart,
+        (UINTN)Hob.ResourceDescriptor->ResourceLength,
+        0x5A
+        );
       break;
     }
 

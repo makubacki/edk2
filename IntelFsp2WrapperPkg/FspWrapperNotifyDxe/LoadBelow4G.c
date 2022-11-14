@@ -91,7 +91,10 @@ RelocateImageUnder4GIfNeeded (
   Status = PeCoffLoaderGetImageInfo (&ImageContext);
   ASSERT_EFI_ERROR (Status);
   if (ImageContext.SectionAlignment > EFI_PAGE_SIZE) {
-    Pages = EFI_SIZE_TO_PAGES ((UINTN)(ImageContext.ImageSize + ImageContext.SectionAlignment));
+    Pages = EFI_SIZE_TO_PAGES (
+              (UINTN)(ImageContext.ImageSize +
+                      ImageContext.SectionAlignment)
+              );
   } else {
     Pages = EFI_SIZE_TO_PAGES ((UINTN)ImageContext.ImageSize);
   }
@@ -109,7 +112,8 @@ RelocateImageUnder4GIfNeeded (
   // Align buffer on section boundary
   //
   ImageContext.ImageAddress += ImageContext.SectionAlignment - 1;
-  ImageContext.ImageAddress &= ~((EFI_PHYSICAL_ADDRESS)ImageContext.SectionAlignment - 1);
+  ImageContext.ImageAddress &=
+    ~((EFI_PHYSICAL_ADDRESS)ImageContext.SectionAlignment - 1);
   //
   // Load the image to our new buffer
   //
@@ -130,12 +134,26 @@ RelocateImageUnder4GIfNeeded (
   //
   // Flush the instruction cache so the image data is written before we execute it
   //
-  InvalidateInstructionCacheRange ((VOID *)(UINTN)ImageContext.ImageAddress, (UINTN)ImageContext.ImageSize);
+  InvalidateInstructionCacheRange (
+    (VOID *)(UINTN)ImageContext.ImageAddress,
+    (UINTN)ImageContext.ImageSize
+    );
 
-  DEBUG ((DEBUG_INFO, "Loading driver at 0x%08x EntryPoint=0x%08x\n", (UINTN)ImageContext.ImageAddress, (UINTN)ImageContext.EntryPoint));
-  Status = ((EFI_IMAGE_ENTRY_POINT)(UINTN)(ImageContext.EntryPoint))(NewImageHandle, gST);
+  DEBUG ((
+    DEBUG_INFO,
+    "Loading driver at 0x%08x EntryPoint=0x%08x\n",
+    (UINTN)ImageContext.ImageAddress,
+    (UINTN)ImageContext.EntryPoint
+    ));
+  Status = ((EFI_IMAGE_ENTRY_POINT)(UINTN)(ImageContext.EntryPoint))(
+  NewImageHandle, gST);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Error: Image at 0x%08x start failed: %r\n", ImageContext.ImageAddress, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Error: Image at 0x%08x start failed: %r\n",
+      ImageContext.ImageAddress,
+      Status
+      ));
     gBS->FreePages (FfsBuffer, Pages);
   }
 

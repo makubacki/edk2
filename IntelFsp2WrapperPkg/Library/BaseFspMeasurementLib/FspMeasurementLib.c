@@ -121,14 +121,35 @@ MeasureFspFirmwareBlobWithCfg (
   FvName = TpmMeasurementGetFvName (FirmwareBlobBase, FirmwareBlobLength);
 
   if (((Description != NULL) || (FvName != NULL)) &&
-      (PcdGet32 (PcdTcgPfpMeasurementRevision) >= TCG_EfiSpecIDEventStruct_SPEC_ERRATA_TPM2_REV_105))
+      (PcdGet32 (PcdTcgPfpMeasurementRevision) >=
+       TCG_EfiSpecIDEventStruct_SPEC_ERRATA_TPM2_REV_105))
   {
     if (Description != NULL) {
-      AsciiSPrint ((CHAR8 *)FvBlob2.BlobDescription, sizeof (FvBlob2.BlobDescription), "%a", Description);
-      AsciiSPrint ((CHAR8 *)UpdBlob2.BlobDescription, sizeof (UpdBlob2.BlobDescription), "%aUDP", Description);
+      AsciiSPrint (
+        (CHAR8 *)FvBlob2.BlobDescription,
+        sizeof (FvBlob2.BlobDescription),
+        "%a",
+        Description
+        );
+      AsciiSPrint (
+        (CHAR8 *)UpdBlob2.BlobDescription,
+        sizeof (UpdBlob2.BlobDescription),
+        "%aUDP",
+        Description
+        );
     } else {
-      AsciiSPrint ((CHAR8 *)FvBlob2.BlobDescription, sizeof (FvBlob2.BlobDescription), "Fv(%g)", FvName);
-      AsciiSPrint ((CHAR8 *)UpdBlob2.BlobDescription, sizeof (UpdBlob2.BlobDescription), "(%g)UDP", FvName);
+      AsciiSPrint (
+        (CHAR8 *)FvBlob2.BlobDescription,
+        sizeof (FvBlob2.BlobDescription),
+        "Fv(%g)",
+        FvName
+        );
+      AsciiSPrint (
+        (CHAR8 *)UpdBlob2.BlobDescription,
+        sizeof (UpdBlob2.BlobDescription),
+        "(%g)UDP",
+        FvName
+        );
     }
 
     FvBlob2.BlobDescriptionSize = sizeof (FvBlob2.BlobDescription);
@@ -249,5 +270,10 @@ MeasureFspFirmwareBlob (
     }
   }
 
-  return MeasureFirmwareBlob (PcrIndex, Description, FirmwareBlobBase, FirmwareBlobLength);
+  return MeasureFirmwareBlob (
+           PcrIndex,
+           Description,
+           FirmwareBlobBase,
+           FirmwareBlobLength
+           );
 }
