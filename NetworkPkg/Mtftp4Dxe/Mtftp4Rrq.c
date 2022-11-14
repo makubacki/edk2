@@ -362,13 +362,13 @@ Mtftp4RrqOackValid (
   // return the timeout matches that requested.
   //
   if (  (((Reply->Exist & MTFTP4_BLKSIZE_EXIST) != 0) && (Reply->BlkSize >
-                                                        Request->BlkSize)) ||
-      (((Reply->Exist & MTFTP4_WINDOWSIZE_EXIST) != 0) && (Reply->WindowSize >
-                                                           Request->WindowSize))
+                                                          Request->BlkSize)) ||
+        (((Reply->Exist & MTFTP4_WINDOWSIZE_EXIST) != 0) && (Reply->WindowSize >
+                                                             Request->WindowSize))
      ||
-      (((Reply->Exist & MTFTP4_TIMEOUT_EXIST) != 0) && (Reply->Timeout !=
-                                                        Request->Timeout))
-      )
+        (((Reply->Exist & MTFTP4_TIMEOUT_EXIST) != 0) && (Reply->Timeout !=
+                                                          Request->Timeout))
+        )
   {
     return FALSE;
   }

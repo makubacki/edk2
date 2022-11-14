@@ -370,8 +370,8 @@ Mtftp4SendError (
   EFI_MTFTP4_PACKET  *TftpError;
   UINT32             Len;
 
-  Len    = (UINT32)(AsciiStrLen ((CHAR8 *)ErrInfo) +
-                    sizeof (EFI_MTFTP4_ERROR_HEADER));
+  Len = (UINT32)(AsciiStrLen ((CHAR8 *)ErrInfo) +
+                 sizeof (EFI_MTFTP4_ERROR_HEADER));
   Packet = NetbufAlloc (Len);
   if (Packet == NULL) {
     return EFI_OUT_OF_RESOURCES;

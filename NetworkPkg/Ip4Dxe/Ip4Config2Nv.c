@@ -671,8 +671,12 @@ Ip4Config2ConvertIfrNvDataToConfigNvData (
     Status = Ip4Config2StrToIp (IfrFormNvData->GatewayAddress, &Gateway.v4);
     if (EFI_ERROR (Status) ||
         ((Gateway.Addr[0] != 0) && (SubnetMask.Addr[0] != 0) &&
-         !NetIp4IsUnicast (NTOHL (Gateway.Addr[0]), NTOHL (
-                                                      SubnetMask.Addr[0]))))
+         !NetIp4IsUnicast (
+            NTOHL (Gateway.Addr[0]),
+            NTOHL (
+              SubnetMask.Addr[0]
+              )
+            )))
     {
       CreatePopUp (
         EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
@@ -1309,7 +1313,8 @@ Ip4FormCallback (
         Status = Ip4Config2StrToIp (IfrFormNvData->SubnetMask, &SubnetMask.v4);
         if (EFI_ERROR (Status) || ((SubnetMask.Addr[0] != 0) &&
                                    (GetSubnetMaskPrefixLength (
-                                      &SubnetMask.v4) == 0)))
+                                      &SubnetMask.v4
+                                      ) == 0)))
         {
           CreatePopUp (
             EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,

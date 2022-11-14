@@ -394,11 +394,11 @@ DeleteCert (
       NewCertList = (EFI_SIGNATURE_LIST *)(Data + Offset);
       Offset     += (sizeof (EFI_SIGNATURE_LIST) +
                      CertList->SignatureHeaderSize);
-      Cert        = (EFI_SIGNATURE_DATA *)((UINT8 *)CertList +
-                                           sizeof (EFI_SIGNATURE_LIST) +
-                                           CertList->SignatureHeaderSize);
-      CertCount   = (CertList->SignatureListSize - sizeof (EFI_SIGNATURE_LIST) -
-                     CertList->SignatureHeaderSize) / CertList->SignatureSize;
+      Cert = (EFI_SIGNATURE_DATA *)((UINT8 *)CertList +
+                                    sizeof (EFI_SIGNATURE_LIST) +
+                                    CertList->SignatureHeaderSize);
+      CertCount = (CertList->SignatureListSize - sizeof (EFI_SIGNATURE_LIST) -
+                   CertList->SignatureHeaderSize) / CertList->SignatureSize;
       for (Index = 0; Index < CertCount; Index++) {
         if (GuidIndex == DeleteIndex) {
           //

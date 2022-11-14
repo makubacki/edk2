@@ -1670,9 +1670,9 @@ ArpFindCacheEntry (
     //
     // Set the fields in FindData.
     //
-    FindData->Size            = FoundEntryLength;
-    FindData->DenyFlag        = (BOOLEAN)(CacheTable ==
-                                          &ArpService->DeniedCacheTable);
+    FindData->Size     = FoundEntryLength;
+    FindData->DenyFlag = (BOOLEAN)(CacheTable ==
+                                   &ArpService->DeniedCacheTable);
     FindData->StaticFlag      = (BOOLEAN)(CacheEntry->DefaultDecayTime == 0);
     FindData->HwAddressType   = ArpService->SnpMode.IfType;
     FindData->SwAddressType   = Instance->ConfigData.SwAddressType;

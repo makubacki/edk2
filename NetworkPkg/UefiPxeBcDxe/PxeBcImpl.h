@@ -75,13 +75,13 @@ typedef struct _PXEBC_VIRTUAL_NIC       PXEBC_VIRTUAL_NIC;
 #define PXEBC_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('P', 'X', 'E', 'P')
 #define PXEBC_VIRTUAL_NIC_SIGNATURE   SIGNATURE_32 ('P', 'X', 'E', 'V')
 #define PXEBC_PRIVATE_DATA_FROM_PXEBC( \
-                                     a)    \
+                                       a)    \
       CR (a, PXEBC_PRIVATE_DATA, PxeBc, PXEBC_PRIVATE_DATA_SIGNATURE)
 #define PXEBC_PRIVATE_DATA_FROM_ID( \
-                                  a)       \
+                                    a)       \
       CR (a, PXEBC_PRIVATE_DATA, Id, PXEBC_PRIVATE_DATA_SIGNATURE)
 #define PXEBC_VIRTUAL_NIC_FROM_LOADFILE( \
-                                       a)  \
+                                         a)  \
       CR (a, PXEBC_VIRTUAL_NIC, LoadFile, PXEBC_VIRTUAL_NIC_SIGNATURE)
 
 #define PXE_ENABLED   0x01

@@ -186,10 +186,10 @@ Ip6SetAddress (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  DelayNode->DelayTime   = (UINT32)(DivU64x32 (
-                                      Delay,
-                                      IP6_TIMER_INTERVAL_IN_MS
-                                      ));
+  DelayNode->DelayTime = (UINT32)(DivU64x32 (
+                                    Delay,
+                                    IP6_TIMER_INTERVAL_IN_MS
+                                    ));
   DelayNode->Interface   = Interface;
   DelayNode->AddressInfo = AddressInfo;
   DelayNode->DadCallback = DadCallback;

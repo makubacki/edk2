@@ -136,7 +136,7 @@
 
 **/
 #define SOCK_IS_CONFIGURED_ACTIVE( \
-                                 Sock)  \
+                                   Sock)  \
   ((Sock)->ConfigureState == SO_CONFIGURED_ACTIVE)
 
 /**
@@ -149,7 +149,7 @@
 
 **/
 #define SOCK_IS_CONNECTED_PASSIVE( \
-                                 Sock)  \
+                                   Sock)  \
   ((Sock)->ConfigureState == SO_CONFIGURED_PASSIVE)
 
 /**

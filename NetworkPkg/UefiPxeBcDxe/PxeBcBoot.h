@@ -15,7 +15,7 @@
 #define PXEBC_DEFAULT_TFTP_OVERHEAD_SIZE  4
 
 #define PXEBC_IS_SIZE_OVERFLOWED( \
-                                x)  \
+                                  x)  \
   ((sizeof (UINTN) < sizeof (UINT64)) && ((x) > 0xFFFFFFFF))
 
 /**

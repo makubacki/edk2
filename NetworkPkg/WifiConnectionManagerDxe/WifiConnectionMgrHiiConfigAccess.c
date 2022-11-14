@@ -2081,7 +2081,7 @@ WifiMgrDxeHiiConfigAccessCallback (
 
         HiddenNetwork = (WIFI_HIDDEN_NETWORK_DATA *)AllocateZeroPool (
                                                       sizeof (
-                                                                             WIFI_HIDDEN_NETWORK_DATA)
+                                                              WIFI_HIDDEN_NETWORK_DATA)
                                                       );
         if (HiddenNetwork == NULL) {
           Status = EFI_OUT_OF_RESOURCES;

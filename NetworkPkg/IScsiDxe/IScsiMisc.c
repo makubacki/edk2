@@ -2655,7 +2655,7 @@ IScsiGetConfigData (
     AttemptConfigData->DhcpSuccess   = FALSE;
     AttemptConfigData->ValidiBFTPath = (BOOLEAN)(mPrivate->EnableMpio ? TRUE :
                                                  FALSE);
-    AttemptConfigData->ValidPath     = FALSE;
+    AttemptConfigData->ValidPath = FALSE;
 
     if (AttemptConfigData->SessionConfigData.IpMode == IP_MODE_AUTOCONFIG) {
       AttemptConfigData->SessionConfigData.InitiatorInfoFromDhcp = TRUE;

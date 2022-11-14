@@ -157,13 +157,15 @@ PxeBcMtftp6GetFileSize (
     ReqOpt[OptCnt].OptionStr =
       (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
     ReqOpt[OptCnt].ValueStr = (UINT8 *)(ReqOpt[OptCnt-1].ValueStr +
-                                        AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-
-                                                                     1].ValueStr)
+                                        AsciiStrLen (
+                                          (CHAR8 *)ReqOpt[OptCnt-
+                                                          1].ValueStr
+                                          )
                                         + 1);
-    OptBufSize             -= (AsciiStrLen (
-                                 (CHAR8 *)ReqOpt[OptCnt-
-                                                 1].ValueStr
-                                 ) + 1);
+    OptBufSize -= (AsciiStrLen (
+                     (CHAR8 *)ReqOpt[OptCnt-
+                                     1].ValueStr
+                     ) + 1);
     PxeBcUintnToAscDec (*BlockSize, ReqOpt[OptCnt].ValueStr, OptBufSize);
     OptCnt++;
   }
@@ -172,13 +174,15 @@ PxeBcMtftp6GetFileSize (
     ReqOpt[OptCnt].OptionStr =
       (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_WINDOWSIZE_INDEX];
     ReqOpt[OptCnt].ValueStr = (UINT8 *)(ReqOpt[OptCnt-1].ValueStr +
-                                        AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-
-                                                                     1].ValueStr)
+                                        AsciiStrLen (
+                                          (CHAR8 *)ReqOpt[OptCnt-
+                                                          1].ValueStr
+                                          )
                                         + 1);
-    OptBufSize             -= (AsciiStrLen (
-                                 (CHAR8 *)ReqOpt[OptCnt-
-                                                 1].ValueStr
-                                 ) + 1);
+    OptBufSize -= (AsciiStrLen (
+                     (CHAR8 *)ReqOpt[OptCnt-
+                                     1].ValueStr
+                     ) + 1);
     PxeBcUintnToAscDec (*WindowSize, ReqOpt[OptCnt].ValueStr, OptBufSize);
     OptCnt++;
   }
@@ -679,13 +683,15 @@ PxeBcMtftp4GetFileSize (
     ReqOpt[OptCnt].OptionStr =
       (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_BLKSIZE_INDEX];
     ReqOpt[OptCnt].ValueStr = (UINT8 *)(ReqOpt[OptCnt-1].ValueStr +
-                                        AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-
-                                                                     1].ValueStr)
+                                        AsciiStrLen (
+                                          (CHAR8 *)ReqOpt[OptCnt-
+                                                          1].ValueStr
+                                          )
                                         + 1);
-    OptBufSize             -= (AsciiStrLen (
-                                 (CHAR8 *)ReqOpt[OptCnt-
-                                                 1].ValueStr
-                                 ) + 1);
+    OptBufSize -= (AsciiStrLen (
+                     (CHAR8 *)ReqOpt[OptCnt-
+                                     1].ValueStr
+                     ) + 1);
     PxeBcUintnToAscDec (*BlockSize, ReqOpt[OptCnt].ValueStr, OptBufSize);
     OptCnt++;
   }
@@ -694,13 +700,15 @@ PxeBcMtftp4GetFileSize (
     ReqOpt[OptCnt].OptionStr =
       (UINT8 *)mMtftpOptions[PXE_MTFTP_OPTION_WINDOWSIZE_INDEX];
     ReqOpt[OptCnt].ValueStr = (UINT8 *)(ReqOpt[OptCnt-1].ValueStr +
-                                        AsciiStrLen ((CHAR8 *)ReqOpt[OptCnt-
-                                                                     1].ValueStr)
+                                        AsciiStrLen (
+                                          (CHAR8 *)ReqOpt[OptCnt-
+                                                          1].ValueStr
+                                          )
                                         + 1);
-    OptBufSize             -= (AsciiStrLen (
-                                 (CHAR8 *)ReqOpt[OptCnt-
-                                                 1].ValueStr
-                                 ) + 1);
+    OptBufSize -= (AsciiStrLen (
+                     (CHAR8 *)ReqOpt[OptCnt-
+                                     1].ValueStr
+                     ) + 1);
     PxeBcUintnToAscDec (*WindowSize, ReqOpt[OptCnt].ValueStr, OptBufSize);
     OptCnt++;
   }

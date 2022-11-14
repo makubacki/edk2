@@ -598,8 +598,8 @@ Mtftp6SendError (
   //
   // Allocate a packet then copy the data.
   //
-  Len  = (UINT32)(AsciiStrLen ((CHAR8 *)ErrInfo) +
-                  sizeof (EFI_MTFTP6_ERROR_HEADER));
+  Len = (UINT32)(AsciiStrLen ((CHAR8 *)ErrInfo) +
+                 sizeof (EFI_MTFTP6_ERROR_HEADER));
   Nbuf = NetbufAlloc (Len);
 
   if (Nbuf == NULL) {

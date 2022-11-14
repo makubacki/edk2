@@ -366,7 +366,7 @@ Mtftp6RrqOackValid (
                                                              &ReplyInfo->McastIp,
                                                              &Instance->McastIp,
                                                              sizeof (
-                                                                    EFI_IPv6_ADDRESS)
+                                                                     EFI_IPv6_ADDRESS)
                                                              ) != 0))
     {
       return FALSE;

@@ -57,10 +57,10 @@ typedef struct _DHCP6_INSTANCE  DHCP6_INSTANCE;
 #define DHCP_CHECK_MEDIA_WAITING_TIME  EFI_TIMER_PERIOD_SECONDS(20)
 
 #define DHCP6_INSTANCE_FROM_THIS( \
-                                Instance)  \
+                                  Instance)  \
       CR ((Instance), DHCP6_INSTANCE, Dhcp6, DHCP6_INSTANCE_SIGNATURE)
 #define DHCP6_SERVICE_FROM_THIS( \
-                               Service)    \
+                                 Service)    \
       CR ((Service), DHCP6_SERVICE, ServiceBinding, DHCP6_SERVICE_SIGNATURE)
 
 extern EFI_IPv6_ADDRESS    mAllDhcpRelayAndServersAddress;

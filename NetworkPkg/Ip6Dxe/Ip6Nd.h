@@ -11,7 +11,7 @@
 #define __EFI_IP6_ND_H__
 
 #define IP6_GET_TICKS( \
-                     Ms)  \
+                       Ms)  \
   (((Ms) + IP6_TIMER_INTERVAL_IN_MS - 1) / IP6_TIMER_INTERVAL_IN_MS)
 
 enum {

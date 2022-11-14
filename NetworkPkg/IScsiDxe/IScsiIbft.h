@@ -19,7 +19,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define IBFT_HEAP_OFFSET     2048
 
 #define IBFT_ROUNDUP( \
-                    size)  \
+                      size)  \
   NET_ROUNDUP ((size), EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_STRUCTURE_ALIGNMENT)
 
 /**

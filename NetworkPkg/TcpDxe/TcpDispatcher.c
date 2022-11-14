@@ -114,14 +114,14 @@ Tcp4GetMode (
       Option->KeepAliveTime     = Tcb->KeepAliveIdle / TCP_TICK_HZ;
       Option->KeepAliveInterval = Tcb->KeepAlivePeriod / TCP_TICK_HZ;
 
-      Option->EnableNagle         = (BOOLEAN)(!TCP_FLG_ON (
-                                                 Tcb->CtrlFlag,
-                                                 TCP_CTRL_NO_NAGLE
-                                                 ));
-      Option->EnableTimeStamp     = (BOOLEAN)(!TCP_FLG_ON (
-                                                 Tcb->CtrlFlag,
-                                                 TCP_CTRL_NO_TS
-                                                 ));
+      Option->EnableNagle = (BOOLEAN)(!TCP_FLG_ON (
+                                         Tcb->CtrlFlag,
+                                         TCP_CTRL_NO_NAGLE
+                                         ));
+      Option->EnableTimeStamp = (BOOLEAN)(!TCP_FLG_ON (
+                                             Tcb->CtrlFlag,
+                                             TCP_CTRL_NO_TS
+                                             ));
       Option->EnableWindowScaling = (BOOLEAN)(!TCP_FLG_ON (
                                                  Tcb->CtrlFlag,
                                                  TCP_CTRL_NO_WS
@@ -205,14 +205,14 @@ Tcp6GetMode (
       Option->KeepAliveTime     = Tcb->KeepAliveIdle / TCP_TICK_HZ;
       Option->KeepAliveInterval = Tcb->KeepAlivePeriod / TCP_TICK_HZ;
 
-      Option->EnableNagle         = (BOOLEAN)(!TCP_FLG_ON (
-                                                 Tcb->CtrlFlag,
-                                                 TCP_CTRL_NO_NAGLE
-                                                 ));
-      Option->EnableTimeStamp     = (BOOLEAN)(!TCP_FLG_ON (
-                                                 Tcb->CtrlFlag,
-                                                 TCP_CTRL_NO_TS
-                                                 ));
+      Option->EnableNagle = (BOOLEAN)(!TCP_FLG_ON (
+                                         Tcb->CtrlFlag,
+                                         TCP_CTRL_NO_NAGLE
+                                         ));
+      Option->EnableTimeStamp = (BOOLEAN)(!TCP_FLG_ON (
+                                             Tcb->CtrlFlag,
+                                             TCP_CTRL_NO_TS
+                                             ));
       Option->EnableWindowScaling = (BOOLEAN)(!TCP_FLG_ON (
                                                  Tcb->CtrlFlag,
                                                  TCP_CTRL_NO_WS

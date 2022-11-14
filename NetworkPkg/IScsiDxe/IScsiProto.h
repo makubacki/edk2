@@ -94,13 +94,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
                          Flgs)  \
                                                       ((((ISCSI_BASIC_HEADER *) (PduHdr))->OpCode) = ((Op) | (Flgs)))
 #define ISCSI_GET_OPCODE( \
-                        PduHdr)            \
+                          PduHdr)            \
                                                       ((((ISCSI_BASIC_HEADER *) (PduHdr))->OpCode) & ISCSI_OPCODE_MASK)
 #define ISCSI_CHECK_OPCODE(PduHdr, \
                            Op)      \
                                                       ((((PduHdr)->OpCode) & ISCSI_OPCODE_MASK) == (Op))
 #define ISCSI_IMMEDIATE_ON( \
-                          PduHdr)          \
+                            PduHdr)          \
                                                       ((PduHdr)->OpCode & ISCSI_REQ_IMMEDIATE)
 #define ISCSI_SET_FLAG(PduHdr, \
                        Flag)        \
@@ -115,10 +115,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
                          Nxt)  \
                                                       ((PduHdr)->Flags = (UINT8) ((PduHdr)->Flags | ((Cur) << 2 | (Nxt))))
 #define ISCSI_GET_CURRENT_STAGE( \
-                               PduHdr)     \
+                                 PduHdr)     \
                                                       ((UINT8) (((PduHdr)->Flags >> 2) & 0x3))
 #define ISCSI_GET_NEXT_STAGE( \
-                            PduHdr)        \
+                              PduHdr)        \
                                                       ((UINT8) (((PduHdr)->Flags) & 0x3))
 
 #define ISCSI_GET_PAD_LEN(DataLen)  ((~(DataLen) + 1) & 0x3)
@@ -134,13 +134,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define NTOH24(src)  (((src)[0] << 16) | ((src)[1] << 8) | ((src)[2]))
 
 #define ISCSI_GET_DATASEG_LEN( \
-                             PduHdr)       \
+                               PduHdr)       \
                   NTOH24 (((ISCSI_BASIC_HEADER *) (PduHdr))->DataSegmentLength)
 #define ISCSI_SET_DATASEG_LEN(PduHdr, \
                               Len)  \
                   HTON24 (((ISCSI_BASIC_HEADER *) (PduHdr))->DataSegmentLength, (Len))
 #define ISCSI_GET_BUFFER_OFFSET( \
-                               PduHdr)     \
+                                 PduHdr)     \
                   NTOHL  (((ISCSI_SCSI_DATA_IN *) (PduHdr))->BufferOffset)
 
 //

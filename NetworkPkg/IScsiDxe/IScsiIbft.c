@@ -221,12 +221,12 @@ IScsiFillNICAndTargetSections (
                                                                    InitiatorOffset
                                                                  + IBFT_ROUNDUP (
                                                                      sizeof (
-                                                                                               EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_INITIATOR_STRUCTURE)
+                                                                             EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_INITIATOR_STRUCTURE)
                                                                      ));
   Target = (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE *)((UINTN)Nic +
                                                                    IBFT_ROUNDUP (
                                                                      sizeof (
-                                                                                        EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE)
+                                                                             EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE)
                                                                      ));
 
   SectionOffset = &Control->NIC0Offset;
@@ -481,13 +481,13 @@ IScsiFillNICAndTargetSections (
     Nic = (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE *)((UINTN)Target +
                                                                IBFT_ROUNDUP (
                                                                  sizeof (
-                                                                                    EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE)
+                                                                         EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE)
                                                                  ));
     Target =
       (EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_TARGET_STRUCTURE *)((UINTN)Nic +
                                                               IBFT_ROUNDUP (
                                                                 sizeof (
-                                                                                          EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE)
+                                                                        EFI_ACPI_ISCSI_BOOT_FIRMWARE_TABLE_NIC_STRUCTURE)
                                                                 ));
 
     Index++;

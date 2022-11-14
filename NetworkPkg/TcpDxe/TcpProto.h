@@ -194,7 +194,7 @@
     (TcpIsIpZero (&((Pb)->Ip), Ver) || TcpIsIpEqual (&((Pb)->Ip), &((Pa)->Ip), Ver)) \
   )
 
-#define TCP_TIMER_ON(Flag, Timer)        ((Flag) & (1 << (Timer)))
+#define TCP_TIMER_ON(Flag, Timer)  ((Flag) & (1 << (Timer)))
 #define TCP_SET_TIMER(Flag, \
                       Timer)    \
                                          ((Flag) = (UINT16) ((Flag) | (1 << (Timer))))

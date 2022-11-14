@@ -651,7 +651,8 @@ TcpIoAccept (
 
   while (!TcpIo->IsListenDone && ((Timeout == NULL) || EFI_ERROR (
                                                          gBS->CheckEvent (
-                                                                Timeout)
+                                                                Timeout
+                                                                )
                                                          )))
   {
     if (TcpIo->TcpVersion == TCP_VERSION_4) {

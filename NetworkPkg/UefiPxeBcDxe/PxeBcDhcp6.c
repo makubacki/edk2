@@ -1214,9 +1214,9 @@ PxeBcCacheDhcp6Offer (
         Private->OfferNum;
       Private->OfferCount[OfferType]++;
     } else if (  ((OfferType == PxeOfferTypeProxyPxe10) || (OfferType ==
-                                                          PxeOfferTypeProxyWfm11a))
+                                                            PxeOfferTypeProxyWfm11a))
               &&
-               (Private->OfferCount[OfferType] < 1))
+                 (Private->OfferCount[OfferType] < 1))
     {
       //
       // Only cache the first PXE10/WFM11a offer, and discard the others.
@@ -1312,7 +1312,7 @@ PxeBcSelectDhcp6Offer (
       {
         OfferIndex = Private->OfferIndex[PxeOfferTypeDhcpOnly][Index];
         if (Private->OfferBuffer[OfferIndex].Dhcp6.OptList[
-                                                          PXEBC_DHCP6_IDX_BOOT_FILE_URL
+                                                           PXEBC_DHCP6_IDX_BOOT_FILE_URL
             ] != NULL)
         {
           Private->SelectIndex = OfferIndex + 1;
@@ -1337,7 +1337,7 @@ PxeBcSelectDhcp6Offer (
       if (!Private->IsProxyRecved &&
           (OfferType == PxeOfferTypeDhcpOnly) &&
           (Private->OfferBuffer[Index].Dhcp6.OptList[
-                                                    PXEBC_DHCP6_IDX_BOOT_FILE_URL
+                                                     PXEBC_DHCP6_IDX_BOOT_FILE_URL
            ] == NULL))
       {
         //
@@ -2008,13 +2008,13 @@ PxeBcDhcp6CallBack (
   if ((Dhcp6Event != Dhcp6SelectAdvertise) && (Callback != NULL)) {
     Received = (BOOLEAN)(Dhcp6Event == Dhcp6RcvdAdvertise || Dhcp6Event ==
                          Dhcp6RcvdReply);
-    Status   = Callback->Callback (
-                           Callback,
-                           Private->Function,
-                           Received,
-                           Packet->Length,
-                           (EFI_PXE_BASE_CODE_PACKET *)&Packet->Dhcp6
-                           );
+    Status = Callback->Callback (
+                         Callback,
+                         Private->Function,
+                         Received,
+                         Packet->Length,
+                         (EFI_PXE_BASE_CODE_PACKET *)&Packet->Dhcp6
+                         );
     if (Status != EFI_PXE_BASE_CODE_CALLBACK_STATUS_CONTINUE) {
       return EFI_ABORTED;
     }
@@ -2099,8 +2099,8 @@ PxeBcDhcp6CallBack (
         Status = EFI_ABORTED;
       } else {
         ASSERT (NewPacket != NULL);
-        SelectAd   = &Private->OfferBuffer[Private->SelectIndex -
-                                           1].Dhcp6.Packet.Offer;
+        SelectAd = &Private->OfferBuffer[Private->SelectIndex -
+                                         1].Dhcp6.Packet.Offer;
         *NewPacket = AllocateZeroPool (SelectAd->Size);
         ASSERT (*NewPacket != NULL);
         if (*NewPacket == NULL) {

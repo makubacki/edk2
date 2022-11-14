@@ -642,7 +642,7 @@ HttpIoSendChunkedTransfer (
       RequestMessage->BodyLength -= MessageBodyLength;
       RequestMessage->Body        = (VOID *)((CHAR8 *)RequestMessage->Body +
                                              MessageBodyLength);
-      MessageBodyLength          += (ChunkLength + 2);
+      MessageBodyLength += (ChunkLength + 2);
       if (RequestMessage->BodyLength == 0) {
         *SendChunkProcess = HttpIoSendChunkEndChunk;
       }

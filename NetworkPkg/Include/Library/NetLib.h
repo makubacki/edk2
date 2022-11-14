@@ -228,19 +228,19 @@ typedef struct {
 // Test the IP's attribute, All the IPs are in host byte order.
 //
 #define IP4_IS_MULTICAST( \
-                        Ip)              \
+                          Ip)              \
                                                                               (((Ip) & 0xF0000000) == 0xE0000000)
 #define IP4_IS_UNSPECIFIED( \
-                          Ip)            \
+                            Ip)            \
                                                                               ((Ip) == 0)
 #define IP4_IS_LOCAL_BROADCAST( \
-                              Ip)        \
+                                Ip)        \
                                                                               ((Ip) == 0xFFFFFFFF)
 #define IP4_NET_EQUAL(Ip1, Ip2, \
                       NetMask)  \
                                                                               (((Ip1) & (NetMask)) == ((Ip2) & (NetMask)))
 #define IP4_IS_VALID_NETMASK( \
-                            Ip)          \
+                              Ip)          \
                                                                               (NetGetMaskLength (Ip) != (IP4_MASK_MAX + 1))
 
 #define IP6_IS_MULTICAST(Ip6)  (((Ip6)->Addr[0]) == 0xFF)
@@ -249,10 +249,10 @@ typedef struct {
 // Convert the EFI_IP4_ADDRESS to plain UINT32 IP4 address.
 //
 #define EFI_IP4( \
-               EfiIpAddr)       \
+                 EfiIpAddr)       \
                                                                       (*(IP4_ADDR *) ((EfiIpAddr).Addr))
 #define EFI_NTOHL( \
-                 EfiIp)         \
+                   EfiIp)         \
                                                                       (NTOHL (EFI_IP4 ((EfiIp))))
 #define EFI_IP4_EQUAL(Ip1, \
                       Ip2)  \
@@ -555,26 +555,26 @@ extern IP4_ADDR  gIp4AllMasks[IP4_MASK_NUM];
 extern EFI_IPv4_ADDRESS  mZeroIp4Addr;
 
 #define NET_IS_DIGIT( \
-                    Ch)            \
+                      Ch)            \
                                                                               (('0' <= (Ch)) && ((Ch) <= '9'))
 #define NET_IS_HEX( \
-                  Ch)              \
+                    Ch)              \
                                                                               ((('0' <= (Ch)) && ((Ch) <= '9')) || (('A' <= (Ch)) && ((Ch) <= 'F')) || (('a' <= (Ch)) && ((Ch) <= 'f')))
 #define NET_ROUNDUP(size, \
                     unit)     \
                                                                               (((size) + (unit) - 1) & (~((unit) - 1)))
 #define NET_IS_LOWER_CASE_CHAR( \
-                              Ch)  \
+                                Ch)  \
                                                                               (('a' <= (Ch)) && ((Ch) <= 'z'))
 #define NET_IS_UPPER_CASE_CHAR( \
-                              Ch)  \
+                                Ch)  \
                                                                               (('A' <= (Ch)) && ((Ch) <= 'Z'))
 
 #define TICKS_PER_MS      10000U
 #define TICKS_PER_SECOND  10000000U
 
 #define NET_RANDOM( \
-                  Seed)  \
+                    Seed)  \
   ((UINT32) ((UINT32) (Seed) * 1103515245UL + 12345) % 4294967295UL)
 
 /**

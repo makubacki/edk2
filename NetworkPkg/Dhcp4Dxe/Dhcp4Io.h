@@ -49,7 +49,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define DHCP_NOTIFY_ALL          3
 
 #define DHCP_IS_BOOTP( \
-                     Parameter)  \
+                       Parameter)  \
   (((Parameter) == NULL) || ((Parameter)->DhcpType == 0))
 
 #define DHCP_CONNECTED(State)     \

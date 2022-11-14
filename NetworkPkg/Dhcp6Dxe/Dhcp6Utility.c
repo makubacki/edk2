@@ -63,10 +63,12 @@ Dhcp6GenerateClientId (
   //
   if ((PcdGet8 (PcdDhcp6UidType) == Dhcp6DuidTypeUuid) && !EFI_ERROR (
                                                              NetLibGetSystemGuid (
-                                                               &Uuid)
+                                                               &Uuid
+                                                               )
                                                              ) && !CompareGuid (
                                                                      &Uuid,
-                                                                     &gZeroGuid))
+                                                                     &gZeroGuid
+                                                                     ))
   {
     //
     //
@@ -1121,7 +1123,7 @@ Dhcp6ParseAddrOption (
         AddrBuf->ValidLifetime     = ValidLt;
         AddrBuf                    = (EFI_DHCP6_IA_ADDRESS *)((UINT8 *)AddrBuf +
                                                               sizeof (
-                                                                                        EFI_DHCP6_IA_ADDRESS));
+                                                                      EFI_DHCP6_IA_ADDRESS));
       }
 
       (*AddrNum)++;

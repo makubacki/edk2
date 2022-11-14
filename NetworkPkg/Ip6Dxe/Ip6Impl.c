@@ -75,8 +75,8 @@ EfiIp6GetModeData (
     // IsStarted is "whether the EfiIp6Configure has been called".
     // IsConfigured is "whether the station address has been configured"
     //
-    Ip6ModeData->IsStarted     = (BOOLEAN)(IpInstance->State ==
-                                           IP6_STATE_CONFIGED);
+    Ip6ModeData->IsStarted = (BOOLEAN)(IpInstance->State ==
+                                       IP6_STATE_CONFIGED);
     Ip6ModeData->MaxPacketSize = IpSb->MaxPacketSize;
     CopyMem (
       &Ip6ModeData->ConfigData,

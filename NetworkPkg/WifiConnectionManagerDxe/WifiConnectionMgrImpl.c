@@ -1164,7 +1164,7 @@ WifiMgrConnectToNetwork (
   ConfigToken->Nic                       = Nic;
   ConfigToken->Token.ConnectNetworkToken = AllocateZeroPool (
                                              sizeof (
-                                                                    EFI_80211_CONNECT_NETWORK_TOKEN)
+                                                     EFI_80211_CONNECT_NETWORK_TOKEN)
                                              );
   if (ConfigToken->Token.ConnectNetworkToken == NULL) {
     goto Exit;
@@ -1346,7 +1346,7 @@ WifiMgrDisconnectToNetwork (
   ConfigToken->Nic                          = Nic;
   ConfigToken->Token.DisconnectNetworkToken = AllocateZeroPool (
                                                 sizeof (
-                                                                       EFI_80211_DISCONNECT_NETWORK_TOKEN)
+                                                        EFI_80211_DISCONNECT_NETWORK_TOKEN)
                                                 );
   if (ConfigToken->Token.DisconnectNetworkToken == NULL) {
     WifiMgrFreeToken (ConfigToken);

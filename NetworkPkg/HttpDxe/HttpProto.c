@@ -1994,7 +1994,8 @@ HttpTcpReceiveHeader (
         while (!HttpInstance->IsRxDone && ((Timeout == NULL) || EFI_ERROR (
                                                                   gBS->
                                                                     CheckEvent (
-                                                                      Timeout)
+                                                                      Timeout
+                                                                      )
                                                                   )))
         {
           Tcp4->Poll (Tcp4);
@@ -2106,7 +2107,8 @@ HttpTcpReceiveHeader (
         while (!HttpInstance->IsRxDone && ((Timeout == NULL) || EFI_ERROR (
                                                                   gBS->
                                                                     CheckEvent (
-                                                                      Timeout)
+                                                                      Timeout
+                                                                      )
                                                                   )))
         {
           Tcp6->Poll (Tcp6);

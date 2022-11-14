@@ -34,8 +34,8 @@ EFI_COMPONENT_NAME2_PROTOCOL  gHttpBootDxeComponentName2 = {
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_UNICODE_STRING_TABLE  mHttpBootDxeDriverNameTable[] = {
-  { "eng;en", (CHAR16 *)L"UEFI HTTP Boot Driver"     },
-  { NULL,     NULL                                   }
+  { "eng;en", (CHAR16 *)L"UEFI HTTP Boot Driver" },
+  { NULL,     NULL                               }
 };
 
 ///
@@ -43,8 +43,8 @@ EFI_UNICODE_STRING_TABLE  mHttpBootDxeDriverNameTable[] = {
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_UNICODE_STRING_TABLE  mHttpBootDxeControllerNameTable[] = {
-  { "eng;en", (CHAR16 *)L"UEFI Http Boot Controller"     },
-  { NULL,     NULL                                       }
+  { "eng;en", (CHAR16 *)L"UEFI Http Boot Controller" },
+  { NULL,     NULL                                   }
 };
 
 /**

@@ -35,7 +35,7 @@ extern ISCSI_FORM_CALLBACK_INFO  *mCallbackInfo;
 //
 // Define QuestionId and OffSet for Keywords.
 //
-#define ATTEMPT_MAC_ADDR_VAR_OFFSET     VAR_OFFSET  (ISCSIMacAddr)
+#define ATTEMPT_MAC_ADDR_VAR_OFFSET  VAR_OFFSET  (ISCSIMacAddr)
 #define ATTEMPT_ATTEMPT_NAME_QUESTION_ID            \
                                         QUESTION_ID (ISCSIAttemptName)
 #define ATTEMPT_ATTEMPT_NAME_VAR_OFFSET             \
@@ -100,8 +100,8 @@ extern ISCSI_FORM_CALLBACK_INFO  *mCallbackInfo;
                                         QUESTION_ID (ISCSIAuthenticationMethod)
 #define ATTEMPT_AUTHENTICATION_METHOD_VAR_OFFSET    \
                                         VAR_OFFSET  (ISCSIAuthenticationMethod)
-#define ATTEMPT_CHARTYPE_QUESTION_ID    QUESTION_ID (ISCSIChapType)
-#define ATTEMPT_CHARTYPE_VAR_OFFSET     VAR_OFFSET  (ISCSIChapType)
+#define ATTEMPT_CHARTYPE_QUESTION_ID  QUESTION_ID (ISCSIChapType)
+#define ATTEMPT_CHARTYPE_VAR_OFFSET   VAR_OFFSET  (ISCSIChapType)
 #define ATTEMPT_CHAR_USER_NAME_QUESTION_ID          \
                                         QUESTION_ID (Keyword->ISCSIChapUsername)
 #define ATTEMPT_CHAR_USER_NAME_VAR_OFFSET           \

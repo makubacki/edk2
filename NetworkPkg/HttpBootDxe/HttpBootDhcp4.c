@@ -654,13 +654,13 @@ HttpBootDhcp4CallBack (
   if ((Private->HttpBootCallback != NULL) && (Dhcp4Event != Dhcp4SelectOffer)) {
     Received = (BOOLEAN)(Dhcp4Event == Dhcp4RcvdOffer || Dhcp4Event ==
                          Dhcp4RcvdAck);
-    Status   = Private->HttpBootCallback->Callback (
-                                            Private->HttpBootCallback,
-                                            HttpBootDhcp4,
-                                            Received,
-                                            Packet->Length,
-                                            &Packet->Dhcp4
-                                            );
+    Status = Private->HttpBootCallback->Callback (
+                                          Private->HttpBootCallback,
+                                          HttpBootDhcp4,
+                                          Received,
+                                          Packet->Length,
+                                          &Packet->Dhcp4
+                                          );
     if (EFI_ERROR (Status)) {
       return EFI_ABORTED;
     }

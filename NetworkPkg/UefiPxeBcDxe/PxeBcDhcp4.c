@@ -925,9 +925,9 @@ PxeBcCacheDhcp4Offer (
           Private->OfferNum;
         Private->OfferCount[OfferType]++;
       } else if (  ((OfferType == PxeOfferTypeProxyPxe10) || (OfferType ==
-                                                            PxeOfferTypeProxyWfm11a))
+                                                              PxeOfferTypeProxyWfm11a))
                 &&
-                 (Private->OfferCount[OfferType] < 1))
+                   (Private->OfferCount[OfferType] < 1))
       {
         //
         // Only cache the first PXE10/WFM11a offer, and discard the others.
@@ -1024,7 +1024,7 @@ PxeBcSelectDhcp4Offer (
       {
         OfferIndex = Private->OfferIndex[PxeOfferTypeDhcpOnly][Index];
         if (Private->OfferBuffer[OfferIndex].Dhcp4.OptList[
-                                                          PXEBC_DHCP4_TAG_INDEX_BOOTFILE
+                                                           PXEBC_DHCP4_TAG_INDEX_BOOTFILE
             ] != NULL)
         {
           Private->SelectIndex = OfferIndex + 1;
@@ -1039,7 +1039,7 @@ PxeBcSelectDhcp4Offer (
       if ((Private->SelectIndex == 0) &&
           (Private->OfferCount[PxeOfferTypeBootp] > 0) &&
           (Private->OfferBuffer[OfferIndex].Dhcp4.OptList[
-                                                         PXEBC_DHCP4_TAG_INDEX_BOOTFILE
+                                                          PXEBC_DHCP4_TAG_INDEX_BOOTFILE
            ] != NULL))
       {
         Private->SelectIndex = OfferIndex + 1;
@@ -1063,7 +1063,7 @@ PxeBcSelectDhcp4Offer (
           (Private->OfferBuffer[Index].Dhcp4.OfferType ==
            PxeOfferTypeDhcpOnly) &&
           (Private->OfferBuffer[Index].Dhcp4.OptList[
-                                                    PXEBC_DHCP4_TAG_INDEX_BOOTFILE
+                                                     PXEBC_DHCP4_TAG_INDEX_BOOTFILE
            ] == NULL))
       {
         //
@@ -1308,13 +1308,13 @@ PxeBcDhcp4CallBack (
   if ((Dhcp4Event != Dhcp4SelectOffer) && (Callback != NULL)) {
     Received = (BOOLEAN)(Dhcp4Event == Dhcp4RcvdOffer || Dhcp4Event ==
                          Dhcp4RcvdAck);
-    Status   = Callback->Callback (
-                           Callback,
-                           Private->Function,
-                           Received,
-                           Packet->Length,
-                           (EFI_PXE_BASE_CODE_PACKET *)&Packet->Dhcp4
-                           );
+    Status = Callback->Callback (
+                         Callback,
+                         Private->Function,
+                         Received,
+                         Packet->Length,
+                         (EFI_PXE_BASE_CODE_PACKET *)&Packet->Dhcp4
+                         );
     if (Status != EFI_PXE_BASE_CODE_CALLBACK_STATUS_CONTINUE) {
       return EFI_ABORTED;
     }
@@ -1508,8 +1508,8 @@ PxeBcDhcp4Discover (
     //
     // Add vendor option of PXE_BOOT_ITEM
     //
-    VendorOptLen      = (UINT8)((sizeof (EFI_DHCP4_PACKET_OPTION) - 1) * 2 +
-                                sizeof (PXEBC_OPTION_BOOT_ITEM) + 1);
+    VendorOptLen = (UINT8)((sizeof (EFI_DHCP4_PACKET_OPTION) - 1) * 2 +
+                           sizeof (PXEBC_OPTION_BOOT_ITEM) + 1);
     OptList[OptCount] = AllocateZeroPool (VendorOptLen);
     if (OptList[OptCount] == NULL) {
       return EFI_OUT_OF_RESOURCES;
@@ -1624,8 +1624,8 @@ PxeBcDhcp4Discover (
   // Send out the request packet to discover the bootfile.
   //
   for (TryIndex = 1; TryIndex <= PXEBC_BOOT_REQUEST_RETRIES; TryIndex++) {
-    Token.TimeoutValue                 = (UINT16)(PXEBC_BOOT_REQUEST_TIMEOUT *
-                                                  TryIndex);
+    Token.TimeoutValue = (UINT16)(PXEBC_BOOT_REQUEST_TIMEOUT *
+                                  TryIndex);
     Token.Packet->Dhcp4.Header.Seconds = (UINT16)(PXEBC_BOOT_REQUEST_TIMEOUT *
                                                   (TryIndex - 1));
 

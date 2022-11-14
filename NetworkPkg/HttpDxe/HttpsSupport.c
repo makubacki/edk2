@@ -523,9 +523,9 @@ TlsConfigCertificate (
   ItemDataSize = (UINT32)CACertSize;
   CertList     = (EFI_SIGNATURE_LIST *)CACert;
   while ((ItemDataSize > 0) && (ItemDataSize >= CertList->SignatureListSize)) {
-    Cert      = (EFI_SIGNATURE_DATA *)((UINT8 *)CertList +
-                                       sizeof (EFI_SIGNATURE_LIST) +
-                                       CertList->SignatureHeaderSize);
+    Cert = (EFI_SIGNATURE_DATA *)((UINT8 *)CertList +
+                                  sizeof (EFI_SIGNATURE_LIST) +
+                                  CertList->SignatureHeaderSize);
     CertCount = (CertList->SignatureListSize - sizeof (EFI_SIGNATURE_LIST) -
                  CertList->SignatureHeaderSize) / CertList->SignatureSize;
     for (Index = 0; Index < CertCount; Index++) {
@@ -968,7 +968,8 @@ TlsCommonReceive (
 
     while (!HttpInstance->TlsIsRxDone && ((Timeout == NULL) || EFI_ERROR (
                                                                  gBS->CheckEvent (
-                                                                        Timeout)
+                                                                        Timeout
+                                                                        )
                                                                  )))
     {
       //
@@ -1227,7 +1228,7 @@ TlsConnectSession (
                                                        &(HttpInstance->
                                                            TlsSessionState),
                                                        sizeof (
-                                                              EFI_TLS_SESSION_STATE)
+                                                               EFI_TLS_SESSION_STATE)
                                                        );
   if (EFI_ERROR (Status)) {
     return Status;

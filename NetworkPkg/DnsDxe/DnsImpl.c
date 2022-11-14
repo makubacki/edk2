@@ -1428,7 +1428,7 @@ ParseDnsResponse (
                                                              DnsHeader->
                                                                AnswersNum *
                                                              sizeof (
-                                                                                                            DNS_RESOURCE_RECORD)
+                                                                     DNS_RESOURCE_RECORD)
                                                              );
       if (Dns4TokenEntry->Token->RspData.GLookupData->RRList == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
@@ -1450,7 +1450,7 @@ ParseDnsResponse (
         Dns4TokenEntry->Token->RspData.H2AData->IpList = AllocateZeroPool (
                                                            DnsHeader->AnswersNum
                                                            * sizeof (
-                                                                                                          EFI_IPv4_ADDRESS)
+                                                                     EFI_IPv4_ADDRESS)
                                                            );
         if (Dns4TokenEntry->Token->RspData.H2AData->IpList == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
@@ -1480,7 +1480,7 @@ ParseDnsResponse (
                                                              DnsHeader->
                                                                AnswersNum *
                                                              sizeof (
-                                                                                                            DNS_RESOURCE_RECORD)
+                                                                     DNS_RESOURCE_RECORD)
                                                              );
       if (Dns6TokenEntry->Token->RspData.GLookupData->RRList == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
@@ -1493,7 +1493,7 @@ ParseDnsResponse (
       if (QuerySection->Type == DNS_TYPE_AAAA) {
         Dns6TokenEntry->Token->RspData.H2AData = AllocateZeroPool (
                                                    sizeof (
-                                                                          DNS6_HOST_TO_ADDR_DATA)
+                                                           DNS6_HOST_TO_ADDR_DATA)
                                                    );
         if (Dns6TokenEntry->Token->RspData.H2AData == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
@@ -1503,7 +1503,7 @@ ParseDnsResponse (
         Dns6TokenEntry->Token->RspData.H2AData->IpList = AllocateZeroPool (
                                                            DnsHeader->AnswersNum
                                                            * sizeof (
-                                                                                                          EFI_IPv6_ADDRESS)
+                                                                     EFI_IPv6_ADDRESS)
                                                            );
         if (Dns6TokenEntry->Token->RspData.H2AData->IpList == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
@@ -1549,8 +1549,8 @@ ParseDnsResponse (
     //
     // Get Answer section.
     //
-    AnswerSection             = (DNS_ANSWER_SECTION *)(AnswerName +
-                                                       sizeof (UINT16));
+    AnswerSection = (DNS_ANSWER_SECTION *)(AnswerName +
+                                           sizeof (UINT16));
     AnswerSection->Type       = NTOHS (AnswerSection->Type);
     AnswerSection->Class      = NTOHS (AnswerSection->Class);
     AnswerSection->Ttl        = NTOHL (AnswerSection->Ttl);

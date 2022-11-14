@@ -47,7 +47,7 @@ extern   UINT8  TlsAuthConfigVfrBin[];
 #define TLS_AUTH_CONFIG_PRIVATE_DATA_SIGNATURE  \
   SIGNATURE_32 ('T', 'A', 'C', 'D')
 #define TLS_AUTH_CONFIG_PRIVATE_FROM_THIS( \
-                                         a)  \
+                                           a)  \
   CR (a, TLS_AUTH_CONFIG_PRIVATE_DATA, ConfigAccess, TLS_AUTH_CONFIG_PRIVATE_DATA_SIGNATURE)
 
 #define TLS_AUTH_CONFIG_VAR_BASE_ATTR  \

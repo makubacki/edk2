@@ -454,13 +454,13 @@ HttpBootDhcp6CallBack (
   {
     Received = (BOOLEAN)(Dhcp6Event == Dhcp6RcvdAdvertise || Dhcp6Event ==
                          Dhcp6RcvdReply);
-    Status   = Private->HttpBootCallback->Callback (
-                                            Private->HttpBootCallback,
-                                            HttpBootDhcp6,
-                                            Received,
-                                            Packet->Length,
-                                            &Packet->Dhcp6
-                                            );
+    Status = Private->HttpBootCallback->Callback (
+                                          Private->HttpBootCallback,
+                                          HttpBootDhcp6,
+                                          Received,
+                                          Packet->Length,
+                                          &Packet->Dhcp6
+                                          );
     if (EFI_ERROR (Status)) {
       return EFI_ABORTED;
     }
@@ -498,8 +498,8 @@ HttpBootDhcp6CallBack (
         Status = EFI_ABORTED;
       } else {
         ASSERT (NewPacket != NULL);
-        SelectAd   = &Private->OfferBuffer[Private->SelectIndex -
-                                           1].Dhcp6.Packet.Offer;
+        SelectAd = &Private->OfferBuffer[Private->SelectIndex -
+                                         1].Dhcp6.Packet.Offer;
         *NewPacket = AllocateZeroPool (SelectAd->Size);
         if (*NewPacket == NULL) {
           return EFI_OUT_OF_RESOURCES;

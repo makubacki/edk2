@@ -64,7 +64,7 @@ typedef struct {
 
 #define VLAN_CONFIG_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('V', 'C', 'P', 'D')
 #define VLAN_CONFIG_PRIVATE_DATA_FROM_THIS( \
-                                          a)  \
+                                            a)  \
   CR (a, VLAN_CONFIG_PRIVATE_DATA, ConfigAccess, VLAN_CONFIG_PRIVATE_DATA_SIGNATURE)
 
 extern VLAN_CONFIG_PRIVATE_DATA  mVlanConfigPrivateDateTemplate;

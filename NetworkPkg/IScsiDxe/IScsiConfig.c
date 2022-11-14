@@ -1548,7 +1548,7 @@ IScsiConvertlfrNvDataToAttemptConfigDataByKeyword (
   {
     AttemptIndex = (UINT8)((OffSet - ATTEMPT_CONNECT_TIMEOUT_VAR_OFFSET) / 2 +
                            1);
-    Attempt      = IScsiConfigGetAttemptByConfigIndex (AttemptIndex);
+    Attempt = IScsiConfigGetAttemptByConfigIndex (AttemptIndex);
     if (Attempt == NULL) {
       return EFI_INVALID_PARAMETER;
     }
@@ -1577,7 +1577,7 @@ IScsiConvertlfrNvDataToAttemptConfigDataByKeyword (
   {
     AttemptIndex = (UINT8)((OffSet - ATTEMPT_INITIATOR_VIA_DHCP_VAR_OFFSET) +
                            1);
-    Attempt      = IScsiConfigGetAttemptByConfigIndex (AttemptIndex);
+    Attempt = IScsiConfigGetAttemptByConfigIndex (AttemptIndex);
     if (Attempt == NULL) {
       return EFI_INVALID_PARAMETER;
     }
@@ -1612,7 +1612,7 @@ IScsiConvertlfrNvDataToAttemptConfigDataByKeyword (
   {
     AttemptIndex = (UINT8)((OffSet - ATTEMPT_TARGET_TCP_PORT_VAR_OFFSET) / 2 +
                            1);
-    Attempt      = IScsiConfigGetAttemptByConfigIndex (AttemptIndex);
+    Attempt = IScsiConfigGetAttemptByConfigIndex (AttemptIndex);
     if (Attempt == NULL) {
       return EFI_INVALID_PARAMETER;
     }
@@ -1639,7 +1639,7 @@ IScsiConvertlfrNvDataToAttemptConfigDataByKeyword (
   {
     AttemptIndex = (UINT8)((OffSet - ATTEMPT_AUTHENTICATION_METHOD_VAR_OFFSET) +
                            1);
-    Attempt      = IScsiConfigGetAttemptByConfigIndex (AttemptIndex);
+    Attempt = IScsiConfigGetAttemptByConfigIndex (AttemptIndex);
     if (Attempt == NULL) {
       return EFI_INVALID_PARAMETER;
     }
@@ -1660,8 +1660,8 @@ IScsiConvertlfrNvDataToAttemptConfigDataByKeyword (
         IfrNvData->ISCSIChapType[AttemptIndex - 1];
     }
   } else if (OffSet >= ATTEMPT_ISID_VAR_OFFSET) {
-    Index        = (UINT8)((OffSet - ATTEMPT_ISID_VAR_OFFSET) /
-                           sizeof (KEYWORD_STR));
+    Index = (UINT8)((OffSet - ATTEMPT_ISID_VAR_OFFSET) /
+                    sizeof (KEYWORD_STR));
     AttemptIndex = Index + 1;
     Attempt      = IScsiConfigGetAttemptByConfigIndex (AttemptIndex);
     if (Attempt == NULL) {
@@ -1732,7 +1732,8 @@ IScsiConvertlfrNvDataToAttemptConfigDataByKeyword (
                    );
         if (EFI_ERROR (Status) || ((SubnetMask.Addr[0] != 0) &&
                                    (IScsiGetSubnetMaskPrefixLength (
-                                      &SubnetMask.v4) == 0)))
+                                      &SubnetMask.v4
+                                      ) == 0)))
         {
           CreatePopUp (
             EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
@@ -4121,7 +4122,8 @@ IScsiFormCallback (
         Status = NetLibStrToIp4 (IfrNvData->SubnetMask, &SubnetMask.v4);
         if (EFI_ERROR (Status) || ((SubnetMask.Addr[0] != 0) &&
                                    (IScsiGetSubnetMaskPrefixLength (
-                                      &SubnetMask.v4) == 0)))
+                                      &SubnetMask.v4
+                                      ) == 0)))
         {
           CreatePopUp (
             EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
