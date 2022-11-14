@@ -159,7 +159,10 @@ AmlParseOptionCommon (
   AML_OP_PARSE_INDEX  TermIndex;
   EFI_STATUS          Status;
 
-  ASSERT ((Index <= AmlByteEncoding->MaxIndex) || (Index == AML_OP_PARSE_INDEX_GET_SIZE));
+  ASSERT (
+    (Index <= AmlByteEncoding->MaxIndex) || (Index ==
+                                             AML_OP_PARSE_INDEX_GET_SIZE)
+    );
 
   //
   // 0. Check if this is NAME string.
@@ -241,7 +244,9 @@ AmlParseOptionCommon (
   // 3. Get Term one by one.
   //
   TermIndex = AML_OP_PARSE_INDEX_GET_TERM1;
-  while ((Index >= TermIndex) && (TermIndex <= AmlByteEncoding->MaxIndex) && ((UINTN)CurrentBuffer < (UINTN)Buffer + MaxBufferSize)) {
+  while ((Index >= TermIndex) && (TermIndex <= AmlByteEncoding->MaxIndex) &&
+         ((UINTN)CurrentBuffer < (UINTN)Buffer + MaxBufferSize))
+  {
     Status = AmlParseOptionTerm (
                AmlByteEncoding,
                CurrentBuffer,

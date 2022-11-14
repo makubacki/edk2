@@ -102,13 +102,21 @@ struct _FV_FILESYSTEM_FILE_INFO {
           FVFS_FILE_INFO_SIGNATURE                    \
           )
 
-#define FVFS_FILE_FROM_LINK(FileLink)  CR (FileLink, FV_FILESYSTEM_FILE, Link, FVFS_FILE_SIGNATURE)
+#define FVFS_FILE_FROM_LINK( \
+                           FileLink)  \
+  CR (FileLink, FV_FILESYSTEM_FILE, Link, FVFS_FILE_SIGNATURE)
 
-#define FVFS_GET_FIRST_FILE(Instance)  FVFS_FILE_FROM_LINK (GetFirstNode (&Instance->FileHead))
+#define FVFS_GET_FIRST_FILE( \
+                           Instance)  \
+  FVFS_FILE_FROM_LINK (GetFirstNode (&Instance->FileHead))
 
-#define FVFS_GET_FIRST_FILE_INFO(Instance)  FVFS_FILE_INFO_FROM_LINK (GetFirstNode (&Instance->FileInfoHead))
+#define FVFS_GET_FIRST_FILE_INFO( \
+                                Instance)  \
+  FVFS_FILE_INFO_FROM_LINK (GetFirstNode (&Instance->FileInfoHead))
 
-#define FV_FILETYPE_IS_EXECUTABLE(Type)  ((Type) == EFI_FV_FILETYPE_PEIM                  ||\
+#define FV_FILETYPE_IS_EXECUTABLE( \
+                                 Type)  \
+  ((Type) == EFI_FV_FILETYPE_PEIM                  ||                                       \
                                          (Type) == EFI_FV_FILETYPE_DRIVER                || \
                                          (Type) == EFI_FV_FILETYPE_COMBINED_PEIM_DRIVER  || \
                                          (Type) == EFI_FV_FILETYPE_APPLICATION)

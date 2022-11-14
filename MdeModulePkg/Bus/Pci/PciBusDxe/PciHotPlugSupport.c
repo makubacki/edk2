@@ -115,7 +115,10 @@ InitializeHotPlugSupport (
   if (!EFI_ERROR (Status)) {
     gPciRootHpcPool  = HpcList;
     gPciRootHpcCount = HpcCount;
-    gPciRootHpcData  = AllocateZeroPool (sizeof (ROOT_HPC_DATA) * gPciRootHpcCount);
+    gPciRootHpcData  = AllocateZeroPool (
+                         sizeof (ROOT_HPC_DATA) *
+                         gPciRootHpcCount
+                         );
     if (gPciRootHpcData == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -144,7 +147,11 @@ IsRootPciHotPlugBus (
   UINTN  Index;
 
   for (Index = 0; Index < gPciRootHpcCount; Index++) {
-    if (EfiCompareDevicePath (gPciRootHpcPool[Index].HpbDevicePath, HpbDevicePath)) {
+    if (EfiCompareDevicePath (
+          gPciRootHpcPool[Index].HpbDevicePath,
+          HpbDevicePath
+          ))
+    {
       if (HpIndex != NULL) {
         *HpIndex = Index;
       }
@@ -176,7 +183,11 @@ IsRootPciHotPlugController (
   UINTN  Index;
 
   for (Index = 0; Index < gPciRootHpcCount; Index++) {
-    if (EfiCompareDevicePath (gPciRootHpcPool[Index].HpcDevicePath, HpcDevicePath)) {
+    if (EfiCompareDevicePath (
+          gPciRootHpcPool[Index].HpcDevicePath,
+          HpcDevicePath
+          ))
+    {
       if (HpIndex != NULL) {
         *HpIndex = Index;
       }
@@ -413,21 +424,29 @@ GetResourcePaddingForHpb (
     //
     // If PCI-PCI bridge device is PCI Hot Plug bus.
     //
-    PciAddress = EFI_PCI_ADDRESS (PciIoDevice->BusNumber, PciIoDevice->DeviceNumber, PciIoDevice->FunctionNumber, 0);
-    Status     = gPciHotPlugInit->GetResourcePadding (
-                                    gPciHotPlugInit,
-                                    PciIoDevice->DevicePath,
-                                    PciAddress,
-                                    &State,
-                                    (VOID **)&Descriptors,
-                                    &Attributes
-                                    );
+    PciAddress = EFI_PCI_ADDRESS (
+                   PciIoDevice->BusNumber,
+                   PciIoDevice->DeviceNumber,
+                   PciIoDevice->FunctionNumber,
+                   0
+                   );
+    Status = gPciHotPlugInit->GetResourcePadding (
+                                gPciHotPlugInit,
+                                PciIoDevice->DevicePath,
+                                PciAddress,
+                                &State,
+                                (VOID **)&Descriptors,
+                                &Attributes
+                                );
 
     if (EFI_ERROR (Status)) {
       return;
     }
 
-    if (((State & EFI_HPC_STATE_ENABLED) != 0) && ((State & EFI_HPC_STATE_INITIALIZED) != 0)) {
+    if (((State & EFI_HPC_STATE_ENABLED) != 0) && ((State &
+                                                    EFI_HPC_STATE_INITIALIZED)
+                                                   != 0))
+    {
       PciIoDevice->ResourcePaddingDescriptors = Descriptors;
       PciIoDevice->PaddingAttributes          = Attributes;
     }

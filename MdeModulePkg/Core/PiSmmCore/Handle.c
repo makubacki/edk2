@@ -12,8 +12,10 @@
 // mProtocolDatabase     - A list of all protocols in the system.  (simple list for now)
 // gHandleList           - A list of all the handles in the system
 //
-LIST_ENTRY  mProtocolDatabase = INITIALIZE_LIST_HEAD_VARIABLE (mProtocolDatabase);
-LIST_ENTRY  gHandleList       = INITIALIZE_LIST_HEAD_VARIABLE (gHandleList);
+LIST_ENTRY  mProtocolDatabase = INITIALIZE_LIST_HEAD_VARIABLE (
+                                  mProtocolDatabase
+                                  );
+LIST_ENTRY  gHandleList = INITIALIZE_LIST_HEAD_VARIABLE (gHandleList);
 
 /**
   Check whether a handle is a valid EFI_HANDLE
@@ -139,7 +141,9 @@ SmmFindProtocolInterface (
     //
     // Look at each protocol interface for any matches
     //
-    for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
+    for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols;
+         Link = Link->ForwardLink)
+    {
       //
       // If this protocol interface matches, remove it
       //
@@ -234,14 +238,23 @@ SmmInstallProtocolInterfaceNotify (
   //
   // Print debug message
   //
-  DEBUG ((DEBUG_LOAD | DEBUG_INFO, "SmmInstallProtocolInterface: %g %p\n", Protocol, Interface));
+  DEBUG ((
+    DEBUG_LOAD | DEBUG_INFO,
+    "SmmInstallProtocolInterface: %g %p\n",
+    Protocol,
+    Interface
+    ));
 
   Status = EFI_OUT_OF_RESOURCES;
   Prot   = NULL;
   Handle = NULL;
 
   if (*UserHandle != NULL) {
-    Status = SmmHandleProtocol (*UserHandle, Protocol, (VOID **)&ExistingInterface);
+    Status = SmmHandleProtocol (
+               *UserHandle,
+               Protocol,
+               (VOID **)&ExistingInterface
+               );
     if (!EFI_ERROR (Status)) {
       return EFI_INVALID_PARAMETER;
     }
@@ -289,7 +302,11 @@ SmmInstallProtocolInterfaceNotify (
   } else {
     Status = SmmValidateHandle (Handle);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "SmmInstallProtocolInterface: input handle at 0x%x is invalid\n", Handle));
+      DEBUG ((
+        DEBUG_ERROR,
+        "SmmInstallProtocolInterface: input handle at 0x%x is invalid\n",
+        Handle
+        ));
       goto Done;
     }
   }
@@ -342,7 +359,13 @@ Done:
       FreePool (Prot);
     }
 
-    DEBUG ((DEBUG_ERROR, "SmmInstallProtocolInterface: %g %p failed with %r\n", Protocol, Interface, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SmmInstallProtocolInterface: %g %p failed with %r\n",
+      Protocol,
+      Interface,
+      Status
+      ));
   }
 
   return Status;
@@ -460,8 +483,15 @@ SmmGetProtocolInterface (
   //
   // Look at each protocol interface for a match
   //
-  for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
-    Prot      = CR (Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
+  for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link =
+         Link->ForwardLink)
+  {
+    Prot = CR (
+             Link,
+             PROTOCOL_INTERFACE,
+             Link,
+             PROTOCOL_INTERFACE_SIGNATURE
+             );
     ProtEntry = Prot->Protocol;
     if (CompareGuid (&ProtEntry->ProtocolID, Protocol)) {
       return Prot;

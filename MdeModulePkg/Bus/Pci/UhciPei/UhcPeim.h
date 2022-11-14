@@ -188,8 +188,12 @@ typedef struct {
   MEMORY_MANAGE_HEADER           *Header1;
 } USB_UHC_DEV;
 
-#define PEI_RECOVERY_USB_UHC_DEV_FROM_UHCI_THIS(a)    CR (a, USB_UHC_DEV, UsbHostControllerPpi, USB_UHC_DEV_SIGNATURE)
-#define PEI_RECOVERY_USB_UHC_DEV_FROM_THIS_NOTIFY(a)  CR (a, USB_UHC_DEV, EndOfPeiNotifyList, USB_UHC_DEV_SIGNATURE)
+#define PEI_RECOVERY_USB_UHC_DEV_FROM_UHCI_THIS( \
+                                               a)    \
+      CR (a, USB_UHC_DEV, UsbHostControllerPpi, USB_UHC_DEV_SIGNATURE)
+#define PEI_RECOVERY_USB_UHC_DEV_FROM_THIS_NOTIFY( \
+                                                 a)  \
+      CR (a, USB_UHC_DEV, EndOfPeiNotifyList, USB_UHC_DEV_SIGNATURE)
 
 /**
   Submits control transfer to a target USB device.

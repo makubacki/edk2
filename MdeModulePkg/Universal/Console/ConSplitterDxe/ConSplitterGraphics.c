@@ -41,7 +41,10 @@ ConSplitterGraphicsOutputQueryMode (
   EFI_STATUS                      Status;
   UINTN                           Index;
 
-  if ((This == NULL) || (Info == NULL) || (SizeOfInfo == NULL) || (ModeNumber >= This->Mode->MaxMode)) {
+  if ((This == NULL) || (Info == NULL) || (SizeOfInfo == NULL) || (ModeNumber >=
+                                                                   This->Mode->
+                                                                     MaxMode))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -68,7 +71,12 @@ ConSplitterGraphicsOutputQueryMode (
     //
     // If only one physical GOP device exist, return its information.
     //
-    Status = GraphicsOutput->QueryMode (GraphicsOutput, (UINT32)ModeNumber, SizeOfInfo, Info);
+    Status = GraphicsOutput->QueryMode (
+                               GraphicsOutput,
+                               (UINT32)ModeNumber,
+                               SizeOfInfo,
+                               Info
+                               );
     return Status;
   } else {
     //
@@ -81,7 +89,11 @@ ConSplitterGraphicsOutputQueryMode (
     }
 
     *SizeOfInfo = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
-    CopyMem (*Info, &Private->GraphicsOutputModeBuffer[ModeNumber], *SizeOfInfo);
+    CopyMem (
+      *Info,
+      &Private->GraphicsOutputModeBuffer[ModeNumber],
+      *SizeOfInfo
+      );
   }
 
   return EFI_SUCCESS;
@@ -139,13 +151,22 @@ ConSplitterGraphicsOutputSetMode (
       //
       // Find corresponding ModeNumber of this GraphicsOutput instance
       //
-      for (NumberIndex = 0; NumberIndex < GraphicsOutput->Mode->MaxMode; NumberIndex++) {
-        Status = GraphicsOutput->QueryMode (GraphicsOutput, (UINT32)NumberIndex, &SizeOfInfo, &Info);
+      for (NumberIndex = 0; NumberIndex < GraphicsOutput->Mode->MaxMode;
+           NumberIndex++)
+      {
+        Status = GraphicsOutput->QueryMode (
+                                   GraphicsOutput,
+                                   (UINT32)NumberIndex,
+                                   &SizeOfInfo,
+                                   &Info
+                                   );
         if (EFI_ERROR (Status)) {
           return Status;
         }
 
-        if ((Info->HorizontalResolution == Mode->HorizontalResolution) && (Info->VerticalResolution == Mode->VerticalResolution)) {
+        if ((Info->HorizontalResolution == Mode->HorizontalResolution) &&
+            (Info->VerticalResolution == Mode->VerticalResolution))
+        {
           FreePool (Info);
           break;
         }
@@ -176,11 +197,17 @@ ConSplitterGraphicsOutputSetMode (
 
   This->Mode->Mode = ModeNumber;
 
-  if ((Private->CurrentNumberOfGraphicsOutput == 1) && (PhysicalGraphicsOutput != NULL)) {
+  if ((Private->CurrentNumberOfGraphicsOutput == 1) &&
+      (PhysicalGraphicsOutput != NULL))
+  {
     //
     // If only one physical GOP device exist, copy physical information to consplitter.
     //
-    CopyMem (This->Mode->Info, PhysicalGraphicsOutput->Mode->Info, PhysicalGraphicsOutput->Mode->SizeOfInfo);
+    CopyMem (
+      This->Mode->Info,
+      PhysicalGraphicsOutput->Mode->Info,
+      PhysicalGraphicsOutput->Mode->SizeOfInfo
+      );
     This->Mode->SizeOfInfo      = PhysicalGraphicsOutput->Mode->SizeOfInfo;
     This->Mode->FrameBufferBase = PhysicalGraphicsOutput->Mode->FrameBufferBase;
     This->Mode->FrameBufferSize = PhysicalGraphicsOutput->Mode->FrameBufferSize;
@@ -189,7 +216,11 @@ ConSplitterGraphicsOutputSetMode (
     // If 2 more phyiscal GOP device exist or GOP protocol does not exist,
     // return GOP information (PixelFormat is PixelBltOnly) created in ConSplitterAddGraphicsOutputMode ().
     //
-    CopyMem (This->Mode->Info, &Private->GraphicsOutputModeBuffer[ModeNumber], This->Mode->SizeOfInfo);
+    CopyMem (
+      This->Mode->Info,
+      &Private->GraphicsOutputModeBuffer[ModeNumber],
+      This->Mode->SizeOfInfo
+      );
   }
 
   return ReturnStatus;
@@ -263,7 +294,9 @@ ConSplitterGraphicsOutputBlt (
   EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
   EFI_UGA_DRAW_PROTOCOL           *UgaDraw;
 
-  if ((This == NULL) || (((UINTN)BltOperation) >= EfiGraphicsOutputBltOperationMax)) {
+  if ((This == NULL) || (((UINTN)BltOperation) >=
+                         EfiGraphicsOutputBltOperationMax))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -429,13 +462,22 @@ ConSplitterUgaDrawSetMode (
       //
       // Find corresponding ModeNumber of this GraphicsOutput instance
       //
-      for (NumberIndex = 0; NumberIndex < GraphicsOutput->Mode->MaxMode; NumberIndex++) {
-        Status = GraphicsOutput->QueryMode (GraphicsOutput, (UINT32)NumberIndex, &SizeOfInfo, &Info);
+      for (NumberIndex = 0; NumberIndex < GraphicsOutput->Mode->MaxMode;
+           NumberIndex++)
+      {
+        Status = GraphicsOutput->QueryMode (
+                                   GraphicsOutput,
+                                   (UINT32)NumberIndex,
+                                   &SizeOfInfo,
+                                   &Info
+                                   );
         if (EFI_ERROR (Status)) {
           return Status;
         }
 
-        if ((Info->HorizontalResolution == HorizontalResolution) && (Info->VerticalResolution == VerticalResolution)) {
+        if ((Info->HorizontalResolution == HorizontalResolution) &&
+            (Info->VerticalResolution == VerticalResolution))
+        {
           FreePool (Info);
           break;
         }
@@ -568,9 +610,13 @@ ConSplitterUgaDrawBlt (
       }
     }
 
-    if ((Private->TextOutList[Index].UgaDraw != NULL) && FeaturePcdGet (PcdUgaConsumeSupport)) {
+    if ((Private->TextOutList[Index].UgaDraw != NULL) && FeaturePcdGet (
+                                                           PcdUgaConsumeSupport
+                                                           ))
+    {
       Status = Private->TextOutList[Index].UgaDraw->Blt (
-                                                      Private->TextOutList[Index].UgaDraw,
+                                                      Private->TextOutList[Index
+                                                      ].UgaDraw,
                                                       BltBuffer,
                                                       BltOperation,
                                                       SourceX,

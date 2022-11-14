@@ -11,7 +11,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gScsiDiskComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gScsiDiskComponentName = {
   ScsiDiskComponentNameGetDriverName,
   ScsiDiskComponentNameGetControllerName,
   "eng"
@@ -20,15 +21,18 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gScsiDiskComponentNam
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gScsiDiskComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gScsiDiskComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)ScsiDiskComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)ScsiDiskComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  ScsiDiskComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mScsiDiskDriverNameTable[] = {
-  { "eng;en", (CHAR16 *)L"Scsi Disk Driver" },
-  { NULL,     NULL                          }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mScsiDiskDriverNameTable[] = {
+  { "eng;en", (CHAR16 *)L"Scsi Disk Driver"     },
+  { NULL,     NULL                              }
 };
 
 /**

@@ -108,14 +108,28 @@ DxePrintLibPrint2ProtocolVaListToBaseList (
 
   if (AsciiFormat) {
     if (ASCII_RSIZE_MAX != 0) {
-      SAFE_PRINT_CONSTRAINT_CHECK ((AsciiStrnLenS (Format, ASCII_RSIZE_MAX + 1) <= ASCII_RSIZE_MAX), FALSE);
+      SAFE_PRINT_CONSTRAINT_CHECK (
+        (AsciiStrnLenS (
+           Format,
+           ASCII_RSIZE_MAX +
+           1
+           ) <= ASCII_RSIZE_MAX),
+        FALSE
+        );
     }
 
     BytesPerFormatCharacter = 1;
     FormatMask              = 0xff;
   } else {
     if (RSIZE_MAX != 0) {
-      SAFE_PRINT_CONSTRAINT_CHECK ((StrnLenS ((CHAR16 *)Format, RSIZE_MAX + 1) <= RSIZE_MAX), FALSE);
+      SAFE_PRINT_CONSTRAINT_CHECK (
+        (StrnLenS (
+           (CHAR16 *)Format,
+           RSIZE_MAX +
+           1
+           ) <= RSIZE_MAX),
+        FALSE
+        );
     }
 
     BytesPerFormatCharacter = 2;
@@ -125,7 +139,8 @@ DxePrintLibPrint2ProtocolVaListToBaseList (
   //
   // Get the first character from the format string
   //
-  FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 : (*(Format + 1) << 8))) & FormatMask;
+  FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 :
+                                         (*(Format + 1) << 8))) & FormatMask;
 
   while (FormatCharacter != 0) {
     if (FormatCharacter == '%') {
@@ -143,7 +158,9 @@ DxePrintLibPrint2ProtocolVaListToBaseList (
         //
         // Get the next character from the format string
         //
-        FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 : (*(Format + 1) << 8))) & FormatMask;
+        FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ?
+                                               0 : (*(Format + 1) << 8))) &
+                          FormatMask;
 
         switch (FormatCharacter) {
           case '.':
@@ -215,7 +232,10 @@ DxePrintLibPrint2ProtocolVaListToBaseList (
           BASE_ARG (BaseListMarker, UINTN) = VA_ARG (VaListMarker, UINTN);
           break;
         case 'r':
-          BASE_ARG (BaseListMarker, RETURN_STATUS) = VA_ARG (VaListMarker, RETURN_STATUS);
+          BASE_ARG (BaseListMarker, RETURN_STATUS) = VA_ARG (
+                                                       VaListMarker,
+                                                       RETURN_STATUS
+                                                       );
           break;
       }
     }
@@ -224,7 +244,10 @@ DxePrintLibPrint2ProtocolVaListToBaseList (
     // If BASE_LIST is larger than Size, then return FALSE
     //
     if (((UINTN)BaseListMarker - (UINTN)BaseListStart) > Size) {
-      DEBUG ((DEBUG_ERROR, "The input variable argument list is too long. Please consider breaking into multiple print calls.\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "The input variable argument list is too long. Please consider breaking into multiple print calls.\n"
+        ));
       return FALSE;
     }
 
@@ -236,7 +259,8 @@ DxePrintLibPrint2ProtocolVaListToBaseList (
     //
     // Get the next character from the format string
     //
-    FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 : (*(Format + 1) << 8))) & FormatMask;
+    FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 :
+                                           (*(Format + 1) << 8))) & FormatMask;
   }
 
   return TRUE;
@@ -308,7 +332,12 @@ UnicodeVSPrint (
     return 0;
   }
 
-  return UnicodeBSPrint (StartOfBuffer, BufferSize, FormatString, (BASE_LIST)BaseListMarker);
+  return UnicodeBSPrint (
+           StartOfBuffer,
+           BufferSize,
+           FormatString,
+           (BASE_LIST)BaseListMarker
+           );
 }
 
 /**
@@ -360,7 +389,12 @@ UnicodeBSPrint (
 {
   ASSERT_UNICODE_BUFFER (StartOfBuffer);
   ASSERT_UNICODE_BUFFER (FormatString);
-  return mPrint2SProtocol->UnicodeBSPrint (StartOfBuffer, BufferSize, FormatString, Marker);
+  return mPrint2SProtocol->UnicodeBSPrint (
+                             StartOfBuffer,
+                             BufferSize,
+                             FormatString,
+                             Marker
+                             );
 }
 
 /**
@@ -416,7 +450,12 @@ UnicodeSPrint (
   UINTN    NumberOfPrinted;
 
   VA_START (Marker, FormatString);
-  NumberOfPrinted = UnicodeVSPrint (StartOfBuffer, BufferSize, FormatString, Marker);
+  NumberOfPrinted = UnicodeVSPrint (
+                      StartOfBuffer,
+                      BufferSize,
+                      FormatString,
+                      Marker
+                      );
   VA_END (Marker);
   return NumberOfPrinted;
 }
@@ -485,7 +524,12 @@ UnicodeVSPrintAsciiFormat (
     return 0;
   }
 
-  return UnicodeBSPrintAsciiFormat (StartOfBuffer, BufferSize, FormatString, (BASE_LIST)BaseListMarker);
+  return UnicodeBSPrintAsciiFormat (
+           StartOfBuffer,
+           BufferSize,
+           FormatString,
+           (BASE_LIST)BaseListMarker
+           );
 }
 
 /**
@@ -535,7 +579,12 @@ UnicodeBSPrintAsciiFormat (
   )
 {
   ASSERT_UNICODE_BUFFER (StartOfBuffer);
-  return mPrint2SProtocol->UnicodeBSPrintAsciiFormat (StartOfBuffer, BufferSize, FormatString, Marker);
+  return mPrint2SProtocol->UnicodeBSPrintAsciiFormat (
+                             StartOfBuffer,
+                             BufferSize,
+                             FormatString,
+                             Marker
+                             );
 }
 
 /**
@@ -591,7 +640,12 @@ UnicodeSPrintAsciiFormat (
   UINTN    NumberOfPrinted;
 
   VA_START (Marker, FormatString);
-  NumberOfPrinted = UnicodeVSPrintAsciiFormat (StartOfBuffer, BufferSize, FormatString, Marker);
+  NumberOfPrinted = UnicodeVSPrintAsciiFormat (
+                      StartOfBuffer,
+                      BufferSize,
+                      FormatString,
+                      Marker
+                      );
   VA_END (Marker);
   return NumberOfPrinted;
 }
@@ -657,7 +711,13 @@ UnicodeValueToStringS (
   IN UINTN       Width
   )
 {
-  return mPrint2SProtocol->UnicodeValueToStringS (Buffer, BufferSize, Flags, Value, Width);
+  return mPrint2SProtocol->UnicodeValueToStringS (
+                             Buffer,
+                             BufferSize,
+                             Flags,
+                             Value,
+                             Width
+                             );
 }
 
 /**
@@ -720,7 +780,12 @@ AsciiVSPrint (
     return 0;
   }
 
-  return AsciiBSPrint (StartOfBuffer, BufferSize, FormatString, (BASE_LIST)BaseListMarker);
+  return AsciiBSPrint (
+           StartOfBuffer,
+           BufferSize,
+           FormatString,
+           (BASE_LIST)BaseListMarker
+           );
 }
 
 /**
@@ -767,7 +832,12 @@ AsciiBSPrint (
   IN  BASE_LIST    Marker
   )
 {
-  return mPrint2SProtocol->AsciiBSPrint (StartOfBuffer, BufferSize, FormatString, Marker);
+  return mPrint2SProtocol->AsciiBSPrint (
+                             StartOfBuffer,
+                             BufferSize,
+                             FormatString,
+                             Marker
+                             );
 }
 
 /**
@@ -821,7 +891,12 @@ AsciiSPrint (
   UINTN    NumberOfPrinted;
 
   VA_START (Marker, FormatString);
-  NumberOfPrinted = AsciiVSPrint (StartOfBuffer, BufferSize, FormatString, Marker);
+  NumberOfPrinted = AsciiVSPrint (
+                      StartOfBuffer,
+                      BufferSize,
+                      FormatString,
+                      Marker
+                      );
   VA_END (Marker);
   return NumberOfPrinted;
 }
@@ -890,7 +965,12 @@ AsciiVSPrintUnicodeFormat (
     return 0;
   }
 
-  return AsciiBSPrintUnicodeFormat (StartOfBuffer, BufferSize, FormatString, (BASE_LIST)BaseListMarker);
+  return AsciiBSPrintUnicodeFormat (
+           StartOfBuffer,
+           BufferSize,
+           FormatString,
+           (BASE_LIST)BaseListMarker
+           );
 }
 
 /**
@@ -940,7 +1020,12 @@ AsciiBSPrintUnicodeFormat (
   )
 {
   ASSERT_UNICODE_BUFFER (FormatString);
-  return mPrint2SProtocol->AsciiBSPrintUnicodeFormat (StartOfBuffer, BufferSize, FormatString, Marker);
+  return mPrint2SProtocol->AsciiBSPrintUnicodeFormat (
+                             StartOfBuffer,
+                             BufferSize,
+                             FormatString,
+                             Marker
+                             );
 }
 
 /**
@@ -996,7 +1081,12 @@ AsciiSPrintUnicodeFormat (
   UINTN    NumberOfPrinted;
 
   VA_START (Marker, FormatString);
-  NumberOfPrinted = AsciiVSPrintUnicodeFormat (StartOfBuffer, BufferSize, FormatString, Marker);
+  NumberOfPrinted = AsciiVSPrintUnicodeFormat (
+                      StartOfBuffer,
+                      BufferSize,
+                      FormatString,
+                      Marker
+                      );
   VA_END (Marker);
   return NumberOfPrinted;
 }
@@ -1060,7 +1150,13 @@ AsciiValueToStringS (
   IN UINTN      Width
   )
 {
-  return mPrint2SProtocol->AsciiValueToStringS (Buffer, BufferSize, Flags, Value, Width);
+  return mPrint2SProtocol->AsciiValueToStringS (
+                             Buffer,
+                             BufferSize,
+                             Flags,
+                             Value,
+                             Width
+                             );
 }
 
 #define PREFIX_SIGN          BIT1
@@ -1092,7 +1188,9 @@ typedef struct {
   UINT8     Pad2;
 } TIME;
 
-GLOBAL_REMOVE_IF_UNREFERENCED CONST CHAR8  mHexStr[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+GLOBAL_REMOVE_IF_UNREFERENCED CONST CHAR8  mHexStr[] = {
+  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+};
 
 /**
   Internal function that convert a number to a string in Buffer.
@@ -1120,7 +1218,8 @@ InternalPrintLibValueToString (
   //
   *Buffer = 0;
   do {
-    Value       = (INT64)DivU64x32Remainder ((UINT64)Value, (UINT32)Radix, &Remainder);
+    Value = (INT64)DivU64x32Remainder ((UINT64)Value, (UINT32)Radix,
+                     &Remainder);
     *(++Buffer) = mHexStr[Remainder];
   } while (Value != 0);
 
@@ -1202,7 +1301,8 @@ InternalPrintLibSPrint (
   UINTN    NumberOfPrinted;
 
   VA_START (Marker, FormatString);
-  NumberOfPrinted = InternalPrintLibSPrintMarker (StartOfBuffer, BufferSize, Flags, FormatString, Marker, NULL);
+  NumberOfPrinted = InternalPrintLibSPrintMarker (StartOfBuffer, BufferSize,
+                      Flags, FormatString, Marker, NULL);
   VA_END (Marker);
   return NumberOfPrinted;
 }
@@ -1406,14 +1506,16 @@ InternalPrintLibSPrintMarker (
   //
   if ((Flags & FORMAT_UNICODE) != 0) {
     if (RSIZE_MAX != 0) {
-      SAFE_PRINT_CONSTRAINT_CHECK ((StrnLenS ((CHAR16 *)Format, RSIZE_MAX + 1) <= RSIZE_MAX), 0);
+      SAFE_PRINT_CONSTRAINT_CHECK ((StrnLenS ((CHAR16 *)Format, RSIZE_MAX +
+                                      1) <= RSIZE_MAX), 0);
     }
 
     BytesPerFormatCharacter = 2;
     FormatMask              = 0xffff;
   } else {
     if (ASCII_RSIZE_MAX != 0) {
-      SAFE_PRINT_CONSTRAINT_CHECK ((AsciiStrnLenS (Format, ASCII_RSIZE_MAX + 1) <= ASCII_RSIZE_MAX), 0);
+      SAFE_PRINT_CONSTRAINT_CHECK ((AsciiStrnLenS (Format, ASCII_RSIZE_MAX +
+                                      1) <= ASCII_RSIZE_MAX), 0);
     }
 
     BytesPerFormatCharacter = 1;
@@ -1453,7 +1555,8 @@ InternalPrintLibSPrintMarker (
   //
   // Get the first character from the format string
   //
-  FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 : (*(Format + 1) << 8))) & FormatMask;
+  FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 :
+                                         (*(Format + 1) << 8))) & FormatMask;
 
   //
   // Loop until the end of the format string is reached or the output buffer is full
@@ -1486,7 +1589,9 @@ InternalPrintLibSPrintMarker (
         //
         for (Done = FALSE; !Done; ) {
           Format         += BytesPerFormatCharacter;
-          FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 : (*(Format + 1) << 8))) & FormatMask;
+          FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter ==
+                                                  1) ? 0 : (*(Format + 1) <<
+                                                            8))) & FormatMask;
           switch (FormatCharacter) {
             case '.':
               Flags |= PRECISION;
@@ -1538,10 +1643,14 @@ InternalPrintLibSPrintMarker (
             case '7':
             case '8':
             case '9':
-              for (Count = 0; ((FormatCharacter >= '0') &&  (FormatCharacter <= '9')); ) {
+              for (Count = 0; ((FormatCharacter >= '0') &&  (FormatCharacter <=
+                                                             '9')); ) {
                 Count           = (Count * 10) + FormatCharacter - '0';
                 Format         += BytesPerFormatCharacter;
-                FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 : (*(Format + 1) << 8))) & FormatMask;
+                FormatCharacter = ((*Format & 0xff) |
+                                   ((BytesPerFormatCharacter == 1) ? 0 :
+                                    (*(Format + 1) << 8))) &
+                                  FormatMask;
               }
 
               Format -= BytesPerFormatCharacter;
@@ -1578,7 +1687,8 @@ InternalPrintLibSPrintMarker (
             //
             // Flag space, +, 0, L & l are invalid for type p.
             //
-            Flags &= ~((UINTN)(PREFIX_BLANK | PREFIX_SIGN | PREFIX_ZERO | LONG_TYPE));
+            Flags &= ~((UINTN)(PREFIX_BLANK | PREFIX_SIGN | PREFIX_ZERO |
+                               LONG_TYPE));
             if (sizeof (VOID *) > 4) {
               Flags |= LONG_TYPE;
             }
@@ -1651,7 +1761,8 @@ InternalPrintLibSPrintMarker (
                 Flags |= PREFIX_SIGN;
                 Prefix = '-';
                 Value  = -Value;
-              } else if (((Flags & UNSIGNED_TYPE) != 0) && ((Flags & LONG_TYPE) == 0)) {
+              } else if (((Flags & UNSIGNED_TYPE) != 0) && ((Flags &
+                                                             LONG_TYPE) == 0)) {
                 //
                 // 'd', 'u', 'x', and 'X' that are not preceded by 'l' or 'L' are assumed to be type "int".
                 // This assumption is made so the format string definition is compatible with the ANSI C
@@ -1681,7 +1792,8 @@ InternalPrintLibSPrintMarker (
             //
             // Convert Value to a reversed string
             //
-            Count = InternalPrintLibValueToString (ValueBuffer, Value, Radix) - ValueBuffer;
+            Count = InternalPrintLibValueToString (ValueBuffer, Value, Radix) -
+                    ValueBuffer;
             if ((Value == 0) && (Precision == 0)) {
               Count = 0;
             }
@@ -1839,14 +1951,17 @@ InternalPrintLibSPrintMarker (
             }
 
             if (ArgumentString == ValueBuffer) {
-              InternalPrintLibSPrint ((CHAR8 *)ValueBuffer, MAXIMUM_VALUE_CHARACTERS, 0, "%08X", Status);
+              InternalPrintLibSPrint ((CHAR8 *)ValueBuffer,
+                MAXIMUM_VALUE_CHARACTERS, 0, "%08X", Status);
             }
 
             break;
 
           case '\r':
             Format         += BytesPerFormatCharacter;
-            FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 : (*(Format + 1) << 8))) & FormatMask;
+            FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter ==
+                                                    1) ? 0 : (*(Format + 1) <<
+                                                              8))) & FormatMask;
             if (FormatCharacter == '\n') {
               //
               // Translate '\r\n' to '\r\n'
@@ -1868,7 +1983,9 @@ InternalPrintLibSPrintMarker (
             //
             ArgumentString  = "\r\n";
             Format         += BytesPerFormatCharacter;
-            FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 : (*(Format + 1) << 8))) & FormatMask;
+            FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter ==
+                                                    1) ? 0 : (*(Format + 1) <<
+                                                              8))) & FormatMask;
             if (FormatCharacter != '\r') {
               Format -= BytesPerFormatCharacter;
             }
@@ -1889,7 +2006,9 @@ InternalPrintLibSPrintMarker (
 
       case '\r':
         Format         += BytesPerFormatCharacter;
-        FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 : (*(Format + 1) << 8))) & FormatMask;
+        FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ?
+                                               0 : (*(Format + 1) << 8))) &
+                          FormatMask;
         if (FormatCharacter == '\n') {
           //
           // Translate '\r\n' to '\r\n'
@@ -1911,7 +2030,9 @@ InternalPrintLibSPrintMarker (
         //
         ArgumentString  = "\r\n";
         Format         += BytesPerFormatCharacter;
-        FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 : (*(Format + 1) << 8))) & FormatMask;
+        FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ?
+                                               0 : (*(Format + 1) << 8))) &
+                          FormatMask;
         if (FormatCharacter != '\r') {
           Format -= BytesPerFormatCharacter;
         }
@@ -1949,7 +2070,12 @@ InternalPrintLibSPrintMarker (
            (Count < Precision || ((Flags & PRECISION) == 0));
            Count++)
       {
-        ArgumentCharacter = ((ArgumentString[Count * BytesPerArgumentCharacter] & 0xff) | ((ArgumentString[Count * BytesPerArgumentCharacter + 1]) << 8)) & ArgumentMask;
+        ArgumentCharacter = ((ArgumentString[Count *
+                                             BytesPerArgumentCharacter] &
+                              0xff) | ((ArgumentString[Count *
+                                                       BytesPerArgumentCharacter
+                                                       + 1]) << 8)) &
+                            ArgumentMask;
         if (ArgumentCharacter == 0) {
           break;
         }
@@ -1966,7 +2092,8 @@ InternalPrintLibSPrintMarker (
     if ((Flags & (PAD_TO_WIDTH | LEFT_JUSTIFY)) == (PAD_TO_WIDTH)) {
       LengthToReturn += ((Width - Precision) * BytesPerOutputCharacter);
       if (((Flags & COUNT_ONLY_NO_PRINT) == 0) && (Buffer != NULL)) {
-        Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, Width - Precision, ' ', BytesPerOutputCharacter);
+        Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, Width -
+                   Precision, ' ', BytesPerOutputCharacter);
       }
     }
 
@@ -1974,24 +2101,28 @@ InternalPrintLibSPrintMarker (
       if (Prefix != 0) {
         LengthToReturn += (1 * BytesPerOutputCharacter);
         if (((Flags & COUNT_ONLY_NO_PRINT) == 0) && (Buffer != NULL)) {
-          Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, 1, Prefix, BytesPerOutputCharacter);
+          Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, 1, Prefix,
+                     BytesPerOutputCharacter);
         }
       }
 
       LengthToReturn += ((Precision - Count) * BytesPerOutputCharacter);
       if (((Flags & COUNT_ONLY_NO_PRINT) == 0) && (Buffer != NULL)) {
-        Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, Precision - Count, '0', BytesPerOutputCharacter);
+        Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, Precision -
+                   Count, '0', BytesPerOutputCharacter);
       }
     } else {
       LengthToReturn += ((Precision - Count) * BytesPerOutputCharacter);
       if (((Flags & COUNT_ONLY_NO_PRINT) == 0) && (Buffer != NULL)) {
-        Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, Precision - Count, ' ', BytesPerOutputCharacter);
+        Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, Precision -
+                   Count, ' ', BytesPerOutputCharacter);
       }
 
       if (Prefix != 0) {
         LengthToReturn += (1 * BytesPerOutputCharacter);
         if (((Flags & COUNT_ONLY_NO_PRINT) == 0) && (Buffer != NULL)) {
-          Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, 1, Prefix, BytesPerOutputCharacter);
+          Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, 1, Prefix,
+                     BytesPerOutputCharacter);
         }
       }
     }
@@ -2011,11 +2142,14 @@ InternalPrintLibSPrintMarker (
            (ArgumentString[0] != '\0' ||
             (BytesPerArgumentCharacter > 1 && ArgumentString[1] != '\0')))
     {
-      ArgumentCharacter = ((*ArgumentString & 0xff) | (((UINT8)*(ArgumentString + 1)) << 8)) & ArgumentMask;
+      ArgumentCharacter = ((*ArgumentString & 0xff) |
+                           (((UINT8)*(ArgumentString + 1)) << 8)) &
+                          ArgumentMask;
 
       LengthToReturn += (1 * BytesPerOutputCharacter);
       if (((Flags & COUNT_ONLY_NO_PRINT) == 0) && (Buffer != NULL)) {
-        Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, 1, ArgumentCharacter, BytesPerOutputCharacter);
+        Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, 1,
+                   ArgumentCharacter, BytesPerOutputCharacter);
       }
 
       ArgumentString += BytesPerArgumentCharacter;
@@ -2028,7 +2162,8 @@ InternalPrintLibSPrintMarker (
           if (Index < Count) {
             LengthToReturn += (1 * BytesPerOutputCharacter);
             if (((Flags & COUNT_ONLY_NO_PRINT) == 0) && (Buffer != NULL)) {
-              Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, 1, ',', BytesPerOutputCharacter);
+              Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, 1, ',',
+                         BytesPerOutputCharacter);
             }
           }
         }
@@ -2038,10 +2173,12 @@ InternalPrintLibSPrintMarker (
     //
     // Pad after the string
     //
-    if ((Flags & (PAD_TO_WIDTH | LEFT_JUSTIFY)) == (PAD_TO_WIDTH | LEFT_JUSTIFY)) {
+    if ((Flags & (PAD_TO_WIDTH | LEFT_JUSTIFY)) == (PAD_TO_WIDTH |
+                                                    LEFT_JUSTIFY)) {
       LengthToReturn += ((Width - Precision) * BytesPerOutputCharacter);
       if (((Flags & COUNT_ONLY_NO_PRINT) == 0) && (Buffer != NULL)) {
-        Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, Width - Precision, ' ', BytesPerOutputCharacter);
+        Buffer = InternalPrintLibFillBuffer (Buffer, EndBuffer, Width -
+                   Precision, ' ', BytesPerOutputCharacter);
       }
     }
 
@@ -2053,7 +2190,8 @@ InternalPrintLibSPrintMarker (
     //
     // Get the next character from the format string
     //
-    FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 : (*(Format + 1) << 8))) & FormatMask;
+    FormatCharacter = ((*Format & 0xff) | ((BytesPerFormatCharacter == 1) ? 0 :
+                                           (*(Format + 1) << 8))) & FormatMask;
   }
 
   if ((Flags & COUNT_ONLY_NO_PRINT) != 0) {
@@ -2064,7 +2202,8 @@ InternalPrintLibSPrintMarker (
   //
   // Null terminate the Unicode or ASCII string
   //
-  InternalPrintLibFillBuffer (Buffer, EndBuffer + BytesPerOutputCharacter, 1, 0, BytesPerOutputCharacter);
+  InternalPrintLibFillBuffer (Buffer, EndBuffer + BytesPerOutputCharacter, 1, 0,
+    BytesPerOutputCharacter);
 
   return ((Buffer - OriginalBuffer) / BytesPerOutputCharacter);
 }
@@ -2094,7 +2233,9 @@ SPrintLength (
   )
 {
   ASSERT_UNICODE_BUFFER (FormatString);
-  return InternalPrintLibSPrintMarker (NULL, 0, FORMAT_UNICODE | OUTPUT_UNICODE | COUNT_ONLY_NO_PRINT, (CHAR8 *)FormatString, Marker, NULL);
+  return InternalPrintLibSPrintMarker (NULL, 0, FORMAT_UNICODE |
+           OUTPUT_UNICODE | COUNT_ONLY_NO_PRINT, (CHAR8 *)FormatString, Marker,
+           NULL);
 }
 
 /**
@@ -2119,5 +2260,6 @@ SPrintLengthAsciiFormat (
   IN  VA_LIST      Marker
   )
 {
-  return InternalPrintLibSPrintMarker (NULL, 0, OUTPUT_UNICODE | COUNT_ONLY_NO_PRINT, (CHAR8 *)FormatString, Marker, NULL);
+  return InternalPrintLibSPrintMarker (NULL, 0, OUTPUT_UNICODE |
+           COUNT_ONLY_NO_PRINT, (CHAR8 *)FormatString, Marker, NULL);
 }

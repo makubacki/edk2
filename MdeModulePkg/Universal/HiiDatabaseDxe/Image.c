@@ -47,7 +47,10 @@ GetImageIdOrAddress (
         // find the previous defined image block.
         //
         if (CurrentImageBlock->BlockType == EFI_HII_IIBT_DUPLICATE) {
-          *ImageId = ReadUnaligned16 ((VOID *)&((EFI_HII_IIBT_DUPLICATE_BLOCK *)CurrentImageBlock)->ImageId);
+          *ImageId = ReadUnaligned16 (
+                       (VOID *)&((EFI_HII_IIBT_DUPLICATE_BLOCK *)
+                                 CurrentImageBlock)->ImageId
+                       );
           ASSERT (*ImageId != ImageIdCurrent);
           ASSERT (*ImageId != 0);
           CurrentImageBlock = ImageBlocks;
@@ -71,18 +74,29 @@ GetImageIdOrAddress (
         Length = ((EFI_HII_IIBT_EXT1_BLOCK *)CurrentImageBlock)->Length;
         break;
       case EFI_HII_IIBT_EXT2:
-        Length = ReadUnaligned16 (&((EFI_HII_IIBT_EXT2_BLOCK *)CurrentImageBlock)->Length);
+        Length = ReadUnaligned16 (
+                   &((EFI_HII_IIBT_EXT2_BLOCK *)CurrentImageBlock)->Length
+                   );
         break;
       case EFI_HII_IIBT_EXT4:
-        Length = ReadUnaligned32 ((VOID *)&((EFI_HII_IIBT_EXT4_BLOCK *)CurrentImageBlock)->Length);
+        Length = ReadUnaligned32 (
+                   (VOID *)&((EFI_HII_IIBT_EXT4_BLOCK *)CurrentImageBlock)->
+                     Length
+                   );
         break;
 
       case EFI_HII_IIBT_IMAGE_1BIT:
       case EFI_HII_IIBT_IMAGE_1BIT_TRANS:
         Length = sizeof (EFI_HII_IIBT_IMAGE_1BIT_BLOCK) - sizeof (UINT8) +
                  BITMAP_LEN_1_BIT (
-                   ReadUnaligned16 (&((EFI_HII_IIBT_IMAGE_1BIT_BLOCK *)CurrentImageBlock)->Bitmap.Width),
-                   ReadUnaligned16 (&((EFI_HII_IIBT_IMAGE_1BIT_BLOCK *)CurrentImageBlock)->Bitmap.Height)
+                   ReadUnaligned16 (
+                     &((EFI_HII_IIBT_IMAGE_1BIT_BLOCK *)CurrentImageBlock)->
+                       Bitmap.Width
+                     ),
+                   ReadUnaligned16 (
+                     &((EFI_HII_IIBT_IMAGE_1BIT_BLOCK *)CurrentImageBlock)->
+                       Bitmap.Height
+                     )
                    );
         ImageIdCurrent++;
         break;
@@ -91,8 +105,14 @@ GetImageIdOrAddress (
       case EFI_HII_IIBT_IMAGE_4BIT_TRANS:
         Length = sizeof (EFI_HII_IIBT_IMAGE_4BIT_BLOCK) - sizeof (UINT8) +
                  BITMAP_LEN_4_BIT (
-                   ReadUnaligned16 (&((EFI_HII_IIBT_IMAGE_4BIT_BLOCK *)CurrentImageBlock)->Bitmap.Width),
-                   ReadUnaligned16 (&((EFI_HII_IIBT_IMAGE_4BIT_BLOCK *)CurrentImageBlock)->Bitmap.Height)
+                   ReadUnaligned16 (
+                     &((EFI_HII_IIBT_IMAGE_4BIT_BLOCK *)CurrentImageBlock)->
+                       Bitmap.Width
+                     ),
+                   ReadUnaligned16 (
+                     &((EFI_HII_IIBT_IMAGE_4BIT_BLOCK *)CurrentImageBlock)->
+                       Bitmap.Height
+                     )
                    );
         ImageIdCurrent++;
         break;
@@ -101,18 +121,33 @@ GetImageIdOrAddress (
       case EFI_HII_IIBT_IMAGE_8BIT_TRANS:
         Length = sizeof (EFI_HII_IIBT_IMAGE_8BIT_BLOCK) - sizeof (UINT8) +
                  BITMAP_LEN_8_BIT (
-                   (UINT32)ReadUnaligned16 (&((EFI_HII_IIBT_IMAGE_8BIT_BLOCK *)CurrentImageBlock)->Bitmap.Width),
-                   ReadUnaligned16 (&((EFI_HII_IIBT_IMAGE_8BIT_BLOCK *)CurrentImageBlock)->Bitmap.Height)
+                   (UINT32)ReadUnaligned16 (
+                             &((EFI_HII_IIBT_IMAGE_8BIT_BLOCK *)
+                               CurrentImageBlock)->Bitmap.Width
+                             ),
+                   ReadUnaligned16 (
+                     &((EFI_HII_IIBT_IMAGE_8BIT_BLOCK *)CurrentImageBlock)->
+                       Bitmap.Height
+                     )
                    );
         ImageIdCurrent++;
         break;
 
       case EFI_HII_IIBT_IMAGE_24BIT:
       case EFI_HII_IIBT_IMAGE_24BIT_TRANS:
-        Length = sizeof (EFI_HII_IIBT_IMAGE_24BIT_BLOCK) - sizeof (EFI_HII_RGB_PIXEL) +
+        Length = sizeof (EFI_HII_IIBT_IMAGE_24BIT_BLOCK) -
+                 sizeof (EFI_HII_RGB_PIXEL) +
                  BITMAP_LEN_24_BIT (
-                   (UINT32)ReadUnaligned16 ((VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)CurrentImageBlock)->Bitmap.Width),
-                   ReadUnaligned16 ((VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)CurrentImageBlock)->Bitmap.Height)
+                   (UINT32)ReadUnaligned16 (
+                             (VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)
+                                       CurrentImageBlock)->Bitmap.
+                               Width
+                             ),
+                   ReadUnaligned16 (
+                     (VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)
+                               CurrentImageBlock)->Bitmap.
+                       Height
+                     )
                    );
         ImageIdCurrent++;
         break;
@@ -123,23 +158,39 @@ GetImageIdOrAddress (
         break;
 
       case EFI_HII_IIBT_IMAGE_JPEG:
-        Length = OFFSET_OF (EFI_HII_IIBT_JPEG_BLOCK, Data) + ReadUnaligned32 ((VOID *)&((EFI_HII_IIBT_JPEG_BLOCK *)CurrentImageBlock)->Size);
+        Length = OFFSET_OF (EFI_HII_IIBT_JPEG_BLOCK, Data) + ReadUnaligned32 (
+                                                               (VOID *)&((
+                                                                                        EFI_HII_IIBT_JPEG_BLOCK
+                                                                                        *)
+                                                                         CurrentImageBlock)
+                                                                 ->Size
+                                                               );
         ImageIdCurrent++;
         break;
 
       case EFI_HII_IIBT_IMAGE_PNG:
-        Length = OFFSET_OF (EFI_HII_IIBT_PNG_BLOCK, Data) + ReadUnaligned32 ((VOID *)&((EFI_HII_IIBT_PNG_BLOCK *)CurrentImageBlock)->Size);
+        Length = OFFSET_OF (EFI_HII_IIBT_PNG_BLOCK, Data) + ReadUnaligned32 (
+                                                              (VOID *)&((
+                                                                                       EFI_HII_IIBT_PNG_BLOCK
+                                                                                       *)
+                                                                        CurrentImageBlock)
+                                                                ->Size
+                                                              );
         ImageIdCurrent++;
         break;
 
       case EFI_HII_IIBT_SKIP1:
         Length          = sizeof (EFI_HII_IIBT_SKIP1_BLOCK);
-        ImageIdCurrent += ((EFI_HII_IIBT_SKIP1_BLOCK *)CurrentImageBlock)->SkipCount;
+        ImageIdCurrent +=
+          ((EFI_HII_IIBT_SKIP1_BLOCK *)CurrentImageBlock)->SkipCount;
         break;
 
       case EFI_HII_IIBT_SKIP2:
         Length          = sizeof (EFI_HII_IIBT_SKIP2_BLOCK);
-        ImageIdCurrent += ReadUnaligned16 ((VOID *)&((EFI_HII_IIBT_SKIP2_BLOCK *)CurrentImageBlock)->SkipCount);
+        ImageIdCurrent += ReadUnaligned16 (
+                            (VOID *)&((EFI_HII_IIBT_SKIP2_BLOCK *)
+                                      CurrentImageBlock)->SkipCount
+                            );
         break;
 
       default:
@@ -151,7 +202,8 @@ GetImageIdOrAddress (
         break;
     }
 
-    CurrentImageBlock = (EFI_HII_IMAGE_BLOCK *)((UINT8 *)CurrentImageBlock + Length);
+    CurrentImageBlock = (EFI_HII_IMAGE_BLOCK *)((UINT8 *)CurrentImageBlock +
+                                                Length);
   }
 
   //
@@ -287,9 +339,11 @@ Output1bitPixel (
       Byte = *(Data + OffsetY + Xpos);
       for (Index = 0; Index < 8; Index++) {
         if ((Byte & (1 << Index)) != 0) {
-          BitMapPtr[Ypos * Image->Width + Xpos * 8 + (8 - Index - 1)] = PaletteValue[1];
+          BitMapPtr[Ypos * Image->Width + Xpos * 8 + (8 - Index - 1)] =
+            PaletteValue[1];
         } else {
-          BitMapPtr[Ypos * Image->Width + Xpos * 8 + (8 - Index - 1)] = PaletteValue[0];
+          BitMapPtr[Ypos * Image->Width + Xpos * 8 + (8 - Index - 1)] =
+            PaletteValue[0];
         }
       }
     }
@@ -361,7 +415,14 @@ Output4bitPixel (
   PaletteNum = (UINT16)(Palette->PaletteSize / sizeof (EFI_HII_RGB_PIXEL));
 
   ZeroMem (PaletteValue, sizeof (PaletteValue));
-  CopyRgbToGopPixel (PaletteValue, Palette->PaletteValue, MIN (PaletteNum, ARRAY_SIZE (PaletteValue)));
+  CopyRgbToGopPixel (
+    PaletteValue,
+    Palette->PaletteValue,
+    MIN (
+      PaletteNum,
+      ARRAY_SIZE (PaletteValue)
+      )
+    );
   FreePool (Palette);
 
   //
@@ -438,7 +499,14 @@ Output8bitPixel (
   CopyMem (Palette, PaletteInfo, PaletteSize);
   PaletteNum = (UINT16)(Palette->PaletteSize / sizeof (EFI_HII_RGB_PIXEL));
   ZeroMem (PaletteValue, sizeof (PaletteValue));
-  CopyRgbToGopPixel (PaletteValue, Palette->PaletteValue, MIN (PaletteNum, ARRAY_SIZE (PaletteValue)));
+  CopyRgbToGopPixel (
+    PaletteValue,
+    Palette->PaletteValue,
+    MIN (
+      PaletteNum,
+      ARRAY_SIZE (PaletteValue)
+      )
+    );
   FreePool (Palette);
 
   //
@@ -588,7 +656,12 @@ LocatePackageList (
        Link = GetNextNode (Database, Link)
        )
   {
-    Record = CR (Link, HII_DATABASE_RECORD, DatabaseEntry, HII_DATABASE_RECORD_SIGNATURE);
+    Record = CR (
+               Link,
+               HII_DATABASE_RECORD,
+               DatabaseEntry,
+               HII_DATABASE_RECORD_SIGNATURE
+               );
     if (Record->Handle == PackageList) {
       return Record->PackageList;
     }
@@ -630,7 +703,9 @@ HiiNewImage (
   EFI_HII_IMAGE_BLOCK                 *ImageBlocks;
   UINT32                              NewBlockSize;
 
-  if ((This == NULL) || (ImageId == NULL) || (Image == NULL) || (Image->Bitmap == NULL)) {
+  if ((This == NULL) || (ImageId == NULL) || (Image == NULL) ||
+      (Image->Bitmap == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -648,12 +723,15 @@ HiiNewImage (
   // Note: 24Bit BMP occpuies 3 bytes per pixel.
   //
   NewBlockSize = (UINT32)Image->Width * Image->Height;
-  if (NewBlockSize > (MAX_UINT32 - (sizeof (EFI_HII_IIBT_IMAGE_24BIT_BLOCK) - sizeof (EFI_HII_RGB_PIXEL))) / 3) {
+  if (NewBlockSize > (MAX_UINT32 - (sizeof (EFI_HII_IIBT_IMAGE_24BIT_BLOCK) -
+                                    sizeof (EFI_HII_RGB_PIXEL))) / 3)
+  {
     EfiReleaseLock (&mHiiDatabaseLock);
     return EFI_OUT_OF_RESOURCES;
   }
 
-  NewBlockSize = NewBlockSize * 3 + (sizeof (EFI_HII_IIBT_IMAGE_24BIT_BLOCK) - sizeof (EFI_HII_RGB_PIXEL));
+  NewBlockSize = NewBlockSize * 3 + (sizeof (EFI_HII_IIBT_IMAGE_24BIT_BLOCK) -
+                                     sizeof (EFI_HII_RGB_PIXEL));
 
   //
   // Get the image package in the package list,
@@ -707,7 +785,9 @@ HiiNewImage (
     // Point to the very last block.
     //
     ImageBlocks = (EFI_HII_IMAGE_BLOCK *)(
-                                          (UINT8 *)ImageBlocks + ImagePackage->ImageBlockSize - sizeof (EFI_HII_IIBT_END_BLOCK)
+                                          (UINT8 *)ImageBlocks +
+                                          ImagePackage->ImageBlockSize -
+                                          sizeof (EFI_HII_IIBT_END_BLOCK)
                                           );
     //
     // Update the length record.
@@ -720,7 +800,9 @@ HiiNewImage (
     // Make sure the final package length doesn't overflow.
     // Length of the package header is represented using 24 bits. So MAX length is MAX_UINT24.
     //
-    if (NewBlockSize > MAX_UINT24 - (sizeof (EFI_HII_IMAGE_PACKAGE_HDR) + sizeof (EFI_HII_IIBT_END_BLOCK))) {
+    if (NewBlockSize > MAX_UINT24 - (sizeof (EFI_HII_IMAGE_PACKAGE_HDR) +
+                                     sizeof (EFI_HII_IIBT_END_BLOCK)))
+    {
       EfiReleaseLock (&mHiiDatabaseLock);
       return EFI_OUT_OF_RESOURCES;
     }
@@ -729,7 +811,10 @@ HiiNewImage (
     // The specified package list does not contain image package.
     // Create one to add this image block.
     //
-    ImagePackage = (HII_IMAGE_PACKAGE_INSTANCE *)AllocateZeroPool (sizeof (HII_IMAGE_PACKAGE_INSTANCE));
+    ImagePackage = (HII_IMAGE_PACKAGE_INSTANCE *)AllocateZeroPool (
+                                                   sizeof (
+                                                                          HII_IMAGE_PACKAGE_INSTANCE)
+                                                   );
     if (ImagePackage == NULL) {
       EfiReleaseLock (&mHiiDatabaseLock);
       return EFI_OUT_OF_RESOURCES;
@@ -743,9 +828,12 @@ HiiNewImage (
     //
     // Fill in image package header.
     //
-    ImagePackage->ImagePkgHdr.Header.Length     = sizeof (EFI_HII_IMAGE_PACKAGE_HDR) + NewBlockSize + sizeof (EFI_HII_IIBT_END_BLOCK);
-    ImagePackage->ImagePkgHdr.Header.Type       = EFI_HII_PACKAGE_IMAGES;
-    ImagePackage->ImagePkgHdr.ImageInfoOffset   = sizeof (EFI_HII_IMAGE_PACKAGE_HDR);
+    ImagePackage->ImagePkgHdr.Header.Length =
+      sizeof (EFI_HII_IMAGE_PACKAGE_HDR) + NewBlockSize +
+      sizeof (EFI_HII_IIBT_END_BLOCK);
+    ImagePackage->ImagePkgHdr.Header.Type     = EFI_HII_PACKAGE_IMAGES;
+    ImagePackage->ImagePkgHdr.ImageInfoOffset =
+      sizeof (EFI_HII_IMAGE_PACKAGE_HDR);
     ImagePackage->ImagePkgHdr.PaletteInfoOffset = 0;
 
     //
@@ -757,8 +845,12 @@ HiiNewImage (
     //
     // Fill in image blocks.
     //
-    ImagePackage->ImageBlockSize = NewBlockSize + sizeof (EFI_HII_IIBT_END_BLOCK);
-    ImagePackage->ImageBlock     = AllocateZeroPool (NewBlockSize + sizeof (EFI_HII_IIBT_END_BLOCK));
+    ImagePackage->ImageBlockSize = NewBlockSize +
+                                   sizeof (EFI_HII_IIBT_END_BLOCK);
+    ImagePackage->ImageBlock = AllocateZeroPool (
+                                 NewBlockSize +
+                                 sizeof (EFI_HII_IIBT_END_BLOCK)
+                                 );
     if (ImagePackage->ImageBlock == NULL) {
       FreePool (ImagePackage);
       EfiReleaseLock (&mHiiDatabaseLock);
@@ -771,7 +863,8 @@ HiiNewImage (
     // Insert this image package.
     //
     PackageListNode->ImagePkg                      = ImagePackage;
-    PackageListNode->PackageListHdr.PackageLength += ImagePackage->ImagePkgHdr.Header.Length;
+    PackageListNode->PackageListHdr.PackageLength +=
+      ImagePackage->ImagePkgHdr.Header.Length;
   }
 
   //
@@ -783,14 +876,25 @@ HiiNewImage (
     ImageBlocks->BlockType = EFI_HII_IIBT_IMAGE_24BIT;
   }
 
-  WriteUnaligned16 ((VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)ImageBlocks)->Bitmap.Width, Image->Width);
-  WriteUnaligned16 ((VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)ImageBlocks)->Bitmap.Height, Image->Height);
-  CopyGopToRgbPixel (((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)ImageBlocks)->Bitmap.Bitmap, Image->Bitmap, (UINT32)Image->Width * Image->Height);
+  WriteUnaligned16 (
+    (VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)ImageBlocks)->Bitmap.Width,
+    Image->Width
+    );
+  WriteUnaligned16 (
+    (VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)ImageBlocks)->Bitmap.Height,
+    Image->Height
+    );
+  CopyGopToRgbPixel (
+    ((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)ImageBlocks)->Bitmap.Bitmap,
+    Image->Bitmap,
+    (UINT32)Image->Width * Image->Height
+    );
 
   //
   // Append the block end
   //
-  ImageBlocks            = (EFI_HII_IMAGE_BLOCK *)((UINT8 *)ImageBlocks + NewBlockSize);
+  ImageBlocks            = (EFI_HII_IMAGE_BLOCK *)((UINT8 *)ImageBlocks +
+                                                   NewBlockSize);
   ImageBlocks->BlockType = EFI_HII_IIBT_END;
 
   //
@@ -890,12 +994,22 @@ IGetImage (
       //
       // Use the common block code since the definition of two structures is the same.
       //
-      ASSERT (OFFSET_OF (EFI_HII_IIBT_JPEG_BLOCK, Data) == OFFSET_OF (EFI_HII_IIBT_PNG_BLOCK, Data));
+      ASSERT (
+        OFFSET_OF (EFI_HII_IIBT_JPEG_BLOCK, Data) == OFFSET_OF (
+                                                       EFI_HII_IIBT_PNG_BLOCK,
+                                                       Data
+                                                       )
+        );
       ASSERT (
         sizeof (((EFI_HII_IIBT_JPEG_BLOCK *)CurrentImageBlock)->Data) ==
         sizeof (((EFI_HII_IIBT_PNG_BLOCK *)CurrentImageBlock)->Data)
         );
-      ASSERT (OFFSET_OF (EFI_HII_IIBT_JPEG_BLOCK, Size) == OFFSET_OF (EFI_HII_IIBT_PNG_BLOCK, Size));
+      ASSERT (
+        OFFSET_OF (EFI_HII_IIBT_JPEG_BLOCK, Size) == OFFSET_OF (
+                                                       EFI_HII_IIBT_PNG_BLOCK,
+                                                       Size
+                                                       )
+        );
       ASSERT (
         sizeof (((EFI_HII_IIBT_JPEG_BLOCK *)CurrentImageBlock)->Size) ==
         sizeof (((EFI_HII_IIBT_PNG_BLOCK *)CurrentImageBlock)->Size)
@@ -934,7 +1048,11 @@ IGetImage (
       //
       // Use the common block code since the definition of these structures is the same.
       //
-      CopyMem (&Iibt1bit, CurrentImageBlock, sizeof (EFI_HII_IIBT_IMAGE_1BIT_BLOCK));
+      CopyMem (
+        &Iibt1bit,
+        CurrentImageBlock,
+        sizeof (EFI_HII_IIBT_IMAGE_1BIT_BLOCK)
+        );
       ImageLength = (UINTN)Iibt1bit.Bitmap.Width * Iibt1bit.Bitmap.Height;
       if (ImageLength > MAX_UINTN / sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)) {
         return EFI_OUT_OF_RESOURCES;
@@ -949,8 +1067,11 @@ IGetImage (
       Image->Width  = Iibt1bit.Bitmap.Width;
       Image->Height = Iibt1bit.Bitmap.Height;
 
-      PaletteInfo = ImagePackage->PaletteBlock + sizeof (EFI_HII_IMAGE_PALETTE_INFO_HEADER);
-      for (PaletteIndex = 1; PaletteIndex < Iibt1bit.PaletteIndex; PaletteIndex++) {
+      PaletteInfo = ImagePackage->PaletteBlock +
+                    sizeof (EFI_HII_IMAGE_PALETTE_INFO_HEADER);
+      for (PaletteIndex = 1; PaletteIndex < Iibt1bit.PaletteIndex;
+           PaletteIndex++)
+      {
         CopyMem (&PaletteSize, PaletteInfo, sizeof (UINT16));
         PaletteInfo += PaletteSize + sizeof (UINT16);
       }
@@ -969,7 +1090,8 @@ IGetImage (
           (EFI_HII_IMAGE_PALETTE_INFO *)PaletteInfo
           );
       } else if ((CurrentImageBlock->BlockType == EFI_HII_IIBT_IMAGE_4BIT) ||
-                 (CurrentImageBlock->BlockType == EFI_HII_IIBT_IMAGE_4BIT_TRANS))
+                 (CurrentImageBlock->BlockType ==
+                  EFI_HII_IIBT_IMAGE_4BIT_TRANS))
       {
         Output4bitPixel (
           Image,
@@ -992,8 +1114,15 @@ IGetImage (
     // fall through
     //
     case EFI_HII_IIBT_IMAGE_24BIT:
-      Width       = ReadUnaligned16 ((VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)CurrentImageBlock)->Bitmap.Width);
-      Height      = ReadUnaligned16 ((VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)CurrentImageBlock)->Bitmap.Height);
+      Width = ReadUnaligned16 (
+                (VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)CurrentImageBlock)->
+                  Bitmap.Width
+                );
+      Height = ReadUnaligned16 (
+                 (VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)CurrentImageBlock)
+                   ->Bitmap.
+                   Height
+                 );
       ImageLength = (UINTN)Width * Height;
       if (ImageLength > MAX_UINTN / sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)) {
         return EFI_OUT_OF_RESOURCES;
@@ -1094,7 +1223,9 @@ HiiSetImage (
   UINT32                              Part1Size;
   UINT32                              Part2Size;
 
-  if ((This == NULL) || (Image == NULL) || (ImageId == 0) || (Image->Bitmap == NULL)) {
+  if ((This == NULL) || (Image == NULL) || (ImageId == 0) || (Image->Bitmap ==
+                                                              NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1125,41 +1256,75 @@ HiiSetImage (
   //
   switch (CurrentImageBlock->BlockType) {
     case EFI_HII_IIBT_IMAGE_JPEG:
-      OldBlockSize = OFFSET_OF (EFI_HII_IIBT_JPEG_BLOCK, Data) + ReadUnaligned32 ((VOID *)&((EFI_HII_IIBT_JPEG_BLOCK *)CurrentImageBlock)->Size);
+      OldBlockSize = OFFSET_OF (EFI_HII_IIBT_JPEG_BLOCK, Data) +
+                     ReadUnaligned32 (
+                       (VOID *)&((EFI_HII_IIBT_JPEG_BLOCK *)CurrentImageBlock)->
+                         Size
+                       );
       break;
     case EFI_HII_IIBT_IMAGE_PNG:
-      OldBlockSize = OFFSET_OF (EFI_HII_IIBT_PNG_BLOCK, Data) + ReadUnaligned32 ((VOID *)&((EFI_HII_IIBT_PNG_BLOCK *)CurrentImageBlock)->Size);
+      OldBlockSize = OFFSET_OF (EFI_HII_IIBT_PNG_BLOCK, Data) +
+                     ReadUnaligned32 (
+                       (VOID *)&((EFI_HII_IIBT_PNG_BLOCK *)CurrentImageBlock)->
+                         Size
+                       );
       break;
     case EFI_HII_IIBT_IMAGE_1BIT:
     case EFI_HII_IIBT_IMAGE_1BIT_TRANS:
       OldBlockSize = sizeof (EFI_HII_IIBT_IMAGE_1BIT_BLOCK) - sizeof (UINT8) +
                      BITMAP_LEN_1_BIT (
-                       ReadUnaligned16 (&((EFI_HII_IIBT_IMAGE_1BIT_BLOCK *)CurrentImageBlock)->Bitmap.Width),
-                       ReadUnaligned16 (&((EFI_HII_IIBT_IMAGE_1BIT_BLOCK *)CurrentImageBlock)->Bitmap.Height)
+                       ReadUnaligned16 (
+                         &((EFI_HII_IIBT_IMAGE_1BIT_BLOCK *)CurrentImageBlock)->
+                           Bitmap.Width
+                         ),
+                       ReadUnaligned16 (
+                         &((EFI_HII_IIBT_IMAGE_1BIT_BLOCK *)CurrentImageBlock)->
+                           Bitmap.Height
+                         )
                        );
       break;
     case EFI_HII_IIBT_IMAGE_4BIT:
     case EFI_HII_IIBT_IMAGE_4BIT_TRANS:
       OldBlockSize = sizeof (EFI_HII_IIBT_IMAGE_4BIT_BLOCK) - sizeof (UINT8) +
                      BITMAP_LEN_4_BIT (
-                       ReadUnaligned16 (&((EFI_HII_IIBT_IMAGE_4BIT_BLOCK *)CurrentImageBlock)->Bitmap.Width),
-                       ReadUnaligned16 (&((EFI_HII_IIBT_IMAGE_4BIT_BLOCK *)CurrentImageBlock)->Bitmap.Height)
+                       ReadUnaligned16 (
+                         &((EFI_HII_IIBT_IMAGE_4BIT_BLOCK *)CurrentImageBlock)->
+                           Bitmap.Width
+                         ),
+                       ReadUnaligned16 (
+                         &((EFI_HII_IIBT_IMAGE_4BIT_BLOCK *)CurrentImageBlock)->
+                           Bitmap.Height
+                         )
                        );
       break;
     case EFI_HII_IIBT_IMAGE_8BIT:
     case EFI_HII_IIBT_IMAGE_8BIT_TRANS:
       OldBlockSize = sizeof (EFI_HII_IIBT_IMAGE_8BIT_BLOCK) - sizeof (UINT8) +
                      BITMAP_LEN_8_BIT (
-                       (UINT32)ReadUnaligned16 (&((EFI_HII_IIBT_IMAGE_8BIT_BLOCK *)CurrentImageBlock)->Bitmap.Width),
-                       ReadUnaligned16 (&((EFI_HII_IIBT_IMAGE_8BIT_BLOCK *)CurrentImageBlock)->Bitmap.Height)
+                       (UINT32)ReadUnaligned16 (
+                                 &((EFI_HII_IIBT_IMAGE_8BIT_BLOCK *)
+                                   CurrentImageBlock)->Bitmap.Width
+                                 ),
+                       ReadUnaligned16 (
+                         &((EFI_HII_IIBT_IMAGE_8BIT_BLOCK *)CurrentImageBlock)->
+                           Bitmap.Height
+                         )
                        );
       break;
     case EFI_HII_IIBT_IMAGE_24BIT:
     case EFI_HII_IIBT_IMAGE_24BIT_TRANS:
-      OldBlockSize = sizeof (EFI_HII_IIBT_IMAGE_24BIT_BLOCK) - sizeof (EFI_HII_RGB_PIXEL) +
+      OldBlockSize = sizeof (EFI_HII_IIBT_IMAGE_24BIT_BLOCK) -
+                     sizeof (EFI_HII_RGB_PIXEL) +
                      BITMAP_LEN_24_BIT (
-                       (UINT32)ReadUnaligned16 ((VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)CurrentImageBlock)->Bitmap.Width),
-                       ReadUnaligned16 ((VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)CurrentImageBlock)->Bitmap.Height)
+                       (UINT32)ReadUnaligned16 (
+                                 (VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)
+                                           CurrentImageBlock)->Bitmap.Width
+                                 ),
+                       ReadUnaligned16 (
+                         (VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)
+                                   CurrentImageBlock)->Bitmap.
+                           Height
+                         )
                        );
       break;
     default:
@@ -1177,14 +1342,18 @@ HiiSetImage (
   // 24Bit BMP occpuies 3 bytes per pixel.
   //
   NewBlockSize = (UINT32)Image->Width * Image->Height;
-  if (NewBlockSize > (MAX_UINT32 - (sizeof (EFI_HII_IIBT_IMAGE_24BIT_BLOCK) - sizeof (EFI_HII_RGB_PIXEL))) / 3) {
+  if (NewBlockSize > (MAX_UINT32 - (sizeof (EFI_HII_IIBT_IMAGE_24BIT_BLOCK) -
+                                    sizeof (EFI_HII_RGB_PIXEL))) / 3)
+  {
     EfiReleaseLock (&mHiiDatabaseLock);
     return EFI_OUT_OF_RESOURCES;
   }
 
-  NewBlockSize = NewBlockSize * 3 + (sizeof (EFI_HII_IIBT_IMAGE_24BIT_BLOCK) - sizeof (EFI_HII_RGB_PIXEL));
+  NewBlockSize = NewBlockSize * 3 + (sizeof (EFI_HII_IIBT_IMAGE_24BIT_BLOCK) -
+                                     sizeof (EFI_HII_RGB_PIXEL));
   if ((NewBlockSize > OldBlockSize) &&
-      (NewBlockSize - OldBlockSize > MAX_UINT24 - ImagePackage->ImagePkgHdr.Header.Length)
+      (NewBlockSize - OldBlockSize > MAX_UINT24 -
+       ImagePackage->ImagePkgHdr.Header.Length)
       )
   {
     EfiReleaseLock (&mHiiDatabaseLock);
@@ -1194,13 +1363,17 @@ HiiSetImage (
   //
   // Adjust the image package to remove the original block firstly then add the new block.
   //
-  ImageBlocks = AllocateZeroPool (ImagePackage->ImageBlockSize + NewBlockSize - OldBlockSize);
+  ImageBlocks = AllocateZeroPool (
+                  ImagePackage->ImageBlockSize + NewBlockSize -
+                  OldBlockSize
+                  );
   if (ImageBlocks == NULL) {
     EfiReleaseLock (&mHiiDatabaseLock);
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Part1Size = (UINT32)((UINTN)CurrentImageBlock - (UINTN)ImagePackage->ImageBlock);
+  Part1Size = (UINT32)((UINTN)CurrentImageBlock -
+                       (UINTN)ImagePackage->ImageBlock);
   Part2Size = ImagePackage->ImageBlockSize - Part1Size - OldBlockSize;
   CopyMem (ImageBlocks, ImagePackage->ImageBlock, Part1Size);
 
@@ -1214,15 +1387,26 @@ HiiSetImage (
     NewImageBlock->BlockType = EFI_HII_IIBT_IMAGE_24BIT;
   }
 
-  WriteUnaligned16 ((VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)NewImageBlock)->Bitmap.Width, Image->Width);
-  WriteUnaligned16 ((VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)NewImageBlock)->Bitmap.Height, Image->Height);
+  WriteUnaligned16 (
+    (VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)NewImageBlock)->Bitmap.Width,
+    Image->Width
+    );
+  WriteUnaligned16 (
+    (VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)NewImageBlock)->Bitmap.Height,
+    Image->Height
+    );
   CopyGopToRgbPixel (
     ((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)NewImageBlock)->Bitmap.Bitmap,
     Image->Bitmap,
     (UINT32)Image->Width * Image->Height
     );
 
-  CopyMem ((UINT8 *)NewImageBlock + NewBlockSize, (UINT8 *)CurrentImageBlock + OldBlockSize, Part2Size);
+  CopyMem (
+    (UINT8 *)NewImageBlock + NewBlockSize,
+    (UINT8 *)CurrentImageBlock +
+    OldBlockSize,
+    Part2Size
+    );
 
   FreePool (ImagePackage->ImageBlock);
   ImagePackage->ImageBlock                       = ImageBlocks;
@@ -1299,11 +1483,15 @@ HiiDrawImage (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (((Flags & EFI_HII_DRAW_FLAG_CLIP) == EFI_HII_DRAW_FLAG_CLIP) && (*Blt == NULL)) {
+  if (((Flags & EFI_HII_DRAW_FLAG_CLIP) == EFI_HII_DRAW_FLAG_CLIP) && (*Blt ==
+                                                                       NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((Flags & EFI_HII_DRAW_FLAG_TRANSPARENT) == EFI_HII_DRAW_FLAG_TRANSPARENT) {
+  if ((Flags & EFI_HII_DRAW_FLAG_TRANSPARENT) ==
+      EFI_HII_DRAW_FLAG_TRANSPARENT)
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1313,9 +1501,13 @@ HiiDrawImage (
   // Check whether the image will be drawn transparently or opaquely.
   //
   Transparent = FALSE;
-  if ((Flags & EFI_HII_DRAW_FLAG_TRANSPARENT) == EFI_HII_DRAW_FLAG_FORCE_TRANS) {
+  if ((Flags & EFI_HII_DRAW_FLAG_TRANSPARENT) ==
+      EFI_HII_DRAW_FLAG_FORCE_TRANS)
+  {
     Transparent = TRUE;
-  } else if ((Flags & EFI_HII_DRAW_FLAG_TRANSPARENT) == EFI_HII_DRAW_FLAG_FORCE_OPAQUE) {
+  } else if ((Flags & EFI_HII_DRAW_FLAG_TRANSPARENT) ==
+             EFI_HII_DRAW_FLAG_FORCE_OPAQUE)
+  {
     Transparent = FALSE;
   } else {
     //
@@ -1444,7 +1636,9 @@ HiiDrawImage (
     //
     // Make sure the final width and height doesn't overflow UINT16.
     //
-    if ((BltX > (UINTN)MAX_UINT16 - Image->Width) || (BltY > (UINTN)MAX_UINT16 - Image->Height)) {
+    if ((BltX > (UINTN)MAX_UINT16 - Image->Width) || (BltY > (UINTN)MAX_UINT16 -
+                                                      Image->Height))
+    {
       return EFI_INVALID_PARAMETER;
     }
 

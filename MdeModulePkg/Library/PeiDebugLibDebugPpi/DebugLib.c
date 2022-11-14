@@ -150,7 +150,9 @@ VaListToBaseList (
     // Parse Flags and Width
     //
     for (Format++; TRUE; Format++) {
-      if ((*Format == '.') || (*Format == '-') || (*Format == '+') || (*Format == ' ')) {
+      if ((*Format == '.') || (*Format == '-') || (*Format == '+') ||
+          (*Format == ' '))
+      {
         //
         // These characters in format field are omitted.
         //
@@ -203,18 +205,26 @@ VaListToBaseList (
       Long = TRUE;
     }
 
-    if ((*Format == 'p') || (*Format == 'X') || (*Format == 'x') || (*Format == 'd') || (*Format == 'u')) {
+    if ((*Format == 'p') || (*Format == 'X') || (*Format == 'x') || (*Format ==
+                                                                     'd') ||
+        (*Format == 'u'))
+    {
       if (Long) {
         BASE_ARG (BaseListMarker, INT64) = VA_ARG (VaListMarker, INT64);
       } else {
         BASE_ARG (BaseListMarker, int) = VA_ARG (VaListMarker, int);
       }
-    } else if ((*Format == 's') || (*Format == 'S') || (*Format == 'a') || (*Format == 'g') || (*Format == 't')) {
+    } else if ((*Format == 's') || (*Format == 'S') || (*Format == 'a') ||
+               (*Format == 'g') || (*Format == 't'))
+    {
       BASE_ARG (BaseListMarker, VOID *) = VA_ARG (VaListMarker, VOID *);
     } else if (*Format == 'c') {
       BASE_ARG (BaseListMarker, UINTN) = VA_ARG (VaListMarker, UINTN);
     } else if (*Format == 'r') {
-      BASE_ARG (BaseListMarker, RETURN_STATUS) = VA_ARG (VaListMarker, RETURN_STATUS);
+      BASE_ARG (BaseListMarker, RETURN_STATUS) = VA_ARG (
+                                                   VaListMarker,
+                                                   RETURN_STATUS
+                                                   );
     }
 
     //
@@ -313,9 +323,13 @@ DebugAssert (
     //
     // Generate a Breakpoint, DeadLoop, or NOP based on PCD settings
     //
-    if ((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_ASSERT_BREAKPOINT_ENABLED) != 0) {
+    if ((PcdGet8 (PcdDebugPropertyMask) &
+         DEBUG_PROPERTY_ASSERT_BREAKPOINT_ENABLED) != 0)
+    {
       CpuBreakpoint ();
-    } else if ((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_ASSERT_DEADLOOP_ENABLED) != 0) {
+    } else if ((PcdGet8 (PcdDebugPropertyMask) &
+                DEBUG_PROPERTY_ASSERT_DEADLOOP_ENABLED) != 0)
+    {
       CpuDeadLoop ();
     }
   } else {
@@ -370,7 +384,8 @@ DebugAssertEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_DEBUG_ASSERT_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) &
+                    DEBUG_PROPERTY_DEBUG_ASSERT_ENABLED) != 0);
 }
 
 /**
@@ -389,7 +404,8 @@ DebugPrintEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_DEBUG_PRINT_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) &
+                    DEBUG_PROPERTY_DEBUG_PRINT_ENABLED) != 0);
 }
 
 /**
@@ -408,7 +424,8 @@ DebugCodeEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_DEBUG_CODE_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) &
+                    DEBUG_PROPERTY_DEBUG_CODE_ENABLED) != 0);
 }
 
 /**
@@ -427,7 +444,8 @@ DebugClearMemoryEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_CLEAR_MEMORY_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) &
+                    DEBUG_PROPERTY_CLEAR_MEMORY_ENABLED) != 0);
 }
 
 /**

@@ -280,7 +280,8 @@ AhciBlockIoGetMediaInfo (
     return EFI_NOT_FOUND;
   }
 
-  MediaInfo->DeviceType   = (EFI_PEI_BLOCK_DEVICE_TYPE)EDKII_PEI_BLOCK_DEVICE_TYPE_ATA_HARD_DISK;
+  MediaInfo->DeviceType =
+    (EFI_PEI_BLOCK_DEVICE_TYPE)EDKII_PEI_BLOCK_DEVICE_TYPE_ATA_HARD_DISK;
   MediaInfo->MediaPresent = TRUE;
   MediaInfo->LastBlock    = (UINTN)DeviceData->Media.LastBlock;
   MediaInfo->BlockSize    = DeviceData->Media.BlockSize;

@@ -43,16 +43,17 @@ typedef struct _URB      URB;
 #define QTD_PID_INPUT   0x01
 #define QTD_PID_SETUP   0x02
 
-#define QTD_STAT_DO_OUT      0
-#define QTD_STAT_DO_SS       0
-#define QTD_STAT_DO_PING     0x01
-#define QTD_STAT_DO_CS       0x02
-#define QTD_STAT_TRANS_ERR   0x08
-#define QTD_STAT_BABBLE_ERR  0x10
-#define QTD_STAT_BUFF_ERR    0x20
-#define QTD_STAT_HALTED      0x40
-#define QTD_STAT_ACTIVE      0x80
-#define QTD_STAT_ERR_MASK    (QTD_STAT_TRANS_ERR | QTD_STAT_BABBLE_ERR | QTD_STAT_BUFF_ERR)
+#define QTD_STAT_DO_OUT        0
+#define QTD_STAT_DO_SS         0
+#define QTD_STAT_DO_PING       0x01
+#define QTD_STAT_DO_CS         0x02
+#define QTD_STAT_TRANS_ERR     0x08
+#define QTD_STAT_BABBLE_ERR    0x10
+#define QTD_STAT_BUFF_ERR      0x20
+#define QTD_STAT_HALTED        0x40
+#define QTD_STAT_ACTIVE        0x80
+#define QTD_STAT_ERR_MASK    \
+                               (QTD_STAT_TRANS_ERR | QTD_STAT_BABBLE_ERR | QTD_STAT_BUFF_ERR)
 
 #define QTD_MAX_BUFFER  4
 #define QTD_BUF_LEN     4096

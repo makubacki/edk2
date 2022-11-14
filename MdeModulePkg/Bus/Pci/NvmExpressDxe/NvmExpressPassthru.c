@@ -21,9 +21,19 @@ NvmeDumpStatus (
   IN NVME_CQ  *Cq
   )
 {
-  DEBUG ((DEBUG_VERBOSE, "Dump NVMe Completion Entry Status from [0x%x]:\n", Cq));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "Dump NVMe Completion Entry Status from [0x%x]:\n",
+    Cq
+    ));
 
-  DEBUG ((DEBUG_VERBOSE, "  SQ Identifier : [0x%x], Phase Tag : [%d], Cmd Identifier : [0x%x]\n", Cq->Sqid, Cq->Pt, Cq->Cid));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "  SQ Identifier : [0x%x], Phase Tag : [%d], Cmd Identifier : [0x%x]\n",
+    Cq->Sqid,
+    Cq->Pt,
+    Cq->Cid
+    ));
 
   DEBUG ((DEBUG_VERBOSE, "  NVMe Cmd Execution Result - "));
 
@@ -46,7 +56,10 @@ NvmeDumpStatus (
           DEBUG ((DEBUG_VERBOSE, "Data Transfer Error\n"));
           break;
         case 0x5:
-          DEBUG ((DEBUG_VERBOSE, "Commands Aborted due to Power Loss Notification\n"));
+          DEBUG ((
+            DEBUG_VERBOSE,
+            "Commands Aborted due to Power Loss Notification\n"
+            ));
           break;
         case 0x6:
           DEBUG ((DEBUG_VERBOSE, "Internal Device Error\n"));
@@ -58,10 +71,16 @@ NvmeDumpStatus (
           DEBUG ((DEBUG_VERBOSE, "Command Aborted due to SQ Deletion\n"));
           break;
         case 0x9:
-          DEBUG ((DEBUG_VERBOSE, "Command Aborted due to Failed Fused Command\n"));
+          DEBUG ((
+            DEBUG_VERBOSE,
+            "Command Aborted due to Failed Fused Command\n"
+            ));
           break;
         case 0xA:
-          DEBUG ((DEBUG_VERBOSE, "Command Aborted due to Missing Fused Command\n"));
+          DEBUG ((
+            DEBUG_VERBOSE,
+            "Command Aborted due to Missing Fused Command\n"
+            ));
           break;
         case 0xB:
           DEBUG ((DEBUG_VERBOSE, "Invalid Namespace or Format\n"));
@@ -115,7 +134,10 @@ NvmeDumpStatus (
           DEBUG ((DEBUG_VERBOSE, "Abort Command Limit Exceeded\n"));
           break;
         case 0x5:
-          DEBUG ((DEBUG_VERBOSE, "Asynchronous Event Request Limit Exceeded\n"));
+          DEBUG ((
+            DEBUG_VERBOSE,
+            "Asynchronous Event Request Limit Exceeded\n"
+            ));
           break;
         case 0x6:
           DEBUG ((DEBUG_VERBOSE, "Invalid Firmware Slot\n"));
@@ -133,7 +155,10 @@ NvmeDumpStatus (
           DEBUG ((DEBUG_VERBOSE, "Invalid Format\n"));
           break;
         case 0xB:
-          DEBUG ((DEBUG_VERBOSE, "Firmware Application Requires Conventional Reset\n"));
+          DEBUG ((
+            DEBUG_VERBOSE,
+            "Firmware Application Requires Conventional Reset\n"
+            ));
           break;
         case 0xC:
           DEBUG ((DEBUG_VERBOSE, "Invalid Queue Deletion\n"));
@@ -148,7 +173,10 @@ NvmeDumpStatus (
           DEBUG ((DEBUG_VERBOSE, "Feature Not Namespace Specific\n"));
           break;
         case 0x10:
-          DEBUG ((DEBUG_VERBOSE, "Firmware Application Requires NVM Subsystem Reset\n"));
+          DEBUG ((
+            DEBUG_VERBOSE,
+            "Firmware Application Requires NVM Subsystem Reset\n"
+            ));
           break;
         case 0x80:
           DEBUG ((DEBUG_VERBOSE, "Conflicting Attributes\n"));
@@ -236,7 +264,11 @@ NvmeCreatePrpList (
   //
   // Calculate total PrpList number.
   //
-  *PrpListNo = (UINTN)DivU64x64Remainder ((UINT64)Pages, (UINT64)PrpEntryNo - 1, &Remainder);
+  *PrpListNo = (UINTN)DivU64x64Remainder (
+                        (UINT64)Pages,
+                        (UINT64)PrpEntryNo - 1,
+                        &Remainder
+                        );
   if (*PrpListNo == 0) {
     *PrpListNo = 1;
   } else if ((Remainder != 0) && (Remainder != 1)) {
@@ -293,7 +325,9 @@ NvmeCreatePrpList (
         //
         // Fill last PRP entries with next PRP List pointer.
         //
-        *((UINT64 *)(UINTN)PrpListBase + PrpEntryIndex) = PrpListPhyAddr + (PrpListIndex + 1) * EFI_PAGE_SIZE;
+        *((UINT64 *)(UINTN)PrpListBase + PrpEntryIndex) = PrpListPhyAddr +
+                                                          (PrpListIndex + 1) *
+                                                          EFI_PAGE_SIZE;
       }
     }
   }
@@ -493,7 +527,9 @@ NvmExpressPassThru (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((Packet->QueueType != NVME_ADMIN_QUEUE) && (Packet->QueueType != NVME_IO_QUEUE)) {
+  if ((Packet->QueueType != NVME_ADMIN_QUEUE) && (Packet->QueueType !=
+                                                  NVME_IO_QUEUE))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -592,13 +628,17 @@ NvmExpressPassThru (
   //
   ASSERT (Sq->Psdt == 0);
   if (Sq->Psdt != 0) {
-    DEBUG ((DEBUG_ERROR, "NvmExpressPassThru: doesn't support SGL mechanism\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "NvmExpressPassThru: doesn't support SGL mechanism\n"
+      ));
     return EFI_UNSUPPORTED;
   }
 
   Sq->Prp[0] = (UINT64)(UINTN)Packet->TransferBuffer;
   if ((Packet->QueueType == NVME_ADMIN_QUEUE) &&
-      ((Sq->Opc == NVME_ADMIN_CRIOCQ_CMD) || (Sq->Opc == NVME_ADMIN_CRIOSQ_CMD)))
+      ((Sq->Opc == NVME_ADMIN_CRIOCQ_CMD) || (Sq->Opc ==
+                                              NVME_ADMIN_CRIOSQ_CMD)))
   {
     //
     // Currently, we only use the IO Completion/Submission queues created internally
@@ -608,7 +648,10 @@ NvmExpressPassThru (
     // queue creation request.
     //
     if (!Private->CreateIoQueue) {
-      DEBUG ((DEBUG_ERROR, "NvmExpressPassThru: Does not support external IO queues creation request.\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "NvmExpressPassThru: Does not support external IO queues creation request.\n"
+        ));
       return EFI_UNSUPPORTED;
     }
   } else if ((Sq->Opc & (BIT0 | BIT1)) != 0) {
@@ -680,7 +723,17 @@ NvmExpressPassThru (
     // Create PrpList for remaining data buffer.
     //
     PhyAddr = (Sq->Prp[0] + EFI_PAGE_SIZE) & ~(EFI_PAGE_SIZE - 1);
-    Prp     = NvmeCreatePrpList (PciIo, PhyAddr, EFI_SIZE_TO_PAGES (Offset + Bytes) - 1, &PrpListHost, &PrpListNo, &MapPrpList);
+    Prp     = NvmeCreatePrpList (
+                PciIo,
+                PhyAddr,
+                EFI_SIZE_TO_PAGES (
+                  Offset +
+                  Bytes
+                  ) - 1,
+                &PrpListHost,
+                &PrpListNo,
+                &MapPrpList
+                );
     if (Prp == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto EXIT;
@@ -828,7 +881,10 @@ NvmExpressPassThru (
     // Timeout occurs for an NVMe command. Reset the controller to abort the
     // outstanding commands.
     //
-    DEBUG ((DEBUG_ERROR, "NvmExpressPassThru: Timeout occurs for an NVMe command.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "NvmExpressPassThru: Timeout occurs for an NVMe command.\n"
+      ));
 
     //
     // Disable the timer to trigger the process of async transfers temporarily.
@@ -848,7 +904,11 @@ NvmExpressPassThru (
         //
         // Re-enable the timer to trigger the process of async transfers.
         //
-        Status = gBS->SetTimer (Private->TimerEvent, TimerPeriodic, NVME_HC_ASYNC_TIMER);
+        Status = gBS->SetTimer (
+                        Private->TimerEvent,
+                        TimerPeriodic,
+                        NVME_HC_ASYNC_TIMER
+                        );
         if (!EFI_ERROR (Status)) {
           //
           // Return EFI_TIMEOUT to indicate a timeout occurs for NVMe PassThru command.
@@ -873,7 +933,10 @@ NvmExpressPassThru (
                                 PciIo,
                                 EfiPciIoWidthUint32,
                                 NVME_BAR,
-                                NVME_CQHDBL_OFFSET (QueueId, Private->Cap.Dstrd),
+                                NVME_CQHDBL_OFFSET (
+                                  QueueId,
+                                  Private->Cap.Dstrd
+                                  ),
                                 1,
                                 &Data
                                 );
@@ -987,7 +1050,10 @@ NvmExpressGetNextNamespace (
     //
     // Allocate buffer for Identify Namespace data.
     //
-    NamespaceData = (NVME_ADMIN_NAMESPACE_DATA *)AllocateZeroPool (sizeof (NVME_ADMIN_NAMESPACE_DATA));
+    NamespaceData = (NVME_ADMIN_NAMESPACE_DATA *)AllocateZeroPool (
+                                                   sizeof (
+                                                                          NVME_ADMIN_NAMESPACE_DATA)
+                                                   );
 
     if (NamespaceData == NULL) {
       return EFI_NOT_FOUND;
@@ -1012,7 +1078,10 @@ NvmExpressGetNextNamespace (
     //
     // Allocate buffer for Identify Namespace data.
     //
-    NamespaceData = (NVME_ADMIN_NAMESPACE_DATA *)AllocateZeroPool (sizeof (NVME_ADMIN_NAMESPACE_DATA));
+    NamespaceData = (NVME_ADMIN_NAMESPACE_DATA *)AllocateZeroPool (
+                                                   sizeof (
+                                                                          NVME_ADMIN_NAMESPACE_DATA)
+                                                   );
     if (NamespaceData == NULL) {
       return EFI_NOT_FOUND;
     }
@@ -1080,7 +1149,9 @@ NvmExpressGetNamespace (
   Private = NVME_CONTROLLER_PRIVATE_DATA_FROM_PASS_THRU (This);
 
   if (DevicePath->SubType == MSG_NVME_NAMESPACE_DP) {
-    if (DevicePathNodeLength (DevicePath) != sizeof (NVME_NAMESPACE_DEVICE_PATH)) {
+    if (DevicePathNodeLength (DevicePath) !=
+        sizeof (NVME_NAMESPACE_DEVICE_PATH))
+    {
       return EFI_NOT_FOUND;
     }
 
@@ -1164,7 +1235,9 @@ NvmExpressBuildDevicePath (
     return EFI_NOT_FOUND;
   }
 
-  Node = (NVME_NAMESPACE_DEVICE_PATH *)AllocateZeroPool (sizeof (NVME_NAMESPACE_DEVICE_PATH));
+  Node = (NVME_NAMESPACE_DEVICE_PATH *)AllocateZeroPool (
+                                         sizeof (NVME_NAMESPACE_DEVICE_PATH)
+                                         );
   if (Node == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

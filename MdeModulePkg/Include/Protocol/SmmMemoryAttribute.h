@@ -16,7 +16,8 @@
     0x69b792ea, 0x39ce, 0x402d, { 0xa2, 0xa6, 0xf7, 0x21, 0xde, 0x35, 0x1d, 0xfe } \
   }
 
-typedef struct _EDKII_SMM_MEMORY_ATTRIBUTE_PROTOCOL EDKII_SMM_MEMORY_ATTRIBUTE_PROTOCOL;
+typedef struct _EDKII_SMM_MEMORY_ATTRIBUTE_PROTOCOL
+EDKII_SMM_MEMORY_ATTRIBUTE_PROTOCOL;
 
 /**
   This function set given attributes of the memory region specified by

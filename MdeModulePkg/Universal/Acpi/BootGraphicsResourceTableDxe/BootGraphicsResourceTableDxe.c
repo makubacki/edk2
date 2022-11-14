@@ -152,7 +152,8 @@ BOOLEAN                        mAcpiBgrtBufferChanged        = FALSE;
 //
 // ACPI Boot Graphics Resource Table template
 //
-EFI_ACPI_5_0_BOOT_GRAPHICS_RESOURCE_TABLE  mBootGraphicsResourceTableTemplate = {
+EFI_ACPI_5_0_BOOT_GRAPHICS_RESOURCE_TABLE  mBootGraphicsResourceTableTemplate =
+{
   {
     EFI_ACPI_5_0_BOOT_GRAPHICS_RESOURCE_TABLE_SIGNATURE,
     sizeof (EFI_ACPI_5_0_BOOT_GRAPHICS_RESOURCE_TABLE),
@@ -379,7 +380,10 @@ GetBootLogo2 (
   // EFI_NOT_READY is returned.
   //
   if (mLogoBltBuffer == NULL) {
-    DEBUG ((DEBUG_ERROR, "Request to get boot logo location before boot logo has been set.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Request to get boot logo location before boot logo has been set.\n"
+      ));
     return EFI_NOT_READY;
   }
 
@@ -470,7 +474,8 @@ BgrtReadyToBootEventNotify (
     //
     // Free the old BMP image buffer
     //
-    ImageBuffer = (UINT8 *)(UINTN)mBootGraphicsResourceTableTemplate.ImageAddress;
+    ImageBuffer =
+      (UINT8 *)(UINTN)mBootGraphicsResourceTableTemplate.ImageAddress;
     if (ImageBuffer != NULL) {
       FreePool (ImageBuffer);
     }
@@ -500,7 +505,8 @@ BgrtReadyToBootEventNotify (
     //
     // Update BMP image fields of the Boot Graphics Resource Table
     //
-    mBootGraphicsResourceTableTemplate.ImageAddress = (UINT64)(UINTN)ImageBuffer;
+    mBootGraphicsResourceTableTemplate.ImageAddress =
+      (UINT64)(UINTN)ImageBuffer;
     mBootGraphicsResourceTableTemplate.ImageOffsetX = (UINT32)mLogoDestX;
     mBootGraphicsResourceTableTemplate.ImageOffsetY = (UINT32)mLogoDestY;
   }
@@ -511,7 +517,8 @@ BgrtReadyToBootEventNotify (
   if (mIsLogoValid) {
     mBootGraphicsResourceTableTemplate.Status = EFI_ACPI_5_0_BGRT_STATUS_VALID;
   } else {
-    mBootGraphicsResourceTableTemplate.Status = EFI_ACPI_5_0_BGRT_STATUS_INVALID;
+    mBootGraphicsResourceTableTemplate.Status =
+      EFI_ACPI_5_0_BGRT_STATUS_INVALID;
   }
 
   //
@@ -530,7 +537,8 @@ BgrtReadyToBootEventNotify (
   Status = AcpiTableProtocol->InstallAcpiTable (
                                 AcpiTableProtocol,
                                 &mBootGraphicsResourceTableTemplate,
-                                sizeof (EFI_ACPI_5_0_BOOT_GRAPHICS_RESOURCE_TABLE),
+                                sizeof (
+                                       EFI_ACPI_5_0_BOOT_GRAPHICS_RESOURCE_TABLE),
                                 &mBootGraphicsResourceTableKey
                                 );
   if (EFI_ERROR (Status)) {

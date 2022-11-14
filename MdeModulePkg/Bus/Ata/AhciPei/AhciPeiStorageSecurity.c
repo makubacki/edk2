@@ -68,7 +68,9 @@ AhciStorageSecurityGetDeviceNo (
     return EFI_INVALID_PARAMETER;
   }
 
-  Private          = GET_AHCI_PEIM_HC_PRIVATE_DATA_FROM_THIS_STROAGE_SECURITY (This);
+  Private = GET_AHCI_PEIM_HC_PRIVATE_DATA_FROM_THIS_STROAGE_SECURITY (
+              This
+              );
   *NumberofDevices = Private->TrustComputingDevices;
 
   return EFI_SUCCESS;
@@ -242,7 +244,9 @@ AhciStorageSecurityReceiveData (
   PEI_AHCI_CONTROLLER_PRIVATE_DATA  *Private;
   PEI_AHCI_ATA_DEVICE_DATA          *DeviceData;
 
-  if ((PayloadBuffer == NULL) || (PayloadTransferSize == NULL) || (PayloadBufferSize == 0)) {
+  if ((PayloadBuffer == NULL) || (PayloadTransferSize == NULL) ||
+      (PayloadBufferSize == 0))
+  {
     return EFI_INVALID_PARAMETER;
   }
 

@@ -103,7 +103,11 @@ PartitionInstallElToritoChildHandles (
     // Check for valid volume descriptor signature
     //
     if ((VolDescriptor->Unknown.Type == CDVOL_TYPE_END) ||
-        (CompareMem (VolDescriptor->Unknown.Id, CDVOL_ID, sizeof (VolDescriptor->Unknown.Id)) != 0)
+        (CompareMem (
+           VolDescriptor->Unknown.Id,
+           CDVOL_ID,
+           sizeof (VolDescriptor->Unknown.Id)
+           ) != 0)
         )
     {
       //
@@ -123,7 +127,12 @@ PartitionInstallElToritoChildHandles (
     //
     // Is it an El Torito volume descriptor?
     //
-    if (CompareMem (VolDescriptor->BootRecordVolume.SystemId, CDVOL_ELTORITO_ID, sizeof (CDVOL_ELTORITO_ID) - 1) != 0) {
+    if (CompareMem (
+          VolDescriptor->BootRecordVolume.SystemId,
+          CDVOL_ELTORITO_ID,
+          sizeof (CDVOL_ELTORITO_ID) - 1
+          ) != 0)
+    {
       continue;
     }
 
@@ -145,7 +154,11 @@ PartitionInstallElToritoChildHandles (
                        Catalog
                        );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "EltCheckDevice: error reading catalog %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "EltCheckDevice: error reading catalog %r\n",
+        Status
+        ));
       continue;
     }
 
@@ -153,19 +166,29 @@ PartitionInstallElToritoChildHandles (
     // We don't care too much about the Catalog header's contents, but we do want
     // to make sure it looks like a Catalog header
     //
-    if ((Catalog->Catalog.Indicator != ELTORITO_ID_CATALOG) || (Catalog->Catalog.Id55AA != 0xAA55)) {
-      DEBUG ((DEBUG_ERROR, "EltCheckBootCatalog: El Torito boot catalog header IDs not correct\n"));
+    if ((Catalog->Catalog.Indicator != ELTORITO_ID_CATALOG) ||
+        (Catalog->Catalog.Id55AA != 0xAA55))
+    {
+      DEBUG ((
+        DEBUG_ERROR,
+        "EltCheckBootCatalog: El Torito boot catalog header IDs not correct\n"
+        ));
       continue;
     }
 
     Check       = 0;
     CheckBuffer = (UINT16 *)Catalog;
-    for (Index = 0; Index < sizeof (ELTORITO_CATALOG) / sizeof (UINT16); Index += 1) {
+    for (Index = 0; Index < sizeof (ELTORITO_CATALOG) / sizeof (UINT16);
+         Index += 1)
+    {
       Check += CheckBuffer[Index];
     }
 
     if ((Check & 0xFFFF) != 0) {
-      DEBUG ((DEBUG_ERROR, "EltCheckBootCatalog: El Torito boot catalog header checksum failed\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "EltCheckBootCatalog: El Torito boot catalog header checksum failed\n"
+        ));
       continue;
     }
 
@@ -179,7 +202,9 @@ PartitionInstallElToritoChildHandles (
       //
       // Check this entry
       //
-      if ((Catalog->Boot.Indicator != ELTORITO_ID_SECTION_BOOTABLE) || (Catalog->Boot.Lba == 0)) {
+      if ((Catalog->Boot.Indicator != ELTORITO_ID_SECTION_BOOTABLE) ||
+          (Catalog->Boot.Lba == 0))
+      {
         continue;
       }
 
@@ -207,7 +232,11 @@ PartitionInstallElToritoChildHandles (
           break;
 
         default:
-          DEBUG ((DEBUG_INIT, "EltCheckDevice: unsupported El Torito boot media type %x\n", Catalog->Boot.MediaType));
+          DEBUG ((
+            DEBUG_INIT,
+            "EltCheckDevice: unsupported El Torito boot media type %x\n",
+            Catalog->Boot.MediaType
+            ));
           SectorCount  = 0;
           SubBlockSize = Media->BlockSize;
           break;
@@ -234,10 +263,14 @@ PartitionInstallElToritoChildHandles (
         //
         // When the SectorCount < 2, set the Partition as the whole CD.
         //
-        if (VolSpaceSize * (SIZE_2KB / Media->BlockSize) > (Media->LastBlock + 1)) {
-          CdDev.PartitionSize = (UINT32)(Media->LastBlock - Catalog->Boot.Lba * (SIZE_2KB / Media->BlockSize) + 1);
+        if (VolSpaceSize * (SIZE_2KB / Media->BlockSize) > (Media->LastBlock +
+                                                            1))
+        {
+          CdDev.PartitionSize = (UINT32)(Media->LastBlock - Catalog->Boot.Lba *
+                                         (SIZE_2KB / Media->BlockSize) + 1);
         } else {
-          CdDev.PartitionSize = (UINT32)(VolSpaceSize - Catalog->Boot.Lba) * (SIZE_2KB / Media->BlockSize);
+          CdDev.PartitionSize = (UINT32)(VolSpaceSize - Catalog->Boot.Lba) *
+                                (SIZE_2KB / Media->BlockSize);
         }
       } else {
         CdDev.PartitionSize = DivU64x32 (
@@ -264,7 +297,8 @@ PartitionInstallElToritoChildHandles (
                  (EFI_DEVICE_PATH_PROTOCOL *)&CdDev,
                  &PartitionInfo,
                  Catalog->Boot.Lba * (SIZE_2KB / Media->BlockSize),
-                 Catalog->Boot.Lba * (SIZE_2KB / Media->BlockSize) + CdDev.PartitionSize - 1,
+                 Catalog->Boot.Lba * (SIZE_2KB / Media->BlockSize) +
+                 CdDev.PartitionSize - 1,
                  SubBlockSize,
                  NULL
                  );

@@ -88,7 +88,9 @@ UhciInitFrameList (
   Uhc->CtrlQh    = UhciCreateQh (Uhc, 1);
   Uhc->BulkQh    = UhciCreateQh (Uhc, 1);
 
-  if ((Uhc->SyncIntQh == NULL) || (Uhc->CtrlQh == NULL) || (Uhc->BulkQh == NULL)) {
+  if ((Uhc->SyncIntQh == NULL) || (Uhc->CtrlQh == NULL) || (Uhc->BulkQh ==
+                                                            NULL))
+  {
     Uhc->PciIo->Unmap (Uhc->PciIo, Mapping);
     Status = EFI_OUT_OF_RESOURCES;
     goto ON_ERROR;
@@ -101,11 +103,19 @@ UhciInitFrameList (
   // Each frame entry is linked to this sequence of QH. These QH
   // will remain on the schedul, never got removed
   //
-  PhyAddr                          = UsbHcGetPciAddressForHostMem (Uhc->MemPool, Uhc->CtrlQh, sizeof (UHCI_QH_HW));
+  PhyAddr = UsbHcGetPciAddressForHostMem (
+              Uhc->MemPool,
+              Uhc->CtrlQh,
+              sizeof (UHCI_QH_HW)
+              );
   Uhc->SyncIntQh->QhHw.HorizonLink = QH_HLINK (PhyAddr, FALSE);
   Uhc->SyncIntQh->NextQh           = Uhc->CtrlQh;
 
-  PhyAddr                       = UsbHcGetPciAddressForHostMem (Uhc->MemPool, Uhc->BulkQh, sizeof (UHCI_QH_HW));
+  PhyAddr = UsbHcGetPciAddressForHostMem (
+              Uhc->MemPool,
+              Uhc->BulkQh,
+              sizeof (UHCI_QH_HW)
+              );
   Uhc->CtrlQh->QhHw.HorizonLink = QH_HLINK (PhyAddr, FALSE);
   Uhc->CtrlQh->NextQh           = Uhc->BulkQh;
 
@@ -124,7 +134,11 @@ UhciInitFrameList (
     goto ON_ERROR;
   }
 
-  PhyAddr = UsbHcGetPciAddressForHostMem (Uhc->MemPool, Uhc->SyncIntQh, sizeof (UHCI_QH_HW));
+  PhyAddr = UsbHcGetPciAddressForHostMem (
+              Uhc->MemPool,
+              Uhc->SyncIntQh,
+              sizeof (UHCI_QH_HW)
+              );
   for (Index = 0; Index < UHCI_FRAME_NUM; Index++) {
     Uhc->FrameBase[Index]         = QH_HLINK (PhyAddr, FALSE);
     Uhc->FrameBaseHostAddr[Index] = (UINT32)(UINTN)Uhc->SyncIntQh;
@@ -249,7 +263,11 @@ UhciLinkQhToFrameList (
 
   ASSERT ((Uhc->FrameBase != NULL) && (Qh != NULL));
 
-  QhPciAddr = UsbHcGetPciAddressForHostMem (Uhc->MemPool, Qh, sizeof (UHCI_QH_HW));
+  QhPciAddr = UsbHcGetPciAddressForHostMem (
+                Uhc->MemPool,
+                Qh,
+                sizeof (UHCI_QH_HW)
+                );
 
   for (Index = 0; Index < UHCI_FRAME_NUM; Index += Qh->Interval) {
     //
@@ -319,8 +337,12 @@ UhciLinkQhToFrameList (
     // guarranted by 2^n polling interval.
     //
     if (Qh->NextQh == NULL) {
-      Qh->NextQh           = Next;
-      PhyAddr              = UsbHcGetPciAddressForHostMem (Uhc->MemPool, Next, sizeof (UHCI_QH_HW));
+      Qh->NextQh = Next;
+      PhyAddr    = UsbHcGetPciAddressForHostMem (
+                     Uhc->MemPool,
+                     Next,
+                     sizeof (UHCI_QH_HW)
+                     );
       Qh->QhHw.HorizonLink = QH_HLINK (PhyAddr, FALSE);
     }
 
@@ -504,7 +526,10 @@ UhciCheckTdStatus (
       // terminate the transfer
       //
       if (!IsLow && (TdHw->ShortPacket == 1) && (Len < Td->DataLen)) {
-        DEBUG ((DEBUG_VERBOSE, "UhciCheckTdStatus: short packet read occurred\n"));
+        DEBUG ((
+          DEBUG_VERBOSE,
+          "UhciCheckTdStatus: short packet read occurred\n"
+          ));
 
         Finished = TRUE;
         goto ON_EXIT;
@@ -590,13 +615,21 @@ UhciExecuteTransfer (
   }
 
   if (!Finished) {
-    DEBUG ((DEBUG_ERROR, "UhciExecuteTransfer: execution not finished for %dms\n", (UINT32)TimeOut));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UhciExecuteTransfer: execution not finished for %dms\n",
+      (UINT32)TimeOut
+      ));
     UhciDumpQh (Qh);
     UhciDumpTds (Td);
 
     Status = EFI_TIMEOUT;
   } else if (QhResult->Result != EFI_USB_NOERROR) {
-    DEBUG ((DEBUG_ERROR, "UhciExecuteTransfer: execution failed with result %x\n", QhResult->Result));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UhciExecuteTransfer: execution failed with result %x\n",
+      QhResult->Result
+      ));
     UhciDumpQh (Qh);
     UhciDumpTds (Td);
 
@@ -966,7 +999,12 @@ UhciMonitorAsyncReqList (
     AsyncReq = UHCI_ASYNC_INT_FROM_LINK (Link);
     Link     = Link->ForwardLink;
 
-    Finished = UhciCheckTdStatus (Uhc, AsyncReq->FirstTd, AsyncReq->IsLow, &QhResult);
+    Finished = UhciCheckTdStatus (
+                 Uhc,
+                 AsyncReq->FirstTd,
+                 AsyncReq->IsLow,
+                 &QhResult
+                 );
 
     if (!Finished) {
       continue;
@@ -997,7 +1035,12 @@ UhciMonitorAsyncReqList (
     // transfer is still active.
     //
     if (QhResult.Result == EFI_USB_NOERROR) {
-      AsyncReq->Callback (Data, QhResult.Complete, AsyncReq->Context, QhResult.Result);
+      AsyncReq->Callback (
+                  Data,
+                  QhResult.Complete,
+                  AsyncReq->Context,
+                  QhResult.Result
+                  );
     } else {
       //
       // Leave error recovery to its related device driver.

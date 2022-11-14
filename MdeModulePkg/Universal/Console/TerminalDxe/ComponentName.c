@@ -11,7 +11,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gTerminalComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gTerminalComponentName = {
   TerminalComponentNameGetDriverName,
   TerminalComponentNameGetControllerName,
   "eng"
@@ -20,13 +21,16 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gTerminalComponentNam
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gTerminalComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gTerminalComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)TerminalComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)TerminalComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  TerminalComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mTerminalDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mTerminalDriverNameTable[] = {
   {
     "eng;en",
     (CHAR16 *)L"Serial Terminal Driver"

@@ -45,7 +45,14 @@ SmiHandlerProfileRegisterHandler (
   )
 {
   if (mSmiHandlerProfile != NULL) {
-    return mSmiHandlerProfile->RegisterHandler (mSmiHandlerProfile, HandlerGuid, Handler, CallerAddress, Context, ContextSize);
+    return mSmiHandlerProfile->RegisterHandler (
+                                 mSmiHandlerProfile,
+                                 HandlerGuid,
+                                 Handler,
+                                 CallerAddress,
+                                 Context,
+                                 ContextSize
+                                 );
   }
 
   return EFI_UNSUPPORTED;
@@ -78,7 +85,13 @@ SmiHandlerProfileUnregisterHandler (
   )
 {
   if (mSmiHandlerProfile != NULL) {
-    return mSmiHandlerProfile->UnregisterHandler (mSmiHandlerProfile, HandlerGuid, Handler, Context, ContextSize);
+    return mSmiHandlerProfile->UnregisterHandler (
+                                 mSmiHandlerProfile,
+                                 HandlerGuid,
+                                 Handler,
+                                 Context,
+                                 ContextSize
+                                 );
   }
 
   return EFI_UNSUPPORTED;

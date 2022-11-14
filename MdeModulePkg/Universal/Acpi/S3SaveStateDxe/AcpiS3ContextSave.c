@@ -83,7 +83,8 @@ IsLongModeWakingVectorSupport (
   )
 {
   if ((Facs == NULL) ||
-      (Facs->Signature != EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE))
+      (Facs->Signature !=
+       EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE))
   {
     //
     // Something wrong with FACS.
@@ -186,28 +187,45 @@ S3AllocatePageTablesBuffer (
     //
     if (PhysicalAddressBits <= 39 ) {
       NumberOfPml4EntriesNeeded = 1;
-      NumberOfPdpEntriesNeeded  = (UINT32)LShiftU64 (1, (PhysicalAddressBits - 30));
+      NumberOfPdpEntriesNeeded  = (UINT32)LShiftU64 (
+                                            1,
+                                            (PhysicalAddressBits -
+                                             30)
+                                            );
     } else {
-      NumberOfPml4EntriesNeeded = (UINT32)LShiftU64 (1, (PhysicalAddressBits - 39));
-      NumberOfPdpEntriesNeeded  = 512;
+      NumberOfPml4EntriesNeeded = (UINT32)LShiftU64 (
+                                            1,
+                                            (PhysicalAddressBits -
+                                             39)
+                                            );
+      NumberOfPdpEntriesNeeded = 512;
     }
 
     //
     // We need calculate whole page size then allocate once, because S3 restore page table does not know each page in Nvs.
     //
     if (!Page1GSupport) {
-      TotalPageTableSize = 1 + NumberOfPml4EntriesNeeded + NumberOfPml4EntriesNeeded * NumberOfPdpEntriesNeeded;
+      TotalPageTableSize = 1 + NumberOfPml4EntriesNeeded +
+                           NumberOfPml4EntriesNeeded * NumberOfPdpEntriesNeeded;
     } else {
       TotalPageTableSize = 1 + NumberOfPml4EntriesNeeded;
     }
 
     TotalPageTableSize += ExtraPageTablePages;
-    DEBUG ((DEBUG_INFO, "AcpiS3ContextSave TotalPageTableSize - 0x%x pages\n", TotalPageTableSize));
+    DEBUG ((
+      DEBUG_INFO,
+      "AcpiS3ContextSave TotalPageTableSize - 0x%x pages\n",
+      TotalPageTableSize
+      ));
 
     //
     // By architecture only one PageMapLevel4 exists - so lets allocate storage for it.
     //
-    S3NvsPageTableAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateMemoryBelow4G (EfiReservedMemoryType, EFI_PAGES_TO_SIZE (TotalPageTableSize));
+    S3NvsPageTableAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateMemoryBelow4G (
+                                                           EfiReservedMemoryType,
+                                                           EFI_PAGES_TO_SIZE (
+                                                             TotalPageTableSize)
+                                                           );
     ASSERT (S3NvsPageTableAddress != 0);
     return S3NvsPageTableAddress;
   } else {
@@ -244,27 +262,39 @@ AcpiS3ContextSaveOnEndOfDxe (
 
   Status = gBS->LocateProtocol (&gEfiLockBoxProtocolGuid, NULL, &Interface);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO | DEBUG_WARN, "ACPI S3 context can't be saved without LockBox!\n"));
+    DEBUG ((
+      DEBUG_INFO | DEBUG_WARN,
+      "ACPI S3 context can't be saved without LockBox!\n"
+      ));
     goto Done;
   }
 
-  AcpiS3Context = AllocateMemoryBelow4G (EfiReservedMemoryType, sizeof (*AcpiS3Context));
+  AcpiS3Context = AllocateMemoryBelow4G (
+                    EfiReservedMemoryType,
+                    sizeof (*AcpiS3Context)
+                    );
   ASSERT (AcpiS3Context != NULL);
   AcpiS3ContextBuffer = (EFI_PHYSICAL_ADDRESS)(UINTN)AcpiS3Context;
 
   //
   // Get ACPI Table because we will save its position to variable
   //
-  Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE *)EfiLocateFirstAcpiTable (
-                                                           EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE
-                                                           );
+  Facs =
+    (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE *)EfiLocateFirstAcpiTable (
+                                                      EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE
+                                                      );
   AcpiS3Context->AcpiFacsTable = (EFI_PHYSICAL_ADDRESS)(UINTN)Facs;
   ASSERT (AcpiS3Context->AcpiFacsTable != 0);
 
-  IdtGate                    = AllocateMemoryBelow4G (EfiReservedMemoryType, sizeof (IA32_IDT_GATE_DESCRIPTOR) * 0x100 + sizeof (IA32_DESCRIPTOR));
+  IdtGate = AllocateMemoryBelow4G (
+              EfiReservedMemoryType,
+              sizeof (IA32_IDT_GATE_DESCRIPTOR) * 0x100 +
+              sizeof (IA32_DESCRIPTOR)
+              );
   Idtr                       = (IA32_DESCRIPTOR *)(IdtGate + 0x100);
   Idtr->Base                 = (UINTN)IdtGate;
-  Idtr->Limit                = (UINT16)(sizeof (IA32_IDT_GATE_DESCRIPTOR) * 0x100 - 1);
+  Idtr->Limit                = (UINT16)(sizeof (IA32_IDT_GATE_DESCRIPTOR) *
+                                        0x100 - 1);
   AcpiS3Context->IdtrProfile = (EFI_PHYSICAL_ADDRESS)(UINTN)Idtr;
 
   Status = SaveLockBox (
@@ -274,33 +304,74 @@ AcpiS3ContextSaveOnEndOfDxe (
              );
   ASSERT_EFI_ERROR (Status);
 
-  Status = SetLockBoxAttributes (&mAcpiS3IdtrProfileGuid, LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE);
+  Status = SetLockBoxAttributes (
+             &mAcpiS3IdtrProfileGuid,
+             LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE
+             );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Allocate page table
   //
-  AcpiS3Context->S3NvsPageTableAddress = S3AllocatePageTablesBuffer (IsLongModeWakingVectorSupport (Facs));
+  AcpiS3Context->S3NvsPageTableAddress = S3AllocatePageTablesBuffer (
+                                           IsLongModeWakingVectorSupport (Facs)
+                                           );
 
   //
   // Allocate stack
   //
   AcpiS3Context->BootScriptStackSize = PcdGet32 (PcdS3BootScriptStackSize);
-  AcpiS3Context->BootScriptStackBase = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateMemoryBelow4G (EfiReservedMemoryType, PcdGet32 (PcdS3BootScriptStackSize));
+  AcpiS3Context->BootScriptStackBase =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateMemoryBelow4G (
+                                   EfiReservedMemoryType,
+                                   PcdGet32 (PcdS3BootScriptStackSize)
+                                   );
   ASSERT (AcpiS3Context->BootScriptStackBase != 0);
 
   //
   // Allocate a code buffer < 4G for S3 debug to load external code, set invalid code instructions in it.
   //
-  AcpiS3Context->S3DebugBufferAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateMemoryBelow4G (EfiReservedMemoryType, EFI_PAGE_SIZE);
-  SetMem ((VOID *)(UINTN)AcpiS3Context->S3DebugBufferAddress, EFI_PAGE_SIZE, 0xff);
+  AcpiS3Context->S3DebugBufferAddress =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateMemoryBelow4G (
+                                   EfiReservedMemoryType,
+                                   EFI_PAGE_SIZE
+                                   );
+  SetMem (
+    (VOID *)(UINTN)AcpiS3Context->S3DebugBufferAddress,
+    EFI_PAGE_SIZE,
+    0xff
+    );
 
-  DEBUG ((DEBUG_INFO, "AcpiS3Context: AcpiFacsTable is 0x%8x\n", AcpiS3Context->AcpiFacsTable));
-  DEBUG ((DEBUG_INFO, "AcpiS3Context: IdtrProfile is 0x%8x\n", AcpiS3Context->IdtrProfile));
-  DEBUG ((DEBUG_INFO, "AcpiS3Context: S3NvsPageTableAddress is 0x%8x\n", AcpiS3Context->S3NvsPageTableAddress));
-  DEBUG ((DEBUG_INFO, "AcpiS3Context: S3DebugBufferAddress is 0x%8x\n", AcpiS3Context->S3DebugBufferAddress));
-  DEBUG ((DEBUG_INFO, "AcpiS3Context: BootScriptStackBase is 0x%8x\n", AcpiS3Context->BootScriptStackBase));
-  DEBUG ((DEBUG_INFO, "AcpiS3Context: BootScriptStackSize is 0x%8x\n", AcpiS3Context->BootScriptStackSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "AcpiS3Context: AcpiFacsTable is 0x%8x\n",
+    AcpiS3Context->AcpiFacsTable
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "AcpiS3Context: IdtrProfile is 0x%8x\n",
+    AcpiS3Context->IdtrProfile
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "AcpiS3Context: S3NvsPageTableAddress is 0x%8x\n",
+    AcpiS3Context->S3NvsPageTableAddress
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "AcpiS3Context: S3DebugBufferAddress is 0x%8x\n",
+    AcpiS3Context->S3DebugBufferAddress
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "AcpiS3Context: BootScriptStackBase is 0x%8x\n",
+    AcpiS3Context->BootScriptStackBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "AcpiS3Context: BootScriptStackSize is 0x%8x\n",
+    AcpiS3Context->BootScriptStackSize
+    ));
 
   Status = SaveLockBox (
              &gEfiAcpiVariableGuid,
@@ -316,7 +387,10 @@ AcpiS3ContextSaveOnEndOfDxe (
              );
   ASSERT_EFI_ERROR (Status);
 
-  Status = SetLockBoxAttributes (&gEfiAcpiS3ContextGuid, LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE);
+  Status = SetLockBoxAttributes (
+             &gEfiAcpiS3ContextGuid,
+             LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE
+             );
   ASSERT_EFI_ERROR (Status);
 
 Done:

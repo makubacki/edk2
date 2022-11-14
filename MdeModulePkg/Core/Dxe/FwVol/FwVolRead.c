@@ -207,7 +207,9 @@ FvGetNextFile (
   *FileType = FfsFileHeader->Type;
   CopyGuid (NameGuid, &FfsFileHeader->Name);
   *Attributes = FfsAttributes2FvFileAttributes (FfsFileHeader->Attributes);
-  if ((FvDevice->FwVolHeader->Attributes & EFI_FVB2_MEMORY_MAPPED) == EFI_FVB2_MEMORY_MAPPED) {
+  if ((FvDevice->FwVolHeader->Attributes & EFI_FVB2_MEMORY_MAPPED) ==
+      EFI_FVB2_MEMORY_MAPPED)
+  {
     *Attributes |= EFI_FV_FILE_ATTRIB_MEMORY_MAPPED;
   }
 
@@ -324,8 +326,9 @@ FvReadFile (
       //
       // Cache FFS file to memory buffer.
       //
-      WholeFileSize = IS_FFS_FILE2 (FfsHeader) ? FFS_FILE2_SIZE (FfsHeader) : FFS_FILE_SIZE (FfsHeader);
-      FfsHeader     = AllocateCopyPool (WholeFileSize, FfsHeader);
+      WholeFileSize = IS_FFS_FILE2 (FfsHeader) ? FFS_FILE2_SIZE (FfsHeader) :
+                      FFS_FILE_SIZE (FfsHeader);
+      FfsHeader = AllocateCopyPool (WholeFileSize, FfsHeader);
       if (FfsHeader == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -348,7 +351,9 @@ FvReadFile (
   //
   *FoundType      = FfsHeader->Type;
   *FileAttributes = FfsAttributes2FvFileAttributes (FfsHeader->Attributes);
-  if ((FvDevice->FwVolHeader->Attributes & EFI_FVB2_MEMORY_MAPPED) == EFI_FVB2_MEMORY_MAPPED) {
+  if ((FvDevice->FwVolHeader->Attributes & EFI_FVB2_MEMORY_MAPPED) ==
+      EFI_FVB2_MEMORY_MAPPED)
+  {
     *FileAttributes |= EFI_FV_FILE_ATTRIB_MEMORY_MAPPED;
   }
 

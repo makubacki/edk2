@@ -66,7 +66,8 @@ UsbCbiInit (
   // Allocate the CBI context for USB_CBI_PROTOCOL and 3 endpoint descriptors.
   //
   UsbCbi = AllocateZeroPool (
-             sizeof (USB_CBI_PROTOCOL) + 3 * sizeof (EFI_USB_ENDPOINT_DESCRIPTOR)
+             sizeof (USB_CBI_PROTOCOL) + 3 *
+             sizeof (EFI_USB_ENDPOINT_DESCRIPTOR)
              );
   ASSERT (UsbCbi != NULL);
 
@@ -112,7 +113,8 @@ UsbCbiInit (
       if (USB_IS_OUT_ENDPOINT (EndPoint.EndpointAddress) &&
           (UsbCbi->BulkOutEndpoint == NULL))
       {
-        UsbCbi->BulkOutEndpoint = (EFI_USB_ENDPOINT_DESCRIPTOR *)(UsbCbi + 1) + 1;
+        UsbCbi->BulkOutEndpoint = (EFI_USB_ENDPOINT_DESCRIPTOR *)(UsbCbi + 1) +
+                                  1;
         CopyMem (UsbCbi->BulkOutEndpoint, &EndPoint, sizeof (EndPoint));
       }
     } else if (USB_IS_INTERRUPT_ENDPOINT (EndPoint.Attributes)) {
@@ -122,7 +124,8 @@ UsbCbiInit (
       if ((Interface->InterfaceProtocol == USB_MASS_STORE_CBI0) &&
           (UsbCbi->InterruptEndpoint == NULL))
       {
-        UsbCbi->InterruptEndpoint = (EFI_USB_ENDPOINT_DESCRIPTOR *)(UsbCbi + 1) + 2;
+        UsbCbi->InterruptEndpoint = (EFI_USB_ENDPOINT_DESCRIPTOR *)(UsbCbi +
+                                                                    1) + 2;
         CopyMem (UsbCbi->InterruptEndpoint, &EndPoint, sizeof (EndPoint));
       }
     }
@@ -133,7 +136,9 @@ UsbCbiInit (
     goto ON_ERROR;
   }
 
-  if ((Interface->InterfaceProtocol == USB_MASS_STORE_CBI0) && (UsbCbi->InterruptEndpoint == NULL)) {
+  if ((Interface->InterfaceProtocol == USB_MASS_STORE_CBI0) &&
+      (UsbCbi->InterruptEndpoint == NULL))
+  {
     Status = EFI_UNSUPPORTED;
     goto ON_ERROR;
   }
@@ -450,7 +455,11 @@ UsbCbiExecCommand (
   Status = UsbCbiSendCommand (UsbCbi, Cmd, CmdLen, Timeout);
   if (EFI_ERROR (Status)) {
     gBS->Stall (10 * USB_MASS_1_MILLISECOND);
-    DEBUG ((DEBUG_ERROR, "UsbCbiExecCommand: UsbCbiSendCommand (%r)\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbCbiExecCommand: UsbCbiSendCommand (%r)\n",
+      Status
+      ));
     return Status;
   }
 
@@ -462,7 +471,11 @@ UsbCbiExecCommand (
 
   Status = UsbCbiDataTransfer (UsbCbi, DataDir, Data, &TransLen, Timeout);
   if (UsbCbi->InterruptEndpoint == NULL) {
-    DEBUG ((DEBUG_ERROR, "UsbCbiExecCommand: UsbCbiDataTransfer (%r)\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbCbiExecCommand: UsbCbiDataTransfer (%r)\n",
+      Status
+      ));
     return Status;
   }
 
@@ -579,8 +592,14 @@ UsbCbiResetDevice (
   //
   // Clear the Bulk-In and Bulk-Out stall condition and init data toggle.
   //
-  UsbClearEndpointStall (UsbCbi->UsbIo, UsbCbi->BulkInEndpoint->EndpointAddress);
-  UsbClearEndpointStall (UsbCbi->UsbIo, UsbCbi->BulkOutEndpoint->EndpointAddress);
+  UsbClearEndpointStall (
+    UsbCbi->UsbIo,
+    UsbCbi->BulkInEndpoint->EndpointAddress
+    );
+  UsbClearEndpointStall (
+    UsbCbi->UsbIo,
+    UsbCbi->BulkOutEndpoint->EndpointAddress
+    );
 
   return Status;
 }

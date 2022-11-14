@@ -125,13 +125,19 @@ AtaDevicePassThru (
   //
   if (TaskPacket != NULL) {
     Packet      = TaskPacket;
-    Packet->Asb = AllocateAlignedBuffer (AtaDevice, sizeof (EFI_ATA_STATUS_BLOCK));
+    Packet->Asb = AllocateAlignedBuffer (
+                    AtaDevice,
+                    sizeof (EFI_ATA_STATUS_BLOCK)
+                    );
     if (Packet->Asb == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
     CopyMem (Packet->Asb, AtaDevice->Asb, sizeof (EFI_ATA_STATUS_BLOCK));
-    Packet->Acb = AllocateCopyPool (sizeof (EFI_ATA_COMMAND_BLOCK), &AtaDevice->Acb);
+    Packet->Acb = AllocateCopyPool (
+                    sizeof (EFI_ATA_COMMAND_BLOCK),
+                    &AtaDevice->Acb
+                    );
   } else {
     Packet      = &AtaDevice->Packet;
     Packet->Asb = AtaDevice->Asb;
@@ -304,7 +310,12 @@ IdentifyAtaDevice (
     return EFI_UNSUPPORTED;
   }
 
-  DEBUG ((DEBUG_INFO, "AtaBus - Identify Device: Port %x PortMultiplierPort %x\n", AtaDevice->Port, AtaDevice->PortMultiplierPort));
+  DEBUG ((
+    DEBUG_INFO,
+    "AtaBus - Identify Device: Port %x PortMultiplierPort %x\n",
+    AtaDevice->Port,
+    AtaDevice->PortMultiplierPort
+    ));
 
   //
   // Check whether the WORD 88 (supported UltraDMA by drive) is valid
@@ -329,7 +340,8 @@ IdentifyAtaDevice (
     //
     // This is a hard disk <= 120GB capacity, treat it as normal hard disk
     //
-    Capacity            = ((UINT32)IdentifyData->user_addressable_sectors_hi << 16) | IdentifyData->user_addressable_sectors_lo;
+    Capacity            = ((UINT32)IdentifyData->user_addressable_sectors_hi <<
+                           16) | IdentifyData->user_addressable_sectors_lo;
     AtaDevice->Lba48Bit = FALSE;
   }
 
@@ -338,7 +350,8 @@ IdentifyAtaDevice (
   //
   BlockMedia            = &AtaDevice->BlockMedia;
   BlockMedia->LastBlock = Capacity - 1;
-  BlockMedia->IoAlign   = AtaDevice->AtaBusDriverData->AtaPassThru->Mode->IoAlign;
+  BlockMedia->IoAlign   =
+    AtaDevice->AtaBusDriverData->AtaPassThru->Mode->IoAlign;
   //
   // Check whether Long Physical Sector Feature is supported
   //
@@ -348,13 +361,22 @@ IdentifyAtaDevice (
     // Check whether one physical block contains multiple physical blocks
     //
     if ((PhyLogicSectorSupport & BIT13) != 0) {
-      BlockMedia->LogicalBlocksPerPhysicalBlock = (UINT32)(1 << (PhyLogicSectorSupport & 0x000f));
+      BlockMedia->LogicalBlocksPerPhysicalBlock = (UINT32)(1 <<
+                                                           (
+                                                                PhyLogicSectorSupport
+                                                                & 0x000f));
       //
       // Check lowest alignment of logical blocks within physical block
       //
-      if ((IdentifyData->alignment_logic_in_phy_blocks & (BIT14 | BIT15)) == BIT14) {
-        BlockMedia->LowestAlignedLba = (EFI_LBA)((BlockMedia->LogicalBlocksPerPhysicalBlock - ((UINT32)IdentifyData->alignment_logic_in_phy_blocks & 0x3fff)) %
-                                                 BlockMedia->LogicalBlocksPerPhysicalBlock);
+      if ((IdentifyData->alignment_logic_in_phy_blocks & (BIT14 | BIT15)) ==
+          BIT14)
+      {
+        BlockMedia->LowestAlignedLba =
+          (EFI_LBA)((BlockMedia->LogicalBlocksPerPhysicalBlock -
+                     ((UINT32)IdentifyData->alignment_logic_in_phy_blocks &
+                      0x3fff)) %
+                    BlockMedia->
+                      LogicalBlocksPerPhysicalBlock);
       }
     }
 
@@ -362,7 +384,10 @@ IdentifyAtaDevice (
     // Check logical block size
     //
     if ((PhyLogicSectorSupport & BIT12) != 0) {
-      BlockMedia->BlockSize = (UINT32)(((IdentifyData->logic_sector_size_hi << 16) | IdentifyData->logic_sector_size_lo) * sizeof (UINT16));
+      BlockMedia->BlockSize = (UINT32)(((IdentifyData->logic_sector_size_hi <<
+                                         16) |
+                                        IdentifyData->logic_sector_size_lo) *
+                                       sizeof (UINT16));
     }
 
     AtaDevice->BlockIo.Revision = EFI_BLOCK_IO_PROTOCOL_REVISION2;
@@ -403,19 +428,28 @@ DiscoverAtaDevice (
   //
   // Prepare for ATA command block.
   //
-  Acb                = ZeroMem (&AtaDevice->Acb, sizeof (EFI_ATA_COMMAND_BLOCK));
+  Acb = ZeroMem (
+          &AtaDevice->Acb,
+          sizeof (EFI_ATA_COMMAND_BLOCK)
+          );
   Acb->AtaCommand    = ATA_CMD_IDENTIFY_DRIVE;
-  Acb->AtaDeviceHead = (UINT8)(BIT7 | BIT6 | BIT5 | (AtaDevice->PortMultiplierPort == 0xFFFF ? 0 : (AtaDevice->PortMultiplierPort << 4)));
+  Acb->AtaDeviceHead = (UINT8)(BIT7 | BIT6 | BIT5 |
+                               (AtaDevice->PortMultiplierPort == 0xFFFF ? 0 :
+                                (AtaDevice->PortMultiplierPort << 4)));
 
   //
   // Prepare for ATA pass through packet.
   //
-  Packet                   = ZeroMem (&AtaDevice->Packet, sizeof (EFI_ATA_PASS_THRU_COMMAND_PACKET));
+  Packet = ZeroMem (
+             &AtaDevice->Packet,
+             sizeof (EFI_ATA_PASS_THRU_COMMAND_PACKET)
+             );
   Packet->InDataBuffer     = AtaDevice->IdentifyData;
   Packet->InTransferLength = sizeof (ATA_IDENTIFY_DATA);
   Packet->Protocol         = EFI_ATA_PASS_THRU_PROTOCOL_PIO_DATA_IN;
-  Packet->Length           = EFI_ATA_PASS_THRU_LENGTH_BYTES | EFI_ATA_PASS_THRU_LENGTH_SECTOR_COUNT;
-  Packet->Timeout          = ATA_TIMEOUT;
+  Packet->Length           = EFI_ATA_PASS_THRU_LENGTH_BYTES |
+                             EFI_ATA_PASS_THRU_LENGTH_SECTOR_COUNT;
+  Packet->Timeout = ATA_TIMEOUT;
 
   Retry = MAX_RETRY_TIMES;
   do {
@@ -481,12 +515,18 @@ TransferAtaDevice (
   //
   // Prepare for ATA command block.
   //
-  Acb                  = ZeroMem (&AtaDevice->Acb, sizeof (EFI_ATA_COMMAND_BLOCK));
-  Acb->AtaCommand      = mAtaCommands[AtaDevice->UdmaValid][AtaDevice->Lba48Bit][IsWrite];
+  Acb = ZeroMem (
+          &AtaDevice->Acb,
+          sizeof (EFI_ATA_COMMAND_BLOCK)
+          );
+  Acb->AtaCommand =
+    mAtaCommands[AtaDevice->UdmaValid][AtaDevice->Lba48Bit][IsWrite];
   Acb->AtaSectorNumber = (UINT8)StartLba;
   Acb->AtaCylinderLow  = (UINT8)RShiftU64 (StartLba, 8);
   Acb->AtaCylinderHigh = (UINT8)RShiftU64 (StartLba, 16);
-  Acb->AtaDeviceHead   = (UINT8)(BIT7 | BIT6 | BIT5 | (AtaDevice->PortMultiplierPort == 0xFFFF ? 0 : (AtaDevice->PortMultiplierPort << 4)));
+  Acb->AtaDeviceHead   = (UINT8)(BIT7 | BIT6 | BIT5 |
+                                 (AtaDevice->PortMultiplierPort == 0xFFFF ? 0 :
+                                  (AtaDevice->PortMultiplierPort << 4)));
   Acb->AtaSectorCount  = (UINT8)TransferLength;
   if (AtaDevice->Lba48Bit) {
     Acb->AtaSectorNumberExp = (UINT8)RShiftU64 (StartLba, 24);
@@ -503,7 +543,10 @@ TransferAtaDevice (
   if (TaskPacket != NULL) {
     Packet = ZeroMem (TaskPacket, sizeof (EFI_ATA_PASS_THRU_COMMAND_PACKET));
   } else {
-    Packet = ZeroMem (&AtaDevice->Packet, sizeof (EFI_ATA_PASS_THRU_COMMAND_PACKET));
+    Packet = ZeroMem (
+               &AtaDevice->Packet,
+               sizeof (EFI_ATA_PASS_THRU_COMMAND_PACKET)
+               );
   }
 
   if (IsWrite) {
@@ -541,12 +584,28 @@ TransferAtaDevice (
     //
     // Calculate the maximum timeout value for DMA read/write operation.
     //
-    Packet->Timeout = EFI_TIMER_PERIOD_SECONDS (DivU64x32 (MultU64x32 (TransferLength, AtaDevice->BlockMedia.BlockSize), 2100000) + 31);
+    Packet->Timeout = EFI_TIMER_PERIOD_SECONDS (
+                        DivU64x32 (
+                          MultU64x32 (
+                            TransferLength,
+                            AtaDevice->BlockMedia.BlockSize
+                            ),
+                          2100000
+                          ) + 31
+                        );
   } else {
     //
     // Calculate the maximum timeout value for PIO read/write operation
     //
-    Packet->Timeout = EFI_TIMER_PERIOD_SECONDS (DivU64x32 (MultU64x32 (TransferLength, AtaDevice->BlockMedia.BlockSize), 3300000) + 31);
+    Packet->Timeout = EFI_TIMER_PERIOD_SECONDS (
+                        DivU64x32 (
+                          MultU64x32 (
+                            TransferLength,
+                            AtaDevice->BlockMedia.BlockSize
+                            ),
+                          3300000
+                          ) + 31
+                        );
   }
 
   return AtaDevicePassThru (AtaDevice, TaskPacket, Event);
@@ -682,7 +741,11 @@ AtaNonBlockingCallBack (
   // Reduce the SubEventCount, till it comes to zero.
   //
   (*Task->UnsignalledEventCount)--;
-  DEBUG ((DEBUG_BLKIO, "UnsignalledEventCount = %d\n", *Task->UnsignalledEventCount));
+  DEBUG ((
+    DEBUG_BLKIO,
+    "UnsignalledEventCount = %d\n",
+    *Task->UnsignalledEventCount
+    ));
 
   //
   // Remove the SubTask from the Task list.
@@ -708,7 +771,12 @@ AtaNonBlockingCallBack (
       Entry   = GetFirstNode (&AtaDevice->AtaTaskList);
       AtaTask = ATA_ASYN_TASK_FROM_ENTRY (Entry);
       DEBUG ((DEBUG_BLKIO, "Start to embark a new Ata Task\n"));
-      DEBUG ((DEBUG_BLKIO, "AtaTask->NumberOfBlocks = %x; AtaTask->Token=%x\n", AtaTask->NumberOfBlocks, AtaTask->Token));
+      DEBUG ((
+        DEBUG_BLKIO,
+        "AtaTask->NumberOfBlocks = %x; AtaTask->Token=%x\n",
+        AtaTask->NumberOfBlocks,
+        AtaTask->Token
+        ));
       Status = AccessAtaDevice (
                  AtaTask->AtaDevice,
                  AtaTask->Buffer,
@@ -731,7 +799,8 @@ AtaNonBlockingCallBack (
     DEBUG_BLKIO,
     "PACKET INFO: Write=%s, Length=%x, LowCylinder=%x, HighCylinder=%x, SectionNumber=%x\n",
     Task->Packet.OutDataBuffer != NULL ? L"YES" : L"NO",
-    Task->Packet.OutDataBuffer != NULL ? Task->Packet.OutTransferLength : Task->Packet.InTransferLength,
+    Task->Packet.OutDataBuffer != NULL ? Task->Packet.OutTransferLength :
+    Task->Packet.InTransferLength,
     Task->Packet.Acb->AtaCylinderLow,
     Task->Packet.Acb->AtaCylinderHigh,
     Task->Packet.Acb->AtaSectorCount
@@ -841,14 +910,27 @@ AccessAtaDevice (
     }
 
     DEBUG ((DEBUG_BLKIO, "Allocation IsError Addr=%x\n", IsError));
-    *IsError    = FALSE;
-    TempCount   = (NumberOfBlocks + MaxTransferBlockNumber - 1) / MaxTransferBlockNumber;
+    *IsError  = FALSE;
+    TempCount = (NumberOfBlocks + MaxTransferBlockNumber - 1) /
+                MaxTransferBlockNumber;
     *EventCount = TempCount;
-    DEBUG ((DEBUG_BLKIO, "AccessAtaDevice, NumberOfBlocks=%x\n", NumberOfBlocks));
-    DEBUG ((DEBUG_BLKIO, "AccessAtaDevice, MaxTransferBlockNumber=%x\n", MaxTransferBlockNumber));
+    DEBUG ((
+      DEBUG_BLKIO,
+      "AccessAtaDevice, NumberOfBlocks=%x\n",
+      NumberOfBlocks
+      ));
+    DEBUG ((
+      DEBUG_BLKIO,
+      "AccessAtaDevice, MaxTransferBlockNumber=%x\n",
+      MaxTransferBlockNumber
+      ));
     DEBUG ((DEBUG_BLKIO, "AccessAtaDevice, EventCount=%x\n", TempCount));
   } else {
-    while (!IsListEmpty (&AtaDevice->AtaTaskList) || !IsListEmpty (&AtaDevice->AtaSubTaskList)) {
+    while (!IsListEmpty (&AtaDevice->AtaTaskList) || !IsListEmpty (
+                                                        &AtaDevice->
+                                                          AtaSubTaskList
+                                                        ))
+    {
       //
       // Stall for 100us.
       //
@@ -903,13 +985,34 @@ AccessAtaDevice (
         goto EXIT;
       }
 
-      Status = TransferAtaDevice (AtaDevice, &SubTask->Packet, Buffer, StartLba, (UINT32)TransferBlockNumber, IsWrite, SubEvent);
+      Status = TransferAtaDevice (
+                 AtaDevice,
+                 &SubTask->Packet,
+                 Buffer,
+                 StartLba,
+                 (UINT32)TransferBlockNumber,
+                 IsWrite,
+                 SubEvent
+                 );
     } else {
       //
       // Blocking Mode.
       //
-      DEBUG ((DEBUG_BLKIO, "Blocking AccessAtaDevice, TransferBlockNumber=%x; StartLba = %x\n", TransferBlockNumber, StartLba));
-      Status = TransferAtaDevice (AtaDevice, NULL, Buffer, StartLba, (UINT32)TransferBlockNumber, IsWrite, NULL);
+      DEBUG ((
+        DEBUG_BLKIO,
+        "Blocking AccessAtaDevice, TransferBlockNumber=%x; StartLba = %x\n",
+        TransferBlockNumber,
+        StartLba
+        ));
+      Status = TransferAtaDevice (
+                 AtaDevice,
+                 NULL,
+                 Buffer,
+                 StartLba,
+                 (UINT32)TransferBlockNumber,
+                 IsWrite,
+                 NULL
+                 );
     }
 
     if (EFI_ERROR (Status)) {
@@ -1025,12 +1128,17 @@ TrustTransferAtaDevice (
   //
   Acb->AtaCylinderHigh = (UINT8)SecurityProtocolSpecificData;
   Acb->AtaCylinderLow  = (UINT8)(SecurityProtocolSpecificData >> 8);
-  Acb->AtaDeviceHead   = (UINT8)(BIT7 | BIT6 | BIT5 | (AtaDevice->PortMultiplierPort == 0xFFFF ? 0 : (AtaDevice->PortMultiplierPort << 4)));
+  Acb->AtaDeviceHead   = (UINT8)(BIT7 | BIT6 | BIT5 |
+                                 (AtaDevice->PortMultiplierPort == 0xFFFF ? 0 :
+                                  (AtaDevice->PortMultiplierPort << 4)));
 
   //
   // Prepare for ATA pass through packet.
   //
-  Packet = ZeroMem (&AtaDevice->Packet, sizeof (EFI_ATA_PASS_THRU_COMMAND_PACKET));
+  Packet = ZeroMem (
+             &AtaDevice->Packet,
+             sizeof (EFI_ATA_PASS_THRU_COMMAND_PACKET)
+             );
   if (TransferLength == 0) {
     Packet->InTransferLength  = 0;
     Packet->OutTransferLength = 0;
@@ -1040,7 +1148,11 @@ TrustTransferAtaDevice (
     // Check the alignment of the incoming buffer prior to invoking underlying ATA PassThru
     //
     AtaPassThru = AtaDevice->AtaBusDriverData->AtaPassThru;
-    if ((AtaPassThru->Mode->IoAlign > 1) && !IS_ALIGNED (Buffer, AtaPassThru->Mode->IoAlign)) {
+    if ((AtaPassThru->Mode->IoAlign > 1) && !IS_ALIGNED (
+                                               Buffer,
+                                               AtaPassThru->Mode->IoAlign
+                                               ))
+    {
       NewBuffer = AllocateAlignedBuffer (AtaDevice, TransferLength);
       if (NewBuffer == NULL) {
         return EFI_OUT_OF_RESOURCES;
@@ -1053,11 +1165,13 @@ TrustTransferAtaDevice (
 
     Packet->OutDataBuffer     = Buffer;
     Packet->OutTransferLength = (UINT32)TransferLength;
-    Packet->Protocol          = mAtaPassThruCmdProtocols[AtaDevice->UdmaValid][IsTrustSend];
+    Packet->Protocol          =
+      mAtaPassThruCmdProtocols[AtaDevice->UdmaValid][IsTrustSend];
   } else {
     Packet->InDataBuffer     = Buffer;
     Packet->InTransferLength = (UINT32)TransferLength;
-    Packet->Protocol         = mAtaPassThruCmdProtocols[AtaDevice->UdmaValid][IsTrustSend];
+    Packet->Protocol         =
+      mAtaPassThruCmdProtocols[AtaDevice->UdmaValid][IsTrustSend];
   }
 
   Packet->Length  = EFI_ATA_PASS_THRU_LENGTH_BYTES;

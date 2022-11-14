@@ -86,7 +86,9 @@ typedef struct {
   I2C_BUS_CONTEXT             *I2cBusContext;
 } I2C_DEVICE_CONTEXT;
 
-#define I2C_DEVICE_CONTEXT_FROM_PROTOCOL(a)  CR (a, I2C_DEVICE_CONTEXT, I2cIo, I2C_DEVICE_SIGNATURE)
+#define I2C_DEVICE_CONTEXT_FROM_PROTOCOL( \
+                                        a)  \
+  CR (a, I2C_DEVICE_CONTEXT, I2cIo, I2C_DEVICE_SIGNATURE)
 
 //
 // I2C Request
@@ -129,7 +131,9 @@ typedef struct {
   EFI_STATUS                *Status;
 } I2C_REQUEST;
 
-#define I2C_REQUEST_FROM_ENTRY(a)  CR (a, I2C_REQUEST, Link, I2C_REQUEST_SIGNATURE);
+#define I2C_REQUEST_FROM_ENTRY( \
+                              a)  \
+  CR (a, I2C_REQUEST, Link, I2C_REQUEST_SIGNATURE);
 
 //
 // I2C host context
@@ -138,55 +142,59 @@ typedef struct {
   //
   // Structure identification
   //
-  UINTN                                            Signature;
+  UINTN                      Signature;
 
   //
   // Current I2C bus configuration
   //
-  UINTN                                            I2cBusConfiguration;
+  UINTN                      I2cBusConfiguration;
 
   //
   // I2C bus configuration management event
   //
-  EFI_EVENT                                        I2cBusConfigurationEvent;
+  EFI_EVENT                  I2cBusConfigurationEvent;
 
   //
   // I2C operation completion event
   //
-  EFI_EVENT                                        I2cEvent;
+  EFI_EVENT                  I2cEvent;
 
   //
   // I2C operation and I2C bus configuration management status
   //
-  EFI_STATUS                                       Status;
+  EFI_STATUS                 Status;
 
   //
   // I2C bus configuration management operation pending
   //
-  BOOLEAN                                          I2cBusConfigurationManagementPending;
+  BOOLEAN
+                             I2cBusConfigurationManagementPending;
 
   //
   // I2C request list maintained by I2C Host
   //
-  LIST_ENTRY                                       RequestList;
+  LIST_ENTRY                 RequestList;
 
   //
   // Upper level API
   //
-  EFI_I2C_HOST_PROTOCOL                            I2cHost;
+  EFI_I2C_HOST_PROTOCOL      I2cHost;
 
   //
   // I2C bus configuration management protocol
   //
-  EFI_I2C_BUS_CONFIGURATION_MANAGEMENT_PROTOCOL    *I2cBusConfigurationManagement;
+  EFI_I2C_BUS_CONFIGURATION_MANAGEMENT_PROTOCOL    *
+                             I2cBusConfigurationManagement;
 
   //
   // Lower level API for I2C master (controller)
   //
-  EFI_I2C_MASTER_PROTOCOL                          *I2cMaster;
+  EFI_I2C_MASTER_PROTOCOL    *I2cMaster;
 } I2C_HOST_CONTEXT;
 
-#define I2C_HOST_CONTEXT_FROM_PROTOCOL(a)  CR (a, I2C_HOST_CONTEXT, I2cHost, I2C_HOST_SIGNATURE)
+#define I2C_HOST_CONTEXT_FROM_PROTOCOL( \
+                                      a)  \
+  CR (a, I2C_HOST_CONTEXT, I2cHost, I2C_HOST_SIGNATURE)
 
 //
 // Global Variables

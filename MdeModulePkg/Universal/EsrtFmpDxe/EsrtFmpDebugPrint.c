@@ -33,8 +33,14 @@ PrintOutEsrtEntry (
   )
 {
   if (Entry == NULL) {
-    DEBUG ((DEBUG_INFO, "| ERROR:  Invalid resource entry pointer                           "));
-    DEBUG ((DEBUG_INFO, "                                                    |\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "| ERROR:  Invalid resource entry pointer                           "
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "                                                    |\n"
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
@@ -98,7 +104,8 @@ PrintTable (
   EFI_SYSTEM_RESOURCE_ENTRY  *Entry;
   UINTN                      Index;
 
-  Entry = (EFI_SYSTEM_RESOURCE_ENTRY *)(((UINT8 *)Table) + sizeof (EFI_SYSTEM_RESOURCE_TABLE));
+  Entry = (EFI_SYSTEM_RESOURCE_ENTRY *)(((UINT8 *)Table) +
+                                        sizeof (EFI_SYSTEM_RESOURCE_TABLE));
 
   //
   // Print ESRT table information
@@ -109,36 +116,92 @@ PrintTable (
     return;
   }
 
-  DEBUG ((DEBUG_INFO, "+--------------------------------------------------------+\n"));
-  DEBUG ((DEBUG_INFO, "| Firmware Resource Count          : 0x%08x          |\n", Table->FwResourceCount));
-  DEBUG ((DEBUG_INFO, "| Firmware Resource Count Max      : 0x%08x          |\n", Table->FwResourceCountMax));
-  DEBUG ((DEBUG_INFO, "| Firmware Resource Entry Version  : 0x%016x  |\n", Table->FwResourceVersion));
-  DEBUG ((DEBUG_INFO, "+--------------------------------------------------------+\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "+--------------------------------------------------------+\n"
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "| Firmware Resource Count          : 0x%08x          |\n",
+    Table->FwResourceCount
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "| Firmware Resource Count Max      : 0x%08x          |\n",
+    Table->FwResourceCountMax
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "| Firmware Resource Entry Version  : 0x%016x  |\n",
+    Table->FwResourceVersion
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "+--------------------------------------------------------+\n"
+    ));
 
   //
   // Print table entry information
   //
   DEBUG ((DEBUG_INFO, "ESRT Table Entries:\n"));
-  if (Table->FwResourceVersion != EFI_SYSTEM_RESOURCE_TABLE_FIRMWARE_RESOURCE_VERSION) {
+  if (Table->FwResourceVersion !=
+      EFI_SYSTEM_RESOURCE_TABLE_FIRMWARE_RESOURCE_VERSION)
+  {
     DEBUG ((DEBUG_INFO, "ERROR:  Unsupported Resource Entry Version\n"));
     return;
   }
 
-  DEBUG ((DEBUG_INFO, "+--------------------------------------+--------------+------------"));
-  DEBUG ((DEBUG_INFO, "+------------+------------+------------+------------+\n"));
-  DEBUG ((DEBUG_INFO, "|                                      |              |            "));
-  DEBUG ((DEBUG_INFO, "| Lowest     |            | Last       | Last       |\n"));
-  DEBUG ((DEBUG_INFO, "|                                      | Firmware     |            "));
-  DEBUG ((DEBUG_INFO, "| Supported  | Capsule    | Attempted  | Attempted  |\n"));
-  DEBUG ((DEBUG_INFO, "| CLASS GUID                           | Type         | Version    "));
-  DEBUG ((DEBUG_INFO, "| Version    | Flags      | Version    | Status     |\n"));
-  DEBUG ((DEBUG_INFO, "+--------------------------------------+--------------+------------"));
-  DEBUG ((DEBUG_INFO, "+------------+------------+------------+------------+\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "+--------------------------------------+--------------+------------"
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "+------------+------------+------------+------------+\n"
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "|                                      |              |            "
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "| Lowest     |            | Last       | Last       |\n"
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "|                                      | Firmware     |            "
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "| Supported  | Capsule    | Attempted  | Attempted  |\n"
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "| CLASS GUID                           | Type         | Version    "
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "| Version    | Flags      | Version    | Status     |\n"
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "+--------------------------------------+--------------+------------"
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "+------------+------------+------------+------------+\n"
+    ));
 
   for (Index = 0; Index < Table->FwResourceCount; Index++) {
     PrintOutEsrtEntry (&(Entry[Index]));
   }
 
-  DEBUG ((DEBUG_INFO, "+--------------------------------------+--------------+------------"));
-  DEBUG ((DEBUG_INFO, "+------------+------------+------------+------------+\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "+--------------------------------------+--------------+------------"
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "+------------+------------+------------+------------+\n"
+    ));
 }

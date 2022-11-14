@@ -65,7 +65,8 @@ typedef struct {
 
 #define TERMINAL_DEV_SIGNATURE  SIGNATURE_32 ('t', 'm', 'n', 'l')
 
-#define TERMINAL_CONSOLE_IN_EX_NOTIFY_SIGNATURE  SIGNATURE_32 ('t', 'm', 'e', 'n')
+#define TERMINAL_CONSOLE_IN_EX_NOTIFY_SIGNATURE  \
+  SIGNATURE_32 ('t', 'm', 'e', 'n')
 
 typedef struct _TERMINAL_CONSOLE_IN_EX_NOTIFY {
   UINTN                      Signature;
@@ -136,9 +137,15 @@ typedef struct {
 #define RESET_STATE_ESC_R        0x01
 #define RESET_STATE_ESC_R_ESC_R  0x02
 
-#define TERMINAL_CON_IN_DEV_FROM_THIS(a)     CR (a, TERMINAL_DEV, SimpleInput, TERMINAL_DEV_SIGNATURE)
-#define TERMINAL_CON_OUT_DEV_FROM_THIS(a)    CR (a, TERMINAL_DEV, SimpleTextOutput, TERMINAL_DEV_SIGNATURE)
-#define TERMINAL_CON_IN_EX_DEV_FROM_THIS(a)  CR (a, TERMINAL_DEV, SimpleInputEx, TERMINAL_DEV_SIGNATURE)
+#define TERMINAL_CON_IN_DEV_FROM_THIS( \
+                                     a)     \
+      CR (a, TERMINAL_DEV, SimpleInput, TERMINAL_DEV_SIGNATURE)
+#define TERMINAL_CON_OUT_DEV_FROM_THIS( \
+                                      a)    \
+      CR (a, TERMINAL_DEV, SimpleTextOutput, TERMINAL_DEV_SIGNATURE)
+#define TERMINAL_CON_IN_EX_DEV_FROM_THIS( \
+                                        a)  \
+      CR (a, TERMINAL_DEV, SimpleInputEx, TERMINAL_DEV_SIGNATURE)
 
 typedef union {
   UINT8    Utf8_1;

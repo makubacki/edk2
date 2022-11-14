@@ -24,7 +24,8 @@ CONST EFI_PEI_PPI_DESCRIPTOR  mDxeIplPpiList = {
   (VOID *)&mDxeIplPpi
 };
 
-CONST EFI_PEI_GUIDED_SECTION_EXTRACTION_PPI  mCustomGuidedSectionExtractionPpi = {
+CONST EFI_PEI_GUIDED_SECTION_EXTRACTION_PPI  mCustomGuidedSectionExtractionPpi =
+{
   CustomGuidedSectionExtract
 };
 
@@ -45,7 +46,8 @@ CONST EFI_PEI_PPI_DESCRIPTOR  gEndOfPeiSignalPpi = {
 };
 
 CONST EFI_PEI_NOTIFY_DESCRIPTOR  mMemoryDiscoveredNotifyList = {
-  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_DISPATCH | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_DISPATCH |
+   EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEfiPeiMemoryDiscoveredPpiGuid,
   InstallIplPermanentMemoryPpis
 };
@@ -155,19 +157,25 @@ InstallIplPermanentMemoryPpis (
   //
   // Get custom extract guided section method guid list
   //
-  ExtractHandlerNumber = ExtractGuidedSectionGetGuidList (&ExtractHandlerGuidTable);
+  ExtractHandlerNumber = ExtractGuidedSectionGetGuidList (
+                           &ExtractHandlerGuidTable
+                           );
 
   //
   // Install custom guided section extraction PPI
   //
   if (ExtractHandlerNumber > 0) {
-    GuidPpi = (EFI_PEI_PPI_DESCRIPTOR *)AllocatePool (ExtractHandlerNumber * sizeof (EFI_PEI_PPI_DESCRIPTOR));
+    GuidPpi = (EFI_PEI_PPI_DESCRIPTOR *)AllocatePool (
+                                          ExtractHandlerNumber *
+                                          sizeof (EFI_PEI_PPI_DESCRIPTOR)
+                                          );
     ASSERT (GuidPpi != NULL);
     while (ExtractHandlerNumber-- > 0) {
-      GuidPpi->Flags = EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
-      GuidPpi->Ppi   = (VOID *)&mCustomGuidedSectionExtractionPpi;
-      GuidPpi->Guid  = &ExtractHandlerGuidTable[ExtractHandlerNumber];
-      Status         = PeiServicesInstallPpi (GuidPpi++);
+      GuidPpi->Flags = EFI_PEI_PPI_DESCRIPTOR_PPI |
+                       EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
+      GuidPpi->Ppi  = (VOID *)&mCustomGuidedSectionExtractionPpi;
+      GuidPpi->Guid = &ExtractHandlerGuidTable[ExtractHandlerNumber];
+      Status        = PeiServicesInstallPpi (GuidPpi++);
       ASSERT_EFI_ERROR (Status);
     }
   }
@@ -295,7 +303,11 @@ DxeLoadCore (
     Status = S3Resume->S3RestoreConfig2 (S3Resume);
     ASSERT_EFI_ERROR (Status);
   } else if (BootMode == BOOT_IN_RECOVERY_MODE) {
-    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_RECOVERY_BEGIN));
+    REPORT_STATUS_CODE (
+      EFI_PROGRESS_CODE,
+      (EFI_SOFTWARE_PEI_MODULE |
+       EFI_SW_PEI_PC_RECOVERY_BEGIN)
+      );
     Status = PeiServicesLocatePpi (
                &gEfiPeiRecoveryModulePpiGuid,
                0,
@@ -304,7 +316,11 @@ DxeLoadCore (
                );
 
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Locate Recovery PPI Failed.(Status = %r)\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Locate Recovery PPI Failed.(Status = %r)\n",
+        Status
+        ));
       //
       // Report Status code the failure of locating Recovery PPI
       //
@@ -315,10 +331,18 @@ DxeLoadCore (
       CpuDeadLoop ();
     }
 
-    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_CAPSULE_LOAD));
+    REPORT_STATUS_CODE (
+      EFI_PROGRESS_CODE,
+      (EFI_SOFTWARE_PEI_MODULE |
+       EFI_SW_PEI_PC_CAPSULE_LOAD)
+      );
     Status = PeiRecovery->LoadRecoveryCapsule (PeiServices, PeiRecovery);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Load Recovery Capsule Failed.(Status = %r)\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Load Recovery Capsule Failed.(Status = %r)\n",
+        Status
+        ));
       //
       // Report Status code that recovery image can not be found
       //
@@ -329,7 +353,11 @@ DxeLoadCore (
       CpuDeadLoop ();
     }
 
-    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_CAPSULE_START));
+    REPORT_STATUS_CODE (
+      EFI_PROGRESS_CODE,
+      (EFI_SOFTWARE_PEI_MODULE |
+       EFI_SW_PEI_PC_CAPSULE_START)
+      );
     //
     // Now should have a HOB with the DXE core
     //
@@ -356,12 +384,17 @@ DxeLoadCore (
       // Whether failed, still goes to Firmware Update boot path. BDS will clear corresponding indicator and reboot later on
       //
       if (!EFI_ERROR (Status)) {
-        Status = PeiCapsuleOnDisk->LoadCapsuleOnDisk (PeiServices, PeiCapsuleOnDisk);
+        Status = PeiCapsuleOnDisk->LoadCapsuleOnDisk (
+                                     PeiServices,
+                                     PeiCapsuleOnDisk
+                                     );
       }
     }
   }
 
-  if (GetFirstGuidHob ((CONST EFI_GUID *)&gEfiMemoryTypeInformationGuid) == NULL) {
+  if (GetFirstGuidHob ((CONST EFI_GUID *)&gEfiMemoryTypeInformationGuid) ==
+      NULL)
+  {
     //
     // Don't build GuidHob if GuidHob has been installed.
     //
@@ -381,7 +414,11 @@ DxeLoadCore (
                              &DataSize,
                              &MemoryData
                              );
-      if (!EFI_ERROR (Status) && ValidateMemoryTypeInfoVariable (MemoryData, DataSize)) {
+      if (!EFI_ERROR (Status) && ValidateMemoryTypeInfoVariable (
+                                   MemoryData,
+                                   DataSize
+                                   ))
+      {
         //
         // Build the GUID'd HOB for DXE
         //
@@ -404,7 +441,12 @@ DxeLoadCore (
   //
   Instance = 0;
   do {
-    Status = PeiServicesLocatePpi (&gEfiPeiLoadFilePpiGuid, Instance++, NULL, (VOID **)&LoadFile);
+    Status = PeiServicesLocatePpi (
+               &gEfiPeiLoadFilePpiGuid,
+               Instance++,
+               NULL,
+               (VOID **)&LoadFile
+               );
     //
     // These must exist an instance of EFI_PEI_LOAD_FILE_PPI to support to load DxeCore file handle successfully.
     //
@@ -439,9 +481,18 @@ DxeLoadCore (
   //
   // Report Status Code EFI_SW_PEI_PC_HANDOFF_TO_NEXT
   //
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE_PEI_CORE | EFI_SW_PEI_CORE_PC_HANDOFF_TO_NEXT));
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    (EFI_SOFTWARE_PEI_CORE |
+     EFI_SW_PEI_CORE_PC_HANDOFF_TO_NEXT)
+    );
 
-  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Loading DXE CORE at 0x%11p EntryPoint=0x%11p\n", (VOID *)(UINTN)DxeCoreAddress, FUNCTION_ENTRY_POINT (DxeCoreEntryPoint)));
+  DEBUG ((
+    DEBUG_INFO | DEBUG_LOAD,
+    "Loading DXE CORE at 0x%11p EntryPoint=0x%11p\n",
+    (VOID *)(UINTN)DxeCoreAddress,
+    FUNCTION_ENTRY_POINT (DxeCoreEntryPoint)
+    ));
 
   //
   // Transfer control to the DXE Core
@@ -486,7 +537,11 @@ DxeIplFindDxeCore (
     // volume that may contain DxeCore.
     //
     if (EFI_ERROR (Status)) {
-      REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_CORE_EC_DXE_CORRUPT));
+      REPORT_STATUS_CODE (
+        EFI_PROGRESS_CODE,
+        (EFI_SOFTWARE_PEI_MODULE |
+         EFI_SW_PEI_CORE_EC_DXE_CORRUPT)
+        );
     }
 
     ASSERT_EFI_ERROR (Status);
@@ -495,7 +550,11 @@ DxeIplFindDxeCore (
     // Find the DxeCore file type from the beginning in this firmware volume.
     //
     FileHandle = NULL;
-    Status     = PeiServicesFfsFindNextFile (EFI_FV_FILETYPE_DXE_CORE, VolumeHandle, &FileHandle);
+    Status     = PeiServicesFfsFindNextFile (
+                   EFI_FV_FILETYPE_DXE_CORE,
+                   VolumeHandle,
+                   &FileHandle
+                   );
     if (!EFI_ERROR (Status)) {
       //
       // Find DxeCore FileHandle in this volume, then we skip other firmware volume and
@@ -611,7 +670,9 @@ CustomGuidedSectionExtract (
     }
   }
 
-  if (((SectionAttribute & EFI_GUIDED_SECTION_PROCESSING_REQUIRED) != 0) && (OutputBufferSize > 0)) {
+  if (((SectionAttribute & EFI_GUIDED_SECTION_PROCESSING_REQUIRED) != 0) &&
+      (OutputBufferSize > 0))
+  {
     //
     // Allocate output buffer
     //
@@ -620,7 +681,12 @@ CustomGuidedSectionExtract (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    DEBUG ((DEBUG_INFO, "Customized Guided section Memory Size required is 0x%x and address is 0x%p\n", OutputBufferSize, *OutputBuffer));
+    DEBUG ((
+      DEBUG_INFO,
+      "Customized Guided section Memory Size required is 0x%x and address is 0x%p\n",
+      OutputBufferSize,
+      *OutputBuffer
+      ));
   }
 
   Status = ExtractGuidedSectionDecode (
@@ -687,13 +753,19 @@ Decompress (
   }
 
   if (IS_SECTION2 (CompressionSection)) {
-    CompressionSource     = (VOID *)((UINT8 *)CompressionSection + sizeof (EFI_COMPRESSION_SECTION2));
-    CompressionSourceSize = (UINT32)(SECTION2_SIZE (CompressionSection) - sizeof (EFI_COMPRESSION_SECTION2));
-    UncompressedLength    = ((EFI_COMPRESSION_SECTION2 *)CompressionSection)->UncompressedLength;
-    CompressionType       = ((EFI_COMPRESSION_SECTION2 *)CompressionSection)->CompressionType;
+    CompressionSource     = (VOID *)((UINT8 *)CompressionSection +
+                                     sizeof (EFI_COMPRESSION_SECTION2));
+    CompressionSourceSize = (UINT32)(SECTION2_SIZE (CompressionSection) -
+                                     sizeof (EFI_COMPRESSION_SECTION2));
+    UncompressedLength    =
+      ((EFI_COMPRESSION_SECTION2 *)CompressionSection)->UncompressedLength;
+    CompressionType =
+      ((EFI_COMPRESSION_SECTION2 *)CompressionSection)->CompressionType;
   } else {
-    CompressionSource     = (VOID *)((UINT8 *)CompressionSection + sizeof (EFI_COMPRESSION_SECTION));
-    CompressionSourceSize = (UINT32)(SECTION_SIZE (CompressionSection) - sizeof (EFI_COMPRESSION_SECTION));
+    CompressionSource     = (VOID *)((UINT8 *)CompressionSection +
+                                     sizeof (EFI_COMPRESSION_SECTION));
+    CompressionSourceSize = (UINT32)(SECTION_SIZE (CompressionSection) -
+                                     sizeof (EFI_COMPRESSION_SECTION));
     UncompressedLength    = CompressionSection->UncompressedLength;
     CompressionType       = CompressionSection->CompressionType;
   }
@@ -813,8 +885,14 @@ UpdateStackHob (
   EFI_PEI_HOB_POINTERS  Hob;
 
   Hob.Raw = GetHobList ();
-  while ((Hob.Raw = GetNextHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, Hob.Raw)) != NULL) {
-    if (CompareGuid (&gEfiHobMemoryAllocStackGuid, &(Hob.MemoryAllocationStack->AllocDescriptor.Name))) {
+  while ((Hob.Raw = GetNextHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, Hob.Raw)) !=
+         NULL)
+  {
+    if (CompareGuid (
+          &gEfiHobMemoryAllocStackGuid,
+          &(Hob.MemoryAllocationStack->AllocDescriptor.Name)
+          ))
+    {
       //
       // Build a new memory allocation HOB with old stack info with EfiBootServicesData type. Need to
       // avoid this region be reclaimed by DXE core as the IDT built in SEC might be on stack, and some
@@ -828,8 +906,9 @@ UpdateStackHob (
       //
       // Update the BSP Stack Hob to reflect the new stack info.
       //
-      Hob.MemoryAllocationStack->AllocDescriptor.MemoryBaseAddress = BaseAddress;
-      Hob.MemoryAllocationStack->AllocDescriptor.MemoryLength      = Length;
+      Hob.MemoryAllocationStack->AllocDescriptor.MemoryBaseAddress =
+        BaseAddress;
+      Hob.MemoryAllocationStack->AllocDescriptor.MemoryLength = Length;
       break;
     }
 

@@ -67,7 +67,9 @@ InitializeDebugSupportDriver (
                       NULL,
                       EFI_OPEN_PROTOCOL_GET_PROTOCOL
                       );
-      if ((Status == EFI_SUCCESS) && (DebugSupportProtocolPtr->Isa == EFI_ISA)) {
+      if ((Status == EFI_SUCCESS) && (DebugSupportProtocolPtr->Isa ==
+                                      EFI_ISA))
+      {
         //
         // a Debug Support protocol has been installed for this processor
         //

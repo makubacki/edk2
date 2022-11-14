@@ -305,7 +305,12 @@ EmmcPeimHcReset (
   UINT8       SwReset;
 
   SwReset = 0xFF;
-  Status  = EmmcPeimHcRwMmio (Bar + EMMC_HC_SW_RST, FALSE, sizeof (SwReset), &SwReset);
+  Status  = EmmcPeimHcRwMmio (
+              Bar + EMMC_HC_SW_RST,
+              FALSE,
+              sizeof (SwReset),
+              &SwReset
+              );
 
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "EmmcPeimHcReset: write full 1 fails: %r\n", Status));
@@ -354,7 +359,12 @@ EmmcPeimHcEnableInterrupt (
   // Enable all bits in Error Interrupt Status Enable Register
   //
   IntStatus = 0xFFFF;
-  Status    = EmmcPeimHcRwMmio (Bar + EMMC_HC_ERR_INT_STS_EN, FALSE, sizeof (IntStatus), &IntStatus);
+  Status    = EmmcPeimHcRwMmio (
+                Bar + EMMC_HC_ERR_INT_STS_EN,
+                FALSE,
+                sizeof (IntStatus),
+                &IntStatus
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -363,7 +373,12 @@ EmmcPeimHcEnableInterrupt (
   // Enable all bits in Normal Interrupt Status Enable Register
   //
   IntStatus = 0xFFFF;
-  Status    = EmmcPeimHcRwMmio (Bar + EMMC_HC_NOR_INT_STS_EN, FALSE, sizeof (IntStatus), &IntStatus);
+  Status    = EmmcPeimHcRwMmio (
+                Bar + EMMC_HC_NOR_INT_STS_EN,
+                FALSE,
+                sizeof (IntStatus),
+                &IntStatus
+                );
 
   return Status;
 }
@@ -422,7 +437,12 @@ EmmcPeimHcCardDetect (
   //
   // Check Normal Interrupt Status Register
   //
-  Status = EmmcPeimHcRwMmio (Bar + EMMC_HC_NOR_INT_STS, TRUE, sizeof (Data), &Data);
+  Status = EmmcPeimHcRwMmio (
+             Bar + EMMC_HC_NOR_INT_STS,
+             TRUE,
+             sizeof (Data),
+             &Data
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -432,7 +452,12 @@ EmmcPeimHcCardDetect (
     // Clear BIT6 and BIT7 by writing 1 to these two bits if set.
     //
     Data  &= BIT6 | BIT7;
-    Status = EmmcPeimHcRwMmio (Bar + EMMC_HC_NOR_INT_STS, FALSE, sizeof (Data), &Data);
+    Status = EmmcPeimHcRwMmio (
+               Bar + EMMC_HC_NOR_INT_STS,
+               FALSE,
+               sizeof (Data),
+               &Data
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -441,7 +466,12 @@ EmmcPeimHcCardDetect (
   //
   // Check Present State Register to see if there is a card presented.
   //
-  Status = EmmcPeimHcRwMmio (Bar + EMMC_HC_PRESENT_STATE, TRUE, sizeof (PresentState), &PresentState);
+  Status = EmmcPeimHcRwMmio (
+             Bar + EMMC_HC_PRESENT_STATE,
+             TRUE,
+             sizeof (PresentState),
+             &PresentState
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -493,7 +523,11 @@ EmmcPeimHcStopClock (
   // Set SD Clock Enable in the Clock Control register to 0
   //
   ClockCtrl = (UINT16) ~BIT2;
-  Status    = EmmcPeimHcAndMmio (Bar + EMMC_HC_CLOCK_CTRL, sizeof (ClockCtrl), &ClockCtrl);
+  Status    = EmmcPeimHcAndMmio (
+                Bar + EMMC_HC_CLOCK_CTRL,
+                sizeof (ClockCtrl),
+                &ClockCtrl
+                );
 
   return Status;
 }
@@ -564,9 +598,20 @@ EmmcPeimHcClockSupply (
     }
   }
 
-  DEBUG ((DEBUG_INFO, "BaseClkFreq %dMHz Divisor %d ClockFreq %dKhz\n", BaseClkFreq, Divisor, ClockFreq));
+  DEBUG ((
+    DEBUG_INFO,
+    "BaseClkFreq %dMHz Divisor %d ClockFreq %dKhz\n",
+    BaseClkFreq,
+    Divisor,
+    ClockFreq
+    ));
 
-  Status = EmmcPeimHcRwMmio (Bar + EMMC_HC_CTRL_VER, TRUE, sizeof (ControllerVer), &ControllerVer);
+  Status = EmmcPeimHcRwMmio (
+             Bar + EMMC_HC_CTRL_VER,
+             TRUE,
+             sizeof (ControllerVer),
+             &ControllerVer
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -588,7 +633,11 @@ EmmcPeimHcClockSupply (
     ASSERT (Divisor <= 0x80);
     ClockCtrl = (Divisor & 0xFF) << 8;
   } else {
-    DEBUG ((DEBUG_ERROR, "Unknown SD Host Controller Spec version [0x%x]!!!\n", ControllerVer));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Unknown SD Host Controller Spec version [0x%x]!!!\n",
+      ControllerVer
+      ));
     return EFI_UNSUPPORTED;
   }
 
@@ -604,9 +653,17 @@ EmmcPeimHcClockSupply (
   // Supply clock frequency with specified divisor
   //
   ClockCtrl |= BIT0;
-  Status     = EmmcPeimHcRwMmio (Bar + EMMC_HC_CLOCK_CTRL, FALSE, sizeof (ClockCtrl), &ClockCtrl);
+  Status     = EmmcPeimHcRwMmio (
+                 Bar + EMMC_HC_CLOCK_CTRL,
+                 FALSE,
+                 sizeof (ClockCtrl),
+                 &ClockCtrl
+                 );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Set SDCLK Frequency Select and Internal Clock Enable fields fails\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Set SDCLK Frequency Select and Internal Clock Enable fields fails\n"
+      ));
     return Status;
   }
 
@@ -628,7 +685,11 @@ EmmcPeimHcClockSupply (
   // Set SD Clock Enable in the Clock Control register to 1
   //
   ClockCtrl = BIT2;
-  Status    = EmmcPeimHcOrMmio (Bar + EMMC_HC_CLOCK_CTRL, sizeof (ClockCtrl), &ClockCtrl);
+  Status    = EmmcPeimHcOrMmio (
+                Bar + EMMC_HC_CLOCK_CTRL,
+                sizeof (ClockCtrl),
+                &ClockCtrl
+                );
 
   return Status;
 }
@@ -657,7 +718,12 @@ EmmcPeimHcPowerControl (
   // Clr SD Bus Power
   //
   PowerCtrl &= (UINT8) ~BIT0;
-  Status     = EmmcPeimHcRwMmio (Bar + EMMC_HC_POWER_CTRL, FALSE, sizeof (PowerCtrl), &PowerCtrl);
+  Status     = EmmcPeimHcRwMmio (
+                 Bar + EMMC_HC_POWER_CTRL,
+                 FALSE,
+                 sizeof (PowerCtrl),
+                 &PowerCtrl
+                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -666,7 +732,12 @@ EmmcPeimHcPowerControl (
   // Set SD Bus Voltage Select and SD Bus Power fields in Power Control Register
   //
   PowerCtrl |= BIT0;
-  Status     = EmmcPeimHcRwMmio (Bar + EMMC_HC_POWER_CTRL, FALSE, sizeof (PowerCtrl), &PowerCtrl);
+  Status     = EmmcPeimHcRwMmio (
+                 Bar + EMMC_HC_POWER_CTRL,
+                 FALSE,
+                 sizeof (PowerCtrl),
+                 &PowerCtrl
+                 );
 
   return Status;
 }
@@ -694,25 +765,49 @@ EmmcPeimHcSetBusWidth (
 
   if (BusWidth == 1) {
     HostCtrl1 = (UINT8) ~(BIT5 | BIT1);
-    Status    = EmmcPeimHcAndMmio (Bar + EMMC_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
+    Status    = EmmcPeimHcAndMmio (
+                  Bar + EMMC_HC_HOST_CTRL1,
+                  sizeof (HostCtrl1),
+                  &HostCtrl1
+                  );
   } else if (BusWidth == 4) {
-    Status = EmmcPeimHcRwMmio (Bar + EMMC_HC_HOST_CTRL1, TRUE, sizeof (HostCtrl1), &HostCtrl1);
+    Status = EmmcPeimHcRwMmio (
+               Bar + EMMC_HC_HOST_CTRL1,
+               TRUE,
+               sizeof (HostCtrl1),
+               &HostCtrl1
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
 
     HostCtrl1 |= BIT1;
     HostCtrl1 &= (UINT8) ~BIT5;
-    Status     = EmmcPeimHcRwMmio (Bar + EMMC_HC_HOST_CTRL1, FALSE, sizeof (HostCtrl1), &HostCtrl1);
+    Status     = EmmcPeimHcRwMmio (
+                   Bar + EMMC_HC_HOST_CTRL1,
+                   FALSE,
+                   sizeof (HostCtrl1),
+                   &HostCtrl1
+                   );
   } else if (BusWidth == 8) {
-    Status = EmmcPeimHcRwMmio (Bar + EMMC_HC_HOST_CTRL1, TRUE, sizeof (HostCtrl1), &HostCtrl1);
+    Status = EmmcPeimHcRwMmio (
+               Bar + EMMC_HC_HOST_CTRL1,
+               TRUE,
+               sizeof (HostCtrl1),
+               &HostCtrl1
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
 
     HostCtrl1 &= (UINT8) ~BIT1;
     HostCtrl1 |= BIT5;
-    Status     = EmmcPeimHcRwMmio (Bar + EMMC_HC_HOST_CTRL1, FALSE, sizeof (HostCtrl1), &HostCtrl1);
+    Status     = EmmcPeimHcRwMmio (
+                   Bar + EMMC_HC_HOST_CTRL1,
+                   FALSE,
+                   sizeof (HostCtrl1),
+                   &HostCtrl1
+                   );
   } else {
     ASSERT (FALSE);
     return EFI_INVALID_PARAMETER;
@@ -810,7 +905,11 @@ EmmcPeimHcInitPowerVoltage (
     //
     MaxVoltage = 0x0A;
     HostCtrl2  = BIT3;
-    Status     = EmmcPeimHcOrMmio (Bar + EMMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+    Status     = EmmcPeimHcOrMmio (
+                   Bar + EMMC_HC_HOST_CTRL2,
+                   sizeof (HostCtrl2),
+                   &HostCtrl2
+                   );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -849,7 +948,12 @@ EmmcPeimHcInitTimeoutCtrl (
   UINT8       Timeout;
 
   Timeout = 0x0E;
-  Status  = EmmcPeimHcRwMmio (Bar + EMMC_HC_TIMEOUT_CTRL, FALSE, sizeof (Timeout), &Timeout);
+  Status  = EmmcPeimHcRwMmio (
+              Bar + EMMC_HC_TIMEOUT_CTRL,
+              FALSE,
+              sizeof (Timeout),
+              &Timeout
+              );
 
   return Status;
 }
@@ -906,10 +1010,18 @@ EmmcPeimHcLedOnOff (
 
   if (On) {
     HostCtrl1 = BIT0;
-    Status    = EmmcPeimHcOrMmio (Bar + EMMC_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
+    Status    = EmmcPeimHcOrMmio (
+                  Bar + EMMC_HC_HOST_CTRL1,
+                  sizeof (HostCtrl1),
+                  &HostCtrl1
+                  );
   } else {
     HostCtrl1 = (UINT8) ~BIT0;
-    Status    = EmmcPeimHcAndMmio (Bar + EMMC_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
+    Status    = EmmcPeimHcAndMmio (
+                  Bar + EMMC_HC_HOST_CTRL1,
+                  sizeof (HostCtrl1),
+                  &HostCtrl1
+                  );
   }
 
   return Status;
@@ -952,13 +1064,26 @@ BuildAdmaDescTable (
   // for 32-bit address descriptor table.
   //
   if ((Data & (BIT0 | BIT1)) != 0) {
-    DEBUG ((DEBUG_INFO, "The buffer [0x%x] to construct ADMA desc is not aligned to 4 bytes boundary!\n", Data));
+    DEBUG ((
+      DEBUG_INFO,
+      "The buffer [0x%x] to construct ADMA desc is not aligned to 4 bytes boundary!\n",
+      Data
+      ));
   }
 
-  Entries = DivU64x32 ((DataLen + ADMA_MAX_DATA_PER_LINE - 1), ADMA_MAX_DATA_PER_LINE);
+  Entries = DivU64x32 (
+              (DataLen + ADMA_MAX_DATA_PER_LINE - 1),
+              ADMA_MAX_DATA_PER_LINE
+              );
 
-  Trb->AdmaDescSize = (UINTN)MultU64x32 (Entries, sizeof (EMMC_HC_ADMA_DESC_LINE));
-  Trb->AdmaDesc     = EmmcPeimAllocateMem (Trb->Slot->Private->Pool, Trb->AdmaDescSize);
+  Trb->AdmaDescSize = (UINTN)MultU64x32 (
+                               Entries,
+                               sizeof (EMMC_HC_ADMA_DESC_LINE)
+                               );
+  Trb->AdmaDesc = EmmcPeimAllocateMem (
+                    Trb->Slot->Private->Pool,
+                    Trb->AdmaDescSize
+                    );
   if (Trb->AdmaDesc == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1033,11 +1158,15 @@ EmmcPeimCreateTrb (
     Trb->Data    = Packet->InDataBuffer;
     Trb->DataLen = Packet->InTransferLength;
     Trb->Read    = TRUE;
-  } else if ((Packet->OutTransferLength != 0) && (Packet->OutDataBuffer != NULL)) {
+  } else if ((Packet->OutTransferLength != 0) && (Packet->OutDataBuffer !=
+                                                  NULL))
+  {
     Trb->Data    = Packet->OutDataBuffer;
     Trb->DataLen = Packet->OutTransferLength;
     Trb->Read    = FALSE;
-  } else if ((Packet->InTransferLength == 0) && (Packet->OutTransferLength == 0)) {
+  } else if ((Packet->InTransferLength == 0) && (Packet->OutTransferLength ==
+                                                 0))
+  {
     Trb->Data    = NULL;
     Trb->DataLen = 0;
   } else {
@@ -1059,7 +1188,13 @@ EmmcPeimCreateTrb (
 
     if (Trb->DataLen != 0) {
       MapLength = Trb->DataLen;
-      Status    = IoMmuMap (MapOp, Trb->Data, &MapLength, &Trb->DataPhy, &Trb->DataMap);
+      Status    = IoMmuMap (
+                    MapOp,
+                    Trb->Data,
+                    &MapLength,
+                    &Trb->DataPhy,
+                    &Trb->DataMap
+                    );
 
       if (EFI_ERROR (Status) || (MapLength != Trb->DataLen)) {
         DEBUG ((DEBUG_ERROR, "EmmcPeimCreateTrb: Fail to map data buffer.\n"));
@@ -1105,7 +1240,11 @@ EmmcPeimFreeTrb (
   }
 
   if ((Trb != NULL) && (Trb->AdmaDesc != NULL)) {
-    EmmcPeimFreeMem (Trb->Slot->Private->Pool, Trb->AdmaDesc, Trb->AdmaDescSize);
+    EmmcPeimFreeMem (
+      Trb->Slot->Private->Pool,
+      Trb->AdmaDesc,
+      Trb->AdmaDescSize
+      );
   }
 
   if (Trb != NULL) {
@@ -1251,7 +1390,12 @@ EmmcPeimExecTrb (
   // Clear all bits in Error Interrupt Status Register
   //
   IntStatus = 0xFFFF;
-  Status    = EmmcPeimHcRwMmio (Bar + EMMC_HC_ERR_INT_STS, FALSE, sizeof (IntStatus), &IntStatus);
+  Status    = EmmcPeimHcRwMmio (
+                Bar + EMMC_HC_ERR_INT_STS,
+                FALSE,
+                sizeof (IntStatus),
+                &IntStatus
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1260,7 +1404,12 @@ EmmcPeimExecTrb (
   // Clear all bits in Normal Interrupt Status Register
   //
   IntStatus = 0xFFFF;
-  Status    = EmmcPeimHcRwMmio (Bar + EMMC_HC_NOR_INT_STS, FALSE, sizeof (IntStatus), &IntStatus);
+  Status    = EmmcPeimHcRwMmio (
+                Bar + EMMC_HC_NOR_INT_STS,
+                FALSE,
+                sizeof (IntStatus),
+                &IntStatus
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1270,7 +1419,11 @@ EmmcPeimExecTrb (
   //
   if (Trb->Mode == EmmcAdmaMode) {
     HostCtrl1 = BIT4;
-    Status    = EmmcPeimHcOrMmio (Bar + EMMC_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
+    Status    = EmmcPeimHcOrMmio (
+                  Bar + EMMC_HC_HOST_CTRL1,
+                  sizeof (HostCtrl1),
+                  &HostCtrl1
+                  );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -1284,13 +1437,23 @@ EmmcPeimExecTrb (
     }
 
     SdmaAddr = (UINT32)(UINTN)Trb->DataPhy;
-    Status   = EmmcPeimHcRwMmio (Bar + EMMC_HC_SDMA_ADDR, FALSE, sizeof (SdmaAddr), &SdmaAddr);
+    Status   = EmmcPeimHcRwMmio (
+                 Bar + EMMC_HC_SDMA_ADDR,
+                 FALSE,
+                 sizeof (SdmaAddr),
+                 &SdmaAddr
+                 );
     if (EFI_ERROR (Status)) {
       return Status;
     }
   } else if (Trb->Mode == EmmcAdmaMode) {
     AdmaAddr = (UINT64)(UINTN)Trb->AdmaDesc;
-    Status   = EmmcPeimHcRwMmio (Bar + EMMC_HC_ADMA_SYS_ADDR, FALSE, sizeof (AdmaAddr), &AdmaAddr);
+    Status   = EmmcPeimHcRwMmio (
+                 Bar + EMMC_HC_ADMA_SYS_ADDR,
+                 FALSE,
+                 sizeof (AdmaAddr),
+                 &AdmaAddr
+                 );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -1304,7 +1467,12 @@ EmmcPeimExecTrb (
     BlkSize |= 0x7000;
   }
 
-  Status = EmmcPeimHcRwMmio (Bar + EMMC_HC_BLK_SIZE, FALSE, sizeof (BlkSize), &BlkSize);
+  Status = EmmcPeimHcRwMmio (
+             Bar + EMMC_HC_BLK_SIZE,
+             FALSE,
+             sizeof (BlkSize),
+             &BlkSize
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1317,13 +1485,23 @@ EmmcPeimExecTrb (
     BlkCount = (UINT16)(Trb->DataLen / Trb->BlockSize);
   }
 
-  Status = EmmcPeimHcRwMmio (Bar + EMMC_HC_BLK_COUNT, FALSE, sizeof (BlkCount), &BlkCount);
+  Status = EmmcPeimHcRwMmio (
+             Bar + EMMC_HC_BLK_COUNT,
+             FALSE,
+             sizeof (BlkCount),
+             &BlkCount
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Argument = Packet->EmmcCmdBlk->CommandArgument;
-  Status   = EmmcPeimHcRwMmio (Bar + EMMC_HC_ARG1, FALSE, sizeof (Argument), &Argument);
+  Status   = EmmcPeimHcRwMmio (
+               Bar + EMMC_HC_ARG1,
+               FALSE,
+               sizeof (Argument),
+               &Argument
+               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1343,7 +1521,12 @@ EmmcPeimExecTrb (
     }
   }
 
-  Status = EmmcPeimHcRwMmio (Bar + EMMC_HC_TRANS_MOD, FALSE, sizeof (TransMode), &TransMode);
+  Status = EmmcPeimHcRwMmio (
+             Bar + EMMC_HC_TRANS_MOD,
+             FALSE,
+             sizeof (TransMode),
+             &TransMode
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1528,13 +1711,16 @@ EmmcPeimCheckTrbResult (
     //
     // Update SDMA Address register.
     //
-    SdmaAddr = EMMC_SDMA_ROUND_UP ((UINT32)(UINTN)Trb->DataPhy, EMMC_SDMA_BOUNDARY);
-    Status   = EmmcPeimHcRwMmio (
-                 Bar + EMMC_HC_SDMA_ADDR,
-                 FALSE,
-                 sizeof (UINT32),
-                 &SdmaAddr
+    SdmaAddr = EMMC_SDMA_ROUND_UP (
+                 (UINT32)(UINTN)Trb->DataPhy,
+                 EMMC_SDMA_BOUNDARY
                  );
+    Status = EmmcPeimHcRwMmio (
+               Bar + EMMC_HC_SDMA_ADDR,
+               FALSE,
+               sizeof (UINT32),
+               &SdmaAddr
+               );
     if (EFI_ERROR (Status)) {
       goto Done;
     }
@@ -1563,12 +1749,22 @@ EmmcPeimCheckTrbResult (
       // Clear Buffer Read Ready interrupt at first.
       //
       IntStatus = BIT5;
-      EmmcPeimHcRwMmio (Bar + EMMC_HC_NOR_INT_STS, FALSE, sizeof (IntStatus), &IntStatus);
+      EmmcPeimHcRwMmio (
+        Bar + EMMC_HC_NOR_INT_STS,
+        FALSE,
+        sizeof (IntStatus),
+        &IntStatus
+        );
       //
       // Read data out from Buffer Port register
       //
       for (PioLength = 0; PioLength < Trb->DataLen; PioLength += 4) {
-        EmmcPeimHcRwMmio (Bar + EMMC_HC_BUF_DAT_PORT, TRUE, 4, (UINT8 *)Trb->Data + PioLength);
+        EmmcPeimHcRwMmio (
+          Bar + EMMC_HC_BUF_DAT_PORT,
+          TRUE,
+          4,
+          (UINT8 *)Trb->Data + PioLength
+          );
       }
 
       Status = EFI_SUCCESS;
@@ -2088,7 +2284,8 @@ EmmcPeimSwitch (
   EmmcCmdBlk.CommandIndex    = EMMC_SWITCH;
   EmmcCmdBlk.CommandType     = EmmcCommandTypeAc;
   EmmcCmdBlk.ResponseType    = EmmcResponceTypeR1b;
-  EmmcCmdBlk.CommandArgument = (Access << 24) | (Index << 16) | (Value << 8) | CmdSet;
+  EmmcCmdBlk.CommandArgument = (Access << 24) | (Index << 16) | (Value << 8) |
+                               CmdSet;
 
   Status = EmmcPeimExecCmd (Slot, &Packet);
 
@@ -2339,7 +2536,11 @@ EmmcPeimTuningClkForHs200 (
   // Notify the host that the sampling clock tuning procedure starts.
   //
   HostCtrl2 = BIT6;
-  Status    = EmmcPeimHcOrMmio (Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+  Status    = EmmcPeimHcOrMmio (
+                Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2,
+                sizeof (HostCtrl2),
+                &HostCtrl2
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -2354,7 +2555,12 @@ EmmcPeimTuningClkForHs200 (
       return Status;
     }
 
-    Status = EmmcPeimHcRwMmio (Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2, TRUE, sizeof (HostCtrl2), &HostCtrl2);
+    Status = EmmcPeimHcRwMmio (
+               Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2,
+               TRUE,
+               sizeof (HostCtrl2),
+               &HostCtrl2
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -2368,12 +2574,21 @@ EmmcPeimTuningClkForHs200 (
     }
   } while (++Retry < 40);
 
-  DEBUG ((DEBUG_ERROR, "EmmcPeimTuningClkForHs200: Send tuning block fails at %d times with HostCtrl2 %02x\n", Retry, HostCtrl2));
+  DEBUG ((
+    DEBUG_ERROR,
+    "EmmcPeimTuningClkForHs200: Send tuning block fails at %d times with HostCtrl2 %02x\n",
+    Retry,
+    HostCtrl2
+    ));
   //
   // Abort the tuning procedure and reset the tuning circuit.
   //
   HostCtrl2 = (UINT8) ~(BIT6 | BIT7);
-  Status    = EmmcPeimHcAndMmio (Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+  Status    = EmmcPeimHcAndMmio (
+                Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2,
+                sizeof (HostCtrl2),
+                &HostCtrl2
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -2555,13 +2770,21 @@ EmmcPeimSwitchToHighSpeed (
   // Set to High Speed timing
   //
   HostCtrl1 = BIT2;
-  Status    = EmmcPeimHcOrMmio (Slot->EmmcHcBase + EMMC_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
+  Status    = EmmcPeimHcOrMmio (
+                Slot->EmmcHcBase + EMMC_HC_HOST_CTRL1,
+                sizeof (HostCtrl1),
+                &HostCtrl1
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   HostCtrl2 = (UINT8) ~0x7;
-  Status    = EmmcPeimHcAndMmio (Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+  Status    = EmmcPeimHcAndMmio (
+                Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2,
+                sizeof (HostCtrl2),
+                &HostCtrl2
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -2574,7 +2797,11 @@ EmmcPeimSwitchToHighSpeed (
     HostCtrl2 = 0;
   }
 
-  Status = EmmcPeimHcOrMmio (Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+  Status = EmmcPeimHcOrMmio (
+             Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2,
+             sizeof (HostCtrl2),
+             &HostCtrl2
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -2634,13 +2861,21 @@ EmmcPeimSwitchToHS200 (
   }
 
   HostCtrl2 = (UINT8) ~0x7;
-  Status    = EmmcPeimHcAndMmio (Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+  Status    = EmmcPeimHcAndMmio (
+                Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2,
+                sizeof (HostCtrl2),
+                &HostCtrl2
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   HostCtrl2 = BIT0 | BIT1;
-  Status    = EmmcPeimHcOrMmio (Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+  Status    = EmmcPeimHcOrMmio (
+                Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2,
+                sizeof (HostCtrl2),
+                &HostCtrl2
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -2663,7 +2898,11 @@ EmmcPeimSwitchToHS200 (
   // Set SD Clock Enable in the Clock Control register to 1
   //
   ClockCtrl = BIT2;
-  Status    = EmmcPeimHcOrMmio (Slot->EmmcHcBase + EMMC_HC_CLOCK_CTRL, sizeof (ClockCtrl), &ClockCtrl);
+  Status    = EmmcPeimHcOrMmio (
+                Slot->EmmcHcBase + EMMC_HC_CLOCK_CTRL,
+                sizeof (ClockCtrl),
+                &ClockCtrl
+                );
 
   HsTiming = 2;
   Status   = EmmcPeimSwitchClockFreq (Slot, Rca, HsTiming, ClockFreq);
@@ -2727,13 +2966,21 @@ EmmcPeimSwitchToHS400 (
   // Set to HS400 timing
   //
   HostCtrl2 = (UINT8) ~0x7;
-  Status    = EmmcPeimHcAndMmio (Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+  Status    = EmmcPeimHcAndMmio (
+                Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2,
+                sizeof (HostCtrl2),
+                &HostCtrl2
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   HostCtrl2 = BIT0 | BIT2;
-  Status    = EmmcPeimHcOrMmio (Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+  Status    = EmmcPeimHcOrMmio (
+                Slot->EmmcHcBase + EMMC_HC_HOST_CTRL2,
+                sizeof (HostCtrl2),
+                &HostCtrl2
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -2772,7 +3019,11 @@ EmmcPeimSetBusMode (
 
   Status = EmmcPeimGetCsd (Slot, Rca, &Slot->Csd);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EmmcPeimSetBusMode: EmmcPeimGetCsd fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EmmcPeimSetBusMode: EmmcPeimGetCsd fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -2784,13 +3035,21 @@ EmmcPeimSetBusMode (
 
   Status = EmmcPeimSelect (Slot, Rca);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EmmcPeimSetBusMode: EmmcPeimSelect fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EmmcPeimSetBusMode: EmmcPeimSelect fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
   Status = EmmcPeimHcGetCapability (Slot->EmmcHcBase, &Capability);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EmmcPeimSetBusMode: EmmcPeimHcGetCapability fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EmmcPeimSetBusMode: EmmcPeimHcGetCapability fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -2809,7 +3068,11 @@ EmmcPeimSetBusMode (
   //
   Status = EmmcPeimGetExtCsd (Slot, &Slot->ExtCsd);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EmmcPeimSetBusMode: EmmcPeimGetExtCsd fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EmmcPeimSetBusMode: EmmcPeimGetExtCsd fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -2819,19 +3082,27 @@ EmmcPeimSetBusMode (
   HsTiming  = 0;
   IsDdr     = FALSE;
   ClockFreq = 0;
-  if (((Slot->ExtCsd.DeviceType & (BIT4 | BIT5))  != 0) && (Capability.Sdr104 != 0)) {
+  if (((Slot->ExtCsd.DeviceType & (BIT4 | BIT5))  != 0) && (Capability.Sdr104 !=
+                                                            0))
+  {
     HsTiming  = 2;
     IsDdr     = FALSE;
     ClockFreq = 200;
-  } else if (((Slot->ExtCsd.DeviceType & (BIT2 | BIT3))  != 0) && (Capability.Ddr50 != 0)) {
+  } else if (((Slot->ExtCsd.DeviceType & (BIT2 | BIT3))  != 0) &&
+             (Capability.Ddr50 != 0))
+  {
     HsTiming  = 1;
     IsDdr     = TRUE;
     ClockFreq = 52;
-  } else if (((Slot->ExtCsd.DeviceType & BIT1)  != 0) && (Capability.HighSpeed != 0)) {
+  } else if (((Slot->ExtCsd.DeviceType & BIT1)  != 0) &&
+             (Capability.HighSpeed != 0))
+  {
     HsTiming  = 1;
     IsDdr     = FALSE;
     ClockFreq = 52;
-  } else if (((Slot->ExtCsd.DeviceType & BIT0)  != 0) && (Capability.HighSpeed != 0)) {
+  } else if (((Slot->ExtCsd.DeviceType & BIT0)  != 0) &&
+             (Capability.HighSpeed != 0))
+  {
     HsTiming  = 1;
     IsDdr     = FALSE;
     ClockFreq = 26;
@@ -2840,7 +3111,9 @@ EmmcPeimSetBusMode (
   //
   // Check if both of the device and the host controller support HS400 DDR mode.
   //
-  if (((Slot->ExtCsd.DeviceType & (BIT6 | BIT7))  != 0) && (Capability.Hs400 != 0)) {
+  if (((Slot->ExtCsd.DeviceType & (BIT6 | BIT7))  != 0) && (Capability.Hs400 !=
+                                                            0))
+  {
     //
     // The host controller supports 8bits bus.
     //
@@ -2857,7 +3130,14 @@ EmmcPeimSetBusMode (
     return EFI_SUCCESS;
   }
 
-  DEBUG ((DEBUG_INFO, "HsTiming %d ClockFreq %d BusWidth %d Ddr %a\n", HsTiming, ClockFreq, BusWidth, IsDdr ? "TRUE" : "FALSE"));
+  DEBUG ((
+    DEBUG_INFO,
+    "HsTiming %d ClockFreq %d BusWidth %d Ddr %a\n",
+    HsTiming,
+    ClockFreq,
+    BusWidth,
+    IsDdr ? "TRUE" : "FALSE"
+    ));
 
   if (HsTiming == 3) {
     //
@@ -2902,7 +3182,11 @@ EmmcPeimIdentification (
 
   Status = EmmcPeimReset (Slot);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EmmcPeimIdentification: EmmcPeimReset fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EmmcPeimIdentification: EmmcPeimReset fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -2911,12 +3195,19 @@ EmmcPeimIdentification (
   do {
     Status = EmmcPeimGetOcr (Slot, &Ocr);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "EmmcPeimIdentification: EmmcPeimGetOcr fails with %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "EmmcPeimIdentification: EmmcPeimGetOcr fails with %r\n",
+        Status
+        ));
       return Status;
     }
 
     if (Retry++ == 100) {
-      DEBUG ((DEBUG_ERROR, "EmmcPeimIdentification: EmmcPeimGetOcr fails too many times\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "EmmcPeimIdentification: EmmcPeimGetOcr fails too many times\n"
+        ));
       return EFI_DEVICE_ERROR;
     }
 
@@ -2925,7 +3216,11 @@ EmmcPeimIdentification (
 
   Status = EmmcPeimGetAllCid (Slot);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EmmcPeimIdentification: EmmcPeimGetAllCid fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EmmcPeimIdentification: EmmcPeimGetAllCid fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -2936,14 +3231,23 @@ EmmcPeimIdentification (
   Rca    = 1;
   Status = EmmcPeimSetRca (Slot, Rca);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EmmcPeimIdentification: EmmcPeimSetRca fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EmmcPeimIdentification: EmmcPeimSetRca fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
   //
   // Enter Data Tranfer Mode.
   //
-  DEBUG ((DEBUG_INFO, "Found a EMMC device at slot [%d], RCA [%d]\n", Slot, Rca));
+  DEBUG ((
+    DEBUG_INFO,
+    "Found a EMMC device at slot [%d], RCA [%d]\n",
+    Slot,
+    Rca
+    ));
 
   Status = EmmcPeimSetBusMode (Slot, Rca);
 

@@ -73,15 +73,17 @@ VENDOR_DEVICE_PATH  gVendorDevicePathTemplate = {
 //
 // Driver name table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mI2cBusDriverNameTable[] = {
-  { "eng;en", (CHAR16 *)L"I2C Bus Driver" },
-  { NULL,     NULL                        }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mI2cBusDriverNameTable[] = {
+  { "eng;en", (CHAR16 *)L"I2C Bus Driver"         },
+  { NULL,     NULL                                }
 };
 
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gI2cBusComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gI2cBusComponentName = {
   (EFI_COMPONENT_NAME_GET_DRIVER_NAME)I2cBusComponentNameGetDriverName,
   (EFI_COMPONENT_NAME_GET_CONTROLLER_NAME)I2cBusComponentNameGetControllerName,
   "eng"
@@ -90,7 +92,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gI2cBusComponentName 
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gI2cBusComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gI2cBusComponentName2 = {
   I2cBusComponentNameGetDriverName,
   I2cBusComponentNameGetControllerName,
   "en"
@@ -277,7 +280,9 @@ CheckRemainingDevicePath (
   }
 
   for (Index = 0; Index < EntryCount; Index++) {
-    if ((OpenInfoBuffer[Index].Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0) {
+    if ((OpenInfoBuffer[Index].Attributes &
+         EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0)
+    {
       Status = gBS->OpenProtocol (
                       OpenInfoBuffer[Index].ControllerHandle,
                       &gEfiDevicePathProtocolGuid,
@@ -297,7 +302,12 @@ CheckRemainingDevicePath (
             //
             // Check if vendor device path is same between system device path and remaining device path
             //
-            if (CompareMem (SystemDevicePath, RemainingDevicePath, sizeof (VENDOR_DEVICE_PATH)) == 0) {
+            if (CompareMem (
+                  SystemDevicePath,
+                  RemainingDevicePath,
+                  sizeof (VENDOR_DEVICE_PATH)
+                  ) == 0)
+            {
               //
               // Get controller node appended after vendor node
               //
@@ -306,18 +316,30 @@ CheckRemainingDevicePath (
                   (DevicePathSubType (SystemDevicePath) == HW_CONTROLLER_DP))
               {
                 SystemHasControllerNode = TRUE;
-                SystemControllerNumber  = ((CONTROLLER_DEVICE_PATH *)SystemDevicePath)->ControllerNumber;
+                SystemControllerNumber  =
+                  ((CONTROLLER_DEVICE_PATH *)SystemDevicePath)->ControllerNumber;
               } else {
                 SystemHasControllerNode = FALSE;
                 SystemControllerNumber  = 0;
               }
 
-              if (((SystemHasControllerNode)  && (!RemainingHasControllerNode) && (SystemControllerNumber == 0)) ||
-                  ((!SystemHasControllerNode) && (RemainingHasControllerNode)  && (RemainingControllerNumber == 0)) ||
-                  ((SystemHasControllerNode)  && (RemainingHasControllerNode)  && (SystemControllerNumber == RemainingControllerNumber)) ||
+              if (  ((SystemHasControllerNode)  &&
+                   (!RemainingHasControllerNode) && (SystemControllerNumber ==
+                                                     0)) ||
+                  ((!SystemHasControllerNode) &&
+                   (RemainingHasControllerNode)  &&
+                   (RemainingControllerNumber ==
+                    0)) ||
+                  ((SystemHasControllerNode)  &&
+                   (RemainingHasControllerNode)  && (SystemControllerNumber ==
+                                                     RemainingControllerNumber))
+                 ||
                   ((!SystemHasControllerNode) && (!RemainingHasControllerNode)))
               {
-                DEBUG ((DEBUG_ERROR, "This I2C device has been already started.\n"));
+                DEBUG ((
+                  DEBUG_ERROR,
+                  "This I2C device has been already started.\n"
+                  ));
                 Status = EFI_UNSUPPORTED;
                 break;
               }
@@ -466,7 +488,8 @@ I2cBusDriverSupported (
         return EFI_UNSUPPORTED;
       } else {
         RemainingHasControllerNode = TRUE;
-        RemainingControllerNumber  = ((CONTROLLER_DEVICE_PATH *)DevPathNode)->ControllerNumber;
+        RemainingControllerNumber  =
+          ((CONTROLLER_DEVICE_PATH *)DevPathNode)->ControllerNumber;
       }
     }
   }
@@ -494,7 +517,9 @@ I2cBusDriverSupported (
 
   if (Status == EFI_ALREADY_STARTED) {
     if ((RemainingDevicePath == NULL) ||
-        ((RemainingDevicePath != NULL) && IsDevicePathEnd (RemainingDevicePath)))
+        ((RemainingDevicePath != NULL) && IsDevicePathEnd (
+                                            RemainingDevicePath
+                                            )))
     {
       //
       // If RemainingDevicePath is NULL or is the End of Device Path Node, return EFI_SUCCESS.
@@ -597,7 +622,11 @@ I2cBusDriverStart (
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "I2cBus: open private protocol error, Status = %r.\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "I2cBus: open private protocol error, Status = %r.\n",
+        Status
+        ));
       return Status;
     }
   }
@@ -614,7 +643,11 @@ I2cBusDriverStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
-    DEBUG ((DEBUG_ERROR, "I2cBus: open I2C enumerate error, Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "I2cBus: open I2C enumerate error, Status = %r\n",
+      Status
+      ));
     goto Error;
   }
 
@@ -627,7 +660,11 @@ I2cBusDriverStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
-    DEBUG ((DEBUG_ERROR, "I2cBus: open device path error, Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "I2cBus: open device path error, Status = %r\n",
+      Status
+      ));
     goto Error;
   }
 
@@ -687,7 +724,11 @@ I2cBusDriverStart (
                     NULL
                     );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "I2cBus: install private protocol error, Status = %r.\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "I2cBus: install private protocol error, Status = %r.\n",
+        Status
+        ));
       goto Error;
     }
   }
@@ -701,7 +742,11 @@ I2cBusDriverStart (
 
 Error:
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "I2cBus: Start() function failed, Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "I2cBus: Start() function failed, Status = %r\n",
+      Status
+      ));
     if (ParentDevicePath != NULL) {
       gBS->CloseProtocol (
              Controller,
@@ -901,7 +946,8 @@ RegisterI2cDevice (
       // RemainingDevicePath != NULL and RemainingDevicePath contains Controller Node,
       // add Controller Node to Device Path on child handle.
       //
-      RemainingPathDeviceIndex = ((CONTROLLER_DEVICE_PATH *)DevPathNode)->ControllerNumber;
+      RemainingPathDeviceIndex =
+        ((CONTROLLER_DEVICE_PATH *)DevPathNode)->ControllerNumber;
     } else {
       //
       // RemainingDevicePath != NULL and RemainingDevicePath does not contain Controller Node,
@@ -919,7 +965,10 @@ RegisterI2cDevice (
     //
     //  Get the next I2C device
     //
-    Status = I2cBusContext->I2cEnumerate->Enumerate (I2cBusContext->I2cEnumerate, &Device);
+    Status = I2cBusContext->I2cEnumerate->Enumerate (
+                                            I2cBusContext->I2cEnumerate,
+                                            &Device
+                                            );
     if (EFI_ERROR (Status) || (Device == NULL)) {
       if (RemainingDevicePath != NULL) {
         Status = EFI_NOT_FOUND;
@@ -933,8 +982,13 @@ RegisterI2cDevice (
     //
     //  Determine if the device info is valid
     //
-    if ((Device->DeviceGuid == NULL) || (Device->SlaveAddressCount == 0) || (Device->SlaveAddressArray == NULL)) {
-      DEBUG ((DEBUG_ERROR, "Invalid EFI_I2C_DEVICE reported by I2c Enumerate protocol.\n"));
+    if ((Device->DeviceGuid == NULL) || (Device->SlaveAddressCount == 0) ||
+        (Device->SlaveAddressArray == NULL))
+    {
+      DEBUG ((
+        DEBUG_ERROR,
+        "Invalid EFI_I2C_DEVICE reported by I2c Enumerate protocol.\n"
+        ));
       continue;
     }
 
@@ -949,7 +1003,10 @@ RegisterI2cDevice (
           //
           //  Get the next I2C device
           //
-          Status = I2cBusContext->I2cEnumerate->Enumerate (I2cBusContext->I2cEnumerate, &TempDevice);
+          Status = I2cBusContext->I2cEnumerate->Enumerate (
+                                                  I2cBusContext->I2cEnumerate,
+                                                  &TempDevice
+                                                  );
           if (EFI_ERROR (Status) || (TempDevice == NULL)) {
             Status = EFI_SUCCESS;
             break;
@@ -972,7 +1029,10 @@ RegisterI2cDevice (
       //
       // Find I2C device reported in Remaining Device Path
       //
-      if ((!CompareGuid (&((VENDOR_DEVICE_PATH *)RemainingDevicePath)->Guid, Device->DeviceGuid)) ||
+      if ((!CompareGuid (
+              &((VENDOR_DEVICE_PATH *)RemainingDevicePath)->Guid,
+              Device->DeviceGuid
+              )) ||
           (RemainingPathDeviceIndex != Device->DeviceIndex))
       {
         continue;
@@ -983,7 +1043,10 @@ RegisterI2cDevice (
     // Build the device context for current I2C device.
     //
     I2cDeviceContext = NULL;
-    I2cDeviceContext = AllocateCopyPool (sizeof (I2C_DEVICE_CONTEXT), &gI2cDeviceContextTemplate);
+    I2cDeviceContext = AllocateCopyPool (
+                         sizeof (I2C_DEVICE_CONTEXT),
+                         &gI2cDeviceContextTemplate
+                         );
     ASSERT (I2cDeviceContext != NULL);
     if (I2cDeviceContext == NULL) {
       continue;
@@ -992,12 +1055,14 @@ RegisterI2cDevice (
     //
     //  Initialize the specific device context
     //
-    I2cDeviceContext->I2cBusContext                   = I2cBusContext;
-    I2cDeviceContext->I2cDevice                       = Device;
-    I2cDeviceContext->I2cIo.DeviceGuid                = Device->DeviceGuid;
-    I2cDeviceContext->I2cIo.DeviceIndex               = Device->DeviceIndex;
-    I2cDeviceContext->I2cIo.HardwareRevision          = Device->HardwareRevision;
-    I2cDeviceContext->I2cIo.I2cControllerCapabilities = I2cBusContext->I2cHost->I2cControllerCapabilities;
+    I2cDeviceContext->I2cBusContext          = I2cBusContext;
+    I2cDeviceContext->I2cDevice              = Device;
+    I2cDeviceContext->I2cIo.DeviceGuid       = Device->DeviceGuid;
+    I2cDeviceContext->I2cIo.DeviceIndex      = Device->DeviceIndex;
+    I2cDeviceContext->I2cIo.HardwareRevision =
+      Device->HardwareRevision;
+    I2cDeviceContext->I2cIo.I2cControllerCapabilities =
+      I2cBusContext->I2cHost->I2cControllerCapabilities;
 
     //
     //  Build the device path
@@ -1326,10 +1391,16 @@ I2cBusDevicePathAppend (
   //
   // Build vendor device path
   //
-  CopyMem (&gVendorDevicePathTemplate.Guid, I2cDeviceContext->I2cDevice->DeviceGuid, sizeof (EFI_GUID));
+  CopyMem (
+    &gVendorDevicePathTemplate.Guid,
+    I2cDeviceContext->I2cDevice->DeviceGuid,
+    sizeof (EFI_GUID)
+    );
   I2cDeviceContext->DevicePath = AppendDevicePathNode (
-                                   I2cDeviceContext->I2cBusContext->ParentDevicePath,
-                                   (EFI_DEVICE_PATH_PROTOCOL *)&gVendorDevicePathTemplate
+                                   I2cDeviceContext->I2cBusContext->
+                                     ParentDevicePath,
+                                   (EFI_DEVICE_PATH_PROTOCOL *)&
+                                   gVendorDevicePathTemplate
                                    );
   ASSERT (I2cDeviceContext->DevicePath != NULL);
   if (I2cDeviceContext->DevicePath == NULL) {
@@ -1340,12 +1411,16 @@ I2cBusDevicePathAppend (
     //
     // Build the final I2C device path with controller node
     //
-    PreviousDevicePath                             = I2cDeviceContext->DevicePath;
-    gControllerDevicePathTemplate.ControllerNumber = I2cDeviceContext->I2cDevice->DeviceIndex;
-    I2cDeviceContext->DevicePath                   = AppendDevicePathNode (
-                                                       I2cDeviceContext->DevicePath,
-                                                       (EFI_DEVICE_PATH_PROTOCOL *)&gControllerDevicePathTemplate
-                                                       );
+    PreviousDevicePath =
+      I2cDeviceContext->DevicePath;
+    gControllerDevicePathTemplate.ControllerNumber =
+      I2cDeviceContext->I2cDevice->DeviceIndex;
+    I2cDeviceContext->DevicePath = AppendDevicePathNode (
+                                     I2cDeviceContext->
+                                       DevicePath,
+                                     (EFI_DEVICE_PATH_PROTOCOL
+                                      *)&gControllerDevicePathTemplate
+                                     );
     gBS->FreePool (PreviousDevicePath);
     ASSERT (I2cDeviceContext->DevicePath != NULL);
     if (I2cDeviceContext->DevicePath == NULL) {

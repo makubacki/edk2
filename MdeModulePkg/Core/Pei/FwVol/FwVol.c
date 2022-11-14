@@ -16,7 +16,8 @@ EFI_PEI_NOTIFY_DESCRIPTOR  mNotifyOnFvInfoList[] = {
     FirmwareVolumeInfoPpiNotifyCallback
   },
   {
-    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+     EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
     &gEfiPeiFirmwareVolumeInfo2PpiGuid,
     FirmwareVolumeInfoPpiNotifyCallback
   }
@@ -183,7 +184,10 @@ CalculateHeaderChecksum (
     TestFileHeader.State                        = 0;
     TestFileHeader.IntegrityCheck.Checksum.File = 0;
 
-    return CalculateSum8 ((CONST UINT8 *)&TestFileHeader, sizeof (EFI_FFS_FILE_HEADER2));
+    return CalculateSum8 (
+             (CONST UINT8 *)&TestFileHeader,
+             sizeof (EFI_FFS_FILE_HEADER2)
+             );
   } else {
     CopyMem (&TestFileHeader, FileHeader, sizeof (EFI_FFS_FILE_HEADER));
     //
@@ -192,7 +196,10 @@ CalculateHeaderChecksum (
     TestFileHeader.State                        = 0;
     TestFileHeader.IntegrityCheck.Checksum.File = 0;
 
-    return CalculateSum8 ((CONST UINT8 *)&TestFileHeader, sizeof (EFI_FFS_FILE_HEADER));
+    return CalculateSum8 (
+             (CONST UINT8 *)&TestFileHeader,
+             sizeof (EFI_FFS_FILE_HEADER)
+             );
   }
 }
 
@@ -224,12 +231,15 @@ FileHandleToVolume (
   for (Index = 0; Index < PrivateData->FvCount; Index++) {
     FwVolHeader = PrivateData->Fv[Index].FvHeader;
     if (((UINT64)(UINTN)FileHandle > (UINT64)(UINTN)FwVolHeader) &&   \
-        ((UINT64)(UINTN)FileHandle <= ((UINT64)(UINTN)FwVolHeader + FwVolHeader->FvLength - 1)))
+        ((UINT64)(UINTN)FileHandle <= ((UINT64)(UINTN)FwVolHeader +
+                                       FwVolHeader->FvLength - 1)))
     {
       if (BestIndex == PrivateData->FvCount) {
         BestIndex = Index;
       } else {
-        if ((UINT64)(UINTN)PrivateData->Fv[BestIndex].FvHeader < (UINT64)(UINTN)FwVolHeader) {
+        if ((UINT64)(UINTN)PrivateData->Fv[BestIndex].FvHeader <
+            (UINT64)(UINTN)FwVolHeader)
+        {
           BestIndex = Index;
         }
       }
@@ -290,7 +300,10 @@ FindFileEx (
   FwVolHeader = (EFI_FIRMWARE_VOLUME_HEADER *)FvHandle;
   FileHeader  = (EFI_FFS_FILE_HEADER **)FileHandle;
 
-  IsFfs3Fv = CompareGuid (&FwVolHeader->FileSystemGuid, &gEfiFirmwareFileSystem3Guid);
+  IsFfs3Fv = CompareGuid (
+               &FwVolHeader->FileSystemGuid,
+               &gEfiFirmwareFileSystem3Guid
+               );
 
   FvLength = FwVolHeader->FvLength;
   if ((FwVolHeader->Attributes & EFI_FVB2_ERASE_POLARITY) != 0) {
@@ -309,17 +322,25 @@ FindFileEx (
       //
       // Searching for files starts on an 8 byte aligned boundary after the end of the Extended Header if it exists.
       //
-      FwVolExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FwVolHeader + FwVolHeader->ExtHeaderOffset);
-      FfsFileHeader  = (EFI_FFS_FILE_HEADER *)((UINT8 *)FwVolExtHeader + FwVolExtHeader->ExtHeaderSize);
+      FwVolExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FwVolHeader +
+                                                          FwVolHeader->
+                                                            ExtHeaderOffset);
+      FfsFileHeader  = (EFI_FFS_FILE_HEADER *)((UINT8 *)FwVolExtHeader +
+                                               FwVolExtHeader->ExtHeaderSize);
     } else {
-      FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FwVolHeader + FwVolHeader->HeaderLength);
+      FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FwVolHeader +
+                                              FwVolHeader->HeaderLength);
     }
 
     FfsFileHeader = (EFI_FFS_FILE_HEADER *)ALIGN_POINTER (FfsFileHeader, 8);
   } else {
     if (IS_FFS_FILE2 (*FileHeader)) {
       if (!IsFfs3Fv) {
-        DEBUG ((DEBUG_ERROR, "It is a FFS3 formatted file: %g in a non-FFS3 formatted FV.\n", &(*FileHeader)->Name));
+        DEBUG ((
+          DEBUG_ERROR,
+          "It is a FFS3 formatted file: %g in a non-FFS3 formatted FV.\n",
+          &(*FileHeader)->Name
+          ));
       }
 
       FileLength = FFS_FILE2_SIZE (*FileHeader);
@@ -332,7 +353,8 @@ FindFileEx (
     // FileLength is adjusted to FileOccupiedSize as it is 8 byte aligned.
     //
     FileOccupiedSize = GET_OCCUPIED_SIZE (FileLength, 8);
-    FfsFileHeader    = (EFI_FFS_FILE_HEADER *)((UINT8 *)*FileHeader + FileOccupiedSize);
+    FfsFileHeader    = (EFI_FFS_FILE_HEADER *)((UINT8 *)*FileHeader +
+                                               FileOccupiedSize);
   }
 
   FileOffset = (UINT32)((UINT8 *)FfsFileHeader - (UINT8 *)FwVolHeader);
@@ -348,14 +370,20 @@ FindFileEx (
       case EFI_FILE_HEADER_INVALID:
         if (IS_FFS_FILE2 (FfsFileHeader)) {
           if (!IsFfs3Fv) {
-            DEBUG ((DEBUG_ERROR, "Found a FFS3 formatted file: %g in a non-FFS3 formatted FV.\n", &FfsFileHeader->Name));
+            DEBUG ((
+              DEBUG_ERROR,
+              "Found a FFS3 formatted file: %g in a non-FFS3 formatted FV.\n",
+              &FfsFileHeader->Name
+              ));
           }
 
           FileOffset   += sizeof (EFI_FFS_FILE_HEADER2);
-          FfsFileHeader =  (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + sizeof (EFI_FFS_FILE_HEADER2));
+          FfsFileHeader =  (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                   sizeof (EFI_FFS_FILE_HEADER2));
         } else {
           FileOffset   += sizeof (EFI_FFS_FILE_HEADER);
-          FfsFileHeader =  (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + sizeof (EFI_FFS_FILE_HEADER));
+          FfsFileHeader =  (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                   sizeof (EFI_FFS_FILE_HEADER));
         }
 
         break;
@@ -373,9 +401,14 @@ FindFileEx (
           ASSERT (FileLength > 0x00FFFFFF);
           FileOccupiedSize = GET_OCCUPIED_SIZE (FileLength, 8);
           if (!IsFfs3Fv) {
-            DEBUG ((DEBUG_ERROR, "Found a FFS3 formatted file: %g in a non-FFS3 formatted FV.\n", &FfsFileHeader->Name));
+            DEBUG ((
+              DEBUG_ERROR,
+              "Found a FFS3 formatted file: %g in a non-FFS3 formatted FV.\n",
+              &FfsFileHeader->Name
+              ));
             FileOffset   += FileOccupiedSize;
-            FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + FileOccupiedSize);
+            FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                    FileOccupiedSize);
             break;
           }
         } else {
@@ -384,11 +417,23 @@ FindFileEx (
         }
 
         DataCheckSum = FFS_FIXED_CHECKSUM;
-        if ((FfsFileHeader->Attributes & FFS_ATTRIB_CHECKSUM) == FFS_ATTRIB_CHECKSUM) {
+        if ((FfsFileHeader->Attributes & FFS_ATTRIB_CHECKSUM) ==
+            FFS_ATTRIB_CHECKSUM)
+        {
           if (IS_FFS_FILE2 (FfsFileHeader)) {
-            DataCheckSum = CalculateCheckSum8 ((CONST UINT8 *)FfsFileHeader + sizeof (EFI_FFS_FILE_HEADER2), FileLength - sizeof (EFI_FFS_FILE_HEADER2));
+            DataCheckSum = CalculateCheckSum8 (
+                             (CONST UINT8 *)FfsFileHeader +
+                             sizeof (EFI_FFS_FILE_HEADER2),
+                             FileLength -
+                             sizeof (EFI_FFS_FILE_HEADER2)
+                             );
           } else {
-            DataCheckSum = CalculateCheckSum8 ((CONST UINT8 *)FfsFileHeader + sizeof (EFI_FFS_FILE_HEADER), FileLength - sizeof (EFI_FFS_FILE_HEADER));
+            DataCheckSum = CalculateCheckSum8 (
+                             (CONST UINT8 *)FfsFileHeader +
+                             sizeof (EFI_FFS_FILE_HEADER),
+                             FileLength -
+                             sizeof (EFI_FFS_FILE_HEADER)
+                             );
           }
         }
 
@@ -412,26 +457,37 @@ FindFileEx (
             return EFI_SUCCESS;
           } else if (AprioriFile != NULL) {
             if (FfsFileHeader->Type == EFI_FV_FILETYPE_FREEFORM) {
-              if (CompareGuid (&FfsFileHeader->Name, &gPeiAprioriFileNameGuid)) {
+              if (CompareGuid (
+                    &FfsFileHeader->Name,
+                    &gPeiAprioriFileNameGuid
+                    ))
+              {
                 *AprioriFile = (EFI_PEI_FILE_HANDLE)FfsFileHeader;
               }
             }
           }
-        } else if (((SearchType == FfsFileHeader->Type) || (SearchType == EFI_FV_FILETYPE_ALL)) &&
-                   (FfsFileHeader->Type != EFI_FV_FILETYPE_FFS_PAD))
+        } else if (  ((SearchType == FfsFileHeader->Type) || (SearchType ==
+                                                              EFI_FV_FILETYPE_ALL))
+                  &&
+                     (FfsFileHeader->Type != EFI_FV_FILETYPE_FFS_PAD))
         {
           *FileHeader = FfsFileHeader;
           return EFI_SUCCESS;
         }
 
         FileOffset   += FileOccupiedSize;
-        FfsFileHeader =  (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + FileOccupiedSize);
+        FfsFileHeader =  (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                 FileOccupiedSize);
         break;
 
       case EFI_FILE_DELETED:
         if (IS_FFS_FILE2 (FfsFileHeader)) {
           if (!IsFfs3Fv) {
-            DEBUG ((DEBUG_ERROR, "Found a FFS3 formatted file: %g in a non-FFS3 formatted FV.\n", &FfsFileHeader->Name));
+            DEBUG ((
+              DEBUG_ERROR,
+              "Found a FFS3 formatted file: %g in a non-FFS3 formatted FV.\n",
+              &FfsFileHeader->Name
+              ));
           }
 
           FileLength = FFS_FILE2_SIZE (FfsFileHeader);
@@ -442,7 +498,8 @@ FindFileEx (
 
         FileOccupiedSize =  GET_OCCUPIED_SIZE (FileLength, 8);
         FileOffset      += FileOccupiedSize;
-        FfsFileHeader    =  (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + FileOccupiedSize);
+        FfsFileHeader    =  (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                    FileOccupiedSize);
         break;
 
       default:
@@ -506,7 +563,10 @@ PeiInitializeFv (
                     );
   ASSERT_EFI_ERROR (Status);
 
-  PrivateData->Fv = AllocateZeroPool (sizeof (PEI_CORE_FV_HANDLE) * FV_GROWTH_STEP);
+  PrivateData->Fv = AllocateZeroPool (
+                      sizeof (PEI_CORE_FV_HANDLE) *
+                      FV_GROWTH_STEP
+                      );
   ASSERT (PrivateData->Fv != NULL);
   PrivateData->MaxFvCount = FV_GROWTH_STEP;
 
@@ -571,7 +631,11 @@ FirmwareVolumeInfoPpiNotifyCallback (
   Status      = EFI_SUCCESS;
   PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS (PeiServices);
 
-  if (CompareGuid (NotifyDescriptor->Guid, &gEfiPeiFirmwareVolumeInfo2PpiGuid)) {
+  if (CompareGuid (
+        NotifyDescriptor->Guid,
+        &gEfiPeiFirmwareVolumeInfo2PpiGuid
+        ))
+  {
     //
     // It is FvInfo2PPI.
     //
@@ -597,7 +661,12 @@ FirmwareVolumeInfoPpiNotifyCallback (
     // ((EFI_FIRMWARE_VOLUME_HEADER *) FvInfo)->FileSystemGuid can be just used for both
     // firmware file system 2 and 3 format.
     //
-    ASSERT (CompareGuid (&(((EFI_FIRMWARE_VOLUME_HEADER *)FvInfo2Ppi.FvInfo)->FileSystemGuid), &gEfiFirmwareFileSystem2Guid));
+    ASSERT (
+      CompareGuid (
+        &(((EFI_FIRMWARE_VOLUME_HEADER *)FvInfo2Ppi.FvInfo)->FileSystemGuid),
+        &gEfiFirmwareFileSystem2Guid
+        )
+      );
   }
 
   //
@@ -613,9 +682,17 @@ FirmwareVolumeInfoPpiNotifyCallback (
     //
     // Process new found FV and get FV handle.
     //
-    Status = FvPpi->ProcessVolume (FvPpi, FvInfo2Ppi.FvInfo, FvInfo2Ppi.FvInfoSize, &FvHandle);
+    Status = FvPpi->ProcessVolume (
+                      FvPpi,
+                      FvInfo2Ppi.FvInfo,
+                      FvInfo2Ppi.FvInfoSize,
+                      &FvHandle
+                      );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Fail to process new found FV, FV may be corrupted!\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Fail to process new found FV, FV may be corrupted!\n"
+        ));
       return Status;
     }
 
@@ -624,12 +701,24 @@ FirmwareVolumeInfoPpiNotifyCallback (
     //
     for (FvIndex = 0; FvIndex < PrivateData->FvCount; FvIndex++) {
       if (PrivateData->Fv[FvIndex].FvHandle == FvHandle) {
-        if (IsFvInfo2 && (FvInfo2Ppi.AuthenticationStatus != PrivateData->Fv[FvIndex].AuthenticationStatus)) {
-          PrivateData->Fv[FvIndex].AuthenticationStatus = FvInfo2Ppi.AuthenticationStatus;
-          DEBUG ((DEBUG_INFO, "Update AuthenticationStatus of the %dth FV to 0x%x!\n", FvIndex, FvInfo2Ppi.AuthenticationStatus));
+        if (IsFvInfo2 && (FvInfo2Ppi.AuthenticationStatus !=
+                          PrivateData->Fv[FvIndex].AuthenticationStatus))
+        {
+          PrivateData->Fv[FvIndex].AuthenticationStatus =
+            FvInfo2Ppi.AuthenticationStatus;
+          DEBUG ((
+            DEBUG_INFO,
+            "Update AuthenticationStatus of the %dth FV to 0x%x!\n",
+            FvIndex,
+            FvInfo2Ppi.AuthenticationStatus
+            ));
         }
 
-        DEBUG ((DEBUG_INFO, "The FV %p has already been processed!\n", FvInfo2Ppi.FvInfo));
+        DEBUG ((
+          DEBUG_INFO,
+          "The FV %p has already been processed!\n",
+          FvInfo2Ppi.FvInfo
+          ));
         return EFI_SUCCESS;
       }
     }
@@ -639,7 +728,8 @@ FirmwareVolumeInfoPpiNotifyCallback (
       // Run out of room, grow the buffer.
       //
       TempPtr = AllocateZeroPool (
-                  sizeof (PEI_CORE_FV_HANDLE) * (PrivateData->MaxFvCount + FV_GROWTH_STEP)
+                  sizeof (PEI_CORE_FV_HANDLE) * (PrivateData->MaxFvCount +
+                                                 FV_GROWTH_STEP)
                   );
       ASSERT (TempPtr != NULL);
       CopyMem (
@@ -654,11 +744,14 @@ FirmwareVolumeInfoPpiNotifyCallback (
     //
     // Update internal PEI_CORE_FV array.
     //
-    PrivateData->Fv[PrivateData->FvCount].FvHeader             = (EFI_FIRMWARE_VOLUME_HEADER *)FvInfo2Ppi.FvInfo;
+    PrivateData->Fv[PrivateData->FvCount].FvHeader =
+      (EFI_FIRMWARE_VOLUME_HEADER *)FvInfo2Ppi.FvInfo;
     PrivateData->Fv[PrivateData->FvCount].FvPpi                = FvPpi;
     PrivateData->Fv[PrivateData->FvCount].FvHandle             = FvHandle;
-    PrivateData->Fv[PrivateData->FvCount].AuthenticationStatus = FvInfo2Ppi.AuthenticationStatus;
-    CurFvCount                                                 = PrivateData->FvCount;
+    PrivateData->Fv[PrivateData->FvCount].AuthenticationStatus =
+      FvInfo2Ppi.AuthenticationStatus;
+    CurFvCount =
+      PrivateData->FvCount;
     DEBUG ((
       DEBUG_INFO,
       "The %dth FV start address is 0x%11p, size is 0x%08x, handle is 0x%p\n",
@@ -696,12 +789,22 @@ FirmwareVolumeInfoPpiNotifyCallback (
           }
         }
 
-        DEBUG ((DEBUG_INFO, "Found firmware volume Image File %p in FV[%d] %p\n", FileHandle, CurFvCount, FvHandle));
+        DEBUG ((
+          DEBUG_INFO,
+          "Found firmware volume Image File %p in FV[%d] %p\n",
+          FileHandle,
+          CurFvCount,
+          FvHandle
+          ));
         ProcessFvFile (PrivateData, &PrivateData->Fv[CurFvCount], FileHandle);
       }
     } while (FileHandle != NULL);
   } else {
-    DEBUG ((DEBUG_ERROR, "Fail to process FV %p because no corresponding EFI_FIRMWARE_VOLUME_PPI is found!\n", FvInfo2Ppi.FvInfo));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Fail to process FV %p because no corresponding EFI_FIRMWARE_VOLUME_PPI is found!\n",
+      FvInfo2Ppi.FvInfo
+      ));
 
     AddUnknownFormatFvInfo (PrivateData, &FvInfo2Ppi);
   }
@@ -743,12 +846,18 @@ VerifyGuidedSectionGuid (
       //
       // Found the recorded GuidedSectionGuid.
       //
-      Status = PeiServicesLocatePpi (GuidedSectionGuid, 0, NULL, (VOID **)&Interface);
+      Status = PeiServicesLocatePpi (
+                 GuidedSectionGuid,
+                 0,
+                 NULL,
+                 (VOID **)&Interface
+                 );
       if (!EFI_ERROR (Status) && (Interface != NULL)) {
         //
         // Found the supported Guided Section Extraction Ppi for the Guided Section.
         //
-        *GuidedSectionExtraction = (EFI_PEI_GUIDED_SECTION_EXTRACTION_PPI *)Interface;
+        *GuidedSectionExtraction =
+          (EFI_PEI_GUIDED_SECTION_EXTRACTION_PPI *)Interface;
         return TRUE;
       }
 
@@ -817,7 +926,10 @@ ProcessSection (
     if (IS_SECTION2 (Section)) {
       ASSERT (SECTION2_SIZE (Section) > 0x00FFFFFF);
       if (!IsFfs3Fv) {
-        DEBUG ((DEBUG_ERROR, "Found a FFS3 formatted section in a non-FFS3 formatted FV.\n"));
+        DEBUG ((
+          DEBUG_ERROR,
+          "Found a FFS3 formatted section in a non-FFS3 formatted FV.\n"
+          ));
         SectionLength = SECTION2_SIZE (Section);
         //
         // SectionLength is adjusted it is 4 byte aligned.
@@ -826,7 +938,8 @@ ProcessSection (
         SectionLength = GET_OCCUPIED_SIZE (SectionLength, 4);
         ASSERT (SectionLength != 0);
         ParsedLength += SectionLength;
-        Section       = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)Section + SectionLength);
+        Section       = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)Section +
+                                                      SectionLength);
         continue;
       }
     }
@@ -841,9 +954,11 @@ ProcessSection (
         // Got it!
         //
         if (IS_SECTION2 (Section)) {
-          *OutputBuffer = (VOID *)((UINT8 *)Section + sizeof (EFI_COMMON_SECTION_HEADER2));
+          *OutputBuffer = (VOID *)((UINT8 *)Section +
+                                   sizeof (EFI_COMMON_SECTION_HEADER2));
         } else {
-          *OutputBuffer = (VOID *)((UINT8 *)Section + sizeof (EFI_COMMON_SECTION_HEADER));
+          *OutputBuffer = (VOID *)((UINT8 *)Section +
+                                   sizeof (EFI_COMMON_SECTION_HEADER));
         }
 
         return EFI_SUCCESS;
@@ -861,20 +976,26 @@ ProcessSection (
         SectionLength = GET_OCCUPIED_SIZE (SectionLength, 4);
         ASSERT (SectionLength != 0);
         ParsedLength += SectionLength;
-        Section       = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)Section + SectionLength);
+        Section       = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)Section +
+                                                      SectionLength);
         continue;
       }
-    } else if ((Section->Type == EFI_SECTION_GUID_DEFINED) || (Section->Type == EFI_SECTION_COMPRESSION)) {
+    } else if ((Section->Type == EFI_SECTION_GUID_DEFINED) || (Section->Type ==
+                                                               EFI_SECTION_COMPRESSION))
+    {
       //
       // Check the encapsulated section is extracted into the cache data.
       //
       SectionCached = FALSE;
-      for (Index = 0; Index < PrivateData->CacheSection.AllSectionCount; Index++) {
+      for (Index = 0; Index < PrivateData->CacheSection.AllSectionCount;
+           Index++)
+      {
         if (Section == PrivateData->CacheSection.Section[Index]) {
           SectionCached  = TRUE;
           PpiOutput      = PrivateData->CacheSection.SectionData[Index];
           PpiOutputSize  = PrivateData->CacheSection.SectionSize[Index];
-          Authentication = PrivateData->CacheSection.AuthenticationStatus[Index];
+          Authentication =
+            PrivateData->CacheSection.AuthenticationStatus[Index];
           //
           // Search section directly from the cache data.
           //
@@ -905,14 +1026,22 @@ ProcessSection (
         Authentication = 0;
         if (Section->Type == EFI_SECTION_GUID_DEFINED) {
           if (IS_SECTION2 (Section)) {
-            SectionDefinitionGuid   = &((EFI_GUID_DEFINED_SECTION2 *)Section)->SectionDefinitionGuid;
-            GuidedSectionAttributes = ((EFI_GUID_DEFINED_SECTION2 *)Section)->Attributes;
+            SectionDefinitionGuid =
+              &((EFI_GUID_DEFINED_SECTION2 *)Section)->SectionDefinitionGuid;
+            GuidedSectionAttributes =
+              ((EFI_GUID_DEFINED_SECTION2 *)Section)->Attributes;
           } else {
-            SectionDefinitionGuid   = &((EFI_GUID_DEFINED_SECTION *)Section)->SectionDefinitionGuid;
-            GuidedSectionAttributes = ((EFI_GUID_DEFINED_SECTION *)Section)->Attributes;
+            SectionDefinitionGuid =
+              &((EFI_GUID_DEFINED_SECTION *)Section)->SectionDefinitionGuid;
+            GuidedSectionAttributes =
+              ((EFI_GUID_DEFINED_SECTION *)Section)->Attributes;
           }
 
-          if (VerifyGuidedSectionGuid (SectionDefinitionGuid, &GuidSectionPpi)) {
+          if (VerifyGuidedSectionGuid (
+                SectionDefinitionGuid,
+                &GuidSectionPpi
+                ))
+          {
             Status = GuidSectionPpi->ExtractSection (
                                        GuidSectionPpi,
                                        Section,
@@ -920,25 +1049,40 @@ ProcessSection (
                                        &PpiOutputSize,
                                        &Authentication
                                        );
-          } else if ((GuidedSectionAttributes & EFI_GUIDED_SECTION_PROCESSING_REQUIRED) == 0) {
+          } else if ((GuidedSectionAttributes &
+                      EFI_GUIDED_SECTION_PROCESSING_REQUIRED) == 0)
+          {
             //
             // Figure out the proper authentication status for GUIDED section without processing required
             //
             Status = EFI_SUCCESS;
-            if ((GuidedSectionAttributes & EFI_GUIDED_SECTION_AUTH_STATUS_VALID) == EFI_GUIDED_SECTION_AUTH_STATUS_VALID) {
-              Authentication |= EFI_AUTH_STATUS_IMAGE_SIGNED | EFI_AUTH_STATUS_NOT_TESTED;
+            if ((GuidedSectionAttributes &
+                 EFI_GUIDED_SECTION_AUTH_STATUS_VALID) ==
+                EFI_GUIDED_SECTION_AUTH_STATUS_VALID)
+            {
+              Authentication |= EFI_AUTH_STATUS_IMAGE_SIGNED |
+                                EFI_AUTH_STATUS_NOT_TESTED;
             }
 
             if (IS_SECTION2 (Section)) {
-              PpiOutputSize = SECTION2_SIZE (Section) - ((EFI_GUID_DEFINED_SECTION2 *)Section)->DataOffset;
-              PpiOutput     = (UINT8 *)Section + ((EFI_GUID_DEFINED_SECTION2 *)Section)->DataOffset;
+              PpiOutputSize = SECTION2_SIZE (Section) -
+                              ((EFI_GUID_DEFINED_SECTION2 *)Section)->DataOffset;
+              PpiOutput = (UINT8 *)Section +
+                          ((EFI_GUID_DEFINED_SECTION2 *)Section)->DataOffset;
             } else {
-              PpiOutputSize = SECTION_SIZE (Section) - ((EFI_GUID_DEFINED_SECTION *)Section)->DataOffset;
-              PpiOutput     = (UINT8 *)Section + ((EFI_GUID_DEFINED_SECTION *)Section)->DataOffset;
+              PpiOutputSize = SECTION_SIZE (Section) -
+                              ((EFI_GUID_DEFINED_SECTION *)Section)->DataOffset;
+              PpiOutput = (UINT8 *)Section +
+                          ((EFI_GUID_DEFINED_SECTION *)Section)->DataOffset;
             }
           }
         } else if (Section->Type == EFI_SECTION_COMPRESSION) {
-          Status = PeiServicesLocatePpi (&gEfiPeiDecompressPpiGuid, 0, NULL, (VOID **)&DecompressPpi);
+          Status = PeiServicesLocatePpi (
+                     &gEfiPeiDecompressPpiGuid,
+                     0,
+                     NULL,
+                     (VOID **)&DecompressPpi
+                     );
           if (!EFI_ERROR (Status)) {
             Status = DecompressPpi->Decompress (
                                       DecompressPpi,
@@ -954,15 +1098,29 @@ ProcessSection (
             //
             // Update cache section data.
             //
-            if (PrivateData->CacheSection.AllSectionCount < CACHE_SETION_MAX_NUMBER) {
+            if (PrivateData->CacheSection.AllSectionCount <
+                CACHE_SETION_MAX_NUMBER)
+            {
               PrivateData->CacheSection.AllSectionCount++;
             }
 
-            PrivateData->CacheSection.Section[PrivateData->CacheSection.SectionIndex]              = Section;
-            PrivateData->CacheSection.SectionData[PrivateData->CacheSection.SectionIndex]          = PpiOutput;
-            PrivateData->CacheSection.SectionSize[PrivateData->CacheSection.SectionIndex]          = PpiOutputSize;
-            PrivateData->CacheSection.AuthenticationStatus[PrivateData->CacheSection.SectionIndex] = Authentication;
-            PrivateData->CacheSection.SectionIndex                                                 = (PrivateData->CacheSection.SectionIndex + 1)%CACHE_SETION_MAX_NUMBER;
+            PrivateData->CacheSection.Section[PrivateData->CacheSection.
+                                                SectionIndex]
+              = Section;
+            PrivateData->CacheSection.SectionData[PrivateData->CacheSection.
+                                                    SectionIndex]
+              = PpiOutput;
+            PrivateData->CacheSection.SectionSize[PrivateData->CacheSection.
+                                                    SectionIndex]
+              =
+                PpiOutputSize;
+            PrivateData->CacheSection.AuthenticationStatus[PrivateData->
+                                                             CacheSection.
+                                                             SectionIndex] =
+              Authentication;
+            PrivateData->CacheSection.SectionIndex
+              = (PrivateData->CacheSection.SectionIndex + 1)%
+                CACHE_SETION_MAX_NUMBER;
           }
 
           TempAuthenticationStatus = 0;
@@ -998,7 +1156,8 @@ ProcessSection (
     SectionLength = GET_OCCUPIED_SIZE (SectionLength, 4);
     ASSERT (SectionLength != 0);
     ParsedLength += SectionLength;
-    Section       = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)Section + SectionLength);
+    Section       = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)Section +
+                                                  SectionLength);
   }
 
   return EFI_NOT_FOUND;
@@ -1033,7 +1192,12 @@ PeiFfsFindSectionData (
     return EFI_NOT_FOUND;
   }
 
-  return CoreFvHandle->FvPpi->FindSectionByType (CoreFvHandle->FvPpi, SectionType, FileHandle, SectionData);
+  return CoreFvHandle->FvPpi->FindSectionByType (
+                                CoreFvHandle->FvPpi,
+                                SectionType,
+                                FileHandle,
+                                SectionData
+                                );
 }
 
 /**
@@ -1068,10 +1232,18 @@ PeiFfsFindSectionData3 (
     return EFI_NOT_FOUND;
   }
 
-  if ((CoreFvHandle->FvPpi->Signature == EFI_PEI_FIRMWARE_VOLUME_PPI_SIGNATURE) &&
+  if ((CoreFvHandle->FvPpi->Signature ==
+       EFI_PEI_FIRMWARE_VOLUME_PPI_SIGNATURE) &&
       (CoreFvHandle->FvPpi->Revision == EFI_PEI_FIRMWARE_VOLUME_PPI_REVISION))
   {
-    return CoreFvHandle->FvPpi->FindSectionByType2 (CoreFvHandle->FvPpi, SectionType, SectionInstance, FileHandle, SectionData, AuthenticationStatus);
+    return CoreFvHandle->FvPpi->FindSectionByType2 (
+                                  CoreFvHandle->FvPpi,
+                                  SectionType,
+                                  SectionInstance,
+                                  FileHandle,
+                                  SectionData,
+                                  AuthenticationStatus
+                                  );
   }
 
   //
@@ -1114,7 +1286,12 @@ PeiFfsFindNextFile (
     return EFI_NOT_FOUND;
   }
 
-  return CoreFvHandle->FvPpi->FindFileByType (CoreFvHandle->FvPpi, SearchType, FvHandle, FileHandle);
+  return CoreFvHandle->FvPpi->FindFileByType (
+                                CoreFvHandle->FvPpi,
+                                SearchType,
+                                FvHandle,
+                                FileHandle
+                                );
 }
 
 /**
@@ -1190,7 +1367,12 @@ PeiFfsFindFileByName (
     return EFI_NOT_FOUND;
   }
 
-  return CoreFvHandle->FvPpi->FindFileByName (CoreFvHandle->FvPpi, FileName, &VolumeHandle, FileHandle);
+  return CoreFvHandle->FvPpi->FindFileByName (
+                                CoreFvHandle->FvPpi,
+                                FileName,
+                                &VolumeHandle,
+                                FileHandle
+                                );
 }
 
 /**
@@ -1225,7 +1407,11 @@ PeiFfsGetFileInfo (
     return EFI_INVALID_PARAMETER;
   }
 
-  return CoreFvHandle->FvPpi->GetFileInfo (CoreFvHandle->FvPpi, FileHandle, FileInfo);
+  return CoreFvHandle->FvPpi->GetFileInfo (
+                                CoreFvHandle->FvPpi,
+                                FileHandle,
+                                FileInfo
+                                );
 }
 
 /**
@@ -1260,10 +1446,15 @@ PeiFfsGetFileInfo2 (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((CoreFvHandle->FvPpi->Signature == EFI_PEI_FIRMWARE_VOLUME_PPI_SIGNATURE) &&
+  if ((CoreFvHandle->FvPpi->Signature ==
+       EFI_PEI_FIRMWARE_VOLUME_PPI_SIGNATURE) &&
       (CoreFvHandle->FvPpi->Revision == EFI_PEI_FIRMWARE_VOLUME_PPI_REVISION))
   {
-    return CoreFvHandle->FvPpi->GetFileInfo2 (CoreFvHandle->FvPpi, FileHandle, FileInfo);
+    return CoreFvHandle->FvPpi->GetFileInfo2 (
+                                  CoreFvHandle->FvPpi,
+                                  FileHandle,
+                                  FileInfo
+                                  );
   }
 
   //
@@ -1309,7 +1500,11 @@ PeiFfsGetVolumeInfo (
     return EFI_INVALID_PARAMETER;
   }
 
-  return CoreHandle->FvPpi->GetVolumeInfo (CoreHandle->FvPpi, VolumeHandle, VolumeInfo);
+  return CoreHandle->FvPpi->GetVolumeInfo (
+                              CoreHandle->FvPpi,
+                              VolumeHandle,
+                              VolumeInfo
+                              );
 }
 
 /**
@@ -1340,16 +1535,25 @@ GetFvUsedSize (
 
   ExtHeaderOffset = ReadUnaligned16 (&FvHeader->ExtHeaderOffset);
   if (ExtHeaderOffset != 0) {
-    ExtHeader    = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FvHeader + ExtHeaderOffset);
+    ExtHeader    = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FvHeader +
+                                                      ExtHeaderOffset);
     ExtEntryList = (EFI_FIRMWARE_VOLUME_EXT_ENTRY *)(ExtHeader + 1);
-    while ((UINTN)ExtEntryList < ((UINTN)ExtHeader + ReadUnaligned32 (&ExtHeader->ExtHeaderSize))) {
-      if (ReadUnaligned16 (&ExtEntryList->ExtEntryType) == EFI_FV_EXT_TYPE_USED_SIZE_TYPE) {
+    while ((UINTN)ExtEntryList < ((UINTN)ExtHeader + ReadUnaligned32 (
+                                                       &ExtHeader->ExtHeaderSize
+                                                       )))
+    {
+      if (ReadUnaligned16 (&ExtEntryList->ExtEntryType) ==
+          EFI_FV_EXT_TYPE_USED_SIZE_TYPE)
+      {
         //
         // USED_SIZE FV_EXT_TYPE entry is found.
         //
-        ExtEntryUsedSize = (EFI_FIRMWARE_VOLUME_EXT_ENTRY_USED_SIZE_TYPE *)ExtEntryList;
-        *FvUsedSize      = ReadUnaligned32 (&ExtEntryUsedSize->UsedSize);
-        if ((ReadUnaligned32 (&FvHeader->Attributes) & EFI_FVB2_ERASE_POLARITY) != 0) {
+        ExtEntryUsedSize =
+          (EFI_FIRMWARE_VOLUME_EXT_ENTRY_USED_SIZE_TYPE *)ExtEntryList;
+        *FvUsedSize = ReadUnaligned32 (&ExtEntryUsedSize->UsedSize);
+        if ((ReadUnaligned32 (&FvHeader->Attributes) &
+             EFI_FVB2_ERASE_POLARITY) != 0)
+        {
           *EraseByte = 0xFF;
         } else {
           *EraseByte = 0;
@@ -1366,7 +1570,9 @@ GetFvUsedSize (
       }
 
       ExtEntryList = (EFI_FIRMWARE_VOLUME_EXT_ENTRY *)
-                     ((UINT8 *)ExtEntryList + ReadUnaligned16 (&ExtEntryList->ExtEntrySize));
+                     ((UINT8 *)ExtEntryList + ReadUnaligned16 (
+                                                &ExtEntryList->ExtEntrySize
+                                                ));
     }
   }
 
@@ -1418,11 +1624,19 @@ ProcessFvFile (
   //
   HobPtr.Raw = GetHobList ();
   while ((HobPtr.Raw = GetNextHob (EFI_HOB_TYPE_FV2, HobPtr.Raw)) != NULL) {
-    if (CompareGuid (&(((EFI_FFS_FILE_HEADER *)ParentFvFileHandle)->Name), &HobPtr.FirmwareVolume2->FileName)) {
+    if (CompareGuid (
+          &(((EFI_FFS_FILE_HEADER *)ParentFvFileHandle)->Name),
+          &HobPtr.FirmwareVolume2->FileName
+          ))
+    {
       //
       // this FILE has been dispatched, it will not be dispatched again.
       //
-      DEBUG ((DEBUG_INFO, "FV file %p has been dispatched!\r\n", ParentFvFileHandle));
+      DEBUG ((
+        DEBUG_INFO,
+        "FV file %p has been dispatched!\r\n",
+        ParentFvFileHandle
+        ));
       return EFI_SUCCESS;
     }
 
@@ -1472,7 +1686,12 @@ ProcessFvFile (
       break;
     }
 
-    Status = VerifyPeim (PrivateData, ParentFvHandle, ParentFvFileHandle, AuthenticationStatus);
+    Status = VerifyPeim (
+               PrivateData,
+               ParentFvHandle,
+               ParentFvFileHandle,
+               AuthenticationStatus
+               );
     if (Status == EFI_SECURITY_VIOLATION) {
       break;
     }
@@ -1482,11 +1701,14 @@ ProcessFvFile (
     // can be aligned on any power-of-two boundary. A weakly aligned volume can not be moved from
     // its initial linked location and maintain its alignment.
     //
-    if ((ReadUnaligned32 (&FvHeader->Attributes) & EFI_FVB2_WEAK_ALIGNMENT) != EFI_FVB2_WEAK_ALIGNMENT) {
+    if ((ReadUnaligned32 (&FvHeader->Attributes) & EFI_FVB2_WEAK_ALIGNMENT) !=
+        EFI_FVB2_WEAK_ALIGNMENT)
+    {
       //
       // FvAlignment must be greater than or equal to 8 bytes of the minimum FFS alignment value.
       //
-      FvAlignment = 1 << ((ReadUnaligned32 (&FvHeader->Attributes) & EFI_FVB2_ALIGNMENT) >> 16);
+      FvAlignment = 1 << ((ReadUnaligned32 (&FvHeader->Attributes) &
+                           EFI_FVB2_ALIGNMENT) >> 16);
       if (FvAlignment < 8) {
         FvAlignment = 8;
       }
@@ -1504,7 +1726,12 @@ ProcessFvFile (
       //
       if ((UINTN)FvHeader % FvAlignment != 0) {
         FvLength    = ReadUnaligned64 (&FvHeader->FvLength);
-        NewFvBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES ((UINT32)FvLength), FvAlignment);
+        NewFvBuffer = AllocateAlignedPages (
+                        EFI_SIZE_TO_PAGES (
+                          (UINT32)FvLength
+                          ),
+                        FvAlignment
+                        );
         if (NewFvBuffer == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
           break;
@@ -1528,10 +1755,18 @@ ProcessFvFile (
       }
     }
 
-    Status = ParentFvPpi->GetVolumeInfo (ParentFvPpi, ParentFvHandle, &ParentFvImageInfo);
+    Status = ParentFvPpi->GetVolumeInfo (
+                            ParentFvPpi,
+                            ParentFvHandle,
+                            &ParentFvImageInfo
+                            );
     ASSERT_EFI_ERROR (Status);
 
-    Status = ParentFvPpi->GetFileInfo (ParentFvPpi, ParentFvFileHandle, &FileInfo);
+    Status = ParentFvPpi->GetFileInfo (
+                            ParentFvPpi,
+                            ParentFvFileHandle,
+                            &FileInfo
+                            );
     ASSERT_EFI_ERROR (Status);
 
     //
@@ -1746,13 +1981,21 @@ PeiFfsFvPpiFindFileByName (
     //
     Status = EFI_NOT_FOUND;
 
-    PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS (GetPeiServicesTablePointer ());
+    PrivateData = PEI_CORE_INSTANCE_FROM_PS_THIS (
+                    GetPeiServicesTablePointer ()
+                    );
     for (Index = 0; Index < PrivateData->FvCount; Index++) {
       //
       // Only search the FV which is associated with a EFI_PEI_FIRMWARE_VOLUME_PPI instance.
       //
       if (PrivateData->Fv[Index].FvPpi != NULL) {
-        Status = FindFileEx (PrivateData->Fv[Index].FvHandle, FileName, 0, FileHandle, NULL);
+        Status = FindFileEx (
+                   PrivateData->Fv[Index].FvHandle,
+                   FileName,
+                   0,
+                   FileHandle,
+                   NULL
+                   );
         if (!EFI_ERROR (Status)) {
           *FvHandle = PrivateData->Fv[Index].FvHandle;
           break;
@@ -1834,21 +2077,31 @@ PeiFfsFvPpiGetFileInfo (
   if (IS_FFS_FILE2 (FileHeader)) {
     ASSERT (FFS_FILE2_SIZE (FileHeader) > 0x00FFFFFF);
     if (!FwVolInstance->IsFfs3Fv) {
-      DEBUG ((DEBUG_ERROR, "It is a FFS3 formatted file: %g in a non-FFS3 formatted FV.\n", &FileHeader->Name));
+      DEBUG ((
+        DEBUG_ERROR,
+        "It is a FFS3 formatted file: %g in a non-FFS3 formatted FV.\n",
+        &FileHeader->Name
+        ));
       return EFI_INVALID_PARAMETER;
     }
 
-    FileInfo->BufferSize = FFS_FILE2_SIZE (FileHeader) - sizeof (EFI_FFS_FILE_HEADER2);
-    FileInfo->Buffer     = (UINT8 *)FileHeader + sizeof (EFI_FFS_FILE_HEADER2);
+    FileInfo->BufferSize = FFS_FILE2_SIZE (FileHeader) -
+                           sizeof (EFI_FFS_FILE_HEADER2);
+    FileInfo->Buffer = (UINT8 *)FileHeader + sizeof (EFI_FFS_FILE_HEADER2);
   } else {
-    FileInfo->BufferSize = FFS_FILE_SIZE (FileHeader) - sizeof (EFI_FFS_FILE_HEADER);
-    FileInfo->Buffer     = (UINT8 *)FileHeader + sizeof (EFI_FFS_FILE_HEADER);
+    FileInfo->BufferSize = FFS_FILE_SIZE (FileHeader) -
+                           sizeof (EFI_FFS_FILE_HEADER);
+    FileInfo->Buffer = (UINT8 *)FileHeader + sizeof (EFI_FFS_FILE_HEADER);
   }
 
   CopyMem (&FileInfo->FileName, &FileHeader->Name, sizeof (EFI_GUID));
   FileInfo->FileType       = FileHeader->Type;
-  FileInfo->FileAttributes = FfsAttributes2FvFileAttributes (FileHeader->Attributes);
-  if ((CoreFvHandle->FvHeader->Attributes & EFI_FVB2_MEMORY_MAPPED) == EFI_FVB2_MEMORY_MAPPED) {
+  FileInfo->FileAttributes = FfsAttributes2FvFileAttributes (
+                               FileHeader->Attributes
+                               );
+  if ((CoreFvHandle->FvHeader->Attributes & EFI_FVB2_MEMORY_MAPPED) ==
+      EFI_FVB2_MEMORY_MAPPED)
+  {
     FileInfo->FileAttributes |= EFI_FV_FILE_ATTRIB_MEMORY_MAPPED;
   }
 
@@ -1897,7 +2150,11 @@ PeiFfsFvPpiGetFileInfo2 (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = PeiFfsFvPpiGetFileInfo (This, FileHandle, (EFI_FV_FILE_INFO *)FileInfo);
+  Status = PeiFfsFvPpiGetFileInfo (
+             This,
+             FileHandle,
+             (EFI_FV_FILE_INFO *)FileInfo
+             );
   if (!EFI_ERROR (Status)) {
     FileInfo->AuthenticationStatus = CoreFvHandle->AuthenticationStatus;
   }
@@ -1952,11 +2209,21 @@ PeiFfsFvPpiGetVolumeInfo (
   VolumeInfo->FvAttributes = FwVolHeader.Attributes;
   VolumeInfo->FvStart      = (VOID *)FvHandle;
   VolumeInfo->FvSize       = FwVolHeader.FvLength;
-  CopyMem (&VolumeInfo->FvFormat, &FwVolHeader.FileSystemGuid, sizeof (EFI_GUID));
+  CopyMem (
+    &VolumeInfo->FvFormat,
+    &FwVolHeader.FileSystemGuid,
+    sizeof (EFI_GUID)
+    );
 
   if (FwVolHeader.ExtHeaderOffset != 0) {
-    FwVolExHeaderInfo = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)(((UINT8 *)FvHandle) + FwVolHeader.ExtHeaderOffset);
-    CopyMem (&VolumeInfo->FvName, &FwVolExHeaderInfo->FvName, sizeof (EFI_GUID));
+    FwVolExHeaderInfo = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)(((UINT8 *)FvHandle) +
+                                                           FwVolHeader.
+                                                             ExtHeaderOffset);
+    CopyMem (
+      &VolumeInfo->FvName,
+      &FwVolExHeaderInfo->FvName,
+      sizeof (EFI_GUID)
+      );
   }
 
   return EFI_SUCCESS;
@@ -1992,7 +2259,14 @@ PeiFfsFvPpiFindSectionByType (
 {
   UINT32  AuthenticationStatus;
 
-  return PeiFfsFvPpiFindSectionByType2 (This, SearchType, 0, FileHandle, SectionData, &AuthenticationStatus);
+  return PeiFfsFvPpiFindSectionByType2 (
+           This,
+           SearchType,
+           0,
+           FileHandle,
+           SectionData,
+           &AuthenticationStatus
+           );
 }
 
 /**
@@ -2057,14 +2331,20 @@ PeiFfsFvPpiFindSectionByType2 (
   if (IS_FFS_FILE2 (FfsFileHeader)) {
     ASSERT (FFS_FILE2_SIZE (FfsFileHeader) > 0x00FFFFFF);
     if (!FwVolInstance->IsFfs3Fv) {
-      DEBUG ((DEBUG_ERROR, "It is a FFS3 formatted file: %g in a non-FFS3 formatted FV.\n", &FfsFileHeader->Name));
+      DEBUG ((
+        DEBUG_ERROR,
+        "It is a FFS3 formatted file: %g in a non-FFS3 formatted FV.\n",
+        &FfsFileHeader->Name
+        ));
       return EFI_NOT_FOUND;
     }
 
-    Section  = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)FfsFileHeader + sizeof (EFI_FFS_FILE_HEADER2));
+    Section  = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)FfsFileHeader +
+                                             sizeof (EFI_FFS_FILE_HEADER2));
     FileSize = FFS_FILE2_SIZE (FfsFileHeader) - sizeof (EFI_FFS_FILE_HEADER2);
   } else {
-    Section  = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)FfsFileHeader + sizeof (EFI_FFS_FILE_HEADER));
+    Section  = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)FfsFileHeader +
+                                             sizeof (EFI_FFS_FILE_HEADER));
     FileSize = FFS_FILE_SIZE (FfsFileHeader) - sizeof (EFI_FFS_FILE_HEADER);
   }
 
@@ -2084,7 +2364,8 @@ PeiFfsFvPpiFindSectionByType2 (
     //
     // Inherit the authentication status.
     //
-    *AuthenticationStatus = ExtractedAuthenticationStatus | CoreFvHandle->AuthenticationStatus;
+    *AuthenticationStatus = ExtractedAuthenticationStatus |
+                            CoreFvHandle->AuthenticationStatus;
   }
 
   return Status;
@@ -2246,26 +2527,31 @@ AddUnknownFormatFvInfo (
     // Run out of room, grow the buffer.
     //
     TempPtr = AllocateZeroPool (
-                sizeof (PEI_CORE_UNKNOW_FORMAT_FV_INFO) * (PrivateData->MaxUnknownFvInfoCount + FV_GROWTH_STEP)
+                sizeof (PEI_CORE_UNKNOW_FORMAT_FV_INFO) *
+                (PrivateData->MaxUnknownFvInfoCount + FV_GROWTH_STEP)
                 );
     ASSERT (TempPtr != NULL);
     CopyMem (
       TempPtr,
       PrivateData->UnknownFvInfo,
-      sizeof (PEI_CORE_UNKNOW_FORMAT_FV_INFO) * PrivateData->MaxUnknownFvInfoCount
+      sizeof (PEI_CORE_UNKNOW_FORMAT_FV_INFO) *
+      PrivateData->MaxUnknownFvInfoCount
       );
     PrivateData->UnknownFvInfo         = TempPtr;
-    PrivateData->MaxUnknownFvInfoCount = PrivateData->MaxUnknownFvInfoCount + FV_GROWTH_STEP;
+    PrivateData->MaxUnknownFvInfoCount = PrivateData->MaxUnknownFvInfoCount +
+                                         FV_GROWTH_STEP;
   }
 
   NewUnknownFv = &PrivateData->UnknownFvInfo[PrivateData->UnknownFvInfoCount];
   PrivateData->UnknownFvInfoCount++;
 
   CopyGuid (&NewUnknownFv->FvFormat, &FvInfo2Ppi->FvFormat);
-  NewUnknownFv->FvInfo                  = FvInfo2Ppi->FvInfo;
-  NewUnknownFv->FvInfoSize              = FvInfo2Ppi->FvInfoSize;
-  NewUnknownFv->AuthenticationStatus    = FvInfo2Ppi->AuthenticationStatus;
-  NewUnknownFv->NotifyDescriptor.Flags  = (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
+  NewUnknownFv->FvInfo                 = FvInfo2Ppi->FvInfo;
+  NewUnknownFv->FvInfoSize             = FvInfo2Ppi->FvInfoSize;
+  NewUnknownFv->AuthenticationStatus   = FvInfo2Ppi->AuthenticationStatus;
+  NewUnknownFv->NotifyDescriptor.Flags =
+    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+     EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
   NewUnknownFv->NotifyDescriptor.Guid   = &NewUnknownFv->FvFormat;
   NewUnknownFv->NotifyDescriptor.Notify = ThirdPartyFvPpiNotifyCallback;
 
@@ -2313,14 +2599,19 @@ FindUnknownFormatFvInfo (
 
   *FvInfo               = PrivateData->UnknownFvInfo[Index].FvInfo;
   *FvInfoSize           = PrivateData->UnknownFvInfo[Index].FvInfoSize;
-  *AuthenticationStatus = PrivateData->UnknownFvInfo[Index].AuthenticationStatus;
+  *AuthenticationStatus =
+    PrivateData->UnknownFvInfo[Index].AuthenticationStatus;
 
   //
   // Remove an entry from UnknownFvInfo array.
   //
   Index2 = Index + 1;
   for ( ; Index2 < PrivateData->UnknownFvInfoCount; Index2++, Index++) {
-    CopyMem (&PrivateData->UnknownFvInfo[Index], &PrivateData->UnknownFvInfo[Index2], sizeof (PEI_CORE_UNKNOW_FORMAT_FV_INFO));
+    CopyMem (
+      &PrivateData->UnknownFvInfo[Index],
+      &PrivateData->UnknownFvInfo[Index2],
+      sizeof (PEI_CORE_UNKNOW_FORMAT_FV_INFO)
+      );
   }
 
   PrivateData->UnknownFvInfoCount--;
@@ -2365,7 +2656,13 @@ ThirdPartyFvPpiNotifyCallback (
   FvPpi       = (EFI_PEI_FIRMWARE_VOLUME_PPI *)Ppi;
 
   do {
-    Status = FindUnknownFormatFvInfo (PrivateData, NotifyDescriptor->Guid, &FvInfo, &FvInfoSize, &AuthenticationStatus);
+    Status = FindUnknownFormatFvInfo (
+               PrivateData,
+               NotifyDescriptor->Guid,
+               &FvInfo,
+               &FvInfoSize,
+               &AuthenticationStatus
+               );
     if (EFI_ERROR (Status)) {
       return EFI_SUCCESS;
     }
@@ -2375,7 +2672,11 @@ ThirdPartyFvPpiNotifyCallback (
     //
     Status = FvPpi->ProcessVolume (FvPpi, FvInfo, FvInfoSize, &FvHandle);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Fail to process the FV 0x%p, FV may be corrupted!\n", FvInfo));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Fail to process the FV 0x%p, FV may be corrupted!\n",
+        FvInfo
+        ));
       continue;
     }
 
@@ -2400,7 +2701,8 @@ ThirdPartyFvPpiNotifyCallback (
       // Run out of room, grow the buffer.
       //
       TempPtr = AllocateZeroPool (
-                  sizeof (PEI_CORE_FV_HANDLE) * (PrivateData->MaxFvCount + FV_GROWTH_STEP)
+                  sizeof (PEI_CORE_FV_HANDLE) * (PrivateData->MaxFvCount +
+                                                 FV_GROWTH_STEP)
                   );
       ASSERT (TempPtr != NULL);
       CopyMem (
@@ -2415,11 +2717,14 @@ ThirdPartyFvPpiNotifyCallback (
     //
     // Update internal PEI_CORE_FV array.
     //
-    PrivateData->Fv[PrivateData->FvCount].FvHeader             = (EFI_FIRMWARE_VOLUME_HEADER *)FvInfo;
+    PrivateData->Fv[PrivateData->FvCount].FvHeader =
+      (EFI_FIRMWARE_VOLUME_HEADER *)FvInfo;
     PrivateData->Fv[PrivateData->FvCount].FvPpi                = FvPpi;
     PrivateData->Fv[PrivateData->FvCount].FvHandle             = FvHandle;
-    PrivateData->Fv[PrivateData->FvCount].AuthenticationStatus = AuthenticationStatus;
-    CurFvCount                                                 = PrivateData->FvCount;
+    PrivateData->Fv[PrivateData->FvCount].AuthenticationStatus =
+      AuthenticationStatus;
+    CurFvCount =
+      PrivateData->FvCount;
     DEBUG ((
       DEBUG_INFO,
       "The %dth FV start address is 0x%11p, size is 0x%08x, handle is 0x%p\n",
@@ -2457,7 +2762,13 @@ ThirdPartyFvPpiNotifyCallback (
           }
         }
 
-        DEBUG ((DEBUG_INFO, "Found firmware volume Image File %p in FV[%d] %p\n", FileHandle, CurFvCount, FvHandle));
+        DEBUG ((
+          DEBUG_INFO,
+          "Found firmware volume Image File %p in FV[%d] %p\n",
+          FileHandle,
+          CurFvCount,
+          FvHandle
+          ));
         ProcessFvFile (PrivateData, &PrivateData->Fv[CurFvCount], FileHandle);
       }
     } while (FileHandle != NULL);

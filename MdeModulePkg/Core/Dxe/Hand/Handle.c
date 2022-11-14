@@ -15,7 +15,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // gProtocolDatabaseLock - Lock to protect the mProtocolDatabase
 // gHandleDatabaseKey    -  The Key to show that the handle has been created/modified
 //
-LIST_ENTRY  mProtocolDatabase     = INITIALIZE_LIST_HEAD_VARIABLE (mProtocolDatabase);
+LIST_ENTRY  mProtocolDatabase = INITIALIZE_LIST_HEAD_VARIABLE (
+                                  mProtocolDatabase
+                                  );
 LIST_ENTRY  gHandleList           = INITIALIZE_LIST_HEAD_VARIABLE (gHandleList);
 EFI_LOCK    gProtocolDatabaseLock = EFI_INITIALIZE_LOCK_VARIABLE (TPL_NOTIFY);
 UINT64      gHandleDatabaseKey    = 0;
@@ -68,7 +70,9 @@ CoreValidateHandle (
 
   ASSERT_LOCKED (&gProtocolDatabaseLock);
 
-  for (Link = gHandleList.BackLink; Link != &gHandleList; Link = Link->BackLink) {
+  for (Link = gHandleList.BackLink; Link != &gHandleList; Link =
+         Link->BackLink)
+  {
     Handle = CR (Link, IHANDLE, AllHandles, EFI_HANDLE_SIGNATURE);
     if (Handle == (IHANDLE *)UserHandle) {
       return EFI_SUCCESS;
@@ -181,7 +185,9 @@ CoreFindProtocolInterface (
     //
     // Look at each protocol interface for any matches
     //
-    for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
+    for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols;
+         Link = Link->ForwardLink)
+    {
       //
       // If this protocol interface matches, remove it
       //
@@ -229,7 +235,12 @@ CoreUnregisterProtocolNotifyEvent (
           NotifyLink != &ProtEntry->Notify;
           NotifyLink =  NotifyLink->ForwardLink)
     {
-      ProtNotify = CR (NotifyLink, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
+      ProtNotify = CR (
+                     NotifyLink,
+                     PROTOCOL_NOTIFY,
+                     Link,
+                     PROTOCOL_NOTIFY_SIGNATURE
+                     );
 
       if (ProtNotify->Event == Event) {
         RemoveEntryList (&ProtNotify->Link);
@@ -346,14 +357,23 @@ CoreInstallProtocolInterfaceNotify (
   //
   // Print debug message
   //
-  DEBUG ((DEBUG_INFO, "InstallProtocolInterface: %g %p\n", Protocol, Interface));
+  DEBUG ((
+    DEBUG_INFO,
+    "InstallProtocolInterface: %g %p\n",
+    Protocol,
+    Interface
+    ));
 
   Status = EFI_OUT_OF_RESOURCES;
   Prot   = NULL;
   Handle = NULL;
 
   if (*UserHandle != NULL) {
-    Status = CoreHandleProtocol (*UserHandle, Protocol, (VOID **)&ExistingInterface);
+    Status = CoreHandleProtocol (
+               *UserHandle,
+               Protocol,
+               (VOID **)&ExistingInterface
+               );
     if (!EFI_ERROR (Status)) {
       return EFI_INVALID_PARAMETER;
     }
@@ -412,7 +432,11 @@ CoreInstallProtocolInterfaceNotify (
   } else {
     Status = CoreValidateHandle (Handle);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "InstallProtocolInterface: input handle at 0x%x is invalid\n", Handle));
+      DEBUG ((
+        DEBUG_ERROR,
+        "InstallProtocolInterface: input handle at 0x%x is invalid\n",
+        Handle
+        ));
       goto Done;
     }
   }
@@ -475,7 +499,13 @@ Done:
       CoreFreePool (Prot);
     }
 
-    DEBUG ((DEBUG_ERROR, "InstallProtocolInterface: %g %p failed with %r\n", Protocol, Interface, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "InstallProtocolInterface: %g %p failed with %r\n",
+      Protocol,
+      Interface,
+      Status
+      ));
   }
 
   return Status;
@@ -551,8 +581,15 @@ CoreInstallMultipleProtocolInterfaces (
     if (CompareGuid (Protocol, &gEfiDevicePathProtocolGuid)) {
       DeviceHandle = NULL;
       DevicePath   = Interface;
-      Status       = CoreLocateDevicePath (&gEfiDevicePathProtocolGuid, &DevicePath, &DeviceHandle);
-      if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd (DevicePath)) {
+      Status       = CoreLocateDevicePath (
+                       &gEfiDevicePathProtocolGuid,
+                       &DevicePath,
+                       &DeviceHandle
+                       );
+      if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd (
+                                                             DevicePath
+                                                             ))
+      {
         Status = EFI_ALREADY_STARTED;
         continue;
       }
@@ -561,7 +598,12 @@ CoreInstallMultipleProtocolInterfaces (
     //
     // Install it
     //
-    Status = CoreInstallProtocolInterface (Handle, Protocol, EFI_NATIVE_INTERFACE, Interface);
+    Status = CoreInstallProtocolInterface (
+               Handle,
+               Protocol,
+               EFI_NATIVE_INTERFACE,
+               Interface
+               );
   }
 
   VA_END (Args);
@@ -624,11 +666,22 @@ CoreDisconnectControllersUsingProtocolInterface (
   //
   do {
     ItemFound = FALSE;
-    for (Link = Prot->OpenList.ForwardLink; Link != &Prot->OpenList; Link = Link->ForwardLink) {
-      OpenData = CR (Link, OPEN_PROTOCOL_DATA, Link, OPEN_PROTOCOL_DATA_SIGNATURE);
+    for (Link = Prot->OpenList.ForwardLink; Link != &Prot->OpenList; Link =
+           Link->ForwardLink)
+    {
+      OpenData = CR (
+                   Link,
+                   OPEN_PROTOCOL_DATA,
+                   Link,
+                   OPEN_PROTOCOL_DATA_SIGNATURE
+                   );
       if ((OpenData->Attributes & EFI_OPEN_PROTOCOL_BY_DRIVER) != 0) {
         CoreReleaseProtocolLock ();
-        Status = CoreDisconnectController (UserHandle, OpenData->AgentHandle, NULL);
+        Status = CoreDisconnectController (
+                   UserHandle,
+                   OpenData->AgentHandle,
+                   NULL
+                   );
         CoreAcquireProtocolLock ();
         if (!EFI_ERROR (Status)) {
           ItemFound = TRUE;
@@ -644,9 +697,16 @@ CoreDisconnectControllersUsingProtocolInterface (
     // Attempt to remove BY_HANDLE_PROTOOCL and GET_PROTOCOL and TEST_PROTOCOL Open List items
     //
     for (Link = Prot->OpenList.ForwardLink; Link != &Prot->OpenList;) {
-      OpenData = CR (Link, OPEN_PROTOCOL_DATA, Link, OPEN_PROTOCOL_DATA_SIGNATURE);
+      OpenData = CR (
+                   Link,
+                   OPEN_PROTOCOL_DATA,
+                   Link,
+                   OPEN_PROTOCOL_DATA_SIGNATURE
+                   );
       if ((OpenData->Attributes &
-           (EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL | EFI_OPEN_PROTOCOL_GET_PROTOCOL | EFI_OPEN_PROTOCOL_TEST_PROTOCOL)) != 0)
+           (EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL |
+            EFI_OPEN_PROTOCOL_GET_PROTOCOL |
+            EFI_OPEN_PROTOCOL_TEST_PROTOCOL)) != 0)
       {
         Link = RemoveEntryList (&OpenData->Link);
         Prot->OpenListCount--;
@@ -849,7 +909,12 @@ CoreUninstallMultipleProtocolInterfaces (
     for ( ; Index > 1; Index--) {
       Protocol  = VA_ARG (Args, EFI_GUID *);
       Interface = VA_ARG (Args, VOID *);
-      CoreInstallProtocolInterface (&Handle, Protocol, EFI_NATIVE_INTERFACE, Interface);
+      CoreInstallProtocolInterface (
+        &Handle,
+        Protocol,
+        EFI_NATIVE_INTERFACE,
+        Interface
+        );
     }
 
     VA_END (Args);
@@ -890,8 +955,15 @@ CoreGetProtocolInterface (
   //
   // Look at each protocol interface for a match
   //
-  for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
-    Prot      = CR (Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
+  for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link =
+         Link->ForwardLink)
+  {
+    Prot = CR (
+             Link,
+             PROTOCOL_INTERFACE,
+             Link,
+             PROTOCOL_INTERFACE_SIGNATURE
+             );
     ProtEntry = Prot->Protocol;
     if (CompareGuid (&ProtEntry->ProtocolID, Protocol)) {
       return Prot;
@@ -1064,8 +1136,15 @@ CoreOpenProtocol (
 
   ByDriver  = FALSE;
   Exclusive = FALSE;
-  for ( Link = Prot->OpenList.ForwardLink; Link != &Prot->OpenList; Link = Link->ForwardLink) {
-    OpenData   = CR (Link, OPEN_PROTOCOL_DATA, Link, OPEN_PROTOCOL_DATA_SIGNATURE);
+  for ( Link = Prot->OpenList.ForwardLink; Link != &Prot->OpenList; Link =
+          Link->ForwardLink)
+  {
+    OpenData = CR (
+                 Link,
+                 OPEN_PROTOCOL_DATA,
+                 Link,
+                 OPEN_PROTOCOL_DATA_SIGNATURE
+                 );
     ExactMatch =  (BOOLEAN)((OpenData->AgentHandle == ImageHandle) &&
                             (OpenData->Attributes == Attributes)  &&
                             (OpenData->ControllerHandle == ControllerHandle));
@@ -1111,12 +1190,23 @@ CoreOpenProtocol (
       if (ByDriver) {
         do {
           Disconnect = FALSE;
-          for (Link = Prot->OpenList.ForwardLink; Link != &Prot->OpenList; Link = Link->ForwardLink) {
-            OpenData = CR (Link, OPEN_PROTOCOL_DATA, Link, OPEN_PROTOCOL_DATA_SIGNATURE);
+          for (Link = Prot->OpenList.ForwardLink; Link != &Prot->OpenList;
+               Link = Link->ForwardLink)
+          {
+            OpenData = CR (
+                         Link,
+                         OPEN_PROTOCOL_DATA,
+                         Link,
+                         OPEN_PROTOCOL_DATA_SIGNATURE
+                         );
             if ((OpenData->Attributes & EFI_OPEN_PROTOCOL_BY_DRIVER) != 0) {
               Disconnect = TRUE;
               CoreReleaseProtocolLock ();
-              Status = CoreDisconnectController (UserHandle, OpenData->AgentHandle, NULL);
+              Status = CoreDisconnectController (
+                         UserHandle,
+                         OpenData->AgentHandle,
+                         NULL
+                         );
               CoreAcquireProtocolLock ();
               if (EFI_ERROR (Status)) {
                 Status = EFI_ACCESS_DENIED;
@@ -1279,9 +1369,16 @@ CoreCloseProtocol (
   //
   Link = ProtocolInterface->OpenList.ForwardLink;
   while (Link != &ProtocolInterface->OpenList) {
-    OpenData = CR (Link, OPEN_PROTOCOL_DATA, Link, OPEN_PROTOCOL_DATA_SIGNATURE);
-    Link     = Link->ForwardLink;
-    if ((OpenData->AgentHandle == AgentHandle) && (OpenData->ControllerHandle == ControllerHandle)) {
+    OpenData = CR (
+                 Link,
+                 OPEN_PROTOCOL_DATA,
+                 Link,
+                 OPEN_PROTOCOL_DATA_SIGNATURE
+                 );
+    Link = Link->ForwardLink;
+    if ((OpenData->AgentHandle == AgentHandle) && (OpenData->ControllerHandle ==
+                                                   ControllerHandle))
+    {
       RemoveEntryList (&OpenData->Link);
       ProtocolInterface->OpenListCount--;
       CoreFreePool (OpenData);
@@ -1375,7 +1472,12 @@ CoreOpenProtocolInformation (
         (Link != &ProtocolInterface->OpenList);
         Link = Link->ForwardLink, Count++  )
   {
-    OpenData = CR (Link, OPEN_PROTOCOL_DATA, Link, OPEN_PROTOCOL_DATA_SIGNATURE);
+    OpenData = CR (
+                 Link,
+                 OPEN_PROTOCOL_DATA,
+                 Link,
+                 OPEN_PROTOCOL_DATA_SIGNATURE
+                 );
 
     Buffer[Count].AgentHandle      = OpenData->AgentHandle;
     Buffer[Count].ControllerHandle = OpenData->ControllerHandle;
@@ -1453,7 +1555,9 @@ CoreProtocolsPerHandle (
 
   Handle = (IHANDLE *)UserHandle;
 
-  for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
+  for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link =
+         Link->ForwardLink)
+  {
     ProtocolCount++;
   }
 
@@ -1478,7 +1582,12 @@ CoreProtocolsPerHandle (
         Link != &Handle->Protocols;
         Link = Link->ForwardLink, ProtocolCount++)
   {
-    Prot                  = CR (Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
+    Prot = CR (
+             Link,
+             PROTOCOL_INTERFACE,
+             Link,
+             PROTOCOL_INTERFACE_SIGNATURE
+             );
     Buffer[ProtocolCount] = &(Prot->Protocol->ProtocolID);
   }
 
@@ -1527,7 +1636,9 @@ CoreConnectHandlesByKey (
   //
   CoreAcquireProtocolLock ();
 
-  for (Link = gHandleList.ForwardLink, Count = 0; Link != &gHandleList; Link = Link->ForwardLink) {
+  for (Link = gHandleList.ForwardLink, Count = 0; Link != &gHandleList; Link =
+         Link->ForwardLink)
+  {
     Handle = CR (Link, IHANDLE, AllHandles, EFI_HANDLE_SIGNATURE);
     if (Handle->Key > Key) {
       Count++;
@@ -1540,7 +1651,9 @@ CoreConnectHandlesByKey (
     return;
   }
 
-  for (Link = gHandleList.ForwardLink, Count = 0; Link != &gHandleList; Link = Link->ForwardLink) {
+  for (Link = gHandleList.ForwardLink, Count = 0; Link != &gHandleList; Link =
+         Link->ForwardLink)
+  {
     Handle = CR (Link, IHANDLE, AllHandles, EFI_HANDLE_SIGNATURE);
     if (Handle->Key > Key) {
       HandleBuffer[Count++] = Handle;

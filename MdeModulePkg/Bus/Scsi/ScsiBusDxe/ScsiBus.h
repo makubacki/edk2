@@ -77,7 +77,9 @@ typedef struct _SCSI_BUS_DEVICE {
   EFI_DEVICE_PATH_PROTOCOL           *DevicePath;
 } SCSI_BUS_DEVICE;
 
-#define SCSI_BUS_CONTROLLER_DEVICE_FROM_THIS(a)  CR (a, SCSI_BUS_DEVICE, BusIdentify, SCSI_BUS_DEVICE_SIGNATURE)
+#define SCSI_BUS_CONTROLLER_DEVICE_FROM_THIS( \
+                                            a)  \
+  CR (a, SCSI_BUS_DEVICE, BusIdentify, SCSI_BUS_DEVICE_SIGNATURE)
 
 typedef struct {
   UINT32                             Signature;
@@ -95,7 +97,9 @@ typedef struct {
   BOOLEAN                            RemovableDevice;
 } SCSI_IO_DEV;
 
-#define SCSI_IO_DEV_FROM_THIS(a)  CR (a, SCSI_IO_DEV, ScsiIo, SCSI_IO_DEV_SIGNATURE)
+#define SCSI_IO_DEV_FROM_THIS( \
+                             a)  \
+  CR (a, SCSI_IO_DEV, ScsiIo, SCSI_IO_DEV_SIGNATURE)
 
 //
 // Global Variables

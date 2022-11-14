@@ -309,8 +309,15 @@ CoreSchedule (
   //
   // Check every driver
   //
-  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
-    DriverEntry = CR (Link, EFI_CORE_DRIVER_ENTRY, Link, EFI_CORE_DRIVER_ENTRY_SIGNATURE);
+  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link =
+         Link->ForwardLink)
+  {
+    DriverEntry = CR (
+                    Link,
+                    EFI_CORE_DRIVER_ENTRY,
+                    Link,
+                    EFI_CORE_DRIVER_ENTRY_SIGNATURE
+                    );
     if ((DriverEntry->FvHandle == FirmwareVolumeHandle) &&
         DriverEntry->Unrequested &&
         CompareGuid (DriverName, &DriverEntry->FileName))
@@ -359,8 +366,15 @@ CoreTrust (
   //
   // Check every driver
   //
-  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
-    DriverEntry = CR (Link, EFI_CORE_DRIVER_ENTRY, Link, EFI_CORE_DRIVER_ENTRY_SIGNATURE);
+  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link =
+         Link->ForwardLink)
+  {
+    DriverEntry = CR (
+                    Link,
+                    EFI_CORE_DRIVER_ENTRY,
+                    Link,
+                    EFI_CORE_DRIVER_ENTRY_SIGNATURE
+                    );
     if ((DriverEntry->FvHandle == FirmwareVolumeHandle) &&
         DriverEntry->Untrusted &&
         CompareGuid (DriverName, &DriverEntry->FileName))
@@ -505,7 +519,11 @@ CoreDispatcher (
         //
         // Produce a firmware volume block protocol for FvImage so it gets dispatched from.
         //
-        Status = CoreProcessFvImageFile (DriverEntry->Fv, DriverEntry->FvHandle, &DriverEntry->FileName);
+        Status = CoreProcessFvImageFile (
+                   DriverEntry->Fv,
+                   DriverEntry->FvHandle,
+                   &DriverEntry->FileName
+                   );
       } else {
         REPORT_STATUS_CODE_WITH_EXTENDED_DATA (
           EFI_PROGRESS_CODE,
@@ -541,8 +559,15 @@ CoreDispatcher (
     // Search DriverList for items to place on Scheduled Queue
     //
     ReadyToRun = FALSE;
-    for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
-      DriverEntry = CR (Link, EFI_CORE_DRIVER_ENTRY, Link, EFI_CORE_DRIVER_ENTRY_SIGNATURE);
+    for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link =
+           Link->ForwardLink)
+    {
+      DriverEntry = CR (
+                      Link,
+                      EFI_CORE_DRIVER_ENTRY,
+                      Link,
+                      EFI_CORE_DRIVER_ENTRY_SIGNATURE
+                      );
 
       if (DriverEntry->DepexProtocolError) {
         //
@@ -558,8 +583,15 @@ CoreDispatcher (
         }
       } else {
         if (DriverEntry->Unrequested) {
-          DEBUG ((DEBUG_DISPATCH, "Evaluate DXE DEPEX for FFS(%g)\n", &DriverEntry->FileName));
-          DEBUG ((DEBUG_DISPATCH, "  SOR                                             = Not Requested\n"));
+          DEBUG ((
+            DEBUG_DISPATCH,
+            "Evaluate DXE DEPEX for FFS(%g)\n",
+            &DriverEntry->FileName
+            ));
+          DEBUG ((
+            DEBUG_DISPATCH,
+            "  SOR                                             = Not Requested\n"
+            ));
           DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE\n"));
         }
       }
@@ -600,12 +632,33 @@ CoreInsertOnScheduledQueueWhileProcessingBeforeAndAfter (
   //
   // Process Before Dependency
   //
-  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
-    DriverEntry = CR (Link, EFI_CORE_DRIVER_ENTRY, Link, EFI_CORE_DRIVER_ENTRY_SIGNATURE);
-    if (DriverEntry->Before && DriverEntry->Dependent && (DriverEntry != InsertedDriverEntry)) {
-      DEBUG ((DEBUG_DISPATCH, "Evaluate DXE DEPEX for FFS(%g)\n", &DriverEntry->FileName));
-      DEBUG ((DEBUG_DISPATCH, "  BEFORE FFS(%g) = ", &DriverEntry->BeforeAfterGuid));
-      if (CompareGuid (&InsertedDriverEntry->FileName, &DriverEntry->BeforeAfterGuid)) {
+  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link =
+         Link->ForwardLink)
+  {
+    DriverEntry = CR (
+                    Link,
+                    EFI_CORE_DRIVER_ENTRY,
+                    Link,
+                    EFI_CORE_DRIVER_ENTRY_SIGNATURE
+                    );
+    if (DriverEntry->Before && DriverEntry->Dependent && (DriverEntry !=
+                                                          InsertedDriverEntry))
+    {
+      DEBUG ((
+        DEBUG_DISPATCH,
+        "Evaluate DXE DEPEX for FFS(%g)\n",
+        &DriverEntry->FileName
+        ));
+      DEBUG ((
+        DEBUG_DISPATCH,
+        "  BEFORE FFS(%g) = ",
+        &DriverEntry->BeforeAfterGuid
+        ));
+      if (CompareGuid (
+            &InsertedDriverEntry->FileName,
+            &DriverEntry->BeforeAfterGuid
+            ))
+      {
         //
         // Recursively process BEFORE
         //
@@ -631,12 +684,33 @@ CoreInsertOnScheduledQueueWhileProcessingBeforeAndAfter (
   //
   // Process After Dependency
   //
-  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
-    DriverEntry = CR (Link, EFI_CORE_DRIVER_ENTRY, Link, EFI_CORE_DRIVER_ENTRY_SIGNATURE);
-    if (DriverEntry->After && DriverEntry->Dependent && (DriverEntry != InsertedDriverEntry)) {
-      DEBUG ((DEBUG_DISPATCH, "Evaluate DXE DEPEX for FFS(%g)\n", &DriverEntry->FileName));
-      DEBUG ((DEBUG_DISPATCH, "  AFTER FFS(%g) = ", &DriverEntry->BeforeAfterGuid));
-      if (CompareGuid (&InsertedDriverEntry->FileName, &DriverEntry->BeforeAfterGuid)) {
+  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link =
+         Link->ForwardLink)
+  {
+    DriverEntry = CR (
+                    Link,
+                    EFI_CORE_DRIVER_ENTRY,
+                    Link,
+                    EFI_CORE_DRIVER_ENTRY_SIGNATURE
+                    );
+    if (DriverEntry->After && DriverEntry->Dependent && (DriverEntry !=
+                                                         InsertedDriverEntry))
+    {
+      DEBUG ((
+        DEBUG_DISPATCH,
+        "Evaluate DXE DEPEX for FFS(%g)\n",
+        &DriverEntry->FileName
+        ));
+      DEBUG ((
+        DEBUG_DISPATCH,
+        "  AFTER FFS(%g) = ",
+        &DriverEntry->BeforeAfterGuid
+        ));
+      if (CompareGuid (
+            &InsertedDriverEntry->FileName,
+            &DriverEntry->BeforeAfterGuid
+            ))
+      {
         //
         // Recursively process AFTER
         //
@@ -666,7 +740,9 @@ FvHasBeenProcessed (
   LIST_ENTRY    *Link;
   KNOWN_HANDLE  *KnownHandle;
 
-  for (Link = mFvHandleList.ForwardLink; Link != &mFvHandleList; Link = Link->ForwardLink) {
+  for (Link = mFvHandleList.ForwardLink; Link != &mFvHandleList; Link =
+         Link->ForwardLink)
+  {
     KnownHandle = CR (Link, KNOWN_HANDLE, Link, KNOWN_HANDLE_SIGNATURE);
     if (KnownHandle->Handle == FvHandle) {
       return TRUE;
@@ -712,7 +788,11 @@ FvIsBeingProcessed (
   // Get the FirmwareVolumeBlock protocol on that handle
   //
   FvNameGuidIsFound = FALSE;
-  Status            = CoreHandleProtocol (FvHandle, &gEfiFirmwareVolumeBlockProtocolGuid, (VOID **)&Fvb);
+  Status            = CoreHandleProtocol (
+                        FvHandle,
+                        &gEfiFirmwareVolumeBlockProtocolGuid,
+                        (VOID **)&Fvb
+                        );
   if (!EFI_ERROR (Status)) {
     //
     // Get the full FV header based on FVB protocol.
@@ -721,7 +801,9 @@ FvIsBeingProcessed (
     Status = GetFwVolHeader (Fvb, &FwVolHeader);
     if (!EFI_ERROR (Status)) {
       ASSERT (FwVolHeader != NULL);
-      if (VerifyFvHeaderChecksum (FwVolHeader) && (FwVolHeader->ExtHeaderOffset != 0)) {
+      if (VerifyFvHeaderChecksum (FwVolHeader) &&
+          (FwVolHeader->ExtHeaderOffset != 0))
+      {
         ExtHeaderOffset = (UINT32)FwVolHeader->ExtHeaderOffset;
         BlockMap        = FwVolHeader->BlockMap;
         LbaIndex        = 0;
@@ -730,7 +812,9 @@ FvIsBeingProcessed (
         // Find LbaIndex and LbaOffset for FV extension header based on BlockMap.
         //
         while ((BlockMap->NumBlocks != 0) || (BlockMap->Length != 0)) {
-          for (Index = 0; Index < BlockMap->NumBlocks && ExtHeaderOffset >= BlockMap->Length; Index++) {
+          for (Index = 0; Index < BlockMap->NumBlocks && ExtHeaderOffset >=
+               BlockMap->Length; Index++)
+          {
             ExtHeaderOffset -= BlockMap->Length;
             LbaIndex++;
           }
@@ -749,7 +833,13 @@ FvIsBeingProcessed (
         //
         // Read FvNameGuid from FV extension header.
         //
-        Status = ReadFvbData (Fvb, &LbaIndex, &LbaOffset, sizeof (FvNameGuid), (UINT8 *)&FvNameGuid);
+        Status = ReadFvbData (
+                   Fvb,
+                   &LbaIndex,
+                   &LbaOffset,
+                   sizeof (FvNameGuid),
+                   (UINT8 *)&FvNameGuid
+                   );
         if (!EFI_ERROR (Status)) {
           FvNameGuidIsFound = TRUE;
         }
@@ -763,10 +853,18 @@ FvIsBeingProcessed (
     //
     // Check whether the FV image with the found FvNameGuid has been processed.
     //
-    for (Link = mFvHandleList.ForwardLink; Link != &mFvHandleList; Link = Link->ForwardLink) {
+    for (Link = mFvHandleList.ForwardLink; Link != &mFvHandleList; Link =
+           Link->ForwardLink)
+    {
       KnownHandle = CR (Link, KNOWN_HANDLE, Link, KNOWN_HANDLE_SIGNATURE);
       if (CompareGuid (&FvNameGuid, &KnownHandle->FvNameGuid)) {
-        DEBUG ((DEBUG_ERROR, "FvImage on FvHandle %p and %p has the same FvNameGuid %g.\n", FvHandle, KnownHandle->Handle, &FvNameGuid));
+        DEBUG ((
+          DEBUG_ERROR,
+          "FvImage on FvHandle %p and %p has the same FvNameGuid %g.\n",
+          FvHandle,
+          KnownHandle->Handle,
+          &FvNameGuid
+          ));
         return NULL;
       }
     }
@@ -812,7 +910,11 @@ CoreFvToDevicePath (
   //
   // Remember the device path of the FV
   //
-  Status = CoreHandleProtocol (FvHandle, &gEfiDevicePathProtocolGuid, (VOID **)&FvDevicePath);
+  Status = CoreHandleProtocol (
+             FvHandle,
+             &gEfiDevicePathProtocolGuid,
+             (VOID **)&FvDevicePath
+             );
   if (EFI_ERROR (Status)) {
     FileNameDevicePath = NULL;
   } else {
@@ -955,16 +1057,25 @@ GetFvUsedSize (
 
   ExtHeaderOffset = ReadUnaligned16 (&FvHeader->ExtHeaderOffset);
   if (ExtHeaderOffset != 0) {
-    ExtHeader    = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FvHeader + ExtHeaderOffset);
+    ExtHeader    = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FvHeader +
+                                                      ExtHeaderOffset);
     ExtEntryList = (EFI_FIRMWARE_VOLUME_EXT_ENTRY *)(ExtHeader + 1);
-    while ((UINTN)ExtEntryList < ((UINTN)ExtHeader + ReadUnaligned32 (&ExtHeader->ExtHeaderSize))) {
-      if (ReadUnaligned16 (&ExtEntryList->ExtEntryType) == EFI_FV_EXT_TYPE_USED_SIZE_TYPE) {
+    while ((UINTN)ExtEntryList < ((UINTN)ExtHeader + ReadUnaligned32 (
+                                                       &ExtHeader->ExtHeaderSize
+                                                       )))
+    {
+      if (ReadUnaligned16 (&ExtEntryList->ExtEntryType) ==
+          EFI_FV_EXT_TYPE_USED_SIZE_TYPE)
+      {
         //
         // USED_SIZE FV_EXT_TYPE entry is found.
         //
-        ExtEntryUsedSize = (EFI_FIRMWARE_VOLUME_EXT_ENTRY_USED_SIZE_TYPE *)ExtEntryList;
-        *FvUsedSize      = ReadUnaligned32 (&ExtEntryUsedSize->UsedSize);
-        if ((ReadUnaligned32 (&FvHeader->Attributes) & EFI_FVB2_ERASE_POLARITY) != 0) {
+        ExtEntryUsedSize =
+          (EFI_FIRMWARE_VOLUME_EXT_ENTRY_USED_SIZE_TYPE *)ExtEntryList;
+        *FvUsedSize = ReadUnaligned32 (&ExtEntryUsedSize->UsedSize);
+        if ((ReadUnaligned32 (&FvHeader->Attributes) &
+             EFI_FVB2_ERASE_POLARITY) != 0)
+        {
           *EraseByte = 0xFF;
         } else {
           *EraseByte = 0;
@@ -981,7 +1092,9 @@ GetFvUsedSize (
       }
 
       ExtEntryList = (EFI_FIRMWARE_VOLUME_EXT_ENTRY *)
-                     ((UINT8 *)ExtEntryList + ReadUnaligned16 (&ExtEntryList->ExtEntrySize));
+                     ((UINT8 *)ExtEntryList + ReadUnaligned16 (
+                                                &ExtEntryList->ExtEntrySize
+                                                ));
     }
   }
 
@@ -1080,11 +1193,14 @@ CoreProcessFvImageFile (
       // can be aligned on any power-of-two boundary. A weakly aligned volume can not be moved from
       // its initial linked location and maintain its alignment.
       //
-      if ((ReadUnaligned32 (&FvHeader->Attributes) & EFI_FVB2_WEAK_ALIGNMENT) != EFI_FVB2_WEAK_ALIGNMENT) {
+      if ((ReadUnaligned32 (&FvHeader->Attributes) & EFI_FVB2_WEAK_ALIGNMENT) !=
+          EFI_FVB2_WEAK_ALIGNMENT)
+      {
         //
         // Get FvHeader alignment
         //
-        FvAlignment = 1 << ((ReadUnaligned32 (&FvHeader->Attributes) & EFI_FVB2_ALIGNMENT) >> 16);
+        FvAlignment = 1 << ((ReadUnaligned32 (&FvHeader->Attributes) &
+                             EFI_FVB2_ALIGNMENT) >> 16);
         //
         // FvAlignment must be greater than or equal to 8 bytes of the minimum FFS alignment value.
         //
@@ -1107,7 +1223,10 @@ CoreProcessFvImageFile (
           //
           // Allocate the aligned buffer for the FvImage.
           //
-          AlignedBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (BufferSize), (UINTN)FvAlignment);
+          AlignedBuffer = AllocateAlignedPages (
+                            EFI_SIZE_TO_PAGES (BufferSize),
+                            (UINTN)FvAlignment
+                            );
           if (AlignedBuffer == NULL) {
             FreePool (Buffer);
             Status = EFI_OUT_OF_RESOURCES;
@@ -1259,7 +1378,11 @@ CoreFwVolEventProtocolNotify (
       continue;
     }
 
-    Status = CoreHandleProtocol (FvHandle, &gEfiFirmwareVolume2ProtocolGuid, (VOID **)&Fv);
+    Status = CoreHandleProtocol (
+               FvHandle,
+               &gEfiFirmwareVolume2ProtocolGuid,
+               (VOID **)&Fv
+               );
     if (EFI_ERROR (Status) || (Fv == NULL)) {
       //
       // FvHandle must have Firmware Volume2 protocol thus we should never get here.
@@ -1268,7 +1391,11 @@ CoreFwVolEventProtocolNotify (
       continue;
     }
 
-    Status = CoreHandleProtocol (FvHandle, &gEfiDevicePathProtocolGuid, (VOID **)&FvDevicePath);
+    Status = CoreHandleProtocol (
+               FvHandle,
+               &gEfiDevicePathProtocolGuid,
+               (VOID **)&FvDevicePath
+               );
     if (EFI_ERROR (Status)) {
       //
       // The Firmware volume doesn't have device path, can't be dispatched.
@@ -1282,7 +1409,9 @@ CoreFwVolEventProtocolNotify (
     //  EFI_FV_FILETYPE_DXE_CORE is processed to produce a Loaded Image protocol for the core
     //  EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE is processed to create a Fvb
     //
-    for (Index = 0; Index < sizeof (mDxeFileTypes) / sizeof (EFI_FV_FILETYPE); Index++) {
+    for (Index = 0; Index < sizeof (mDxeFileTypes) / sizeof (EFI_FV_FILETYPE);
+         Index++)
+    {
       //
       // Initialize the search key
       //
@@ -1308,11 +1437,15 @@ CoreFwVolEventProtocolNotify (
                 // Maybe One specail Fv cantains only one DXE_CORE module, so its device path must
                 // be initialized completely.
                 //
-                EfiInitializeFwVolDevicepathNode (&mFvDevicePath.File, &NameGuid);
+                EfiInitializeFwVolDevicepathNode (
+                  &mFvDevicePath.File,
+                  &NameGuid
+                  );
                 SetDevicePathEndNode (&mFvDevicePath.End);
 
                 gDxeCoreLoadedImage->FilePath = DuplicateDevicePath (
-                                                  (EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath
+                                                  (EFI_DEVICE_PATH_PROTOCOL *)&
+                                                  mFvDevicePath
                                                   );
                 gDxeCoreLoadedImage->DeviceHandle = FvHandle;
               }
@@ -1411,8 +1544,15 @@ CoreFwVolEventProtocolNotify (
     //
 
     for (Index = 0; Index < AprioriEntryCount; Index++) {
-      for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
-        DriverEntry = CR (Link, EFI_CORE_DRIVER_ENTRY, Link, EFI_CORE_DRIVER_ENTRY_SIGNATURE);
+      for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link =
+             Link->ForwardLink)
+      {
+        DriverEntry = CR (
+                        Link,
+                        EFI_CORE_DRIVER_ENTRY,
+                        Link,
+                        EFI_CORE_DRIVER_ENTRY_SIGNATURE
+                        );
         if (CompareGuid (&DriverEntry->FileName, &AprioriFile[Index]) &&
             (FvHandle == DriverEntry->FvHandle))
         {
@@ -1421,7 +1561,11 @@ CoreFwVolEventProtocolNotify (
           DriverEntry->Scheduled = TRUE;
           InsertTailList (&mScheduledQueue, &DriverEntry->ScheduledLink);
           CoreReleaseDispatcherLock ();
-          DEBUG ((DEBUG_DISPATCH, "Evaluate DXE DEPEX for FFS(%g)\n", &DriverEntry->FileName));
+          DEBUG ((
+            DEBUG_DISPATCH,
+            "Evaluate DXE DEPEX for FFS(%g)\n",
+            &DriverEntry->FileName
+            ));
           DEBUG ((DEBUG_DISPATCH, "  RESULT = TRUE (Apriori)\n"));
           break;
         }
@@ -1475,10 +1619,21 @@ CoreDisplayDiscoveredNotDispatched (
   LIST_ENTRY             *Link;
   EFI_CORE_DRIVER_ENTRY  *DriverEntry;
 
-  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
-    DriverEntry = CR (Link, EFI_CORE_DRIVER_ENTRY, Link, EFI_CORE_DRIVER_ENTRY_SIGNATURE);
+  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link =
+         Link->ForwardLink)
+  {
+    DriverEntry = CR (
+                    Link,
+                    EFI_CORE_DRIVER_ENTRY,
+                    Link,
+                    EFI_CORE_DRIVER_ENTRY_SIGNATURE
+                    );
     if (DriverEntry->Dependent) {
-      DEBUG ((DEBUG_LOAD, "Driver %g was discovered but not loaded!!\n", &DriverEntry->FileName));
+      DEBUG ((
+        DEBUG_LOAD,
+        "Driver %g was discovered but not loaded!!\n",
+        &DriverEntry->FileName
+        ));
     }
   }
 }

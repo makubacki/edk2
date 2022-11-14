@@ -79,7 +79,8 @@ CreateEntryStub (
   //
   // fixup the jump target to point to the common entry
   //
-  *(UINT32 *)&StubCopy[0x3] = (UINT32)((UINTN)CommonIdtEntry - (UINTN)&StubCopy[StubSize]);
+  *(UINT32 *)&StubCopy[0x3] = (UINT32)((UINTN)CommonIdtEntry -
+                                       (UINTN)&StubCopy[StubSize]);
 
   return;
 }
@@ -112,7 +113,12 @@ ManageIdtEntryTable (
 
   Status = EFI_SUCCESS;
 
-  if (CompareMem (&IdtEntryTable[ExceptionType].NewDesc, &NullDesc, sizeof (IA32_IDT_GATE_DESCRIPTOR)) != 0) {
+  if (CompareMem (
+        &IdtEntryTable[ExceptionType].NewDesc,
+        &NullDesc,
+        sizeof (IA32_IDT_GATE_DESCRIPTOR)
+        ) != 0)
+  {
     //
     // we've already installed to this vector
     //

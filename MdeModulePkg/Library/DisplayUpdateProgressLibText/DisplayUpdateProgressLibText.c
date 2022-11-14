@@ -95,7 +95,9 @@ DisplayUpdateProgress (
         mProgressBarForegroundColor |= EFI_RED;
       }
 
-      if ((Color->Pixel.Blue >= 0xC0) || (Color->Pixel.Green >= 0xC0) || (Color->Pixel.Red >= 0xC0)) {
+      if ((Color->Pixel.Blue >= 0xC0) || (Color->Pixel.Green >= 0xC0) ||
+          (Color->Pixel.Red >= 0xC0))
+      {
         mProgressBarForegroundColor |= EFI_BRIGHT;
       }
 
@@ -114,7 +116,12 @@ DisplayUpdateProgress (
   // Can not update progress bar if Completion is less than previous
   //
   if (Completion < mPreviousProgress) {
-    DEBUG ((DEBUG_WARN, "WARNING: Completion (%d) should not be lesss than Previous (%d)!!!\n", Completion, mPreviousProgress));
+    DEBUG ((
+      DEBUG_WARN,
+      "WARNING: Completion (%d) should not be lesss than Previous (%d)!!!\n",
+      Completion,
+      mPreviousProgress
+      ));
     return EFI_INVALID_PARAMETER;
   }
 

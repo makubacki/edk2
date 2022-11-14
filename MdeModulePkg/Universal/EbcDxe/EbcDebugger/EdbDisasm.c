@@ -352,7 +352,10 @@ EdbDisasmCALL (
 
       if ((Operands & OPERAND_M_INDIRECT1) == 0) {
         if ((Operands & OPERAND_M_RELATIVE_ADDR) != 0) {
-          Result = EdbFindAndPrintSymbol ((UINTN)(SavedInstructionAddress + Ip + Size));
+          Result = EdbFindAndPrintSymbol (
+                     (UINTN)(SavedInstructionAddress + Ip +
+                             Size)
+                     );
         } else {
           Result = EdbFindAndPrintSymbol ((UINTN)Ip);
         }
@@ -1753,7 +1756,10 @@ EdbDisasmMOVREL (
     switch (Modifiers & MOVI_M_DATAWIDTH) {
       case MOVI_DATAWIDTH16:
         CopyMem (&Data16, (VOID *)(UINTN)(InstructionAddress), sizeof (UINT16));
-        Result = EdbFindAndPrintSymbol ((UINTN)(SavedInstructionAddress + Size + (INT16)Data16));
+        Result = EdbFindAndPrintSymbol (
+                   (UINTN)(SavedInstructionAddress + Size +
+                           (INT16)Data16)
+                   );
         if (Result == 0) {
           EdbPrintData16 (Data16);
         }
@@ -1761,7 +1767,10 @@ EdbDisasmMOVREL (
         break;
       case MOVI_DATAWIDTH32:
         CopyMem (&Data32, (VOID *)(UINTN)(InstructionAddress), sizeof (UINT32));
-        Result = EdbFindAndPrintSymbol ((UINTN)(SavedInstructionAddress + Size + (INT32)Data32));
+        Result = EdbFindAndPrintSymbol (
+                   (UINTN)(SavedInstructionAddress + Size +
+                           (INT32)Data32)
+                   );
         if (Result == 0) {
           EdbPrintData32 (Data32);
         }
@@ -1770,7 +1779,10 @@ EdbDisasmMOVREL (
       case MOVI_DATAWIDTH64:
         CopyMem (&Data64, (VOID *)(UINTN)(InstructionAddress), sizeof (UINT64));
         if (sizeof (UINTN) == sizeof (UINT64)) {
-          Result = EdbFindAndPrintSymbol ((UINTN)(SavedInstructionAddress + Size + (INT64)Data64));
+          Result = EdbFindAndPrintSymbol (
+                     (UINTN)(SavedInstructionAddress +
+                             Size + (INT64)Data64)
+                     );
         } else {
           Result = 0;
         }

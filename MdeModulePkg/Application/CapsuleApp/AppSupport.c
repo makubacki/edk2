@@ -179,7 +179,8 @@ WriteFileFromBuffer (
   Status = ShellProtocol->OpenFileByName (
                             FileName,
                             &Handle,
-                            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE
+                            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE |
+                            EFI_FILE_MODE_CREATE
                             );
   if (EFI_ERROR (Status)) {
     return Status;

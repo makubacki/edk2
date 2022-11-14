@@ -12,7 +12,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gEhciComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gEhciComponentName =
+{
   EhciComponentNameGetDriverName,
   EhciComponentNameGetControllerName,
   "eng"
@@ -21,15 +22,17 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gEhciComponentName = 
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gEhciComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gEhciComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)EhciComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)EhciComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mEhciDriverNameTable[] = {
-  { "eng;en", L"Usb Ehci Driver" },
-  { NULL,     NULL               }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mEhciDriverNameTable[] =
+{
+  { "eng;en", L"Usb Ehci Driver"     },
+  { NULL,     NULL                   }
 };
 
 /**

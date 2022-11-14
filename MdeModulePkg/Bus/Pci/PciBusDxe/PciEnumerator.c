@@ -158,7 +158,9 @@ PciRootBridgeEnumerator (
     return Status;
   }
 
-  if ((Configuration == NULL) || (Configuration->Desc == ACPI_END_TAG_DESCRIPTOR)) {
+  if ((Configuration == NULL) || (Configuration->Desc ==
+                                  ACPI_END_TAG_DESCRIPTOR))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -167,9 +169,13 @@ PciRootBridgeEnumerator (
   //
   // Sort the descriptors in ascending order
   //
-  for (Configuration1 = Configuration; Configuration1->Desc != ACPI_END_TAG_DESCRIPTOR; Configuration1++) {
+  for (Configuration1 = Configuration; Configuration1->Desc !=
+       ACPI_END_TAG_DESCRIPTOR; Configuration1++)
+  {
     Configuration2 = Configuration1;
-    for (Configuration3 = Configuration1 + 1; Configuration3->Desc != ACPI_END_TAG_DESCRIPTOR; Configuration3++) {
+    for (Configuration3 = Configuration1 + 1; Configuration3->Desc !=
+         ACPI_END_TAG_DESCRIPTOR; Configuration3++)
+    {
       if (Configuration2->AddrRangeMin > Configuration3->AddrRangeMin) {
         Configuration2 = Configuration3;
       }
@@ -226,7 +232,12 @@ PciRootBridgeEnumerator (
   // Assign max bus number scanned
   //
 
-  Status = PciAllocateBusNumber (RootBridgeDev, SubBusNumber, PaddedBusRange, &SubBusNumber);
+  Status = PciAllocateBusNumber (
+             RootBridgeDev,
+             SubBusNumber,
+             PaddedBusRange,
+             &SubBusNumber
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -235,7 +246,9 @@ PciRootBridgeEnumerator (
   // Find the bus range which contains the higest bus number, then returns the number of buses
   // that should be decoded.
   //
-  while (Configuration->AddrRangeMin + Configuration->AddrLen - 1 < SubBusNumber) {
+  while (Configuration->AddrRangeMin + Configuration->AddrLen - 1 <
+         SubBusNumber)
+  {
     Configuration++;
   }
 
@@ -591,7 +604,9 @@ PciHostBridgeDeviceAttribute (
 
   RootBridgeHandle = NULL;
 
-  while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) == EFI_SUCCESS) {
+  while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) ==
+         EFI_SUCCESS)
+  {
     //
     // Get RootBridg Device by handle
     //
@@ -831,7 +846,8 @@ GetLargerConsumerDevice (
     return PciResNode1;
   }
 
-  if (  (IS_PCI_BRIDGE (&(PciResNode2->PciDev->Pci)) || (PciResNode2->PciDev->Parent == NULL)) \
+  if (  (IS_PCI_BRIDGE (&(PciResNode2->PciDev->Pci)) ||
+         (PciResNode2->PciDev->Parent == NULL)) \
      && (PciResNode2->ResourceUsage != PciResUsagePadding))
   {
     return PciResNode1;
@@ -877,7 +893,8 @@ GetMaxResourceConsumerDevice (
       continue;
     }
 
-    if (  (IS_PCI_BRIDGE (&(Temp->PciDev->Pci)) || (Temp->PciDev->Parent == NULL)) \
+    if (  (IS_PCI_BRIDGE (&(Temp->PciDev->Pci)) || (Temp->PciDev->Parent ==
+                                                    NULL)) \
        && (Temp->ResourceUsage != PciResUsagePadding))
     {
       PPBResNode = GetMaxResourceConsumerDevice (Temp);
@@ -1006,9 +1023,11 @@ PciHostBridgeAdjustAllocation (
       // Have no way to get ReqRes, AllocRes & Bar here
       //
       ZeroMem (&AllocFailExtendedData, sizeof (AllocFailExtendedData));
-      AllocFailExtendedData.DevicePathSize = (UINT16)sizeof (EFI_DEVICE_PATH_PROTOCOL);
-      AllocFailExtendedData.DevicePath     = (UINT8 *)PciResNode->PciDev->DevicePath;
-      AllocFailExtendedData.Bar            = PciResNode->Bar;
+      AllocFailExtendedData.DevicePathSize =
+        (UINT16)sizeof (EFI_DEVICE_PATH_PROTOCOL);
+      AllocFailExtendedData.DevicePath =
+        (UINT8 *)PciResNode->PciDev->DevicePath;
+      AllocFailExtendedData.Bar = PciResNode->Bar;
 
       REPORT_STATUS_CODE_WITH_EXTENDED_DATA (
         EFI_PROGRESS_CODE,
@@ -1119,7 +1138,10 @@ ConstructAcpiResourceRequestor (
     // If there is at least one type of resource request,
     // allocate a acpi resource node
     //
-    Configuration = AllocateZeroPool (sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) * NumConfig + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR));
+    Configuration = AllocateZeroPool (
+                      sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) * NumConfig +
+                      sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)
+                      );
     if (Configuration == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1382,7 +1404,13 @@ PciBridgeEnumerator (
   SubBusNumber   = 0;
   StartBusNumber = 0;
   PciIo          = &(BridgeDev->PciIo);
-  Status         = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0x19, 1, &StartBusNumber);
+  Status         = PciIo->Pci.Read (
+                                PciIo,
+                                EfiPciIoWidthUint8,
+                                0x19,
+                                1,
+                                &StartBusNumber
+                                );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -2011,7 +2039,9 @@ PciHotPlugRequestNotify (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((Operation != EfiPciHotPlugRequestAdd) && (Operation != EfiPciHotplugRequestRemove)) {
+  if ((Operation != EfiPciHotPlugRequestAdd) && (Operation !=
+                                                 EfiPciHotplugRequestRemove))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -2019,7 +2049,9 @@ PciHotPlugRequestNotify (
     if (ChildHandleBuffer == NULL) {
       return EFI_INVALID_PARAMETER;
     }
-  } else if ((Operation == EfiPciHotplugRequestRemove) && (*NumberOfChildren != 0)) {
+  } else if ((Operation == EfiPciHotplugRequestRemove) && (*NumberOfChildren !=
+                                                           0))
+  {
     if (ChildHandleBuffer == NULL) {
       return EFI_INVALID_PARAMETER;
     }

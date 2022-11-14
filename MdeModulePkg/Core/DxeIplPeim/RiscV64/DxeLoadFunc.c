@@ -44,7 +44,8 @@ HandOffToDxeCore (
   // Compute the top of the stack we were allocated. Pre-allocate a UINTN
   // for safety.
   //
-  TopOfStack = (VOID *)((UINTN)BaseOfStack + EFI_SIZE_TO_PAGES (STACK_SIZE) * EFI_PAGE_SIZE - CPU_STACK_ALIGNMENT);
+  TopOfStack = (VOID *)((UINTN)BaseOfStack + EFI_SIZE_TO_PAGES (STACK_SIZE) *
+                        EFI_PAGE_SIZE - CPU_STACK_ALIGNMENT);
   TopOfStack = ALIGN_POINTER (TopOfStack, CPU_STACK_ALIGNMENT);
 
   //
@@ -61,7 +62,12 @@ HandOffToDxeCore (
   //
   UpdateStackHob ((EFI_PHYSICAL_ADDRESS)(UINTN)BaseOfStack, STACK_SIZE);
 
-  DEBUG ((DEBUG_INFO, "DXE Core new stack at %x, stack pointer at %x\n", BaseOfStack, TopOfStack));
+  DEBUG ((
+    DEBUG_INFO,
+    "DXE Core new stack at %x, stack pointer at %x\n",
+    BaseOfStack,
+    TopOfStack
+    ));
 
   //
   // Transfer the control to the entry point of DxeCore.

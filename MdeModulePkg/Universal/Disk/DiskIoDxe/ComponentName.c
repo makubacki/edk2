@@ -11,7 +11,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gDiskIoComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gDiskIoComponentName = {
   DiskIoComponentNameGetDriverName,
   DiskIoComponentNameGetControllerName,
   "eng"
@@ -20,7 +21,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gDiskIoComponentName 
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gDiskIoComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gDiskIoComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)DiskIoComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)DiskIoComponentNameGetControllerName,
   "en"
@@ -30,7 +32,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gDiskIoComponentName
 // Driver name table for DiskIo module.
 // It is shared by the implementation of ComponentName & ComponentName2 Protocol.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mDiskIoDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mDiskIoDriverNameTable[] = {
   {
     "eng;en",
     (CHAR16 *)L"Generic Disk I/O Driver"

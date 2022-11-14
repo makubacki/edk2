@@ -11,7 +11,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUsbMassStorageComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gUsbMassStorageComponentName = {
   UsbMassStorageGetDriverName,
   UsbMassStorageGetControllerName,
   "eng"
@@ -20,7 +21,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUsbMassStorageCompon
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gUsbMassStorageComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gUsbMassStorageComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)UsbMassStorageGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)UsbMassStorageGetControllerName,
   "en"
@@ -28,8 +30,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gUsbMassStorageCompo
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mUsbMassStorageDriverNameTable[] = {
-  { "eng;en", L"Usb Mass Storage Driver" },
-  { NULL,     NULL                       }
+  { "eng;en", L"Usb Mass Storage Driver"     },
+  { NULL,     NULL                           }
 };
 
 /**

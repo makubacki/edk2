@@ -31,10 +31,20 @@ PciCfgAddressConvert (
   )
 {
   if (Address->ExtendedRegister == 0) {
-    return PCI_LIB_ADDRESS (Address->Bus, Address->Device, Address->Function, Address->Register);
+    return PCI_LIB_ADDRESS (
+             Address->Bus,
+             Address->Device,
+             Address->Function,
+             Address->Register
+             );
   }
 
-  return PCI_LIB_ADDRESS (Address->Bus, Address->Device, Address->Function, Address->ExtendedRegister);
+  return PCI_LIB_ADDRESS (
+           Address->Bus,
+           Address->Device,
+           Address->Function,
+           Address->ExtendedRegister
+           );
 }
 
 /**
@@ -64,7 +74,9 @@ PciCfg2Read (
 {
   UINTN  PciLibAddress;
 
-  PciLibAddress = PciCfgAddressConvert ((EFI_PEI_PCI_CFG_PPI_PCI_ADDRESS *)&Address);
+  PciLibAddress = PciCfgAddressConvert (
+                    (EFI_PEI_PCI_CFG_PPI_PCI_ADDRESS *)&Address
+                    );
 
   if (Width == EfiPeiPciCfgWidthUint8) {
     *((UINT8 *)Buffer) = PciRead8 (PciLibAddress);
@@ -136,7 +148,9 @@ PciCfg2Write (
 {
   UINTN  PciLibAddress;
 
-  PciLibAddress = PciCfgAddressConvert ((EFI_PEI_PCI_CFG_PPI_PCI_ADDRESS *)&Address);
+  PciLibAddress = PciCfgAddressConvert (
+                    (EFI_PEI_PCI_CFG_PPI_PCI_ADDRESS *)&Address
+                    );
 
   if (Width == EfiPeiPciCfgWidthUint8) {
     PciWrite8 (PciLibAddress, *((UINT8 *)Buffer));
@@ -217,10 +231,16 @@ PciCfg2Modify (
   UINT32  ClearValue32;
   UINT32  SetValue32;
 
-  PciLibAddress = PciCfgAddressConvert ((EFI_PEI_PCI_CFG_PPI_PCI_ADDRESS *)&Address);
+  PciLibAddress = PciCfgAddressConvert (
+                    (EFI_PEI_PCI_CFG_PPI_PCI_ADDRESS *)&Address
+                    );
 
   if (Width == EfiPeiPciCfgWidthUint8) {
-    PciAndThenOr8 (PciLibAddress, (UINT8)(~(*(UINT8 *)ClearBits)), *((UINT8 *)SetBits));
+    PciAndThenOr8 (
+      PciLibAddress,
+      (UINT8)(~(*(UINT8 *)ClearBits)),
+      *((UINT8 *)SetBits)
+      );
   } else if (Width == EfiPeiPciCfgWidthUint16) {
     if ((PciLibAddress & 0x01) == 0) {
       //
@@ -233,8 +253,16 @@ PciCfg2Modify (
       //
       // Unaligned Pci address access, break up the request into byte by byte.
       //
-      PciAndThenOr8 (PciLibAddress, (UINT8)(~(*(UINT8 *)ClearBits)), *((UINT8 *)SetBits));
-      PciAndThenOr8 (PciLibAddress + 1, (UINT8)(~(*((UINT8 *)ClearBits + 1))), *((UINT8 *)SetBits + 1));
+      PciAndThenOr8 (
+        PciLibAddress,
+        (UINT8)(~(*(UINT8 *)ClearBits)),
+        *((UINT8 *)SetBits)
+        );
+      PciAndThenOr8 (
+        PciLibAddress + 1,
+        (UINT8)(~(*((UINT8 *)ClearBits + 1))),
+        *((UINT8 *)SetBits + 1)
+        );
     }
   } else if (Width == EfiPeiPciCfgWidthUint32) {
     if ((PciLibAddress & 0x03) == 0) {
@@ -259,10 +287,26 @@ PciCfg2Modify (
       //
       // Unaligned Pci address access, break up the request into byte by byte.
       //
-      PciAndThenOr8 (PciLibAddress, (UINT8)(~(*(UINT8 *)ClearBits)), *((UINT8 *)SetBits));
-      PciAndThenOr8 (PciLibAddress + 1, (UINT8)(~(*((UINT8 *)ClearBits + 1))), *((UINT8 *)SetBits + 1));
-      PciAndThenOr8 (PciLibAddress + 2, (UINT8)(~(*((UINT8 *)ClearBits + 2))), *((UINT8 *)SetBits + 2));
-      PciAndThenOr8 (PciLibAddress + 3, (UINT8)(~(*((UINT8 *)ClearBits + 3))), *((UINT8 *)SetBits + 3));
+      PciAndThenOr8 (
+        PciLibAddress,
+        (UINT8)(~(*(UINT8 *)ClearBits)),
+        *((UINT8 *)SetBits)
+        );
+      PciAndThenOr8 (
+        PciLibAddress + 1,
+        (UINT8)(~(*((UINT8 *)ClearBits + 1))),
+        *((UINT8 *)SetBits + 1)
+        );
+      PciAndThenOr8 (
+        PciLibAddress + 2,
+        (UINT8)(~(*((UINT8 *)ClearBits + 2))),
+        *((UINT8 *)SetBits + 2)
+        );
+      PciAndThenOr8 (
+        PciLibAddress + 3,
+        (UINT8)(~(*((UINT8 *)ClearBits + 3))),
+        *((UINT8 *)SetBits + 3)
+        );
     }
   } else {
     return EFI_INVALID_PARAMETER;
@@ -303,7 +347,9 @@ PeimInitializePciCfg (
   EFI_STATUS  Status;
 
   (**(EFI_PEI_SERVICES **)PeiServices).PciCfg = &gPciCfg2Ppi;
-  Status                                      = PeiServicesInstallPpi (&gPciCfg2PpiList);
+  Status                                      = PeiServicesInstallPpi (
+                                                  &gPciCfg2PpiList
+                                                  );
   ASSERT_EFI_ERROR (Status);
 
   return Status;

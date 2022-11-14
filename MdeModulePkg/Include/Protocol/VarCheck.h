@@ -109,9 +109,10 @@ EFI_STATUS
   );
 
 struct _EDKII_VAR_CHECK_PROTOCOL {
-  EDKII_VAR_CHECK_REGISTER_SET_VARIABLE_CHECK_HANDLER    RegisterSetVariableCheckHandler;
-  EDKII_VAR_CHECK_VARIABLE_PROPERTY_SET                  VariablePropertySet;
-  EDKII_VAR_CHECK_VARIABLE_PROPERTY_GET                  VariablePropertyGet;
+  EDKII_VAR_CHECK_REGISTER_SET_VARIABLE_CHECK_HANDLER
+                                           RegisterSetVariableCheckHandler;
+  EDKII_VAR_CHECK_VARIABLE_PROPERTY_SET    VariablePropertySet;
+  EDKII_VAR_CHECK_VARIABLE_PROPERTY_GET    VariablePropertyGet;
 };
 
 extern EFI_GUID  gEdkiiVarCheckProtocolGuid;

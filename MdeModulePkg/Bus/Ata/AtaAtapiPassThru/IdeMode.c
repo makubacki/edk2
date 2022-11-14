@@ -229,17 +229,47 @@ DumpAllIdeRegisters (
 
   ZeroMem (&StatusBlock, sizeof (EFI_ATA_STATUS_BLOCK));
 
-  StatusBlock.AtaStatus          = IdeReadPortB (PciIo, IdeRegisters->CmdOrStatus);
-  StatusBlock.AtaError           = IdeReadPortB (PciIo, IdeRegisters->ErrOrFeature);
-  StatusBlock.AtaSectorCount     = IdeReadPortB (PciIo, IdeRegisters->SectorCount);
-  StatusBlock.AtaSectorCountExp  = IdeReadPortB (PciIo, IdeRegisters->SectorCount);
-  StatusBlock.AtaSectorNumber    = IdeReadPortB (PciIo, IdeRegisters->SectorNumber);
-  StatusBlock.AtaSectorNumberExp = IdeReadPortB (PciIo, IdeRegisters->SectorNumber);
-  StatusBlock.AtaCylinderLow     = IdeReadPortB (PciIo, IdeRegisters->CylinderLsb);
-  StatusBlock.AtaCylinderLowExp  = IdeReadPortB (PciIo, IdeRegisters->CylinderLsb);
-  StatusBlock.AtaCylinderHigh    = IdeReadPortB (PciIo, IdeRegisters->CylinderMsb);
-  StatusBlock.AtaCylinderHighExp = IdeReadPortB (PciIo, IdeRegisters->CylinderMsb);
-  StatusBlock.AtaDeviceHead      = IdeReadPortB (PciIo, IdeRegisters->Head);
+  StatusBlock.AtaStatus = IdeReadPortB (
+                            PciIo,
+                            IdeRegisters->CmdOrStatus
+                            );
+  StatusBlock.AtaError = IdeReadPortB (
+                           PciIo,
+                           IdeRegisters->ErrOrFeature
+                           );
+  StatusBlock.AtaSectorCount = IdeReadPortB (
+                                 PciIo,
+                                 IdeRegisters->SectorCount
+                                 );
+  StatusBlock.AtaSectorCountExp = IdeReadPortB (
+                                    PciIo,
+                                    IdeRegisters->SectorCount
+                                    );
+  StatusBlock.AtaSectorNumber = IdeReadPortB (
+                                  PciIo,
+                                  IdeRegisters->SectorNumber
+                                  );
+  StatusBlock.AtaSectorNumberExp = IdeReadPortB (
+                                     PciIo,
+                                     IdeRegisters->SectorNumber
+                                     );
+  StatusBlock.AtaCylinderLow = IdeReadPortB (
+                                 PciIo,
+                                 IdeRegisters->CylinderLsb
+                                 );
+  StatusBlock.AtaCylinderLowExp = IdeReadPortB (
+                                    PciIo,
+                                    IdeRegisters->CylinderLsb
+                                    );
+  StatusBlock.AtaCylinderHigh = IdeReadPortB (
+                                  PciIo,
+                                  IdeRegisters->CylinderMsb
+                                  );
+  StatusBlock.AtaCylinderHighExp = IdeReadPortB (
+                                     PciIo,
+                                     IdeRegisters->CylinderMsb
+                                     );
+  StatusBlock.AtaDeviceHead = IdeReadPortB (PciIo, IdeRegisters->Head);
 
   if (AtaStatusBlock != NULL) {
     //
@@ -250,36 +280,68 @@ DumpAllIdeRegisters (
 
   DEBUG_CODE_BEGIN ();
   if ((StatusBlock.AtaStatus & ATA_STSREG_DWF) != 0) {
-    DEBUG ((DEBUG_ERROR, "CheckRegisterStatus()-- %02x : Error : Write Fault\n", StatusBlock.AtaStatus));
+    DEBUG ((
+      DEBUG_ERROR,
+      "CheckRegisterStatus()-- %02x : Error : Write Fault\n",
+      StatusBlock.AtaStatus
+      ));
   }
 
   if ((StatusBlock.AtaStatus & ATA_STSREG_CORR) != 0) {
-    DEBUG ((DEBUG_ERROR, "CheckRegisterStatus()-- %02x : Error : Corrected Data\n", StatusBlock.AtaStatus));
+    DEBUG ((
+      DEBUG_ERROR,
+      "CheckRegisterStatus()-- %02x : Error : Corrected Data\n",
+      StatusBlock.AtaStatus
+      ));
   }
 
   if ((StatusBlock.AtaStatus & ATA_STSREG_ERR) != 0) {
     if ((StatusBlock.AtaError & ATA_ERRREG_BBK) != 0) {
-      DEBUG ((DEBUG_ERROR, "CheckRegisterStatus()-- %02x : Error : Bad Block Detected\n", StatusBlock.AtaError));
+      DEBUG ((
+        DEBUG_ERROR,
+        "CheckRegisterStatus()-- %02x : Error : Bad Block Detected\n",
+        StatusBlock.AtaError
+        ));
     }
 
     if ((StatusBlock.AtaError & ATA_ERRREG_UNC) != 0) {
-      DEBUG ((DEBUG_ERROR, "CheckRegisterStatus()-- %02x : Error : Uncorrectable Data\n", StatusBlock.AtaError));
+      DEBUG ((
+        DEBUG_ERROR,
+        "CheckRegisterStatus()-- %02x : Error : Uncorrectable Data\n",
+        StatusBlock.AtaError
+        ));
     }
 
     if ((StatusBlock.AtaError & ATA_ERRREG_MC) != 0) {
-      DEBUG ((DEBUG_ERROR, "CheckRegisterStatus()-- %02x : Error : Media Change\n", StatusBlock.AtaError));
+      DEBUG ((
+        DEBUG_ERROR,
+        "CheckRegisterStatus()-- %02x : Error : Media Change\n",
+        StatusBlock.AtaError
+        ));
     }
 
     if ((StatusBlock.AtaError & ATA_ERRREG_ABRT) != 0) {
-      DEBUG ((DEBUG_ERROR, "CheckRegisterStatus()-- %02x : Error : Abort\n", StatusBlock.AtaError));
+      DEBUG ((
+        DEBUG_ERROR,
+        "CheckRegisterStatus()-- %02x : Error : Abort\n",
+        StatusBlock.AtaError
+        ));
     }
 
     if ((StatusBlock.AtaError & ATA_ERRREG_TK0NF) != 0) {
-      DEBUG ((DEBUG_ERROR, "CheckRegisterStatus()-- %02x : Error : Track 0 Not Found\n", StatusBlock.AtaError));
+      DEBUG ((
+        DEBUG_ERROR,
+        "CheckRegisterStatus()-- %02x : Error : Track 0 Not Found\n",
+        StatusBlock.AtaError
+        ));
     }
 
     if ((StatusBlock.AtaError & ATA_ERRREG_AMNF) != 0) {
-      DEBUG ((DEBUG_ERROR, "CheckRegisterStatus()-- %02x : Error : Address Mark Not Found\n", StatusBlock.AtaError));
+      DEBUG ((
+        DEBUG_ERROR,
+        "CheckRegisterStatus()-- %02x : Error : Address Mark Not Found\n",
+        StatusBlock.AtaError
+        ));
     }
   }
 
@@ -312,7 +374,9 @@ CheckStatusRegister (
   StatusRegister = IdeReadPortB (PciIo, IdeRegisters->CmdOrStatus);
 
   if ((StatusRegister & ATA_STSREG_BSY) == 0) {
-    if ((StatusRegister & (ATA_STSREG_ERR | ATA_STSREG_DWF | ATA_STSREG_CORR)) == 0) {
+    if ((StatusRegister & (ATA_STSREG_ERR | ATA_STSREG_DWF |
+                           ATA_STSREG_CORR)) == 0)
+    {
       return EFI_SUCCESS;
     } else {
       return EFI_DEVICE_ERROR;
@@ -774,14 +838,21 @@ GetIdeRegisterIoAddr (
   //
   // Calculate IDE primary channel I/O register base address.
   //
-  IdeRegisters[EfiIdePrimary].Data              = CommandBlockBaseAddr;
-  IdeRegisters[EfiIdePrimary].ErrOrFeature      = (UINT16)(CommandBlockBaseAddr + 0x01);
-  IdeRegisters[EfiIdePrimary].SectorCount       = (UINT16)(CommandBlockBaseAddr + 0x02);
-  IdeRegisters[EfiIdePrimary].SectorNumber      = (UINT16)(CommandBlockBaseAddr + 0x03);
-  IdeRegisters[EfiIdePrimary].CylinderLsb       = (UINT16)(CommandBlockBaseAddr + 0x04);
-  IdeRegisters[EfiIdePrimary].CylinderMsb       = (UINT16)(CommandBlockBaseAddr + 0x05);
-  IdeRegisters[EfiIdePrimary].Head              = (UINT16)(CommandBlockBaseAddr + 0x06);
-  IdeRegisters[EfiIdePrimary].CmdOrStatus       = (UINT16)(CommandBlockBaseAddr + 0x07);
+  IdeRegisters[EfiIdePrimary].Data         = CommandBlockBaseAddr;
+  IdeRegisters[EfiIdePrimary].ErrOrFeature =
+    (UINT16)(CommandBlockBaseAddr + 0x01);
+  IdeRegisters[EfiIdePrimary].SectorCount =
+    (UINT16)(CommandBlockBaseAddr + 0x02);
+  IdeRegisters[EfiIdePrimary].SectorNumber =
+    (UINT16)(CommandBlockBaseAddr + 0x03);
+  IdeRegisters[EfiIdePrimary].CylinderLsb =
+    (UINT16)(CommandBlockBaseAddr + 0x04);
+  IdeRegisters[EfiIdePrimary].CylinderMsb =
+    (UINT16)(CommandBlockBaseAddr + 0x05);
+  IdeRegisters[EfiIdePrimary].Head =
+    (UINT16)(CommandBlockBaseAddr + 0x06);
+  IdeRegisters[EfiIdePrimary].CmdOrStatus =
+    (UINT16)(CommandBlockBaseAddr + 0x07);
   IdeRegisters[EfiIdePrimary].AltOrDev          = ControlBlockBaseAddr;
   IdeRegisters[EfiIdePrimary].BusMasterBaseAddr = BusMasterBaseAddr;
 
@@ -805,16 +876,24 @@ GetIdeRegisterIoAddr (
   //
   // Calculate IDE secondary channel I/O register base address.
   //
-  IdeRegisters[EfiIdeSecondary].Data              = CommandBlockBaseAddr;
-  IdeRegisters[EfiIdeSecondary].ErrOrFeature      = (UINT16)(CommandBlockBaseAddr + 0x01);
-  IdeRegisters[EfiIdeSecondary].SectorCount       = (UINT16)(CommandBlockBaseAddr + 0x02);
-  IdeRegisters[EfiIdeSecondary].SectorNumber      = (UINT16)(CommandBlockBaseAddr + 0x03);
-  IdeRegisters[EfiIdeSecondary].CylinderLsb       = (UINT16)(CommandBlockBaseAddr + 0x04);
-  IdeRegisters[EfiIdeSecondary].CylinderMsb       = (UINT16)(CommandBlockBaseAddr + 0x05);
-  IdeRegisters[EfiIdeSecondary].Head              = (UINT16)(CommandBlockBaseAddr + 0x06);
-  IdeRegisters[EfiIdeSecondary].CmdOrStatus       = (UINT16)(CommandBlockBaseAddr + 0x07);
+  IdeRegisters[EfiIdeSecondary].Data         = CommandBlockBaseAddr;
+  IdeRegisters[EfiIdeSecondary].ErrOrFeature =
+    (UINT16)(CommandBlockBaseAddr + 0x01);
+  IdeRegisters[EfiIdeSecondary].SectorCount =
+    (UINT16)(CommandBlockBaseAddr + 0x02);
+  IdeRegisters[EfiIdeSecondary].SectorNumber =
+    (UINT16)(CommandBlockBaseAddr + 0x03);
+  IdeRegisters[EfiIdeSecondary].CylinderLsb =
+    (UINT16)(CommandBlockBaseAddr + 0x04);
+  IdeRegisters[EfiIdeSecondary].CylinderMsb =
+    (UINT16)(CommandBlockBaseAddr + 0x05);
+  IdeRegisters[EfiIdeSecondary].Head =
+    (UINT16)(CommandBlockBaseAddr + 0x06);
+  IdeRegisters[EfiIdeSecondary].CmdOrStatus =
+    (UINT16)(CommandBlockBaseAddr + 0x07);
   IdeRegisters[EfiIdeSecondary].AltOrDev          = ControlBlockBaseAddr;
-  IdeRegisters[EfiIdeSecondary].BusMasterBaseAddr = (UINT16)(BusMasterBaseAddr + 0x8);
+  IdeRegisters[EfiIdeSecondary].BusMasterBaseAddr = (UINT16)(BusMasterBaseAddr +
+                                                             0x8);
 
   return EFI_SUCCESS;
 }
@@ -873,26 +952,66 @@ AtaIssueCommand (
   //
   // Fill the feature register, which is a two-byte FIFO. Need write twice.
   //
-  IdeWritePortB (PciIo, IdeRegisters->ErrOrFeature, AtaCommandBlock->AtaFeaturesExp);
-  IdeWritePortB (PciIo, IdeRegisters->ErrOrFeature, AtaCommandBlock->AtaFeatures);
+  IdeWritePortB (
+    PciIo,
+    IdeRegisters->ErrOrFeature,
+    AtaCommandBlock->AtaFeaturesExp
+    );
+  IdeWritePortB (
+    PciIo,
+    IdeRegisters->ErrOrFeature,
+    AtaCommandBlock->AtaFeatures
+    );
 
   //
   // Fill the sector count register, which is a two-byte FIFO. Need write twice.
   //
-  IdeWritePortB (PciIo, IdeRegisters->SectorCount, AtaCommandBlock->AtaSectorCountExp);
-  IdeWritePortB (PciIo, IdeRegisters->SectorCount, AtaCommandBlock->AtaSectorCount);
+  IdeWritePortB (
+    PciIo,
+    IdeRegisters->SectorCount,
+    AtaCommandBlock->AtaSectorCountExp
+    );
+  IdeWritePortB (
+    PciIo,
+    IdeRegisters->SectorCount,
+    AtaCommandBlock->AtaSectorCount
+    );
 
   //
   // Fill the start LBA registers, which are also two-byte FIFO
   //
-  IdeWritePortB (PciIo, IdeRegisters->SectorNumber, AtaCommandBlock->AtaSectorNumberExp);
-  IdeWritePortB (PciIo, IdeRegisters->SectorNumber, AtaCommandBlock->AtaSectorNumber);
+  IdeWritePortB (
+    PciIo,
+    IdeRegisters->SectorNumber,
+    AtaCommandBlock->AtaSectorNumberExp
+    );
+  IdeWritePortB (
+    PciIo,
+    IdeRegisters->SectorNumber,
+    AtaCommandBlock->AtaSectorNumber
+    );
 
-  IdeWritePortB (PciIo, IdeRegisters->CylinderLsb, AtaCommandBlock->AtaCylinderLowExp);
-  IdeWritePortB (PciIo, IdeRegisters->CylinderLsb, AtaCommandBlock->AtaCylinderLow);
+  IdeWritePortB (
+    PciIo,
+    IdeRegisters->CylinderLsb,
+    AtaCommandBlock->AtaCylinderLowExp
+    );
+  IdeWritePortB (
+    PciIo,
+    IdeRegisters->CylinderLsb,
+    AtaCommandBlock->AtaCylinderLow
+    );
 
-  IdeWritePortB (PciIo, IdeRegisters->CylinderMsb, AtaCommandBlock->AtaCylinderHighExp);
-  IdeWritePortB (PciIo, IdeRegisters->CylinderMsb, AtaCommandBlock->AtaCylinderHigh);
+  IdeWritePortB (
+    PciIo,
+    IdeRegisters->CylinderMsb,
+    AtaCommandBlock->AtaCylinderHighExp
+    );
+  IdeWritePortB (
+    PciIo,
+    IdeRegisters->CylinderMsb,
+    AtaCommandBlock->AtaCylinderHigh
+    );
 
   //
   // Send command via Command Register
@@ -948,7 +1067,9 @@ AtaPioDataInOut (
   UINT16      *Buffer16;
   EFI_STATUS  Status;
 
-  if ((PciIo == NULL) || (IdeRegisters == NULL) || (Buffer == NULL) || (AtaCommandBlock == NULL)) {
+  if ((PciIo == NULL) || (IdeRegisters == NULL) || (Buffer == NULL) ||
+      (AtaCommandBlock == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1311,7 +1432,9 @@ AtaUdmaInOut (
   BaseAddr      = 0;
   PciIo         = Instance->PciIo;
 
-  if ((PciIo == NULL) || (IdeRegisters == NULL) || (DataBuffer == NULL) || (AtaCommandBlock == NULL)) {
+  if ((PciIo == NULL) || (IdeRegisters == NULL) || (DataBuffer == NULL) ||
+      (AtaCommandBlock == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1399,7 +1522,10 @@ AtaUdmaInOut (
                          &BaseMapAddr,
                          &PrdTableMap
                          );
-    if (EFI_ERROR (Status) || (ByteCount != EFI_PAGES_TO_SIZE (RealPageCount))) {
+    if (EFI_ERROR (Status) || (ByteCount != EFI_PAGES_TO_SIZE (
+                                              RealPageCount
+                                              )))
+    {
       //
       // If the data length actually mapped is not equal to the requested amount,
       // it means the DMA operation may be broken into several discontinuous smaller chunks.
@@ -1636,7 +1762,9 @@ AtaPacketReadPendingData (
 
   if ((AltRegister & (ATA_STSREG_BSY | ATA_STSREG_DRQ)) == ATA_STSREG_DRQ) {
     TempWordBuffer = IdeReadPortB (PciIo, IdeRegisters->AltOrDev);
-    while ((TempWordBuffer & (ATA_STSREG_BSY | ATA_STSREG_DRQ)) == ATA_STSREG_DRQ) {
+    while ((TempWordBuffer & (ATA_STSREG_BSY | ATA_STSREG_DRQ)) ==
+           ATA_STSREG_DRQ)
+    {
       IdeReadPortWMultiple (
         PciIo,
         IdeRegisters->Data,
@@ -1851,7 +1979,12 @@ AtaPacketCommandExecute (
   //
   // Issue ATA PACKET command firstly
   //
-  Status = AtaIssueCommand (PciIo, IdeRegisters, &AtaCommandBlock, Packet->Timeout);
+  Status = AtaIssueCommand (
+             PciIo,
+             IdeRegisters,
+             &AtaCommandBlock,
+             Packet->Timeout
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1865,7 +1998,12 @@ AtaPacketCommandExecute (
   // Send out ATAPI command packet
   //
   for (Count = 0; Count < 6; Count++) {
-    IdeWritePortW (PciIo, IdeRegisters->Data, *((UINT16 *)PacketCommand + Count));
+    IdeWritePortW (
+      PciIo,
+      IdeRegisters->Data,
+      *((UINT16 *)PacketCommand +
+        Count)
+      );
     //
     // Stall for 10 microseconds.
     //
@@ -1978,7 +2116,8 @@ SetDriveParameters (
 
   AtaCommandBlock.AtaCommand     = ATA_CMD_INIT_DRIVE_PARAM;
   AtaCommandBlock.AtaSectorCount = DriveParameters->Sector;
-  AtaCommandBlock.AtaDeviceHead  = (UINT8)((Device << 0x4) + DriveParameters->Heads);
+  AtaCommandBlock.AtaDeviceHead  = (UINT8)((Device << 0x4) +
+                                           DriveParameters->Heads);
 
   //
   // Send Init drive parameters
@@ -2070,14 +2209,23 @@ IdeAtaSmartReturnStatusCheck (
     (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_ENABLE)
     );
 
-  LBAMid  = IdeReadPortB (Instance->PciIo, Instance->IdeRegisters[Channel].CylinderLsb);
-  LBAHigh = IdeReadPortB (Instance->PciIo, Instance->IdeRegisters[Channel].CylinderMsb);
+  LBAMid = IdeReadPortB (
+             Instance->PciIo,
+             Instance->IdeRegisters[Channel].CylinderLsb
+             );
+  LBAHigh = IdeReadPortB (
+              Instance->PciIo,
+              Instance->IdeRegisters[Channel].CylinderMsb
+              );
 
   if ((LBAMid == 0x4f) && (LBAHigh == 0xc2)) {
     //
     // The threshold exceeded condition is not detected by the device
     //
-    DEBUG ((DEBUG_INFO, "The S.M.A.R.T threshold exceeded condition is not detected\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "The S.M.A.R.T threshold exceeded condition is not detected\n"
+      ));
     REPORT_STATUS_CODE (
       EFI_PROGRESS_CODE,
       (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_UNDERTHRESHOLD)
@@ -2086,7 +2234,10 @@ IdeAtaSmartReturnStatusCheck (
     //
     // The threshold exceeded condition is detected by the device
     //
-    DEBUG ((DEBUG_INFO, "The S.M.A.R.T threshold exceeded condition is detected\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "The S.M.A.R.T threshold exceeded condition is detected\n"
+      ));
     REPORT_STATUS_CODE (
       EFI_PROGRESS_CODE,
       (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_OVERTHRESHOLD)
@@ -2396,7 +2547,11 @@ DetectAndConfigIdeDevice (
 
     Status = WaitForBSYClear (PciIo, IdeRegisters, 350000000);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "New detecting method: Send Execute Diagnostic Command: WaitForBSYClear: Status: %d\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "New detecting method: Send Execute Diagnostic Command: WaitForBSYClear: Status: %d\n",
+        Status
+        ));
       continue;
     }
 
@@ -2417,7 +2572,9 @@ DetectAndConfigIdeDevice (
     //
     // Refer to ATA/ATAPI 4 Spec, section 9.1
     //
-    if ((SectorCountReg == 0x1) && (LBALowReg == 0x1) && (LBAMidReg == 0x0) && (LBAHighReg == 0x0)) {
+    if ((SectorCountReg == 0x1) && (LBALowReg == 0x1) && (LBAMidReg == 0x0) &&
+        (LBAHighReg == 0x0))
+    {
       DeviceType = EfiIdeHarddisk;
     } else if ((LBAMidReg == 0x14) && (LBAHighReg == 0xeb)) {
       DeviceType = EfiIdeCdrom;
@@ -2434,19 +2591,41 @@ DetectAndConfigIdeDevice (
       // if identifying ata device is failure, then try to send identify packet cmd.
       //
       if (EFI_ERROR (Status)) {
-        REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_PERIPHERAL_FIXED_MEDIA | EFI_P_EC_NOT_DETECTED));
+        REPORT_STATUS_CODE (
+          EFI_PROGRESS_CODE,
+          (EFI_PERIPHERAL_FIXED_MEDIA |
+           EFI_P_EC_NOT_DETECTED)
+          );
 
         DeviceType = EfiIdeCdrom;
-        Status     = AtaIdentifyPacket (Instance, IdeChannel, IdeDevice, &Buffer, NULL);
+        Status     = AtaIdentifyPacket (
+                       Instance,
+                       IdeChannel,
+                       IdeDevice,
+                       &Buffer,
+                       NULL
+                       );
       }
     } else {
-      Status = AtaIdentifyPacket (Instance, IdeChannel, IdeDevice, &Buffer, NULL);
+      Status = AtaIdentifyPacket (
+                 Instance,
+                 IdeChannel,
+                 IdeDevice,
+                 &Buffer,
+                 NULL
+                 );
       //
       // if identifying atapi device is failure, then try to send identify cmd.
       //
       if (EFI_ERROR (Status)) {
         DeviceType = EfiIdeHarddisk;
-        Status     = AtaIdentify (Instance, IdeChannel, IdeDevice, &Buffer, NULL);
+        Status     = AtaIdentify (
+                       Instance,
+                       IdeChannel,
+                       IdeDevice,
+                       &Buffer,
+                       NULL
+                       );
       }
     }
 
@@ -2508,7 +2687,13 @@ DetectAndConfigIdeDevice (
     TransferMode.ModeNumber = (UINT8)(SupportedModes->PioMode.Mode);
 
     if (SupportedModes->ExtModeCount == 0) {
-      Status = SetDeviceTransferMode (Instance, IdeChannel, IdeDevice, &TransferMode, NULL);
+      Status = SetDeviceTransferMode (
+                 Instance,
+                 IdeChannel,
+                 IdeDevice,
+                 &TransferMode,
+                 NULL
+                 );
 
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
@@ -2525,7 +2710,13 @@ DetectAndConfigIdeDevice (
     if (SupportedModes->UdmaMode.Valid) {
       TransferMode.ModeCategory = EFI_ATA_MODE_UDMA;
       TransferMode.ModeNumber   = (UINT8)(SupportedModes->UdmaMode.Mode);
-      Status                    = SetDeviceTransferMode (Instance, IdeChannel, IdeDevice, &TransferMode, NULL);
+      Status                    = SetDeviceTransferMode (
+                                    Instance,
+                                    IdeChannel,
+                                    IdeDevice,
+                                    &TransferMode,
+                                    NULL
+                                    );
 
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
@@ -2534,7 +2725,13 @@ DetectAndConfigIdeDevice (
     } else if (SupportedModes->MultiWordDmaMode.Valid) {
       TransferMode.ModeCategory = EFI_ATA_MODE_MDMA;
       TransferMode.ModeNumber   = (UINT8)SupportedModes->MultiWordDmaMode.Mode;
-      Status                    = SetDeviceTransferMode (Instance, IdeChannel, IdeDevice, &TransferMode, NULL);
+      Status                    = SetDeviceTransferMode (
+                                    Instance,
+                                    IdeChannel,
+                                    IdeDevice,
+                                    &TransferMode,
+                                    NULL
+                                    );
 
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
@@ -2551,11 +2748,21 @@ DetectAndConfigIdeDevice (
       //
       // Init driver parameters
       //
-      DriveParameters.Sector         = (UINT8)((ATA5_IDENTIFY_DATA *)(&Buffer.AtaData))->sectors_per_track;
-      DriveParameters.Heads          = (UINT8)(((ATA5_IDENTIFY_DATA *)(&Buffer.AtaData))->heads - 1);
-      DriveParameters.MultipleSector = (UINT8)((ATA5_IDENTIFY_DATA *)(&Buffer.AtaData))->multi_sector_cmd_max_sct_cnt;
+      DriveParameters.Sector =
+        (UINT8)((ATA5_IDENTIFY_DATA *)(&Buffer.AtaData))->sectors_per_track;
+      DriveParameters.Heads =
+        (UINT8)(((ATA5_IDENTIFY_DATA *)(&Buffer.AtaData))->heads - 1);
+      DriveParameters.MultipleSector =
+        (UINT8)((ATA5_IDENTIFY_DATA *)(&Buffer.AtaData))->
+          multi_sector_cmd_max_sct_cnt;
 
-      Status = SetDriveParameters (Instance, IdeChannel, IdeDevice, &DriveParameters, NULL);
+      Status = SetDriveParameters (
+                 Instance,
+                 IdeChannel,
+                 IdeDevice,
+                 &DriveParameters,
+                 NULL
+                 );
     }
 
     //
@@ -2567,13 +2774,23 @@ DetectAndConfigIdeDevice (
     // IDE controller and IDE device timing is configured successfully.
     // Now insert the device into device list.
     //
-    Status = CreateNewDeviceInfo (Instance, IdeChannel, IdeDevice, DeviceType, &Buffer);
+    Status = CreateNewDeviceInfo (
+               Instance,
+               IdeChannel,
+               IdeDevice,
+               DeviceType,
+               &Buffer
+               );
     if (EFI_ERROR (Status)) {
       continue;
     }
 
     if (DeviceType == EfiIdeHarddisk) {
-      REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_PERIPHERAL_FIXED_MEDIA | EFI_P_PC_ENABLE));
+      REPORT_STATUS_CODE (
+        EFI_PROGRESS_CODE,
+        (EFI_PERIPHERAL_FIXED_MEDIA |
+         EFI_P_PC_ENABLE)
+        );
     }
   }
 
@@ -2649,7 +2866,11 @@ IdeModeInitialization (
     //
     // Now inform the IDE Controller Init Module.
     //
-    IdeInit->NotifyPhase (IdeInit, EfiIdeBusBeforeDevicePresenceDetection, IdeChannel);
+    IdeInit->NotifyPhase (
+               IdeInit,
+               EfiIdeBusBeforeDevicePresenceDetection,
+               IdeChannel
+               );
 
     //
     // Detect all attached ATA devices and set the transfer mode for each device.

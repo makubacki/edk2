@@ -32,7 +32,11 @@ ReadIdtGateDescriptor (
   AsmReadIdtr (&IdtrValue);
   IdtTable = (IA32_IDT_GATE_DESCRIPTOR *)IdtrValue.Base;
 
-  CopyMem ((VOID *)IdtGateDescriptor, (VOID *)&(IdtTable)[Vector], sizeof (IA32_IDT_GATE_DESCRIPTOR));
+  CopyMem (
+    (VOID *)IdtGateDescriptor,
+    (VOID *)&(IdtTable)[Vector],
+    sizeof (IA32_IDT_GATE_DESCRIPTOR)
+    );
 }
 
 /**
@@ -54,7 +58,11 @@ WriteIdtGateDescriptor (
   AsmReadIdtr (&IdtrValue);
   IdtTable = (IA32_IDT_GATE_DESCRIPTOR *)IdtrValue.Base;
 
-  CopyMem ((VOID *)&(IdtTable)[Vector], (VOID *)IdtGateDescriptor, sizeof (IA32_IDT_GATE_DESCRIPTOR));
+  CopyMem (
+    (VOID *)&(IdtTable)[Vector],
+    (VOID *)IdtGateDescriptor,
+    sizeof (IA32_IDT_GATE_DESCRIPTOR)
+    );
 }
 
 /**
@@ -77,7 +85,10 @@ HookEntry (
 {
   BOOLEAN  OldIntFlagState;
 
-  CreateEntryStub (ExceptionType, (VOID **)&IdtEntryTable[ExceptionType].StubEntry);
+  CreateEntryStub (
+    ExceptionType,
+    (VOID **)&IdtEntryTable[ExceptionType].StubEntry
+    );
 
   //
   // Disables CPU interrupts and returns the previous interrupt state
@@ -87,16 +98,25 @@ HookEntry (
   //
   // gets IDT Gate descriptor by index
   //
-  ReadIdtGateDescriptor (ExceptionType, &(IdtEntryTable[ExceptionType].OrigDesc));
+  ReadIdtGateDescriptor (
+    ExceptionType,
+    &(IdtEntryTable[ExceptionType].OrigDesc)
+    );
   //
   // stores orignal interrupt handle
   //
-  IdtEntryTable[ExceptionType].OrigVector = (DEBUG_PROC)GetInterruptHandleFromIdt (&(IdtEntryTable[ExceptionType].OrigDesc));
+  IdtEntryTable[ExceptionType].OrigVector =
+    (DEBUG_PROC)GetInterruptHandleFromIdt (
+                  &(IdtEntryTable[ExceptionType].OrigDesc)
+                  );
 
   //
   // encodes new IDT Gate descriptor by stub entry
   //
-  Vect2Desc (&IdtEntryTable[ExceptionType].NewDesc, IdtEntryTable[ExceptionType].StubEntry);
+  Vect2Desc (
+    &IdtEntryTable[ExceptionType].NewDesc,
+    IdtEntryTable[ExceptionType].StubEntry
+    );
   //
   // stores NewCallback
   //
@@ -105,7 +125,10 @@ HookEntry (
   //
   // writes back new IDT Gate descriptor
   //
-  WriteIdtGateDescriptor (ExceptionType, &(IdtEntryTable[ExceptionType].NewDesc));
+  WriteIdtGateDescriptor (
+    ExceptionType,
+    &(IdtEntryTable[ExceptionType].NewDesc)
+    );
 
   //
   // restore interrupt state
@@ -136,7 +159,10 @@ UnhookEntry (
   //
   // restore the default IDT Date Descriptor
   //
-  WriteIdtGateDescriptor (ExceptionType, &(IdtEntryTable[ExceptionType].OrigDesc));
+  WriteIdtGateDescriptor (
+    ExceptionType,
+    &(IdtEntryTable[ExceptionType].OrigDesc)
+    );
 
   //
   // restore interrupt state
@@ -268,7 +294,10 @@ InterruptDistrubutionHub (
 {
   if (IdtEntryTable[ExceptionType].RegisteredCallback != NULL) {
     if (ExceptionType != SYSTEM_TIMER_VECTOR) {
-      IdtEntryTable[ExceptionType].RegisteredCallback (ExceptionType, ContextRecord);
+      IdtEntryTable[ExceptionType].RegisteredCallback (
+                                     ExceptionType,
+                                     ContextRecord
+                                     );
     } else {
       OrigVector = IdtEntryTable[ExceptionType].OrigVector;
       IdtEntryTable[ExceptionType].RegisteredCallback (ContextRecord);
@@ -341,7 +370,9 @@ PlInitializeDebugSupportDriver (
   }
 
   for (ExceptionType = 0; ExceptionType < NUM_IDT_ENTRIES; ExceptionType++) {
-    IdtEntryTable[ExceptionType].StubEntry = (DEBUG_PROC)(UINTN)AllocatePool (StubSize);
+    IdtEntryTable[ExceptionType].StubEntry = (DEBUG_PROC)(UINTN)AllocatePool (
+                                                                  StubSize
+                                                                  );
     if (IdtEntryTable[ExceptionType].StubEntry == NULL) {
       goto ErrorCleanup;
     }
@@ -349,7 +380,11 @@ PlInitializeDebugSupportDriver (
     //
     // Copy Interrupt stub code.
     //
-    CopyMem ((VOID *)(UINTN)IdtEntryTable[ExceptionType].StubEntry, InterruptEntryStub, StubSize);
+    CopyMem (
+      (VOID *)(UINTN)IdtEntryTable[ExceptionType].StubEntry,
+      InterruptEntryStub,
+      StubSize
+      );
   }
 
   return EFI_SUCCESS;

@@ -104,7 +104,10 @@ InitializeUnicodeCollationEng (
     mEngLowerMap[Index] = (CHAR8)Index;
     mEngInfoMap[Index]  = 0;
 
-    if (((Index >= 'a') && (Index <= 'z')) || ((Index >= 0xe0) && (Index <= 0xf6)) || ((Index >= 0xf8) && (Index <= 0xfe))) {
+    if (((Index >= 'a') && (Index <= 'z')) || ((Index >= 0xe0) && (Index <=
+                                                                   0xf6)) ||
+        ((Index >= 0xf8) && (Index <= 0xfe)))
+    {
       Index2               = Index - 0x20;
       mEngUpperMap[Index]  = (CHAR8)Index2;
       mEngLowerMap[Index2] = (CHAR8)Index;
@@ -330,7 +333,9 @@ EngMetaiMatch (
               return FALSE;
             }
 
-            if ((TO_UPPER (CharC) >= TO_UPPER (Index3)) && (TO_UPPER (CharC) <= TO_UPPER (CharP))) {
+            if ((TO_UPPER (CharC) >= TO_UPPER (Index3)) && (TO_UPPER (CharC) <=
+                                                            TO_UPPER (CharP)))
+            {
               //
               // if in range, it's a match
               //
@@ -441,7 +446,9 @@ EngStrToFat (
       // If this is a valid fat char, move it.
       // Otherwise, move a '_' and flag the fact that the name needs a long file name.
       //
-      if ((*String < MAP_TABLE_SIZE) && ((mEngInfoMap[*String] & CHAR_FAT_VALID) != 0)) {
+      if ((*String < MAP_TABLE_SIZE) && ((mEngInfoMap[*String] &
+                                          CHAR_FAT_VALID) != 0))
+      {
         *Fat = mEngUpperMap[*String];
       } else {
         *Fat             = '_';

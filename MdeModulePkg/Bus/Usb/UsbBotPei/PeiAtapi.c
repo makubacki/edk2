@@ -160,7 +160,8 @@ PeiUsbRequestSense (
   //
   ZeroMem (&Packet, sizeof (ATAPI_PACKET_COMMAND));
   Packet.RequestSence.opcode            = ATA_CMD_REQUEST_SENSE;
-  Packet.RequestSence.allocation_length = (UINT8)sizeof (ATAPI_REQUEST_SENSE_DATA);
+  Packet.RequestSence.allocation_length =
+    (UINT8)sizeof (ATAPI_REQUEST_SENSE_DATA);
 
   Ptr = SenseKeyBuffer;
 
@@ -266,10 +267,14 @@ PeiUsbReadCapacity (
     return EFI_DEVICE_ERROR;
   }
 
-  LastBlock = ((UINT32)Data.LastLba3 << 24) | (Data.LastLba2 << 16) | (Data.LastLba1 << 8) | Data.LastLba0;
+  LastBlock = ((UINT32)Data.LastLba3 << 24) | (Data.LastLba2 << 16) |
+              (Data.LastLba1 << 8) | Data.LastLba0;
 
   if (LastBlock == 0xFFFFFFFF) {
-    DEBUG ((DEBUG_INFO, "The usb device LBA count is larger than 0xFFFFFFFF!\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "The usb device LBA count is larger than 0xFFFFFFFF!\n"
+      ));
   }
 
   PeiBotDevice->Media.LastBlock    = LastBlock;
@@ -337,9 +342,14 @@ PeiUsbReadFormattedCapacity (
     PeiBotDevice->Media2.MediaPresent = FALSE;
     PeiBotDevice->Media2.LastBlock    = 0;
   } else {
-    LastBlock = ((UINT32)FormatData.LastLba3 << 24) | (FormatData.LastLba2 << 16) | (FormatData.LastLba1 << 8) | FormatData.LastLba0;
+    LastBlock = ((UINT32)FormatData.LastLba3 << 24) | (FormatData.LastLba2 <<
+                                                       16) |
+                (FormatData.LastLba1 << 8) | FormatData.LastLba0;
     if (LastBlock == 0xFFFFFFFF) {
-      DEBUG ((DEBUG_INFO, "The usb device LBA count is larger than 0xFFFFFFFF!\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "The usb device LBA count is larger than 0xFFFFFFFF!\n"
+        ));
     }
 
     PeiBotDevice->Media.LastBlock = LastBlock;

@@ -47,7 +47,11 @@ NvmeCreatePrpList (
   //
   // Calculate total PrpList number.
   //
-  PrpListNo = (UINTN)DivU64x64Remainder ((UINT64)Pages, (UINT64)PrpEntryNo, &Remainder);
+  PrpListNo = (UINTN)DivU64x64Remainder (
+                       (UINT64)Pages,
+                       (UINT64)PrpEntryNo,
+                       &Remainder
+                       );
   if (Remainder != 0) {
     PrpListNo += 1;
   }
@@ -76,7 +80,8 @@ NvmeCreatePrpList (
     PrpListBase = (UINTN)PrpListHost + PrpListIndex * EFI_PAGE_SIZE;
 
     for (PrpEntryIndex = 0; PrpEntryIndex < PrpEntryNo; ++PrpEntryIndex) {
-      PrpEntry = (UINT8 *)(UINTN)(PrpListBase + PrpEntryIndex * sizeof (UINT64));
+      PrpEntry = (UINT8 *)(UINTN)(PrpListBase + PrpEntryIndex *
+                                  sizeof (UINT64));
       if (PrpEntryIndex != PrpEntryNo - 1) {
         //
         // Fill all PRP entries except of last one.
@@ -97,7 +102,9 @@ NvmeCreatePrpList (
   // Fill last PRP list.
   //
   PrpListBase = (UINTN)PrpListHost + PrpListIndex * EFI_PAGE_SIZE;
-  for (PrpEntryIndex = 0; PrpEntryIndex < ((Remainder != 0) ? Remainder : PrpEntryNo); ++PrpEntryIndex) {
+  for (PrpEntryIndex = 0; PrpEntryIndex < ((Remainder != 0) ? Remainder :
+                                           PrpEntryNo); ++PrpEntryIndex)
+  {
     PrpEntry = (UINT8 *)(UINTN)(PrpListBase + PrpEntryIndex * sizeof (UINT64));
     CopyMem (PrpEntry, (VOID *)(UINTN)(&PhysicalAddr), sizeof (UINT64));
 
@@ -122,7 +129,11 @@ NvmeCheckCqStatus (
     return EFI_SUCCESS;
   }
 
-  DEBUG ((DEBUG_INFO, "Dump NVMe Completion Entry Status from [0x%x]:\n", (UINTN)Cq));
+  DEBUG ((
+    DEBUG_INFO,
+    "Dump NVMe Completion Entry Status from [0x%x]:\n",
+    (UINTN)Cq
+    ));
   DEBUG ((
     DEBUG_INFO,
     "  SQ Identifier : [0x%x], Phase Tag : [%d], Cmd Identifier : [0x%x]\n",
@@ -130,7 +141,12 @@ NvmeCheckCqStatus (
     Cq->Pt,
     Cq->Cid
     ));
-  DEBUG ((DEBUG_INFO, "  Status Code Type : [0x%x], Status Code : [0x%x]\n", Cq->Sct, Cq->Sc));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Status Code Type : [0x%x], Status Code : [0x%x]\n",
+    Cq->Sct,
+    Cq->Sc
+    ));
   DEBUG ((DEBUG_INFO, "  NVMe Cmd Execution Result - "));
 
   switch (Cq->Sct) {
@@ -152,7 +168,10 @@ NvmeCheckCqStatus (
           DEBUG ((DEBUG_INFO, "Data Transfer Error\n"));
           break;
         case 0x5:
-          DEBUG ((DEBUG_INFO, "Commands Aborted due to Power Loss Notification\n"));
+          DEBUG ((
+            DEBUG_INFO,
+            "Commands Aborted due to Power Loss Notification\n"
+            ));
           break;
         case 0x6:
           DEBUG ((DEBUG_INFO, "Internal Device Error\n"));
@@ -167,7 +186,10 @@ NvmeCheckCqStatus (
           DEBUG ((DEBUG_INFO, "Command Aborted due to Failed Fused Command\n"));
           break;
         case 0xA:
-          DEBUG ((DEBUG_INFO, "Command Aborted due to Missing Fused Command\n"));
+          DEBUG ((
+            DEBUG_INFO,
+            "Command Aborted due to Missing Fused Command\n"
+            ));
           break;
         case 0xB:
           DEBUG ((DEBUG_INFO, "Invalid Namespace or Format\n"));
@@ -239,7 +261,10 @@ NvmeCheckCqStatus (
           DEBUG ((DEBUG_INFO, "Invalid Format\n"));
           break;
         case 0xB:
-          DEBUG ((DEBUG_INFO, "Firmware Application Requires Conventional Reset\n"));
+          DEBUG ((
+            DEBUG_INFO,
+            "Firmware Application Requires Conventional Reset\n"
+            ));
           break;
         case 0xC:
           DEBUG ((DEBUG_INFO, "Invalid Queue Deletion\n"));
@@ -254,7 +279,10 @@ NvmeCheckCqStatus (
           DEBUG ((DEBUG_INFO, "Feature Not Namespace Specific\n"));
           break;
         case 0x10:
-          DEBUG ((DEBUG_INFO, "Firmware Application Requires NVM Subsystem Reset\n"));
+          DEBUG ((
+            DEBUG_INFO,
+            "Firmware Application Requires NVM Subsystem Reset\n"
+            ));
           break;
         case 0x80:
           DEBUG ((DEBUG_INFO, "Conflicting Attributes\n"));
@@ -382,7 +410,9 @@ NvmePassThruExecute (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((Packet->QueueType != NVME_ADMIN_QUEUE) && (Packet->QueueType != NVME_IO_QUEUE)) {
+  if ((Packet->QueueType != NVME_ADMIN_QUEUE) && (Packet->QueueType !=
+                                                  NVME_IO_QUEUE))
+  {
     DEBUG ((
       DEBUG_ERROR,
       "%a, Invalid parameter: QueueId(%lx)\n",
@@ -425,7 +455,11 @@ NvmePassThruExecute (
   //
   ASSERT (Sq->Psdt == 0);
   if (Sq->Psdt != 0) {
-    DEBUG ((DEBUG_ERROR, "%a: Does not support SGL mechanism.\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Does not support SGL mechanism.\n",
+      __FUNCTION__
+      ));
     return EFI_UNSUPPORTED;
   }
 
@@ -450,7 +484,8 @@ NvmePassThruExecute (
     // allocated internally by the driver.
     //
     if ((Packet->QueueType == NVME_ADMIN_QUEUE) &&
-        ((Sq->Opc == NVME_ADMIN_CRIOCQ_CMD) || (Sq->Opc == NVME_ADMIN_CRIOSQ_CMD)))
+        ((Sq->Opc == NVME_ADMIN_CRIOCQ_CMD) || (Sq->Opc ==
+                                                NVME_ADMIN_CRIOSQ_CMD)))
     {
       if ((Packet->TransferBuffer != Private->SqBuffer[NVME_IO_QUEUE]) &&
           (Packet->TransferBuffer != Private->CqBuffer[NVME_IO_QUEUE]))
@@ -498,7 +533,11 @@ NvmePassThruExecute (
                       );
         if (EFI_ERROR (Status) || (MapLength != Packet->MetadataLength)) {
           Status = EFI_OUT_OF_RESOURCES;
-          DEBUG ((DEBUG_ERROR, "%a: Fail to map meta data buffer.\n", __FUNCTION__));
+          DEBUG ((
+            DEBUG_ERROR,
+            "%a: Fail to map meta data buffer.\n",
+            __FUNCTION__
+            ));
           goto Exit;
         }
 
@@ -526,7 +565,12 @@ NvmePassThruExecute (
                    );
     if (Sq->Prp[1] == 0) {
       Status = EFI_OUT_OF_RESOURCES;
-      DEBUG ((DEBUG_ERROR, "%a: Create PRP list fail, Status - %r\n", __FUNCTION__, Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: Create PRP list fail, Status - %r\n",
+        __FUNCTION__,
+        Status
+        ));
       goto Exit;
     }
   } else if ((Offset + Bytes) > EFI_PAGE_SIZE) {
@@ -568,7 +612,12 @@ NvmePassThruExecute (
   Data32 = ReadUnaligned32 ((UINT32 *)&Private->SqTdbl[QueueId]);
   Status = NVME_SET_SQTDBL (Private, QueueId, &Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: NVME_SET_SQTDBL fail, Status - %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: NVME_SET_SQTDBL fail, Status - %r\n",
+      __FUNCTION__,
+      Status
+      ));
     goto Exit;
   }
 
@@ -591,7 +640,11 @@ NvmePassThruExecute (
     //
     // Timeout occurs for an NVMe command, reset the controller to abort the outstanding command
     //
-    DEBUG ((DEBUG_ERROR, "%a: Timeout occurs for the PassThru command.\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Timeout occurs for the PassThru command.\n",
+      __FUNCTION__
+      ));
     Status = NvmeControllerInit (Private);
     if (EFI_ERROR (Status)) {
       Status = EFI_DEVICE_ERROR;
@@ -671,7 +724,10 @@ NvmePassThruGetDevicePath (
   Private = GET_NVME_PEIM_HC_PRIVATE_DATA_FROM_THIS_NVME_PASSTHRU (This);
 
   *DevicePathLength = Private->DevicePathLength;
-  *DevicePath       = AllocateCopyPool (Private->DevicePathLength, Private->DevicePath);
+  *DevicePath       = AllocateCopyPool (
+                        Private->DevicePathLength,
+                        Private->DevicePath
+                        );
   if (*DevicePath == NULL) {
     *DevicePathLength = 0;
     return EFI_OUT_OF_RESOURCES;
@@ -760,7 +816,9 @@ NvmePassThruGetNextNameSpace (
       return EFI_NOT_FOUND;
     }
 
-    for (DeviceIndex = 0; DeviceIndex < Private->ActiveNamespaceNum; DeviceIndex++) {
+    for (DeviceIndex = 0; DeviceIndex < Private->ActiveNamespaceNum;
+         DeviceIndex++)
+    {
       if (*NamespaceId == Private->NamespaceInfo[DeviceIndex].NamespaceId) {
         if ((DeviceIndex + 1) < Private->ActiveNamespaceNum) {
           *NamespaceId = Private->NamespaceInfo[DeviceIndex + 1].NamespaceId;

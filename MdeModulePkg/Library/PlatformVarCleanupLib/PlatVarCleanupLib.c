@@ -18,9 +18,11 @@ BOOLEAN  mEndOfDxe = FALSE;
 
 EFI_EVENT  mPlatVarCleanupLibEndOfDxeEvent = NULL;
 
-LIST_ENTRY  mUserVariableList        = INITIALIZE_LIST_HEAD_VARIABLE (mUserVariableList);
-UINT16      mUserVariableCount       = 0;
-UINT16      mMarkedUserVariableCount = 0;
+LIST_ENTRY  mUserVariableList = INITIALIZE_LIST_HEAD_VARIABLE (
+                                  mUserVariableList
+                                  );
+UINT16  mUserVariableCount       = 0;
+UINT16  mMarkedUserVariableCount = 0;
 
 EFI_GUID  mVariableCleanupHiiGuid = VARIABLE_CLEANUP_HII_GUID;
 CHAR16    mVarStoreName[]         = L"VariableCleanup";
@@ -117,7 +119,12 @@ IsUserVariable (
     //
     // No property, it is user variable.
     //
-    DEBUG ((DEBUG_INFO, "PlatformVarCleanup - User variable: %g:%s\n", Guid, Name));
+    DEBUG ((
+      DEBUG_INFO,
+      "PlatformVarCleanup - User variable: %g:%s\n",
+      Guid,
+      Name
+      ));
     return TRUE;
   }
 
@@ -173,7 +180,12 @@ FindUserVariableNodeByGuid (
   //
   UserVariableNode->PromptString = AllocatePool ((36 + 2) * sizeof (CHAR16));
   ASSERT (UserVariableNode->PromptString != NULL);
-  UnicodeSPrint (UserVariableNode->PromptString, (36 + 2) * sizeof (CHAR16), L" %g", &UserVariableNode->Guid);
+  UnicodeSPrint (
+    UserVariableNode->PromptString,
+    (36 + 2) * sizeof (CHAR16),
+    L" %g",
+    &UserVariableNode->Guid
+    );
   InitializeListHead (&UserVariableNode->NameLink);
   InsertTailList (&mUserVariableList, &UserVariableNode->Link);
   return UserVariableNode;
@@ -231,12 +243,24 @@ CreateUserVariableNode (
     if (!EFI_ERROR (Status)) {
       if (IsUserVariable (VarName, &Guid)) {
         DataSize          = MaxDataSize;
-        GetVariableStatus = gRT->GetVariable (VarName, &Guid, &Attributes, &DataSize, Data);
+        GetVariableStatus = gRT->GetVariable (
+                                   VarName,
+                                   &Guid,
+                                   &Attributes,
+                                   &DataSize,
+                                   Data
+                                   );
         if (GetVariableStatus == EFI_BUFFER_TOO_SMALL) {
           Data = ReallocatePool (MaxDataSize, DataSize, Data);
           ASSERT (Data != NULL);
           MaxDataSize       = DataSize;
-          GetVariableStatus = gRT->GetVariable (VarName, &Guid, &Attributes, &DataSize, Data);
+          GetVariableStatus = gRT->GetVariable (
+                                     VarName,
+                                     &Guid,
+                                     &Attributes,
+                                     &DataSize,
+                                     Data
+                                     );
         }
 
         ASSERT_EFI_ERROR (GetVariableStatus);
@@ -248,30 +272,54 @@ CreateUserVariableNode (
           //
           // Different variables that have same variable GUID share same user variable node.
           //
-          UserVariableNameNode = AllocateZeroPool (sizeof (*UserVariableNameNode));
+          UserVariableNameNode = AllocateZeroPool (
+                                   sizeof (*UserVariableNameNode)
+                                   );
           ASSERT (UserVariableNameNode != NULL);
-          UserVariableNameNode->Signature  = USER_VARIABLE_NAME_NODE_SIGNATURE;
-          UserVariableNameNode->Name       = AllocateCopyPool (VarNameSize, VarName);
+          UserVariableNameNode->Signature = USER_VARIABLE_NAME_NODE_SIGNATURE;
+          UserVariableNameNode->Name      = AllocateCopyPool (
+                                              VarNameSize,
+                                              VarName
+                                              );
           UserVariableNameNode->Attributes = Attributes;
           UserVariableNameNode->DataSize   = DataSize;
           UserVariableNameNode->Index      = Index;
-          UserVariableNameNode->QuestionId = (EFI_QUESTION_ID)(USER_VARIABLE_QUESTION_ID + Index);
+          UserVariableNameNode->QuestionId =
+            (EFI_QUESTION_ID)(USER_VARIABLE_QUESTION_ID + Index);
           //
           // 2 space * sizeof (CHAR16) + StrSize.
           //
-          StringSize                         = 2 * sizeof (CHAR16) + StrSize (UserVariableNameNode->Name);
+          StringSize = 2 * sizeof (CHAR16) + StrSize (
+                                               UserVariableNameNode->Name
+                                               );
           UserVariableNameNode->PromptString = AllocatePool (StringSize);
           ASSERT (UserVariableNameNode->PromptString != NULL);
-          UnicodeSPrint (UserVariableNameNode->PromptString, StringSize, L"  %s", UserVariableNameNode->Name);
+          UnicodeSPrint (
+            UserVariableNameNode->PromptString,
+            StringSize,
+            L"  %s",
+            UserVariableNameNode->Name
+            );
           //
           // (33 chars of "Attribtues = 0x and DataSize = 0x" + 1 terminator + (sizeof (UINT32) + sizeof (UINTN)) * 2) * sizeof (CHAR16).
           //
-          StringSize                       = (33 + 1 + (sizeof (UINT32) + sizeof (UINTN)) * 2) * sizeof (CHAR16);
+          StringSize = (33 + 1 + (sizeof (UINT32) +
+                                  sizeof (UINTN)) * 2) *
+                       sizeof (CHAR16);
           UserVariableNameNode->HelpString = AllocatePool (StringSize);
           ASSERT (UserVariableNameNode->HelpString != NULL);
-          UnicodeSPrint (UserVariableNameNode->HelpString, StringSize, L"Attribtues = 0x%08x and DataSize = 0x%x", UserVariableNameNode->Attributes, UserVariableNameNode->DataSize);
+          UnicodeSPrint (
+            UserVariableNameNode->HelpString,
+            StringSize,
+            L"Attribtues = 0x%08x and DataSize = 0x%x",
+            UserVariableNameNode->Attributes,
+            UserVariableNameNode->DataSize
+            );
           UserVariableNameNode->Deleted = FALSE;
-          InsertTailList (&UserVariableNode->NameLink, &UserVariableNameNode->Link);
+          InsertTailList (
+            &UserVariableNode->NameLink,
+            &UserVariableNameNode->Link
+            );
           Index++;
         }
       }
@@ -280,7 +328,11 @@ CreateUserVariableNode (
 
   mUserVariableCount = Index;
   ASSERT (mUserVariableCount <= MAX_USER_VARIABLE_COUNT);
-  DEBUG ((DEBUG_INFO, "PlatformVarCleanup - User variable count: 0x%04x\n", mUserVariableCount));
+  DEBUG ((
+    DEBUG_INFO,
+    "PlatformVarCleanup - User variable count: 0x%04x\n",
+    mUserVariableCount
+    ));
 
   FreePool (VarName);
   FreePool (Data);
@@ -306,7 +358,9 @@ DestroyUserVariableNode (
 
     RemoveEntryList (&UserVariableNode->Link);
 
-    while (UserVariableNode->NameLink.ForwardLink != &UserVariableNode->NameLink) {
+    while (UserVariableNode->NameLink.ForwardLink !=
+           &UserVariableNode->NameLink)
+    {
       NameLink             = UserVariableNode->NameLink.ForwardLink;
       UserVariableNameNode = USER_VARIABLE_NAME_FROM_LINK (NameLink);
 
@@ -368,8 +422,9 @@ CreateTimeBasedPayload (
   Payload     = *Data;
   PayloadSize = *DataSize;
 
-  DescriptorSize = OFFSET_OF (EFI_VARIABLE_AUTHENTICATION_2, AuthInfo) + OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData);
-  NewData        = (UINT8 *)AllocateZeroPool (DescriptorSize + PayloadSize);
+  DescriptorSize = OFFSET_OF (EFI_VARIABLE_AUTHENTICATION_2, AuthInfo) +
+                   OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData);
+  NewData = (UINT8 *)AllocateZeroPool (DescriptorSize + PayloadSize);
   if (NewData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -394,7 +449,10 @@ CreateTimeBasedPayload (
   Time.Pad2       = 0;
   CopyMem (&DescriptorData->TimeStamp, &Time, sizeof (EFI_TIME));
 
-  DescriptorData->AuthInfo.Hdr.dwLength         = OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData);
+  DescriptorData->AuthInfo.Hdr.dwLength = OFFSET_OF (
+                                            WIN_CERTIFICATE_UEFI_GUID,
+                                            CertData
+                                            );
   DescriptorData->AuthInfo.Hdr.wRevision        = 0x0200;
   DescriptorData->AuthInfo.Hdr.wCertificateType = WIN_CERT_TYPE_EFI_GUID;
   CopyGuid (&DescriptorData->AuthInfo.CertType, &gEfiCertPkcs7Guid);
@@ -475,7 +533,11 @@ CreateCounterBasedPayload (
 
   DescriptorData->MonotonicCount = MonotonicCount;
 
-  DescriptorData->AuthInfo.Hdr.dwLength         = OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData) + sizeof (EFI_CERT_BLOCK_RSA_2048_SHA256);
+  DescriptorData->AuthInfo.Hdr.dwLength = OFFSET_OF (
+                                            WIN_CERTIFICATE_UEFI_GUID,
+                                            CertData
+                                            ) +
+                                          sizeof (EFI_CERT_BLOCK_RSA_2048_SHA256);
   DescriptorData->AuthInfo.Hdr.wRevision        = 0x0200;
   DescriptorData->AuthInfo.Hdr.wCertificateType = WIN_CERT_TYPE_EFI_GUID;
   CopyGuid (&DescriptorData->AuthInfo.CertType, &gEfiCertTypeRsa2048Sha256Guid);
@@ -522,32 +584,69 @@ DeleteUserVariable (
     {
       UserVariableNameNode = USER_VARIABLE_NAME_FROM_LINK (NameLink);
 
-      if (!UserVariableNameNode->Deleted && (DeleteAll || ((VariableCleanupData != NULL) && (VariableCleanupData->UserVariable[UserVariableNameNode->Index] == TRUE)))) {
-        DEBUG ((DEBUG_INFO, "PlatformVarCleanup - Delete variable: %g:%s\n", &UserVariableNode->Guid, UserVariableNameNode->Name));
-        if ((UserVariableNameNode->Attributes & EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS) != 0) {
+      if (!UserVariableNameNode->Deleted && (DeleteAll ||
+                                             ((VariableCleanupData != NULL) &&
+                                              (VariableCleanupData->UserVariable
+                                               [UserVariableNameNode->Index] ==
+                                               TRUE))))
+      {
+        DEBUG ((
+          DEBUG_INFO,
+          "PlatformVarCleanup - Delete variable: %g:%s\n",
+          &UserVariableNode->Guid,
+          UserVariableNameNode->Name
+          ));
+        if ((UserVariableNameNode->Attributes &
+             EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS) != 0)
+        {
           DataSize = 0;
           Data     = NULL;
           Status   = CreateTimeBasedPayload (&DataSize, &Data);
           if (!EFI_ERROR (Status)) {
-            Status = gRT->SetVariable (UserVariableNameNode->Name, &UserVariableNode->Guid, UserVariableNameNode->Attributes, DataSize, Data);
+            Status = gRT->SetVariable (
+                            UserVariableNameNode->Name,
+                            &UserVariableNode->Guid,
+                            UserVariableNameNode->Attributes,
+                            DataSize,
+                            Data
+                            );
             FreePool (Data);
           }
-        } else if ((UserVariableNameNode->Attributes & EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS) != 0) {
+        } else if ((UserVariableNameNode->Attributes &
+                    EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS) != 0)
+        {
           DataSize = 0;
           Data     = NULL;
           Status   = CreateCounterBasedPayload (&DataSize, &Data);
           if (!EFI_ERROR (Status)) {
-            Status = gRT->SetVariable (UserVariableNameNode->Name, &UserVariableNode->Guid, UserVariableNameNode->Attributes, DataSize, Data);
+            Status = gRT->SetVariable (
+                            UserVariableNameNode->Name,
+                            &UserVariableNode->Guid,
+                            UserVariableNameNode->Attributes,
+                            DataSize,
+                            Data
+                            );
             FreePool (Data);
           }
         } else {
-          Status = gRT->SetVariable (UserVariableNameNode->Name, &UserVariableNode->Guid, 0, 0, NULL);
+          Status = gRT->SetVariable (
+                          UserVariableNameNode->Name,
+                          &UserVariableNode->Guid,
+                          0,
+                          0,
+                          NULL
+                          );
         }
 
         if (!EFI_ERROR (Status)) {
           UserVariableNameNode->Deleted = TRUE;
         } else {
-          DEBUG ((DEBUG_INFO, "PlatformVarCleanup - Delete variable fail: %g:%s\n", &UserVariableNode->Guid, UserVariableNameNode->Name));
+          DEBUG ((
+            DEBUG_INFO,
+            "PlatformVarCleanup - Delete variable fail: %g:%s\n",
+            &UserVariableNode->Guid,
+            UserVariableNameNode->Name
+            ));
         }
       }
     }
@@ -597,7 +696,12 @@ VariableCleanupHiiExtractConfig (
   }
 
   *Progress = Request;
-  if ((Request != NULL) && !HiiIsConfigHdrMatch (Request, &mVariableCleanupHiiGuid, mVarStoreName)) {
+  if ((Request != NULL) && !HiiIsConfigHdrMatch (
+                              Request,
+                              &mVariableCleanupHiiGuid,
+                              mVarStoreName
+                              ))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -627,7 +731,13 @@ VariableCleanupHiiExtractConfig (
     ConfigRequest = AllocateZeroPool (Size);
     ASSERT (ConfigRequest != NULL);
     AllocatedRequest = TRUE;
-    UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
+    UnicodeSPrint (
+      ConfigRequest,
+      Size,
+      L"%s&OFFSET=0&WIDTH=%016LX",
+      ConfigRequestHdr,
+      (UINT64)BufferSize
+      );
     FreePool (ConfigRequestHdr);
   }
 
@@ -696,14 +806,24 @@ UpdateUserVariableForm (
   //
   // Create Hii Extend Label OpCode as the start opcode.
   //
-  StartLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (StartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  StartLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                       StartOpCodeHandle,
+                                       &gEfiIfrTianoGuid,
+                                       NULL,
+                                       sizeof (EFI_IFR_GUID_LABEL)
+                                       );
   StartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   StartLabel->Number       = LABEL_START;
 
   //
   // Create Hii Extend Label OpCode as the end opcode.
   //
-  EndLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (EndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  EndLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                     EndOpCodeHandle,
+                                     &gEfiIfrTianoGuid,
+                                     NULL,
+                                     sizeof (EFI_IFR_GUID_LABEL)
+                                     );
   EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndLabel->Number       = LABEL_END;
 
@@ -736,16 +856,37 @@ UpdateUserVariableForm (
           //
           // Create subtitle opcode for variable GUID.
           //
-          PromptStringToken = HiiSetString (Private->HiiHandle, 0, UserVariableNode->PromptString, NULL);
-          HiiCreateSubTitleOpCode (StartOpCodeHandle, PromptStringToken, 0, 0, 0);
+          PromptStringToken = HiiSetString (
+                                Private->HiiHandle,
+                                0,
+                                UserVariableNode->PromptString,
+                                NULL
+                                );
+          HiiCreateSubTitleOpCode (
+            StartOpCodeHandle,
+            PromptStringToken,
+            0,
+            0,
+            0
+            );
           Created = TRUE;
         }
 
         //
         // Only create opcode for the non-deleted variables.
         //
-        PromptStringToken = HiiSetString (Private->HiiHandle, 0, UserVariableNameNode->PromptString, NULL);
-        HelpStringToken   = HiiSetString (Private->HiiHandle, 0, UserVariableNameNode->HelpString, NULL);
+        PromptStringToken = HiiSetString (
+                              Private->HiiHandle,
+                              0,
+                              UserVariableNameNode->PromptString,
+                              NULL
+                              );
+        HelpStringToken = HiiSetString (
+                            Private->HiiHandle,
+                            0,
+                            UserVariableNameNode->HelpString,
+                            NULL
+                            );
         HiiCreateCheckBoxOpCode (
           StartOpCodeHandle,
           UserVariableNameNode->QuestionId,
@@ -861,7 +1002,12 @@ VariableCleanupHiiRouteConfig (
   // Check routing data in <ConfigHdr>.
   // Note: there is no name for Name/Value storage, only GUID will be checked.
   //
-  if (!HiiIsConfigHdrMatch (Configuration, &mVariableCleanupHiiGuid, mVarStoreName)) {
+  if (!HiiIsConfigHdrMatch (
+         Configuration,
+         &mVariableCleanupHiiGuid,
+         mVarStoreName
+         ))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -931,7 +1077,9 @@ VariableCleanupHiiCallback (
 
   Private = VARIABLE_CLEANUP_HII_PRIVATE_FROM_THIS (This);
 
-  if ((Action != EFI_BROWSER_ACTION_CHANGING) && (Action != EFI_BROWSER_ACTION_CHANGED)) {
+  if ((Action != EFI_BROWSER_ACTION_CHANGING) && (Action !=
+                                                  EFI_BROWSER_ACTION_CHANGED))
+  {
     //
     // All other action return unsupported.
     //
@@ -942,7 +1090,12 @@ VariableCleanupHiiCallback (
   // Retrieve uncommitted data from Form Browser.
   //
   VariableCleanupData = &Private->VariableCleanupData;
-  HiiGetBrowserData (&mVariableCleanupHiiGuid, mVarStoreName, sizeof (VARIABLE_CLEANUP_DATA), (UINT8 *)VariableCleanupData);
+  HiiGetBrowserData (
+    &mVariableCleanupHiiGuid,
+    mVarStoreName,
+    sizeof (VARIABLE_CLEANUP_DATA),
+    (UINT8 *)VariableCleanupData
+    );
   if (Action == EFI_BROWSER_ACTION_CHANGING) {
     if (Value == NULL) {
       return EFI_INVALID_PARAMETER;
@@ -952,7 +1105,10 @@ VariableCleanupHiiCallback (
       return EFI_INVALID_PARAMETER;
     }
 
-    if ((QuestionId >= USER_VARIABLE_QUESTION_ID) && (QuestionId < USER_VARIABLE_QUESTION_ID + MAX_USER_VARIABLE_COUNT)) {
+    if ((QuestionId >= USER_VARIABLE_QUESTION_ID) && (QuestionId <
+                                                      USER_VARIABLE_QUESTION_ID
+                                                      + MAX_USER_VARIABLE_COUNT))
+    {
       if (Value->b) {
         //
         // Means one user variable checkbox is marked to delete but not press F10 or "Commit Changes and Exit" menu.
@@ -982,13 +1138,21 @@ VariableCleanupHiiCallback (
             //
             // Means the SelectAll checkbox is marked to delete all user variables but not press F10 or "Commit Changes and Exit" menu.
             //
-            SetMem (VariableCleanupData->UserVariable, sizeof (VariableCleanupData->UserVariable), TRUE);
+            SetMem (
+              VariableCleanupData->UserVariable,
+              sizeof (VariableCleanupData->UserVariable),
+              TRUE
+              );
             mMarkedUserVariableCount = mUserVariableCount;
           } else {
             //
             // Means the SelectAll checkbox is unmarked.
             //
-            SetMem (VariableCleanupData->UserVariable, sizeof (VariableCleanupData->UserVariable), FALSE);
+            SetMem (
+              VariableCleanupData->UserVariable,
+              sizeof (VariableCleanupData->UserVariable),
+              FALSE
+              );
             mMarkedUserVariableCount = 0;
           }
 
@@ -1014,7 +1178,13 @@ VariableCleanupHiiCallback (
   //
   // Pass changed uncommitted data back to Form Browser.
   //
-  HiiSetBrowserData (&mVariableCleanupHiiGuid, mVarStoreName, sizeof (VARIABLE_CLEANUP_DATA), (UINT8 *)VariableCleanupData, NULL);
+  HiiSetBrowserData (
+    &mVariableCleanupHiiGuid,
+    mVarStoreName,
+    sizeof (VARIABLE_CLEANUP_DATA),
+    (UINT8 *)VariableCleanupData,
+    NULL
+    );
   return EFI_SUCCESS;
 }
 
@@ -1052,7 +1222,12 @@ PlatformVarCleanup (
     return EFI_UNSUPPORTED;
   }
 
-  if ((Type >= VarCleanupMax) || ((Flag & ((VAR_ERROR_FLAG)(VAR_ERROR_FLAG_SYSTEM_ERROR & VAR_ERROR_FLAG_USER_ERROR))) == 0)) {
+  if ((Type >= VarCleanupMax) || ((Flag &
+                                   ((VAR_ERROR_FLAG)(VAR_ERROR_FLAG_SYSTEM_ERROR
+                                                     &
+                                                     VAR_ERROR_FLAG_USER_ERROR)))
+                                  == 0))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1068,7 +1243,10 @@ PlatformVarCleanup (
     // This sample does not support system variables cleanup.
     //
     DEBUG ((DEBUG_ERROR, "NOTICE - VAR_ERROR_FLAG_SYSTEM_ERROR\n"));
-    DEBUG ((DEBUG_ERROR, "Platform should have mechanism to reset system to manufacture mode\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Platform should have mechanism to reset system to manufacture mode\n"
+      ));
     return EFI_UNSUPPORTED;
   }
 
@@ -1095,7 +1273,11 @@ PlatformVarCleanup (
       //
       // Locate FormBrowser2 protocol.
       //
-      Status = gBS->LocateProtocol (&gEfiFormBrowser2ProtocolGuid, NULL, (VOID **)&FormBrowser2);
+      Status = gBS->LocateProtocol (
+                      &gEfiFormBrowser2ProtocolGuid,
+                      NULL,
+                      (VOID **)&FormBrowser2
+                      );
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -1105,7 +1287,8 @@ PlatformVarCleanup (
         return EFI_OUT_OF_RESOURCES;
       }
 
-      Private->Signature                  = VARIABLE_CLEANUP_HII_PRIVATE_SIGNATURE;
+      Private->Signature =
+        VARIABLE_CLEANUP_HII_PRIVATE_SIGNATURE;
       Private->ConfigAccess.ExtractConfig = VariableCleanupHiiExtractConfig;
       Private->ConfigAccess.RouteConfig   = VariableCleanupHiiRouteConfig;
       Private->ConfigAccess.Callback      = VariableCleanupHiiCallback;

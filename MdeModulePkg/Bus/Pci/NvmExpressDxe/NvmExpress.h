@@ -48,10 +48,11 @@ typedef struct _NVME_DEVICE_PRIVATE_DATA      NVME_DEVICE_PRIVATE_DATA;
 #include "NvmExpressDiskInfo.h"
 #include "NvmExpressHci.h"
 
-extern EFI_DRIVER_BINDING_PROTOCOL                gNvmExpressDriverBinding;
-extern EFI_COMPONENT_NAME_PROTOCOL                gNvmExpressComponentName;
-extern EFI_COMPONENT_NAME2_PROTOCOL               gNvmExpressComponentName2;
-extern EFI_DRIVER_SUPPORTED_EFI_VERSION_PROTOCOL  gNvmExpressDriverSupportedEfiVersion;
+extern EFI_DRIVER_BINDING_PROTOCOL   gNvmExpressDriverBinding;
+extern EFI_COMPONENT_NAME_PROTOCOL   gNvmExpressComponentName;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gNvmExpressComponentName2;
+extern EFI_DRIVER_SUPPORTED_EFI_VERSION_PROTOCOL
+  gNvmExpressDriverSupportedEfiVersion;
 
 #define PCI_CLASS_MASS_STORAGE_NVM  0x08                // mass storage sub-class non-volatile memory.
 #define PCI_IF_NVMHCI               0x02                // mass storage programming interface NVMHCI.

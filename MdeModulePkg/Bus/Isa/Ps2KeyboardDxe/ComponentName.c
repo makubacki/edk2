@@ -140,7 +140,8 @@ Ps2KeyboardComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gPs2KeyboardComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gPs2KeyboardComponentName = {
   Ps2KeyboardComponentNameGetDriverName,
   Ps2KeyboardComponentNameGetControllerName,
   "eng"
@@ -149,13 +150,16 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gPs2KeyboardComponent
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gPs2KeyboardComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gPs2KeyboardComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)Ps2KeyboardComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)Ps2KeyboardComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  Ps2KeyboardComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mPs2KeyboardDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mPs2KeyboardDriverNameTable[] = {
   {
     "eng;en",
     L"PS/2 Keyboard Driver"
@@ -314,7 +318,11 @@ Ps2KeyboardComponentNameGetControllerName (
   //
   // Check Controller's handle
   //
-  Status = EfiTestManagedDevice (ControllerHandle, gKeyboardControllerDriver.DriverBindingHandle, &gEfiSioProtocolGuid);
+  Status = EfiTestManagedDevice (
+             ControllerHandle,
+             gKeyboardControllerDriver.DriverBindingHandle,
+             &gEfiSioProtocolGuid
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }

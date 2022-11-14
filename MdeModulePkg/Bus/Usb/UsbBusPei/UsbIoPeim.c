@@ -61,7 +61,12 @@ PeiUsbControlTransfer (
     // Request->Index is the Endpoint Address, use it to get the Endpoint Index.
     //
     while (EndpointIndex < MAX_ENDPOINT) {
-      Status = PeiUsbGetEndpointDescriptor (PeiServices, This, EndpointIndex, &EndpointDescriptor);
+      Status = PeiUsbGetEndpointDescriptor (
+                 PeiServices,
+                 This,
+                 EndpointIndex,
+                 &EndpointDescriptor
+                 );
       if (EFI_ERROR (Status)) {
         return EFI_INVALID_PARAMETER;
       }
@@ -117,7 +122,8 @@ PeiUsbControlTransfer (
       (Request->Value       == USB_FEATURE_ENDPOINT_HALT))
   {
     if ((PeiUsbDev->DataToggle & (1 << EndpointIndex)) != 0) {
-      PeiUsbDev->DataToggle = (UINT16)(PeiUsbDev->DataToggle ^ (1 << EndpointIndex));
+      PeiUsbDev->DataToggle = (UINT16)(PeiUsbDev->DataToggle ^ (1 <<
+                                                                EndpointIndex));
     }
   }
 
@@ -175,7 +181,12 @@ PeiUsbBulkTransfer (
   Data2[1]           = NULL;
 
   while (EndpointIndex < MAX_ENDPOINT) {
-    Status = PeiUsbGetEndpointDescriptor (PeiServices, This, EndpointIndex, &EndpointDescriptor);
+    Status = PeiUsbGetEndpointDescriptor (
+               PeiServices,
+               This,
+               EndpointIndex,
+               &EndpointDescriptor
+               );
     if (EFI_ERROR (Status)) {
       return EFI_INVALID_PARAMETER;
     }
@@ -231,7 +242,8 @@ PeiUsbBulkTransfer (
   }
 
   if (OldToggle != DataToggle) {
-    PeiUsbDev->DataToggle = (UINT16)(PeiUsbDev->DataToggle ^ (1 << EndpointIndex));
+    PeiUsbDev->DataToggle = (UINT16)(PeiUsbDev->DataToggle ^ (1 <<
+                                                              EndpointIndex));
   }
 
   DEBUG ((DEBUG_INFO, "PeiUsbBulkTransfer: %r\n", Status));

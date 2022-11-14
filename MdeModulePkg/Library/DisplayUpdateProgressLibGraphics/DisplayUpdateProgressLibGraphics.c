@@ -148,7 +148,11 @@ FindDim (
                   (VOID **)&BootLogo
                   );
   if ((BootLogo == NULL) || (EFI_ERROR (Status))) {
-    DEBUG ((DEBUG_ERROR, "Failed to locate gEdkiiBootLogo2ProtocolGuid Status = %r.  No Progress bar support. \n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed to locate gEdkiiBootLogo2ProtocolGuid Status = %r.  No Progress bar support. \n",
+      Status
+      ));
     return;
   }
 
@@ -164,7 +168,11 @@ FindDim (
                        &Height
                        );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to Get Boot Logo Status = %r.  No Progress bar support. \n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed to Get Boot Logo Status = %r.  No Progress bar support. \n",
+      Status
+      ));
     return;
   }
 
@@ -186,7 +194,13 @@ FindDim (
         // For loop searches from right side back to this column.
         //
         LogoEndX = LogoX;
-        DEBUG ((DEBUG_INFO, "StartX found at (%d, %d) Color is: 0x%X \n", LogoX, LogoY, Pixel->Raw));
+        DEBUG ((
+          DEBUG_INFO,
+          "StartX found at (%d, %d) Color is: 0x%X \n",
+          LogoX,
+          LogoY,
+          Pixel->Raw
+          ));
         break;
       }
 
@@ -202,7 +216,13 @@ FindDim (
     for (LogoY = 0; LogoY < (INTN)Height; LogoY++) {
       if ((Pixel->Raw & mLogoDetectionColorMask.Raw) != 0x0) {
         LogoEndX = LogoX;
-        DEBUG ((DEBUG_INFO, "EndX found at (%d, %d) Color is: 0x%X \n", LogoX, LogoY, Pixel->Raw));
+        DEBUG ((
+          DEBUG_INFO,
+          "EndX found at (%d, %d) Color is: 0x%X \n",
+          LogoX,
+          LogoY,
+          Pixel->Raw
+          ));
         break;
       }
 
@@ -218,7 +238,8 @@ FindDim (
   //
   // Adjust mStartX based on block width so it is centered under logo
   //
-  mStartX = LogoStartX + OffsetX - (((mBlockWidth * 100) - (LogoEndX - LogoStartX)) / 2);
+  mStartX = LogoStartX + OffsetX - (((mBlockWidth * 100) - (LogoEndX -
+                                                            LogoStartX)) / 2);
   DEBUG ((DEBUG_INFO, "mBlockWidth set to 0x%X\n", mBlockWidth));
   DEBUG ((DEBUG_INFO, "mStartX set to 0x%X\n", mStartX));
 
@@ -232,7 +253,13 @@ FindDim (
       if ((Pixel->Raw & mLogoDetectionColorMask.Raw) != 0x0) {
         LogoStartY = LogoY;
         LogoEndY   = LogoY; // for next loop will search from bottom side back to this row.
-        DEBUG ((DEBUG_INFO, "StartY found at (%d, %d) Color is: 0x%X \n", LogoX, LogoY, Pixel->Raw));
+        DEBUG ((
+          DEBUG_INFO,
+          "StartY found at (%d, %d) Color is: 0x%X \n",
+          LogoX,
+          LogoY,
+          Pixel->Raw
+          ));
         break;
       }
 
@@ -248,7 +275,13 @@ FindDim (
     for (LogoX = 0; LogoX < (INTN)Width; LogoX++) {
       if ((Pixel->Raw & mLogoDetectionColorMask.Raw) != 0x0) {
         LogoEndY = LogoY;
-        DEBUG ((DEBUG_INFO, "EndY found at (%d, %d) Color is: 0x%X \n", LogoX, LogoY, Pixel->Raw));
+        DEBUG ((
+          DEBUG_INFO,
+          "EndY found at (%d, %d) Color is: 0x%X \n",
+          LogoX,
+          LogoY,
+          Pixel->Raw
+          ));
         break;
       }
 
@@ -259,7 +292,8 @@ FindDim (
   //
   // Compute bottom padding (distance between logo bottom and progress bar)
   //
-  mStartY = (((LogoEndY - LogoStartY) * LOGO_BOTTOM_PADDING) / 100) + LogoEndY + OffsetY;
+  mStartY = (((LogoEndY - LogoStartY) * LOGO_BOTTOM_PADDING) / 100) + LogoEndY +
+            OffsetY;
 
   //
   // Compute progress bar height
@@ -271,7 +305,10 @@ FindDim (
   //
   // Create progress bar background (one time init).
   //
-  mProgressBarBackground = AllocatePool (mBlockWidth * 100 * mBlockHeight * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+  mProgressBarBackground = AllocatePool (
+                             mBlockWidth * 100 * mBlockHeight *
+                             sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+                             );
   if (mProgressBarBackground == NULL) {
     DEBUG ((DEBUG_ERROR, "Failed to allocate progress bar background\n"));
     return;
@@ -289,7 +326,10 @@ FindDim (
   //
   // Allocate mBlockBitmap
   //
-  mBlockBitmap = AllocatePool (mBlockWidth * mBlockHeight * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+  mBlockBitmap = AllocatePool (
+                   mBlockWidth * mBlockHeight *
+                   sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+                   );
   if (mBlockBitmap == NULL) {
     FreePool (mProgressBarBackground);
     DEBUG ((DEBUG_ERROR, "Failed to allocate block\n"));
@@ -299,9 +339,19 @@ FindDim (
   //
   // Check screen width and height and make sure it fits.
   //
-  if ((mBlockHeight > Height) || (mBlockWidth > Width) || (mBlockHeight < 1) || (mBlockWidth < 1)) {
-    DEBUG ((DEBUG_ERROR, "DisplayUpdateProgressLib - Progress - Failed to get valid width and height.\n"));
-    DEBUG ((DEBUG_ERROR, "DisplayUpdateProgressLib - Progress - mBlockHeight: 0x%X  mBlockWidth: 0x%X.\n", mBlockHeight, mBlockWidth));
+  if ((mBlockHeight > Height) || (mBlockWidth > Width) || (mBlockHeight < 1) ||
+      (mBlockWidth < 1))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "DisplayUpdateProgressLib - Progress - Failed to get valid width and height.\n"
+      ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "DisplayUpdateProgressLib - Progress - mBlockHeight: 0x%X  mBlockWidth: 0x%X.\n",
+      mBlockHeight,
+      mBlockWidth
+      ));
     FreePool (mProgressBarBackground);
     FreePool (mBlockBitmap);
     return;
@@ -367,10 +417,18 @@ DisplayUpdateProgress (
                     (VOID **)&mGop
                     );
     if (EFI_ERROR (Status)) {
-      Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **)&mGop);
+      Status = gBS->LocateProtocol (
+                      &gEfiGraphicsOutputProtocolGuid,
+                      NULL,
+                      (VOID **)&mGop
+                      );
       if (EFI_ERROR (Status)) {
         mGop = NULL;
-        DEBUG ((DEBUG_ERROR, "Show Progress Function could not locate GOP.  Status = %r\n", Status));
+        DEBUG ((
+          DEBUG_ERROR,
+          "Show Progress Function could not locate GOP.  Status = %r\n",
+          Status
+          ));
         return EFI_NOT_READY;
       }
     }
@@ -385,7 +443,10 @@ DisplayUpdateProgress (
   // Make sure a valid start, end, and size info are available (find the Logo)
   //
   if (!mGraphicsGood) {
-    DEBUG ((DEBUG_INFO, "Graphics Not Good.  Not doing any onscreen visual display\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "Graphics Not Good.  Not doing any onscreen visual display\n"
+      ));
     return EFI_NOT_READY;
   }
 
@@ -434,7 +495,12 @@ DisplayUpdateProgress (
   // Can not update progress bar if Completion is less than previous
   //
   if (Completion < mPreviousProgress) {
-    DEBUG ((DEBUG_WARN, "WARNING: Completion (%d) should not be lesss than Previous (%d)!!!\n", Completion, mPreviousProgress));
+    DEBUG ((
+      DEBUG_WARN,
+      "WARNING: Completion (%d) should not be lesss than Previous (%d)!!!\n",
+      Completion,
+      mPreviousProgress
+      ));
     return EFI_INVALID_PARAMETER;
   }
 

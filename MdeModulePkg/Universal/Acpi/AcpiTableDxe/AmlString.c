@@ -439,7 +439,11 @@ AmlNameFromAslName (
     NameLength = AmlGetAslNameSegLength (Buffer);
     ASSERT ((NameLength != 0) && (NameLength <= AML_NAME_SEG_SIZE));
     AmlUpperCaseCopyMem (AmlBuffer, Buffer, NameLength);
-    SetMem (AmlBuffer + NameLength, AML_NAME_SEG_SIZE - NameLength, AML_NAME_CHAR__);
+    SetMem (
+      AmlBuffer + NameLength,
+      AML_NAME_SEG_SIZE - NameLength,
+      AML_NAME_CHAR__
+      );
     Buffer    += NameLength;
     AmlBuffer += AML_NAME_SEG_SIZE;
     if (*Buffer == 0) {

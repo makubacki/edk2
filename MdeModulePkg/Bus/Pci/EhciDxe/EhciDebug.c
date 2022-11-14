@@ -76,7 +76,12 @@ EhcDumpQtd (
     DEBUG ((DEBUG_VERBOSE, Msg));
   }
 
-  DEBUG ((DEBUG_VERBOSE, "Queue TD @ 0x%p, data length %d\n", Qtd, (UINT32)Qtd->DataLen));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "Queue TD @ 0x%p, data length %d\n",
+    Qtd,
+    (UINT32)Qtd->DataLen
+    ));
 
   QtdHw = &Qtd->QtdHw;
 
@@ -100,7 +105,12 @@ EhcDumpQtd (
   DEBUG ((DEBUG_VERBOSE, "Data Toggle  : %d\n", QtdHw->DataToggle));
 
   for (Index = 0; Index < 5; Index++) {
-    DEBUG ((DEBUG_VERBOSE, "Page[%d]      : 0x%x\n", (UINT32)Index, QtdHw->Page[Index]));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "Page[%d]      : 0x%x\n",
+      (UINT32)Index,
+      QtdHw->Page[Index]
+      ));
   }
 }
 
@@ -178,7 +188,12 @@ EhcDumpQh (
   DEBUG ((DEBUG_VERBOSE, "Data Toggle   : %d\n", QhHw->DataToggle));
 
   for (Index = 0; Index < 5; Index++) {
-    DEBUG ((DEBUG_VERBOSE, "Page[%d]       : 0x%x\n", Index, QhHw->Page[Index]));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "Page[%d]       : 0x%x\n",
+      Index,
+      QhHw->Page[Index]
+      ));
   }
 
   DEBUG ((DEBUG_VERBOSE, "\n"));

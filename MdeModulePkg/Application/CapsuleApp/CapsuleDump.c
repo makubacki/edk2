@@ -41,14 +41,26 @@ DumpUxCapsule (
   DisplayCapsule = (EFI_DISPLAY_CAPSULE *)CapsuleHeader;
   Print (L"[UxCapsule]\n");
   Print (L"CapsuleHeader:\n");
-  Print (L"  CapsuleGuid      - %g\n", &DisplayCapsule->CapsuleHeader.CapsuleGuid);
-  Print (L"  HeaderSize       - 0x%x\n", DisplayCapsule->CapsuleHeader.HeaderSize);
+  Print (
+    L"  CapsuleGuid      - %g\n",
+    &DisplayCapsule->CapsuleHeader.CapsuleGuid
+    );
+  Print (
+    L"  HeaderSize       - 0x%x\n",
+    DisplayCapsule->CapsuleHeader.HeaderSize
+    );
   Print (L"  Flags            - 0x%x\n", DisplayCapsule->CapsuleHeader.Flags);
-  Print (L"  CapsuleImageSize - 0x%x\n", DisplayCapsule->CapsuleHeader.CapsuleImageSize);
+  Print (
+    L"  CapsuleImageSize - 0x%x\n",
+    DisplayCapsule->CapsuleHeader.CapsuleImageSize
+    );
   Print (L"ImagePayload:\n");
   Print (L"  Version          - 0x%x\n", DisplayCapsule->ImagePayload.Version);
   Print (L"  Checksum         - 0x%x\n", DisplayCapsule->ImagePayload.Checksum);
-  Print (L"  ImageType        - 0x%x\n", DisplayCapsule->ImagePayload.ImageType);
+  Print (
+    L"  ImageType        - 0x%x\n",
+    DisplayCapsule->ImagePayload.ImageType
+    );
   Print (L"  Mode             - 0x%x\n", DisplayCapsule->ImagePayload.Mode);
   Print (L"  OffsetX          - 0x%x\n", DisplayCapsule->ImagePayload.OffsetX);
   Print (L"  OffsetY          - 0x%x\n", DisplayCapsule->ImagePayload.OffsetY);
@@ -77,29 +89,58 @@ DumpFmpCapsule (
   Print (L"  Flags            - 0x%x\n", CapsuleHeader->Flags);
   Print (L"  CapsuleImageSize - 0x%x\n", CapsuleHeader->CapsuleImageSize);
 
-  FmpCapsuleHeader = (EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER *)((UINT8 *)CapsuleHeader + CapsuleHeader->HeaderSize);
-  ItemOffsetList   = (UINT64 *)(FmpCapsuleHeader + 1);
+  FmpCapsuleHeader =
+    (EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER *)((UINT8 *)CapsuleHeader +
+                                               CapsuleHeader->HeaderSize);
+  ItemOffsetList = (UINT64 *)(FmpCapsuleHeader + 1);
   Print (L"FmpHeader:\n");
   Print (L"  Version             - 0x%x\n", FmpCapsuleHeader->Version);
-  Print (L"  EmbeddedDriverCount - 0x%x\n", FmpCapsuleHeader->EmbeddedDriverCount);
+  Print (
+    L"  EmbeddedDriverCount - 0x%x\n",
+    FmpCapsuleHeader->EmbeddedDriverCount
+    );
   Print (L"  PayloadItemCount    - 0x%x\n", FmpCapsuleHeader->PayloadItemCount);
-  Count = FmpCapsuleHeader->EmbeddedDriverCount + FmpCapsuleHeader->PayloadItemCount;
+  Count = FmpCapsuleHeader->EmbeddedDriverCount +
+          FmpCapsuleHeader->PayloadItemCount;
   for (Index = 0; Index < Count; Index++) {
     Print (L"  Offset[%d]           - 0x%x\n", Index, ItemOffsetList[Index]);
   }
 
   for (Index = FmpCapsuleHeader->EmbeddedDriverCount; Index < Count; Index++) {
     Print (L"FmpPayload[%d] ImageHeader:\n", Index);
-    FmpImageHeader = (EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER *)((UINT8 *)FmpCapsuleHeader + ItemOffsetList[Index]);
+    FmpImageHeader =
+      (EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER *)((UINT8 *)FmpCapsuleHeader
+                                                       +
+                                                       ItemOffsetList[Index]);
     Print (L"  Version                - 0x%x\n", FmpImageHeader->Version);
-    Print (L"  UpdateImageTypeId      - %g\n", &FmpImageHeader->UpdateImageTypeId);
-    Print (L"  UpdateImageIndex       - 0x%x\n", FmpImageHeader->UpdateImageIndex);
-    Print (L"  UpdateImageSize        - 0x%x\n", FmpImageHeader->UpdateImageSize);
-    Print (L"  UpdateVendorCodeSize   - 0x%x\n", FmpImageHeader->UpdateVendorCodeSize);
+    Print (
+      L"  UpdateImageTypeId      - %g\n",
+      &FmpImageHeader->UpdateImageTypeId
+      );
+    Print (
+      L"  UpdateImageIndex       - 0x%x\n",
+      FmpImageHeader->UpdateImageIndex
+      );
+    Print (
+      L"  UpdateImageSize        - 0x%x\n",
+      FmpImageHeader->UpdateImageSize
+      );
+    Print (
+      L"  UpdateVendorCodeSize   - 0x%x\n",
+      FmpImageHeader->UpdateVendorCodeSize
+      );
     if (FmpImageHeader->Version >= 2) {
-      Print (L"  UpdateHardwareInstance - 0x%lx\n", FmpImageHeader->UpdateHardwareInstance);
-      if (FmpImageHeader->Version >= EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER_INIT_VERSION) {
-        Print (L"  ImageCapsuleSupport    - 0x%lx\n", FmpImageHeader->ImageCapsuleSupport);
+      Print (
+        L"  UpdateHardwareInstance - 0x%lx\n",
+        FmpImageHeader->UpdateHardwareInstance
+        );
+      if (FmpImageHeader->Version >=
+          EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER_INIT_VERSION)
+      {
+        Print (
+          L"  ImageCapsuleSupport    - 0x%lx\n",
+          FmpImageHeader->ImageCapsuleSupport
+          );
       }
     }
   }
@@ -130,7 +171,10 @@ IsNestedFmpCapsule (
   // Check ESRT
   //
   EsrtGuidFound = FALSE;
-  Status        = EfiGetSystemConfigurationTable (&gEfiSystemResourceTableGuid, (VOID **)&Esrt);
+  Status        = EfiGetSystemConfigurationTable (
+                    &gEfiSystemResourceTableGuid,
+                    (VOID **)&Esrt
+                    );
   if (!EFI_ERROR (Status)) {
     ASSERT (Esrt != NULL);
     EsrtEntry = (VOID *)(Esrt + 1);
@@ -150,8 +194,10 @@ IsNestedFmpCapsule (
   // Check nested capsule header
   // FMP GUID after ESRT one
   //
-  NestedCapsuleHeader = (EFI_CAPSULE_HEADER *)((UINT8 *)CapsuleHeader + CapsuleHeader->HeaderSize);
-  NestedCapsuleSize   = (UINTN)CapsuleHeader + CapsuleHeader->CapsuleImageSize- (UINTN)NestedCapsuleHeader;
+  NestedCapsuleHeader = (EFI_CAPSULE_HEADER *)((UINT8 *)CapsuleHeader +
+                                               CapsuleHeader->HeaderSize);
+  NestedCapsuleSize   = (UINTN)CapsuleHeader + CapsuleHeader->CapsuleImageSize-
+                        (UINTN)NestedCapsuleHeader;
   if (NestedCapsuleSize < sizeof (EFI_CAPSULE_HEADER)) {
     return FALSE;
   }
@@ -189,7 +235,10 @@ DumpCapsule (
   }
 
   if (!IsValidCapsuleHeader (Buffer, FileSize)) {
-    Print (L"CapsuleApp: Capsule image (%s) is not a valid capsule.\n", CapsuleName);
+    Print (
+      L"CapsuleApp: Capsule image (%s) is not a valid capsule.\n",
+      CapsuleName
+      );
     Status = EFI_INVALID_PARAMETER;
     goto Done;
   }
@@ -212,7 +261,10 @@ DumpCapsule (
     Print (L"  HeaderSize       - 0x%x\n", CapsuleHeader->HeaderSize);
     Print (L"  Flags            - 0x%x\n", CapsuleHeader->Flags);
     Print (L"  CapsuleImageSize - 0x%x\n", CapsuleHeader->CapsuleImageSize);
-    DumpFmpCapsule ((EFI_CAPSULE_HEADER *)((UINTN)CapsuleHeader + CapsuleHeader->HeaderSize));
+    DumpFmpCapsule (
+      (EFI_CAPSULE_HEADER *)((UINTN)CapsuleHeader +
+                             CapsuleHeader->HeaderSize)
+      );
   }
 
 Done:
@@ -274,7 +326,11 @@ DumpCapsuleStatusVariable (
     FreePool (CapsuleIndex);
   }
 
-  StrCpyS (CapsuleVarName, sizeof (CapsuleVarName)/sizeof (CapsuleVarName[0]), L"Capsule");
+  StrCpyS (
+    CapsuleVarName,
+    sizeof (CapsuleVarName)/sizeof (CapsuleVarName[0]),
+    L"Capsule"
+    );
   TempVarName = CapsuleVarName + StrLen (CapsuleVarName);
   Index       = 0;
 
@@ -298,24 +354,43 @@ DumpCapsuleStatusVariable (
     //
     // display capsule process status
     //
-    if (CapsuleResult->VariableTotalSize >= sizeof (EFI_CAPSULE_RESULT_VARIABLE_HEADER)) {
+    if (CapsuleResult->VariableTotalSize >=
+        sizeof (EFI_CAPSULE_RESULT_VARIABLE_HEADER))
+    {
       Print (L"CapsuleName: %s\n", CapsuleVarName);
       Print (L"  Capsule Guid: %g\n", &CapsuleResult->CapsuleGuid);
-      Print (L"  Capsule ProcessedTime: %t\n", &CapsuleResult->CapsuleProcessed);
+      Print (
+        L"  Capsule ProcessedTime: %t\n",
+        &CapsuleResult->CapsuleProcessed
+        );
       Print (L"  Capsule Status: %r\n", CapsuleResult->CapsuleStatus);
     }
 
     if (CompareGuid (&CapsuleResult->CapsuleGuid, &gEfiFmpCapsuleGuid)) {
-      if (CapsuleResult->VariableTotalSize >= sizeof (EFI_CAPSULE_RESULT_VARIABLE_HEADER) + sizeof (EFI_CAPSULE_RESULT_VARIABLE_FMP) + sizeof (CHAR16) * 2) {
-        CapsuleResultFmp = (EFI_CAPSULE_RESULT_VARIABLE_FMP *)(CapsuleResult + 1);
+      if (CapsuleResult->VariableTotalSize >=
+          sizeof (EFI_CAPSULE_RESULT_VARIABLE_HEADER) +
+          sizeof (EFI_CAPSULE_RESULT_VARIABLE_FMP) + sizeof (CHAR16) * 2)
+      {
+        CapsuleResultFmp = (EFI_CAPSULE_RESULT_VARIABLE_FMP *)(CapsuleResult +
+                                                               1);
         Print (L"  Capsule FMP Version: 0x%x\n", CapsuleResultFmp->Version);
-        Print (L"  Capsule FMP PayloadIndex: 0x%x\n", CapsuleResultFmp->PayloadIndex);
-        Print (L"  Capsule FMP UpdateImageIndex: 0x%x\n", CapsuleResultFmp->UpdateImageIndex);
-        Print (L"  Capsule FMP UpdateImageTypeId: %g\n", &CapsuleResultFmp->UpdateImageTypeId);
+        Print (
+          L"  Capsule FMP PayloadIndex: 0x%x\n",
+          CapsuleResultFmp->PayloadIndex
+          );
+        Print (
+          L"  Capsule FMP UpdateImageIndex: 0x%x\n",
+          CapsuleResultFmp->UpdateImageIndex
+          );
+        Print (
+          L"  Capsule FMP UpdateImageTypeId: %g\n",
+          &CapsuleResultFmp->UpdateImageTypeId
+          );
         CapsuleFileName = (CHAR16 *)(CapsuleResultFmp + 1);
         Print (L"  Capsule FMP CapsuleFileName: \"%s\"\n", CapsuleFileName);
         CapsuleFileNameSize = StrSize (CapsuleFileName);
-        CapsuleTarget       = (CHAR16 *)((UINTN)CapsuleFileName + CapsuleFileNameSize);
+        CapsuleTarget       = (CHAR16 *)((UINTN)CapsuleFileName +
+                                         CapsuleFileNameSize);
         Print (L"  Capsule FMP CapsuleTarget: \"%s\"\n", CapsuleTarget);
       }
     }
@@ -381,7 +456,9 @@ LastAttemptStatusToString (
   IN UINT32  LastAttemptStatus
   )
 {
-  if (LastAttemptStatus < sizeof (mLastAttemptStatusString) / sizeof (mLastAttemptStatusString[0])) {
+  if (LastAttemptStatus < sizeof (mLastAttemptStatusString) /
+      sizeof (mLastAttemptStatusString[0]))
+  {
     return mLastAttemptStatusString[LastAttemptStatus];
   } else {
     return "Error: Unknown";
@@ -399,12 +476,25 @@ DumpEsrtEntry (
   )
 {
   Print (L"  FwClass                  - %g\n", &EsrtEntry->FwClass);
-  Print (L"  FwType                   - 0x%x (%a)\n", EsrtEntry->FwType, FwTypeToString (EsrtEntry->FwType));
+  Print (
+    L"  FwType                   - 0x%x (%a)\n",
+    EsrtEntry->FwType,
+    FwTypeToString (EsrtEntry->FwType)
+    );
   Print (L"  FwVersion                - 0x%x\n", EsrtEntry->FwVersion);
-  Print (L"  LowestSupportedFwVersion - 0x%x\n", EsrtEntry->LowestSupportedFwVersion);
+  Print (
+    L"  LowestSupportedFwVersion - 0x%x\n",
+    EsrtEntry->LowestSupportedFwVersion
+    );
   Print (L"  CapsuleFlags             - 0x%x\n", EsrtEntry->CapsuleFlags);
   Print (L"  LastAttemptVersion       - 0x%x\n", EsrtEntry->LastAttemptVersion);
-  Print (L"  LastAttemptStatus        - 0x%x (%a)\n", EsrtEntry->LastAttemptStatus, LastAttemptStatusToString (EsrtEntry->LastAttemptStatus));
+  Print (
+    L"  LastAttemptStatus        - 0x%x (%a)\n",
+    EsrtEntry->LastAttemptStatus,
+    LastAttemptStatusToString (
+      EsrtEntry->LastAttemptStatus
+      )
+    );
 }
 
 /**
@@ -452,7 +542,10 @@ DumpEsrtData (
   Print (L"# ESRT TABLE #\n");
   Print (L"##############\n");
 
-  Status = EfiGetSystemConfigurationTable (&gEfiSystemResourceTableGuid, (VOID **)&Esrt);
+  Status = EfiGetSystemConfigurationTable (
+             &gEfiSystemResourceTableGuid,
+             (VOID **)&Esrt
+             );
   if (EFI_ERROR (Status)) {
     Print (L"ESRT - %r\n", Status);
     return;
@@ -491,7 +584,10 @@ DumpCapsuleFromBuffer (
     Print (L"  HeaderSize       - 0x%x\n", CapsuleHeader->HeaderSize);
     Print (L"  Flags            - 0x%x\n", CapsuleHeader->Flags);
     Print (L"  CapsuleImageSize - 0x%x\n", CapsuleHeader->CapsuleImageSize);
-    DumpFmpCapsule ((EFI_CAPSULE_HEADER *)((UINTN)CapsuleHeader + CapsuleHeader->HeaderSize));
+    DumpFmpCapsule (
+      (EFI_CAPSULE_HEADER *)((UINTN)CapsuleHeader +
+                             CapsuleHeader->HeaderSize)
+      );
   }
 
   return EFI_SUCCESS;
@@ -725,9 +821,19 @@ DumpCapsuleFromDisk (
     goto Done;
   }
 
-  Status = Root->Open (Root, &DirHandle, EFI_CAPSULE_FILE_DIRECTORY, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+  Status = Root->Open (
+                   Root,
+                   &DirHandle,
+                   EFI_CAPSULE_FILE_DIRECTORY,
+                   EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE,
+                   0
+                   );
   if (EFI_ERROR (Status)) {
-    Print (L"Cannot open %s. Status = %r\n", EFI_CAPSULE_FILE_DIRECTORY, Status);
+    Print (
+      L"Cannot open %s. Status = %r\n",
+      EFI_CAPSULE_FILE_DIRECTORY,
+      Status
+      );
     goto Done;
   }
 
@@ -777,7 +883,10 @@ DumpCapsuleFromDisk (
     }
 
     if ((FileInfo->Attribute & (EFI_FILE_SYSTEM | EFI_FILE_ARCHIVE)) != 0) {
-      FileInfoBuffer[Index++] = AllocateCopyPool ((UINTN)FileInfo->Size, FileInfo);
+      FileInfoBuffer[Index++] = AllocateCopyPool (
+                                  (UINTN)FileInfo->Size,
+                                  FileInfo
+                                  );
     }
 
     Status = FileHandleFindNextFile (DirHandle, FileInfo, &NoFile);
@@ -812,14 +921,24 @@ DumpCapsuleFromDisk (
 
   for (Index = 0; Index < FileCount; Index++) {
     FileHandle = NULL;
-    Status     = DirHandle->Open (DirHandle, &FileHandle, FileInfoBuffer[Index]->FileName, EFI_FILE_MODE_READ, 0);
+    Status     = DirHandle->Open (
+                              DirHandle,
+                              &FileHandle,
+                              FileInfoBuffer[Index]->FileName,
+                              EFI_FILE_MODE_READ,
+                              0
+                              );
     if (EFI_ERROR (Status)) {
       goto Done;
     }
 
     Status = FileHandleGetSize (FileHandle, (UINT64 *)&FileSize);
     if (EFI_ERROR (Status)) {
-      Print (L"Cannot read file %s. Status = %r\n", FileInfoBuffer[Index]->FileName, Status);
+      Print (
+        L"Cannot read file %s. Status = %r\n",
+        FileInfoBuffer[Index]->FileName,
+        Status
+        );
       FileHandleClose (FileHandle);
       goto Done;
     }
@@ -832,7 +951,11 @@ DumpCapsuleFromDisk (
 
     Status = FileHandleRead (FileHandle, &FileSize, FileBuffer);
     if (EFI_ERROR (Status)) {
-      Print (L"Cannot read file %s. Status = %r\n", FileInfoBuffer[Index]->FileName, Status);
+      Print (
+        L"Cannot read file %s. Status = %r\n",
+        FileInfoBuffer[Index]->FileName,
+        Status
+        );
       FileHandleClose (FileHandle);
       FreePool (FileBuffer);
       goto Done;
@@ -883,10 +1006,16 @@ DumpBlockDescriptors (
         Print (L"******************************************************\n");
       }
 
-      Print (L"Capsule data starts at 0x%08x with size 0x%08x\n", TempBlockPtr->Union.DataBlock, TempBlockPtr->Length);
+      Print (
+        L"Capsule data starts at 0x%08x with size 0x%08x\n",
+        TempBlockPtr->Union.DataBlock,
+        TempBlockPtr->Length
+        );
       if (DumpCapsuleInfo) {
         Print (L"******************************************************\n");
-        DumpCapsuleFromBuffer ((EFI_CAPSULE_HEADER *)(UINTN)TempBlockPtr->Union.DataBlock);
+        DumpCapsuleFromBuffer (
+          (EFI_CAPSULE_HEADER *)(UINTN)TempBlockPtr->Union.DataBlock
+          );
       }
 
       TempBlockPtr += 1;
@@ -894,7 +1023,9 @@ DumpBlockDescriptors (
       if (TempBlockPtr->Union.ContinuationPointer == (UINTN)NULL) {
         break;
       } else {
-        TempBlockPtr = (EFI_CAPSULE_BLOCK_DESCRIPTOR *)(UINTN)TempBlockPtr->Union.ContinuationPointer;
+        TempBlockPtr =
+          (EFI_CAPSULE_BLOCK_DESCRIPTOR *)(UINTN)TempBlockPtr->Union.
+            ContinuationPointer;
       }
     }
   }
@@ -939,7 +1070,11 @@ DumpProvisionedCapsule (
   Print (L"#########################\n");
   Print (L"### Capsule on Memory ###\n");
   Print (L"#########################\n");
-  StrCpyS (CapsuleVarName, sizeof (CapsuleVarName)/sizeof (CHAR16), EFI_CAPSULE_VARIABLE_NAME);
+  StrCpyS (
+    CapsuleVarName,
+    sizeof (CapsuleVarName)/sizeof (CHAR16),
+    EFI_CAPSULE_VARIABLE_NAME
+    );
   TempVarName = CapsuleVarName + StrLen (CapsuleVarName);
   while (TRUE) {
     if (Index > 0) {
@@ -968,7 +1103,10 @@ DumpProvisionedCapsule (
 
     Index++;
     Print (L"Capsule Description at 0x%08x\n", *CapsuleDataPtr64);
-    DumpBlockDescriptors ((EFI_CAPSULE_BLOCK_DESCRIPTOR *)(UINTN)*CapsuleDataPtr64, DumpCapsuleInfo);
+    DumpBlockDescriptors (
+      (EFI_CAPSULE_BLOCK_DESCRIPTOR *)(UINTN)*CapsuleDataPtr64,
+      DumpCapsuleInfo
+      );
   }
 
   //
@@ -986,16 +1124,37 @@ DumpProvisionedCapsule (
   if (EFI_ERROR (Status) || (BootNext == NULL)) {
     Print (L"Get BootNext Variable Fail. Status = %r\n", Status);
   } else {
-    UnicodeSPrint (BootOptionName, sizeof (BootOptionName), L"Boot%04x", *BootNext);
-    Status = EfiBootManagerVariableToLoadOption (BootOptionName, &BootNextOptionEntry);
+    UnicodeSPrint (
+      BootOptionName,
+      sizeof (BootOptionName),
+      L"Boot%04x",
+      *BootNext
+      );
+    Status = EfiBootManagerVariableToLoadOption (
+               BootOptionName,
+               &BootNextOptionEntry
+               );
     if (!EFI_ERROR (Status)) {
       //
       // Display description and device path
       //
-      GetEfiSysPartitionFromBootOptionFilePath (BootNextOptionEntry.FilePath, &DevicePath, &Fs);
+      GetEfiSysPartitionFromBootOptionFilePath (
+        BootNextOptionEntry.FilePath,
+        &DevicePath,
+        &Fs
+        );
       if (!EFI_ERROR (Status)) {
-        Print (L"Capsules are provisioned on BootOption: %s\n", BootNextOptionEntry.Description);
-        Print (L"    %s %s\n", ShellProtocol->GetMapFromDevicePath (&DevicePath), ConvertDevicePathToText (DevicePath, TRUE, TRUE));
+        Print (
+          L"Capsules are provisioned on BootOption: %s\n",
+          BootNextOptionEntry.Description
+          );
+        Print (
+          L"    %s %s\n",
+          ShellProtocol->GetMapFromDevicePath (
+                           &DevicePath
+                           ),
+          ConvertDevicePathToText (DevicePath, TRUE, TRUE)
+          );
         DumpCapsuleFromDisk (Fs, DumpCapsuleInfo);
       }
     }
@@ -1036,33 +1195,110 @@ DumpFmpImageInfo (
   CurrentImageInfo = ImageInfo;
   for (Index = 0; Index < DescriptorCount; Index++) {
     Print (L"  ImageDescriptor (%d)\n", Index);
-    Print (L"    ImageIndex                  - 0x%x\n", CurrentImageInfo->ImageIndex);
-    Print (L"    ImageTypeId                 - %g\n", &CurrentImageInfo->ImageTypeId);
-    Print (L"    ImageId                     - 0x%lx\n", CurrentImageInfo->ImageId);
-    Print (L"    ImageIdName                 - \"%s\"\n", CurrentImageInfo->ImageIdName);
-    Print (L"    Version                     - 0x%x\n", CurrentImageInfo->Version);
-    Print (L"    VersionName                 - \"%s\"\n", CurrentImageInfo->VersionName);
+    Print (
+      L"    ImageIndex                  - 0x%x\n",
+      CurrentImageInfo->ImageIndex
+      );
+    Print (
+      L"    ImageTypeId                 - %g\n",
+      &CurrentImageInfo->ImageTypeId
+      );
+    Print (
+      L"    ImageId                     - 0x%lx\n",
+      CurrentImageInfo->ImageId
+      );
+    Print (
+      L"    ImageIdName                 - \"%s\"\n",
+      CurrentImageInfo->ImageIdName
+      );
+    Print (
+      L"    Version                     - 0x%x\n",
+      CurrentImageInfo->Version
+      );
+    Print (
+      L"    VersionName                 - \"%s\"\n",
+      CurrentImageInfo->VersionName
+      );
     Print (L"    Size                        - 0x%x\n", CurrentImageInfo->Size);
-    Print (L"    AttributesSupported         - 0x%lx\n", CurrentImageInfo->AttributesSupported);
-    Print (L"      IMAGE_UPDATABLE           - 0x%lx\n", CurrentImageInfo->AttributesSupported & IMAGE_ATTRIBUTE_IMAGE_UPDATABLE);
-    Print (L"      RESET_REQUIRED            - 0x%lx\n", CurrentImageInfo->AttributesSupported & IMAGE_ATTRIBUTE_RESET_REQUIRED);
-    Print (L"      AUTHENTICATION_REQUIRED   - 0x%lx\n", CurrentImageInfo->AttributesSupported & IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED);
-    Print (L"      IN_USE                    - 0x%lx\n", CurrentImageInfo->AttributesSupported & IMAGE_ATTRIBUTE_IN_USE);
-    Print (L"      UEFI_IMAGE                - 0x%lx\n", CurrentImageInfo->AttributesSupported & IMAGE_ATTRIBUTE_UEFI_IMAGE);
-    Print (L"    AttributesSetting           - 0x%lx\n", CurrentImageInfo->AttributesSetting);
-    Print (L"      IMAGE_UPDATABLE           - 0x%lx\n", CurrentImageInfo->AttributesSetting & IMAGE_ATTRIBUTE_IMAGE_UPDATABLE);
-    Print (L"      RESET_REQUIRED            - 0x%lx\n", CurrentImageInfo->AttributesSetting & IMAGE_ATTRIBUTE_RESET_REQUIRED);
-    Print (L"      AUTHENTICATION_REQUIRED   - 0x%lx\n", CurrentImageInfo->AttributesSetting & IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED);
-    Print (L"      IN_USE                    - 0x%lx\n", CurrentImageInfo->AttributesSetting & IMAGE_ATTRIBUTE_IN_USE);
-    Print (L"      UEFI_IMAGE                - 0x%lx\n", CurrentImageInfo->AttributesSetting & IMAGE_ATTRIBUTE_UEFI_IMAGE);
-    Print (L"    Compatibilities             - 0x%lx\n", CurrentImageInfo->Compatibilities);
-    Print (L"      COMPATIB_CHECK_SUPPORTED  - 0x%lx\n", CurrentImageInfo->Compatibilities & IMAGE_COMPATIBILITY_CHECK_SUPPORTED);
+    Print (
+      L"    AttributesSupported         - 0x%lx\n",
+      CurrentImageInfo->AttributesSupported
+      );
+    Print (
+      L"      IMAGE_UPDATABLE           - 0x%lx\n",
+      CurrentImageInfo->AttributesSupported & IMAGE_ATTRIBUTE_IMAGE_UPDATABLE
+      );
+    Print (
+      L"      RESET_REQUIRED            - 0x%lx\n",
+      CurrentImageInfo->AttributesSupported & IMAGE_ATTRIBUTE_RESET_REQUIRED
+      );
+    Print (
+      L"      AUTHENTICATION_REQUIRED   - 0x%lx\n",
+      CurrentImageInfo->AttributesSupported &
+      IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED
+      );
+    Print (
+      L"      IN_USE                    - 0x%lx\n",
+      CurrentImageInfo->AttributesSupported & IMAGE_ATTRIBUTE_IN_USE
+      );
+    Print (
+      L"      UEFI_IMAGE                - 0x%lx\n",
+      CurrentImageInfo->AttributesSupported & IMAGE_ATTRIBUTE_UEFI_IMAGE
+      );
+    Print (
+      L"    AttributesSetting           - 0x%lx\n",
+      CurrentImageInfo->AttributesSetting
+      );
+    Print (
+      L"      IMAGE_UPDATABLE           - 0x%lx\n",
+      CurrentImageInfo->AttributesSetting & IMAGE_ATTRIBUTE_IMAGE_UPDATABLE
+      );
+    Print (
+      L"      RESET_REQUIRED            - 0x%lx\n",
+      CurrentImageInfo->AttributesSetting & IMAGE_ATTRIBUTE_RESET_REQUIRED
+      );
+    Print (
+      L"      AUTHENTICATION_REQUIRED   - 0x%lx\n",
+      CurrentImageInfo->AttributesSetting &
+      IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED
+      );
+    Print (
+      L"      IN_USE                    - 0x%lx\n",
+      CurrentImageInfo->AttributesSetting & IMAGE_ATTRIBUTE_IN_USE
+      );
+    Print (
+      L"      UEFI_IMAGE                - 0x%lx\n",
+      CurrentImageInfo->AttributesSetting & IMAGE_ATTRIBUTE_UEFI_IMAGE
+      );
+    Print (
+      L"    Compatibilities             - 0x%lx\n",
+      CurrentImageInfo->Compatibilities
+      );
+    Print (
+      L"      COMPATIB_CHECK_SUPPORTED  - 0x%lx\n",
+      CurrentImageInfo->Compatibilities & IMAGE_COMPATIBILITY_CHECK_SUPPORTED
+      );
     if (DescriptorVersion > 1) {
-      Print (L"    LowestSupportedImageVersion - 0x%x\n", CurrentImageInfo->LowestSupportedImageVersion);
+      Print (
+        L"    LowestSupportedImageVersion - 0x%x\n",
+        CurrentImageInfo->LowestSupportedImageVersion
+        );
       if (DescriptorVersion > 2) {
-        Print (L"    LastAttemptVersion          - 0x%x\n", CurrentImageInfo->LastAttemptVersion);
-        Print (L"    LastAttemptStatus           - 0x%x (%a)\n", CurrentImageInfo->LastAttemptStatus, LastAttemptStatusToString (CurrentImageInfo->LastAttemptStatus));
-        Print (L"    HardwareInstance            - 0x%lx\n", CurrentImageInfo->HardwareInstance);
+        Print (
+          L"    LastAttemptVersion          - 0x%x\n",
+          CurrentImageInfo->LastAttemptVersion
+          );
+        Print (
+          L"    LastAttemptStatus           - 0x%x (%a)\n",
+          CurrentImageInfo->LastAttemptStatus,
+          LastAttemptStatusToString (
+            CurrentImageInfo->LastAttemptStatus
+            )
+          );
+        Print (
+          L"    HardwareInstance            - 0x%lx\n",
+          CurrentImageInfo->HardwareInstance
+          );
         if (DescriptorVersion > 3) {
           Print (L"    Dependencies                - ");
           if (CurrentImageInfo->Dependencies == NULL) {
@@ -1070,8 +1306,12 @@ DumpFmpImageInfo (
           } else {
             Index2 = 0;
             do {
-              Print (L"%02x ", CurrentImageInfo->Dependencies->Dependencies[Index2]);
-            } while (CurrentImageInfo->Dependencies->Dependencies[Index2++] != EFI_FMP_DEP_END);
+              Print (
+                L"%02x ",
+                CurrentImageInfo->Dependencies->Dependencies[Index2]
+                );
+            } while (CurrentImageInfo->Dependencies->Dependencies[Index2++] !=
+                     EFI_FMP_DEP_END);
 
             Print (L"\n");
           }
@@ -1082,7 +1322,9 @@ DumpFmpImageInfo (
     //
     // Use DescriptorSize to move ImageInfo Pointer to stay compatible with different ImageInfo version
     //
-    CurrentImageInfo = (EFI_FIRMWARE_IMAGE_DESCRIPTOR *)((UINT8 *)CurrentImageInfo + DescriptorSize);
+    CurrentImageInfo =
+      (EFI_FIRMWARE_IMAGE_DESCRIPTOR *)((UINT8 *)CurrentImageInfo +
+                                        DescriptorSize);
   }
 }
 
@@ -1108,13 +1350,37 @@ DumpFmpPackageInfo (
   Print (L"  PackageVersionName          - \"%s\"\n", PackageVersionName);
   Print (L"  PackageVersionNameMaxLen    - 0x%x\n", PackageVersionNameMaxLen);
   Print (L"  AttributesSupported         - 0x%lx\n", AttributesSupported);
-  Print (L"    IMAGE_UPDATABLE           - 0x%lx\n", AttributesSupported & IMAGE_ATTRIBUTE_IMAGE_UPDATABLE);
-  Print (L"    RESET_REQUIRED            - 0x%lx\n", AttributesSupported & IMAGE_ATTRIBUTE_RESET_REQUIRED);
-  Print (L"    AUTHENTICATION_REQUIRED   - 0x%lx\n", AttributesSupported & IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED);
+  Print (
+    L"    IMAGE_UPDATABLE           - 0x%lx\n",
+    AttributesSupported &
+    IMAGE_ATTRIBUTE_IMAGE_UPDATABLE
+    );
+  Print (
+    L"    RESET_REQUIRED            - 0x%lx\n",
+    AttributesSupported &
+    IMAGE_ATTRIBUTE_RESET_REQUIRED
+    );
+  Print (
+    L"    AUTHENTICATION_REQUIRED   - 0x%lx\n",
+    AttributesSupported &
+    IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED
+    );
   Print (L"  AttributesSetting           - 0x%lx\n", AttributesSetting);
-  Print (L"    IMAGE_UPDATABLE           - 0x%lx\n", AttributesSetting & IMAGE_ATTRIBUTE_IMAGE_UPDATABLE);
-  Print (L"    RESET_REQUIRED            - 0x%lx\n", AttributesSetting & IMAGE_ATTRIBUTE_RESET_REQUIRED);
-  Print (L"    AUTHENTICATION_REQUIRED   - 0x%lx\n", AttributesSetting & IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED);
+  Print (
+    L"    IMAGE_UPDATABLE           - 0x%lx\n",
+    AttributesSetting &
+    IMAGE_ATTRIBUTE_IMAGE_UPDATABLE
+    );
+  Print (
+    L"    RESET_REQUIRED            - 0x%lx\n",
+    AttributesSetting &
+    IMAGE_ATTRIBUTE_RESET_REQUIRED
+    );
+  Print (
+    L"    AUTHENTICATION_REQUIRED   - 0x%lx\n",
+    AttributesSetting &
+    IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED
+    );
 }
 
 /**
@@ -1290,7 +1556,9 @@ IsThisFmpImageInfo (
       return TRUE;
     }
 
-    CurrentImageInfo = (EFI_FIRMWARE_IMAGE_DESCRIPTOR *)((UINT8 *)CurrentImageInfo + DescriptorSize);
+    CurrentImageInfo =
+      (EFI_FIRMWARE_IMAGE_DESCRIPTOR *)((UINT8 *)CurrentImageInfo +
+                                        DescriptorSize);
   }
 
   return FALSE;
@@ -1392,7 +1660,13 @@ FindFmpFromImageTypeId (
       FreePool (PackageVersionName);
     }
 
-    if (IsThisFmpImageInfo (FmpImageInfoBuf, FmpImageInfoCount, DescriptorSize, ImageTypeId)) {
+    if (IsThisFmpImageInfo (
+          FmpImageInfoBuf,
+          FmpImageInfoCount,
+          DescriptorSize,
+          ImageTypeId
+          ))
+    {
       TargetFmp = Fmp;
     }
 
@@ -1459,7 +1733,13 @@ DumpFmpImage (
   }
 
   Status = WriteFileFromBuffer (ImageName, ImageSize, Image);
-  Print (L"CapsuleApp: Dump %g ImageIndex (0x%x) to %s %r\n", ImageTypeId, ImageIndex, ImageName, Status);
+  Print (
+    L"CapsuleApp: Dump %g ImageIndex (0x%x) to %s %r\n",
+    ImageTypeId,
+    ImageIndex,
+    ImageName,
+    Status
+    );
 
   FreePool (Image);
 

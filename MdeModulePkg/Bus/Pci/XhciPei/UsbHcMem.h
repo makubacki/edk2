@@ -32,7 +32,9 @@ struct _USBHC_MEM_BLOCK {
 #define USBHC_MEM_UNIT  64
 
 #define USBHC_MEM_UNIT_MASK  (USBHC_MEM_UNIT - 1)
-#define USBHC_MEM_ROUND(Len)  (((Len) + USBHC_MEM_UNIT_MASK) & (~USBHC_MEM_UNIT_MASK))
+#define USBHC_MEM_ROUND( \
+                       Len)  \
+  (((Len) + USBHC_MEM_UNIT_MASK) & (~USBHC_MEM_UNIT_MASK))
 
 #define USB_HC_BIT(a)  ((UINTN)(1 << (a)))
 

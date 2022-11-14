@@ -13,7 +13,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gFvSimpleFileSystemComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gFvSimpleFileSystemComponentName = {
   FvSimpleFileSystemComponentNameGetDriverName,
   FvSimpleFileSystemComponentNameGetControllerName,
   "eng"
@@ -22,9 +23,12 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gFvSimpleFileSystemCo
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gFvSimpleFileSystemComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)FvSimpleFileSystemComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)FvSimpleFileSystemComponentNameGetControllerName,
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gFvSimpleFileSystemComponentName2 = {
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)
+  FvSimpleFileSystemComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  FvSimpleFileSystemComponentNameGetControllerName,
   "en"
 };
 
@@ -32,7 +36,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gFvSimpleFileSystemC
 // Driver name table for FvSimpleFileSystem module.
 // It is shared by the implementation of ComponentName & ComponentName2 Protocol.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mFvSimpleFileSystemDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mFvSimpleFileSystemDriverNameTable[] = {
   {
     "eng;en",
     (CHAR16 *)L"Fv Simple File System Driver"

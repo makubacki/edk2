@@ -36,8 +36,9 @@
 //
 // Structure forward declarations
 //
-typedef struct _PEI_NVME_NAMESPACE_INFO           PEI_NVME_NAMESPACE_INFO;
-typedef struct _PEI_NVME_CONTROLLER_PRIVATE_DATA  PEI_NVME_CONTROLLER_PRIVATE_DATA;
+typedef struct _PEI_NVME_NAMESPACE_INFO PEI_NVME_NAMESPACE_INFO;
+typedef struct _PEI_NVME_CONTROLLER_PRIVATE_DATA
+PEI_NVME_CONTROLLER_PRIVATE_DATA;
 
 /**
   Macro that checks whether device is a NVMHCI Interface.
@@ -48,7 +49,9 @@ typedef struct _PEI_NVME_CONTROLLER_PRIVATE_DATA  PEI_NVME_CONTROLLER_PRIVATE_DA
   @retval FALSE   Device is not a NVMHCI Interface.
 
 **/
-#define IS_PCI_NVMHCI(_p)  IS_CLASS3 (_p, PCI_CLASS_MASS_STORAGE, PCI_CLASS_MASS_STORAGE_SOLID_STATE, PCI_IF_MASS_STORAGE_SOLID_STATE_ENTERPRISE_NVMHCI)
+#define IS_PCI_NVMHCI( \
+                     _p)  \
+  IS_CLASS3 (_p, PCI_CLASS_MASS_STORAGE, PCI_CLASS_MASS_STORAGE_SOLID_STATE, PCI_IF_MASS_STORAGE_SOLID_STATE_ENTERPRISE_NVMHCI)
 
 #include "NvmExpressPeiHci.h"
 #include "NvmExpressPeiPassThru.h"
@@ -94,7 +97,8 @@ struct _PEI_NVME_NAMESPACE_INFO {
 //
 // Unique signature for private data structure.
 //
-#define NVME_PEI_CONTROLLER_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('N','V','P','C')
+#define NVME_PEI_CONTROLLER_PRIVATE_DATA_SIGNATURE  \
+  SIGNATURE_32 ('N','V','P','C')
 
 //
 // Nvme controller private data structure.

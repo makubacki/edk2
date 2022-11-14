@@ -157,7 +157,11 @@ UhciLinkTdToQh (
 {
   EFI_PHYSICAL_ADDRESS  PhyAddr;
 
-  PhyAddr = UsbHcGetPciAddressForHostMem (Uhc->MemPool, Td, sizeof (UHCI_TD_HW));
+  PhyAddr = UsbHcGetPciAddressForHostMem (
+              Uhc->MemPool,
+              Td,
+              sizeof (UHCI_TD_HW)
+              );
 
   ASSERT ((Qh != NULL) && (Td != NULL));
 
@@ -201,7 +205,11 @@ UhciAppendTd (
 {
   EFI_PHYSICAL_ADDRESS  PhyAddr;
 
-  PhyAddr = UsbHcGetPciAddressForHostMem (Uhc->MemPool, ThisTd, sizeof (UHCI_TD_HW));
+  PhyAddr = UsbHcGetPciAddressForHostMem (
+              Uhc->MemPool,
+              ThisTd,
+              sizeof (UHCI_TD_HW)
+              );
 
   ASSERT ((PrevTd != NULL) && (ThisTd != NULL));
 

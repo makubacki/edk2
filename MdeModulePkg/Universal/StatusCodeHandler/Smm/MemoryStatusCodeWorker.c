@@ -27,16 +27,31 @@ MemoryStatusCodeInitializeWorker (
   //
   // Allocate MM memory status code pool.
   //
-  mMmMemoryStatusCodeTable = (RUNTIME_MEMORY_STATUSCODE_HEADER *)AllocateZeroPool (sizeof (RUNTIME_MEMORY_STATUSCODE_HEADER) + PcdGet16 (PcdStatusCodeMemorySize) * 1024);
+  mMmMemoryStatusCodeTable =
+    (RUNTIME_MEMORY_STATUSCODE_HEADER *)AllocateZeroPool (
+                                          sizeof (
+                                                                                          RUNTIME_MEMORY_STATUSCODE_HEADER)
+                                          + PcdGet16 (
+                                              PcdStatusCodeMemorySize
+                                              )
+                                          * 1024
+                                          );
   ASSERT (mMmMemoryStatusCodeTable != NULL);
 
-  mMmMemoryStatusCodeTable->MaxRecordsNumber = (PcdGet16 (PcdStatusCodeMemorySize) * 1024) / sizeof (MEMORY_STATUSCODE_RECORD);
-  Status                                     = gMmst->MmInstallConfigurationTable (
-                                                        gMmst,
-                                                        &gMemoryStatusCodeRecordGuid,
-                                                        &mMmMemoryStatusCodeTable,
-                                                        sizeof (mMmMemoryStatusCodeTable)
-                                                        );
+  mMmMemoryStatusCodeTable->MaxRecordsNumber = (PcdGet16 (
+                                                  PcdStatusCodeMemorySize
+                                                  ) * 1024) /
+                                               sizeof (MEMORY_STATUSCODE_RECORD);
+  Status =
+    gMmst->MmInstallConfigurationTable (
+             gMmst,
+             &
+             gMemoryStatusCodeRecordGuid,
+             &
+             mMmMemoryStatusCodeTable,
+             sizeof (
+                     mMmMemoryStatusCodeTable)
+             );
   return Status;
 }
 
@@ -92,7 +107,9 @@ MemoryStatusCodeReportWorker (
   // If it is less then max number, index of the first record is zero.
   //
   mMmMemoryStatusCodeTable->NumberOfRecords++;
-  if (mMmMemoryStatusCodeTable->RecordIndex == mMmMemoryStatusCodeTable->MaxRecordsNumber) {
+  if (mMmMemoryStatusCodeTable->RecordIndex ==
+      mMmMemoryStatusCodeTable->MaxRecordsNumber)
+  {
     //
     // Wrap around record index.
     //

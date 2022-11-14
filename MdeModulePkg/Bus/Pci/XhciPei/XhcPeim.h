@@ -64,9 +64,11 @@ typedef struct _USB_DEV_CONTEXT  USB_DEV_CONTEXT;
 //
 #define XHC_GENERIC_TIMEOUT  (10 * 1000)
 
-#define XHC_LOW_32BIT(Addr64)      ((UINT32)(((UINTN)(Addr64)) & 0XFFFFFFFF))
-#define XHC_HIGH_32BIT(Addr64)     ((UINT32)(RShiftU64((UINTN)(Addr64), 32) & 0XFFFFFFFF))
-#define XHC_BIT_IS_SET(Data, Bit)  ((BOOLEAN)(((Data) & (Bit)) == (Bit)))
+#define XHC_LOW_32BIT(Addr64)        ((UINT32)(((UINTN)(Addr64)) & 0XFFFFFFFF))
+#define XHC_HIGH_32BIT( \
+                      Addr64)     \
+                                     ((UINT32)(RShiftU64((UINTN)(Addr64), 32) & 0XFFFFFFFF))
+#define XHC_BIT_IS_SET(Data, Bit)    ((BOOLEAN)(((Data) & (Bit)) == (Bit)))
 
 #define XHC_REG_BIT_IS_SET(XHC, Offset, Bit) \
           (XHC_BIT_IS_SET(XhcPeiReadOpReg ((XHC), (Offset)), (Bit)))
@@ -186,8 +188,12 @@ struct _PEI_XHC_DEV {
   USB_DEV_CONTEXT                 UsbDevContext[256];
 };
 
-#define PEI_RECOVERY_USB_XHC_DEV_FROM_THIS(a)         CR (a, PEI_XHC_DEV, Usb2HostControllerPpi, USB_XHC_DEV_SIGNATURE)
-#define PEI_RECOVERY_USB_XHC_DEV_FROM_THIS_NOTIFY(a)  CR (a, PEI_XHC_DEV, EndOfPeiNotifyList, USB_XHC_DEV_SIGNATURE)
+#define PEI_RECOVERY_USB_XHC_DEV_FROM_THIS( \
+                                          a)         \
+      CR (a, PEI_XHC_DEV, Usb2HostControllerPpi, USB_XHC_DEV_SIGNATURE)
+#define PEI_RECOVERY_USB_XHC_DEV_FROM_THIS_NOTIFY( \
+                                                 a)  \
+      CR (a, PEI_XHC_DEV, EndOfPeiNotifyList, USB_XHC_DEV_SIGNATURE)
 
 /**
   Initialize the memory management pool for the host controller.

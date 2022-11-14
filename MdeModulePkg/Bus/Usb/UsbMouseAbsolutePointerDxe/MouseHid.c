@@ -265,11 +265,13 @@ ParseMouseReportDescriptor (
     Ptr = GetNextHidItem (Ptr, DescriptorEnd, &HidItem);
   }
 
-  UsbMouseAbsolutePointer->NumberOfButtons = (UINT8)(UsbMouseAbsolutePointer->PrivateData.ButtonMaxIndex - UsbMouseAbsolutePointer->PrivateData.ButtonMinIndex + 1);
-  UsbMouseAbsolutePointer->XLogicMax       = 1023;
-  UsbMouseAbsolutePointer->YLogicMax       = 1023;
-  UsbMouseAbsolutePointer->XLogicMin       = -1023;
-  UsbMouseAbsolutePointer->YLogicMin       = -1023;
+  UsbMouseAbsolutePointer->NumberOfButtons =
+    (UINT8)(UsbMouseAbsolutePointer->PrivateData.ButtonMaxIndex -
+            UsbMouseAbsolutePointer->PrivateData.ButtonMinIndex + 1);
+  UsbMouseAbsolutePointer->XLogicMax = 1023;
+  UsbMouseAbsolutePointer->YLogicMax = 1023;
+  UsbMouseAbsolutePointer->XLogicMin = -1023;
+  UsbMouseAbsolutePointer->YLogicMin = -1023;
 
   return EFI_SUCCESS;
 }

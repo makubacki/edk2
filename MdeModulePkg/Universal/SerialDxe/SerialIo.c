@@ -159,12 +159,14 @@ EFI_HANDLE  mSerialHandle = NULL;
 
 SERIAL_DEVICE_PATH  mSerialDevicePath = {
   {
-    { HARDWARE_DEVICE_PATH,  HW_VENDOR_DP,                   { sizeof (VENDOR_DEVICE_PATH),       0 }
+    { HARDWARE_DEVICE_PATH,              HW_VENDOR_DP,
+        { sizeof (VENDOR_DEVICE_PATH),       0 }
     },
     EDKII_SERIAL_PORT_LIB_VENDOR_GUID
   },
   {
-    { MESSAGING_DEVICE_PATH, MSG_UART_DP,                    { sizeof (UART_DEVICE_PATH),         0 }
+    { MESSAGING_DEVICE_PATH,             MSG_UART_DP,
+        { sizeof (UART_DEVICE_PATH),         0 }
     },
     0,                  // Reserved
     0,                  // BaudRate
@@ -172,7 +174,8 @@ SERIAL_DEVICE_PATH  mSerialDevicePath = {
     0,                  // Parity
     0                   // StopBits
   },
-  { END_DEVICE_PATH_TYPE,  END_ENTIRE_DEVICE_PATH_SUBTYPE, { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0 }
+  { END_DEVICE_PATH_TYPE,              END_ENTIRE_DEVICE_PATH_SUBTYPE,
+        { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0 }
   }
 };
 
@@ -309,7 +312,14 @@ SerialSetAttributes (
   OriginalParity           = Parity;
   OriginalDataBits         = DataBits;
   OriginalStopBits         = StopBits;
-  Status                   = SerialPortSetAttributes (&BaudRate, &ReceiveFifoDepth, &Timeout, &Parity, &DataBits, &StopBits);
+  Status                   = SerialPortSetAttributes (
+                               &BaudRate,
+                               &ReceiveFifoDepth,
+                               &Timeout,
+                               &Parity,
+                               &DataBits,
+                               &StopBits
+                               );
   if (EFI_ERROR (Status)) {
     //
     // If it is just to set Timeout value and unsupported is returned,
@@ -333,7 +343,9 @@ SerialSetAttributes (
       DataBits         = OriginalDataBits;
       StopBits         = OriginalStopBits;
       Status           = EFI_SUCCESS;
-    } else if ((Status == EFI_INVALID_PARAMETER) || (Status == EFI_UNSUPPORTED)) {
+    } else if ((Status == EFI_INVALID_PARAMETER) || (Status ==
+                                                     EFI_UNSUPPORTED))
+    {
       return EFI_INVALID_PARAMETER;
     } else {
       return EFI_DEVICE_ERROR;

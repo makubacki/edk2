@@ -360,7 +360,8 @@ IoMmuAllocateAlignedBuffer (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    *HostAddress   = (VOID *)(((UINTN)HostPhyAddress + AlignmentMask) & ~AlignmentMask);
+    *HostAddress   = (VOID *)(((UINTN)HostPhyAddress + AlignmentMask) &
+                              ~AlignmentMask);
     *DeviceAddress = ((UINTN)HostPhyAddress + AlignmentMask) & ~AlignmentMask;
     *Mapping       = NULL;
   }

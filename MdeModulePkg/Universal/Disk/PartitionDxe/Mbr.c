@@ -52,13 +52,19 @@ PartitionValidMbr (
   //
   MbrValid = FALSE;
   for (Index1 = 0; Index1 < MAX_MBR_PARTITIONS; Index1++) {
-    if ((Mbr->Partition[Index1].OSIndicator == 0x00) || (UNPACK_UINT32 (Mbr->Partition[Index1].SizeInLBA) == 0)) {
+    if ((Mbr->Partition[Index1].OSIndicator == 0x00) || (UNPACK_UINT32 (
+                                                           Mbr->Partition[Index1
+                                                           ].SizeInLBA
+                                                           ) == 0))
+    {
       continue;
     }
 
     MbrValid    = TRUE;
     StartingLBA = UNPACK_UINT32 (Mbr->Partition[Index1].StartingLBA);
-    EndingLBA   = StartingLBA + UNPACK_UINT32 (Mbr->Partition[Index1].SizeInLBA) - 1;
+    EndingLBA   = StartingLBA + UNPACK_UINT32 (
+                                  Mbr->Partition[Index1].SizeInLBA
+                                  ) - 1;
     if (EndingLBA > LastLba) {
       //
       // Compatibility Errata:
@@ -72,18 +78,32 @@ PartitionValidMbr (
       // with INT 13h
       //
 
-      DEBUG ((DEBUG_INFO, "PartitionValidMbr: Bad MBR partition size EndingLBA(%1x) > LastLBA(%1x)\n", EndingLBA, LastLba));
+      DEBUG ((
+        DEBUG_INFO,
+        "PartitionValidMbr: Bad MBR partition size EndingLBA(%1x) > LastLBA(%1x)\n",
+        EndingLBA,
+        LastLba
+        ));
 
       return FALSE;
     }
 
     for (Index2 = Index1 + 1; Index2 < MAX_MBR_PARTITIONS; Index2++) {
-      if ((Mbr->Partition[Index2].OSIndicator == 0x00) || (UNPACK_UINT32 (Mbr->Partition[Index2].SizeInLBA) == 0)) {
+      if ((Mbr->Partition[Index2].OSIndicator == 0x00) || (UNPACK_UINT32 (
+                                                             Mbr->Partition[
+                                                                                        Index2
+                                                             ].SizeInLBA
+                                                             ) == 0))
+      {
         continue;
       }
 
-      NewEndingLBA = UNPACK_UINT32 (Mbr->Partition[Index2].StartingLBA) + UNPACK_UINT32 (Mbr->Partition[Index2].SizeInLBA) - 1;
-      if ((NewEndingLBA >= StartingLBA) && (UNPACK_UINT32 (Mbr->Partition[Index2].StartingLBA) <= EndingLBA)) {
+      NewEndingLBA = UNPACK_UINT32 (Mbr->Partition[Index2].StartingLBA) +
+                     UNPACK_UINT32 (Mbr->Partition[Index2].SizeInLBA) - 1;
+      if ((NewEndingLBA >= StartingLBA) && (UNPACK_UINT32 (
+                                              Mbr->Partition[Index2].StartingLBA
+                                              ) <= EndingLBA))
+      {
         //
         // This region overlaps with the Index1'th region
         //
@@ -213,7 +233,11 @@ PartitionInstallMbrChildHandles (
     // This is a MBR, add each partition
     //
     for (Index = 0; Index < MAX_MBR_PARTITIONS; Index++) {
-      if ((Mbr->Partition[Index].OSIndicator == 0x00) || (UNPACK_UINT32 (Mbr->Partition[Index].SizeInLBA) == 0)) {
+      if ((Mbr->Partition[Index].OSIndicator == 0x00) || (UNPACK_UINT32 (
+                                                            Mbr->Partition[Index
+                                                            ].SizeInLBA
+                                                            ) == 0))
+      {
         //
         // Don't use null MBR entries
         //
@@ -233,7 +257,11 @@ PartitionInstallMbrChildHandles (
       HdDev.PartitionNumber = Index + 1;
       HdDev.PartitionStart  = UNPACK_UINT32 (Mbr->Partition[Index].StartingLBA);
       HdDev.PartitionSize   = UNPACK_UINT32 (Mbr->Partition[Index].SizeInLBA);
-      CopyMem (HdDev.Signature, &(Mbr->UniqueMbrSignature[0]), sizeof (Mbr->UniqueMbrSignature));
+      CopyMem (
+        HdDev.Signature,
+        &(Mbr->UniqueMbrSignature[0]),
+        sizeof (Mbr->UniqueMbrSignature)
+        );
 
       ZeroMem (&PartitionInfo, sizeof (EFI_PARTITION_INFO_PROTOCOL));
       PartitionInfo.Revision = EFI_PARTITION_INFO_PROTOCOL_REVISION;
@@ -242,7 +270,11 @@ PartitionInstallMbrChildHandles (
         PartitionInfo.System = 1;
       }
 
-      CopyMem (&PartitionInfo.Info.Mbr, &Mbr->Partition[Index], sizeof (MBR_PARTITION_RECORD));
+      CopyMem (
+        &PartitionInfo.Info.Mbr,
+        &Mbr->Partition[Index],
+        sizeof (MBR_PARTITION_RECORD)
+        );
 
       Status = PartitionInstallChildHandle (
                  This,
@@ -257,7 +289,8 @@ PartitionInstallMbrChildHandles (
                  HdDev.PartitionStart,
                  HdDev.PartitionStart + HdDev.PartitionSize - 1,
                  MBR_SIZE,
-                 ((Mbr->Partition[Index].OSIndicator == EFI_PARTITION) ? &gEfiPartTypeSystemPartGuid : NULL)
+                 ((Mbr->Partition[Index].OSIndicator == EFI_PARTITION) ?
+                  &gEfiPartTypeSystemPartGuid : NULL)
                  );
 
       if (!EFI_ERROR (Status)) {
@@ -304,9 +337,11 @@ PartitionInstallMbrChildHandles (
       }
 
       HdDev.PartitionNumber = ++Index;
-      HdDev.PartitionStart  = UNPACK_UINT32 (Mbr->Partition[0].StartingLBA) + ExtMbrStartingLba + ParentHdDev.PartitionStart;
-      HdDev.PartitionSize   = UNPACK_UINT32 (Mbr->Partition[0].SizeInLBA);
-      if ((HdDev.PartitionStart + HdDev.PartitionSize - 1 >= ParentHdDev.PartitionStart + ParentHdDev.PartitionSize) ||
+      HdDev.PartitionStart  = UNPACK_UINT32 (Mbr->Partition[0].StartingLBA) +
+                              ExtMbrStartingLba + ParentHdDev.PartitionStart;
+      HdDev.PartitionSize = UNPACK_UINT32 (Mbr->Partition[0].SizeInLBA);
+      if ((HdDev.PartitionStart + HdDev.PartitionSize - 1 >=
+           ParentHdDev.PartitionStart + ParentHdDev.PartitionSize) ||
           (HdDev.PartitionStart <= ParentHdDev.PartitionStart))
       {
         break;
@@ -324,7 +359,11 @@ PartitionInstallMbrChildHandles (
         PartitionInfo.System = 1;
       }
 
-      CopyMem (&PartitionInfo.Info.Mbr, &Mbr->Partition[0], sizeof (MBR_PARTITION_RECORD));
+      CopyMem (
+        &PartitionInfo.Info.Mbr,
+        &Mbr->Partition[0],
+        sizeof (MBR_PARTITION_RECORD)
+        );
 
       Status = PartitionInstallChildHandle (
                  This,
@@ -337,9 +376,11 @@ PartitionInstallMbrChildHandles (
                  (EFI_DEVICE_PATH_PROTOCOL *)&HdDev,
                  &PartitionInfo,
                  HdDev.PartitionStart - ParentHdDev.PartitionStart,
-                 HdDev.PartitionStart - ParentHdDev.PartitionStart + HdDev.PartitionSize - 1,
+                 HdDev.PartitionStart - ParentHdDev.PartitionStart +
+                 HdDev.PartitionSize - 1,
                  MBR_SIZE,
-                 ((Mbr->Partition[0].OSIndicator == EFI_PARTITION) ? &gEfiPartTypeSystemPartGuid : NULL)
+                 ((Mbr->Partition[0].OSIndicator == EFI_PARTITION) ?
+                  &gEfiPartTypeSystemPartGuid : NULL)
                  );
       if (!EFI_ERROR (Status)) {
         Found = EFI_SUCCESS;

@@ -69,8 +69,10 @@ BrotliGuidedSectionGetInfo (
     *SectionAttribute = ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->Attributes;
 
     return BrotliUefiDecompressGetInfo (
-             (UINT8 *)InputSection + ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
-             SECTION2_SIZE (InputSection) - ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
+             (UINT8 *)InputSection +
+             ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
+             SECTION2_SIZE (InputSection) -
+             ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
              OutputBufferSize,
              ScratchBufferSize
              );
@@ -86,8 +88,10 @@ BrotliGuidedSectionGetInfo (
     *SectionAttribute = ((EFI_GUID_DEFINED_SECTION *)InputSection)->Attributes;
 
     return BrotliUefiDecompressGetInfo (
-             (UINT8 *)InputSection + ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
-             SECTION_SIZE (InputSection) - ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
+             (UINT8 *)InputSection +
+             ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
+             SECTION_SIZE (InputSection) -
+             ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
              OutputBufferSize,
              ScratchBufferSize
              );
@@ -153,8 +157,10 @@ BrotliGuidedSectionExtraction (
     *AuthenticationStatus = 0;
 
     return BrotliUefiDecompress (
-             (UINT8 *)InputSection + ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
-             SECTION2_SIZE (InputSection) - ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
+             (UINT8 *)InputSection +
+             ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
+             SECTION2_SIZE (InputSection) -
+             ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
              *OutputBuffer,
              ScratchBuffer
              );
@@ -173,8 +179,10 @@ BrotliGuidedSectionExtraction (
     *AuthenticationStatus = 0;
 
     return BrotliUefiDecompress (
-             (UINT8 *)InputSection + ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
-             SECTION_SIZE (InputSection) - ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
+             (UINT8 *)InputSection +
+             ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
+             SECTION_SIZE (InputSection) -
+             ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
              *OutputBuffer,
              ScratchBuffer
              );

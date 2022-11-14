@@ -39,7 +39,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // PCD_DXE_SERVICE_DRIVER_VERSION is defined in Autogen.h.
 //
 #if (PCD_SERVICE_DXE_VERSION != PCD_DXE_SERVICE_DRIVER_VERSION)
-  #error "Please make sure the version of PCD DXE Service and the generated PCD DXE Database match."
+  #error \
+  "Please make sure the version of PCD DXE Service and the generated PCD DXE Database match."
 #endif
 
 extern UINTN  mVpdBaseAddress;
@@ -805,7 +806,8 @@ typedef struct {
   PCD_PROTOCOL_CALLBACK    CallbackFn;
 } CALLBACK_FN_ENTRY;
 
-#define CR_FNENTRY_FROM_LISTNODE(Record, Type, Field)  BASE_CR(Record, Type, Field)
+#define CR_FNENTRY_FROM_LISTNODE(Record, Type, \
+                                 Field)  BASE_CR(Record, Type, Field)
 
 //
 // Internal Functions

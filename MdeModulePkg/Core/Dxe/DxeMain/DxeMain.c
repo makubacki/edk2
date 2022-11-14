@@ -84,8 +84,10 @@ EFI_BOOT_SERVICES  mBootServices = {
   (EFI_PROTOCOLS_PER_HANDLE)CoreProtocolsPerHandle,                                       // ProtocolsPerHandle
   (EFI_LOCATE_HANDLE_BUFFER)CoreLocateHandleBuffer,                                       // LocateHandleBuffer
   (EFI_LOCATE_PROTOCOL)CoreLocateProtocol,                                                // LocateProtocol
-  (EFI_INSTALL_MULTIPLE_PROTOCOL_INTERFACES)CoreInstallMultipleProtocolInterfaces,        // InstallMultipleProtocolInterfaces
-  (EFI_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES)CoreUninstallMultipleProtocolInterfaces,    // UninstallMultipleProtocolInterfaces
+  (EFI_INSTALL_MULTIPLE_PROTOCOL_INTERFACES)
+  CoreInstallMultipleProtocolInterfaces,                                                  // InstallMultipleProtocolInterfaces
+  (EFI_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES)
+  CoreUninstallMultipleProtocolInterfaces,                                                // UninstallMultipleProtocolInterfaces
   (EFI_CALCULATE_CRC32)CoreEfiNotAvailableYetArg3,                                        // CalculateCrc32
   (EFI_COPY_MEM)CopyMem,                                                                  // CopyMem
   (EFI_SET_MEM)SetMem,                                                                    // SetMem
@@ -175,7 +177,8 @@ EFI_RUNTIME_ARCH_PROTOCOL  gRuntimeTemplate = {
   // prevent people from having pointer math bugs in their code.
   // now you have to use *DescriptorSize to make things work.
   //
-  sizeof (EFI_MEMORY_DESCRIPTOR) + sizeof (UINT64) - (sizeof (EFI_MEMORY_DESCRIPTOR) % sizeof (UINT64)),
+  sizeof (EFI_MEMORY_DESCRIPTOR) + sizeof (UINT64) -
+  (sizeof (EFI_MEMORY_DESCRIPTOR) % sizeof (UINT64)),
   EFI_MEMORY_DESCRIPTOR_VERSION,
   0,
   NULL,
@@ -215,7 +218,8 @@ EFI_DECOMPRESS_PROTOCOL  gEfiDecompress = {
 // For Loading modules at fixed address feature, the configuration table is to cache the top address below which to load
 // Runtime code&boot time code
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_LOAD_FIXED_ADDRESS_CONFIGURATION_TABLE  gLoadModuleAtFixAddressConfigurationTable = { 0, 0 };
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_LOAD_FIXED_ADDRESS_CONFIGURATION_TABLE
+  gLoadModuleAtFixAddressConfigurationTable = { 0, 0 };
 
 // Main entry point to the DXE Core
 //
@@ -280,10 +284,16 @@ DxeMain (
   // Allocate the EFI System Table and EFI Runtime Service Table from EfiRuntimeServicesData
   // Use the templates to initialize the contents of the EFI System Table and EFI Runtime Services Table
   //
-  gDxeCoreST = AllocateRuntimeCopyPool (sizeof (EFI_SYSTEM_TABLE), &mEfiSystemTableTemplate);
+  gDxeCoreST = AllocateRuntimeCopyPool (
+                 sizeof (EFI_SYSTEM_TABLE),
+                 &mEfiSystemTableTemplate
+                 );
   ASSERT (gDxeCoreST != NULL);
 
-  gDxeCoreRT = AllocateRuntimeCopyPool (sizeof (EFI_RUNTIME_SERVICES), &mEfiRuntimeServicesTableTemplate);
+  gDxeCoreRT = AllocateRuntimeCopyPool (
+                 sizeof (EFI_RUNTIME_SERVICES),
+                 &mEfiRuntimeServicesTableTemplate
+                 );
   ASSERT (gDxeCoreRT != NULL);
 
   gDxeCoreST->RuntimeServices = gDxeCoreRT;
@@ -297,7 +307,11 @@ DxeMain (
   //
   // Initialize the Global Coherency Domain Services
   //
-  Status = CoreInitializeGcdServices (&HobStart, MemoryBaseAddress, MemoryLength);
+  Status = CoreInitializeGcdServices (
+             &HobStart,
+             MemoryBaseAddress,
+             MemoryLength
+             );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -324,10 +338,18 @@ DxeMain (
   // Report DXE Core image information to the PE/COFF Extra Action Library
   //
   ZeroMem (&ImageContext, sizeof (ImageContext));
-  ImageContext.ImageAddress  = (EFI_PHYSICAL_ADDRESS)(UINTN)gDxeCoreLoadedImage->ImageBase;
-  ImageContext.PdbPointer    = PeCoffLoaderGetPdbPointer ((VOID *)(UINTN)ImageContext.ImageAddress);
-  ImageContext.SizeOfHeaders = PeCoffGetSizeOfHeaders ((VOID *)(UINTN)ImageContext.ImageAddress);
-  Status                     = PeCoffLoaderGetEntryPoint ((VOID *)(UINTN)ImageContext.ImageAddress, &EntryPoint);
+  ImageContext.ImageAddress =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)gDxeCoreLoadedImage->ImageBase;
+  ImageContext.PdbPointer = PeCoffLoaderGetPdbPointer (
+                              (VOID *)(UINTN)ImageContext.ImageAddress
+                              );
+  ImageContext.SizeOfHeaders = PeCoffGetSizeOfHeaders (
+                                 (VOID *)(UINTN)ImageContext.ImageAddress
+                                 );
+  Status = PeCoffLoaderGetEntryPoint (
+             (VOID *)(UINTN)ImageContext.ImageAddress,
+             &EntryPoint
+             );
   if (Status == EFI_SUCCESS) {
     ImageContext.EntryPoint = (EFI_PHYSICAL_ADDRESS)(UINTN)EntryPoint;
   }
@@ -339,7 +361,10 @@ DxeMain (
   //
   // Install the DXE Services Table into the EFI System Tables's Configuration Table
   //
-  Status = CoreInstallConfigurationTable (&gEfiDxeServicesTableGuid, gDxeCoreDS);
+  Status = CoreInstallConfigurationTable (
+             &gEfiDxeServicesTableGuid,
+             gDxeCoreDS
+             );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -351,7 +376,10 @@ DxeMain (
   //
   // Install Memory Type Information Table into the EFI System Tables's Configuration Table
   //
-  Status = CoreInstallConfigurationTable (&gEfiMemoryTypeInformationGuid, &gMemoryTypeInformation);
+  Status = CoreInstallConfigurationTable (
+             &gEfiMemoryTypeInformationGuid,
+             &gMemoryTypeInformation
+             );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -360,7 +388,10 @@ DxeMain (
   // Code and Tseg base to load SMM driver.
   //
   if (PcdGet64 (PcdLoadModuleAtFixAddressEnable) != 0) {
-    Status = CoreInstallConfigurationTable (&gLoadFixedAddressConfigurationTableGuid, &gLoadModuleAtFixAddressConfigurationTable);
+    Status = CoreInstallConfigurationTable (
+               &gLoadFixedAddressConfigurationTableGuid,
+               &gLoadModuleAtFixAddressConfigurationTable
+               );
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -384,24 +415,35 @@ DxeMain (
     gDxeCoreImageHandle
     );
 
-  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "HOBLIST address in DXE = 0x%p\n", HobStart));
+  DEBUG ((
+    DEBUG_INFO | DEBUG_LOAD,
+    "HOBLIST address in DXE = 0x%p\n",
+    HobStart
+    ));
 
   DEBUG_CODE_BEGIN ();
   EFI_PEI_HOB_POINTERS  Hob;
 
-  for (Hob.Raw = HobStart; !END_OF_HOB_LIST (Hob); Hob.Raw = GET_NEXT_HOB (Hob)) {
+  for (Hob.Raw = HobStart; !END_OF_HOB_LIST (Hob); Hob.Raw = GET_NEXT_HOB (
+                                                               Hob
+                                                               ))
+  {
     if (GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_MEMORY_ALLOCATION) {
       DEBUG ((
         DEBUG_INFO | DEBUG_LOAD,
         "Memory Allocation 0x%08x 0x%0lx - 0x%0lx\n", \
         Hob.MemoryAllocation->AllocDescriptor.MemoryType,                      \
         Hob.MemoryAllocation->AllocDescriptor.MemoryBaseAddress,               \
-        Hob.MemoryAllocation->AllocDescriptor.MemoryBaseAddress + Hob.MemoryAllocation->AllocDescriptor.MemoryLength - 1
+        Hob.MemoryAllocation->AllocDescriptor.MemoryBaseAddress +
+        Hob.MemoryAllocation->AllocDescriptor.MemoryLength - 1
         ));
     }
   }
 
-  for (Hob.Raw = HobStart; !END_OF_HOB_LIST (Hob); Hob.Raw = GET_NEXT_HOB (Hob)) {
+  for (Hob.Raw = HobStart; !END_OF_HOB_LIST (Hob); Hob.Raw = GET_NEXT_HOB (
+                                                               Hob
+                                                               ))
+  {
     if (GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_FV) {
       DEBUG ((
         DEBUG_INFO | DEBUG_LOAD,
@@ -469,9 +511,15 @@ DxeMain (
       Index++;
     }
 
-    VectorInfo = AllocateCopyPool (sizeof (EFI_VECTOR_HANDOFF_INFO) * Index, (VOID *)VectorInfoList);
+    VectorInfo = AllocateCopyPool (
+                   sizeof (EFI_VECTOR_HANDOFF_INFO) * Index,
+                   (VOID *)VectorInfoList
+                   );
     ASSERT (VectorInfo != NULL);
-    Status = CoreInstallConfigurationTable (&gEfiVectorHandoffTableGuid, (VOID *)VectorInfo);
+    Status = CoreInstallConfigurationTable (
+               &gEfiVectorHandoffTableGuid,
+               (VOID *)VectorInfo
+               );
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -890,7 +938,12 @@ DxeMainUefiDecompressGetInfo (
     return EFI_INVALID_PARAMETER;
   }
 
-  return UefiDecompressGetInfo (Source, SourceSize, DestinationSize, ScratchSize);
+  return UefiDecompressGetInfo (
+           Source,
+           SourceSize,
+           DestinationSize,
+           ScratchSize
+           );
 }
 
 /**
@@ -947,12 +1000,19 @@ DxeMainUefiDecompress (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = UefiDecompressGetInfo (Source, SourceSize, &TestDestinationSize, &TestScratchSize);
+  Status = UefiDecompressGetInfo (
+             Source,
+             SourceSize,
+             &TestDestinationSize,
+             &TestScratchSize
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  if ((ScratchSize < TestScratchSize) || (DestinationSize < TestDestinationSize)) {
+  if ((ScratchSize < TestScratchSize) || (DestinationSize <
+                                          TestDestinationSize))
+  {
     return RETURN_INVALID_PARAMETER;
   }
 

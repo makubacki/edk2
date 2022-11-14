@@ -69,7 +69,10 @@ GetCurrentCapsuleLastIndex (
     return -1;
   }
 
-  CurrentIndex = (UINT16)StrHexToUintn (&CapsuleLastStr[sizeof ("Capsule") - 1]);
+  CurrentIndex = (UINT16)StrHexToUintn (
+                           &CapsuleLastStr[sizeof ("Capsule") -
+                                           1]
+                           );
   return CurrentIndex;
 }
 
@@ -167,7 +170,8 @@ WriteNewCapsuleResultVariable (
   Status = gRT->SetVariable (
                   CapsuleResultStr,
                   &gEfiCapsuleReportGuid,
-                  EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                  EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                  EFI_VARIABLE_RUNTIME_ACCESS,
                   CapsuleResultSize,
                   CapsuleResult
                   );
@@ -177,7 +181,9 @@ WriteNewCapsuleResultVariable (
     Status = gRT->SetVariable (
                     L"CapsuleLast",
                     &gEfiCapsuleReportGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                    EFI_VARIABLE_NON_VOLATILE |
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS,
                     Size,
                     CapsuleResultStr
                     );
@@ -207,13 +213,19 @@ RecordCapsuleStatusVariable (
   CapsuleResultVariable.VariableTotalSize = sizeof (CapsuleResultVariable);
   CapsuleResultVariable.Reserved          = 0;
   CopyGuid (&CapsuleResultVariable.CapsuleGuid, &CapsuleHeader->CapsuleGuid);
-  ZeroMem (&CapsuleResultVariable.CapsuleProcessed, sizeof (CapsuleResultVariable.CapsuleProcessed));
+  ZeroMem (
+    &CapsuleResultVariable.CapsuleProcessed,
+    sizeof (CapsuleResultVariable.CapsuleProcessed)
+    );
   gRT->GetTime (&CapsuleResultVariable.CapsuleProcessed, NULL);
   CapsuleResultVariable.CapsuleStatus = CapsuleStatus;
 
   Status = EFI_SUCCESS;
   if ((CapsuleHeader->Flags & CAPSULE_FLAGS_PERSIST_ACROSS_RESET) != 0) {
-    Status = WriteNewCapsuleResultVariable (&CapsuleResultVariable, sizeof (CapsuleResultVariable));
+    Status = WriteNewCapsuleResultVariable (
+               &CapsuleResultVariable,
+               sizeof (CapsuleResultVariable)
+               );
   }
 
   return Status;
@@ -271,40 +283,69 @@ RecordFmpCapsuleStatusVariable (
   //
   // Allocate room for CapsuleFileName.
   //
-  CapsuleResultVariableSize = sizeof (EFI_CAPSULE_RESULT_VARIABLE_HEADER) + sizeof (EFI_CAPSULE_RESULT_VARIABLE_FMP) + CapFileNameSize + DevicePathStrSize;
+  CapsuleResultVariableSize = sizeof (EFI_CAPSULE_RESULT_VARIABLE_HEADER) +
+                              sizeof (EFI_CAPSULE_RESULT_VARIABLE_FMP) +
+                              CapFileNameSize +
+                              DevicePathStrSize;
 
   CapsuleResultVariable = AllocateZeroPool (CapsuleResultVariableSize);
   if (CapsuleResultVariable == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CapsuleResultVariableHeader                    = (VOID *)CapsuleResultVariable;
-  CapsuleResultVariableHeader->VariableTotalSize = (UINT32)CapsuleResultVariableSize;
-  CapsuleResultVariableHeader->Reserved          = 0;
-  CopyGuid (&CapsuleResultVariableHeader->CapsuleGuid, &CapsuleHeader->CapsuleGuid);
-  ZeroMem (&CapsuleResultVariableHeader->CapsuleProcessed, sizeof (CapsuleResultVariableHeader->CapsuleProcessed));
+  CapsuleResultVariableHeader =
+    (VOID *)CapsuleResultVariable;
+  CapsuleResultVariableHeader->VariableTotalSize =
+    (UINT32)CapsuleResultVariableSize;
+  CapsuleResultVariableHeader->Reserved = 0;
+  CopyGuid (
+    &CapsuleResultVariableHeader->CapsuleGuid,
+    &CapsuleHeader->CapsuleGuid
+    );
+  ZeroMem (
+    &CapsuleResultVariableHeader->CapsuleProcessed,
+    sizeof (CapsuleResultVariableHeader->CapsuleProcessed)
+    );
   gRT->GetTime (&CapsuleResultVariableHeader->CapsuleProcessed, NULL);
   CapsuleResultVariableHeader->CapsuleStatus = CapsuleStatus;
 
-  CapsuleResultVariableFmp                   = (VOID *)(CapsuleResultVariable + sizeof (EFI_CAPSULE_RESULT_VARIABLE_HEADER));
+  CapsuleResultVariableFmp                   = (VOID *)(CapsuleResultVariable +
+                                                        sizeof (
+                                                                                       EFI_CAPSULE_RESULT_VARIABLE_HEADER));
   CapsuleResultVariableFmp->Version          = 0x1;
   CapsuleResultVariableFmp->PayloadIndex     = (UINT8)PayloadIndex;
   CapsuleResultVariableFmp->UpdateImageIndex = ImageHeader->UpdateImageIndex;
-  CopyGuid (&CapsuleResultVariableFmp->UpdateImageTypeId, &ImageHeader->UpdateImageTypeId);
+  CopyGuid (
+    &CapsuleResultVariableFmp->UpdateImageTypeId,
+    &ImageHeader->UpdateImageTypeId
+    );
 
   if (CapFileName != NULL) {
-    CopyMem ((UINT8 *)CapsuleResultVariableFmp + sizeof (EFI_CAPSULE_RESULT_VARIABLE_FMP), CapFileName, CapFileNameSize);
+    CopyMem (
+      (UINT8 *)CapsuleResultVariableFmp +
+      sizeof (EFI_CAPSULE_RESULT_VARIABLE_FMP),
+      CapFileName,
+      CapFileNameSize
+      );
   }
 
   if (DevicePathStr != NULL) {
-    CopyMem ((UINT8 *)CapsuleResultVariableFmp + sizeof (EFI_CAPSULE_RESULT_VARIABLE_FMP) + CapFileNameSize, DevicePathStr, DevicePathStrSize);
+    CopyMem (
+      (UINT8 *)CapsuleResultVariableFmp +
+      sizeof (EFI_CAPSULE_RESULT_VARIABLE_FMP) + CapFileNameSize,
+      DevicePathStr,
+      DevicePathStrSize
+      );
     FreePool (DevicePathStr);
     DevicePathStr = NULL;
   }
 
   Status = EFI_SUCCESS;
   if ((CapsuleHeader->Flags & CAPSULE_FLAGS_PERSIST_ACROSS_RESET) != 0) {
-    Status = WriteNewCapsuleResultVariable (CapsuleResultVariable, CapsuleResultVariableSize);
+    Status = WriteNewCapsuleResultVariable (
+               CapsuleResultVariable,
+               CapsuleResultVariableSize
+               );
   }
 
   FreePool (CapsuleResultVariable);
@@ -367,7 +408,9 @@ InitCapsuleLastVariable (
     Status = gRT->SetVariable (
                     L"CapsuleLast",
                     &gEfiCapsuleReportGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                    EFI_VARIABLE_NON_VOLATILE |
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS,
                     0,
                     NULL
                     );
@@ -402,7 +445,9 @@ InitCapsuleLastVariable (
         Status = gRT->SetVariable (
                         L"CapsuleLast",
                         &gEfiCapsuleReportGuid,
-                        EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                        EFI_VARIABLE_NON_VOLATILE |
+                        EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                        EFI_VARIABLE_RUNTIME_ACCESS,
                         0,
                         NULL
                         );
@@ -436,7 +481,11 @@ InitCapsuleUpdateVariable (
   // as early as possible which will avoid the next time boot after the capsule update
   // will still into the capsule loop
   //
-  StrCpyS (CapsuleVarName, sizeof (CapsuleVarName)/sizeof (CapsuleVarName[0]), EFI_CAPSULE_VARIABLE_NAME);
+  StrCpyS (
+    CapsuleVarName,
+    sizeof (CapsuleVarName)/sizeof (CapsuleVarName[0]),
+    EFI_CAPSULE_VARIABLE_NAME
+    );
   TempVarName = CapsuleVarName + StrLen (CapsuleVarName);
   Index       = 0;
   while (TRUE) {
@@ -453,7 +502,8 @@ InitCapsuleUpdateVariable (
     Status = gRT->SetVariable (
                     CapsuleVarName,
                     &gEfiCapsuleVendorGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS |
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS,
                     0,
                     (VOID *)NULL
                     );
@@ -484,7 +534,11 @@ InitCapsuleRelocationInfo (
   // Unlock Capsule On Disk relocation Info variable only when Capsule On Disk flag is enabled
   //
   if (!CoDCheckCapsuleOnDiskFlag ()) {
-    LockVariable (gEfiCapsuleVendorGuid, COD_RELOCATION_INFO_VAR_NAME, VariablePolicy);
+    LockVariable (
+      gEfiCapsuleVendorGuid,
+      COD_RELOCATION_INFO_VAR_NAME,
+      VariablePolicy
+      );
   }
 }
 
@@ -500,9 +554,18 @@ InitCapsuleVariable (
   EDKII_VARIABLE_POLICY_PROTOCOL  *VariablePolicy;
 
   // Locate the VariablePolicy protocol
-  Status = gBS->LocateProtocol (&gEdkiiVariablePolicyProtocolGuid, NULL, (VOID **)&VariablePolicy);
+  Status = gBS->LocateProtocol (
+                  &gEdkiiVariablePolicyProtocolGuid,
+                  NULL,
+                  (VOID **)&VariablePolicy
+                  );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "DxeCapsuleReportLib %a - Could not locate VariablePolicy protocol! %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "DxeCapsuleReportLib %a - Could not locate VariablePolicy protocol! %r\n",
+      __FUNCTION__,
+      Status
+      ));
     ASSERT_EFI_ERROR (Status);
   }
 

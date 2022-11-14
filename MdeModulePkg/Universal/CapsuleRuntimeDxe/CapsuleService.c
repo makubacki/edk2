@@ -97,7 +97,10 @@ UpdateCapsule (
     // CAPSULE_FLAGS_PERSIST_ACROSS_RESET set in its header as well.
     //
     CapsuleHeader = CapsuleHeaderArray[ArrayNumber];
-    if ((CapsuleHeader->Flags & (CAPSULE_FLAGS_PERSIST_ACROSS_RESET | CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE)) == CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE) {
+    if ((CapsuleHeader->Flags & (CAPSULE_FLAGS_PERSIST_ACROSS_RESET |
+                                 CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE)) ==
+        CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE)
+    {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -105,7 +108,10 @@ UpdateCapsule (
     // A capsule which has the CAPSULE_FLAGS_INITIATE_RESET flag must have
     // CAPSULE_FLAGS_PERSIST_ACROSS_RESET set in its header as well.
     //
-    if ((CapsuleHeader->Flags & (CAPSULE_FLAGS_PERSIST_ACROSS_RESET | CAPSULE_FLAGS_INITIATE_RESET)) == CAPSULE_FLAGS_INITIATE_RESET) {
+    if ((CapsuleHeader->Flags & (CAPSULE_FLAGS_PERSIST_ACROSS_RESET |
+                                 CAPSULE_FLAGS_INITIATE_RESET)) ==
+        CAPSULE_FLAGS_INITIATE_RESET)
+    {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -140,7 +146,10 @@ UpdateCapsule (
     // Platform specific update for the non-reset capsule image.
     //
     if ((CapsuleHeader->Flags & CAPSULE_FLAGS_PERSIST_ACROSS_RESET) == 0) {
-      if (EfiAtRuntime () && !FeaturePcdGet (PcdSupportProcessCapsuleAtRuntime)) {
+      if (EfiAtRuntime () && !FeaturePcdGet (
+                                PcdSupportProcessCapsuleAtRuntime
+                                ))
+      {
         Status = EFI_OUT_OF_RESOURCES;
       } else {
         Status = ProcessCapsuleImage (CapsuleHeader);
@@ -186,7 +195,11 @@ UpdateCapsule (
   // Construct variable name CapsuleUpdateData, CapsuleUpdateData1, CapsuleUpdateData2...
   // if user calls UpdateCapsule multiple times.
   //
-  StrCpyS (CapsuleVarName, sizeof (CapsuleVarName)/sizeof (CHAR16), EFI_CAPSULE_VARIABLE_NAME);
+  StrCpyS (
+    CapsuleVarName,
+    sizeof (CapsuleVarName)/sizeof (CHAR16),
+    EFI_CAPSULE_VARIABLE_NAME
+    );
   TempVarName = CapsuleVarName + StrLen (CapsuleVarName);
   if (mTimes > 0) {
     UnicodeValueToStringS (
@@ -206,7 +219,8 @@ UpdateCapsule (
   Status = EfiSetVariable (
              CapsuleVarName,
              &gEfiCapsuleVendorGuid,
-             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS |
+             EFI_VARIABLE_BOOTSERVICE_ACCESS,
              sizeof (UINTN),
              (VOID *)&ScatterGatherList
              );
@@ -286,7 +300,10 @@ QueryCapsuleCapabilities (
     // A capsule which has the CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE flag must have
     // CAPSULE_FLAGS_PERSIST_ACROSS_RESET set in its header as well.
     //
-    if ((CapsuleHeader->Flags & (CAPSULE_FLAGS_PERSIST_ACROSS_RESET | CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE)) == CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE) {
+    if ((CapsuleHeader->Flags & (CAPSULE_FLAGS_PERSIST_ACROSS_RESET |
+                                 CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE)) ==
+        CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE)
+    {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -294,7 +311,10 @@ QueryCapsuleCapabilities (
     // A capsule which has the CAPSULE_FLAGS_INITIATE_RESET flag must have
     // CAPSULE_FLAGS_PERSIST_ACROSS_RESET set in its header as well.
     //
-    if ((CapsuleHeader->Flags & (CAPSULE_FLAGS_PERSIST_ACROSS_RESET | CAPSULE_FLAGS_INITIATE_RESET)) == CAPSULE_FLAGS_INITIATE_RESET) {
+    if ((CapsuleHeader->Flags & (CAPSULE_FLAGS_PERSIST_ACROSS_RESET |
+                                 CAPSULE_FLAGS_INITIATE_RESET)) ==
+        CAPSULE_FLAGS_INITIATE_RESET)
+    {
       return EFI_INVALID_PARAMETER;
     }
 

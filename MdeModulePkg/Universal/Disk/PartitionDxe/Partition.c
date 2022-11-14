@@ -94,7 +94,8 @@ PartitionDriverBindingSupported (
       Node = (EFI_DEV_PATH *)RemainingDevicePath;
       if ((Node->DevPath.Type != MEDIA_DEVICE_PATH) ||
           (Node->DevPath.SubType != MEDIA_HARDDRIVE_DP) ||
-          (DevicePathNodeLength (&Node->DevPath) != sizeof (HARDDRIVE_DEVICE_PATH)))
+          (DevicePathNodeLength (&Node->DevPath) !=
+           sizeof (HARDDRIVE_DEVICE_PATH)))
       {
         return EFI_UNSUPPORTED;
       }
@@ -326,7 +327,9 @@ PartitionDriverBindingStart (
   BlockIo2,
   ParentDevicePath
   );
-      if (!EFI_ERROR (Status) || (Status == EFI_MEDIA_CHANGED) || (Status == EFI_NO_MEDIA)) {
+      if (!EFI_ERROR (Status) || (Status == EFI_MEDIA_CHANGED) || (Status ==
+                                                                   EFI_NO_MEDIA))
+      {
         break;
       }
 
@@ -492,7 +495,11 @@ PartitionDriverBindingStop (
 
     if (BlockIo2 != NULL) {
       Status = BlockIo2->FlushBlocksEx (BlockIo2, NULL);
-      DEBUG ((DEBUG_ERROR, "PartitionDriverBindingStop: FlushBlocksEx returned with %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "PartitionDriverBindingStop: FlushBlocksEx returned with %r\n",
+        Status
+        ));
     } else {
       Status = EFI_SUCCESS;
     }
@@ -696,7 +703,13 @@ PartitionReadBlocks (
   // device, we call the Disk IO protocol on the parent device, not the Block IO
   // protocol
   //
-  return Private->DiskIo->ReadDisk (Private->DiskIo, MediaId, Offset, BufferSize, Buffer);
+  return Private->DiskIo->ReadDisk (
+                            Private->DiskIo,
+                            MediaId,
+                            Offset,
+                            BufferSize,
+                            Buffer
+                            );
 }
 
 /**
@@ -748,7 +761,13 @@ PartitionWriteBlocks (
   // device, we call the Disk IO protocol on the parent device, not the Block IO
   // protocol
   //
-  return Private->DiskIo->WriteDisk (Private->DiskIo, MediaId, Offset, BufferSize, Buffer);
+  return Private->DiskIo->WriteDisk (
+                            Private->DiskIo,
+                            MediaId,
+                            Offset,
+                            BufferSize,
+                            Buffer
+                            );
 }
 
 /**
@@ -958,7 +977,11 @@ PartitionReadBlocksEx (
 
   Offset = MultU64x32 (Lba, Private->BlockSize) + Private->Start;
   if (Offset + BufferSize > Private->End) {
-    return ProbeMediaStatusEx (Private->DiskIo2, MediaId, EFI_INVALID_PARAMETER);
+    return ProbeMediaStatusEx (
+             Private->DiskIo2,
+             MediaId,
+             EFI_INVALID_PARAMETER
+             );
   }
 
   if ((Token != NULL) && (Token->Event != NULL)) {
@@ -967,13 +990,27 @@ PartitionReadBlocksEx (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    Status = Private->DiskIo2->ReadDiskEx (Private->DiskIo2, MediaId, Offset, &Task->DiskIo2Token, BufferSize, Buffer);
+    Status = Private->DiskIo2->ReadDiskEx (
+                                 Private->DiskIo2,
+                                 MediaId,
+                                 Offset,
+                                 &Task->DiskIo2Token,
+                                 BufferSize,
+                                 Buffer
+                                 );
     if (EFI_ERROR (Status)) {
       gBS->CloseEvent (Task->DiskIo2Token.Event);
       FreePool (Task);
     }
   } else {
-    Status = Private->DiskIo2->ReadDiskEx (Private->DiskIo2, MediaId, Offset, NULL, BufferSize, Buffer);
+    Status = Private->DiskIo2->ReadDiskEx (
+                                 Private->DiskIo2,
+                                 MediaId,
+                                 Offset,
+                                 NULL,
+                                 BufferSize,
+                                 Buffer
+                                 );
   }
 
   return Status;
@@ -1034,7 +1071,11 @@ PartitionWriteBlocksEx (
 
   Offset = MultU64x32 (Lba, Private->BlockSize) + Private->Start;
   if (Offset + BufferSize > Private->End) {
-    return ProbeMediaStatusEx (Private->DiskIo2, MediaId, EFI_INVALID_PARAMETER);
+    return ProbeMediaStatusEx (
+             Private->DiskIo2,
+             MediaId,
+             EFI_INVALID_PARAMETER
+             );
   }
 
   if ((Token != NULL) && (Token->Event != NULL)) {
@@ -1043,13 +1084,27 @@ PartitionWriteBlocksEx (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    Status =  Private->DiskIo2->WriteDiskEx (Private->DiskIo2, MediaId, Offset, &Task->DiskIo2Token, BufferSize, Buffer);
+    Status =  Private->DiskIo2->WriteDiskEx (
+                                  Private->DiskIo2,
+                                  MediaId,
+                                  Offset,
+                                  &Task->DiskIo2Token,
+                                  BufferSize,
+                                  Buffer
+                                  );
     if (EFI_ERROR (Status)) {
       gBS->CloseEvent (Task->DiskIo2Token.Event);
       FreePool (Task);
     }
   } else {
-    Status = Private->DiskIo2->WriteDiskEx (Private->DiskIo2, MediaId, Offset, NULL, BufferSize, Buffer);
+    Status = Private->DiskIo2->WriteDiskEx (
+                                 Private->DiskIo2,
+                                 MediaId,
+                                 Offset,
+                                 NULL,
+                                 BufferSize,
+                                 Buffer
+                                 );
   }
 
   return Status;
@@ -1096,7 +1151,10 @@ PartitionFlushBlocksEx (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    Status = Private->DiskIo2->FlushDiskEx (Private->DiskIo2, &Task->DiskIo2Token);
+    Status = Private->DiskIo2->FlushDiskEx (
+                                 Private->DiskIo2,
+                                 &Task->DiskIo2Token
+                                 );
     if (EFI_ERROR (Status)) {
       gBS->CloseEvent (Task->DiskIo2Token.Event);
       FreePool (Task);
@@ -1173,7 +1231,11 @@ PartitionInstallChildHandle (
   Private->BlockIo.Revision = ParentBlockIo->Revision;
 
   Private->BlockIo.Media = &Private->Media;
-  CopyMem (Private->BlockIo.Media, ParentBlockIo->Media, sizeof (EFI_BLOCK_IO_MEDIA));
+  CopyMem (
+    Private->BlockIo.Media,
+    ParentBlockIo->Media,
+    sizeof (EFI_BLOCK_IO_MEDIA)
+    );
 
   Private->BlockIo.Reset       = PartitionReset;
   Private->BlockIo.ReadBlocks  = PartitionReadBlocks;
@@ -1186,7 +1248,11 @@ PartitionInstallChildHandle (
   if (Private->DiskIo2 != NULL) {
     ASSERT (Private->ParentBlockIo2 != NULL);
     Private->BlockIo2.Media = &Private->Media2;
-    CopyMem (Private->BlockIo2.Media, ParentBlockIo2->Media, sizeof (EFI_BLOCK_IO_MEDIA));
+    CopyMem (
+      Private->BlockIo2.Media,
+      ParentBlockIo2->Media,
+      sizeof (EFI_BLOCK_IO_MEDIA)
+      );
 
     Private->BlockIo2.Reset         = PartitionResetEx;
     Private->BlockIo2.ReadBlocksEx  = PartitionReadBlocksEx;
@@ -1236,7 +1302,11 @@ PartitionInstallChildHandle (
   //
   // Set the PartitionInfo into Private Data.
   //
-  CopyMem (&Private->PartitionInfo, PartitionInfo, sizeof (EFI_PARTITION_INFO_PROTOCOL));
+  CopyMem (
+    &Private->PartitionInfo,
+    PartitionInfo,
+    sizeof (EFI_PARTITION_INFO_PROTOCOL)
+    );
 
   if (TypeGuid != NULL) {
     CopyGuid (&(Private->TypeGuid), TypeGuid);
@@ -1370,7 +1440,9 @@ HasChildren (
   ASSERT_EFI_ERROR (Status);
 
   for (Index = 0; Index < EntryCount; Index++) {
-    if ((OpenInfoBuffer[Index].Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0) {
+    if ((OpenInfoBuffer[Index].Attributes &
+         EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0)
+    {
       break;
     }
   }

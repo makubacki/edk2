@@ -16,7 +16,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/DevicePathLib.h>
 #include <Library/PcdLib.h>
 
-GLOBAL_REMOVE_IF_UNREFERENCED CONST EFI_DEVICE_PATH_UTILITIES_PROTOCOL  mDevicePathUtilities = {
+GLOBAL_REMOVE_IF_UNREFERENCED CONST EFI_DEVICE_PATH_UTILITIES_PROTOCOL
+  mDevicePathUtilities = {
   GetDevicePathSize,
   DuplicateDevicePath,
   AppendDevicePath,
@@ -27,12 +28,14 @@ GLOBAL_REMOVE_IF_UNREFERENCED CONST EFI_DEVICE_PATH_UTILITIES_PROTOCOL  mDeviceP
   CreateDeviceNode
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED CONST EFI_DEVICE_PATH_TO_TEXT_PROTOCOL  mDevicePathToText = {
+GLOBAL_REMOVE_IF_UNREFERENCED CONST EFI_DEVICE_PATH_TO_TEXT_PROTOCOL
+  mDevicePathToText = {
   ConvertDeviceNodeToText,
   ConvertDevicePathToText
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED CONST EFI_DEVICE_PATH_FROM_TEXT_PROTOCOL  mDevicePathFromText = {
+GLOBAL_REMOVE_IF_UNREFERENCED CONST EFI_DEVICE_PATH_FROM_TEXT_PROTOCOL
+  mDevicePathFromText = {
   ConvertTextToDeviceNode,
   ConvertTextToDevicePath
 };

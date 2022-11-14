@@ -79,10 +79,14 @@ EdbClearAllBreakpoint (
   //
   // Patch all the breakpoint
   //
-  for (Index = 0; (Index < DebuggerPrivate->DebuggerBreakpointCount) && (Index < EFI_DEBUGGER_BREAKPOINT_MAX); Index++) {
+  for (Index = 0; (Index < DebuggerPrivate->DebuggerBreakpointCount) && (Index <
+                                                                         EFI_DEBUGGER_BREAKPOINT_MAX);
+       Index++)
+  {
     if (DebuggerPrivate->DebuggerBreakpointContext[Index].State) {
       CopyMem (
-        (VOID *)(UINTN)DebuggerPrivate->DebuggerBreakpointContext[Index].BreakpointAddress,
+        (VOID *)(UINTN)DebuggerPrivate->DebuggerBreakpointContext[Index].
+          BreakpointAddress,
         &DebuggerPrivate->DebuggerBreakpointContext[Index].OldInstruction,
         sizeof (UINT16)
         );
@@ -94,7 +98,10 @@ EdbClearAllBreakpoint (
   //
   if (NeedRemove) {
     DebuggerPrivate->DebuggerBreakpointCount = 0;
-    ZeroMem (DebuggerPrivate->DebuggerBreakpointContext, sizeof (DebuggerPrivate->DebuggerBreakpointContext));
+    ZeroMem (
+      DebuggerPrivate->DebuggerBreakpointContext,
+      sizeof (DebuggerPrivate->DebuggerBreakpointContext)
+      );
   }
 
   //
@@ -122,10 +129,14 @@ EdbSetAllBreakpoint (
   // Set all the breakpoint (BREAK(3) : 0x0300)
   //
   Data16 = 0x0300;
-  for (Index = 0; (Index < DebuggerPrivate->DebuggerBreakpointCount) && (Index < EFI_DEBUGGER_BREAKPOINT_MAX); Index++) {
+  for (Index = 0; (Index < DebuggerPrivate->DebuggerBreakpointCount) && (Index <
+                                                                         EFI_DEBUGGER_BREAKPOINT_MAX);
+       Index++)
+  {
     if (DebuggerPrivate->DebuggerBreakpointContext[Index].State) {
       CopyMem (
-        (VOID *)(UINTN)DebuggerPrivate->DebuggerBreakpointContext[Index].BreakpointAddress,
+        (VOID *)(UINTN)DebuggerPrivate->DebuggerBreakpointContext[Index].
+          BreakpointAddress,
         &Data16,
         sizeof (UINT16)
         );
@@ -136,10 +147,15 @@ EdbSetAllBreakpoint (
   // Check if current break is caused by breakpoint set.
   // If so, we need to patch memory back to let user see the real memory.
   //
-  if (DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX].BreakpointAddress != 0) {
+  if (DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX].
+        BreakpointAddress != 0)
+  {
     CopyMem (
-      (VOID *)(UINTN)DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX].BreakpointAddress,
-      &DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX].OldInstruction,
+      (VOID *)(UINTN)DebuggerPrivate->DebuggerBreakpointContext[
+                                                               EFI_DEBUGGER_BREAKPOINT_MAX
+      ].BreakpointAddress,
+      &DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX].
+        OldInstruction,
       sizeof (UINT16)
       );
     DebuggerPrivate->StatusFlags &= ~EFI_DEBUG_FLAG_EBC_B_BP;
@@ -179,8 +195,12 @@ EdbCheckBreakpoint (
   // Check if the breakpoint is hit
   //
   IsHitBreakpoint = FALSE;
-  for (Index = 0; (Index < DebuggerPrivate->DebuggerBreakpointCount) && (Index < EFI_DEBUGGER_BREAKPOINT_MAX); Index++) {
-    if ((DebuggerPrivate->DebuggerBreakpointContext[Index].BreakpointAddress == Address) &&
+  for (Index = 0; (Index < DebuggerPrivate->DebuggerBreakpointCount) && (Index <
+                                                                         EFI_DEBUGGER_BREAKPOINT_MAX);
+       Index++)
+  {
+    if ((DebuggerPrivate->DebuggerBreakpointContext[Index].BreakpointAddress ==
+         Address) &&
         (DebuggerPrivate->DebuggerBreakpointContext[Index].State))
     {
       IsHitBreakpoint = TRUE;
@@ -192,8 +212,10 @@ EdbCheckBreakpoint (
     //
     // If hit, record current breakpoint
     //
-    DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX]       = DebuggerPrivate->DebuggerBreakpointContext[Index];
-    DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX].State = TRUE;
+    DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX]
+      = DebuggerPrivate->DebuggerBreakpointContext[Index];
+    DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX].
+      State = TRUE;
     //
     // Update: IP and Instruction (NOTE: Since we not allow set breakpoint to BREAK 3, this update is safe)
     //
@@ -214,8 +236,11 @@ EdbCheckBreakpoint (
     // Check if the breakpoint is hit
     //
     IsHitBreakpoint = FALSE;
-    for (Index = 0; (Index < DebuggerPrivate->DebuggerBreakpointCount) && (Index < EFI_DEBUGGER_BREAKPOINT_MAX); Index++) {
-      if ((DebuggerPrivate->DebuggerBreakpointContext[Index].BreakpointAddress == Address) &&
+    for (Index = 0; (Index < DebuggerPrivate->DebuggerBreakpointCount) &&
+         (Index < EFI_DEBUGGER_BREAKPOINT_MAX); Index++)
+    {
+      if ((DebuggerPrivate->DebuggerBreakpointContext[Index].BreakpointAddress
+           == Address) &&
           (DebuggerPrivate->DebuggerBreakpointContext[Index].State))
       {
         IsHitBreakpoint = TRUE;
@@ -230,9 +255,12 @@ EdbCheckBreakpoint (
       CopyMem (
         &DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX],
         &DebuggerPrivate->DebuggerBreakpointContext[Index],
-        sizeof (DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX])
+        sizeof (DebuggerPrivate->DebuggerBreakpointContext[
+                                                          EFI_DEBUGGER_BREAKPOINT_MAX
+                ])
         );
-      DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX].State = TRUE;
+      DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX].
+        State = TRUE;
       //
       // Do not set Breakpoint flag. We record the address here just let it not patch breakpoint address when de-init.
       //
@@ -242,7 +270,9 @@ EdbCheckBreakpoint (
       //
       ZeroMem (
         &DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX],
-        sizeof (DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX])
+        sizeof (DebuggerPrivate->DebuggerBreakpointContext[
+                                                          EFI_DEBUGGER_BREAKPOINT_MAX
+                ])
         );
     }
   }
@@ -273,7 +303,9 @@ EdbClearSymbol (
   // Go throuth each object
   //
   DebuggerSymbolContext = &DebuggerPrivate->DebuggerSymbolContext;
-  for (ObjectIndex = 0; ObjectIndex < DebuggerSymbolContext->ObjectCount; ObjectIndex++) {
+  for (ObjectIndex = 0; ObjectIndex < DebuggerSymbolContext->ObjectCount;
+       ObjectIndex++)
+  {
     Object = &DebuggerSymbolContext->Object[ObjectIndex];
     //
     // Go throuth each entry
@@ -333,7 +365,10 @@ InitDebuggerPrivateData (
     DebuggerPrivate->InstructionNumber = EFI_DEBUG_DEFAULT_INSTRUCTION_NUMBER;
 
     DebuggerPrivate->DebuggerBreakpointCount = 0;
-    ZeroMem (DebuggerPrivate->DebuggerBreakpointContext, sizeof (DebuggerPrivate->DebuggerBreakpointContext));
+    ZeroMem (
+      DebuggerPrivate->DebuggerBreakpointContext,
+      sizeof (DebuggerPrivate->DebuggerBreakpointContext)
+      );
 
     //    DebuggerPrivate->StatusFlags = 0;
 
@@ -387,10 +422,14 @@ DeinitDebuggerPrivateData (
     //
     // If it does not want initialized state, de-init everything
     //
-    DebuggerPrivate->FeatureFlags        = EFI_DEBUG_FLAG_EBC_BOE | EFI_DEBUG_FLAG_EBC_BOT;
+    DebuggerPrivate->FeatureFlags = EFI_DEBUG_FLAG_EBC_BOE |
+                                    EFI_DEBUG_FLAG_EBC_BOT;
     DebuggerPrivate->CallStackEntryCount = 0;
     DebuggerPrivate->TraceEntryCount     = 0;
-    ZeroMem (DebuggerPrivate->CallStackEntry, sizeof (DebuggerPrivate->CallStackEntry));
+    ZeroMem (
+      DebuggerPrivate->CallStackEntry,
+      sizeof (DebuggerPrivate->CallStackEntry)
+      );
     ZeroMem (DebuggerPrivate->TraceEntry, sizeof (DebuggerPrivate->TraceEntry));
 
     //
@@ -412,7 +451,10 @@ DeinitDebuggerPrivateData (
   //
   // Clear Step context
   //
-  ZeroMem (&mDebuggerPrivate.StepContext, sizeof (mDebuggerPrivate.StepContext));
+  ZeroMem (
+    &mDebuggerPrivate.StepContext,
+    sizeof (mDebuggerPrivate.StepContext)
+    );
   DebuggerPrivate->StatusFlags = 0;
 
   //
@@ -442,29 +484,51 @@ PrintExceptionReason (
   //
   // Print break status
   //
-  if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_GT) == EFI_DEBUG_FLAG_EBC_GT) {
+  if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_GT) ==
+      EFI_DEBUG_FLAG_EBC_GT)
+  {
     EDBPrint (L"Break on GoTil\n");
-  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_BOC) == EFI_DEBUG_FLAG_EBC_BOC) {
+  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_BOC) ==
+             EFI_DEBUG_FLAG_EBC_BOC)
+  {
     EDBPrint (L"Break on CALL\n");
-  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_BOCX) == EFI_DEBUG_FLAG_EBC_BOCX) {
+  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_BOCX) ==
+             EFI_DEBUG_FLAG_EBC_BOCX)
+  {
     EDBPrint (L"Break on CALLEX\n");
-  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_BOR) == EFI_DEBUG_FLAG_EBC_BOR) {
+  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_BOR) ==
+             EFI_DEBUG_FLAG_EBC_BOR)
+  {
     EDBPrint (L"Break on RET\n");
-  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_BOE) == EFI_DEBUG_FLAG_EBC_BOE) {
+  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_BOE) ==
+             EFI_DEBUG_FLAG_EBC_BOE)
+  {
     EDBPrint (L"Break on Entrypoint\n");
-  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_BOT) == EFI_DEBUG_FLAG_EBC_BOT) {
+  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_BOT) ==
+             EFI_DEBUG_FLAG_EBC_BOT)
+  {
     EDBPrint (L"Break on Thunk\n");
-  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_STEPOVER) == EFI_DEBUG_FLAG_EBC_STEPOVER) {
+  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_STEPOVER) ==
+             EFI_DEBUG_FLAG_EBC_STEPOVER)
+  {
     EDBPrint (L"Break on StepOver\n");
-  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_STEPOUT) == EFI_DEBUG_FLAG_EBC_STEPOUT) {
+  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_STEPOUT) ==
+             EFI_DEBUG_FLAG_EBC_STEPOUT)
+  {
     EDBPrint (L"Break on StepOut\n");
-  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_BP) == EFI_DEBUG_FLAG_EBC_BP) {
+  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_BP) ==
+             EFI_DEBUG_FLAG_EBC_BP)
+  {
     EDBPrint (L"Break on Breakpoint\n");
-  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_BOK) == EFI_DEBUG_FLAG_EBC_BOK) {
+  } else if ((DebuggerPrivate->StatusFlags & EFI_DEBUG_FLAG_EBC_BOK) ==
+             EFI_DEBUG_FLAG_EBC_BOK)
+  {
     EDBPrint (L"Break on Key\n");
   } else {
     EDBPrint (L"Exception Type - %x", (UINTN)ExceptionType);
-    if ((ExceptionType >= EXCEPT_EBC_UNDEFINED) && (ExceptionType <= EXCEPT_EBC_STEP)) {
+    if ((ExceptionType >= EXCEPT_EBC_UNDEFINED) && (ExceptionType <=
+                                                    EXCEPT_EBC_STEP))
+    {
       EDBPrint (L" (%s)\n", mExceptionStr[ExceptionType]);
     } else {
       EDBPrint (L"\n");
@@ -520,12 +584,22 @@ EdbExceptionHandler (
   //
   // Init Private Data
   //
-  InitDebuggerPrivateData (&mDebuggerPrivate, ExceptionType, SystemContext, mInitialized);
+  InitDebuggerPrivateData (
+    &mDebuggerPrivate,
+    ExceptionType,
+    SystemContext,
+    mInitialized
+    );
 
   //
   // EDBPrint basic info
   //
-  PrintExceptionReason (&mDebuggerPrivate, ExceptionType, SystemContext, mInitialized);
+  PrintExceptionReason (
+    &mDebuggerPrivate,
+    ExceptionType,
+    SystemContext,
+    mInitialized
+    );
 
   EdbShowDisasm (&mDebuggerPrivate, SystemContext);
   // EFI_BREAKPOINT ();
@@ -547,7 +621,11 @@ EdbExceptionHandler (
     //
     // Get user input
     //
-    Input (L"\n\r" EFI_DEBUG_PROMPT_STRING, InputBuffer, EFI_DEBUG_INPUS_BUFFER_SIZE);
+    Input (
+      L"\n\r" EFI_DEBUG_PROMPT_STRING,
+      InputBuffer,
+      EFI_DEBUG_INPUS_BUFFER_SIZE
+      );
     EDBPrint (L"\n");
 
     //
@@ -572,7 +650,12 @@ EdbExceptionHandler (
     //
     // Dispatch command
     //
-    DebugStatus                      = DebuggerCommand (CommandArg, &mDebuggerPrivate, ExceptionType, SystemContext);
+    DebugStatus = DebuggerCommand (
+                    CommandArg,
+                    &mDebuggerPrivate,
+                    ExceptionType,
+                    SystemContext
+                    );
     mDebuggerPrivate.EnablePageBreak = FALSE;
 
     //
@@ -593,7 +676,12 @@ EdbExceptionHandler (
   //
   // Deinit Private Data
   //
-  DeinitDebuggerPrivateData (&mDebuggerPrivate, ExceptionType, SystemContext, mInitialized);
+  DeinitDebuggerPrivateData (
+    &mDebuggerPrivate,
+    ExceptionType,
+    SystemContext,
+    mInitialized
+    );
 
   DEBUG ((DEBUG_ERROR, "Goodbye EBC Debugger!\n"));
 

@@ -92,7 +92,9 @@ typedef struct {
   EFI_DEVICE_PATH_PROTOCOL          *RetDevicePath;
 } FILE_EXPLORER_CALLBACK_DATA;
 
-#define FILE_EXPLORER_PRIVATE_FROM_THIS(a)  CR (a, FILE_EXPLORER_CALLBACK_DATA, FeConfigAccess, FILE_EXPLORER_CALLBACK_DATA_SIGNATURE)
+#define FILE_EXPLORER_PRIVATE_FROM_THIS( \
+                                       a)  \
+  CR (a, FILE_EXPLORER_CALLBACK_DATA, FeConfigAccess, FILE_EXPLORER_CALLBACK_DATA_SIGNATURE)
 
 extern UINT8  FileExplorerVfrBin[];
 

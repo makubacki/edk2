@@ -98,7 +98,14 @@ MemoryProfileLibRecord (
   )
 {
   if (BufferInSmram (Buffer)) {
-    return SmmCoreUpdateProfile (CallerAddress, Action, MemoryType, Size, Buffer, ActionString);
+    return SmmCoreUpdateProfile (
+             CallerAddress,
+             Action,
+             MemoryType,
+             Size,
+             Buffer,
+             ActionString
+             );
   } else {
     if (mLibProfileProtocol == NULL) {
       return EFI_UNSUPPORTED;

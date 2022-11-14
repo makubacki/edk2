@@ -70,12 +70,13 @@ typedef INTN    intptr_t;
 
 #define UCHAR_MAX        255
 #define MAX_STRING_SIZE  0x1000
-#define strlen_s(String, MaxSize)              AsciiStrnLenS (String, MaxSize)
-#define xstrncpy(Dest, Src, MaxSize)           strcat_s(Dest,MaxSize,Src)
-#define xstrcat(Dest, Src, MaxSize)            strcat(Dest,Src,MaxSize)
-#define strcat(Dest, Src, MaxSize)             strcat_s(Dest,MaxSize,Src)
-#define strcat_s(Dest, MaxSize, Src)           AsciiStrCatS (Dest, MaxSize, Src)
-#define strncpy_s(Dest, MaxSize, Src, Length)  AsciiStrnCpyS (Dest, MaxSize, Src, Length)
+#define strlen_s(String, MaxSize)     AsciiStrnLenS (String, MaxSize)
+#define xstrncpy(Dest, Src, MaxSize)  strcat_s(Dest,MaxSize,Src)
+#define xstrcat(Dest, Src, MaxSize)   strcat(Dest,Src,MaxSize)
+#define strcat(Dest, Src, MaxSize)    strcat_s(Dest,MaxSize,Src)
+#define strcat_s(Dest, MaxSize, Src)  AsciiStrCatS (Dest, MaxSize, Src)
+#define strncpy_s(Dest, MaxSize, Src, \
+                  Length)             AsciiStrnCpyS (Dest, MaxSize, Src, Length)
 #define strcmp  OnigStrCmp
 
 int

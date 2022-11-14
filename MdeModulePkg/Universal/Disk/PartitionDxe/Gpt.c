@@ -285,7 +285,13 @@ PartitionInstallGptChildHandles (
   //
   // Check primary and backup partition tables
   //
-  if (!PartitionValidGptTable (BlockIo, DiskIo, PRIMARY_PART_HEADER_LBA, PrimaryHeader)) {
+  if (!PartitionValidGptTable (
+         BlockIo,
+         DiskIo,
+         PRIMARY_PART_HEADER_LBA,
+         PrimaryHeader
+         ))
+  {
     DEBUG ((DEBUG_INFO, " Not Valid primary partition table\n"));
 
     if (!PartitionValidGptTable (BlockIo, DiskIo, LastBlock, BackupHeader)) {
@@ -298,18 +304,36 @@ PartitionInstallGptChildHandles (
         DEBUG ((DEBUG_INFO, " Restore primary partition table error\n"));
       }
 
-      if (PartitionValidGptTable (BlockIo, DiskIo, BackupHeader->AlternateLBA, PrimaryHeader)) {
+      if (PartitionValidGptTable (
+            BlockIo,
+            DiskIo,
+            BackupHeader->AlternateLBA,
+            PrimaryHeader
+            ))
+      {
         DEBUG ((DEBUG_INFO, " Restore backup partition table success\n"));
       }
     }
-  } else if (!PartitionValidGptTable (BlockIo, DiskIo, PrimaryHeader->AlternateLBA, BackupHeader)) {
+  } else if (!PartitionValidGptTable (
+                BlockIo,
+                DiskIo,
+                PrimaryHeader->AlternateLBA,
+                BackupHeader
+                ))
+  {
     DEBUG ((DEBUG_INFO, " Valid primary and !Valid backup partition table\n"));
     DEBUG ((DEBUG_INFO, " Restore backup partition table by the primary\n"));
     if (!PartitionRestoreGptTable (BlockIo, DiskIo, PrimaryHeader)) {
       DEBUG ((DEBUG_INFO, " Restore backup partition table error\n"));
     }
 
-    if (PartitionValidGptTable (BlockIo, DiskIo, PrimaryHeader->AlternateLBA, BackupHeader)) {
+    if (PartitionValidGptTable (
+          BlockIo,
+          DiskIo,
+          PrimaryHeader->AlternateLBA,
+          BackupHeader
+          ))
+    {
       DEBUG ((DEBUG_INFO, " Restore backup partition table success\n"));
     }
   }
@@ -319,7 +343,10 @@ PartitionInstallGptChildHandles (
   //
   // Read the EFI Partition Entries
   //
-  PartEntry = AllocatePool (PrimaryHeader->NumberOfPartitionEntries * PrimaryHeader->SizeOfPartitionEntry);
+  PartEntry = AllocatePool (
+                PrimaryHeader->NumberOfPartitionEntries *
+                PrimaryHeader->SizeOfPartitionEntry
+                );
   if (PartEntry == NULL) {
     DEBUG ((DEBUG_ERROR, "Allocate pool error\n"));
     goto Done;
@@ -329,7 +356,8 @@ PartitionInstallGptChildHandles (
                      DiskIo,
                      MediaId,
                      MultU64x32 (PrimaryHeader->PartitionEntryLBA, BlockSize),
-                     PrimaryHeader->NumberOfPartitionEntries * (PrimaryHeader->SizeOfPartitionEntry),
+                     PrimaryHeader->NumberOfPartitionEntries *
+                     (PrimaryHeader->SizeOfPartitionEntry),
                      PartEntry
                      );
   if (EFI_ERROR (Status)) {
@@ -340,9 +368,16 @@ PartitionInstallGptChildHandles (
 
   DEBUG ((DEBUG_INFO, " Partition entries read block success\n"));
 
-  DEBUG ((DEBUG_INFO, " Number of partition entries: %d\n", PrimaryHeader->NumberOfPartitionEntries));
+  DEBUG ((
+    DEBUG_INFO,
+    " Number of partition entries: %d\n",
+    PrimaryHeader->NumberOfPartitionEntries
+    ));
 
-  PEntryStatus = AllocateZeroPool (PrimaryHeader->NumberOfPartitionEntries * sizeof (EFI_PARTITION_ENTRY_STATUS));
+  PEntryStatus = AllocateZeroPool (
+                   PrimaryHeader->NumberOfPartitionEntries *
+                   sizeof (EFI_PARTITION_ENTRY_STATUS)
+                   );
   if (PEntryStatus == NULL) {
     DEBUG ((DEBUG_ERROR, "Allocate pool error\n"));
     goto Done;
@@ -362,7 +397,8 @@ PartitionInstallGptChildHandles (
   // Create child device handles
   //
   for (Index = 0; Index < PrimaryHeader->NumberOfPartitionEntries; Index++) {
-    Entry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartEntry + Index * PrimaryHeader->SizeOfPartitionEntry);
+    Entry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartEntry + Index *
+                                    PrimaryHeader->SizeOfPartitionEntry);
     if (CompareGuid (&Entry->PartitionTypeGUID, &gEfiPartTypeUnusedGuid) ||
         PEntryStatus[Index].OutOfRange ||
         PEntryStatus[Index].Overlap ||
@@ -401,8 +437,22 @@ PartitionInstallGptChildHandles (
     DEBUG ((DEBUG_INFO, " Start LBA : %lx\n", (UINT64)HdDev.PartitionStart));
     DEBUG ((DEBUG_INFO, " End LBA : %lx\n", (UINT64)Entry->EndingLBA));
     DEBUG ((DEBUG_INFO, " Partition size: %lx\n", (UINT64)HdDev.PartitionSize));
-    DEBUG ((DEBUG_INFO, " Start : %lx", MultU64x32 (Entry->StartingLBA, BlockSize)));
-    DEBUG ((DEBUG_INFO, " End : %lx\n", MultU64x32 (Entry->EndingLBA, BlockSize)));
+    DEBUG ((
+      DEBUG_INFO,
+      " Start : %lx",
+      MultU64x32 (
+        Entry->StartingLBA,
+        BlockSize
+        )
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      " End : %lx\n",
+      MultU64x32 (
+        Entry->EndingLBA,
+        BlockSize
+        )
+      ));
 
     Status = PartitionInstallChildHandle (
                This,
@@ -514,7 +564,11 @@ PartitionValidGptTable (
   //
   // Ensure the NumberOfPartitionEntries * SizeOfPartitionEntry doesn't overflow.
   //
-  if (PartHdr->NumberOfPartitionEntries > DivU64x32 (MAX_UINTN, PartHdr->SizeOfPartitionEntry)) {
+  if (PartHdr->NumberOfPartitionEntries > DivU64x32 (
+                                            MAX_UINTN,
+                                            PartHdr->SizeOfPartitionEntry
+                                            ))
+  {
     FreePool (PartHdr);
     return FALSE;
   }
@@ -557,7 +611,10 @@ PartitionCheckGptEntryArrayCRC (
   //
   // Read the EFI Partition Entries
   //
-  Ptr = AllocatePool (PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry);
+  Ptr = AllocatePool (
+          PartHeader->NumberOfPartitionEntries *
+          PartHeader->SizeOfPartitionEntry
+          );
   if (Ptr == NULL) {
     DEBUG ((DEBUG_ERROR, " Allocate pool error\n"));
     return FALSE;
@@ -566,8 +623,12 @@ PartitionCheckGptEntryArrayCRC (
   Status = DiskIo->ReadDisk (
                      DiskIo,
                      BlockIo->Media->MediaId,
-                     MultU64x32 (PartHeader->PartitionEntryLBA, BlockIo->Media->BlockSize),
-                     PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
+                     MultU64x32 (
+                       PartHeader->PartitionEntryLBA,
+                       BlockIo->Media->BlockSize
+                       ),
+                     PartHeader->NumberOfPartitionEntries *
+                     PartHeader->SizeOfPartitionEntry,
                      Ptr
                      );
   if (EFI_ERROR (Status)) {
@@ -575,7 +636,8 @@ PartitionCheckGptEntryArrayCRC (
     return FALSE;
   }
 
-  Size = PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry;
+  Size = PartHeader->NumberOfPartitionEntries *
+         PartHeader->SizeOfPartitionEntry;
 
   Status = gBS->CalculateCrc32 (Ptr, Size, &Crc);
   if (EFI_ERROR (Status)) {
@@ -650,7 +712,10 @@ PartitionRestoreGptTable (
     goto Done;
   }
 
-  Ptr = AllocatePool (PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry);
+  Ptr = AllocatePool (
+          PartHeader->NumberOfPartitionEntries *
+          PartHeader->SizeOfPartitionEntry
+          );
   if (Ptr == NULL) {
     DEBUG ((DEBUG_ERROR, " Allocate pool error\n"));
     Status = EFI_OUT_OF_RESOURCES;
@@ -660,8 +725,12 @@ PartitionRestoreGptTable (
   Status = DiskIo->ReadDisk (
                      DiskIo,
                      MediaId,
-                     MultU64x32 (PartHeader->PartitionEntryLBA, (UINT32)BlockSize),
-                     PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
+                     MultU64x32 (
+                       PartHeader->PartitionEntryLBA,
+                       (UINT32)BlockSize
+                       ),
+                     PartHeader->NumberOfPartitionEntries *
+                     PartHeader->SizeOfPartitionEntry,
                      Ptr
                      );
   if (EFI_ERROR (Status)) {
@@ -672,7 +741,8 @@ PartitionRestoreGptTable (
                      DiskIo,
                      MediaId,
                      MultU64x32 (PEntryLBA, (UINT32)BlockSize),
-                     PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
+                     PartHeader->NumberOfPartitionEntries *
+                     PartHeader->SizeOfPartitionEntry,
                      Ptr
                      );
 
@@ -718,7 +788,8 @@ PartitionCheckGptEntry (
 
   DEBUG ((DEBUG_INFO, " start check partition entries\n"));
   for (Index1 = 0; Index1 < PartHeader->NumberOfPartitionEntries; Index1++) {
-    Entry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartEntry + Index1 * PartHeader->SizeOfPartitionEntry);
+    Entry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartEntry + Index1 *
+                                    PartHeader->SizeOfPartitionEntry);
     if (CompareGuid (&Entry->PartitionTypeGUID, &gEfiPartTypeUnusedGuid)) {
       continue;
     }
@@ -743,13 +814,18 @@ PartitionCheckGptEntry (
       PEntryStatus[Index1].OsSpecific = TRUE;
     }
 
-    for (Index2 = Index1 + 1; Index2 < PartHeader->NumberOfPartitionEntries; Index2++) {
-      Entry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartEntry + Index2 * PartHeader->SizeOfPartitionEntry);
+    for (Index2 = Index1 + 1; Index2 < PartHeader->NumberOfPartitionEntries;
+         Index2++)
+    {
+      Entry = (EFI_PARTITION_ENTRY *)((UINT8 *)PartEntry + Index2 *
+                                      PartHeader->SizeOfPartitionEntry);
       if (CompareGuid (&Entry->PartitionTypeGUID, &gEfiPartTypeUnusedGuid)) {
         continue;
       }
 
-      if ((Entry->EndingLBA >= StartingLBA) && (Entry->StartingLBA <= EndingLBA)) {
+      if ((Entry->EndingLBA >= StartingLBA) && (Entry->StartingLBA <=
+                                                EndingLBA))
+      {
         //
         // This region overlaps with the Index1'th region
         //

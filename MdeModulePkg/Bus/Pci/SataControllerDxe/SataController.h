@@ -113,7 +113,9 @@ typedef struct _EFI_SATA_CONTROLLER_PRIVATE_DATA {
   UINT64                              OriginalPciAttributes;
 } EFI_SATA_CONTROLLER_PRIVATE_DATA;
 
-#define SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS(a)  CR(a, EFI_SATA_CONTROLLER_PRIVATE_DATA, IdeInit, SATA_CONTROLLER_SIGNATURE)
+#define SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS( \
+                                              a)  \
+  CR(a, EFI_SATA_CONTROLLER_PRIVATE_DATA, IdeInit, SATA_CONTROLLER_SIGNATURE)
 
 //
 // Driver binding functions declaration

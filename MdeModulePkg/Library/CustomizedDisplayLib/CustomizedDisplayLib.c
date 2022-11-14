@@ -76,11 +76,14 @@ DisplayPageFrame (
   //
   // Calculate the ScreenForStatement.
   //
-  ScreenForStatement->BottomRow = gScreenDimensions.BottomRow - STATUS_BAR_HEIGHT - gFooterHeight;
+  ScreenForStatement->BottomRow = gScreenDimensions.BottomRow -
+                                  STATUS_BAR_HEIGHT - gFooterHeight;
   if (gClassOfVfr == FORMSET_CLASS_FRONT_PAGE) {
-    ScreenForStatement->TopRow = gScreenDimensions.TopRow + FRONT_PAGE_HEADER_HEIGHT;
+    ScreenForStatement->TopRow = gScreenDimensions.TopRow +
+                                 FRONT_PAGE_HEADER_HEIGHT;
   } else {
-    ScreenForStatement->TopRow = gScreenDimensions.TopRow + NONE_FRONT_PAGE_HEADER_HEIGHT;
+    ScreenForStatement->TopRow = gScreenDimensions.TopRow +
+                                 NONE_FRONT_PAGE_HEADER_HEIGHT;
   }
 
   ScreenForStatement->LeftColumn  = gScreenDimensions.LeftColumn;
@@ -90,8 +93,20 @@ DisplayPageFrame (
     //
     // Ensure we are in Text mode
     //
-    gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
-    ClearLines (0, gScreenDimensions.RightColumn, 0, gScreenDimensions.BottomRow, KEYHELP_BACKGROUND);
+    gST->ConOut->SetAttribute (
+                   gST->ConOut,
+                   EFI_TEXT_ATTR (
+                     EFI_LIGHTGRAY,
+                     EFI_BLACK
+                     )
+                   );
+    ClearLines (
+      0,
+      gScreenDimensions.RightColumn,
+      0,
+      gScreenDimensions.BottomRow,
+      KEYHELP_BACKGROUND
+      );
     gLibIsFirstForm = FALSE;
   }
 
@@ -158,16 +173,20 @@ RefreshKeyHelp (
     return;
   }
 
-  SecCol = gScreenDimensions.LeftColumn + (gScreenDimensions.RightColumn - gScreenDimensions.LeftColumn) / 3;
-  ThdCol = gScreenDimensions.LeftColumn + (gScreenDimensions.RightColumn - gScreenDimensions.LeftColumn) / 3 * 2;
+  SecCol = gScreenDimensions.LeftColumn + (gScreenDimensions.RightColumn -
+                                           gScreenDimensions.LeftColumn) / 3;
+  ThdCol = gScreenDimensions.LeftColumn + (gScreenDimensions.RightColumn -
+                                           gScreenDimensions.LeftColumn) / 3 *
+           2;
 
   //
   // + 2 means leave 1 space before the first hotkey info.
   //
   StartColumnOfHelp = gScreenDimensions.LeftColumn + 2;
   RightColumnOfHelp = gScreenDimensions.RightColumn - 1;
-  TopRowOfHelp      = gScreenDimensions.BottomRow - STATUS_BAR_HEIGHT - gFooterHeight + 1;
-  BottomRowOfHelp   = gScreenDimensions.BottomRow - STATUS_BAR_HEIGHT - 2;
+  TopRowOfHelp      = gScreenDimensions.BottomRow - STATUS_BAR_HEIGHT -
+                      gFooterHeight + 1;
+  BottomRowOfHelp = gScreenDimensions.BottomRow - STATUS_BAR_HEIGHT - 2;
 
   ColumnWidth1 = SecCol - StartColumnOfHelp;
   ColumnWidth2 = ThdCol - SecCol;
@@ -179,17 +198,42 @@ RefreshKeyHelp (
   //
   // Clean the space at gScreenDimensions.LeftColumn + 1.
   //
-  PrintStringAtWithWidth (StartColumnOfHelp - 1, BottomRowOfHelp, gLibEmptyString, 1);
-  PrintStringAtWithWidth (StartColumnOfHelp - 1, TopRowOfHelp, gLibEmptyString, 1);
+  PrintStringAtWithWidth (
+    StartColumnOfHelp - 1,
+    BottomRowOfHelp,
+    gLibEmptyString,
+    1
+    );
+  PrintStringAtWithWidth (
+    StartColumnOfHelp - 1,
+    TopRowOfHelp,
+    gLibEmptyString,
+    1
+    );
 
   if (Statement == NULL) {
     //
     // Print Key for Form without showable statement.
     //
     PrintHotKeyHelpString (FormData, TRUE);
-    PrintStringAtWithWidth (StartColumnOfHelp, BottomRowOfHelp, gLibEmptyString, ColumnWidth1);
-    PrintStringAtWithWidth (SecCol, BottomRowOfHelp, gLibEmptyString, ColumnWidth2);
-    PrintStringAtWithWidth (StartColumnOfHelp, TopRowOfHelp, gLibEmptyString, ColumnWidth1);
+    PrintStringAtWithWidth (
+      StartColumnOfHelp,
+      BottomRowOfHelp,
+      gLibEmptyString,
+      ColumnWidth1
+      );
+    PrintStringAtWithWidth (
+      SecCol,
+      BottomRowOfHelp,
+      gLibEmptyString,
+      ColumnWidth2
+      );
+    PrintStringAtWithWidth (
+      StartColumnOfHelp,
+      TopRowOfHelp,
+      gLibEmptyString,
+      ColumnWidth1
+      );
     if (gClassOfVfr == FORMSET_CLASS_PLATFORM_SETUP) {
       ColumnStr3 = gEscapeString;
     }
@@ -205,13 +249,16 @@ RefreshKeyHelp (
   TimeOp     = NULL;
   if (Statement->OpCode->OpCode == EFI_IFR_NUMERIC_OP) {
     NumericOp  = (EFI_IFR_NUMERIC *)Statement->OpCode;
-    HexDisplay = (NumericOp->Flags & EFI_IFR_DISPLAY_UINT_HEX) == EFI_IFR_DISPLAY_UINT_HEX;
+    HexDisplay = (NumericOp->Flags & EFI_IFR_DISPLAY_UINT_HEX) ==
+                 EFI_IFR_DISPLAY_UINT_HEX;
   } else if (Statement->OpCode->OpCode == EFI_IFR_DATE_OP) {
     DateOp     = (EFI_IFR_DATE *)Statement->OpCode;
-    HexDisplay = (DateOp->Flags & EFI_IFR_DISPLAY_UINT_HEX) == EFI_IFR_DISPLAY_UINT_HEX;
+    HexDisplay = (DateOp->Flags & EFI_IFR_DISPLAY_UINT_HEX) ==
+                 EFI_IFR_DISPLAY_UINT_HEX;
   } else if (Statement->OpCode->OpCode == EFI_IFR_TIME_OP) {
     TimeOp     = (EFI_IFR_TIME *)Statement->OpCode;
-    HexDisplay = (TimeOp->Flags & EFI_IFR_DISPLAY_UINT_HEX) == EFI_IFR_DISPLAY_UINT_HEX;
+    HexDisplay = (TimeOp->Flags & EFI_IFR_DISPLAY_UINT_HEX) ==
+                 EFI_IFR_DISPLAY_UINT_HEX;
   }
 
   switch (Statement->OpCode->OpCode) {
@@ -227,7 +274,12 @@ RefreshKeyHelp (
           ColumnStr3 = gEscapeString;
         }
 
-        PrintStringAtWithWidth (ThdCol, BottomRowOfHelp, ColumnStr3, ColumnWidth3);
+        PrintStringAtWithWidth (
+          ThdCol,
+          BottomRowOfHelp,
+          ColumnStr3,
+          ColumnWidth3
+          );
 
         if ((Statement->OpCode->OpCode == EFI_IFR_DATE_OP) ||
             (Statement->OpCode->OpCode == EFI_IFR_TIME_OP))
@@ -243,20 +295,56 @@ RefreshKeyHelp (
             ARROW_LEFT,
             gMoveHighlight
             );
-          PrintStringAtWithWidth (SecCol, BottomRowOfHelp, gEnterString, ColumnWidth2);
-          PrintStringAtWithWidth (StartColumnOfHelp, TopRowOfHelp, gAdjustNumber, ColumnWidth1);
+          PrintStringAtWithWidth (
+            SecCol,
+            BottomRowOfHelp,
+            gEnterString,
+            ColumnWidth2
+            );
+          PrintStringAtWithWidth (
+            StartColumnOfHelp,
+            TopRowOfHelp,
+            gAdjustNumber,
+            ColumnWidth1
+            );
         } else {
-          PrintAt (ColumnWidth1, StartColumnOfHelp, BottomRowOfHelp, L"%c%c%s", ARROW_UP, ARROW_DOWN, gMoveHighlight);
-          if ((Statement->OpCode->OpCode == EFI_IFR_NUMERIC_OP) && (NumericOp != NULL) && (LibGetFieldFromNum (Statement->OpCode) != 0)) {
+          PrintAt (
+            ColumnWidth1,
+            StartColumnOfHelp,
+            BottomRowOfHelp,
+            L"%c%c%s",
+            ARROW_UP,
+            ARROW_DOWN,
+            gMoveHighlight
+            );
+          if ((Statement->OpCode->OpCode == EFI_IFR_NUMERIC_OP) && (NumericOp !=
+                                                                    NULL) &&
+              (LibGetFieldFromNum (Statement->OpCode) != 0))
+          {
             ColumnStr1 = gAdjustNumber;
           }
 
-          PrintStringAtWithWidth (StartColumnOfHelp, TopRowOfHelp, ColumnStr1, ColumnWidth1);
-          PrintStringAtWithWidth (SecCol, BottomRowOfHelp, gEnterString, ColumnWidth2);
+          PrintStringAtWithWidth (
+            StartColumnOfHelp,
+            TopRowOfHelp,
+            ColumnStr1,
+            ColumnWidth1
+            );
+          PrintStringAtWithWidth (
+            SecCol,
+            BottomRowOfHelp,
+            gEnterString,
+            ColumnWidth2
+            );
         }
       } else {
         PrintHotKeyHelpString (FormData, FALSE);
-        PrintStringAtWithWidth (SecCol, BottomRowOfHelp, gEnterCommitString, ColumnWidth2);
+        PrintStringAtWithWidth (
+          SecCol,
+          BottomRowOfHelp,
+          gEnterCommitString,
+          ColumnWidth2
+          );
 
         //
         // If it is a selected numeric with manual input, display different message
@@ -266,9 +354,22 @@ RefreshKeyHelp (
             (Statement->OpCode->OpCode == EFI_IFR_TIME_OP))
         {
           ColumnStr2 = HexDisplay ? gHexNumericInput : gDecNumericInput;
-          PrintStringAtWithWidth (StartColumnOfHelp, BottomRowOfHelp, gLibEmptyString, ColumnWidth1);
+          PrintStringAtWithWidth (
+            StartColumnOfHelp,
+            BottomRowOfHelp,
+            gLibEmptyString,
+            ColumnWidth1
+            );
         } else {
-          PrintAt (ColumnWidth1, StartColumnOfHelp, BottomRowOfHelp, L"%c%c%s", ARROW_UP, ARROW_DOWN, gMoveHighlight);
+          PrintAt (
+            ColumnWidth1,
+            StartColumnOfHelp,
+            BottomRowOfHelp,
+            L"%c%c%s",
+            ARROW_UP,
+            ARROW_DOWN,
+            gMoveHighlight
+            );
         }
 
         if (Statement->OpCode->OpCode == EFI_IFR_ORDERED_LIST_OP) {
@@ -276,11 +377,21 @@ RefreshKeyHelp (
           ColumnStr3 = gMinusString;
         }
 
-        PrintStringAtWithWidth (StartColumnOfHelp, TopRowOfHelp, ColumnStr1, ColumnWidth1);
+        PrintStringAtWithWidth (
+          StartColumnOfHelp,
+          TopRowOfHelp,
+          ColumnStr1,
+          ColumnWidth1
+          );
         PrintStringAtWithWidth (ThdCol, TopRowOfHelp, ColumnStr3, ColumnWidth3);
         PrintStringAtWithWidth (SecCol, TopRowOfHelp, ColumnStr2, ColumnWidth2);
 
-        PrintStringAtWithWidth (ThdCol, BottomRowOfHelp, gEnterEscapeString, ColumnWidth3);
+        PrintStringAtWithWidth (
+          ThdCol,
+          BottomRowOfHelp,
+          gEnterEscapeString,
+          ColumnWidth3
+          );
       }
 
       break;
@@ -292,11 +403,34 @@ RefreshKeyHelp (
         ColumnStr3 = gEscapeString;
       }
 
-      PrintStringAtWithWidth (ThdCol, BottomRowOfHelp, ColumnStr3, ColumnWidth3);
+      PrintStringAtWithWidth (
+        ThdCol,
+        BottomRowOfHelp,
+        ColumnStr3,
+        ColumnWidth3
+        );
 
-      PrintAt (ColumnWidth1, StartColumnOfHelp, BottomRowOfHelp, L"%c%c%s", ARROW_UP, ARROW_DOWN, gMoveHighlight);
-      PrintStringAtWithWidth (SecCol, BottomRowOfHelp, gToggleCheckBox, ColumnWidth2);
-      PrintStringAtWithWidth (StartColumnOfHelp, TopRowOfHelp, gLibEmptyString, ColumnWidth1);
+      PrintAt (
+        ColumnWidth1,
+        StartColumnOfHelp,
+        BottomRowOfHelp,
+        L"%c%c%s",
+        ARROW_UP,
+        ARROW_DOWN,
+        gMoveHighlight
+        );
+      PrintStringAtWithWidth (
+        SecCol,
+        BottomRowOfHelp,
+        gToggleCheckBox,
+        ColumnWidth2
+        );
+      PrintStringAtWithWidth (
+        StartColumnOfHelp,
+        TopRowOfHelp,
+        gLibEmptyString,
+        ColumnWidth1
+        );
       break;
 
     case EFI_IFR_REF_OP:
@@ -313,15 +447,40 @@ RefreshKeyHelp (
           ColumnStr3 = gEscapeString;
         }
 
-        PrintStringAtWithWidth (ThdCol, BottomRowOfHelp, ColumnStr3, ColumnWidth3);
+        PrintStringAtWithWidth (
+          ThdCol,
+          BottomRowOfHelp,
+          ColumnStr3,
+          ColumnWidth3
+          );
 
-        PrintAt (ColumnWidth1, StartColumnOfHelp, BottomRowOfHelp, L"%c%c%s", ARROW_UP, ARROW_DOWN, gMoveHighlight);
-        if ((Statement->OpCode->OpCode != EFI_IFR_TEXT_OP) && (Statement->OpCode->OpCode != EFI_IFR_SUBTITLE_OP)) {
+        PrintAt (
+          ColumnWidth1,
+          StartColumnOfHelp,
+          BottomRowOfHelp,
+          L"%c%c%s",
+          ARROW_UP,
+          ARROW_DOWN,
+          gMoveHighlight
+          );
+        if ((Statement->OpCode->OpCode != EFI_IFR_TEXT_OP) &&
+            (Statement->OpCode->OpCode != EFI_IFR_SUBTITLE_OP))
+        {
           ColumnStr2 = gEnterString;
         }
 
-        PrintStringAtWithWidth (SecCol, BottomRowOfHelp, ColumnStr2, ColumnWidth2);
-        PrintStringAtWithWidth (StartColumnOfHelp, TopRowOfHelp, ColumnStr1, ColumnWidth1);
+        PrintStringAtWithWidth (
+          SecCol,
+          BottomRowOfHelp,
+          ColumnStr2,
+          ColumnWidth2
+          );
+        PrintStringAtWithWidth (
+          StartColumnOfHelp,
+          TopRowOfHelp,
+          ColumnStr1,
+          ColumnWidth1
+          );
       } else {
         PrintHotKeyHelpString (FormData, FALSE);
         if (Statement->OpCode->OpCode != EFI_IFR_REF_OP) {
@@ -329,10 +488,30 @@ RefreshKeyHelp (
           ColumnStr3 = gEnterEscapeString;
         }
 
-        PrintStringAtWithWidth (StartColumnOfHelp, TopRowOfHelp, ColumnStr1, ColumnWidth1);
-        PrintStringAtWithWidth (StartColumnOfHelp, BottomRowOfHelp, ColumnStr1, ColumnWidth1);
-        PrintStringAtWithWidth (SecCol, BottomRowOfHelp, ColumnStr2, ColumnWidth2);
-        PrintStringAtWithWidth (ThdCol, BottomRowOfHelp, ColumnStr3, ColumnWidth3);
+        PrintStringAtWithWidth (
+          StartColumnOfHelp,
+          TopRowOfHelp,
+          ColumnStr1,
+          ColumnWidth1
+          );
+        PrintStringAtWithWidth (
+          StartColumnOfHelp,
+          BottomRowOfHelp,
+          ColumnStr1,
+          ColumnWidth1
+          );
+        PrintStringAtWithWidth (
+          SecCol,
+          BottomRowOfHelp,
+          ColumnStr2,
+          ColumnWidth2
+          );
+        PrintStringAtWithWidth (
+          ThdCol,
+          BottomRowOfHelp,
+          ColumnStr3,
+          ColumnWidth3
+          );
       }
 
       break;
@@ -361,7 +540,8 @@ UpdateStatusBar (
   UINTN   Index;
   CHAR16  OptionWidth;
 
-  OptionWidth = (CHAR16)((gScreenDimensions.RightColumn - gScreenDimensions.LeftColumn) / 3);
+  OptionWidth = (CHAR16)((gScreenDimensions.RightColumn -
+                          gScreenDimensions.LeftColumn) / 3);
 
   switch (MessageType) {
     case INPUT_ERROR:
@@ -374,8 +554,14 @@ UpdateStatusBar (
           );
       } else {
         gST->ConOut->SetAttribute (gST->ConOut, KEYHELP_BACKGROUND);
-        for (Index = 0; Index < (LibGetStringWidth (gInputErrorMessage) - 2) / 2; Index++) {
-          PrintStringAt (gScreenDimensions.LeftColumn + OptionWidth + Index, gScreenDimensions.BottomRow - 1, L"  ");
+        for (Index = 0; Index < (LibGetStringWidth (gInputErrorMessage) - 2) /
+             2; Index++)
+        {
+          PrintStringAt (
+            gScreenDimensions.LeftColumn + OptionWidth + Index,
+            gScreenDimensions.BottomRow - 1,
+            L"  "
+            );
         }
       }
 
@@ -394,7 +580,9 @@ UpdateStatusBar (
           );
       } else {
         gST->ConOut->SetAttribute (gST->ConOut, KEYHELP_BACKGROUND);
-        for (Index = 0; Index < (LibGetStringWidth (gNvUpdateMessage) - 2) / 2; Index++) {
+        for (Index = 0; Index < (LibGetStringWidth (gNvUpdateMessage) - 2) / 2;
+             Index++)
+        {
           PrintStringAt (
             (gScreenDimensions.LeftColumn + OptionWidth * 2 + Index),
             gScreenDimensions.BottomRow - 1,
@@ -447,7 +635,9 @@ CreateDialog (
   //
   // If screen dimension info is not ready, get it from console.
   //
-  if ((gScreenDimensions.RightColumn == 0) || (gScreenDimensions.BottomRow == 0)) {
+  if ((gScreenDimensions.RightColumn == 0) || (gScreenDimensions.BottomRow ==
+                                               0))
+  {
     ZeroMem (&gScreenDimensions, sizeof (EFI_SCREEN_DESCRIPTOR));
     gST->ConOut->QueryMode (
                    gST->ConOut,
@@ -457,7 +647,8 @@ CreateDialog (
                    );
   }
 
-  DimensionsWidth  = gScreenDimensions.RightColumn - gScreenDimensions.LeftColumn;
+  DimensionsWidth = gScreenDimensions.RightColumn -
+                    gScreenDimensions.LeftColumn;
   DimensionsHeight = gScreenDimensions.BottomRow - gScreenDimensions.TopRow;
 
   LargestString = 0;
@@ -486,10 +677,12 @@ CreateDialog (
   // Subtract the PopUp width from total Columns, allow for one space extra on
   // each end plus a border.
   //
-  Start = (DimensionsWidth - LargestString - 2) / 2 + gScreenDimensions.LeftColumn + 1;
-  End   = Start + LargestString + 1;
+  Start = (DimensionsWidth - LargestString - 2) / 2 +
+          gScreenDimensions.LeftColumn + 1;
+  End = Start + LargestString + 1;
 
-  Top    = ((DimensionsHeight - LineNum - 2) / 2) + gScreenDimensions.TopRow - 1;
+  Top = ((DimensionsHeight - LineNum - 2) / 2) + gScreenDimensions.TopRow -
+        1;
   Bottom = Top + LineNum + 2;
 
   Character = BOXDRAW_DOWN_RIGHT;
@@ -517,9 +710,17 @@ CreateDialog (
       //
       // Passing in a space results in the assumption that this is where typing will occur
       //
-      ClearLines (Start + 1, End - 1, Index + 1, Index + 1, POPUP_INVERSE_TEXT | POPUP_INVERSE_BACKGROUND);
+      ClearLines (
+        Start + 1,
+        End - 1,
+        Index + 1,
+        Index + 1,
+        POPUP_INVERSE_TEXT |
+        POPUP_INVERSE_BACKGROUND
+        );
       PrintStringAt (
-        ((DimensionsWidth - LibGetStringWidth (String) / 2) / 2) + gScreenDimensions.LeftColumn + 1,
+        ((DimensionsWidth - LibGetStringWidth (String) / 2) / 2) +
+        gScreenDimensions.LeftColumn + 1,
         Index + 1,
         String + 1
         );
@@ -531,7 +732,8 @@ CreateDialog (
       //
       ClearLines (Start, End, Index + 1, Index + 1, GetPopupColor ());
       PrintStringAt (
-        ((DimensionsWidth - LibGetStringWidth (String) / 2) / 2) + gScreenDimensions.LeftColumn + 1,
+        ((DimensionsWidth - LibGetStringWidth (String) / 2) / 2) +
+        gScreenDimensions.LeftColumn + 1,
         Index + 1,
         String
         );
@@ -588,17 +790,28 @@ ConfirmDataChange (
   // If NV flag is up, prompt user
   //
   do {
-    CreateDialog (&Key, gLibEmptyString, gSaveChanges, gAreYouSure, gLibEmptyString, NULL);
+    CreateDialog (
+      &Key,
+      gLibEmptyString,
+      gSaveChanges,
+      gAreYouSure,
+      gLibEmptyString,
+      NULL
+      );
   } while
   (
    (Key.ScanCode != SCAN_ESC) &&
-   ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) != (NoResponse | UPPER_LOWER_CASE_OFFSET)) &&
-   ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) != (YesResponse | UPPER_LOWER_CASE_OFFSET))
+   ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) != (NoResponse |
+                                                    UPPER_LOWER_CASE_OFFSET)) &&
+   ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) != (YesResponse |
+                                                    UPPER_LOWER_CASE_OFFSET))
   );
 
   if (Key.ScanCode == SCAN_ESC) {
     return BROWSER_ACTION_NONE;
-  } else if ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) == (YesResponse | UPPER_LOWER_CASE_OFFSET)) {
+  } else if ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) == (YesResponse |
+                                                             UPPER_LOWER_CASE_OFFSET))
+  {
     return BROWSER_ACTION_SUBMIT;
   } else {
     return BROWSER_ACTION_DISCARD;
@@ -879,7 +1092,9 @@ GetHighlightTextColor (
   VOID
   )
 {
-  return PcdGet8 (PcdBrowserFieldTextHighlightColor) | PcdGet8 (PcdBrowserFieldBackgroundHighlightColor);
+  return PcdGet8 (PcdBrowserFieldTextHighlightColor) | PcdGet8 (
+                                                         PcdBrowserFieldBackgroundHighlightColor
+                                                         );
 }
 
 /**
@@ -919,7 +1134,13 @@ ClearDisplayPage (
   VOID
   )
 {
-  gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
+  gST->ConOut->SetAttribute (
+                 gST->ConOut,
+                 EFI_TEXT_ATTR (
+                   EFI_LIGHTGRAY,
+                   EFI_BLACK
+                   )
+                 );
   gST->ConOut->ClearScreen (gST->ConOut);
   gLibIsFirstForm = TRUE;
 }
@@ -940,7 +1161,12 @@ CustomizedDisplayLibConstructor (
   IN      EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  mCDLStringPackHandle = HiiAddPackages (&gCustomizedDisplayLibGuid, ImageHandle, CustomizedDisplayLibStrings, NULL);
+  mCDLStringPackHandle = HiiAddPackages (
+                           &gCustomizedDisplayLibGuid,
+                           ImageHandle,
+                           CustomizedDisplayLibStrings,
+                           NULL
+                           );
   ASSERT (mCDLStringPackHandle != NULL);
 
   InitializeLibStrings ();

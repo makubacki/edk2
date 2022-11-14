@@ -144,13 +144,19 @@ EbcInterpret (
   // Adjust the VM's stack pointer down.
   //
 
-  Status = GetEBCStack ((EFI_HANDLE)(UINTN)-1, &VmContext.StackPool, &StackIndex);
+  Status = GetEBCStack (
+             (EFI_HANDLE)(UINTN)-1,
+             &VmContext.StackPool,
+             &StackIndex
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  VmContext.StackTop        = (UINT8 *)VmContext.StackPool + (STACK_REMAIN_SIZE);
-  VmContext.Gpr[0]          = (UINT64)((UINT8 *)VmContext.StackPool + STACK_POOL_SIZE);
+  VmContext.StackTop = (UINT8 *)VmContext.StackPool +
+                       (STACK_REMAIN_SIZE);
+  VmContext.Gpr[0]          = (UINT64)((UINT8 *)VmContext.StackPool +
+                                       STACK_POOL_SIZE);
   VmContext.HighStackBottom = (UINTN)VmContext.Gpr[0];
   VmContext.Gpr[0]         -= sizeof (UINTN);
 
@@ -288,8 +294,10 @@ ExecuteEbcImageEntryPoint (
     return Status;
   }
 
-  VmContext.StackTop        = (UINT8 *)VmContext.StackPool + (STACK_REMAIN_SIZE);
-  VmContext.Gpr[0]          = (UINT64)((UINT8 *)VmContext.StackPool + STACK_POOL_SIZE);
+  VmContext.StackTop = (UINT8 *)VmContext.StackPool +
+                       (STACK_REMAIN_SIZE);
+  VmContext.Gpr[0]          = (UINT64)((UINT8 *)VmContext.StackPool +
+                                       STACK_POOL_SIZE);
   VmContext.HighStackBottom = (UINTN)VmContext.Gpr[0];
   VmContext.Gpr[0]         -= sizeof (UINTN);
 
@@ -463,7 +471,12 @@ EbcLLCALLEX (
     VmWriteMemN (VmPtr, (UINTN)VmPtr->Gpr[0], (UINTN)FramePtr);
     VmPtr->FramePtr = (VOID *)(UINTN)VmPtr->Gpr[0];
     VmPtr->Gpr[0]  -= 8;
-    VmWriteMem64 (VmPtr, (UINTN)VmPtr->Gpr[0], (UINT64)(UINTN)(VmPtr->Ip + Size));
+    VmWriteMem64 (
+      VmPtr,
+      (UINTN)VmPtr->Gpr[0],
+      (UINT64)(UINTN)(VmPtr->Ip +
+                      Size)
+      );
 
     VmPtr->Ip = (VMIP)InstructionBuffer->EbcEntryPoint;
   } else {

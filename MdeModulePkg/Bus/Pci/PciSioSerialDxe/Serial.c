@@ -66,7 +66,7 @@ SERIAL_DEV  gSerialDevTemplate = {
         (UINT8)((sizeof (UART_DEVICE_PATH)) >> 8)
       }
     },
-    0,                                     0,0, 0, 0
+    0,                                     0, 0, 0, 0
   },                                            // UartDevicePath
   0,                                            // BaseAddress
   FALSE,                                        // MmioAccess
@@ -140,11 +140,15 @@ InitializePciSioSerial (
   //
   // Initialize UART default setting in gSerialDevTemplate
   //
-  gSerialDevTemplate.SerialMode.BaudRate     = PcdGet64 (PcdUartDefaultBaudRate);
+  gSerialDevTemplate.SerialMode.BaudRate = PcdGet64 (
+                                             PcdUartDefaultBaudRate
+                                             );
   gSerialDevTemplate.SerialMode.DataBits     = PcdGet8 (PcdUartDefaultDataBits);
   gSerialDevTemplate.SerialMode.Parity       = PcdGet8 (PcdUartDefaultParity);
   gSerialDevTemplate.SerialMode.StopBits     = PcdGet8 (PcdUartDefaultStopBits);
-  gSerialDevTemplate.UartDevicePath.BaudRate = PcdGet64 (PcdUartDefaultBaudRate);
+  gSerialDevTemplate.UartDevicePath.BaudRate = PcdGet64 (
+                                                 PcdUartDefaultBaudRate
+                                                 );
   gSerialDevTemplate.UartDevicePath.DataBits = PcdGet8 (PcdUartDefaultDataBits);
   gSerialDevTemplate.UartDevicePath.Parity   = PcdGet8 (PcdUartDefaultParity);
   gSerialDevTemplate.UartDevicePath.StopBits = PcdGet8 (PcdUartDefaultStopBits);
@@ -214,7 +218,8 @@ IsSioSerialController (
       } while (!IsDevicePathEnd (DevicePath));
 
       if ((DevicePathType (Acpi) != ACPI_DEVICE_PATH) ||
-          ((DevicePathSubType (Acpi) != ACPI_DP) && (DevicePathSubType (Acpi) != ACPI_EXTENDED_DP)) ||
+          ((DevicePathSubType (Acpi) != ACPI_DP) && (DevicePathSubType (Acpi) !=
+                                                     ACPI_EXTENDED_DP)) ||
           (Acpi->HID != EISA_PNP_ID (0x501))
           )
       {
@@ -274,7 +279,9 @@ IsPciSerialController (
     Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0, sizeof (Pci), &Pci);
     if (!EFI_ERROR (Status)) {
       if (!IS_PCI_16550_SERIAL (&Pci)) {
-        for (PciSerialParameter = (PCI_SERIAL_PARAMETER *)PcdGetPtr (PcdPciSerialParameters)
+        for (PciSerialParameter = (PCI_SERIAL_PARAMETER *)PcdGetPtr (
+                                                            PcdPciSerialParameters
+                                                            )
              ; PciSerialParameter->VendorId != 0xFFFF
              ; PciSerialParameter++
              )
@@ -377,7 +384,16 @@ SerialControllerDriverSupported (
     //
     // Do a rough check because Clock Rate is unknown until DriverBindingStart()
     //
-    if (!VerifyUartParameters (0, Uart->BaudRate, Uart->DataBits, Uart->Parity, Uart->StopBits, NULL, NULL)) {
+    if (!VerifyUartParameters (
+           0,
+           Uart->BaudRate,
+           Uart->DataBits,
+           Uart->Parity,
+           Uart->StopBits,
+           NULL,
+           NULL
+           ))
+    {
       return EFI_UNSUPPORTED;
     }
 
@@ -387,7 +403,9 @@ SerialControllerDriverSupported (
       // If the second node is Flow Control Node,
       //   return error when it request other than hardware flow control.
       //
-      if ((ReadUnaligned32 (&FlowControl->FlowControlMap) & ~UART_FLOW_CONTROL_HARDWARE) != 0) {
+      if ((ReadUnaligned32 (&FlowControl->FlowControlMap) &
+           ~UART_FLOW_CONTROL_HARDWARE) != 0)
+      {
         return EFI_UNSUPPORTED;
       }
     }
@@ -475,8 +493,9 @@ CreateSerialDevice (
   // For PCI serial device, use the information from PCD
   //
   if (PciSerialParameter != NULL) {
-    BarIndex = (PciSerialParameter->BarIndex == MAX_UINT8) ? 0 : PciSerialParameter->BarIndex;
-    Offset   = PciSerialParameter->Offset;
+    BarIndex = (PciSerialParameter->BarIndex == MAX_UINT8) ? 0 :
+               PciSerialParameter->BarIndex;
+    Offset = PciSerialParameter->Offset;
     if (PciSerialParameter->RegisterStride != 0) {
       SerialDevice->RegisterStride = PciSerialParameter->RegisterStride;
     }
@@ -515,7 +534,12 @@ CreateSerialDevice (
   if (PciSerialParameter == NULL) {
     Status = ParentIo.Sio->GetResources (ParentIo.Sio, &Resources);
   } else {
-    Status = ParentIo.PciIo->GetBarAttributes (ParentIo.PciIo, BarIndex, NULL, (VOID **)&Resources);
+    Status = ParentIo.PciIo->GetBarAttributes (
+                               ParentIo.PciIo,
+                               BarIndex,
+                               NULL,
+                               (VOID **)&Resources
+                               );
   }
 
   if (!EFI_ERROR (Status)) {
@@ -524,7 +548,9 @@ CreateSerialDevice (
     // ACPI_IO_PORT_DESCRIPTOR and ACPI_FIXED_LOCATION_IO_PORT_DESCRIPTOR are returned from Sio;
     // ACPI_ADDRESS_SPACE_DESCRIPTOR is returned from PciIo.
     //
-    while ((Resources.SmallHeader->Byte != ACPI_END_TAG_DESCRIPTOR) && (SerialDevice->BaseAddress == 0)) {
+    while ((Resources.SmallHeader->Byte != ACPI_END_TAG_DESCRIPTOR) &&
+           (SerialDevice->BaseAddress == 0))
+    {
       switch (Resources.SmallHeader->Byte) {
         case ACPI_IO_PORT_DESCRIPTOR:
           Io = (EFI_ACPI_IO_PORT_DESCRIPTOR *)Resources.SmallHeader;
@@ -535,7 +561,8 @@ CreateSerialDevice (
           break;
 
         case ACPI_FIXED_LOCATION_IO_PORT_DESCRIPTOR:
-          FixedIo = (EFI_ACPI_FIXED_LOCATION_IO_PORT_DESCRIPTOR *)Resources.SmallHeader;
+          FixedIo =
+            (EFI_ACPI_FIXED_LOCATION_IO_PORT_DESCRIPTOR *)Resources.SmallHeader;
           if (FixedIo->Length != 0) {
             SerialDevice->BaseAddress = FixedIo->BaseAddress;
           }
@@ -543,7 +570,8 @@ CreateSerialDevice (
           break;
 
         case ACPI_ADDRESS_SPACE_DESCRIPTOR:
-          AddressSpace = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Resources.SmallHeader;
+          AddressSpace =
+            (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Resources.SmallHeader;
           if (AddressSpace->AddrLen != 0) {
             if (AddressSpace->ResType == ACPI_ADDRESS_SPACE_TYPE_MEM) {
               SerialDevice->MmioAccess = TRUE;
@@ -556,13 +584,19 @@ CreateSerialDevice (
       }
 
       if (Resources.SmallHeader->Bits.Type == 0) {
-        Resources.SmallHeader = (ACPI_SMALL_RESOURCE_HEADER *)((UINT8 *)Resources.SmallHeader
-                                                               + Resources.SmallHeader->Bits.Length
-                                                               + sizeof (*Resources.SmallHeader));
+        Resources.SmallHeader =
+          (ACPI_SMALL_RESOURCE_HEADER *)((UINT8 *)Resources.SmallHeader
+                                         + Resources.
+                                           SmallHeader->Bits.Length
+                                         + sizeof (*
+                                                   Resources.SmallHeader));
       } else {
-        Resources.LargeHeader = (ACPI_LARGE_RESOURCE_HEADER *)((UINT8 *)Resources.LargeHeader
-                                                               + Resources.LargeHeader->Length
-                                                               + sizeof (*Resources.LargeHeader));
+        Resources.LargeHeader =
+          (ACPI_LARGE_RESOURCE_HEADER *)((UINT8 *)Resources.LargeHeader
+                                         + Resources.
+                                           LargeHeader->Length
+                                         + sizeof (*
+                                                   Resources.LargeHeader));
       }
     }
   }
@@ -572,7 +606,8 @@ CreateSerialDevice (
     goto CreateError;
   }
 
-  SerialDevice->HardwareFlowControl = (BOOLEAN)(FlowControlMap == UART_FLOW_CONTROL_HARDWARE);
+  SerialDevice->HardwareFlowControl = (BOOLEAN)(FlowControlMap ==
+                                                UART_FLOW_CONTROL_HARDWARE);
 
   //
   // Report status code the serial present
@@ -599,8 +634,11 @@ CreateSerialDevice (
   if (CreateControllerNode) {
     mControllerDevicePathTemplate.ControllerNumber = SerialDevice->Instance;
     SerialDevice->DevicePath                       = AppendDevicePathNode (
-                                                       SerialDevice->ParentDevicePath,
-                                                       (EFI_DEVICE_PATH_PROTOCOL *)&mControllerDevicePathTemplate
+                                                       SerialDevice->
+                                                         ParentDevicePath,
+                                                       (EFI_DEVICE_PATH_PROTOCOL
+                                                        *)&
+                                                       mControllerDevicePathTemplate
                                                        );
     SerialDevice->ContainsControllerNode = TRUE;
   }
@@ -614,13 +652,15 @@ CreateSerialDevice (
   if (TempDevicePath != NULL) {
     SerialDevice->DevicePath = AppendDevicePathNode (
                                  TempDevicePath,
-                                 (EFI_DEVICE_PATH_PROTOCOL *)&SerialDevice->UartDevicePath
+                                 (EFI_DEVICE_PATH_PROTOCOL *)&SerialDevice->
+                                   UartDevicePath
                                  );
     FreePool (TempDevicePath);
   } else {
     SerialDevice->DevicePath = AppendDevicePathNode (
                                  SerialDevice->ParentDevicePath,
-                                 (EFI_DEVICE_PATH_PROTOCOL *)&SerialDevice->UartDevicePath
+                                 (EFI_DEVICE_PATH_PROTOCOL *)&SerialDevice->
+                                   UartDevicePath
                                  );
   }
 
@@ -683,7 +723,8 @@ CreateSerialDevice (
   //
   Status = gBS->OpenProtocol (
                   Controller,
-                  PciSerialParameter != NULL ? &gEfiPciIoProtocolGuid : &gEfiSioProtocolGuid,
+                  PciSerialParameter != NULL ? &gEfiPciIoProtocolGuid :
+                  &gEfiSioProtocolGuid,
                   (VOID **)&ParentIo,
                   gSerialControllerDriver.DriverBindingHandle,
                   SerialDevice->Handle,
@@ -763,7 +804,9 @@ GetChildSerialDevices (
   *Count       = 0;
   OpenByDriver = FALSE;
   for (Index = 0; Index < EntryCount; Index++) {
-    if ((OpenInfoBuffer[Index].Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0) {
+    if ((OpenInfoBuffer[Index].Attributes &
+         EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0)
+    {
       Status = gBS->OpenProtocol (
                       OpenInfoBuffer[Index].ControllerHandle,
                       &gEfiSerialIoProtocolGuid,
@@ -778,7 +821,10 @@ GetChildSerialDevices (
     }
 
     if ((OpenInfoBuffer[Index].Attributes & EFI_OPEN_PROTOCOL_BY_DRIVER) != 0) {
-      ASSERT (OpenInfoBuffer[Index].AgentHandle == gSerialControllerDriver.DriverBindingHandle);
+      ASSERT (
+        OpenInfoBuffer[Index].AgentHandle ==
+        gSerialControllerDriver.DriverBindingHandle
+        );
       OpenByDriver = TRUE;
     }
   }
@@ -890,7 +936,11 @@ SerialControllerDriverStart (
 
   ControllerNumber       = 0;
   ContainsControllerNode = FALSE;
-  SerialDevices          = GetChildSerialDevices (Controller, IoProtocolGuid, &SerialDeviceCount);
+  SerialDevices          = GetChildSerialDevices (
+                             Controller,
+                             IoProtocolGuid,
+                             &SerialDeviceCount
+                             );
 
   if (SerialDeviceCount != 0) {
     if (RemainingDevicePath == NULL) {
@@ -903,11 +953,18 @@ SerialControllerDriverStart (
       //
       // Update the attributes/control of the SerialIo instance specified by RemainingDevicePath.
       //
-      Uart = (UART_DEVICE_PATH *)SkipControllerDevicePathNode (RemainingDevicePath, &ContainsControllerNode, &ControllerNumber);
+      Uart = (UART_DEVICE_PATH *)SkipControllerDevicePathNode (
+                                   RemainingDevicePath,
+                                   &ContainsControllerNode,
+                                   &ControllerNumber
+                                   );
       for (Index = 0; Index < SerialDeviceCount; Index++) {
         ASSERT ((SerialDevices != NULL) && (SerialDevices[Index] != NULL));
-        if ((!SerialDevices[Index]->ContainsControllerNode && !ContainsControllerNode) ||
-            (SerialDevices[Index]->ContainsControllerNode && ContainsControllerNode && (SerialDevices[Index]->Instance == ControllerNumber))
+        if ((!SerialDevices[Index]->ContainsControllerNode &&
+             !ContainsControllerNode) ||
+            (SerialDevices[Index]->ContainsControllerNode &&
+             ContainsControllerNode && (SerialDevices[Index]->Instance ==
+                                        ControllerNumber))
             )
         {
           SerialIo = &SerialDevices[Index]->SerialIo;
@@ -937,11 +994,18 @@ SerialControllerDriverStart (
                                  );
           }
 
-          FlowControl = (UART_FLOW_CONTROL_DEVICE_PATH *)NextDevicePathNode (Uart);
-          if (!EFI_ERROR (Status) && IsUartFlowControlDevicePathNode (FlowControl)) {
+          FlowControl = (UART_FLOW_CONTROL_DEVICE_PATH *)NextDevicePathNode (
+                                                           Uart
+                                                           );
+          if (!EFI_ERROR (Status) && IsUartFlowControlDevicePathNode (
+                                       FlowControl
+                                       ))
+          {
             Status = SerialIo->GetControl (SerialIo, &Control);
             if (!EFI_ERROR (Status)) {
-              if (ReadUnaligned32 (&FlowControl->FlowControlMap) == UART_FLOW_CONTROL_HARDWARE) {
+              if (ReadUnaligned32 (&FlowControl->FlowControlMap) ==
+                  UART_FLOW_CONTROL_HARDWARE)
+              {
                 Control |= EFI_SERIAL_HARDWARE_FLOW_CONTROL_ENABLE;
               } else {
                 Control &= ~EFI_SERIAL_HARDWARE_FLOW_CONTROL_ENABLE;
@@ -950,8 +1014,10 @@ SerialControllerDriverStart (
               //
               // Clear the bits that are not allowed to pass to SetControl
               //
-              Control &= (EFI_SERIAL_REQUEST_TO_SEND | EFI_SERIAL_DATA_TERMINAL_READY |
-                          EFI_SERIAL_HARDWARE_LOOPBACK_ENABLE | EFI_SERIAL_SOFTWARE_LOOPBACK_ENABLE |
+              Control &= (EFI_SERIAL_REQUEST_TO_SEND |
+                          EFI_SERIAL_DATA_TERMINAL_READY |
+                          EFI_SERIAL_HARDWARE_LOOPBACK_ENABLE |
+                          EFI_SERIAL_SOFTWARE_LOOPBACK_ENABLE |
                           EFI_SERIAL_HARDWARE_FLOW_CONTROL_ENABLE);
               Status = SerialIo->SetControl (SerialIo, Control);
             }
@@ -976,7 +1042,11 @@ SerialControllerDriverStart (
   }
 
   if (RemainingDevicePath != NULL) {
-    Uart = (UART_DEVICE_PATH *)SkipControllerDevicePathNode (RemainingDevicePath, &ContainsControllerNode, &ControllerNumber);
+    Uart = (UART_DEVICE_PATH *)SkipControllerDevicePathNode (
+                                 RemainingDevicePath,
+                                 &ContainsControllerNode,
+                                 &ControllerNumber
+                                 );
   } else {
     Uart = NULL;
   }
@@ -991,17 +1061,38 @@ SerialControllerDriverStart (
         Node = NextDevicePathNode (Node);
       } while (!IsDevicePathEnd (Node));
 
-      Status = CreateSerialDevice (Controller, Uart, ParentDevicePath, FALSE, Acpi->UID, ParentIo, NULL, NULL);
-      DEBUG ((DEBUG_INFO, "PciSioSerial: Create SIO child serial device - %r\n", Status));
+      Status = CreateSerialDevice (
+                 Controller,
+                 Uart,
+                 ParentDevicePath,
+                 FALSE,
+                 Acpi->UID,
+                 ParentIo,
+                 NULL,
+                 NULL
+                 );
+      DEBUG ((
+        DEBUG_INFO,
+        "PciSioSerial: Create SIO child serial device - %r\n",
+        Status
+        ));
     }
   } else {
-    Status = ParentIo.PciIo->Pci.Read (ParentIo.PciIo, EfiPciIoWidthUint8, 0, sizeof (Pci), &Pci);
+    Status = ParentIo.PciIo->Pci.Read (
+                                   ParentIo.PciIo,
+                                   EfiPciIoWidthUint8,
+                                   0,
+                                   sizeof (Pci),
+                                   &Pci
+                                   );
     if (!EFI_ERROR (Status)) {
       //
       // PcdPciSerialParameters takes the higher priority.
       //
       PciSerialCount = 0;
-      for (PciSerialParameter = PcdGetPtr (PcdPciSerialParameters); PciSerialParameter->VendorId != 0xFFFF; PciSerialParameter++) {
+      for (PciSerialParameter = PcdGetPtr (PcdPciSerialParameters);
+           PciSerialParameter->VendorId != 0xFFFF; PciSerialParameter++)
+      {
         if ((PciSerialParameter->VendorId == Pci.Hdr.VendorId) &&
             (PciSerialParameter->DeviceId == Pci.Hdr.DeviceId)
             )
@@ -1023,7 +1114,8 @@ SerialControllerDriverStart (
                                                       ParentIo.PciIo,
                                                       EfiPciIoAttributeOperationGet,
                                                       0,
-                                                      &PciDeviceInfo->PciAttributes
+                                                      &PciDeviceInfo->
+                                                        PciAttributes
                                                       );
 
         if (!EFI_ERROR (Status)) {
@@ -1034,7 +1126,8 @@ SerialControllerDriverStart (
                                      &Supports
                                      );
           if (!EFI_ERROR (Status)) {
-            Supports &= (UINT64)(EFI_PCI_IO_ATTRIBUTE_IO | EFI_PCI_IO_ATTRIBUTE_MEMORY);
+            Supports &= (UINT64)(EFI_PCI_IO_ATTRIBUTE_IO |
+                                 EFI_PCI_IO_ATTRIBUTE_MEMORY);
             Status    = ParentIo.PciIo->Attributes (
                                           ParentIo.PciIo,
                                           EfiPciIoAttributeOperationEnable,
@@ -1068,13 +1161,27 @@ SerialControllerDriverStart (
             DefaultPciSerialParameter.Offset         = 0;
             DefaultPciSerialParameter.RegisterStride = 0;
             DefaultPciSerialParameter.ClockRate      = 0;
-            PciSerialParameter                       = &DefaultPciSerialParameter;
+            PciSerialParameter                       =
+              &DefaultPciSerialParameter;
           } else if (PciSerialCount == 1) {
             PciSerialParameter = PcdGetPtr (PcdPciSerialParameters);
           }
 
-          Status = CreateSerialDevice (Controller, Uart, ParentDevicePath, FALSE, 0, ParentIo, PciSerialParameter, PciDeviceInfo);
-          DEBUG ((DEBUG_INFO, "PciSioSerial: Create PCI child serial device (single) - %r\n", Status));
+          Status = CreateSerialDevice (
+                     Controller,
+                     Uart,
+                     ParentDevicePath,
+                     FALSE,
+                     0,
+                     ParentIo,
+                     PciSerialParameter,
+                     PciDeviceInfo
+                     );
+          DEBUG ((
+            DEBUG_INFO,
+            "PciSioSerial: Create PCI child serial device (single) - %r\n",
+            Status
+            ));
           if (!EFI_ERROR (Status)) {
             PciDeviceInfo->ChildCount++;
           }
@@ -1085,18 +1192,34 @@ SerialControllerDriverStart (
         //
         if ((RemainingDevicePath == NULL) || ContainsControllerNode) {
           PciSerialCount = 0;
-          for (PciSerialParameter = PcdGetPtr (PcdPciSerialParameters); PciSerialParameter->VendorId != 0xFFFF; PciSerialParameter++) {
+          for (PciSerialParameter = PcdGetPtr (PcdPciSerialParameters);
+               PciSerialParameter->VendorId != 0xFFFF; PciSerialParameter++)
+          {
             if ((PciSerialParameter->VendorId == Pci.Hdr.VendorId) &&
                 (PciSerialParameter->DeviceId == Pci.Hdr.DeviceId) &&
-                ((RemainingDevicePath == NULL) || (ControllerNumber == PciSerialCount))
+                ((RemainingDevicePath == NULL) || (ControllerNumber ==
+                                                   PciSerialCount))
                 )
             {
               //
               // Create controller node when PCI serial device contains multiple UARTs
               //
-              Status = CreateSerialDevice (Controller, Uart, ParentDevicePath, TRUE, PciSerialCount, ParentIo, PciSerialParameter, PciDeviceInfo);
+              Status = CreateSerialDevice (
+                         Controller,
+                         Uart,
+                         ParentDevicePath,
+                         TRUE,
+                         PciSerialCount,
+                         ParentIo,
+                         PciSerialParameter,
+                         PciDeviceInfo
+                         );
               PciSerialCount++;
-              DEBUG ((DEBUG_INFO, "PciSioSerial: Create PCI child serial device (multiple) - %r\n", Status));
+              DEBUG ((
+                DEBUG_INFO,
+                "PciSioSerial: Create PCI child serial device (multiple) - %r\n",
+                Status
+                ));
               if (!EFI_ERROR (Status)) {
                 PciDeviceInfo->ChildCount++;
               }
@@ -1236,12 +1359,16 @@ SerialControllerDriverStop (
                     );
     if (!EFI_ERROR (Status)) {
       SerialDevice = SERIAL_DEV_FROM_THIS (SerialIo);
-      ASSERT ((PciDeviceInfo == NULL) || (PciDeviceInfo == SerialDevice->PciDeviceInfo));
+      ASSERT (
+        (PciDeviceInfo == NULL) || (PciDeviceInfo ==
+                                    SerialDevice->PciDeviceInfo)
+        );
       PciDeviceInfo = SerialDevice->PciDeviceInfo;
 
       Status = gBS->CloseProtocol (
                       Controller,
-                      PciDeviceInfo != NULL ? &gEfiPciIoProtocolGuid : &gEfiSioProtocolGuid,
+                      PciDeviceInfo != NULL ? &gEfiPciIoProtocolGuid :
+                      &gEfiSioProtocolGuid,
                       This->DriverBindingHandle,
                       ChildHandleBuffer[Index]
                       );
@@ -1257,7 +1384,8 @@ SerialControllerDriverStop (
       if (EFI_ERROR (Status)) {
         gBS->OpenProtocol (
                Controller,
-               PciDeviceInfo != NULL ? &gEfiPciIoProtocolGuid : &gEfiSioProtocolGuid,
+               PciDeviceInfo != NULL ? &gEfiPciIoProtocolGuid :
+               &gEfiSioProtocolGuid,
                &IoProtocol,
                This->DriverBindingHandle,
                ChildHandleBuffer[Index],

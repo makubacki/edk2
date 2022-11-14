@@ -25,7 +25,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
   Below 2 global variable can only be used in constructor. They should NOT be used in any other library functions.
 **/
 SMM_LOCK_BOX_CONTEXT  mSmmLockBoxContext;
-LIST_ENTRY            mLockBoxQueue = INITIALIZE_LIST_HEAD_VARIABLE (mLockBoxQueue);
+LIST_ENTRY            mLockBoxQueue = INITIALIZE_LIST_HEAD_VARIABLE (
+                                        mLockBoxQueue
+                                        );
 
 BOOLEAN  mSmmConfigurationTableInstalled        = FALSE;
 VOID     *mSmmLockBoxRegistrationSmmEndOfDxe    = NULL;
@@ -50,12 +52,17 @@ InternalGetSmmLockBoxContext (
   // Check if gEfiSmmLockBoxCommunicationGuid is installed by someone
   //
   for (Index = 0; Index < gMmst->NumberOfTableEntries; Index++) {
-    if (CompareGuid (&gMmst->MmConfigurationTable[Index].VendorGuid, &gEfiSmmLockBoxCommunicationGuid)) {
+    if (CompareGuid (
+          &gMmst->MmConfigurationTable[Index].VendorGuid,
+          &gEfiSmmLockBoxCommunicationGuid
+          ))
+    {
       //
       // Found. That means some other library instance is already run.
       // No need to install again, just return.
       //
-      return (SMM_LOCK_BOX_CONTEXT *)gMmst->MmConfigurationTable[Index].VendorTable;
+      return (SMM_LOCK_BOX_CONTEXT *)gMmst->MmConfigurationTable[Index].
+               VendorTable;
     }
   }
 
@@ -243,7 +250,10 @@ SmmLockBoxMmConstructor (
     // Find it. That means some other library instance is already run.
     // No need to install again, just return.
     //
-    DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SmmLockBoxContext - already installed\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "SmmLockBoxSmmLib SmmLockBoxContext - already installed\n"
+      ));
     DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SmmLockBoxMmConstructor - Exit\n"));
     return EFI_SUCCESS;
   }
@@ -257,7 +267,8 @@ SmmLockBoxMmConstructor (
     mSmmLockBoxContext.Signature = SMM_LOCK_BOX_SIGNATURE_32;
   }
 
-  mSmmLockBoxContext.LockBoxDataAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)&mLockBoxQueue;
+  mSmmLockBoxContext.LockBoxDataAddress =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)&mLockBoxQueue;
 
   Status = gMmst->MmInstallConfigurationTable (
                     gMmst,
@@ -268,8 +279,16 @@ SmmLockBoxMmConstructor (
   ASSERT_EFI_ERROR (Status);
   mSmmConfigurationTableInstalled = TRUE;
 
-  DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SmmLockBoxContext - %x\n", (UINTN)&mSmmLockBoxContext));
-  DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib LockBoxDataAddress - %x\n", (UINTN)&mLockBoxQueue));
+  DEBUG ((
+    DEBUG_INFO,
+    "SmmLockBoxSmmLib SmmLockBoxContext - %x\n",
+    (UINTN)&mSmmLockBoxContext
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SmmLockBoxSmmLib LockBoxDataAddress - %x\n",
+    (UINTN)&mLockBoxQueue
+    ));
   DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SmmLockBoxMmConstructor - Exit\n"));
 
   return Status;
@@ -290,7 +309,11 @@ SmmLockBoxMmDestructor (
 {
   EFI_STATUS  Status;
 
-  DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SmmLockBoxMmDestructor in %a module\n", gEfiCallerBaseName));
+  DEBUG ((
+    DEBUG_INFO,
+    "SmmLockBoxSmmLib SmmLockBoxMmDestructor in %a module\n",
+    gEfiCallerBaseName
+    ));
 
   if (mSmmConfigurationTableInstalled) {
     Status = gMmst->MmInstallConfigurationTable (
@@ -300,7 +323,10 @@ SmmLockBoxMmDestructor (
                       0
                       );
     ASSERT_EFI_ERROR (Status);
-    DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib uninstall SmmLockBoxCommunication configuration table\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "SmmLockBoxSmmLib uninstall SmmLockBoxCommunication configuration table\n"
+      ));
   }
 
   if (mSmmLockBoxRegistrationSmmReadyToLock != NULL) {
@@ -433,7 +459,11 @@ SaveLockBox (
   // Basic check
   //
   if ((Guid == NULL) || (Buffer == NULL) || (Length == 0)) {
-    DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SaveLockBox - Exit (%r)\n", EFI_INVALID_PARAMETER));
+    DEBUG ((
+      DEBUG_INFO,
+      "SmmLockBoxSmmLib SaveLockBox - Exit (%r)\n",
+      EFI_INVALID_PARAMETER
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
@@ -442,7 +472,11 @@ SaveLockBox (
   //
   LockBox = InternalFindLockBoxByGuid (Guid);
   if (LockBox != NULL) {
-    DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SaveLockBox - Exit (%r)\n", EFI_ALREADY_STARTED));
+    DEBUG ((
+      DEBUG_INFO,
+      "SmmLockBoxSmmLib SaveLockBox - Exit (%r)\n",
+      EFI_ALREADY_STARTED
+      ));
     return EFI_ALREADY_STARTED;
   }
 
@@ -457,7 +491,11 @@ SaveLockBox (
                     );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SaveLockBox - Exit (%r)\n", EFI_OUT_OF_RESOURCES));
+    DEBUG ((
+      DEBUG_INFO,
+      "SmmLockBoxSmmLib SaveLockBox - Exit (%r)\n",
+      EFI_OUT_OF_RESOURCES
+      ));
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -472,7 +510,11 @@ SaveLockBox (
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     gMmst->MmFreePages (SmramBuffer, EFI_SIZE_TO_PAGES (Length));
-    DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SaveLockBox - Exit (%r)\n", EFI_OUT_OF_RESOURCES));
+    DEBUG ((
+      DEBUG_INFO,
+      "SmmLockBoxSmmLib SaveLockBox - Exit (%r)\n",
+      EFI_OUT_OF_RESOURCES
+      ));
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -506,7 +548,11 @@ SaveLockBox (
   //
   // Done
   //
-  DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SaveLockBox - Exit (%r)\n", EFI_SUCCESS));
+  DEBUG ((
+    DEBUG_INFO,
+    "SmmLockBoxSmmLib SaveLockBox - Exit (%r)\n",
+    EFI_SUCCESS
+    ));
   return EFI_SUCCESS;
 }
 
@@ -538,17 +584,29 @@ SetLockBoxAttributes (
   // Basic check
   //
   if ((Guid == NULL) ||
-      ((Attributes & ~(LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE | LOCK_BOX_ATTRIBUTE_RESTORE_IN_S3_ONLY)) != 0))
+      ((Attributes & ~(LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE |
+                       LOCK_BOX_ATTRIBUTE_RESTORE_IN_S3_ONLY)) != 0))
   {
-    DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SetLockBoxAttributes - Exit (%r)\n", EFI_INVALID_PARAMETER));
+    DEBUG ((
+      DEBUG_INFO,
+      "SmmLockBoxSmmLib SetLockBoxAttributes - Exit (%r)\n",
+      EFI_INVALID_PARAMETER
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
   if (((Attributes & LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE) != 0) &&
       ((Attributes & LOCK_BOX_ATTRIBUTE_RESTORE_IN_S3_ONLY) != 0))
   {
-    DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SetLockBoxAttributes - Exit (%r)\n", EFI_INVALID_PARAMETER));
-    DEBUG ((DEBUG_INFO, "  LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE and LOCK_BOX_ATTRIBUTE_RESTORE_IN_S3_ONLY\n\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "SmmLockBoxSmmLib SetLockBoxAttributes - Exit (%r)\n",
+      EFI_INVALID_PARAMETER
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "  LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE and LOCK_BOX_ATTRIBUTE_RESTORE_IN_S3_ONLY\n\n"
+      ));
     DEBUG ((DEBUG_INFO, "  can not be set together\n"));
     return EFI_INVALID_PARAMETER;
   }
@@ -558,7 +616,11 @@ SetLockBoxAttributes (
   //
   LockBox = InternalFindLockBoxByGuid (Guid);
   if (LockBox == NULL) {
-    DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SetLockBoxAttributes - Exit (%r)\n", EFI_NOT_FOUND));
+    DEBUG ((
+      DEBUG_INFO,
+      "SmmLockBoxSmmLib SetLockBoxAttributes - Exit (%r)\n",
+      EFI_NOT_FOUND
+      ));
     return EFI_NOT_FOUND;
   }
 
@@ -567,8 +629,17 @@ SetLockBoxAttributes (
       (((LockBox->Attributes & LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE) != 0) &&
        ((Attributes & LOCK_BOX_ATTRIBUTE_RESTORE_IN_S3_ONLY) != 0)))
   {
-    DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SetLockBoxAttributes 0x%lx 0x%lx - Exit (%r)\n", LockBox->Attributes, Attributes, EFI_INVALID_PARAMETER));
-    DEBUG ((DEBUG_INFO, "  LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE and LOCK_BOX_ATTRIBUTE_RESTORE_IN_S3_ONLY\n\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "SmmLockBoxSmmLib SetLockBoxAttributes 0x%lx 0x%lx - Exit (%r)\n",
+      LockBox->Attributes,
+      Attributes,
+      EFI_INVALID_PARAMETER
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "  LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE and LOCK_BOX_ATTRIBUTE_RESTORE_IN_S3_ONLY\n\n"
+      ));
     DEBUG ((DEBUG_INFO, "  can not be set together\n"));
     return EFI_INVALID_PARAMETER;
   }
@@ -581,7 +652,11 @@ SetLockBoxAttributes (
   //
   // Done
   //
-  DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SetLockBoxAttributes - Exit (%r)\n", EFI_SUCCESS));
+  DEBUG ((
+    DEBUG_INFO,
+    "SmmLockBoxSmmLib SetLockBoxAttributes - Exit (%r)\n",
+    EFI_SUCCESS
+    ));
   return EFI_SUCCESS;
 }
 
@@ -625,7 +700,11 @@ UpdateLockBox (
   if ((Guid == NULL) || (Buffer == NULL) || (Length == 0) ||
       (Length > MAX_UINTN - Offset))
   {
-    DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib UpdateLockBox - Exit (%r)\n", EFI_INVALID_PARAMETER));
+    DEBUG ((
+      DEBUG_INFO,
+      "SmmLockBoxSmmLib UpdateLockBox - Exit (%r)\n",
+      EFI_INVALID_PARAMETER
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
@@ -634,7 +713,11 @@ UpdateLockBox (
   //
   LockBox = InternalFindLockBoxByGuid (Guid);
   if (LockBox == NULL) {
-    DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib UpdateLockBox - Exit (%r)\n", EFI_NOT_FOUND));
+    DEBUG ((
+      DEBUG_INFO,
+      "SmmLockBoxSmmLib UpdateLockBox - Exit (%r)\n",
+      EFI_NOT_FOUND
+      ));
     return EFI_NOT_FOUND;
   }
 
@@ -652,7 +735,9 @@ UpdateLockBox (
         "SmmLockBoxSmmLib UpdateLockBox - Origin LockBox too small, enlarge.\n"
         ));
 
-      if (EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES ((UINTN)LockBox->Length)) < Offset + Length) {
+      if (EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES ((UINTN)LockBox->Length)) <
+          Offset + Length)
+      {
         //
         // In SaveLockBox(), the SMRAM buffer allocated for LockBox is of page
         // granularity. Here, if the required size is larger than the origin size
@@ -669,7 +754,11 @@ UpdateLockBox (
                           &SmramBuffer
                           );
         if (EFI_ERROR (Status)) {
-          DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib UpdateLockBox - Exit (%r)\n", EFI_OUT_OF_RESOURCES));
+          DEBUG ((
+            DEBUG_INFO,
+            "SmmLockBoxSmmLib UpdateLockBox - Exit (%r)\n",
+            EFI_OUT_OF_RESOURCES
+            ));
           return EFI_OUT_OF_RESOURCES;
         }
 
@@ -677,9 +766,18 @@ UpdateLockBox (
         // Copy origin data to the new SMRAM buffer and wipe the content in the
         // origin SMRAM buffer.
         //
-        CopyMem ((VOID *)(UINTN)SmramBuffer, (VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
+        CopyMem (
+          (VOID *)(UINTN)SmramBuffer,
+          (VOID *)(UINTN)LockBox->SmramBuffer,
+          (UINTN)LockBox->Length
+          );
         ZeroMem ((VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
-        gMmst->MmFreePages (LockBox->SmramBuffer, EFI_SIZE_TO_PAGES ((UINTN)LockBox->Length));
+        gMmst->MmFreePages (
+                 LockBox->SmramBuffer,
+                 EFI_SIZE_TO_PAGES (
+                   (UINTN)LockBox->Length
+                   )
+                 );
 
         LockBox->SmramBuffer = SmramBuffer;
       }
@@ -700,7 +798,11 @@ UpdateLockBox (
       // If 'LOCK_BOX_ATTRIBUTE_RESTORE_IN_S3_ONLY' attribute is NOT set, return
       // EFI_BUFFER_TOO_SMALL directly.
       //
-      DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib UpdateLockBox - Exit (%r)\n", EFI_BUFFER_TOO_SMALL));
+      DEBUG ((
+        DEBUG_INFO,
+        "SmmLockBoxSmmLib UpdateLockBox - Exit (%r)\n",
+        EFI_BUFFER_TOO_SMALL
+        ));
       return EFI_BUFFER_TOO_SMALL;
     }
   }
@@ -711,7 +813,11 @@ UpdateLockBox (
   //
   // Done
   //
-  DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib UpdateLockBox - Exit (%r)\n", EFI_SUCCESS));
+  DEBUG ((
+    DEBUG_INFO,
+    "SmmLockBoxSmmLib UpdateLockBox - Exit (%r)\n",
+    EFI_SUCCESS
+    ));
   return EFI_SUCCESS;
 }
 
@@ -753,7 +859,11 @@ RestoreLockBox (
       ((Buffer == NULL) && (Length != NULL)) ||
       ((Buffer != NULL) && (Length == NULL)))
   {
-    DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib RestoreLockBox - Exit (%r)\n", EFI_INVALID_PARAMETER));
+    DEBUG ((
+      DEBUG_INFO,
+      "SmmLockBoxSmmLib RestoreLockBox - Exit (%r)\n",
+      EFI_INVALID_PARAMETER
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
@@ -765,7 +875,11 @@ RestoreLockBox (
     //
     // Not found
     //
-    DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib RestoreLockBox - Exit (%r)\n", EFI_NOT_FOUND));
+    DEBUG ((
+      DEBUG_INFO,
+      "SmmLockBoxSmmLib RestoreLockBox - Exit (%r)\n",
+      EFI_NOT_FOUND
+      ));
     return EFI_NOT_FOUND;
   }
 
@@ -793,7 +907,11 @@ RestoreLockBox (
     // restore to original buffer
     //
     if ((LockBox->Attributes & LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE) == 0) {
-      DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib RestoreLockBox - Exit (%r)\n", EFI_WRITE_PROTECTED));
+      DEBUG ((
+        DEBUG_INFO,
+        "SmmLockBoxSmmLib RestoreLockBox - Exit (%r)\n",
+        EFI_WRITE_PROTECTED
+        ));
       return EFI_WRITE_PROTECTED;
     }
 
@@ -809,7 +927,11 @@ RestoreLockBox (
       // Input buffer is too small to hold all data.
       //
       *Length = (UINTN)LockBox->Length;
-      DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib RestoreLockBox - Exit (%r)\n", EFI_BUFFER_TOO_SMALL));
+      DEBUG ((
+        DEBUG_INFO,
+        "SmmLockBoxSmmLib RestoreLockBox - Exit (%r)\n",
+        EFI_BUFFER_TOO_SMALL
+        ));
       return EFI_BUFFER_TOO_SMALL;
     }
 
@@ -819,12 +941,20 @@ RestoreLockBox (
   //
   // Restore data
   //
-  CopyMem (RestoreBuffer, (VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
+  CopyMem (
+    RestoreBuffer,
+    (VOID *)(UINTN)LockBox->SmramBuffer,
+    (UINTN)LockBox->Length
+    );
 
   //
   // Done
   //
-  DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib RestoreLockBox - Exit (%r)\n", EFI_SUCCESS));
+  DEBUG ((
+    DEBUG_INFO,
+    "SmmLockBoxSmmLib RestoreLockBox - Exit (%r)\n",
+    EFI_SUCCESS
+    ));
   return EFI_SUCCESS;
 }
 
@@ -866,13 +996,21 @@ RestoreAllLockBoxInPlace (
       //
       // Restore data
       //
-      CopyMem ((VOID *)(UINTN)LockBox->Buffer, (VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
+      CopyMem (
+        (VOID *)(UINTN)LockBox->Buffer,
+        (VOID *)(UINTN)LockBox->SmramBuffer,
+        (UINTN)LockBox->Length
+        );
     }
   }
 
   //
   // Done
   //
-  DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib RestoreAllLockBoxInPlace - Exit (%r)\n", EFI_SUCCESS));
+  DEBUG ((
+    DEBUG_INFO,
+    "SmmLockBoxSmmLib RestoreAllLockBoxInPlace - Exit (%r)\n",
+    EFI_SUCCESS
+    ));
   return EFI_SUCCESS;
 }

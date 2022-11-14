@@ -68,9 +68,15 @@ struct _SD_PEIM_HC_PRIVATE_DATA {
 };
 
 #define SD_TIMEOUT  MultU64x32((UINT64)(3), 1000000)
-#define GET_SD_PEIM_HC_PRIVATE_DATA_FROM_THIS(a)         CR (a, SD_PEIM_HC_PRIVATE_DATA, BlkIoPpi, SD_PEIM_SIG)
-#define GET_SD_PEIM_HC_PRIVATE_DATA_FROM_THIS2(a)        CR (a, SD_PEIM_HC_PRIVATE_DATA, BlkIo2Ppi, SD_PEIM_SIG)
-#define GET_SD_PEIM_HC_PRIVATE_DATA_FROM_THIS_NOTIFY(a)  CR (a, SD_PEIM_HC_PRIVATE_DATA, EndOfPeiNotifyList, SD_PEIM_SIG)
+#define GET_SD_PEIM_HC_PRIVATE_DATA_FROM_THIS( \
+                                             a)         \
+      CR (a, SD_PEIM_HC_PRIVATE_DATA, BlkIoPpi, SD_PEIM_SIG)
+#define GET_SD_PEIM_HC_PRIVATE_DATA_FROM_THIS2( \
+                                              a)        \
+      CR (a, SD_PEIM_HC_PRIVATE_DATA, BlkIo2Ppi, SD_PEIM_SIG)
+#define GET_SD_PEIM_HC_PRIVATE_DATA_FROM_THIS_NOTIFY( \
+                                                    a)  \
+      CR (a, SD_PEIM_HC_PRIVATE_DATA, EndOfPeiNotifyList, SD_PEIM_SIG)
 
 struct _SD_TRB {
   SD_PEIM_HC_SLOT         *Slot;

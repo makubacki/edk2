@@ -27,7 +27,10 @@ AnsiRawDataToUnicode (
   // and translate it into unicode, then push
   // the unicode into unicode fifo, until the raw fifo is empty.
   //
-  while (!IsRawFiFoEmpty (TerminalDevice) && !IsUnicodeFiFoFull (TerminalDevice)) {
+  while (!IsRawFiFoEmpty (TerminalDevice) && !IsUnicodeFiFoFull (
+                                                TerminalDevice
+                                                ))
+  {
     RawFiFoRemoveOneKey (TerminalDevice, &RawData);
 
     UnicodeFiFoInsertOneKey (TerminalDevice, (UINT16)RawData);

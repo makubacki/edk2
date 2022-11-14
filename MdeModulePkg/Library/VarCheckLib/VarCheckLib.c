@@ -109,7 +109,8 @@ VarCheckInternalIsHexaDecimalDigitCharacter (
   IN CHAR16  Char
   )
 {
-  return (BOOLEAN)((Char >= L'0' && Char <= L'9') || (Char >= L'A' && Char <= L'F'));
+  return (BOOLEAN)((Char >= L'0' && Char <= L'9') || (Char >= L'A' && Char <=
+                                                      L'F'));
 }
 
 /**
@@ -133,21 +134,46 @@ VariablePropertyGetWithWildcardName (
   UINTN  NameLength;
 
   NameLength = StrLen (VariableName) - 4;
-  for (Index = 0; Index < sizeof (mVarCheckVariableWithWildcardName)/sizeof (mVarCheckVariableWithWildcardName[0]); Index++) {
-    if (CompareGuid (mVarCheckVariableWithWildcardName[Index].Guid, VendorGuid)) {
+  for (Index = 0; Index < sizeof (mVarCheckVariableWithWildcardName)/
+       sizeof (mVarCheckVariableWithWildcardName[0]); Index++)
+  {
+    if (CompareGuid (
+          mVarCheckVariableWithWildcardName[Index].Guid,
+          VendorGuid
+          ))
+    {
       if (WildcardMatch) {
-        if ((StrLen (VariableName) == StrLen (mVarCheckVariableWithWildcardName[Index].Name)) &&
-            (StrnCmp (VariableName, mVarCheckVariableWithWildcardName[Index].Name, NameLength) == 0) &&
-            VarCheckInternalIsHexaDecimalDigitCharacter (VariableName[NameLength]) &&
-            VarCheckInternalIsHexaDecimalDigitCharacter (VariableName[NameLength + 1]) &&
-            VarCheckInternalIsHexaDecimalDigitCharacter (VariableName[NameLength + 2]) &&
-            VarCheckInternalIsHexaDecimalDigitCharacter (VariableName[NameLength + 3]))
+        if ((StrLen (VariableName) == StrLen (
+                                        mVarCheckVariableWithWildcardName[Index]
+                                          .Name
+                                        )) &&
+            (StrnCmp (
+               VariableName,
+               mVarCheckVariableWithWildcardName[Index].Name,
+               NameLength
+               ) == 0) &&
+            VarCheckInternalIsHexaDecimalDigitCharacter (
+              VariableName[NameLength]
+              ) &&
+            VarCheckInternalIsHexaDecimalDigitCharacter (
+              VariableName[NameLength + 1]
+              ) &&
+            VarCheckInternalIsHexaDecimalDigitCharacter (
+              VariableName[NameLength + 2]
+              ) &&
+            VarCheckInternalIsHexaDecimalDigitCharacter (
+              VariableName[NameLength + 3]
+              ))
         {
           return &mVarCheckVariableWithWildcardName[Index].VariableProperty;
         }
       }
 
-      if (StrCmp (mVarCheckVariableWithWildcardName[Index].Name, VariableName) == 0) {
+      if (StrCmp (
+            mVarCheckVariableWithWildcardName[Index].Name,
+            VariableName
+            ) == 0)
+      {
         return &mVarCheckVariableWithWildcardName[Index].VariableProperty;
       }
     }
@@ -180,7 +206,9 @@ VariablePropertyGetFunction (
   for (Index = 0; Index < mNumberOfVarCheckVariable; Index++) {
     Entry        = (VAR_CHECK_VARIABLE_ENTRY *)mVarCheckVariableTable[Index];
     VariableName = (CHAR16 *)((UINTN)Entry + sizeof (*Entry));
-    if (CompareGuid (&Entry->Guid, Guid) && (StrCmp (VariableName, Name) == 0)) {
+    if (CompareGuid (&Entry->Guid, Guid) && (StrCmp (VariableName, Name) ==
+                                             0))
+    {
       return &Entry->VariableProperty;
     }
   }
@@ -282,7 +310,12 @@ VarCheckLibRegisterEndOfDxeCallback (
              (UINTN)Callback
              );
 
-  DEBUG ((DEBUG_INFO, "VarCheckLibRegisterEndOfDxeCallback - 0x%x %r\n", Callback, Status));
+  DEBUG ((
+    DEBUG_INFO,
+    "VarCheckLibRegisterEndOfDxeCallback - 0x%x %r\n",
+    Callback,
+    Status
+    ));
 
   return Status;
 }
@@ -346,12 +379,14 @@ VarCheckLibInitializeAtEndOfDxe (
   // Get the total count needed.
   // Also cover VarCheckHandler and the entries, and VarCheckVariable and the entries.
   //
-  TotalCount = mVarCheckLibAddressPointerCount + (mNumberOfVarCheckHandler + 1) + (mNumberOfVarCheckVariable + 1);
-  TempTable  = ReallocateRuntimePool (
-                 mVarCheckLibAddressPointerMaxCount * sizeof (VOID **),
-                 TotalCount * sizeof (VOID **),
-                 (VOID *)mVarCheckLibAddressPointer
-                 );
+  TotalCount = mVarCheckLibAddressPointerCount + (mNumberOfVarCheckHandler +
+                                                  1) +
+               (mNumberOfVarCheckVariable + 1);
+  TempTable = ReallocateRuntimePool (
+                mVarCheckLibAddressPointerMaxCount * sizeof (VOID **),
+                TotalCount * sizeof (VOID **),
+                (VOID *)mVarCheckLibAddressPointer
+                );
 
   if (TempTable != NULL) {
     mVarCheckLibAddressPointer = (VOID ***)TempTable;
@@ -359,17 +394,21 @@ VarCheckLibInitializeAtEndOfDxe (
     //
     // Cover VarCheckHandler and the entries.
     //
-    mVarCheckLibAddressPointer[mVarCheckLibAddressPointerCount++] = (VOID **)&mVarCheckHandlerTable;
+    mVarCheckLibAddressPointer[mVarCheckLibAddressPointerCount++] =
+      (VOID **)&mVarCheckHandlerTable;
     for (Index = 0; Index < mNumberOfVarCheckHandler; Index++) {
-      mVarCheckLibAddressPointer[mVarCheckLibAddressPointerCount++] = (VOID **)&mVarCheckHandlerTable[Index];
+      mVarCheckLibAddressPointer[mVarCheckLibAddressPointerCount++] =
+        (VOID **)&mVarCheckHandlerTable[Index];
     }
 
     //
     // Cover VarCheckVariable and the entries.
     //
-    mVarCheckLibAddressPointer[mVarCheckLibAddressPointerCount++] = (VOID **)&mVarCheckVariableTable;
+    mVarCheckLibAddressPointer[mVarCheckLibAddressPointerCount++] =
+      (VOID **)&mVarCheckVariableTable;
     for (Index = 0; Index < mNumberOfVarCheckVariable; Index++) {
-      mVarCheckLibAddressPointer[mVarCheckLibAddressPointerCount++] = (VOID **)&mVarCheckVariableTable[Index];
+      mVarCheckLibAddressPointer[mVarCheckLibAddressPointerCount++] =
+        (VOID **)&mVarCheckVariableTable[Index];
     }
 
     ASSERT (mVarCheckLibAddressPointerCount == TotalCount);
@@ -416,7 +455,12 @@ VarCheckLibRegisterAddressPointer (
              (UINTN)AddressPointer
              );
 
-  DEBUG ((DEBUG_INFO, "VarCheckLibRegisterAddressPointer - 0x%x %r\n", AddressPointer, Status));
+  DEBUG ((
+    DEBUG_INFO,
+    "VarCheckLibRegisterAddressPointer - 0x%x %r\n",
+    AddressPointer,
+    Status
+    ));
 
   return Status;
 }
@@ -458,7 +502,12 @@ VarCheckLibRegisterSetVariableCheckHandler (
               (UINTN)Handler
               );
 
-  DEBUG ((DEBUG_INFO, "VarCheckLibRegisterSetVariableCheckHandler - 0x%x %r\n", Handler, Status));
+  DEBUG ((
+    DEBUG_INFO,
+    "VarCheckLibRegisterSetVariableCheckHandler - 0x%x %r\n",
+    Handler,
+    Status
+    ));
 
   return Status;
 }
@@ -524,7 +573,11 @@ VarCheckLibVariablePropertySet (
     VariableName = (CHAR16 *)((UINTN)Entry + sizeof (*Entry));
     StrCpyS (VariableName, StrSize (Name)/sizeof (CHAR16), Name);
     CopyGuid (&Entry->Guid, Guid);
-    CopyMem (&Entry->VariableProperty, VariableProperty, sizeof (*VariableProperty));
+    CopyMem (
+      &Entry->VariableProperty,
+      VariableProperty,
+      sizeof (*VariableProperty)
+      );
 
     Status = VarCheckAddTableEntry (
                (UINTN **)&mVarCheckVariableTable,
@@ -577,7 +630,9 @@ VarCheckLibVariablePropertyGet (
   // There is no property set to this variable(wildcard name)
   // if the revision is not VAR_CHECK_VARIABLE_PROPERTY_REVISION.
   //
-  if ((Property != NULL) && (Property->Revision == VAR_CHECK_VARIABLE_PROPERTY_REVISION)) {
+  if ((Property != NULL) && (Property->Revision ==
+                             VAR_CHECK_VARIABLE_PROPERTY_REVISION))
+  {
     CopyMem (VariableProperty, Property, sizeof (*VariableProperty));
     return EFI_SUCCESS;
   }
@@ -630,24 +685,58 @@ VarCheckLibSetVariableCheck (
   // There is no property set to this variable(wildcard name)
   // if the revision is not VAR_CHECK_VARIABLE_PROPERTY_REVISION.
   //
-  if ((Property != NULL) && (Property->Revision == VAR_CHECK_VARIABLE_PROPERTY_REVISION)) {
-    if ((RequestSource != VarCheckFromTrusted) && ((Property->Property & VAR_CHECK_VARIABLE_PROPERTY_READ_ONLY) != 0)) {
-      DEBUG ((DEBUG_INFO, "Variable Check ReadOnly variable fail %r - %g:%s\n", EFI_WRITE_PROTECTED, VendorGuid, VariableName));
+  if ((Property != NULL) && (Property->Revision ==
+                             VAR_CHECK_VARIABLE_PROPERTY_REVISION))
+  {
+    if ((RequestSource != VarCheckFromTrusted) && ((Property->Property &
+                                                    VAR_CHECK_VARIABLE_PROPERTY_READ_ONLY)
+                                                   != 0))
+    {
+      DEBUG ((
+        DEBUG_INFO,
+        "Variable Check ReadOnly variable fail %r - %g:%s\n",
+        EFI_WRITE_PROTECTED,
+        VendorGuid,
+        VariableName
+        ));
       return EFI_WRITE_PROTECTED;
     }
 
-    if (!((((Attributes & EFI_VARIABLE_APPEND_WRITE) == 0) && (DataSize == 0)) || (Attributes == 0))) {
+    if (!((((Attributes & EFI_VARIABLE_APPEND_WRITE) == 0) && (DataSize ==
+                                                               0)) ||
+          (Attributes == 0)))
+    {
       //
       // Not to delete variable.
       //
-      if ((Property->Attributes != 0) && ((Attributes & (~EFI_VARIABLE_APPEND_WRITE)) != Property->Attributes)) {
-        DEBUG ((DEBUG_INFO, "Variable Check Attributes(0x%08x to 0x%08x) fail %r - %g:%s\n", Property->Attributes, Attributes, EFI_INVALID_PARAMETER, VendorGuid, VariableName));
+      if ((Property->Attributes != 0) && ((Attributes &
+                                           (~EFI_VARIABLE_APPEND_WRITE)) !=
+                                          Property->Attributes))
+      {
+        DEBUG ((
+          DEBUG_INFO,
+          "Variable Check Attributes(0x%08x to 0x%08x) fail %r - %g:%s\n",
+          Property->Attributes,
+          Attributes,
+          EFI_INVALID_PARAMETER,
+          VendorGuid,
+          VariableName
+          ));
         return EFI_INVALID_PARAMETER;
       }
 
       if (DataSize != 0) {
         if ((DataSize < Property->MinSize) || (DataSize > Property->MaxSize)) {
-          DEBUG ((DEBUG_INFO, "Variable Check DataSize fail(0x%x not in 0x%x - 0x%x) %r - %g:%s\n", DataSize, Property->MinSize, Property->MaxSize, EFI_INVALID_PARAMETER, VendorGuid, VariableName));
+          DEBUG ((
+            DEBUG_INFO,
+            "Variable Check DataSize fail(0x%x not in 0x%x - 0x%x) %r - %g:%s\n",
+            DataSize,
+            Property->MinSize,
+            Property->MaxSize,
+            EFI_INVALID_PARAMETER,
+            VendorGuid,
+            VariableName
+            ));
           return EFI_INVALID_PARAMETER;
         }
       }
@@ -662,7 +751,9 @@ VarCheckLibSetVariableCheck (
                                           DataSize,
                                           Data
                                           );
-    if ((Status == EFI_WRITE_PROTECTED) && (RequestSource == VarCheckFromTrusted)) {
+    if ((Status == EFI_WRITE_PROTECTED) && (RequestSource ==
+                                            VarCheckFromTrusted))
+    {
       //
       // If RequestSource is trusted, then allow variable to be set even if it
       // is write protected.
@@ -671,7 +762,13 @@ VarCheckLibSetVariableCheck (
     }
 
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_INFO, "Variable Check handler fail %r - %g:%s\n", Status, VendorGuid, VariableName));
+      DEBUG ((
+        DEBUG_INFO,
+        "Variable Check handler fail %r - %g:%s\n",
+        Status,
+        VendorGuid,
+        VariableName
+        ));
       return Status;
     }
   }

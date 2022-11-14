@@ -54,7 +54,8 @@ CreateRscHandlerCallbackPacket (
   //
   NumberOfEntries = BuildGuidHob (
                       &gStatusCodeCallbackGuid,
-                      sizeof (EFI_PEI_RSC_HANDLER_CALLBACK) * 64 + sizeof (UINTN)
+                      sizeof (EFI_PEI_RSC_HANDLER_CALLBACK) * 64 +
+                      sizeof (UINTN)
                       );
   ASSERT (NumberOfEntries != NULL);
 
@@ -137,7 +138,8 @@ Register (
     FreePacket = CreateRscHandlerCallbackPacket ();
   }
 
-  CallbackEntry                 = (EFI_PEI_RSC_HANDLER_CALLBACK *)(FreePacket + 1);
+  CallbackEntry                 = (EFI_PEI_RSC_HANDLER_CALLBACK *)(FreePacket +
+                                                                   1);
   CallbackEntry[FreeEntryIndex] = Callback;
 
   if (*FreePacket == FreeEntryIndex) {

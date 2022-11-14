@@ -31,7 +31,9 @@ UINT8  mInstructionBufferTemplate[] = {
   // Add a magic code here to help the VM recognize the thunk..
   // mov eax, 0xca112ebc  => B8 BC 2E 11 CA
   //
-  0xB8,                                                    0xBC, 0x2E, 0x11, 0xCA,
+  0xB8,                                                    0xBC,
+  0x2E,                                                    0x11,
+  0xCA,
   //
   // Add code bytes to load up a processor register with the EBC entry point.
   //  mov eax, EbcEntryPoint  => B8 XX XX XX XX (To be fixed at runtime)
@@ -126,13 +128,19 @@ EbcLLCALLEX (
   //
   // Fill the signature according to mInstructionBufferTemplate
   //
-  for (Index = 0; Index < sizeof (mInstructionBufferTemplate) - sizeof (UINTN); Index++) {
-    if (*(UINTN *)&mInstructionBufferTemplate[Index] == EBC_ENTRYPOINT_SIGNATURE) {
+  for (Index = 0; Index < sizeof (mInstructionBufferTemplate) - sizeof (UINTN);
+       Index++)
+  {
+    if (*(UINTN *)&mInstructionBufferTemplate[Index] ==
+        EBC_ENTRYPOINT_SIGNATURE)
+    {
       *(UINTN *)&InstructionBuffer[Index] = EBC_ENTRYPOINT_SIGNATURE;
       IndexOfEbcEntrypoint                = Index;
     }
 
-    if (*(UINTN *)&mInstructionBufferTemplate[Index] == EBC_LL_EBC_ENTRYPOINT_SIGNATURE) {
+    if (*(UINTN *)&mInstructionBufferTemplate[Index] ==
+        EBC_LL_EBC_ENTRYPOINT_SIGNATURE)
+    {
       *(UINTN *)&InstructionBuffer[Index] = EBC_LL_EBC_ENTRYPOINT_SIGNATURE;
     }
   }
@@ -140,7 +148,12 @@ EbcLLCALLEX (
   //
   // Check if we need thunk to native
   //
-  if (CompareMem (InstructionBuffer, mInstructionBufferTemplate, sizeof (mInstructionBufferTemplate)) != 0) {
+  if (CompareMem (
+        InstructionBuffer,
+        mInstructionBufferTemplate,
+        sizeof (mInstructionBufferTemplate)
+        ) != 0)
+  {
     IsThunk = 0;
   }
 
@@ -154,9 +167,18 @@ EbcLLCALLEX (
     VmWriteMemN (VmPtr, (UINTN)VmPtr->Gpr[0], (UINTN)FramePtr);
     VmPtr->FramePtr = (VOID *)(UINTN)VmPtr->Gpr[0];
     VmPtr->Gpr[0]  -= 8;
-    VmWriteMem64 (VmPtr, (UINTN)VmPtr->Gpr[0], (UINT64)(UINTN)(VmPtr->Ip + Size));
+    VmWriteMem64 (
+      VmPtr,
+      (UINTN)VmPtr->Gpr[0],
+      (UINT64)(UINTN)(VmPtr->Ip +
+                      Size)
+      );
 
-    CopyMem (&TargetEbcAddr, (UINT8 *)FuncAddr + IndexOfEbcEntrypoint, sizeof (UINTN));
+    CopyMem (
+      &TargetEbcAddr,
+      (UINT8 *)FuncAddr + IndexOfEbcEntrypoint,
+      sizeof (UINTN)
+      );
     VmPtr->Ip = (VMIP)(UINTN)TargetEbcAddr;
   } else {
     //
@@ -261,8 +283,10 @@ EbcInterpret (
     return Status;
   }
 
-  VmContext.StackTop        = (UINT8 *)VmContext.StackPool + (STACK_REMAIN_SIZE);
-  VmContext.Gpr[0]          = (UINT64)(UINTN)((UINT8 *)VmContext.StackPool + STACK_POOL_SIZE);
+  VmContext.StackTop = (UINT8 *)VmContext.StackPool +
+                       (STACK_REMAIN_SIZE);
+  VmContext.Gpr[0]          = (UINT64)(UINTN)((UINT8 *)VmContext.StackPool +
+                                              STACK_POOL_SIZE);
   VmContext.HighStackBottom = (UINTN)VmContext.Gpr[0];
   VmContext.Gpr[0]         &= ~((VM_REGISTER)(sizeof (UINTN) - 1));
   VmContext.Gpr[0]         -= sizeof (UINTN);
@@ -400,8 +424,10 @@ ExecuteEbcImageEntryPoint (
     return Status;
   }
 
-  VmContext.StackTop        = (UINT8 *)VmContext.StackPool + (STACK_REMAIN_SIZE);
-  VmContext.Gpr[0]          = (UINT64)(UINTN)((UINT8 *)VmContext.StackPool + STACK_POOL_SIZE);
+  VmContext.StackTop = (UINT8 *)VmContext.StackPool +
+                       (STACK_REMAIN_SIZE);
+  VmContext.Gpr[0]          = (UINT64)(UINTN)((UINT8 *)VmContext.StackPool +
+                                              STACK_POOL_SIZE);
   VmContext.HighStackBottom = (UINTN)VmContext.Gpr[0];
   VmContext.Gpr[0]         -= sizeof (UINTN);
 
@@ -500,12 +526,18 @@ EbcCreateThunks (
   //
   // Copy whole thunk instruction buffer template
   //
-  CopyMem (Ptr, mInstructionBufferTemplate, sizeof (mInstructionBufferTemplate));
+  CopyMem (
+    Ptr,
+    mInstructionBufferTemplate,
+    sizeof (mInstructionBufferTemplate)
+    );
 
   //
   // Patch EbcEntryPoint and EbcLLEbcInterpret
   //
-  for (Index = 0; Index < sizeof (mInstructionBufferTemplate) - sizeof (UINTN); Index++) {
+  for (Index = 0; Index < sizeof (mInstructionBufferTemplate) - sizeof (UINTN);
+       Index++)
+  {
     if (*(UINTN *)&Ptr[Index] == EBC_ENTRYPOINT_SIGNATURE) {
       *(UINTN *)&Ptr[Index] = (UINTN)EbcEntryPoint;
     }

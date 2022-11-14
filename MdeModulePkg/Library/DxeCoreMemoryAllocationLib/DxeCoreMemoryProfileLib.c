@@ -45,5 +45,12 @@ MemoryProfileLibRecord (
   IN CHAR8                  *ActionString OPTIONAL
   )
 {
-  return CoreUpdateProfile (CallerAddress, Action, MemoryType, Size, Buffer, ActionString);
+  return CoreUpdateProfile (
+           CallerAddress,
+           Action,
+           MemoryType,
+           Size,
+           Buffer,
+           ActionString
+           );
 }

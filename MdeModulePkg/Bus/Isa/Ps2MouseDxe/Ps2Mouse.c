@@ -70,7 +70,8 @@ PS2MouseDriverSupported (
   } while (!IsDevicePathEnd (DevicePath));
 
   if ((DevicePathType (Acpi) != ACPI_DEVICE_PATH) ||
-      ((DevicePathSubType (Acpi) != ACPI_DP) && (DevicePathSubType (Acpi) != ACPI_EXTENDED_DP)))
+      ((DevicePathSubType (Acpi) != ACPI_DP) && (DevicePathSubType (Acpi) !=
+                                                 ACPI_EXTENDED_DP)))
   {
     return EFI_UNSUPPORTED;
   }
@@ -280,7 +281,9 @@ PS2MouseDriverStart (
   //
   Status = MouseDev->SimplePointerProtocol.Reset (
                                              &MouseDev->SimplePointerProtocol,
-                                             FeaturePcdGet (PcdPs2MouseExtendedVerification)
+                                             FeaturePcdGet (
+                                               PcdPs2MouseExtendedVerification
+                                               )
                                              );
   if (EFI_ERROR (Status)) {
     //
@@ -383,7 +386,9 @@ ErrorExit:
       );
   }
 
-  if ((MouseDev != NULL) && (MouseDev->SimplePointerProtocol.WaitForInput != NULL)) {
+  if ((MouseDev != NULL) && (MouseDev->SimplePointerProtocol.WaitForInput !=
+                             NULL))
+  {
     gBS->CloseEvent (MouseDev->SimplePointerProtocol.WaitForInput);
   }
 

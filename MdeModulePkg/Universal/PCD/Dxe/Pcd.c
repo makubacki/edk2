@@ -181,7 +181,10 @@ PcdDxeInit (
   //
   // PcdVpdBaseAddress64 is DynamicEx PCD only. So, DxePcdGet64Ex() is used to get its value.
   //
-  mVpdBaseAddress = (UINTN)DxePcdGet64Ex (&gEfiMdeModulePkgTokenSpaceGuid, PcdToken (PcdVpdBaseAddress64));
+  mVpdBaseAddress = (UINTN)DxePcdGet64Ex (
+                             &gEfiMdeModulePkgTokenSpaceGuid,
+                             PcdToken (PcdVpdBaseAddress64)
+                             );
   if (mVpdBaseAddress == 0) {
     //
     // PcdVpdBaseAddress64 is not set, get value from PcdVpdBaseAddress.
@@ -309,14 +312,19 @@ DxePcdSetSku (
     return;
   }
 
-  SkuIdTable = (SKU_ID *)((UINT8 *)mPcdDatabase.DxeDb + mPcdDatabase.DxeDb->SkuIdTableOffset);
+  SkuIdTable = (SKU_ID *)((UINT8 *)mPcdDatabase.DxeDb +
+                          mPcdDatabase.DxeDb->SkuIdTableOffset);
   for (Index = 0; Index < SkuIdTable[0]; Index++) {
     if (SkuId == SkuIdTable[Index + 1]) {
       DEBUG ((DEBUG_INFO, "PcdDxe - SkuId is found in SkuId table.\n"));
       Status = UpdatePcdDatabase (SkuId, TRUE);
       if (!EFI_ERROR (Status)) {
         mPcdDatabase.DxeDb->SystemSkuId = (SKU_ID)SkuId;
-        DEBUG ((DEBUG_INFO, "PcdDxe - Set current SKU Id to 0x%lx.\n", (SKU_ID)SkuId));
+        DEBUG ((
+          DEBUG_INFO,
+          "PcdDxe - Set current SKU Id to 0x%lx.\n",
+          (SKU_ID)SkuId
+          ));
         return;
       }
     }
@@ -325,7 +333,10 @@ DxePcdSetSku (
   //
   // Invalid input SkuId, the default SKU Id will be still used for the system.
   //
-  DEBUG ((DEBUG_ERROR, "PcdDxe - Invalid input SkuId, the default SKU Id will be still used.\n"));
+  DEBUG ((
+    DEBUG_ERROR,
+    "PcdDxe - Invalid input SkuId, the default SKU Id will be still used.\n"
+    ));
   return;
 }
 
@@ -501,10 +512,15 @@ DxePcdGetSize (
   TokenNumber = IsPeiDb ? TokenNumber :
                 (TokenNumber - mPeiLocalTokenCount);
 
-  LocalTokenNumberTable = IsPeiDb ? (UINT32 *)((UINT8 *)mPcdDatabase.PeiDb + mPcdDatabase.PeiDb->LocalTokenNumberTableOffset)
-                                  : (UINT32 *)((UINT8 *)mPcdDatabase.DxeDb + mPcdDatabase.DxeDb->LocalTokenNumberTableOffset);
+  LocalTokenNumberTable = IsPeiDb ? (UINT32 *)((UINT8 *)mPcdDatabase.PeiDb +
+                                               mPcdDatabase.PeiDb->
+                                                 LocalTokenNumberTableOffset)
+                                  : (UINT32 *)((UINT8 *)mPcdDatabase.DxeDb +
+                                               mPcdDatabase.DxeDb->
+                                                 LocalTokenNumberTableOffset);
 
-  Size = (LocalTokenNumberTable[TokenNumber] & PCD_DATUM_TYPE_ALL_SET) >> PCD_DATUM_TYPE_SHIFT;
+  Size = (LocalTokenNumberTable[TokenNumber] & PCD_DATUM_TYPE_ALL_SET) >>
+         PCD_DATUM_TYPE_SHIFT;
 
   if (Size == 0) {
     //
@@ -1159,7 +1175,9 @@ DxePcdGetNextToken (
     // EBC compiler is very choosy. It may report warning about comparison
     // between UINTN and 0 . So we add 1 in each size of the
     // comparison.
-    if (((*TokenNumber + 1 > mPeiNexTokenCount + 1) && (*TokenNumber + 1 <= mPeiLocalTokenCount + 1)) ||
+    if (((*TokenNumber + 1 > mPeiNexTokenCount + 1) && (*TokenNumber + 1 <=
+                                                        mPeiLocalTokenCount +
+                                                        1)) ||
         ((*TokenNumber + 1 > (mPeiLocalTokenCount + mDxeNexTokenCount + 1))))
     {
       return EFI_NOT_FOUND;
@@ -1195,9 +1213,11 @@ DxePcdGetNextToken (
     Status = ExGetNextTokeNumber (
                Guid,
                TokenNumber,
-               (EFI_GUID *)((UINT8 *)mPcdDatabase.PeiDb + mPcdDatabase.PeiDb->GuidTableOffset),
+               (EFI_GUID *)((UINT8 *)mPcdDatabase.PeiDb +
+                            mPcdDatabase.PeiDb->GuidTableOffset),
                mPeiGuidTableSize,
-               (DYNAMICEX_MAPPING *)((UINT8 *)mPcdDatabase.PeiDb + mPcdDatabase.PeiDb->ExMapTableOffset),
+               (DYNAMICEX_MAPPING *)((UINT8 *)mPcdDatabase.PeiDb +
+                                     mPcdDatabase.PeiDb->ExMapTableOffset),
                mPeiExMapppingTableSize
                );
   }
@@ -1210,9 +1230,11 @@ DxePcdGetNextToken (
     Status = ExGetNextTokeNumber (
                Guid,
                TokenNumber,
-               (EFI_GUID *)((UINT8 *)mPcdDatabase.DxeDb + mPcdDatabase.DxeDb->GuidTableOffset),
+               (EFI_GUID *)((UINT8 *)mPcdDatabase.DxeDb +
+                            mPcdDatabase.DxeDb->GuidTableOffset),
                mDxeGuidTableSize,
-               (DYNAMICEX_MAPPING *)((UINT8 *)mPcdDatabase.DxeDb + mPcdDatabase.DxeDb->ExMapTableOffset),
+               (DYNAMICEX_MAPPING *)((UINT8 *)mPcdDatabase.DxeDb +
+                                     mPcdDatabase.DxeDb->ExMapTableOffset),
                mDxeExMapppingTableSize
                );
   }
@@ -1323,32 +1345,53 @@ DxePcdGetNextTokenSpace (
     PeiTokenSpaceTableSize = 0;
 
     if (!PeiExMapTableEmpty) {
-      PeiTokenSpaceTableSize = mPeiExMapppingTableSize / sizeof (DYNAMICEX_MAPPING);
-      PeiTokenSpaceTable     = GetDistinctTokenSpace (
-                                 &PeiTokenSpaceTableSize,
-                                 (DYNAMICEX_MAPPING *)((UINT8 *)mPcdDatabase.PeiDb + mPcdDatabase.PeiDb->ExMapTableOffset),
-                                 (EFI_GUID *)((UINT8 *)mPcdDatabase.PeiDb + mPcdDatabase.PeiDb->GuidTableOffset)
-                                 );
-      CopyMem (TmpTokenSpaceBuffer, PeiTokenSpaceTable, sizeof (EFI_GUID *) * PeiTokenSpaceTableSize);
+      PeiTokenSpaceTableSize = mPeiExMapppingTableSize /
+                               sizeof (DYNAMICEX_MAPPING);
+      PeiTokenSpaceTable = GetDistinctTokenSpace (
+                             &PeiTokenSpaceTableSize,
+                             (DYNAMICEX_MAPPING *)((UINT8 *)mPcdDatabase.
+                                                     PeiDb +
+                                                   mPcdDatabase.PeiDb->
+                                                     ExMapTableOffset),
+                             (EFI_GUID *)((UINT8 *)mPcdDatabase.PeiDb +
+                                          mPcdDatabase.PeiDb->GuidTableOffset)
+                             );
+      CopyMem (
+        TmpTokenSpaceBuffer,
+        PeiTokenSpaceTable,
+        sizeof (EFI_GUID *) *
+        PeiTokenSpaceTableSize
+        );
       TmpTokenSpaceBufferCount = PeiTokenSpaceTableSize;
       FreePool (PeiTokenSpaceTable);
     }
 
     if (!DxeExMapTableEmpty) {
-      DxeTokenSpaceTableSize = mDxeExMapppingTableSize / sizeof (DYNAMICEX_MAPPING);
-      DxeTokenSpaceTable     = GetDistinctTokenSpace (
-                                 &DxeTokenSpaceTableSize,
-                                 (DYNAMICEX_MAPPING *)((UINT8 *)mPcdDatabase.DxeDb + mPcdDatabase.DxeDb->ExMapTableOffset),
-                                 (EFI_GUID *)((UINT8 *)mPcdDatabase.DxeDb + mPcdDatabase.DxeDb->GuidTableOffset)
-                                 );
+      DxeTokenSpaceTableSize = mDxeExMapppingTableSize /
+                               sizeof (DYNAMICEX_MAPPING);
+      DxeTokenSpaceTable = GetDistinctTokenSpace (
+                             &DxeTokenSpaceTableSize,
+                             (DYNAMICEX_MAPPING *)((UINT8 *)mPcdDatabase.
+                                                     DxeDb +
+                                                   mPcdDatabase.DxeDb->
+                                                     ExMapTableOffset),
+                             (EFI_GUID *)((UINT8 *)mPcdDatabase.DxeDb +
+                                          mPcdDatabase.DxeDb->GuidTableOffset)
+                             );
 
       //
       // Make sure EFI_GUID in DxeTokenSpaceTable does not exist in PeiTokenSpaceTable
       //
-      for (Idx2 = 0, Idx3 = PeiTokenSpaceTableSize; Idx2 < DxeTokenSpaceTableSize; Idx2++) {
+      for (Idx2 = 0, Idx3 = PeiTokenSpaceTableSize; Idx2 <
+           DxeTokenSpaceTableSize; Idx2++)
+      {
         Match = FALSE;
         for (Idx = 0; Idx < PeiTokenSpaceTableSize; Idx++) {
-          if (CompareGuid (TmpTokenSpaceBuffer[Idx], DxeTokenSpaceTable[Idx2])) {
+          if (CompareGuid (
+                TmpTokenSpaceBuffer[Idx],
+                DxeTokenSpaceTable[Idx2]
+                ))
+          {
             Match = TRUE;
             break;
           }

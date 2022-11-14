@@ -94,37 +94,145 @@ DumpCsd (
   )
 {
   DEBUG ((DEBUG_INFO, "== Dump Emmc Csd Register==\n"));
-  DEBUG ((DEBUG_INFO, "  CSD structure                    0x%x\n", Csd->CsdStructure));
-  DEBUG ((DEBUG_INFO, "  System specification version     0x%x\n", Csd->SpecVers));
+  DEBUG ((
+    DEBUG_INFO,
+    "  CSD structure                    0x%x\n",
+    Csd->CsdStructure
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  System specification version     0x%x\n",
+    Csd->SpecVers
+    ));
   DEBUG ((DEBUG_INFO, "  Data read access-time 1          0x%x\n", Csd->Taac));
   DEBUG ((DEBUG_INFO, "  Data read access-time 2          0x%x\n", Csd->Nsac));
-  DEBUG ((DEBUG_INFO, "  Max. bus clock frequency         0x%x\n", Csd->TranSpeed));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Max. bus clock frequency         0x%x\n",
+    Csd->TranSpeed
+    ));
   DEBUG ((DEBUG_INFO, "  Device command classes           0x%x\n", Csd->Ccc));
-  DEBUG ((DEBUG_INFO, "  Max. read data block length      0x%x\n", Csd->ReadBlLen));
-  DEBUG ((DEBUG_INFO, "  Partial blocks for read allowed  0x%x\n", Csd->ReadBlPartial));
-  DEBUG ((DEBUG_INFO, "  Write block misalignment         0x%x\n", Csd->WriteBlkMisalign));
-  DEBUG ((DEBUG_INFO, "  Read block misalignment          0x%x\n", Csd->ReadBlkMisalign));
-  DEBUG ((DEBUG_INFO, "  DSR implemented                  0x%x\n", Csd->DsrImp));
-  DEBUG ((DEBUG_INFO, "  Device size                      0x%x\n", Csd->CSizeLow | (Csd->CSizeHigh << 2)));
-  DEBUG ((DEBUG_INFO, "  Max. read current @ VDD min      0x%x\n", Csd->VddRCurrMin));
-  DEBUG ((DEBUG_INFO, "  Max. read current @ VDD max      0x%x\n", Csd->VddRCurrMax));
-  DEBUG ((DEBUG_INFO, "  Max. write current @ VDD min     0x%x\n", Csd->VddWCurrMin));
-  DEBUG ((DEBUG_INFO, "  Max. write current @ VDD max     0x%x\n", Csd->VddWCurrMax));
-  DEBUG ((DEBUG_INFO, "  Device size multiplier           0x%x\n", Csd->CSizeMult));
-  DEBUG ((DEBUG_INFO, "  Erase group size                 0x%x\n", Csd->EraseGrpSize));
-  DEBUG ((DEBUG_INFO, "  Erase group size multiplier      0x%x\n", Csd->EraseGrpMult));
-  DEBUG ((DEBUG_INFO, "  Write protect group size         0x%x\n", Csd->WpGrpSize));
-  DEBUG ((DEBUG_INFO, "  Write protect group enable       0x%x\n", Csd->WpGrpEnable));
-  DEBUG ((DEBUG_INFO, "  Manufacturer default ECC         0x%x\n", Csd->DefaultEcc));
-  DEBUG ((DEBUG_INFO, "  Write speed factor               0x%x\n", Csd->R2WFactor));
-  DEBUG ((DEBUG_INFO, "  Max. write data block length     0x%x\n", Csd->WriteBlLen));
-  DEBUG ((DEBUG_INFO, "  Partial blocks for write allowed 0x%x\n", Csd->WriteBlPartial));
-  DEBUG ((DEBUG_INFO, "  Content protection application   0x%x\n", Csd->ContentProtApp));
-  DEBUG ((DEBUG_INFO, "  File format group                0x%x\n", Csd->FileFormatGrp));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Max. read data block length      0x%x\n",
+    Csd->ReadBlLen
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Partial blocks for read allowed  0x%x\n",
+    Csd->ReadBlPartial
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Write block misalignment         0x%x\n",
+    Csd->WriteBlkMisalign
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Read block misalignment          0x%x\n",
+    Csd->ReadBlkMisalign
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  DSR implemented                  0x%x\n",
+    Csd->DsrImp
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Device size                      0x%x\n",
+    Csd->CSizeLow | (Csd->CSizeHigh << 2)
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Max. read current @ VDD min      0x%x\n",
+    Csd->VddRCurrMin
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Max. read current @ VDD max      0x%x\n",
+    Csd->VddRCurrMax
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Max. write current @ VDD min     0x%x\n",
+    Csd->VddWCurrMin
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Max. write current @ VDD max     0x%x\n",
+    Csd->VddWCurrMax
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Device size multiplier           0x%x\n",
+    Csd->CSizeMult
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Erase group size                 0x%x\n",
+    Csd->EraseGrpSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Erase group size multiplier      0x%x\n",
+    Csd->EraseGrpMult
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Write protect group size         0x%x\n",
+    Csd->WpGrpSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Write protect group enable       0x%x\n",
+    Csd->WpGrpEnable
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Manufacturer default ECC         0x%x\n",
+    Csd->DefaultEcc
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Write speed factor               0x%x\n",
+    Csd->R2WFactor
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Max. write data block length     0x%x\n",
+    Csd->WriteBlLen
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Partial blocks for write allowed 0x%x\n",
+    Csd->WriteBlPartial
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Content protection application   0x%x\n",
+    Csd->ContentProtApp
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  File format group                0x%x\n",
+    Csd->FileFormatGrp
+    ));
   DEBUG ((DEBUG_INFO, "  Copy flag (OTP)                  0x%x\n", Csd->Copy));
-  DEBUG ((DEBUG_INFO, "  Permanent write protection       0x%x\n", Csd->PermWriteProtect));
-  DEBUG ((DEBUG_INFO, "  Temporary write protection       0x%x\n", Csd->TmpWriteProtect));
-  DEBUG ((DEBUG_INFO, "  File format                      0x%x\n", Csd->FileFormat));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Permanent write protection       0x%x\n",
+    Csd->PermWriteProtect
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Temporary write protection       0x%x\n",
+    Csd->TmpWriteProtect
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  File format                      0x%x\n",
+    Csd->FileFormat
+    ));
   DEBUG ((DEBUG_INFO, "  ECC code                         0x%x\n", Csd->Ecc));
 
   return EFI_SUCCESS;
@@ -143,48 +251,216 @@ DumpExtCsd (
   )
 {
   DEBUG ((DEBUG_INFO, "==Dump Emmc ExtCsd Register==\n"));
-  DEBUG ((DEBUG_INFO, "  Supported Command Sets                 0x%x\n", ExtCsd->CmdSet));
-  DEBUG ((DEBUG_INFO, "  HPI features                           0x%x\n", ExtCsd->HpiFeatures));
-  DEBUG ((DEBUG_INFO, "  Background operations support          0x%x\n", ExtCsd->BkOpsSupport));
-  DEBUG ((DEBUG_INFO, "  Background operations status           0x%x\n", ExtCsd->BkopsStatus));
-  DEBUG ((DEBUG_INFO, "  Number of correctly programmed sectors 0x%x\n", *((UINT32 *)&ExtCsd->CorrectlyPrgSectorsNum[0])));
-  DEBUG ((DEBUG_INFO, "  Initialization time after partitioning 0x%x\n", ExtCsd->IniTimeoutAp));
-  DEBUG ((DEBUG_INFO, "  TRIM Multiplier                        0x%x\n", ExtCsd->TrimMult));
-  DEBUG ((DEBUG_INFO, "  Secure Feature support                 0x%x\n", ExtCsd->SecFeatureSupport));
-  DEBUG ((DEBUG_INFO, "  Secure Erase Multiplier                0x%x\n", ExtCsd->SecEraseMult));
-  DEBUG ((DEBUG_INFO, "  Secure TRIM Multiplier                 0x%x\n", ExtCsd->SecTrimMult));
-  DEBUG ((DEBUG_INFO, "  Boot information                       0x%x\n", ExtCsd->BootInfo));
-  DEBUG ((DEBUG_INFO, "  Boot partition size                    0x%x\n", ExtCsd->BootSizeMult));
-  DEBUG ((DEBUG_INFO, "  Access size                            0x%x\n", ExtCsd->AccSize));
-  DEBUG ((DEBUG_INFO, "  High-capacity erase unit size          0x%x\n", ExtCsd->HcEraseGrpSize));
-  DEBUG ((DEBUG_INFO, "  High-capacity erase timeout            0x%x\n", ExtCsd->EraseTimeoutMult));
-  DEBUG ((DEBUG_INFO, "  Reliable write sector count            0x%x\n", ExtCsd->RelWrSecC));
-  DEBUG ((DEBUG_INFO, "  High-capacity write protect group size 0x%x\n", ExtCsd->HcWpGrpSize));
-  DEBUG ((DEBUG_INFO, "  Sleep/awake timeout                    0x%x\n", ExtCsd->SATimeout));
-  DEBUG ((DEBUG_INFO, "  Sector Count                           0x%x\n", *((UINT32 *)&ExtCsd->SecCount[0])));
-  DEBUG ((DEBUG_INFO, "  Partition switching timing             0x%x\n", ExtCsd->PartitionSwitchTime));
-  DEBUG ((DEBUG_INFO, "  Out-of-interrupt busy timing           0x%x\n", ExtCsd->OutOfInterruptTime));
-  DEBUG ((DEBUG_INFO, "  I/O Driver Strength                    0x%x\n", ExtCsd->DriverStrength));
-  DEBUG ((DEBUG_INFO, "  Device type                            0x%x\n", ExtCsd->DeviceType));
-  DEBUG ((DEBUG_INFO, "  CSD STRUCTURE                          0x%x\n", ExtCsd->CsdStructure));
-  DEBUG ((DEBUG_INFO, "  Extended CSD revision                  0x%x\n", ExtCsd->ExtCsdRev));
-  DEBUG ((DEBUG_INFO, "  Command set                            0x%x\n", ExtCsd->CmdSet));
-  DEBUG ((DEBUG_INFO, "  Command set revision                   0x%x\n", ExtCsd->CmdSetRev));
-  DEBUG ((DEBUG_INFO, "  Power class                            0x%x\n", ExtCsd->PowerClass));
-  DEBUG ((DEBUG_INFO, "  High-speed interface timing            0x%x\n", ExtCsd->HsTiming));
-  DEBUG ((DEBUG_INFO, "  Bus width mode                         0x%x\n", ExtCsd->BusWidth));
-  DEBUG ((DEBUG_INFO, "  Erased memory content                  0x%x\n", ExtCsd->ErasedMemCont));
-  DEBUG ((DEBUG_INFO, "  Partition configuration                0x%x\n", ExtCsd->PartitionConfig));
-  DEBUG ((DEBUG_INFO, "  Boot config protection                 0x%x\n", ExtCsd->BootConfigProt));
-  DEBUG ((DEBUG_INFO, "  Boot bus Conditions                    0x%x\n", ExtCsd->BootBusConditions));
-  DEBUG ((DEBUG_INFO, "  High-density erase group definition    0x%x\n", ExtCsd->EraseGroupDef));
-  DEBUG ((DEBUG_INFO, "  Boot write protection status register  0x%x\n", ExtCsd->BootWpStatus));
-  DEBUG ((DEBUG_INFO, "  Boot area write protection register    0x%x\n", ExtCsd->BootWp));
-  DEBUG ((DEBUG_INFO, "  User area write protection register    0x%x\n", ExtCsd->UserWp));
-  DEBUG ((DEBUG_INFO, "  FW configuration                       0x%x\n", ExtCsd->FwConfig));
-  DEBUG ((DEBUG_INFO, "  RPMB Size                              0x%x\n", ExtCsd->RpmbSizeMult));
-  DEBUG ((DEBUG_INFO, "  H/W reset function                     0x%x\n", ExtCsd->RstFunction));
-  DEBUG ((DEBUG_INFO, "  Partitioning Support                   0x%x\n", ExtCsd->PartitioningSupport));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Supported Command Sets                 0x%x\n",
+    ExtCsd->CmdSet
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  HPI features                           0x%x\n",
+    ExtCsd->HpiFeatures
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Background operations support          0x%x\n",
+    ExtCsd->BkOpsSupport
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Background operations status           0x%x\n",
+    ExtCsd->BkopsStatus
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Number of correctly programmed sectors 0x%x\n",
+    *((UINT32 *)&ExtCsd->CorrectlyPrgSectorsNum[0])
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Initialization time after partitioning 0x%x\n",
+    ExtCsd->IniTimeoutAp
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  TRIM Multiplier                        0x%x\n",
+    ExtCsd->TrimMult
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Secure Feature support                 0x%x\n",
+    ExtCsd->SecFeatureSupport
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Secure Erase Multiplier                0x%x\n",
+    ExtCsd->SecEraseMult
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Secure TRIM Multiplier                 0x%x\n",
+    ExtCsd->SecTrimMult
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Boot information                       0x%x\n",
+    ExtCsd->BootInfo
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Boot partition size                    0x%x\n",
+    ExtCsd->BootSizeMult
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Access size                            0x%x\n",
+    ExtCsd->AccSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  High-capacity erase unit size          0x%x\n",
+    ExtCsd->HcEraseGrpSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  High-capacity erase timeout            0x%x\n",
+    ExtCsd->EraseTimeoutMult
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Reliable write sector count            0x%x\n",
+    ExtCsd->RelWrSecC
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  High-capacity write protect group size 0x%x\n",
+    ExtCsd->HcWpGrpSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Sleep/awake timeout                    0x%x\n",
+    ExtCsd->SATimeout
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Sector Count                           0x%x\n",
+    *((UINT32 *)&ExtCsd->SecCount[0])
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Partition switching timing             0x%x\n",
+    ExtCsd->PartitionSwitchTime
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Out-of-interrupt busy timing           0x%x\n",
+    ExtCsd->OutOfInterruptTime
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  I/O Driver Strength                    0x%x\n",
+    ExtCsd->DriverStrength
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Device type                            0x%x\n",
+    ExtCsd->DeviceType
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  CSD STRUCTURE                          0x%x\n",
+    ExtCsd->CsdStructure
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Extended CSD revision                  0x%x\n",
+    ExtCsd->ExtCsdRev
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Command set                            0x%x\n",
+    ExtCsd->CmdSet
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Command set revision                   0x%x\n",
+    ExtCsd->CmdSetRev
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Power class                            0x%x\n",
+    ExtCsd->PowerClass
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  High-speed interface timing            0x%x\n",
+    ExtCsd->HsTiming
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Bus width mode                         0x%x\n",
+    ExtCsd->BusWidth
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Erased memory content                  0x%x\n",
+    ExtCsd->ErasedMemCont
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Partition configuration                0x%x\n",
+    ExtCsd->PartitionConfig
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Boot config protection                 0x%x\n",
+    ExtCsd->BootConfigProt
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Boot bus Conditions                    0x%x\n",
+    ExtCsd->BootBusConditions
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  High-density erase group definition    0x%x\n",
+    ExtCsd->EraseGroupDef
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Boot write protection status register  0x%x\n",
+    ExtCsd->BootWpStatus
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Boot area write protection register    0x%x\n",
+    ExtCsd->BootWp
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  User area write protection register    0x%x\n",
+    ExtCsd->UserWp
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  FW configuration                       0x%x\n",
+    ExtCsd->FwConfig
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  RPMB Size                              0x%x\n",
+    ExtCsd->RpmbSizeMult
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  H/W reset function                     0x%x\n",
+    ExtCsd->RstFunction
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Partitioning Support                   0x%x\n",
+    ExtCsd->PartitioningSupport
+    ));
   DEBUG ((
     DEBUG_INFO,
     "  Max Enhanced Area Size                 0x%02x%02x%02x\n", \
@@ -192,8 +468,16 @@ DumpExtCsd (
     ExtCsd->MaxEnhSizeMult[1],
     ExtCsd->MaxEnhSizeMult[0]
     ));
-  DEBUG ((DEBUG_INFO, "  Partitions attribute                   0x%x\n", ExtCsd->PartitionsAttribute));
-  DEBUG ((DEBUG_INFO, "  Partitioning Setting                   0x%x\n", ExtCsd->PartitionSettingCompleted));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Partitions attribute                   0x%x\n",
+    ExtCsd->PartitionsAttribute
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Partitioning Setting                   0x%x\n",
+    ExtCsd->PartitionSettingCompleted
+    ));
   DEBUG ((
     DEBUG_INFO,
     "  General Purpose Partition 1 Size       0x%02x%02x%02x\n", \
@@ -229,11 +513,31 @@ DumpExtCsd (
     ExtCsd->EnhSizeMult[1],
     ExtCsd->EnhSizeMult[0]
     ));
-  DEBUG ((DEBUG_INFO, "  Enhanced User Data Start Address       0x%x\n", *((UINT32 *)&ExtCsd->EnhStartAddr[0])));
-  DEBUG ((DEBUG_INFO, "  Bad Block Management mode              0x%x\n", ExtCsd->SecBadBlkMgmnt));
-  DEBUG ((DEBUG_INFO, "  Native sector size                     0x%x\n", ExtCsd->NativeSectorSize));
-  DEBUG ((DEBUG_INFO, "  Sector size emulation                  0x%x\n", ExtCsd->UseNativeSector));
-  DEBUG ((DEBUG_INFO, "  Sector size                            0x%x\n", ExtCsd->DataSectorSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Enhanced User Data Start Address       0x%x\n",
+    *((UINT32 *)&ExtCsd->EnhStartAddr[0])
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Bad Block Management mode              0x%x\n",
+    ExtCsd->SecBadBlkMgmnt
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Native sector size                     0x%x\n",
+    ExtCsd->NativeSectorSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Sector size emulation                  0x%x\n",
+    ExtCsd->UseNativeSector
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Sector size                            0x%x\n",
+    ExtCsd->DataSectorSize
+    ));
 
   return EFI_SUCCESS;
 }
@@ -258,11 +562,24 @@ GetEmmcModelName (
   ZeroMem (String, sizeof (String));
   CopyMem (String, &Cid->OemId, sizeof (Cid->OemId));
   String[sizeof (Cid->OemId)] = ' ';
-  CopyMem (String + sizeof (Cid->OemId) + 1, Cid->ProductName, sizeof (Cid->ProductName));
+  CopyMem (
+    String + sizeof (Cid->OemId) + 1,
+    Cid->ProductName,
+    sizeof (Cid->ProductName)
+    );
   String[sizeof (Cid->OemId) + sizeof (Cid->ProductName)] = ' ';
-  CopyMem (String + sizeof (Cid->OemId) + sizeof (Cid->ProductName) + 1, Cid->ProductSerialNumber, sizeof (Cid->ProductSerialNumber));
+  CopyMem (
+    String + sizeof (Cid->OemId) + sizeof (Cid->ProductName) + 1,
+    Cid->ProductSerialNumber,
+    sizeof (Cid->ProductSerialNumber)
+    );
 
-  AsciiStrToUnicodeStrS (String, Device->ModelName, sizeof (Device->ModelName) / sizeof (Device->ModelName[0]));
+  AsciiStrToUnicodeStrS (
+    String,
+    Device->ModelName,
+    sizeof (Device->ModelName) /
+    sizeof (Device->ModelName[0])
+    );
 
   return EFI_SUCCESS;
 }
@@ -347,12 +664,18 @@ DiscoverAllPartitions (
   DumpExtCsd (ExtCsd);
 
   if (ExtCsd->ExtCsdRev < 5) {
-    DEBUG ((DEBUG_ERROR, "The EMMC device version is too low, we don't support!!!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "The EMMC device version is too low, we don't support!!!\n"
+      ));
     return EFI_UNSUPPORTED;
   }
 
   if ((ExtCsd->PartitioningSupport & BIT0) != BIT0) {
-    DEBUG ((DEBUG_ERROR, "The EMMC device doesn't support Partition Feature!!!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "The EMMC device doesn't support Partition Feature!!!\n"
+      ));
     return EFI_UNSUPPORTED;
   }
 
@@ -384,20 +707,64 @@ DiscoverAllPartitions (
         Capacity = ExtCsd->RpmbSizeMult * SIZE_128KB;
         break;
       case EmmcPartitionGP1:
-        GpSizeMult = (UINT32)(ExtCsd->GpSizeMult[0] | (ExtCsd->GpSizeMult[1] << 8) | (ExtCsd->GpSizeMult[2] << 16));
-        Capacity   = MultU64x32 (MultU64x32 (MultU64x32 ((UINT64)GpSizeMult, ExtCsd->HcWpGrpSize), ExtCsd->HcEraseGrpSize), SIZE_512KB);
+        GpSizeMult = (UINT32)(ExtCsd->GpSizeMult[0] | (ExtCsd->GpSizeMult[1] <<
+                                                       8) |
+                              (ExtCsd->GpSizeMult[2] << 16));
+        Capacity   = MultU64x32 (
+                       MultU64x32 (
+                         MultU64x32 (
+                           (UINT64)GpSizeMult,
+                           ExtCsd->HcWpGrpSize
+                           ),
+                         ExtCsd->HcEraseGrpSize
+                         ),
+                       SIZE_512KB
+                       );
         break;
       case EmmcPartitionGP2:
-        GpSizeMult = (UINT32)(ExtCsd->GpSizeMult[3] | (ExtCsd->GpSizeMult[4] << 8) | (ExtCsd->GpSizeMult[5] << 16));
-        Capacity   = MultU64x32 (MultU64x32 (MultU64x32 ((UINT64)GpSizeMult, ExtCsd->HcWpGrpSize), ExtCsd->HcEraseGrpSize), SIZE_512KB);
+        GpSizeMult = (UINT32)(ExtCsd->GpSizeMult[3] | (ExtCsd->GpSizeMult[4] <<
+                                                       8) |
+                              (ExtCsd->GpSizeMult[5] << 16));
+        Capacity   = MultU64x32 (
+                       MultU64x32 (
+                         MultU64x32 (
+                           (UINT64)GpSizeMult,
+                           ExtCsd->HcWpGrpSize
+                           ),
+                         ExtCsd->HcEraseGrpSize
+                         ),
+                       SIZE_512KB
+                       );
         break;
       case EmmcPartitionGP3:
-        GpSizeMult = (UINT32)(ExtCsd->GpSizeMult[6] | (ExtCsd->GpSizeMult[7] << 8) | (ExtCsd->GpSizeMult[8] << 16));
-        Capacity   = MultU64x32 (MultU64x32 (MultU64x32 ((UINT64)GpSizeMult, ExtCsd->HcWpGrpSize), ExtCsd->HcEraseGrpSize), SIZE_512KB);
+        GpSizeMult = (UINT32)(ExtCsd->GpSizeMult[6] | (ExtCsd->GpSizeMult[7] <<
+                                                       8) |
+                              (ExtCsd->GpSizeMult[8] << 16));
+        Capacity   = MultU64x32 (
+                       MultU64x32 (
+                         MultU64x32 (
+                           (UINT64)GpSizeMult,
+                           ExtCsd->HcWpGrpSize
+                           ),
+                         ExtCsd->HcEraseGrpSize
+                         ),
+                       SIZE_512KB
+                       );
         break;
       case EmmcPartitionGP4:
-        GpSizeMult = (UINT32)(ExtCsd->GpSizeMult[9] | (ExtCsd->GpSizeMult[10] << 8) | (ExtCsd->GpSizeMult[11] << 16));
-        Capacity   = MultU64x32 (MultU64x32 (MultU64x32 ((UINT64)GpSizeMult, ExtCsd->HcWpGrpSize), ExtCsd->HcEraseGrpSize), SIZE_512KB);
+        GpSizeMult = (UINT32)(ExtCsd->GpSizeMult[9] | (ExtCsd->GpSizeMult[10] <<
+                                                       8) |
+                              (ExtCsd->GpSizeMult[11] << 16));
+        Capacity   = MultU64x32 (
+                       MultU64x32 (
+                         MultU64x32 (
+                           (UINT64)GpSizeMult,
+                           ExtCsd->HcWpGrpSize
+                           ),
+                         ExtCsd->HcEraseGrpSize
+                         ),
+                       SIZE_512KB
+                       );
         break;
       default:
         ASSERT (FALSE);
@@ -406,17 +773,24 @@ DiscoverAllPartitions (
 
     if (Capacity != 0) {
       Partition->Enable               = TRUE;
-      Partition->BlockMedia.LastBlock = DivU64x32 (Capacity, Partition->BlockMedia.BlockSize) - 1;
+      Partition->BlockMedia.LastBlock = DivU64x32 (
+                                          Capacity,
+                                          Partition->BlockMedia.BlockSize
+                                          ) - 1;
     }
 
     if ((ExtCsd->EraseGroupDef & BIT0) == 0) {
       if (Csd->WriteBlLen < 9) {
         Partition->EraseBlock.EraseLengthGranularity = 1;
       } else {
-        Partition->EraseBlock.EraseLengthGranularity = (Csd->EraseGrpMult + 1) * (Csd->EraseGrpSize + 1) * (1 << (Csd->WriteBlLen - 9));
+        Partition->EraseBlock.EraseLengthGranularity = (Csd->EraseGrpMult + 1) *
+                                                       (Csd->EraseGrpSize + 1) *
+                                                       (1 << (Csd->WriteBlLen -
+                                                              9));
       }
     } else {
-      Partition->EraseBlock.EraseLengthGranularity = 1024 * ExtCsd->HcEraseGrpSize;
+      Partition->EraseBlock.EraseLengthGranularity = 1024 *
+                                                     ExtCsd->HcEraseGrpSize;
     }
   }
 
@@ -454,10 +828,16 @@ InstallProtocolOnPartition (
 
   ControlNode.Header.Type    = HARDWARE_DEVICE_PATH;
   ControlNode.Header.SubType = HW_CONTROLLER_DP;
-  SetDevicePathNodeLength (&ControlNode.Header, sizeof (CONTROLLER_DEVICE_PATH));
+  SetDevicePathNodeLength (
+    &ControlNode.Header,
+    sizeof (CONTROLLER_DEVICE_PATH)
+    );
   ControlNode.ControllerNumber = Index;
 
-  DevicePath = AppendDevicePathNode (ParentDevicePath, (EFI_DEVICE_PATH_PROTOCOL *)&ControlNode);
+  DevicePath = AppendDevicePathNode (
+                 ParentDevicePath,
+                 (EFI_DEVICE_PATH_PROTOCOL *)&ControlNode
+                 );
   if (DevicePath == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;
@@ -465,8 +845,15 @@ InstallProtocolOnPartition (
 
   DeviceHandle        = NULL;
   RemainingDevicePath = DevicePath;
-  Status              = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &DeviceHandle);
-  if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd (RemainingDevicePath)) {
+  Status              = gBS->LocateDevicePath (
+                               &gEfiDevicePathProtocolGuid,
+                               &RemainingDevicePath,
+                               &DeviceHandle
+                               );
+  if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd (
+                                                         RemainingDevicePath
+                                                         ))
+  {
     Status = EFI_ALREADY_STARTED;
     goto Error;
   }
@@ -615,11 +1002,18 @@ DiscoverEmmcDevice (
 
   DeviceHandle         = NULL;
   RemainingEmmcDevPath = NewDevicePath;
-  Status               = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &RemainingEmmcDevPath, &DeviceHandle);
+  Status               = gBS->LocateDevicePath (
+                                &gEfiDevicePathProtocolGuid,
+                                &RemainingEmmcDevPath,
+                                &DeviceHandle
+                                );
   //
   // The device path to the EMMC device doesn't exist. It means the corresponding device private data hasn't been initialized.
   //
-  if (EFI_ERROR (Status) || (DeviceHandle == NULL) || !IsDevicePathEnd (RemainingEmmcDevPath)) {
+  if (EFI_ERROR (Status) || (DeviceHandle == NULL) || !IsDevicePathEnd (
+                                                         RemainingEmmcDevPath
+                                                         ))
+  {
     Device->DevicePath = NewDevicePath;
     Device->Slot       = Slot;
     Device->Private    = Private;
@@ -675,7 +1069,8 @@ DiscoverEmmcDevice (
     Node = (EFI_DEV_PATH *)RemainingDevicePath;
     if ((DevicePathType (&Node->DevPath) != HARDWARE_DEVICE_PATH) ||
         (DevicePathSubType (&Node->DevPath) != HW_CONTROLLER_DP) ||
-        (DevicePathNodeLength (&Node->DevPath) != sizeof (CONTROLLER_DEVICE_PATH)))
+        (DevicePathNodeLength (&Node->DevPath) !=
+         sizeof (CONTROLLER_DEVICE_PATH)))
     {
       Status = EFI_INVALID_PARAMETER;
       goto Error;
@@ -944,7 +1339,13 @@ EmmcDxeDriverBindingStart (
   } else if (!IsDevicePathEnd (RemainingDevicePath)) {
     Status = PassThru->GetSlotNumber (PassThru, RemainingDevicePath, &Slot);
     if (!EFI_ERROR (Status)) {
-      Status = DiscoverEmmcDevice (Private, Slot, NextDevicePathNode (RemainingDevicePath));
+      Status = DiscoverEmmcDevice (
+                 Private,
+                 Slot,
+                 NextDevicePathNode (
+                   RemainingDevicePath
+                   )
+                 );
     }
   }
 

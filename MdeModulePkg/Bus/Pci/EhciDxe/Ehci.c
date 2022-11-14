@@ -23,19 +23,19 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // to the UEFI protocol's port state (change).
 //
 USB_PORT_STATE_MAP  mUsbPortStateMap[] = {
-  { PORTSC_CONN,    USB_PORT_STAT_CONNECTION  },
-  { PORTSC_ENABLED, USB_PORT_STAT_ENABLE      },
-  { PORTSC_SUSPEND, USB_PORT_STAT_SUSPEND     },
-  { PORTSC_OVERCUR, USB_PORT_STAT_OVERCURRENT },
-  { PORTSC_RESET,   USB_PORT_STAT_RESET       },
-  { PORTSC_POWER,   USB_PORT_STAT_POWER       },
-  { PORTSC_OWNER,   USB_PORT_STAT_OWNER       }
+  { PORTSC_CONN,    USB_PORT_STAT_CONNECTION        },
+  { PORTSC_ENABLED, USB_PORT_STAT_ENABLE            },
+  { PORTSC_SUSPEND, USB_PORT_STAT_SUSPEND           },
+  { PORTSC_OVERCUR, USB_PORT_STAT_OVERCURRENT       },
+  { PORTSC_RESET,   USB_PORT_STAT_RESET             },
+  { PORTSC_POWER,   USB_PORT_STAT_POWER             },
+  { PORTSC_OWNER,   USB_PORT_STAT_OWNER             }
 };
 
 USB_PORT_STATE_MAP  mUsbPortChangeMap[] = {
-  { PORTSC_CONN_CHANGE,    USB_PORT_STAT_C_CONNECTION  },
-  { PORTSC_ENABLE_CHANGE,  USB_PORT_STAT_C_ENABLE      },
-  { PORTSC_OVERCUR_CHANGE, USB_PORT_STAT_C_OVERCURRENT }
+  { PORTSC_CONN_CHANGE,    USB_PORT_STAT_C_CONNECTION        },
+  { PORTSC_ENABLE_CHANGE,  USB_PORT_STAT_C_ENABLE            },
+  { PORTSC_OVERCUR_CHANGE, USB_PORT_STAT_C_OVERCURRENT       }
 };
 
 EFI_DRIVER_BINDING_PROTOCOL
@@ -84,7 +84,12 @@ EhcGetCapability (
   *PortNumber     = (UINT8)(Ehc->HcStructParams & HCSP_NPORTS);
   *Is64BitCapable = (UINT8)Ehc->Support64BitDma;
 
-  DEBUG ((DEBUG_INFO, "EhcGetCapability: %d ports, 64 bit %d\n", *PortNumber, *Is64BitCapable));
+  DEBUG ((
+    DEBUG_INFO,
+    "EhcGetCapability: %d ports, 64 bit %d\n",
+    *PortNumber,
+    *Is64BitCapable
+    ));
 
   gBS->RestoreTPL (OldTpl);
   return EFI_SUCCESS;
@@ -347,7 +352,8 @@ EhcGetRootHubPortStatus (
     goto ON_EXIT;
   }
 
-  Offset                       = (UINT32)(EHC_PORT_STAT_OFFSET + (4 * PortNumber));
+  Offset                       = (UINT32)(EHC_PORT_STAT_OFFSET + (4 *
+                                                                  PortNumber));
   PortStatus->PortStatus       = 0;
   PortStatus->PortChangeStatus = 0;
 
@@ -376,7 +382,8 @@ EhcGetRootHubPortStatus (
 
   for (Index = 0; Index < MapSize; Index++) {
     if (EHC_BIT_IS_SET (State, mUsbPortStateMap[Index].HwState)) {
-      PortStatus->PortStatus = (UINT16)(PortStatus->PortStatus | mUsbPortStateMap[Index].UefiState);
+      PortStatus->PortStatus = (UINT16)(PortStatus->PortStatus |
+                                        mUsbPortStateMap[Index].UefiState);
     }
   }
 
@@ -384,7 +391,8 @@ EhcGetRootHubPortStatus (
 
   for (Index = 0; Index < MapSize; Index++) {
     if (EHC_BIT_IS_SET (State, mUsbPortChangeMap[Index].HwState)) {
-      PortStatus->PortChangeStatus = (UINT16)(PortStatus->PortChangeStatus | mUsbPortChangeMap[Index].UefiState);
+      PortStatus->PortChangeStatus = (UINT16)(PortStatus->PortChangeStatus |
+                                              mUsbPortChangeMap[Index].UefiState);
     }
   }
 
@@ -463,7 +471,11 @@ EhcSetRootHubPortFeature (
         Status = EhcRunHC (Ehc, EHC_GENERIC_TIMEOUT);
 
         if (EFI_ERROR (Status)) {
-          DEBUG ((DEBUG_INFO, "EhcSetRootHubPortFeature :failed to start HC - %r\n", Status));
+          DEBUG ((
+            DEBUG_INFO,
+            "EhcSetRootHubPortFeature :failed to start HC - %r\n",
+            Status
+            ));
           break;
         }
       }
@@ -791,7 +803,12 @@ ON_EXIT:
   gBS->RestoreTPL (OldTpl);
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EhcControlTransfer: error - %r, transfer - %x\n", Status, *TransferResult));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EhcControlTransfer: error - %r, transfer - %x\n",
+      Status,
+      *TransferResult
+      ));
   }
 
   return Status;
@@ -932,7 +949,12 @@ ON_EXIT:
   gBS->RestoreTPL (OldTpl);
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EhcBulkTransfer: error - %r, transfer - %x\n", Status, *TransferResult));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EhcBulkTransfer: error - %r, transfer - %x\n",
+      Status,
+      *TransferResult
+      ));
   }
 
   return Status;
@@ -1018,9 +1040,18 @@ EhcAsyncInterruptTransfer (
   // the next data toggle to use.
   //
   if (!IsNewTransfer) {
-    Status = EhciDelAsyncIntTransfer (Ehc, DeviceAddress, EndPointAddress, DataToggle);
+    Status = EhciDelAsyncIntTransfer (
+               Ehc,
+               DeviceAddress,
+               EndPointAddress,
+               DataToggle
+               );
 
-    DEBUG ((DEBUG_INFO, "EhcAsyncInterruptTransfer: remove old transfer - %r\n", Status));
+    DEBUG ((
+      DEBUG_INFO,
+      "EhcAsyncInterruptTransfer: remove old transfer - %r\n",
+      Status
+      ));
     goto ON_EXIT;
   }
 
@@ -1187,7 +1218,12 @@ ON_EXIT:
   gBS->RestoreTPL (OldTpl);
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EhcSyncInterruptTransfer: error - %r, transfer - %x\n", Status, *TransferResult));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EhcSyncInterruptTransfer: error - %r, transfer - %x\n",
+      Status,
+      *TransferResult
+      ));
   }
 
   return Status;
@@ -1358,8 +1394,12 @@ EhcDriverBindingSupported (
   //
   // Test whether the controller belongs to Ehci type
   //
-  if (  (UsbClassCReg.BaseCode != PCI_CLASS_SERIAL) || (UsbClassCReg.SubClassCode != PCI_CLASS_SERIAL_USB)
-     || ((UsbClassCReg.ProgInterface != PCI_IF_EHCI) && (UsbClassCReg.ProgInterface != PCI_IF_UHCI) && (UsbClassCReg.ProgInterface != PCI_IF_OHCI)))
+  if (  (UsbClassCReg.BaseCode != PCI_CLASS_SERIAL) ||
+        (UsbClassCReg.SubClassCode != PCI_CLASS_SERIAL_USB)
+     || ((UsbClassCReg.ProgInterface != PCI_IF_EHCI) &&
+         (UsbClassCReg.ProgInterface != PCI_IF_UHCI) &&
+         (UsbClassCReg.ProgInterface !=
+          PCI_IF_OHCI)))
   {
     Status = EFI_UNSUPPORTED;
   }
@@ -1717,7 +1757,10 @@ EhcDriverBindingStart (
   }
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EhcDriverBindingStart: failed to enable controller\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EhcDriverBindingStart: failed to enable controller\n"
+      ));
     goto CLOSE_PCIIO;
   }
 
@@ -1742,7 +1785,8 @@ EhcDriverBindingStart (
   // companion usb ehci host controller and force EHCI driver get attached to it before
   // UHCI or OHCI driver attaches to UHCI or OHCI host controller.
   //
-  if (((UsbClassCReg.ProgInterface == PCI_IF_UHCI) || (UsbClassCReg.ProgInterface == PCI_IF_OHCI)) &&
+  if (((UsbClassCReg.ProgInterface == PCI_IF_UHCI) ||
+       (UsbClassCReg.ProgInterface == PCI_IF_OHCI)) &&
       (UsbClassCReg.BaseCode == PCI_CLASS_SERIAL) &&
       (UsbClassCReg.SubClassCode == PCI_CLASS_SERIAL_USB))
   {
@@ -1871,7 +1915,10 @@ EhcDriverBindingStart (
                   );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EhcDriverBindingStart: failed to install USB2_HC Protocol\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EhcDriverBindingStart: failed to install USB2_HC Protocol\n"
+      ));
     goto FREE_POOL;
   }
 
@@ -1890,17 +1937,27 @@ EhcDriverBindingStart (
   Status = EhcInitHC (Ehc);
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EhcDriverBindingStart: failed to init host controller\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EhcDriverBindingStart: failed to init host controller\n"
+      ));
     goto UNINSTALL_USBHC;
   }
 
   //
   // Start the asynchronous interrupt monitor
   //
-  Status = gBS->SetTimer (Ehc->PollTimer, TimerPeriodic, EHC_ASYNC_POLL_INTERVAL);
+  Status = gBS->SetTimer (
+                  Ehc->PollTimer,
+                  TimerPeriodic,
+                  EHC_ASYNC_POLL_INTERVAL
+                  );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EhcDriverBindingStart: failed to start async interrupt monitor\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EhcDriverBindingStart: failed to start async interrupt monitor\n"
+      ));
 
     EhcHaltHC (Ehc, EHC_GENERIC_TIMEOUT);
     goto UNINSTALL_USBHC;
@@ -1940,7 +1997,11 @@ EhcDriverBindingStart (
     FALSE
     );
 
-  DEBUG ((DEBUG_INFO, "EhcDriverBindingStart: EHCI started for controller @ %p\n", Controller));
+  DEBUG ((
+    DEBUG_INFO,
+    "EhcDriverBindingStart: EHCI started for controller @ %p\n",
+    Controller
+    ));
   return EFI_SUCCESS;
 
 UNINSTALL_USBHC:

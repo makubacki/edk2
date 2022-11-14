@@ -102,39 +102,135 @@ DumpCsd (
   SD_CSD2  *Csd2;
 
   DEBUG ((DEBUG_INFO, "== Dump Sd Csd Register==\n"));
-  DEBUG ((DEBUG_INFO, "  CSD structure                    0x%x\n", Csd->CsdStructure));
+  DEBUG ((
+    DEBUG_INFO,
+    "  CSD structure                    0x%x\n",
+    Csd->CsdStructure
+    ));
   DEBUG ((DEBUG_INFO, "  Data read access-time 1          0x%x\n", Csd->Taac));
   DEBUG ((DEBUG_INFO, "  Data read access-time 2          0x%x\n", Csd->Nsac));
-  DEBUG ((DEBUG_INFO, "  Max. bus clock frequency         0x%x\n", Csd->TranSpeed));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Max. bus clock frequency         0x%x\n",
+    Csd->TranSpeed
+    ));
   DEBUG ((DEBUG_INFO, "  Device command classes           0x%x\n", Csd->Ccc));
-  DEBUG ((DEBUG_INFO, "  Max. read data block length      0x%x\n", Csd->ReadBlLen));
-  DEBUG ((DEBUG_INFO, "  Partial blocks for read allowed  0x%x\n", Csd->ReadBlPartial));
-  DEBUG ((DEBUG_INFO, "  Write block misalignment         0x%x\n", Csd->WriteBlkMisalign));
-  DEBUG ((DEBUG_INFO, "  Read block misalignment          0x%x\n", Csd->ReadBlkMisalign));
-  DEBUG ((DEBUG_INFO, "  DSR implemented                  0x%x\n", Csd->DsrImp));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Max. read data block length      0x%x\n",
+    Csd->ReadBlLen
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Partial blocks for read allowed  0x%x\n",
+    Csd->ReadBlPartial
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Write block misalignment         0x%x\n",
+    Csd->WriteBlkMisalign
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Read block misalignment          0x%x\n",
+    Csd->ReadBlkMisalign
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  DSR implemented                  0x%x\n",
+    Csd->DsrImp
+    ));
   if (Csd->CsdStructure == 0) {
-    DEBUG ((DEBUG_INFO, "  Device size                      0x%x\n", Csd->CSizeLow | (Csd->CSizeHigh << 2)));
-    DEBUG ((DEBUG_INFO, "  Max. read current @ VDD min      0x%x\n", Csd->VddRCurrMin));
-    DEBUG ((DEBUG_INFO, "  Max. read current @ VDD max      0x%x\n", Csd->VddRCurrMax));
-    DEBUG ((DEBUG_INFO, "  Max. write current @ VDD min     0x%x\n", Csd->VddWCurrMin));
-    DEBUG ((DEBUG_INFO, "  Max. write current @ VDD max     0x%x\n", Csd->VddWCurrMax));
+    DEBUG ((
+      DEBUG_INFO,
+      "  Device size                      0x%x\n",
+      Csd->CSizeLow | (Csd->CSizeHigh << 2)
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "  Max. read current @ VDD min      0x%x\n",
+      Csd->VddRCurrMin
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "  Max. read current @ VDD max      0x%x\n",
+      Csd->VddRCurrMax
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "  Max. write current @ VDD min     0x%x\n",
+      Csd->VddWCurrMin
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "  Max. write current @ VDD max     0x%x\n",
+      Csd->VddWCurrMax
+      ));
   } else {
     Csd2 = (SD_CSD2 *)(VOID *)Csd;
-    DEBUG ((DEBUG_INFO, "  Device size                      0x%x\n", Csd2->CSizeLow | (Csd->CSizeHigh << 16)));
+    DEBUG ((
+      DEBUG_INFO,
+      "  Device size                      0x%x\n",
+      Csd2->CSizeLow | (Csd->CSizeHigh << 16)
+      ));
   }
 
-  DEBUG ((DEBUG_INFO, "  Erase sector size                0x%x\n", Csd->SectorSize));
-  DEBUG ((DEBUG_INFO, "  Erase single block enable        0x%x\n", Csd->EraseBlkEn));
-  DEBUG ((DEBUG_INFO, "  Write protect group size         0x%x\n", Csd->WpGrpSize));
-  DEBUG ((DEBUG_INFO, "  Write protect group enable       0x%x\n", Csd->WpGrpEnable));
-  DEBUG ((DEBUG_INFO, "  Write speed factor               0x%x\n", Csd->R2WFactor));
-  DEBUG ((DEBUG_INFO, "  Max. write data block length     0x%x\n", Csd->WriteBlLen));
-  DEBUG ((DEBUG_INFO, "  Partial blocks for write allowed 0x%x\n", Csd->WriteBlPartial));
-  DEBUG ((DEBUG_INFO, "  File format group                0x%x\n", Csd->FileFormatGrp));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Erase sector size                0x%x\n",
+    Csd->SectorSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Erase single block enable        0x%x\n",
+    Csd->EraseBlkEn
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Write protect group size         0x%x\n",
+    Csd->WpGrpSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Write protect group enable       0x%x\n",
+    Csd->WpGrpEnable
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Write speed factor               0x%x\n",
+    Csd->R2WFactor
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Max. write data block length     0x%x\n",
+    Csd->WriteBlLen
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Partial blocks for write allowed 0x%x\n",
+    Csd->WriteBlPartial
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  File format group                0x%x\n",
+    Csd->FileFormatGrp
+    ));
   DEBUG ((DEBUG_INFO, "  Copy flag (OTP)                  0x%x\n", Csd->Copy));
-  DEBUG ((DEBUG_INFO, "  Permanent write protection       0x%x\n", Csd->PermWriteProtect));
-  DEBUG ((DEBUG_INFO, "  Temporary write protection       0x%x\n", Csd->TmpWriteProtect));
-  DEBUG ((DEBUG_INFO, "  File format                      0x%x\n", Csd->FileFormat));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Permanent write protection       0x%x\n",
+    Csd->PermWriteProtect
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  Temporary write protection       0x%x\n",
+    Csd->TmpWriteProtect
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  File format                      0x%x\n",
+    Csd->FileFormat
+    ));
 
   return EFI_SUCCESS;
 }
@@ -159,11 +255,24 @@ GetSdModelName (
   ZeroMem (String, sizeof (String));
   CopyMem (String, Cid->OemId, sizeof (Cid->OemId));
   String[sizeof (Cid->OemId)] = ' ';
-  CopyMem (String + sizeof (Cid->OemId) + 1, Cid->ProductName, sizeof (Cid->ProductName));
+  CopyMem (
+    String + sizeof (Cid->OemId) + 1,
+    Cid->ProductName,
+    sizeof (Cid->ProductName)
+    );
   String[sizeof (Cid->OemId) + sizeof (Cid->ProductName)] = ' ';
-  CopyMem (String + sizeof (Cid->OemId) + sizeof (Cid->ProductName) + 1, Cid->ProductSerialNumber, sizeof (Cid->ProductSerialNumber));
+  CopyMem (
+    String + sizeof (Cid->OemId) + sizeof (Cid->ProductName) + 1,
+    Cid->ProductSerialNumber,
+    sizeof (Cid->ProductSerialNumber)
+    );
 
-  AsciiStrToUnicodeStrS (String, Device->ModelName, sizeof (Device->ModelName) / sizeof (Device->ModelName[0]));
+  AsciiStrToUnicodeStrS (
+    String,
+    Device->ModelName,
+    sizeof (Device->ModelName) /
+    sizeof (Device->ModelName[0])
+    );
 
   return EFI_SUCCESS;
 }
@@ -202,7 +311,12 @@ DiscoverUserArea (
 
   Status = SdSetRca (Device, &Rca);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "DiscoverUserArea(): Assign new Rca = 0x%x fails with %r\n", Rca, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "DiscoverUserArea(): Assign new Rca = 0x%x fails with %r\n",
+      Rca,
+      Status
+      ));
     return Status;
   }
 
@@ -224,7 +338,12 @@ DiscoverUserArea (
 
   Status = SdSelect (Device, Rca);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "DiscoverUserArea(): Reselect the device 0x%x fails with %r\n", Rca, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "DiscoverUserArea(): Reselect the device 0x%x fails with %r\n",
+      Rca,
+      Status
+      ));
     return Status;
   }
 
@@ -238,7 +357,10 @@ DiscoverUserArea (
     CSize                    = (Csd->CSizeHigh << 2 | Csd->CSizeLow) + 1;
     CSizeMul                 = (1 << (Csd->CSizeMul + 2));
     ReadBlLen                = (1 << (Csd->ReadBlLen));
-    Capacity                 = MultU64x32 (MultU64x32 ((UINT64)CSize, CSizeMul), ReadBlLen);
+    Capacity                 = MultU64x32 (
+                                 MultU64x32 ((UINT64)CSize, CSizeMul),
+                                 ReadBlLen
+                                 );
   } else {
     Device->SectorAddressing = TRUE;
     Csd2                     = (SD_CSD2 *)(VOID *)Csd;
@@ -254,12 +376,18 @@ DiscoverUserArea (
   Device->BlockMedia.RemovableMedia   = TRUE;
   Device->BlockMedia.MediaPresent     = TRUE;
   Device->BlockMedia.LogicalPartition = FALSE;
-  Device->BlockMedia.LastBlock        = DivU64x32 (Capacity, Device->BlockMedia.BlockSize) - 1;
+  Device->BlockMedia.LastBlock        = DivU64x32 (
+                                          Capacity,
+                                          Device->BlockMedia.BlockSize
+                                          ) - 1;
 
   if (Csd->EraseBlkEn) {
     Device->EraseBlock.EraseLengthGranularity = 1;
   } else {
-    Device->EraseBlock.EraseLengthGranularity = (Csd->SectorSize + 1) * (1 << (Csd->WriteBlLen - 9));
+    Device->EraseBlock.EraseLengthGranularity = (Csd->SectorSize + 1) * (1 <<
+                                                                         (Csd->
+                                                                            WriteBlLen
+                                                                          - 9));
   }
 
   return Status;
@@ -329,8 +457,15 @@ DiscoverSdDevice (
 
   DeviceHandle        = NULL;
   RemainingDevicePath = NewDevicePath;
-  Status              = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &DeviceHandle);
-  if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd (RemainingDevicePath)) {
+  Status              = gBS->LocateDevicePath (
+                               &gEfiDevicePathProtocolGuid,
+                               &RemainingDevicePath,
+                               &DeviceHandle
+                               );
+  if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd (
+                                                         RemainingDevicePath
+                                                         ))
+  {
     //
     // The device has been started, directly return to fast boot.
     //

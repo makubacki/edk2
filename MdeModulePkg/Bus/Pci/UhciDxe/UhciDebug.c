@@ -62,7 +62,11 @@ UhciDumpTds (
     DEBUG ((DEBUG_VERBOSE, " EndPoint     - %d\n", CurTdSw->TdHw.EndPoint));
     DEBUG ((DEBUG_VERBOSE, " DataToggle   - %d\n", CurTdSw->TdHw.DataToggle));
     DEBUG ((DEBUG_VERBOSE, " MaxPacketLen - %d\n", CurTdSw->TdHw.MaxPacketLen));
-    DEBUG ((DEBUG_VERBOSE, " DataBuffer   - 0x%x\n\n", CurTdSw->TdHw.DataBuffer));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      " DataBuffer   - 0x%x\n\n",
+      CurTdSw->TdHw.DataBuffer
+      ));
 
     CurTdSw = CurTdSw->NextTd;
   }

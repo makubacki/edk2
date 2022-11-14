@@ -26,12 +26,12 @@ typedef struct {
 } VARIABLE_TYPE;
 
 VARIABLE_TYPE  mVariableType[] = {
-  { EFI_SECURE_BOOT_MODE_NAME,    &gEfiGlobalVariableGuid        },
-  { EFI_PLATFORM_KEY_NAME,        &gEfiGlobalVariableGuid        },
-  { EFI_KEY_EXCHANGE_KEY_NAME,    &gEfiGlobalVariableGuid        },
-  { EFI_IMAGE_SECURITY_DATABASE,  &gEfiImageSecurityDatabaseGuid },
-  { EFI_IMAGE_SECURITY_DATABASE1, &gEfiImageSecurityDatabaseGuid },
-  { EFI_IMAGE_SECURITY_DATABASE2, &gEfiImageSecurityDatabaseGuid },
+  { EFI_SECURE_BOOT_MODE_NAME,    &gEfiGlobalVariableGuid               },
+  { EFI_PLATFORM_KEY_NAME,        &gEfiGlobalVariableGuid               },
+  { EFI_KEY_EXCHANGE_KEY_NAME,    &gEfiGlobalVariableGuid               },
+  { EFI_IMAGE_SECURITY_DATABASE,  &gEfiImageSecurityDatabaseGuid        },
+  { EFI_IMAGE_SECURITY_DATABASE1, &gEfiImageSecurityDatabaseGuid        },
+  { EFI_IMAGE_SECURITY_DATABASE2, &gEfiImageSecurityDatabaseGuid        },
 };
 
 //
@@ -58,7 +58,9 @@ IsSecureBootPolicyVariable (
 {
   UINTN  Index;
 
-  for (Index = 0; Index < sizeof (mVariableType)/sizeof (mVariableType[0]); Index++) {
+  for (Index = 0; Index < sizeof (mVariableType)/sizeof (mVariableType[0]);
+       Index++)
+  {
     if ((StrCmp (VariableName, mVariableType[Index].VariableName) == 0) &&
         (CompareGuid (VendorGuid, mVariableType[Index].VendorGuid)))
     {
@@ -96,11 +98,16 @@ MeasureVariable (
   UEFI_VARIABLE_DATA  *VarLog;
   UINT32              VarLogSize;
 
-  ASSERT ((VarSize == 0 && VarData == NULL) || (VarSize != 0 && VarData != NULL));
+  ASSERT (
+    (VarSize == 0 && VarData == NULL) || (VarSize != 0 && VarData !=
+                                          NULL)
+    );
 
   VarNameLength = StrLen (VarName);
-  VarLogSize    = (UINT32)(sizeof (*VarLog) + VarNameLength * sizeof (*VarName) + VarSize
-                           - sizeof (VarLog->UnicodeName) - sizeof (VarLog->VariableData));
+  VarLogSize    = (UINT32)(sizeof (*VarLog) + VarNameLength *
+                           sizeof (*VarName) + VarSize
+                           - sizeof (VarLog->UnicodeName) -
+                           sizeof (VarLog->VariableData));
 
   VarLog = (UEFI_VARIABLE_DATA *)AllocateZeroPool (VarLogSize);
   if (VarLog == NULL) {
@@ -123,8 +130,18 @@ MeasureVariable (
       );
   }
 
-  DEBUG ((DEBUG_INFO, "VariableDxe: MeasureVariable (Pcr - %x, EventType - %x, ", (UINTN)7, (UINTN)EV_EFI_VARIABLE_DRIVER_CONFIG));
-  DEBUG ((DEBUG_INFO, "VariableName - %s, VendorGuid - %g)\n", VarName, VendorGuid));
+  DEBUG ((
+    DEBUG_INFO,
+    "VariableDxe: MeasureVariable (Pcr - %x, EventType - %x, ",
+    (UINTN)7,
+    (UINTN)EV_EFI_VARIABLE_DRIVER_CONFIG
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "VariableName - %s, VendorGuid - %g)\n",
+    VarName,
+    VendorGuid
+    ));
 
   Status = TpmMeasureAndLogData (
              7,
@@ -176,7 +193,13 @@ InternalGetVariable (
     *Size = 0;
   }
 
-  Status = gRT->GetVariable ((CHAR16 *)Name, (EFI_GUID *)Guid, NULL, &BufferSize, *Value);
+  Status = gRT->GetVariable (
+                  (CHAR16 *)Name,
+                  (EFI_GUID *)Guid,
+                  NULL,
+                  &BufferSize,
+                  *Value
+                  );
   if (Status != EFI_BUFFER_TOO_SMALL) {
     return Status;
   }
@@ -193,7 +216,13 @@ InternalGetVariable (
   //
   // Get the variable data.
   //
-  Status = gRT->GetVariable ((CHAR16 *)Name, (EFI_GUID *)Guid, NULL, &BufferSize, *Value);
+  Status = gRT->GetVariable (
+                  (CHAR16 *)Name,
+                  (EFI_GUID *)Guid,
+                  NULL,
+                  &BufferSize,
+                  *Value
+                  );
   if (EFI_ERROR (Status)) {
     FreePool (*Value);
     *Value = NULL;
@@ -246,7 +275,11 @@ SecureBootHook (
     if ((StrCmp (VariableName, EFI_IMAGE_SECURITY_DATABASE2) == 0) &&
         CompareGuid (VendorGuid, &gEfiImageSecurityDatabaseGuid))
     {
-      DEBUG ((DEBUG_INFO, "Skip measuring variable %s since it's deleted\n", EFI_IMAGE_SECURITY_DATABASE2));
+      DEBUG ((
+        DEBUG_INFO,
+        "Skip measuring variable %s since it's deleted\n",
+        EFI_IMAGE_SECURITY_DATABASE2
+        ));
       return;
     } else {
       VariableData     = NULL;
@@ -292,7 +325,11 @@ SecureBootHook (
       mSecureBootVarData     = VariableData;
       mSecureBootVarDataSize = VariableDataSize;
 
-      DEBUG ((DEBUG_INFO, "%s variable updated according to PK change. Remeasure the value!\n", EFI_SECURE_BOOT_MODE_NAME));
+      DEBUG ((
+        DEBUG_INFO,
+        "%s variable updated according to PK change. Remeasure the value!\n",
+        EFI_SECURE_BOOT_MODE_NAME
+        ));
       Status = MeasureVariable (
                  EFI_SECURE_BOOT_MODE_NAME,
                  &gEfiGlobalVariableGuid,
@@ -338,6 +375,11 @@ RecordSecureBootPolicyVarData (
     //
     // Read could fail when Auth Variable solution is not supported
     //
-    DEBUG ((DEBUG_INFO, "RecordSecureBootPolicyVarData GetVariable %s Status %x\n", EFI_SECURE_BOOT_MODE_NAME, Status));
+    DEBUG ((
+      DEBUG_INFO,
+      "RecordSecureBootPolicyVarData GetVariable %s Status %x\n",
+      EFI_SECURE_BOOT_MODE_NAME,
+      Status
+      ));
   }
 }

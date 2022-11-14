@@ -63,7 +63,11 @@ BootLogoEnableLogo (
   UINTN                                  NewDestY;
   UINTN                                  BufferSize;
 
-  Status = gBS->LocateProtocol (&gEdkiiPlatformLogoProtocolGuid, NULL, (VOID **)&PlatformLogo);
+  Status = gBS->LocateProtocol (
+                  &gEdkiiPlatformLogoProtocolGuid,
+                  NULL,
+                  (VOID **)&PlatformLogo
+                  );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -72,13 +76,21 @@ BootLogoEnableLogo (
   //
   // Try to open GOP first
   //
-  Status = gBS->HandleProtocol (gST->ConsoleOutHandle, &gEfiGraphicsOutputProtocolGuid, (VOID **)&GraphicsOutput);
+  Status = gBS->HandleProtocol (
+                  gST->ConsoleOutHandle,
+                  &gEfiGraphicsOutputProtocolGuid,
+                  (VOID **)&GraphicsOutput
+                  );
   if (EFI_ERROR (Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
     GraphicsOutput = NULL;
     //
     // Open GOP failed, try to open UGA
     //
-    Status = gBS->HandleProtocol (gST->ConsoleOutHandle, &gEfiUgaDrawProtocolGuid, (VOID **)&UgaDraw);
+    Status = gBS->HandleProtocol (
+                    gST->ConsoleOutHandle,
+                    &gEfiUgaDrawProtocolGuid,
+                    (VOID **)&UgaDraw
+                    );
     if (EFI_ERROR (Status)) {
       UgaDraw = NULL;
     }
@@ -91,7 +103,11 @@ BootLogoEnableLogo (
   //
   // Try to open Boot Logo Protocol.
   //
-  Status = gBS->LocateProtocol (&gEfiBootLogoProtocolGuid, NULL, (VOID **)&BootLogo);
+  Status = gBS->LocateProtocol (
+                  &gEfiBootLogoProtocolGuid,
+                  NULL,
+                  (VOID **)&BootLogo
+                  );
   if (EFI_ERROR (Status)) {
     BootLogo = NULL;
   }
@@ -99,7 +115,11 @@ BootLogoEnableLogo (
   //
   // Try to open Boot Logo 2 Protocol.
   //
-  Status = gBS->LocateProtocol (&gEdkiiBootLogo2ProtocolGuid, NULL, (VOID **)&BootLogo2);
+  Status = gBS->LocateProtocol (
+                  &gEdkiiBootLogo2ProtocolGuid,
+                  NULL,
+                  (VOID **)&BootLogo2
+                  );
   if (EFI_ERROR (Status)) {
     BootLogo2 = NULL;
   }
@@ -114,7 +134,13 @@ BootLogoEnableLogo (
     SizeOfY = GraphicsOutput->Mode->Info->VerticalResolution;
   } else {
     ASSERT (UgaDraw != NULL);
-    Status = UgaDraw->GetMode (UgaDraw, &SizeOfX, &SizeOfY, &ColorDepth, &RefreshRate);
+    Status = UgaDraw->GetMode (
+                        UgaDraw,
+                        &SizeOfX,
+                        &SizeOfY,
+                        &ColorDepth,
+                        &RefreshRate
+                        );
     if (EFI_ERROR (Status)) {
       return EFI_UNSUPPORTED;
     }
@@ -217,7 +243,8 @@ BootLogoEnableLogo (
                                    (UINTN)DestY,
                                    Image.Width,
                                    Image.Height,
-                                   Image.Width * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+                                   Image.Width *
+                                   sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
                                    );
       } else {
         ASSERT (UgaDraw != NULL);
@@ -253,10 +280,15 @@ BootLogoEnableLogo (
           //
           // Merge new logo with old one.
           //
-          NewDestX   = MIN ((UINTN)DestX, LogoDestX);
-          NewDestY   = MIN ((UINTN)DestY, LogoDestY);
-          LogoWidth  = MAX ((UINTN)DestX + Image.Width, LogoDestX + LogoWidth) - NewDestX;
-          LogoHeight = MAX ((UINTN)DestY + Image.Height, LogoDestY + LogoHeight) - NewDestY;
+          NewDestX  = MIN ((UINTN)DestX, LogoDestX);
+          NewDestY  = MIN ((UINTN)DestY, LogoDestY);
+          LogoWidth = MAX ((UINTN)DestX + Image.Width, LogoDestX + LogoWidth) -
+                      NewDestX;
+          LogoHeight = MAX (
+                         (UINTN)DestY + Image.Height,
+                         LogoDestY +
+                         LogoHeight
+                         ) - NewDestY;
 
           LogoDestX = NewDestX;
           LogoDestY = NewDestY;
@@ -296,11 +328,14 @@ BootLogoEnableLogo (
     //
     // Ensure the LogoHeight * LogoWidth * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL) doesn't overflow
     //
-    if (LogoHeight > MAX_UINTN / LogoWidth / sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)) {
+    if (LogoHeight > MAX_UINTN / LogoWidth /
+        sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL))
+    {
       return EFI_UNSUPPORTED;
     }
 
-    BufferSize = LogoWidth * LogoHeight * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
+    BufferSize = LogoWidth * LogoHeight *
+                 sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
 
     LogoBlt = AllocatePool (BufferSize);
     if (LogoBlt == NULL) {
@@ -318,7 +353,8 @@ BootLogoEnableLogo (
                                  0,
                                  LogoWidth,
                                  LogoHeight,
-                                 LogoWidth * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+                                 LogoWidth *
+                                 sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
                                  );
     } else {
       Status = UgaDraw->Blt (
@@ -341,7 +377,14 @@ BootLogoEnableLogo (
     // Attempt to register logo with Boot Logo 2 Protocol first
     //
     if (BootLogo2 != NULL) {
-      Status = BootLogo2->SetBootLogo (BootLogo2, LogoBlt, LogoDestX, LogoDestY, LogoWidth, LogoHeight);
+      Status = BootLogo2->SetBootLogo (
+                            BootLogo2,
+                            LogoBlt,
+                            LogoDestX,
+                            LogoDestY,
+                            LogoWidth,
+                            LogoHeight
+                            );
     }
 
     //
@@ -349,7 +392,14 @@ BootLogoEnableLogo (
     // Protocol failed, then attempt to register logo with Boot Logo Protocol
     //
     if (EFI_ERROR (Status) && (BootLogo != NULL)) {
-      Status = BootLogo->SetBootLogo (BootLogo, LogoBlt, LogoDestX, LogoDestY, LogoWidth, LogoHeight);
+      Status = BootLogo->SetBootLogo (
+                           BootLogo,
+                           LogoBlt,
+                           LogoDestX,
+                           LogoDestY,
+                           LogoWidth,
+                           LogoHeight
+                           );
     }
 
     //
@@ -429,11 +479,19 @@ BootLogoUpdateProgress (
   }
 
   UgaDraw = NULL;
-  Status  = gBS->HandleProtocol (gST->ConsoleOutHandle, &gEfiGraphicsOutputProtocolGuid, (VOID **)&GraphicsOutput);
+  Status  = gBS->HandleProtocol (
+                   gST->ConsoleOutHandle,
+                   &gEfiGraphicsOutputProtocolGuid,
+                   (VOID **)&GraphicsOutput
+                   );
   if (EFI_ERROR (Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
     GraphicsOutput = NULL;
 
-    Status = gBS->HandleProtocol (gST->ConsoleOutHandle, &gEfiUgaDrawProtocolGuid, (VOID **)&UgaDraw);
+    Status = gBS->HandleProtocol (
+                    gST->ConsoleOutHandle,
+                    &gEfiUgaDrawProtocolGuid,
+                    (VOID **)&UgaDraw
+                    );
     if (EFI_ERROR (Status)) {
       UgaDraw = NULL;
     }
@@ -488,7 +546,8 @@ BootLogoUpdateProgress (
                                  PosY - EFI_GLYPH_HEIGHT - 1,
                                  SizeOfX,
                                  SizeOfY - (PosY - EFI_GLYPH_HEIGHT - 1),
-                                 SizeOfX * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+                                 SizeOfX *
+                                 sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
                                  );
     } else if (FeaturePcdGet (PcdUgaConsumeSupport)) {
       Status = UgaDraw->Blt (
@@ -524,7 +583,8 @@ BootLogoUpdateProgress (
                                  PosY,
                                  BlockWidth - 1,
                                  BlockHeight,
-                                 (BlockWidth) * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+                                 (BlockWidth) *
+                                 sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
                                  );
     } else if (FeaturePcdGet (PcdUgaConsumeSupport)) {
       Status = UgaDraw->Blt (

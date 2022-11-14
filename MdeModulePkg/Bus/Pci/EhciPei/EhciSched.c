@@ -161,7 +161,11 @@ EhcInitSched (
   // Initialize the frame list entries then set the registers
   //
   Desc    = (UINT32 *)Ehc->PeriodFrame;
-  PciAddr = UsbHcGetPciAddressForHostMem (Ehc->MemPool, Ehc->PeriodOne, sizeof (PEI_EHC_QH));
+  PciAddr = UsbHcGetPciAddressForHostMem (
+              Ehc->MemPool,
+              Ehc->PeriodOne,
+              sizeof (PEI_EHC_QH)
+              );
   for (Index = 0; Index < EHC_FRAME_LEN; Index++) {
     Desc[Index] = QH_LINK (PciAddr, EHC_TYPE_QH, FALSE);
   }
@@ -173,7 +177,11 @@ EhcInitSched (
   // Only need to set the AsynListAddr register to
   // the reclamation header
   //
-  PciAddr = UsbHcGetPciAddressForHostMem (Ehc->MemPool, Ehc->ReclaimHead, sizeof (PEI_EHC_QH));
+  PciAddr = UsbHcGetPciAddressForHostMem (
+              Ehc->MemPool,
+              Ehc->ReclaimHead,
+              sizeof (PEI_EHC_QH)
+              );
   EhcWriteOpReg (Ehc, EHC_ASYNC_HEAD_OFFSET, EHC_LOW_32BIT (PciAddr));
   return EFI_SUCCESS;
 }

@@ -9,7 +9,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "FaultTolerantWrite.h"
 
-EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER  mWorkingBlockHeader = { ZERO_GUID, 0, 0, 0, 0, { 0, 0, 0 }, 0 };
+EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER  mWorkingBlockHeader = {
+  ZERO_GUID, 0, 0, 0, 0, { 0, 0, 0 }, 0
+};
 
 /**
   Initialize a local work space header.
@@ -28,7 +30,8 @@ InitializeLocalWorkSpaceHeader (
   //
   // Check signature with gEdkiiWorkingBlockSignatureGuid.
   //
-  if (CompareGuid (&gEdkiiWorkingBlockSignatureGuid, &mWorkingBlockHeader.Signature)) {
+  if (CompareGuid (&gEdkiiWorkingBlockSignatureGuid,
+        &mWorkingBlockHeader.Signature)) {
     //
     // The local work space header has been initialized.
     //
@@ -49,7 +52,9 @@ InitializeLocalWorkSpaceHeader (
     &gEdkiiWorkingBlockSignatureGuid,
     sizeof (EFI_GUID)
     );
-  mWorkingBlockHeader.WriteQueueSize = WorkSpaceLength - sizeof (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER);
+  mWorkingBlockHeader.WriteQueueSize = WorkSpaceLength -
+                                       sizeof (
+                                                                EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER);
 
   //
   // Crc is calculated with all the fields except Crc and STATE, so leave them as FTW_ERASED_BYTE.
@@ -86,7 +91,8 @@ IsValidWorkSpace (
     return FALSE;
   }
 
-  if (CompareMem (WorkingHeader, &mWorkingBlockHeader, sizeof (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER)) == 0) {
+  if (CompareMem (WorkingHeader, &mWorkingBlockHeader,
+        sizeof (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER)) == 0) {
     return TRUE;
   }
 
@@ -112,7 +118,8 @@ InitWorkSpaceHeader (
     return EFI_INVALID_PARAMETER;
   }
 
-  CopyMem (WorkingHeader, &mWorkingBlockHeader, sizeof (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER));
+  CopyMem (WorkingHeader, &mWorkingBlockHeader,
+    sizeof (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER));
 
   return EFI_SUCCESS;
 }
@@ -294,15 +301,20 @@ WorkSpaceRefresh (
              FtwDevice->FtwWorkSpaceSize,
              &FtwDevice->FtwLastWriteHeader
              );
-  RemainingSpaceSize = FtwDevice->FtwWorkSpaceSize - ((UINTN)FtwDevice->FtwLastWriteHeader - (UINTN)FtwDevice->FtwWorkSpace);
-  DEBUG ((DEBUG_INFO, "Ftw: Remaining work space size - %x\n", RemainingSpaceSize));
+  RemainingSpaceSize = FtwDevice->FtwWorkSpaceSize -
+                       ((UINTN)FtwDevice->FtwLastWriteHeader -
+                        (UINTN)FtwDevice->FtwWorkSpace);
+  DEBUG ((DEBUG_INFO, "Ftw: Remaining work space size - %x\n",
+    RemainingSpaceSize));
   //
   // If FtwGetLastWriteHeader() returns error, or the remaining space size is even not enough to contain
   // one EFI_FAULT_TOLERANT_WRITE_HEADER + one EFI_FAULT_TOLERANT_WRITE_RECORD(It will cause that the header
   // pointed by FtwDevice->FtwLastWriteHeader or record pointed by FtwDevice->FtwLastWriteRecord may contain invalid data),
   // it needs to reclaim work space.
   //
-  if (EFI_ERROR (Status) || (RemainingSpaceSize < sizeof (EFI_FAULT_TOLERANT_WRITE_HEADER) + sizeof (EFI_FAULT_TOLERANT_WRITE_RECORD))) {
+  if (EFI_ERROR (Status) || (RemainingSpaceSize <
+                             sizeof (EFI_FAULT_TOLERANT_WRITE_HEADER) +
+                             sizeof (EFI_FAULT_TOLERANT_WRITE_RECORD))) {
     //
     // reclaim work space in working block.
     //
@@ -441,7 +453,9 @@ FtwReclaimWorkSpace (
                &FtwDevice->FtwLastWriteHeader
                );
     Header = FtwDevice->FtwLastWriteHeader;
-    if (!EFI_ERROR (Status) && (Header != NULL) && (Header->Complete != FTW_VALID_STATE) && (Header->HeaderAllocated == FTW_VALID_STATE)) {
+    if (!EFI_ERROR (Status) && (Header != NULL) && (Header->Complete !=
+                                                    FTW_VALID_STATE) &&
+        (Header->HeaderAllocated == FTW_VALID_STATE)) {
       CopyMem (
         Ptr + sizeof (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER),
         FtwDevice->FtwLastWriteHeader,
@@ -471,8 +485,13 @@ FtwReclaimWorkSpace (
   // Set the WorkingBlockValid and WorkingBlockInvalid as INVALID
   //
   WorkingBlockHeader = (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER *)(TempBuffer +
-                                                                   (UINTN)WorkSpaceLbaOffset * FtwDevice->WorkBlockSize +
-                                                                   FtwDevice->FtwWorkSpaceBase);
+                                                                   (UINTN)
+                                                                   WorkSpaceLbaOffset
+                                                                   * FtwDevice->
+                                                                     WorkBlockSize
+                                                                   +
+                                                                   FtwDevice->
+                                                                     FtwWorkSpaceBase);
   WorkingBlockHeader->WorkingBlockValid   = FTW_INVALID_STATE;
   WorkingBlockHeader->WorkingBlockInvalid = FTW_INVALID_STATE;
 
@@ -553,7 +572,8 @@ FtwReclaimWorkSpace (
              FtwDevice->FtwBackupFvb,
              FtwDevice->SpareBlockSize,
              FtwDevice->FtwSpareLba + FtwDevice->FtwWorkSpaceLbaInSpare,
-             FtwDevice->FtwWorkSpaceBaseInSpare + sizeof (EFI_GUID) + sizeof (UINT32),
+             FtwDevice->FtwWorkSpaceBaseInSpare + sizeof (EFI_GUID) +
+             sizeof (UINT32),
              WORKING_BLOCK_VALID
              );
   if (EFI_ERROR (Status)) {

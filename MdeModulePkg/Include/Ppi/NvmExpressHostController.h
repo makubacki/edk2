@@ -21,7 +21,8 @@
 //
 // Forward declaration for the EDKII_NVM_EXPRESS_HOST_CONTROLLER_PPI.
 //
-typedef struct _EDKII_NVM_EXPRESS_HOST_CONTROLLER_PPI EDKII_NVM_EXPRESS_HOST_CONTROLLER_PPI;
+typedef struct _EDKII_NVM_EXPRESS_HOST_CONTROLLER_PPI
+EDKII_NVM_EXPRESS_HOST_CONTROLLER_PPI;
 
 /**
   Get the MMIO base address of NVM Express host controller.

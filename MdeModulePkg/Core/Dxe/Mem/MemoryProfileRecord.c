@@ -9,7 +9,8 @@
 #include "DxeMain.h"
 #include "Imem.h"
 
-#define IS_UEFI_MEMORY_PROFILE_ENABLED  ((PcdGet8 (PcdMemoryProfilePropertyMask) & BIT0) != 0)
+#define IS_UEFI_MEMORY_PROFILE_ENABLED  \
+  ((PcdGet8 (PcdMemoryProfilePropertyMask) & BIT0) != 0)
 
 #define GET_OCCUPIED_SIZE(ActualSize, Alignment) \
   ((ActualSize) + (((Alignment) - ((ActualSize) & ((Alignment) - 1))) & ((Alignment) - 1)))
@@ -35,8 +36,10 @@ typedef struct {
   LIST_ENTRY                   Link;
 } MEMORY_PROFILE_ALLOC_INFO_DATA;
 
-GLOBAL_REMOVE_IF_UNREFERENCED LIST_ENTRY                   mImageQueue           = INITIALIZE_LIST_HEAD_VARIABLE (mImageQueue);
-GLOBAL_REMOVE_IF_UNREFERENCED MEMORY_PROFILE_CONTEXT_DATA  mMemoryProfileContext = {
+GLOBAL_REMOVE_IF_UNREFERENCED LIST_ENTRY
+  mImageQueue = INITIALIZE_LIST_HEAD_VARIABLE (mImageQueue);
+GLOBAL_REMOVE_IF_UNREFERENCED MEMORY_PROFILE_CONTEXT_DATA
+  mMemoryProfileContext = {
   MEMORY_PROFILE_CONTEXT_SIGNATURE,
   {
     {
@@ -54,13 +57,19 @@ GLOBAL_REMOVE_IF_UNREFERENCED MEMORY_PROFILE_CONTEXT_DATA  mMemoryProfileContext
   },
   &mImageQueue,
 };
-GLOBAL_REMOVE_IF_UNREFERENCED MEMORY_PROFILE_CONTEXT_DATA  *mMemoryProfileContextPtr = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED MEMORY_PROFILE_CONTEXT_DATA  *
+  mMemoryProfileContextPtr = NULL;
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_LOCK                  mMemoryProfileLock            = EFI_INITIALIZE_LOCK_VARIABLE (TPL_NOTIFY);
-GLOBAL_REMOVE_IF_UNREFERENCED BOOLEAN                   mMemoryProfileGettingStatus   = FALSE;
-GLOBAL_REMOVE_IF_UNREFERENCED BOOLEAN                   mMemoryProfileRecordingEnable = MEMORY_PROFILE_RECORDING_DISABLE;
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_PROTOCOL  *mMemoryProfileDriverPath;
-GLOBAL_REMOVE_IF_UNREFERENCED UINTN                     mMemoryProfileDriverPathSize;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_LOCK
+  mMemoryProfileLock = EFI_INITIALIZE_LOCK_VARIABLE (TPL_NOTIFY);
+GLOBAL_REMOVE_IF_UNREFERENCED BOOLEAN
+  mMemoryProfileGettingStatus = FALSE;
+GLOBAL_REMOVE_IF_UNREFERENCED BOOLEAN
+  mMemoryProfileRecordingEnable = MEMORY_PROFILE_RECORDING_DISABLE;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_DEVICE_PATH_PROTOCOL  *
+  mMemoryProfileDriverPath;
+GLOBAL_REMOVE_IF_UNREFERENCED UINTN
+  mMemoryProfileDriverPathSize;
 
 /**
   Get memory profile data.
@@ -202,7 +211,8 @@ ProfileProtocolRecord (
   IN CHAR8                          *ActionString OPTIONAL
   );
 
-GLOBAL_REMOVE_IF_UNREFERENCED EDKII_MEMORY_PROFILE_PROTOCOL  mProfileProtocol = {
+GLOBAL_REMOVE_IF_UNREFERENCED EDKII_MEMORY_PROFILE_PROTOCOL  mProfileProtocol =
+{
   ProfileProtocolGetData,
   ProfileProtocolRegisterImage,
   ProfileProtocolUnregisterImage,
@@ -272,7 +282,9 @@ InternalPeCoffGetSubsystem (
     //
     // DOS image header is present, so read the PE header after the DOS image header.
     //
-    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)Pe32Data + (UINTN)((DosHdr->e_lfanew) & 0x0ffff));
+    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)Pe32Data +
+                                          (UINTN)((DosHdr->e_lfanew) &
+                                                  0x0ffff));
   } else {
     //
     // DOS image header is not present, so PE header is at the image base.
@@ -328,7 +340,9 @@ InternalPeCoffGetEntryPoint (
     //
     // DOS image header is present, so read the PE header after the DOS image header.
     //
-    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)Pe32Data + (UINTN)((DosHdr->e_lfanew) & 0x0ffff));
+    Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINTN)Pe32Data +
+                                          (UINTN)((DosHdr->e_lfanew) &
+                                                  0x0ffff));
   } else {
     //
     // DOS image header is not present, so PE header is at the image base.
@@ -341,10 +355,14 @@ InternalPeCoffGetEntryPoint (
   // AddressOfEntryPoint is common for PE32 & PE32+
   //
   if (Hdr.Te->Signature == EFI_TE_IMAGE_HEADER_SIGNATURE) {
-    *EntryPoint = (VOID *)((UINTN)Pe32Data + (UINTN)(Hdr.Te->AddressOfEntryPoint & 0x0ffffffff) + sizeof (EFI_TE_IMAGE_HEADER) - Hdr.Te->StrippedSize);
+    *EntryPoint = (VOID *)((UINTN)Pe32Data +
+                           (UINTN)(Hdr.Te->AddressOfEntryPoint & 0x0ffffffff) +
+                           sizeof (EFI_TE_IMAGE_HEADER) - Hdr.Te->StrippedSize);
     return RETURN_SUCCESS;
   } else if (Hdr.Pe32->Signature == EFI_IMAGE_NT_SIGNATURE) {
-    *EntryPoint = (VOID *)((UINTN)Pe32Data + (UINTN)(Hdr.Pe32->OptionalHeader.AddressOfEntryPoint & 0x0ffffffff));
+    *EntryPoint = (VOID *)((UINTN)Pe32Data +
+                           (UINTN)(Hdr.Pe32->OptionalHeader.AddressOfEntryPoint
+                                   & 0x0ffffffff));
     return RETURN_SUCCESS;
   }
 
@@ -414,7 +432,8 @@ BuildDriverInfo (
   DriverInfo                   = &DriverInfoData->DriverInfo;
   DriverInfoData->Signature    = MEMORY_PROFILE_DRIVER_INFO_SIGNATURE;
   DriverInfo->Header.Signature = MEMORY_PROFILE_DRIVER_INFO_SIGNATURE;
-  DriverInfo->Header.Length    = (UINT16)(sizeof (MEMORY_PROFILE_DRIVER_INFO) + PdbOccupiedSize);
+  DriverInfo->Header.Length    = (UINT16)(sizeof (MEMORY_PROFILE_DRIVER_INFO) +
+                                          PdbOccupiedSize);
   DriverInfo->Header.Revision  = MEMORY_PROFILE_DRIVER_INFO_REVISION;
   if (FileName != NULL) {
     CopyMem (&DriverInfo->FileName, FileName, sizeof (EFI_GUID));
@@ -424,14 +443,21 @@ BuildDriverInfo (
   DriverInfo->ImageSize      = ImageSize;
   DriverInfo->EntryPoint     = EntryPoint;
   DriverInfo->ImageSubsystem = ImageSubsystem;
-  if ((EntryPoint != 0) && ((EntryPoint < ImageBase) || (EntryPoint >= (ImageBase + ImageSize)))) {
+  if ((EntryPoint != 0) && ((EntryPoint < ImageBase) || (EntryPoint >=
+                                                         (ImageBase +
+                                                          ImageSize))))
+  {
     //
     // If the EntryPoint is not in the range of image buffer, it should come from emulation environment.
     // So patch ImageBuffer here to align the EntryPoint.
     //
-    Status = InternalPeCoffGetEntryPoint ((VOID *)(UINTN)ImageBase, &EntryPointInImage);
+    Status = InternalPeCoffGetEntryPoint (
+               (VOID *)(UINTN)ImageBase,
+               &EntryPointInImage
+               );
     ASSERT_EFI_ERROR (Status);
-    DriverInfo->ImageBase = ImageBase + EntryPoint - (PHYSICAL_ADDRESS)(UINTN)EntryPointInImage;
+    DriverInfo->ImageBase = ImageBase + EntryPoint -
+                            (PHYSICAL_ADDRESS)(UINTN)EntryPointInImage;
   }
 
   DriverInfo->FileType          = FileType;
@@ -475,7 +501,11 @@ NeedRecordThisDriver (
   UINTN                     DevicePathSize;
   UINTN                     FilePathSize;
 
-  if (!IsDevicePathValid (mMemoryProfileDriverPath, mMemoryProfileDriverPathSize)) {
+  if (!IsDevicePathValid (
+         mMemoryProfileDriverPath,
+         mMemoryProfileDriverPathSize
+         ))
+  {
     //
     // Invalid Device Path means record all.
     //
@@ -485,7 +515,8 @@ NeedRecordThisDriver (
   //
   // Record FilePath without END node.
   //
-  FilePathSize = GetDevicePathSize (DriverFilePath) - sizeof (EFI_DEVICE_PATH_PROTOCOL);
+  FilePathSize = GetDevicePathSize (DriverFilePath) -
+                 sizeof (EFI_DEVICE_PATH_PROTOCOL);
 
   DevicePathInstance = mMemoryProfileDriverPath;
   do {
@@ -510,7 +541,9 @@ NeedRecordThisDriver (
     //
     // Get next instance.
     //
-    DevicePathInstance = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)DevicePathInstance + DevicePathSize + DevicePathNodeLength (TmpDevicePath));
+    DevicePathInstance =
+      (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)DevicePathInstance + DevicePathSize +
+                                   DevicePathNodeLength (TmpDevicePath));
   } while (DevicePathSubType (TmpDevicePath) != END_ENTIRE_DEVICE_PATH_SUBTYPE);
 
   return FALSE;
@@ -532,10 +565,13 @@ RegisterDxeCore (
   IN MEMORY_PROFILE_CONTEXT_DATA  *ContextData
   )
 {
-  EFI_PEI_HOB_POINTERS               DxeCoreHob;
-  MEMORY_PROFILE_DRIVER_INFO_DATA    *DriverInfoData;
-  PHYSICAL_ADDRESS                   ImageBase;
-  UINT8                              TempBuffer[sizeof (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH) + sizeof (EFI_DEVICE_PATH_PROTOCOL)];
+  EFI_PEI_HOB_POINTERS             DxeCoreHob;
+  MEMORY_PROFILE_DRIVER_INFO_DATA  *DriverInfoData;
+  PHYSICAL_ADDRESS                 ImageBase;
+  UINT8                            TempBuffer[sizeof (
+                                                      MEDIA_FW_VOL_FILEPATH_DEVICE_PATH)
+                                              + sizeof (EFI_DEVICE_PATH_PROTOCOL)
+  ];
   MEDIA_FW_VOL_FILEPATH_DEVICE_PATH  *FilePath;
 
   ASSERT (ContextData != NULL);
@@ -544,8 +580,16 @@ RegisterDxeCore (
   // Searching for image hob
   //
   DxeCoreHob.Raw = HobStart;
-  while ((DxeCoreHob.Raw = GetNextHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, DxeCoreHob.Raw)) != NULL) {
-    if (CompareGuid (&DxeCoreHob.MemoryAllocationModule->MemoryAllocationHeader.Name, &gEfiHobMemoryAllocModuleGuid)) {
+  while ((DxeCoreHob.Raw = GetNextHob (
+                             EFI_HOB_TYPE_MEMORY_ALLOCATION,
+                             DxeCoreHob.Raw
+                             )) != NULL)
+  {
+    if (CompareGuid (
+          &DxeCoreHob.MemoryAllocationModule->MemoryAllocationHeader.Name,
+          &gEfiHobMemoryAllocModuleGuid
+          ))
+    {
       //
       // Find Dxe Core HOB
       //
@@ -558,19 +602,24 @@ RegisterDxeCore (
   ASSERT (DxeCoreHob.Raw != NULL);
 
   FilePath = (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)TempBuffer;
-  EfiInitializeFwVolDevicepathNode (FilePath, &DxeCoreHob.MemoryAllocationModule->ModuleName);
+  EfiInitializeFwVolDevicepathNode (
+    FilePath,
+    &DxeCoreHob.MemoryAllocationModule->ModuleName
+    );
   SetDevicePathEndNode (FilePath + 1);
 
   if (!NeedRecordThisDriver ((EFI_DEVICE_PATH_PROTOCOL *)FilePath)) {
     return FALSE;
   }
 
-  ImageBase      = DxeCoreHob.MemoryAllocationModule->MemoryAllocationHeader.MemoryBaseAddress;
+  ImageBase =
+    DxeCoreHob.MemoryAllocationModule->MemoryAllocationHeader.MemoryBaseAddress;
   DriverInfoData = BuildDriverInfo (
                      ContextData,
                      &DxeCoreHob.MemoryAllocationModule->ModuleName,
                      ImageBase,
-                     DxeCoreHob.MemoryAllocationModule->MemoryAllocationHeader.MemoryLength,
+                     DxeCoreHob.MemoryAllocationModule->MemoryAllocationHeader.
+                       MemoryLength,
                      DxeCoreHob.MemoryAllocationModule->EntryPoint,
                      InternalPeCoffGetSubsystem ((VOID *)(UINTN)ImageBase),
                      EFI_FV_FILETYPE_DXE_CORE
@@ -612,12 +661,19 @@ MemoryProfileInit (
   }
 
   mMemoryProfileDriverPathSize = PcdGetSize (PcdMemoryProfileDriverPath);
-  mMemoryProfileDriverPath     = AllocateCopyPool (mMemoryProfileDriverPathSize, PcdGetPtr (PcdMemoryProfileDriverPath));
-  mMemoryProfileContextPtr     = &mMemoryProfileContext;
+  mMemoryProfileDriverPath     = AllocateCopyPool (
+                                   mMemoryProfileDriverPathSize,
+                                   PcdGetPtr (PcdMemoryProfileDriverPath)
+                                   );
+  mMemoryProfileContextPtr = &mMemoryProfileContext;
 
   RegisterDxeCore (HobStart, &mMemoryProfileContext);
 
-  DEBUG ((DEBUG_INFO, "MemoryProfileInit MemoryProfileContext - 0x%x\n", &mMemoryProfileContext));
+  DEBUG ((
+    DEBUG_INFO,
+    "MemoryProfileInit MemoryProfileContext - 0x%x\n",
+    &mMemoryProfileContext
+    ));
 }
 
 /**
@@ -671,7 +727,9 @@ GetFileNameFromFilePath (
         break;
       }
 
-      ThisFilePath = (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)NextDevicePathNode (ThisFilePath);
+      ThisFilePath = (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)NextDevicePathNode (
+                                                            ThisFilePath
+                                                            );
     }
   }
 
@@ -857,22 +915,37 @@ UnregisterMemoryProfileImage (
   DriverInfoData = NULL;
   FileName       = GetFileNameFromFilePath (DriverEntry->Info.FilePath);
   ImageAddress   = DriverEntry->ImageContext.ImageAddress;
-  if ((DriverEntry->ImageContext.EntryPoint < ImageAddress) || (DriverEntry->ImageContext.EntryPoint >= (ImageAddress + DriverEntry->ImageContext.ImageSize))) {
+  if ((DriverEntry->ImageContext.EntryPoint < ImageAddress) ||
+      (DriverEntry->ImageContext.EntryPoint >= (ImageAddress +
+                                                DriverEntry->ImageContext.
+                                                  ImageSize)))
+  {
     //
     // If the EntryPoint is not in the range of image buffer, it should come from emulation environment.
     // So patch ImageAddress here to align the EntryPoint.
     //
-    Status = InternalPeCoffGetEntryPoint ((VOID *)(UINTN)ImageAddress, &EntryPointInImage);
+    Status = InternalPeCoffGetEntryPoint (
+               (VOID *)(UINTN)ImageAddress,
+               &EntryPointInImage
+               );
     ASSERT_EFI_ERROR (Status);
-    ImageAddress = ImageAddress + (UINTN)DriverEntry->ImageContext.EntryPoint - (UINTN)EntryPointInImage;
+    ImageAddress = ImageAddress + (UINTN)DriverEntry->ImageContext.EntryPoint -
+                   (UINTN)EntryPointInImage;
   }
 
   if (FileName != NULL) {
-    DriverInfoData = GetMemoryProfileDriverInfoByFileNameAndAddress (ContextData, FileName, ImageAddress);
+    DriverInfoData = GetMemoryProfileDriverInfoByFileNameAndAddress (
+                       ContextData,
+                       FileName,
+                       ImageAddress
+                       );
   }
 
   if (DriverInfoData == NULL) {
-    DriverInfoData = GetMemoryProfileDriverInfoFromAddress (ContextData, ImageAddress);
+    DriverInfoData = GetMemoryProfileDriverInfoFromAddress (
+                       ContextData,
+                       ImageAddress
+                       );
   }
 
   if (DriverInfoData == NULL) {
@@ -1001,7 +1074,10 @@ CoreUpdateProfileAllocate (
     return EFI_UNSUPPORTED;
   }
 
-  DriverInfoData = GetMemoryProfileDriverInfoFromAddress (ContextData, CallerAddress);
+  DriverInfoData = GetMemoryProfileDriverInfoFromAddress (
+                     ContextData,
+                     CallerAddress
+                     );
   if (DriverInfoData == NULL) {
     return EFI_UNSUPPORTED;
   }
@@ -1010,7 +1086,10 @@ CoreUpdateProfileAllocate (
   ActionStringOccupiedSize = 0;
   if (ActionString != NULL) {
     ActionStringSize         = AsciiStrSize (ActionString);
-    ActionStringOccupiedSize = GET_OCCUPIED_SIZE (ActionStringSize, sizeof (UINT64));
+    ActionStringOccupiedSize = GET_OCCUPIED_SIZE (
+                                 ActionStringSize,
+                                 sizeof (UINT64)
+                                 );
   }
 
   //
@@ -1038,7 +1117,8 @@ CoreUpdateProfileAllocate (
   AllocInfo                   = &AllocInfoData->AllocInfo;
   AllocInfoData->Signature    = MEMORY_PROFILE_ALLOC_INFO_SIGNATURE;
   AllocInfo->Header.Signature = MEMORY_PROFILE_ALLOC_INFO_SIGNATURE;
-  AllocInfo->Header.Length    = (UINT16)(sizeof (MEMORY_PROFILE_ALLOC_INFO) + ActionStringOccupiedSize);
+  AllocInfo->Header.Length    = (UINT16)(sizeof (MEMORY_PROFILE_ALLOC_INFO) +
+                                         ActionStringOccupiedSize);
   AllocInfo->Header.Revision  = MEMORY_PROFILE_ALLOC_INFO_REVISION;
   AllocInfo->CallerAddress    = CallerAddress;
   AllocInfo->SequenceId       = ContextData->Context.SequenceCount;
@@ -1073,8 +1153,11 @@ CoreUpdateProfileAllocate (
     }
 
     DriverInfo->CurrentUsageByType[ProfileMemoryIndex] += Size;
-    if (DriverInfo->PeakUsageByType[ProfileMemoryIndex] < DriverInfo->CurrentUsageByType[ProfileMemoryIndex]) {
-      DriverInfo->PeakUsageByType[ProfileMemoryIndex] = DriverInfo->CurrentUsageByType[ProfileMemoryIndex];
+    if (DriverInfo->PeakUsageByType[ProfileMemoryIndex] <
+        DriverInfo->CurrentUsageByType[ProfileMemoryIndex])
+    {
+      DriverInfo->PeakUsageByType[ProfileMemoryIndex] =
+        DriverInfo->CurrentUsageByType[ProfileMemoryIndex];
     }
 
     Context->CurrentTotalUsage += Size;
@@ -1083,8 +1166,11 @@ CoreUpdateProfileAllocate (
     }
 
     Context->CurrentTotalUsageByType[ProfileMemoryIndex] += Size;
-    if (Context->PeakTotalUsageByType[ProfileMemoryIndex] < Context->CurrentTotalUsageByType[ProfileMemoryIndex]) {
-      Context->PeakTotalUsageByType[ProfileMemoryIndex] = Context->CurrentTotalUsageByType[ProfileMemoryIndex];
+    if (Context->PeakTotalUsageByType[ProfileMemoryIndex] <
+        Context->CurrentTotalUsageByType[ProfileMemoryIndex])
+    {
+      Context->PeakTotalUsageByType[ProfileMemoryIndex] =
+        Context->CurrentTotalUsageByType[ProfileMemoryIndex];
     }
   }
 
@@ -1135,7 +1221,8 @@ GetMemoryProfileAllocInfoFromAddress (
     switch (BasicAction) {
       case MemoryProfileActionAllocatePages:
         if ((AllocInfo->Buffer <= (PHYSICAL_ADDRESS)(UINTN)Buffer) &&
-            ((AllocInfo->Buffer + AllocInfo->Size) >= ((PHYSICAL_ADDRESS)(UINTN)Buffer + Size)))
+            ((AllocInfo->Buffer + AllocInfo->Size) >=
+             ((PHYSICAL_ADDRESS)(UINTN)Buffer + Size)))
         {
           return AllocInfoData;
         }
@@ -1197,7 +1284,10 @@ CoreUpdateProfileFree (
     return EFI_UNSUPPORTED;
   }
 
-  DriverInfoData = GetMemoryProfileDriverInfoFromAddress (ContextData, CallerAddress);
+  DriverInfoData = GetMemoryProfileDriverInfoFromAddress (
+                     ContextData,
+                     CallerAddress
+                     );
 
   //
   // Do not return if DriverInfoData == NULL here,
@@ -1214,10 +1304,20 @@ CoreUpdateProfileFree (
     if (DriverInfoData != NULL) {
       switch (BasicAction) {
         case MemoryProfileActionFreePages:
-          AllocInfoData = GetMemoryProfileAllocInfoFromAddress (DriverInfoData, MemoryProfileActionAllocatePages, Size, Buffer);
+          AllocInfoData = GetMemoryProfileAllocInfoFromAddress (
+                            DriverInfoData,
+                            MemoryProfileActionAllocatePages,
+                            Size,
+                            Buffer
+                            );
           break;
         case MemoryProfileActionFreePool:
-          AllocInfoData = GetMemoryProfileAllocInfoFromAddress (DriverInfoData, MemoryProfileActionAllocatePool, 0, Buffer);
+          AllocInfoData = GetMemoryProfileAllocInfoFromAddress (
+                            DriverInfoData,
+                            MemoryProfileActionAllocatePool,
+                            0,
+                            Buffer
+                            );
           break;
         default:
           ASSERT (FALSE);
@@ -1244,10 +1344,20 @@ CoreUpdateProfileFree (
                                );
         switch (BasicAction) {
           case MemoryProfileActionFreePages:
-            AllocInfoData = GetMemoryProfileAllocInfoFromAddress (ThisDriverInfoData, MemoryProfileActionAllocatePages, Size, Buffer);
+            AllocInfoData = GetMemoryProfileAllocInfoFromAddress (
+                              ThisDriverInfoData,
+                              MemoryProfileActionAllocatePages,
+                              Size,
+                              Buffer
+                              );
             break;
           case MemoryProfileActionFreePool:
-            AllocInfoData = GetMemoryProfileAllocInfoFromAddress (ThisDriverInfoData, MemoryProfileActionAllocatePool, 0, Buffer);
+            AllocInfoData = GetMemoryProfileAllocInfoFromAddress (
+                              ThisDriverInfoData,
+                              MemoryProfileActionAllocatePool,
+                              0,
+                              Buffer
+                              );
             break;
           default:
             ASSERT (FALSE);
@@ -1287,7 +1397,9 @@ CoreUpdateProfileFree (
     //
     // Update summary if and only if it is basic action.
     //
-    if (AllocInfo->Action == (AllocInfo->Action & MEMORY_PROFILE_ACTION_BASIC_MASK)) {
+    if (AllocInfo->Action == (AllocInfo->Action &
+                              MEMORY_PROFILE_ACTION_BASIC_MASK))
+    {
       ProfileMemoryIndex = GetProfileMemoryIndex (AllocInfo->MemoryType);
 
       Context->CurrentTotalUsage                           -= AllocInfo->Size;
@@ -1311,12 +1423,15 @@ CoreUpdateProfileFree (
           );
       }
 
-      if (AllocInfo->Buffer + AllocInfo->Size != ((PHYSICAL_ADDRESS)(UINTN)Buffer + Size)) {
+      if (AllocInfo->Buffer + AllocInfo->Size !=
+          ((PHYSICAL_ADDRESS)(UINTN)Buffer + Size))
+      {
         CoreUpdateProfileAllocate (
           AllocInfo->CallerAddress,
           AllocInfo->Action,
           AllocInfo->MemoryType,
-          (UINTN)((AllocInfo->Buffer + AllocInfo->Size) - ((PHYSICAL_ADDRESS)(UINTN)Buffer + Size)),
+          (UINTN)((AllocInfo->Buffer + AllocInfo->Size) -
+                  ((PHYSICAL_ADDRESS)(UINTN)Buffer + Size)),
           (VOID *)((UINTN)Buffer + Size),
           AllocInfoData->ActionString
           );
@@ -1404,13 +1519,27 @@ CoreUpdateProfile (
   CoreAcquireMemoryProfileLock ();
   switch (BasicAction) {
     case MemoryProfileActionAllocatePages:
-      Status = CoreUpdateProfileAllocate (CallerAddress, Action, MemoryType, Size, Buffer, ActionString);
+      Status = CoreUpdateProfileAllocate (
+                 CallerAddress,
+                 Action,
+                 MemoryType,
+                 Size,
+                 Buffer,
+                 ActionString
+                 );
       break;
     case MemoryProfileActionFreePages:
       Status = CoreUpdateProfileFree (CallerAddress, Action, Size, Buffer);
       break;
     case MemoryProfileActionAllocatePool:
-      Status = CoreUpdateProfileAllocate (CallerAddress, Action, MemoryType, Size, Buffer, ActionString);
+      Status = CoreUpdateProfileAllocate (
+                 CallerAddress,
+                 Action,
+                 MemoryType,
+                 Size,
+                 Buffer,
+                 ActionString
+                 );
       break;
     case MemoryProfileActionFreePool:
       Status = CoreUpdateProfileFree (CallerAddress, Action, 0, Buffer);
@@ -1530,13 +1659,22 @@ MemoryProfileCopyData (
                        Link,
                        MEMORY_PROFILE_DRIVER_INFO_SIGNATURE
                        );
-    CopyMem (DriverInfo, &DriverInfoData->DriverInfo, sizeof (MEMORY_PROFILE_DRIVER_INFO));
+    CopyMem (
+      DriverInfo,
+      &DriverInfoData->DriverInfo,
+      sizeof (MEMORY_PROFILE_DRIVER_INFO)
+      );
     if (DriverInfo->PdbStringOffset != 0) {
       PdbSize = AsciiStrSize (DriverInfoData->PdbString);
-      CopyMem ((VOID *)((UINTN)DriverInfo + DriverInfo->PdbStringOffset), DriverInfoData->PdbString, PdbSize);
+      CopyMem (
+        (VOID *)((UINTN)DriverInfo + DriverInfo->PdbStringOffset),
+        DriverInfoData->PdbString,
+        PdbSize
+        );
     }
 
-    AllocInfo = (MEMORY_PROFILE_ALLOC_INFO *)((UINTN)DriverInfo + DriverInfo->Header.Length);
+    AllocInfo = (MEMORY_PROFILE_ALLOC_INFO *)((UINTN)DriverInfo +
+                                              DriverInfo->Header.Length);
 
     AllocInfoList = DriverInfoData->AllocInfoList;
     for (AllocLink = AllocInfoList->ForwardLink;
@@ -1549,13 +1687,22 @@ MemoryProfileCopyData (
                         Link,
                         MEMORY_PROFILE_ALLOC_INFO_SIGNATURE
                         );
-      CopyMem (AllocInfo, &AllocInfoData->AllocInfo, sizeof (MEMORY_PROFILE_ALLOC_INFO));
+      CopyMem (
+        AllocInfo,
+        &AllocInfoData->AllocInfo,
+        sizeof (MEMORY_PROFILE_ALLOC_INFO)
+        );
       if (AllocInfo->ActionStringOffset != 0) {
         ActionStringSize = AsciiStrSize (AllocInfoData->ActionString);
-        CopyMem ((VOID *)((UINTN)AllocInfo + AllocInfo->ActionStringOffset), AllocInfoData->ActionString, ActionStringSize);
+        CopyMem (
+          (VOID *)((UINTN)AllocInfo + AllocInfo->ActionStringOffset),
+          AllocInfoData->ActionString,
+          ActionStringSize
+          );
       }
 
-      AllocInfo = (MEMORY_PROFILE_ALLOC_INFO *)((UINTN)AllocInfo + AllocInfo->Header.Length);
+      AllocInfo = (MEMORY_PROFILE_ALLOC_INFO *)((UINTN)AllocInfo +
+                                                AllocInfo->Header.Length);
     }
 
     DriverInfo = (MEMORY_PROFILE_DRIVER_INFO *)AllocInfo;
@@ -1644,10 +1791,16 @@ ProfileProtocolRegisterImage (
   DriverEntry.Info.FilePath             = FilePath;
   DriverEntry.ImageContext.ImageAddress = ImageBase;
   DriverEntry.ImageContext.ImageSize    = ImageSize;
-  Status                                = InternalPeCoffGetEntryPoint ((VOID *)(UINTN)ImageBase, &EntryPointInImage);
+  Status                                = InternalPeCoffGetEntryPoint (
+                                            (VOID *)(UINTN)ImageBase,
+                                            &EntryPointInImage
+                                            );
   ASSERT_EFI_ERROR (Status);
-  DriverEntry.ImageContext.EntryPoint = (PHYSICAL_ADDRESS)(UINTN)EntryPointInImage;
-  DriverEntry.ImageContext.ImageType  = InternalPeCoffGetSubsystem ((VOID *)(UINTN)ImageBase);
+  DriverEntry.ImageContext.EntryPoint =
+    (PHYSICAL_ADDRESS)(UINTN)EntryPointInImage;
+  DriverEntry.ImageContext.ImageType = InternalPeCoffGetSubsystem (
+                                         (VOID *)(UINTN)ImageBase
+                                         );
 
   return RegisterMemoryProfileImage (&DriverEntry, FileType);
 }
@@ -1683,9 +1836,13 @@ ProfileProtocolUnregisterImage (
   DriverEntry.Info.FilePath             = FilePath;
   DriverEntry.ImageContext.ImageAddress = ImageBase;
   DriverEntry.ImageContext.ImageSize    = ImageSize;
-  Status                                = InternalPeCoffGetEntryPoint ((VOID *)(UINTN)ImageBase, &EntryPointInImage);
+  Status                                = InternalPeCoffGetEntryPoint (
+                                            (VOID *)(UINTN)ImageBase,
+                                            &EntryPointInImage
+                                            );
   ASSERT_EFI_ERROR (Status);
-  DriverEntry.ImageContext.EntryPoint = (PHYSICAL_ADDRESS)(UINTN)EntryPointInImage;
+  DriverEntry.ImageContext.EntryPoint =
+    (PHYSICAL_ADDRESS)(UINTN)EntryPointInImage;
 
   return UnregisterMemoryProfileImage (&DriverEntry);
 }
@@ -1786,7 +1943,14 @@ ProfileProtocolRecord (
   IN CHAR8                          *ActionString OPTIONAL
   )
 {
-  return CoreUpdateProfile (CallerAddress, Action, MemoryType, Size, Buffer, ActionString);
+  return CoreUpdateProfile (
+           CallerAddress,
+           Action,
+           MemoryType,
+           Size,
+           Buffer,
+           ActionString
+           );
 }
 
 ////////////////////

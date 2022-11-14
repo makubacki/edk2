@@ -45,7 +45,8 @@ typedef struct {
   UINTN                                FrameBufferBltLibConfigureSize;
 } GRAPHICS_OUTPUT_PRIVATE_DATA;
 
-#define GRAPHICS_OUTPUT_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('g', 'g', 'o', 'p')
+#define GRAPHICS_OUTPUT_PRIVATE_DATA_SIGNATURE  \
+  SIGNATURE_32 ('g', 'g', 'o', 'p')
 #define GRAPHICS_OUTPUT_PRIVATE_FROM_THIS(a) \
   CR(a, GRAPHICS_OUTPUT_PRIVATE_DATA, GraphicsOutput, GRAPHICS_OUTPUT_PRIVATE_DATA_SIGNATURE)
 

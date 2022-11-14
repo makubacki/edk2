@@ -97,7 +97,9 @@ InitializationDispatcherWorker (
     //
     Hob.Raw = GetFirstGuidHob (&gMemoryStatusCodeRecordGuid);
     if (Hob.Raw != NULL) {
-      PacketHeader    = (MEMORY_STATUSCODE_PACKET_HEADER *)GET_GUID_HOB_DATA (Hob.Guid);
+      PacketHeader = (MEMORY_STATUSCODE_PACKET_HEADER *)GET_GUID_HOB_DATA (
+                                                          Hob.Guid
+                                                          );
       Record          = (MEMORY_STATUSCODE_RECORD *)(PacketHeader + 1);
       MaxRecordNumber = (UINTN)PacketHeader->RecordIndex;
       if (PacketHeader->PacketIndex > 0) {
@@ -169,11 +171,17 @@ StatusCodeHandlerRuntimeDxeEntry (
   InitializationDispatcherWorker ();
 
   if (PcdGetBool (PcdStatusCodeUseSerial)) {
-    mRscHandlerProtocol->Register (SerialStatusCodeReportWorker, TPL_HIGH_LEVEL);
+    mRscHandlerProtocol->Register (
+                           SerialStatusCodeReportWorker,
+                           TPL_HIGH_LEVEL
+                           );
   }
 
   if (PcdGetBool (PcdStatusCodeUseMemory)) {
-    mRscHandlerProtocol->Register (RtMemoryStatusCodeReportWorker, TPL_HIGH_LEVEL);
+    mRscHandlerProtocol->Register (
+                           RtMemoryStatusCodeReportWorker,
+                           TPL_HIGH_LEVEL
+                           );
   }
 
   Status = gBS->CreateEventEx (

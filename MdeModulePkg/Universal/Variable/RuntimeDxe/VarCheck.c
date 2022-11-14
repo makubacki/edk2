@@ -32,9 +32,13 @@ VarCheckRegisterSetVariableCheckHandler (
 {
   EFI_STATUS  Status;
 
-  AcquireLockOnlyAtBootTime (&mVariableModuleGlobal->VariableGlobal.VariableServicesLock);
+  AcquireLockOnlyAtBootTime (
+    &mVariableModuleGlobal->VariableGlobal.VariableServicesLock
+    );
   Status = VarCheckLibRegisterSetVariableCheckHandler (Handler);
-  ReleaseLockOnlyAtBootTime (&mVariableModuleGlobal->VariableGlobal.VariableServicesLock);
+  ReleaseLockOnlyAtBootTime (
+    &mVariableModuleGlobal->VariableGlobal.VariableServicesLock
+    );
 
   return Status;
 }
@@ -64,9 +68,13 @@ VarCheckVariablePropertySet (
 {
   EFI_STATUS  Status;
 
-  AcquireLockOnlyAtBootTime (&mVariableModuleGlobal->VariableGlobal.VariableServicesLock);
+  AcquireLockOnlyAtBootTime (
+    &mVariableModuleGlobal->VariableGlobal.VariableServicesLock
+    );
   Status = VarCheckLibVariablePropertySet (Name, Guid, VariableProperty);
-  ReleaseLockOnlyAtBootTime (&mVariableModuleGlobal->VariableGlobal.VariableServicesLock);
+  ReleaseLockOnlyAtBootTime (
+    &mVariableModuleGlobal->VariableGlobal.VariableServicesLock
+    );
 
   return Status;
 }
@@ -93,9 +101,13 @@ VarCheckVariablePropertyGet (
 {
   EFI_STATUS  Status;
 
-  AcquireLockOnlyAtBootTime (&mVariableModuleGlobal->VariableGlobal.VariableServicesLock);
+  AcquireLockOnlyAtBootTime (
+    &mVariableModuleGlobal->VariableGlobal.VariableServicesLock
+    );
   Status = VarCheckLibVariablePropertyGet (Name, Guid, VariableProperty);
-  ReleaseLockOnlyAtBootTime (&mVariableModuleGlobal->VariableGlobal.VariableServicesLock);
+  ReleaseLockOnlyAtBootTime (
+    &mVariableModuleGlobal->VariableGlobal.VariableServicesLock
+    );
 
   return Status;
 }

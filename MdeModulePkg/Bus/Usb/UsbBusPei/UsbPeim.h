@@ -58,12 +58,16 @@ typedef struct {
   EFI_USB_INTERFACE_DESCRIPTOR          *InterfaceDesc;
   EFI_USB_INTERFACE_DESCRIPTOR          *InterfaceDescList[MAX_INTERFACE];
   EFI_USB_ENDPOINT_DESCRIPTOR           *EndpointDesc[MAX_ENDPOINT];
-  EFI_USB_ENDPOINT_DESCRIPTOR           *EndpointDescList[MAX_INTERFACE][MAX_ENDPOINT];
+  EFI_USB_ENDPOINT_DESCRIPTOR           *EndpointDescList[MAX_INTERFACE][
+                                                                         MAX_ENDPOINT
+  ];
   EFI_USB2_HC_TRANSACTION_TRANSLATOR    Translator;
   UINT8                                 Tier;
 } PEI_USB_DEVICE;
 
-#define PEI_USB_DEVICE_FROM_THIS(a)  CR (a, PEI_USB_DEVICE, UsbIoPpi, PEI_USB_DEVICE_SIGNATURE)
+#define PEI_USB_DEVICE_FROM_THIS( \
+                                a)  \
+  CR (a, PEI_USB_DEVICE, UsbIoPpi, PEI_USB_DEVICE_SIGNATURE)
 
 #define USB_BIT_IS_SET(Data, Bit)  ((BOOLEAN)(((Data) & (Bit)) == (Bit)))
 

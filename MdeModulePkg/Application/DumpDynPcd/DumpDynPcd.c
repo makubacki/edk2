@@ -30,7 +30,8 @@
 // the resource section. Thus the application can use '-?' option to show help message in
 // Shell.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_STRING_ID  mStrDumpDynPcdHelpTokenId = STRING_TOKEN (STR_DUMP_DYN_PCD_HELP_INFORMATION);
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_STRING_ID  mStrDumpDynPcdHelpTokenId =
+  STRING_TOKEN (STR_DUMP_DYN_PCD_HELP_INFORMATION);
 
 #define MAJOR_VERSION  1
 #define MINOR_VERSION  0
@@ -43,7 +44,9 @@ static GET_PCD_INFO_PROTOCOL           *mPcdInfo              = NULL;
 static CHAR16                          *mTempPcdNameBuffer    = NULL;
 static UINTN                           mTempPcdNameBufferSize = 0;
 
-static CONST CHAR8  mHex[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+static CONST CHAR8  mHex[] = {
+  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+};
 
 static UINTN   Argc;
 static CHAR16  **Argv;
@@ -101,8 +104,10 @@ ShowHelp (
   Print (L"DumpDynPcd [PcdName]\n");
   Print (L"\n");
   Print (L"  PcdName    Specifies the name of PCD.\n");
-  Print (L"             A literal[or partial] name or a pattern as specified in\n");
-  Print (L"             the MetaiMatch() function of the EFI_UNICODE_COLLATION2_PROCOOL.\n");
+  Print (
+    L"             A literal[or partial] name or a pattern as specified in\n");
+  Print (
+    L"             the MetaiMatch() function of the EFI_UNICODE_COLLATION2_PROCOOL.\n");
   Print (L"             If it is absent, dump all PCDs' info.\n");
   Print (L"The PCD data is printed as hexadecimal dump.\n");
 }
@@ -146,7 +151,8 @@ DumpHex (
       Val[Index * 3 + 0] = mHex[TempByte >> 4];
       Val[Index * 3 + 1] = mHex[TempByte & 0xF];
       Val[Index * 3 + 2] = (CHAR8)((Index == 7) ? '-' : ' ');
-      Str[Index]         = (CHAR8)((TempByte < ' ' || TempByte > 'z') ? '.' : TempByte);
+      Str[Index]         = (CHAR8)((TempByte < ' ' || TempByte > 'z') ? '.' :
+                                   TempByte);
     }
 
     Val[Index * 3] = 0;
@@ -361,7 +367,8 @@ DumpPcdInfo (
         Uint8 = mPiPcd->Get8 (TokenSpace, TokenNumber);
       }
 
-      Print (L"  Token = 0x%08x - Type = %-17s - Size = 0x%x - Value = 0x%x\n", TokenNumber, RetString, PcdInfo->PcdSize, Uint8);
+      Print (L"  Token = 0x%08x - Type = %-17s - Size = 0x%x - Value = 0x%x\n",
+        TokenNumber, RetString, PcdInfo->PcdSize, Uint8);
       break;
     case EFI_PCD_TYPE_16:
       if (TokenSpace == NULL) {
@@ -370,7 +377,8 @@ DumpPcdInfo (
         Uint16 = mPiPcd->Get16 (TokenSpace, TokenNumber);
       }
 
-      Print (L"  Token = 0x%08x - Type = %-17s - Size = 0x%x - Value = 0x%x\n", TokenNumber, RetString, PcdInfo->PcdSize, Uint16);
+      Print (L"  Token = 0x%08x - Type = %-17s - Size = 0x%x - Value = 0x%x\n",
+        TokenNumber, RetString, PcdInfo->PcdSize, Uint16);
       break;
     case EFI_PCD_TYPE_32:
       if (TokenSpace == NULL) {
@@ -379,7 +387,8 @@ DumpPcdInfo (
         Uint32 = mPiPcd->Get32 (TokenSpace, TokenNumber);
       }
 
-      Print (L"  Token = 0x%08x - Type = %-17s - Size = 0x%x - Value = 0x%x\n", TokenNumber, RetString, PcdInfo->PcdSize, Uint32);
+      Print (L"  Token = 0x%08x - Type = %-17s - Size = 0x%x - Value = 0x%x\n",
+        TokenNumber, RetString, PcdInfo->PcdSize, Uint32);
       break;
     case EFI_PCD_TYPE_64:
       if (TokenSpace == NULL) {
@@ -388,7 +397,8 @@ DumpPcdInfo (
         Uint64 = mPiPcd->Get64 (TokenSpace, TokenNumber);
       }
 
-      Print (L"  Token = 0x%08x - Type = %-17s - Size = 0x%x - Value = 0x%lx\n", TokenNumber, RetString, PcdInfo->PcdSize, Uint64);
+      Print (L"  Token = 0x%08x - Type = %-17s - Size = 0x%x - Value = 0x%lx\n",
+        TokenNumber, RetString, PcdInfo->PcdSize, Uint64);
       break;
     case EFI_PCD_TYPE_BOOL:
       if (TokenSpace == NULL) {
@@ -397,7 +407,8 @@ DumpPcdInfo (
         Boolean = mPiPcd->GetBool (TokenSpace, TokenNumber);
       }
 
-      Print (L"  Token = 0x%08x - Type = %-17s - Size = 0x%x - Value = %a\n", TokenNumber, RetString, PcdInfo->PcdSize, Boolean ? "TRUE" : "FALSE");
+      Print (L"  Token = 0x%08x - Type = %-17s - Size = 0x%x - Value = %a\n",
+        TokenNumber, RetString, PcdInfo->PcdSize, Boolean ? "TRUE" : "FALSE");
       break;
     case EFI_PCD_TYPE_PTR:
       if (TokenSpace == NULL) {
@@ -406,7 +417,8 @@ DumpPcdInfo (
         PcdData = mPiPcd->GetPtr (TokenSpace, TokenNumber);
       }
 
-      Print (L"  Token = 0x%08x - Type = %-17s - Size = 0x%x\n", TokenNumber, RetString, PcdInfo->PcdSize);
+      Print (L"  Token = 0x%08x - Type = %-17s - Size = 0x%x\n", TokenNumber,
+        RetString, PcdInfo->PcdSize);
       DumpHex (2, 0, PcdInfo->PcdSize, PcdData);
       break;
     default:
@@ -475,7 +487,8 @@ ProcessPcd (
             mTempPcdNameBufferSize = PcdNameSize;
             mTempPcdNameBuffer     = AllocatePool (mTempPcdNameBufferSize);
           } else if (mTempPcdNameBufferSize < PcdNameSize) {
-            mTempPcdNameBuffer     = ReallocatePool (mTempPcdNameBufferSize, PcdNameSize, mTempPcdNameBuffer);
+            mTempPcdNameBuffer = ReallocatePool (mTempPcdNameBufferSize,
+                                   PcdNameSize, mTempPcdNameBuffer);
             mTempPcdNameBufferSize = PcdNameSize;
           }
 
@@ -483,12 +496,16 @@ ProcessPcd (
             return EFI_OUT_OF_RESOURCES;
           }
 
-          AsciiStrToUnicodeStrS (PcdInfo.PcdName, mTempPcdNameBuffer, mTempPcdNameBufferSize / sizeof (CHAR16));
+          AsciiStrToUnicodeStrS (PcdInfo.PcdName, mTempPcdNameBuffer,
+            mTempPcdNameBufferSize / sizeof (CHAR16));
           //
           // Compare the input PCD name with the PCD name in PCD database.
           //
           if ((StrStr (mTempPcdNameBuffer, InputPcdName) != NULL) ||
-              ((mUnicodeCollation != NULL) && mUnicodeCollation->MetaiMatch (mUnicodeCollation, mTempPcdNameBuffer, InputPcdName)))
+              ((mUnicodeCollation != NULL) && mUnicodeCollation->MetaiMatch (
+                                                                   mUnicodeCollation,
+                                                                   mTempPcdNameBuffer,
+                                                                   InputPcdName)))
           {
             //
             // Found matched PCD.
@@ -541,7 +558,8 @@ DumpDynPcdMain (
 
   InputPcdName = NULL;
 
-  Status = gBS->LocateProtocol (&gEfiUnicodeCollation2ProtocolGuid, NULL, (VOID **)&mUnicodeCollation);
+  Status = gBS->LocateProtocol (&gEfiUnicodeCollation2ProtocolGuid, NULL,
+                  (VOID **)&mUnicodeCollation);
   if (EFI_ERROR (Status)) {
     mUnicodeCollation = NULL;
   }
@@ -552,7 +570,8 @@ DumpDynPcdMain (
     return Status;
   }
 
-  Status = gBS->LocateProtocol (&gEfiGetPcdInfoProtocolGuid, NULL, (VOID **)&mPiPcdInfo);
+  Status = gBS->LocateProtocol (&gEfiGetPcdInfoProtocolGuid, NULL,
+                  (VOID **)&mPiPcdInfo);
   if (EFI_ERROR (Status)) {
     Print (L"DumpDynPcd: Error. PI PCD info protocol is not present.\n");
     return Status;
@@ -564,7 +583,8 @@ DumpDynPcdMain (
     return Status;
   }
 
-  Status = gBS->LocateProtocol (&gGetPcdInfoProtocolGuid, NULL, (VOID **)&mPcdInfo);
+  Status = gBS->LocateProtocol (&gGetPcdInfoProtocolGuid, NULL,
+                  (VOID **)&mPcdInfo);
   if (EFI_ERROR (Status)) {
     Print (L"DumpDynPcd: Error. PCD info protocol is not present.\n");
     return Status;
@@ -591,7 +611,8 @@ DumpDynPcdMain (
     goto Done;
   }
 
-  if ((StrCmp (Argv[1], L"-?") == 0) || (StrCmp (Argv[1], L"-h") == 0) || (StrCmp (Argv[1], L"-H") == 0)) {
+  if ((StrCmp (Argv[1], L"-?") == 0) || (StrCmp (Argv[1], L"-h") == 0) ||
+      (StrCmp (Argv[1], L"-H") == 0)) {
     ShowHelp ();
     goto Done;
   } else {

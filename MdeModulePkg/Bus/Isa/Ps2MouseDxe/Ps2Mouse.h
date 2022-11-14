@@ -94,7 +94,9 @@ typedef struct {
   EFI_DEVICE_PATH_PROTOCOL       *DevicePath;
 } PS2_MOUSE_DEV;
 
-#define PS2_MOUSE_DEV_FROM_THIS(a)  CR (a, PS2_MOUSE_DEV, SimplePointerProtocol, PS2_MOUSE_DEV_SIGNATURE)
+#define PS2_MOUSE_DEV_FROM_THIS( \
+                               a)  \
+  CR (a, PS2_MOUSE_DEV, SimplePointerProtocol, PS2_MOUSE_DEV_SIGNATURE)
 
 //
 // Function prototypes

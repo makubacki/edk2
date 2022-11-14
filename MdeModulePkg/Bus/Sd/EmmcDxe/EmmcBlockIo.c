@@ -350,7 +350,8 @@ EmmcSetExtCsd (
   //
   // Write the Value to the field specified by Offset.
   //
-  CommandArgument                           = (Value << 8) | (Offset << 16) | BIT24 | BIT25;
+  CommandArgument = (Value << 8) | (Offset << 16) |
+                    BIT24 | BIT25;
   SetExtCsdReq->SdMmcCmdBlk.CommandArgument = CommandArgument;
 
   SetExtCsdReq->IsEnd = IsEnd;
@@ -371,7 +372,12 @@ EmmcSetExtCsd (
     SetExtCsdReq->Event = NULL;
   }
 
-  Status = PassThru->PassThru (PassThru, Device->Slot, &SetExtCsdReq->Packet, SetExtCsdReq->Event);
+  Status = PassThru->PassThru (
+                       PassThru,
+                       Device->Slot,
+                       &SetExtCsdReq->Packet,
+                       SetExtCsdReq->Event
+                       );
 
 Error:
   if ((Token != NULL) && (Token->Event != NULL)) {
@@ -474,7 +480,12 @@ EmmcSetBlkCount (
     SetBlkCntReq->Event = NULL;
   }
 
-  Status = PassThru->PassThru (PassThru, Device->Slot, &SetBlkCntReq->Packet, SetBlkCntReq->Event);
+  Status = PassThru->PassThru (
+                       PassThru,
+                       Device->Slot,
+                       &SetBlkCntReq->Packet,
+                       SetBlkCntReq->Event
+                       );
 
 Error:
   if ((Token != NULL) && (Token->Event != NULL)) {
@@ -584,7 +595,9 @@ EmmcProtocolInOut (
     ProtocolReq->SdMmcCmdBlk.ResponseType = SdMmcResponseTypeR1;
   }
 
-  ProtocolReq->SdMmcCmdBlk.CommandArgument = (SecurityProtocol << 8) | (SecurityProtocolSpecificData << 16);
+  ProtocolReq->SdMmcCmdBlk.CommandArgument = (SecurityProtocol << 8) |
+                                             (SecurityProtocolSpecificData <<
+                                              16);
   //
   // Convert to 1 microsecond unit.
   //
@@ -608,7 +621,12 @@ EmmcProtocolInOut (
     ProtocolReq->Event = NULL;
   }
 
-  Status = PassThru->PassThru (PassThru, Device->Slot, &ProtocolReq->Packet, ProtocolReq->Event);
+  Status = PassThru->PassThru (
+                       PassThru,
+                       Device->Slot,
+                       &ProtocolReq->Packet,
+                       ProtocolReq->Event
+                       );
 
 Error:
   if ((Token != NULL) && (Token->Event != NULL)) {
@@ -701,7 +719,8 @@ EmmcRwMultiBlocks (
   // transfer speed (2.4MB/s).
   // Refer to eMMC 5.0 spec section 6.9.1 for details.
   //
-  RwMultiBlkReq->Packet.Timeout = (BufferSize / (2 * 1024 * 1024) + 1) * 1000 * 1000;
+  RwMultiBlkReq->Packet.Timeout = (BufferSize / (2 * 1024 * 1024) + 1) * 1000 *
+                                  1000;
 
   if (IsRead) {
     RwMultiBlkReq->Packet.InDataBuffer     = Buffer;
@@ -722,7 +741,11 @@ EmmcRwMultiBlocks (
   if (Partition->Device->SectorAddressing) {
     RwMultiBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32)Lba;
   } else {
-    RwMultiBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (Lba, Partition->BlockMedia.BlockSize);
+    RwMultiBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (
+                                                           Lba,
+                                                           Partition->BlockMedia
+                                                             .BlockSize
+                                                           );
   }
 
   RwMultiBlkReq->IsEnd = IsEnd;
@@ -743,7 +766,12 @@ EmmcRwMultiBlocks (
     RwMultiBlkReq->Event = NULL;
   }
 
-  Status = PassThru->PassThru (PassThru, Device->Slot, &RwMultiBlkReq->Packet, RwMultiBlkReq->Event);
+  Status = PassThru->PassThru (
+                       PassThru,
+                       Device->Slot,
+                       &RwMultiBlkReq->Packet,
+                       RwMultiBlkReq->Event
+                       );
 
 Error:
   if ((Token != NULL) && (Token->Event != NULL)) {
@@ -876,7 +904,16 @@ EmmcReadWrite (
   if ((PartitionConfig & 0x7) != Partition->PartitionType) {
     PartitionConfig &= (UINT8) ~0x7;
     PartitionConfig |= Partition->PartitionType;
-    Status           = EmmcSetExtCsd (Partition, OFFSET_OF (EMMC_EXT_CSD, PartitionConfig), PartitionConfig, Token, FALSE);
+    Status           = EmmcSetExtCsd (
+                         Partition,
+                         OFFSET_OF (
+                           EMMC_EXT_CSD,
+                           PartitionConfig
+                           ),
+                         PartitionConfig,
+                         Token,
+                         FALSE
+                         );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -904,7 +941,15 @@ EmmcReadWrite (
     }
 
     BufferSize = BlockNum * BlockSize;
-    Status     = EmmcRwMultiBlocks (Partition, Lba, Buffer, BufferSize, IsRead, Token, LastRw);
+    Status     = EmmcRwMultiBlocks (
+                   Partition,
+                   Lba,
+                   Buffer,
+                   BufferSize,
+                   IsRead,
+                   Token,
+                   LastRw
+                   );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -995,7 +1040,15 @@ EmmcReadBlocks (
 
   Partition = EMMC_PARTITION_DATA_FROM_BLKIO (This);
 
-  Status = EmmcReadWrite (Partition, MediaId, Lba, Buffer, BufferSize, TRUE, NULL);
+  Status = EmmcReadWrite (
+             Partition,
+             MediaId,
+             Lba,
+             Buffer,
+             BufferSize,
+             TRUE,
+             NULL
+             );
   return Status;
 }
 
@@ -1034,7 +1087,15 @@ EmmcWriteBlocks (
 
   Partition = EMMC_PARTITION_DATA_FROM_BLKIO (This);
 
-  Status = EmmcReadWrite (Partition, MediaId, Lba, Buffer, BufferSize, FALSE, NULL);
+  Status = EmmcReadWrite (
+             Partition,
+             MediaId,
+             Lba,
+             Buffer,
+             BufferSize,
+             FALSE,
+             NULL
+             );
   return Status;
 }
 
@@ -1153,7 +1214,15 @@ EmmcReadBlocksEx (
 
   Partition = EMMC_PARTITION_DATA_FROM_BLKIO2 (This);
 
-  Status = EmmcReadWrite (Partition, MediaId, Lba, Buffer, BufferSize, TRUE, Token);
+  Status = EmmcReadWrite (
+             Partition,
+             MediaId,
+             Lba,
+             Buffer,
+             BufferSize,
+             TRUE,
+             Token
+             );
   return Status;
 }
 
@@ -1195,7 +1264,15 @@ EmmcWriteBlocksEx (
 
   Partition = EMMC_PARTITION_DATA_FROM_BLKIO2 (This);
 
-  Status = EmmcReadWrite (Partition, MediaId, Lba, Buffer, BufferSize, FALSE, Token);
+  Status = EmmcReadWrite (
+             Partition,
+             MediaId,
+             Lba,
+             Buffer,
+             BufferSize,
+             FALSE,
+             Token
+             );
   return Status;
 }
 
@@ -1373,7 +1450,16 @@ EmmcSecurityProtocolInOut (
   if ((PartitionConfig & 0x7) != Partition->PartitionType) {
     PartitionConfig &= (UINT8) ~0x7;
     PartitionConfig |= Partition->PartitionType;
-    Status           = EmmcSetExtCsd (Partition, OFFSET_OF (EMMC_EXT_CSD, PartitionConfig), PartitionConfig, NULL, FALSE);
+    Status           = EmmcSetExtCsd (
+                         Partition,
+                         OFFSET_OF (
+                           EMMC_EXT_CSD,
+                           PartitionConfig
+                           ),
+                         PartitionConfig,
+                         NULL,
+                         FALSE
+                         );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -1400,7 +1486,17 @@ EmmcSecurityProtocolInOut (
     }
 
     PayloadBufferSize = BlockNum * BlockSize;
-    Status            = EmmcProtocolInOut (Partition, SecurityProtocolId, SecurityProtocolSpecificData, PayloadBufferSize, PayloadBuffer, IsRead, Timeout, NULL, FALSE);
+    Status            = EmmcProtocolInOut (
+                          Partition,
+                          SecurityProtocolId,
+                          SecurityProtocolSpecificData,
+                          PayloadBufferSize,
+                          PayloadBuffer,
+                          IsRead,
+                          Timeout,
+                          NULL,
+                          FALSE
+                          );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -1665,7 +1761,12 @@ EmmcEraseBlockStart (
   if (Device->SectorAddressing) {
     EraseBlockStart->SdMmcCmdBlk.CommandArgument = (UINT32)StartLba;
   } else {
-    EraseBlockStart->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (StartLba, Partition->BlockMedia.BlockSize);
+    EraseBlockStart->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (
+                                                             StartLba,
+                                                             Partition->
+                                                               BlockMedia.
+                                                               BlockSize
+                                                             );
   }
 
   EraseBlockStart->IsEnd = IsEnd;
@@ -1686,7 +1787,12 @@ EmmcEraseBlockStart (
     EraseBlockStart->Event = NULL;
   }
 
-  Status = PassThru->PassThru (PassThru, Device->Slot, &EraseBlockStart->Packet, EraseBlockStart->Event);
+  Status = PassThru->PassThru (
+                       PassThru,
+                       Device->Slot,
+                       &EraseBlockStart->Packet,
+                       EraseBlockStart->Event
+                       );
 
 Error:
   if ((Token != NULL) && (Token->Event != NULL)) {
@@ -1773,7 +1879,11 @@ EmmcEraseBlockEnd (
   if (Device->SectorAddressing) {
     EraseBlockEnd->SdMmcCmdBlk.CommandArgument = (UINT32)EndLba;
   } else {
-    EraseBlockEnd->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (EndLba, Partition->BlockMedia.BlockSize);
+    EraseBlockEnd->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (
+                                                           EndLba,
+                                                           Partition->BlockMedia
+                                                             .BlockSize
+                                                           );
   }
 
   EraseBlockEnd->IsEnd = IsEnd;
@@ -1794,7 +1904,12 @@ EmmcEraseBlockEnd (
     EraseBlockEnd->Event = NULL;
   }
 
-  Status = PassThru->PassThru (PassThru, Device->Slot, &EraseBlockEnd->Packet, EraseBlockEnd->Event);
+  Status = PassThru->PassThru (
+                       PassThru,
+                       Device->Slot,
+                       &EraseBlockEnd->Packet,
+                       EraseBlockEnd->Event
+                       );
 
 Error:
   if ((Token != NULL) && (Token->Event != NULL)) {
@@ -1902,7 +2017,12 @@ EmmcEraseBlock (
     EraseBlock->Event = NULL;
   }
 
-  Status = PassThru->PassThru (PassThru, Device->Slot, &EraseBlock->Packet, EraseBlock->Event);
+  Status = PassThru->PassThru (
+                       PassThru,
+                       Device->Slot,
+                       &EraseBlock->Packet,
+                       EraseBlock->Event
+                       );
 
 Error:
   if ((Token != NULL) && (Token->Event != NULL)) {
@@ -1966,7 +2086,15 @@ EmmcWriteZeros (
 
   MediaId = Partition->BlockMedia.MediaId;
 
-  Status = EmmcReadWrite (Partition, MediaId, StartLba, Buffer, Size, FALSE, NULL);
+  Status = EmmcReadWrite (
+             Partition,
+             MediaId,
+             StartLba,
+             Buffer,
+             Size,
+             FALSE,
+             NULL
+             );
   FreePool (Buffer);
 
   return Status;
@@ -2064,7 +2192,16 @@ EmmcEraseBlocks (
   if ((PartitionConfig & 0x7) != Partition->PartitionType) {
     PartitionConfig &= (UINT8) ~0x7;
     PartitionConfig |= Partition->PartitionType;
-    Status           = EmmcSetExtCsd (Partition, OFFSET_OF (EMMC_EXT_CSD, PartitionConfig), PartitionConfig, (EFI_BLOCK_IO2_TOKEN *)Token, FALSE);
+    Status           = EmmcSetExtCsd (
+                         Partition,
+                         OFFSET_OF (
+                           EMMC_EXT_CSD,
+                           PartitionConfig
+                           ),
+                         PartitionConfig,
+                         (EFI_BLOCK_IO2_TOKEN *)Token,
+                         FALSE
+                         );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -2080,7 +2217,8 @@ EmmcEraseBlocks (
     EraseGroupSize = This->EraseLengthGranularity;
 
     DivU64x32Remainder (FirstLba, EraseGroupSize, &Remainder);
-    StartGroupLba = (Remainder == 0) ? FirstLba : (FirstLba + EraseGroupSize - Remainder);
+    StartGroupLba = (Remainder == 0) ? FirstLba : (FirstLba + EraseGroupSize -
+                                                   Remainder);
 
     DivU64x32Remainder (LastLba + 1, EraseGroupSize, &Remainder);
     EndGroupLba = LastLba + 1 - Remainder;
@@ -2163,12 +2301,22 @@ EmmcEraseBlocks (
     LastLba  = EndGroupLba - 1;
   }
 
-  Status = EmmcEraseBlockStart (Partition, FirstLba, (EFI_BLOCK_IO2_TOKEN *)Token, FALSE);
+  Status = EmmcEraseBlockStart (
+             Partition,
+             FirstLba,
+             (EFI_BLOCK_IO2_TOKEN *)Token,
+             FALSE
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = EmmcEraseBlockEnd (Partition, LastLba, (EFI_BLOCK_IO2_TOKEN *)Token, FALSE);
+  Status = EmmcEraseBlockEnd (
+             Partition,
+             LastLba,
+             (EFI_BLOCK_IO2_TOKEN *)Token,
+             FALSE
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }

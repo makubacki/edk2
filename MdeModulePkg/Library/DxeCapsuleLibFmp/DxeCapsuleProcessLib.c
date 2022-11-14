@@ -235,11 +235,22 @@ InitCapsulePtr (
   // Find all capsule images from hob
   //
   HobPointer.Raw = GetHobList ();
-  while ((HobPointer.Raw = GetNextHob (EFI_HOB_TYPE_UEFI_CAPSULE, HobPointer.Raw)) != NULL) {
-    if (!IsValidCapsuleHeader ((VOID *)(UINTN)HobPointer.Capsule->BaseAddress, HobPointer.Capsule->Length)) {
+  while ((HobPointer.Raw = GetNextHob (
+                             EFI_HOB_TYPE_UEFI_CAPSULE,
+                             HobPointer.Raw
+                             )) != NULL)
+  {
+    if (!IsValidCapsuleHeader (
+           (VOID *)(UINTN)HobPointer.Capsule->BaseAddress,
+           HobPointer.Capsule->Length
+           ))
+    {
       HobPointer.Header->HobType = EFI_HOB_TYPE_UNUSED; // Mark this hob as invalid
     } else {
-      if (IsCapsuleNameCapsule ((VOID *)(UINTN)HobPointer.Capsule->BaseAddress)) {
+      if (IsCapsuleNameCapsule (
+            (VOID *)(UINTN)HobPointer.Capsule->BaseAddress
+            ))
+      {
         CapsuleNameCapsuleTotalNumber++;
       } else {
         mCapsuleTotalNumber++;
@@ -258,14 +269,20 @@ InitCapsulePtr (
   //
   // Init temp Capsule Data table.
   //
-  mCapsulePtr = (VOID **)AllocateZeroPool (sizeof (VOID *) * mCapsuleTotalNumber);
+  mCapsulePtr = (VOID **)AllocateZeroPool (
+                           sizeof (VOID *) *
+                           mCapsuleTotalNumber
+                           );
   if (mCapsulePtr == NULL) {
     DEBUG ((DEBUG_ERROR, "Allocate mCapsulePtr fail!\n"));
     mCapsuleTotalNumber = 0;
     return;
   }
 
-  mCapsuleStatusArray = (EFI_STATUS *)AllocateZeroPool (sizeof (EFI_STATUS) * mCapsuleTotalNumber);
+  mCapsuleStatusArray = (EFI_STATUS *)AllocateZeroPool (
+                                        sizeof (EFI_STATUS) *
+                                        mCapsuleTotalNumber
+                                        );
   if (mCapsuleStatusArray == NULL) {
     DEBUG ((DEBUG_ERROR, "Allocate mCapsuleStatusArray fail!\n"));
     FreePool (mCapsulePtr);
@@ -274,9 +291,16 @@ InitCapsulePtr (
     return;
   }
 
-  SetMemN (mCapsuleStatusArray, sizeof (EFI_STATUS) * mCapsuleTotalNumber, EFI_NOT_READY);
+  SetMemN (
+    mCapsuleStatusArray,
+    sizeof (EFI_STATUS) * mCapsuleTotalNumber,
+    EFI_NOT_READY
+    );
 
-  CapsuleNameCapsulePtr =  (VOID **)AllocateZeroPool (sizeof (VOID *) * CapsuleNameCapsuleTotalNumber);
+  CapsuleNameCapsulePtr =  (VOID **)AllocateZeroPool (
+                                      sizeof (VOID *) *
+                                      CapsuleNameCapsuleTotalNumber
+                                      );
   if (CapsuleNameCapsulePtr == NULL) {
     DEBUG ((DEBUG_ERROR, "Allocate CapsuleNameCapsulePtr fail!\n"));
     FreePool (mCapsulePtr);
@@ -293,9 +317,14 @@ InitCapsulePtr (
   HobPointer.Raw = GetHobList ();
   Index          = 0;
   Index2         = 0;
-  while ((HobPointer.Raw = GetNextHob (EFI_HOB_TYPE_UEFI_CAPSULE, HobPointer.Raw)) != NULL) {
+  while ((HobPointer.Raw = GetNextHob (
+                             EFI_HOB_TYPE_UEFI_CAPSULE,
+                             HobPointer.Raw
+                             )) != NULL)
+  {
     if (IsCapsuleNameCapsule ((VOID *)(UINTN)HobPointer.Capsule->BaseAddress)) {
-      CapsuleNameCapsulePtr[Index2++] = (VOID *)(UINTN)HobPointer.Capsule->BaseAddress;
+      CapsuleNameCapsulePtr[Index2++] =
+        (VOID *)(UINTN)HobPointer.Capsule->BaseAddress;
     } else {
       mCapsulePtr[Index++] = (VOID *)(UINTN)HobPointer.Capsule->BaseAddress;
     }
@@ -307,14 +336,20 @@ InitCapsulePtr (
   // Find Capsule On Disk Names
   //
   for (Index = 0; Index < CapsuleNameCapsuleTotalNumber; Index++) {
-    CapsuleNameAddress = ValidateCapsuleNameCapsuleIntegrity (CapsuleNameCapsulePtr[Index], &CapsuleNameNumber);
+    CapsuleNameAddress = ValidateCapsuleNameCapsuleIntegrity (
+                           CapsuleNameCapsulePtr[Index],
+                           &CapsuleNameNumber
+                           );
     if (CapsuleNameAddress != NULL ) {
       CapsuleNameTotalNumber += CapsuleNameNumber;
     }
   }
 
   if (CapsuleNameTotalNumber == mCapsuleTotalNumber) {
-    mCapsuleNamePtr = (CHAR16 **)AllocateZeroPool (sizeof (CHAR16 *) * mCapsuleTotalNumber);
+    mCapsuleNamePtr = (CHAR16 **)AllocateZeroPool (
+                                   sizeof (CHAR16 *) *
+                                   mCapsuleTotalNumber
+                                   );
     if (mCapsuleNamePtr == NULL) {
       DEBUG ((DEBUG_ERROR, "Allocate mCapsuleNamePtr fail!\n"));
       FreePool (mCapsulePtr);
@@ -326,11 +361,17 @@ InitCapsulePtr (
       return;
     }
 
-    for (Index = 0, Index3 = 0; Index < CapsuleNameCapsuleTotalNumber; Index++) {
-      CapsuleNameAddress = ValidateCapsuleNameCapsuleIntegrity (CapsuleNameCapsulePtr[Index], &CapsuleNameNumber);
+    for (Index = 0, Index3 = 0; Index < CapsuleNameCapsuleTotalNumber;
+         Index++)
+    {
+      CapsuleNameAddress = ValidateCapsuleNameCapsuleIntegrity (
+                             CapsuleNameCapsulePtr[Index],
+                             &CapsuleNameNumber
+                             );
       if (CapsuleNameAddress != NULL ) {
         for (Index2 = 0; Index2 < CapsuleNameNumber; Index2++) {
-          mCapsuleNamePtr[Index3++] = (CHAR16 *)(UINTN)CapsuleNameAddress[Index2];
+          mCapsuleNamePtr[Index3++] =
+            (CHAR16 *)(UINTN)CapsuleNameAddress[Index2];
         }
       }
     }
@@ -391,13 +432,19 @@ PopulateCapsuleInConfigurationTable (
   CacheIndex       = 0;
   CacheNumber      = 0;
 
-  CapsulePtrCache = (VOID **)AllocateZeroPool (sizeof (VOID *) * mCapsuleTotalNumber);
+  CapsulePtrCache = (VOID **)AllocateZeroPool (
+                               sizeof (VOID *) *
+                               mCapsuleTotalNumber
+                               );
   if (CapsulePtrCache == NULL) {
     DEBUG ((DEBUG_ERROR, "Allocate CapsulePtrCache fail!\n"));
     return;
   }
 
-  CapsuleGuidCache = (EFI_GUID *)AllocateZeroPool (sizeof (EFI_GUID) * mCapsuleTotalNumber);
+  CapsuleGuidCache = (EFI_GUID *)AllocateZeroPool (
+                                   sizeof (EFI_GUID) *
+                                   mCapsuleTotalNumber
+                                   );
   if (CapsuleGuidCache == NULL) {
     DEBUG ((DEBUG_ERROR, "Allocate CapsuleGuidCache fail!\n"));
     FreePool (CapsulePtrCache);
@@ -424,7 +471,11 @@ PopulateCapsuleInConfigurationTable (
       //
       CacheIndex = 0;
       while (CacheIndex < CacheNumber) {
-        if (CompareGuid (&CapsuleGuidCache[CacheIndex], &CapsuleHeader->CapsuleGuid)) {
+        if (CompareGuid (
+              &CapsuleGuidCache[CacheIndex],
+              &CapsuleHeader->CapsuleGuid
+              ))
+        {
           break;
         }
 
@@ -432,7 +483,11 @@ PopulateCapsuleInConfigurationTable (
       }
 
       if (CacheIndex == CacheNumber) {
-        CopyMem (&CapsuleGuidCache[CacheNumber++], &CapsuleHeader->CapsuleGuid, sizeof (EFI_GUID));
+        CopyMem (
+          &CapsuleGuidCache[CacheNumber++],
+          &CapsuleHeader->CapsuleGuid,
+          sizeof (EFI_GUID)
+          );
       }
     }
   }
@@ -451,7 +506,11 @@ PopulateCapsuleInConfigurationTable (
     for (Index = 0; Index < mCapsuleTotalNumber; Index++) {
       CapsuleHeader = (EFI_CAPSULE_HEADER *)mCapsulePtr[Index];
       if ((CapsuleHeader->Flags & CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE) != 0) {
-        if (CompareGuid (&CapsuleGuidCache[CacheIndex], &CapsuleHeader->CapsuleGuid)) {
+        if (CompareGuid (
+              &CapsuleGuidCache[CacheIndex],
+              &CapsuleHeader->CapsuleGuid
+              ))
+        {
           //
           // Cache Caspuleheader to the array, this array is uniqued with certain CapsuleGuid.
           //
@@ -461,18 +520,35 @@ PopulateCapsuleInConfigurationTable (
     }
 
     if (CapsuleNumber != 0) {
-      Size         = sizeof (EFI_CAPSULE_TABLE) + (CapsuleNumber - 1) * sizeof (VOID *);
+      Size = sizeof (EFI_CAPSULE_TABLE) + (CapsuleNumber - 1) *
+             sizeof (VOID *);
       CapsuleTable = AllocateRuntimePool (Size);
       if (CapsuleTable == NULL) {
-        DEBUG ((DEBUG_ERROR, "Allocate CapsuleTable (%g) fail!\n", &CapsuleGuidCache[CacheIndex]));
+        DEBUG ((
+          DEBUG_ERROR,
+          "Allocate CapsuleTable (%g) fail!\n",
+          &CapsuleGuidCache[CacheIndex]
+          ));
         continue;
       }
 
       CapsuleTable->CapsuleArrayNumber =  CapsuleNumber;
-      CopyMem (&CapsuleTable->CapsulePtr[0], CapsulePtrCache, CapsuleNumber * sizeof (VOID *));
-      Status = gBS->InstallConfigurationTable (&CapsuleGuidCache[CacheIndex], (VOID *)CapsuleTable);
+      CopyMem (
+        &CapsuleTable->CapsulePtr[0],
+        CapsulePtrCache,
+        CapsuleNumber *
+        sizeof (VOID *)
+        );
+      Status = gBS->InstallConfigurationTable (
+                      &CapsuleGuidCache[CacheIndex],
+                      (VOID *)CapsuleTable
+                      );
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "InstallConfigurationTable (%g) fail!\n", &CapsuleGuidCache[CacheIndex]));
+        DEBUG ((
+          DEBUG_ERROR,
+          "InstallConfigurationTable (%g) fail!\n",
+          &CapsuleGuidCache[CacheIndex]
+          ));
       }
     }
   }
@@ -509,7 +585,14 @@ ProcessTheseCapsules (
   BOOLEAN                   ResetRequired;
   CHAR16                    *CapsuleName;
 
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE | PcdGet32 (PcdStatusCodeSubClassCapsule) | PcdGet32 (PcdCapsuleStatusCodeProcessCapsulesBegin)));
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    (EFI_SOFTWARE | PcdGet32 (
+                      PcdStatusCodeSubClassCapsule
+                      ) | PcdGet32 (
+                            PcdCapsuleStatusCodeProcessCapsulesBegin
+                            ))
+    );
 
   if (FirstRound) {
     InitCapsulePtr ();
@@ -519,7 +602,10 @@ ProcessTheseCapsules (
     //
     // We didn't find a hob, so had no errors.
     //
-    DEBUG ((DEBUG_ERROR, "We can not find capsule data in capsule update boot mode.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "We can not find capsule data in capsule update boot mode.\n"
+      ));
     mNeedReset = TRUE;
     return EFI_SUCCESS;
   }
@@ -536,7 +622,14 @@ ProcessTheseCapsules (
     PopulateCapsuleInConfigurationTable ();
   }
 
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE | PcdGet32 (PcdStatusCodeSubClassCapsule) | PcdGet32 (PcdCapsuleStatusCodeUpdatingFirmware)));
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    (EFI_SOFTWARE | PcdGet32 (
+                      PcdStatusCodeSubClassCapsule
+                      ) | PcdGet32 (
+                            PcdCapsuleStatusCodeUpdatingFirmware
+                            ))
+    );
 
   //
   // If Windows UX capsule exist, process it first
@@ -545,9 +638,17 @@ ProcessTheseCapsules (
     CapsuleHeader = (EFI_CAPSULE_HEADER *)mCapsulePtr[Index];
     CapsuleName   = (mCapsuleNamePtr == NULL) ? NULL : mCapsuleNamePtr[Index];
     if (CompareGuid (&CapsuleHeader->CapsuleGuid, &gWindowsUxCapsuleGuid)) {
-      DEBUG ((DEBUG_INFO, "ProcessThisCapsuleImage (Ux) - 0x%x\n", CapsuleHeader));
+      DEBUG ((
+        DEBUG_INFO,
+        "ProcessThisCapsuleImage (Ux) - 0x%x\n",
+        CapsuleHeader
+        ));
       DEBUG ((DEBUG_INFO, "Display logo capsule is found.\n"));
-      Status                     = ProcessThisCapsuleImage (CapsuleHeader, CapsuleName, NULL);
+      Status = ProcessThisCapsuleImage (
+                 CapsuleHeader,
+                 CapsuleName,
+                 NULL
+                 );
       mCapsuleStatusArray[Index] = EFI_SUCCESS;
       DEBUG ((DEBUG_INFO, "ProcessThisCapsuleImage (Ux) - %r\n", Status));
       break;
@@ -586,21 +687,42 @@ ProcessTheseCapsules (
 
       if ((!FirstRound) || (EmbeddedDriverCount == 0)) {
         DEBUG ((DEBUG_INFO, "ProcessThisCapsuleImage - 0x%x\n", CapsuleHeader));
-        ResetRequired              = FALSE;
-        Status                     = ProcessThisCapsuleImage (CapsuleHeader, CapsuleName, &ResetRequired);
+        ResetRequired = FALSE;
+        Status        = ProcessThisCapsuleImage (
+                          CapsuleHeader,
+                          CapsuleName,
+                          &ResetRequired
+                          );
         mCapsuleStatusArray[Index] = Status;
         DEBUG ((DEBUG_INFO, "ProcessThisCapsuleImage - %r\n", Status));
 
         if (Status != EFI_NOT_READY) {
           if (EFI_ERROR (Status)) {
-            REPORT_STATUS_CODE (EFI_ERROR_CODE, (EFI_SOFTWARE | PcdGet32 (PcdStatusCodeSubClassCapsule) | PcdGet32 (PcdCapsuleStatusCodeUpdateFirmwareFailed)));
+            REPORT_STATUS_CODE (
+              EFI_ERROR_CODE,
+              (EFI_SOFTWARE | PcdGet32 (
+                                PcdStatusCodeSubClassCapsule
+                                ) | PcdGet32 (
+                                      PcdCapsuleStatusCodeUpdateFirmwareFailed
+                                      ))
+              );
             DEBUG ((DEBUG_ERROR, "Capsule process failed!\n"));
           } else {
-            REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE | PcdGet32 (PcdStatusCodeSubClassCapsule) | PcdGet32 (PcdCapsuleStatusCodeUpdateFirmwareSuccess)));
+            REPORT_STATUS_CODE (
+              EFI_PROGRESS_CODE,
+              (EFI_SOFTWARE | PcdGet32 (
+                                PcdStatusCodeSubClassCapsule
+                                ) | PcdGet32 (
+                                      PcdCapsuleStatusCodeUpdateFirmwareSuccess
+                                      ))
+              );
           }
 
           mNeedReset |= ResetRequired;
-          if ((CapsuleHeader->Flags & PcdGet16 (PcdSystemRebootAfterCapsuleProcessFlag)) != 0) {
+          if ((CapsuleHeader->Flags & PcdGet16 (
+                                        PcdSystemRebootAfterCapsuleProcessFlag
+                                        )) != 0)
+          {
             mNeedReset = TRUE;
           }
         }
@@ -608,7 +730,11 @@ ProcessTheseCapsules (
     }
   }
 
-  Status = gBS->LocateProtocol (&gEsrtManagementProtocolGuid, NULL, (VOID **)&EsrtManagement);
+  Status = gBS->LocateProtocol (
+                  &gEsrtManagementProtocolGuid,
+                  NULL,
+                  (VOID **)&EsrtManagement
+                  );
   //
   // Always sync ESRT Cache from FMP Instance
   //
@@ -618,7 +744,14 @@ ProcessTheseCapsules (
 
   Status = EFI_SUCCESS;
 
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE | PcdGet32 (PcdStatusCodeSubClassCapsule) | PcdGet32 (PcdCapsuleStatusCodeProcessCapsulesEnd)));
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    (EFI_SOFTWARE | PcdGet32 (
+                      PcdStatusCodeSubClassCapsule
+                      ) | PcdGet32 (
+                            PcdCapsuleStatusCodeProcessCapsulesEnd
+                            ))
+    );
 
   return Status;
 }
@@ -633,7 +766,14 @@ DoResetSystem (
 {
   DEBUG ((DEBUG_INFO, "Capsule Request Cold Reboot."));
 
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE | PcdGet32 (PcdStatusCodeSubClassCapsule) | PcdGet32 (PcdCapsuleStatusCodeResettingSystem)));
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    (EFI_SOFTWARE | PcdGet32 (
+                      PcdStatusCodeSubClassCapsule
+                      ) | PcdGet32 (
+                            PcdCapsuleStatusCodeResettingSystem
+                            ))
+    );
 
   gRT->ResetSystem (EfiResetCold, EFI_SUCCESS, 0, NULL);
 

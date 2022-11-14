@@ -35,8 +35,10 @@ typedef struct _VAR_CHECK_POLICY_COMM_DUMP_PARAMS {
 #pragma pack(pop)
 
 // Make sure that we will hold at least the headers.
-#define   VAR_CHECK_POLICY_MM_COMM_BUFFER_SIZE  MAX((OFFSET_OF(EFI_MM_COMMUNICATE_HEADER, Data) + sizeof (VAR_CHECK_POLICY_COMM_HEADER) + EFI_PAGES_TO_SIZE(1)), EFI_PAGES_TO_SIZE(4))
-#define   VAR_CHECK_POLICY_MM_DUMP_BUFFER_SIZE  (VAR_CHECK_POLICY_MM_COMM_BUFFER_SIZE - \
+#define   VAR_CHECK_POLICY_MM_COMM_BUFFER_SIZE  \
+      MAX((OFFSET_OF(EFI_MM_COMMUNICATE_HEADER, Data) + sizeof (VAR_CHECK_POLICY_COMM_HEADER) + EFI_PAGES_TO_SIZE(1)), EFI_PAGES_TO_SIZE(4))
+#define   VAR_CHECK_POLICY_MM_DUMP_BUFFER_SIZE  \
+      (VAR_CHECK_POLICY_MM_COMM_BUFFER_SIZE -                                           \
                                                     (OFFSET_OF(EFI_MM_COMMUNICATE_HEADER, Data) + \
                                                       sizeof(VAR_CHECK_POLICY_COMM_HEADER) + \
                                                       sizeof(VAR_CHECK_POLICY_COMM_DUMP_PARAMS)))

@@ -200,7 +200,10 @@ BmSetMemoryTypeInformationVariable (
   }
 
   VariableSize                  = GET_GUID_HOB_DATA_SIZE (GuidHob);
-  PreviousMemoryTypeInformation = AllocateCopyPool (VariableSize, GET_GUID_HOB_DATA (GuidHob));
+  PreviousMemoryTypeInformation = AllocateCopyPool (
+                                    VariableSize,
+                                    GET_GUID_HOB_DATA (GuidHob)
+                                    );
   if (PreviousMemoryTypeInformation == NULL) {
     return;
   }
@@ -212,9 +215,15 @@ BmSetMemoryTypeInformationVariable (
   DEBUG ((DEBUG_INFO, " Type    Pages     Pages     Pages  \n"));
   DEBUG ((DEBUG_INFO, "======  ========  ========  ========\n"));
 
-  for (Index = 0; PreviousMemoryTypeInformation[Index].Type != EfiMaxMemoryType; Index++) {
-    for (Index1 = 0; CurrentMemoryTypeInformation[Index1].Type != EfiMaxMemoryType; Index1++) {
-      if (PreviousMemoryTypeInformation[Index].Type == CurrentMemoryTypeInformation[Index1].Type) {
+  for (Index = 0; PreviousMemoryTypeInformation[Index].Type != EfiMaxMemoryType;
+       Index++)
+  {
+    for (Index1 = 0; CurrentMemoryTypeInformation[Index1].Type !=
+         EfiMaxMemoryType; Index1++)
+    {
+      if (PreviousMemoryTypeInformation[Index].Type ==
+          CurrentMemoryTypeInformation[Index1].Type)
+      {
         break;
       }
     }
@@ -254,7 +263,14 @@ BmSetMemoryTypeInformationVariable (
       MemoryTypeInformationModified                      = TRUE;
     }
 
-    DEBUG ((DEBUG_INFO, "  %02x    %08x  %08x  %08x\n", PreviousMemoryTypeInformation[Index].Type, Previous, Current, Next));
+    DEBUG ((
+      DEBUG_INFO,
+      "  %02x    %08x  %08x  %08x\n",
+      PreviousMemoryTypeInformation[Index].Type,
+      Previous,
+      Current,
+      Next
+      ));
   }
 
   //
@@ -284,7 +300,10 @@ BmSetMemoryTypeInformationVariable (
         }
       }
     } else {
-      DEBUG ((DEBUG_ERROR, "Memory Type Information settings cannot be saved. OS S4 may fail!\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Memory Type Information settings cannot be saved. OS S4 may fail!\n"
+        ));
     }
   }
 
@@ -346,7 +365,10 @@ BmSetVariableAndReportStatusCodeOnError (
                   );
   if (EFI_ERROR (Status)) {
     NameSize          = StrSize (VariableName);
-    SetVariableStatus = AllocatePool (sizeof (EDKII_SET_VARIABLE_STATUS) + NameSize + DataSize);
+    SetVariableStatus = AllocatePool (
+                          sizeof (EDKII_SET_VARIABLE_STATUS) +
+                          NameSize + DataSize
+                          );
     if (SetVariableStatus != NULL) {
       CopyGuid (&SetVariableStatus->Guid, VendorGuid);
       SetVariableStatus->NameSize   = NameSize;
@@ -462,7 +484,11 @@ EfiBootManagerDispatchDeferredImages (
   ImageCount = 0;
   LoadCount  = 0;
   for (Index = 0; Index < HandleCount; Index++) {
-    Status = gBS->HandleProtocol (Handles[Index], &gEfiDeferredImageLoadProtocolGuid, (VOID **)&DeferredImage);
+    Status = gBS->HandleProtocol (
+                    Handles[Index],
+                    &gEfiDeferredImageLoadProtocolGuid,
+                    (VOID **)&DeferredImage
+                    );
     if (EFI_ERROR (Status)) {
       continue;
     }

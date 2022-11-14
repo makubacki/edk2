@@ -230,7 +230,9 @@ EhcCreateQh (
       break;
 
     case EHC_BULK_TRANSFER:
-      if ((Ep->DevSpeed == EFI_USB_SPEED_HIGH) && (Ep->Direction == EfiUsbDataOut)) {
+      if ((Ep->DevSpeed == EFI_USB_SPEED_HIGH) && (Ep->Direction ==
+                                                   EfiUsbDataOut))
+      {
         QhHw->Status |= QTD_STAT_DO_PING;
       }
 
@@ -381,7 +383,11 @@ EhcCreateQtds (
   StatusQtd = NULL;
   AlterNext = QTD_LINK (NULL, TRUE);
 
-  PhyAddr = UsbHcGetPciAddressForHostMem (Ehc->MemPool, Ehc->ShortReadStop, sizeof (EHC_QTD));
+  PhyAddr = UsbHcGetPciAddressForHostMem (
+              Ehc->MemPool,
+              Ehc->ShortReadStop,
+              sizeof (EHC_QTD)
+              );
   if (Ep->Direction == EfiUsbDataIn) {
     AlterNext = QTD_LINK (PhyAddr, FALSE);
   }
@@ -391,7 +397,15 @@ EhcCreateQtds (
   //
   if (Urb->Ep.Type == EHC_CTRL_TRANSFER) {
     Len = sizeof (EFI_USB_DEVICE_REQUEST);
-    Qtd = EhcCreateQtd (Ehc, (UINT8 *)Urb->Request, (UINT8 *)Urb->RequestPhy, Len, QTD_PID_SETUP, 0, Ep->MaxPacket);
+    Qtd = EhcCreateQtd (
+            Ehc,
+            (UINT8 *)Urb->Request,
+            (UINT8 *)Urb->RequestPhy,
+            Len,
+            QTD_PID_SETUP,
+            0,
+            Ep->MaxPacket
+            );
 
     if (Qtd == NULL) {
       return EFI_OUT_OF_RESOURCES;
@@ -418,7 +432,11 @@ EhcCreateQtds (
     }
 
     if (Ep->Direction == EfiUsbDataIn) {
-      PhyAddr   = UsbHcGetPciAddressForHostMem (Ehc->MemPool, StatusQtd, sizeof (EHC_QTD));
+      PhyAddr = UsbHcGetPciAddressForHostMem (
+                  Ehc->MemPool,
+                  StatusQtd,
+                  sizeof (EHC_QTD)
+                  );
       AlterNext = QTD_LINK (PhyAddr, FALSE);
     }
 
@@ -485,16 +503,32 @@ EhcCreateQtds (
       break;
     }
 
-    NextQtd            = EFI_LIST_CONTAINER (Entry->ForwardLink, EHC_QTD, QtdList);
-    PhyAddr            = UsbHcGetPciAddressForHostMem (Ehc->MemPool, NextQtd, sizeof (EHC_QTD));
+    NextQtd = EFI_LIST_CONTAINER (
+                Entry->ForwardLink,
+                EHC_QTD,
+                QtdList
+                );
+    PhyAddr = UsbHcGetPciAddressForHostMem (
+                Ehc->MemPool,
+                NextQtd,
+                sizeof (EHC_QTD)
+                );
     Qtd->QtdHw.NextQtd = QTD_LINK (PhyAddr, FALSE);
   }
 
   //
   // Link the QTDs to the queue head
   //
-  NextQtd          = EFI_LIST_CONTAINER (Qh->Qtds.ForwardLink, EHC_QTD, QtdList);
-  PhyAddr          = UsbHcGetPciAddressForHostMem (Ehc->MemPool, NextQtd, sizeof (EHC_QTD));
+  NextQtd = EFI_LIST_CONTAINER (
+              Qh->Qtds.ForwardLink,
+              EHC_QTD,
+              QtdList
+              );
+  PhyAddr = UsbHcGetPciAddressForHostMem (
+              Ehc->MemPool,
+              NextQtd,
+              sizeof (EHC_QTD)
+              );
   Qh->QhHw.NextQtd = QTD_LINK (PhyAddr, FALSE);
   return EFI_SUCCESS;
 

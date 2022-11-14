@@ -120,7 +120,10 @@ TranslateBmpToGopBlt (
   BmpHeader = (BMP_IMAGE_HEADER *)BmpImage;
 
   if ((BmpHeader->CharB != 'B') || (BmpHeader->CharM != 'M')) {
-    DEBUG ((DEBUG_ERROR, "TranslateBmpToGopBlt: BmpHeader->Char fields incorrect\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "TranslateBmpToGopBlt: BmpHeader->Char fields incorrect\n"
+      ));
     return RETURN_UNSUPPORTED;
   }
 
@@ -128,12 +131,18 @@ TranslateBmpToGopBlt (
   // Doesn't support compress.
   //
   if (BmpHeader->CompressionType != 0) {
-    DEBUG ((DEBUG_ERROR, "TranslateBmpToGopBlt: Compression Type unsupported.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "TranslateBmpToGopBlt: Compression Type unsupported.\n"
+      ));
     return RETURN_UNSUPPORTED;
   }
 
   if ((BmpHeader->PixelHeight == 0) || (BmpHeader->PixelWidth == 0)) {
-    DEBUG ((DEBUG_ERROR, "TranslateBmpToGopBlt: BmpHeader->PixelHeight or BmpHeader->PixelWidth is 0.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "TranslateBmpToGopBlt: BmpHeader->PixelHeight or BmpHeader->PixelWidth is 0.\n"
+      ));
     return RETURN_UNSUPPORTED;
   }
 
@@ -141,7 +150,11 @@ TranslateBmpToGopBlt (
   // Only support BITMAPINFOHEADER format.
   // BITMAPFILEHEADER + BITMAPINFOHEADER = BMP_IMAGE_HEADER
   //
-  if (BmpHeader->HeaderSize != sizeof (BMP_IMAGE_HEADER) - OFFSET_OF (BMP_IMAGE_HEADER, HeaderSize)) {
+  if (BmpHeader->HeaderSize != sizeof (BMP_IMAGE_HEADER) - OFFSET_OF (
+                                                             BMP_IMAGE_HEADER,
+                                                             HeaderSize
+                                                             ))
+  {
     DEBUG ((
       DEBUG_ERROR,
       "TranslateBmpToGopBlt: BmpHeader->Headership is not as expected.  Headersize is 0x%x\n",
@@ -220,7 +233,11 @@ TranslateBmpToGopBlt (
   {
     DEBUG ((DEBUG_ERROR, "TranslateBmpToGopBlt: invalid BmpImage... \n"));
     DEBUG ((DEBUG_ERROR, "   BmpHeader->Size: 0x%x\n", BmpHeader->Size));
-    DEBUG ((DEBUG_ERROR, "   BmpHeader->ImageOffset: 0x%x\n", BmpHeader->ImageOffset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "   BmpHeader->ImageOffset: 0x%x\n",
+      BmpHeader->ImageOffset
+      ));
     DEBUG ((DEBUG_ERROR, "   BmpImageSize: 0x%lx\n", (UINTN)BmpImageSize));
     DEBUG ((DEBUG_ERROR, "   DataSize: 0x%lx\n", (UINTN)DataSize));
 
@@ -256,7 +273,9 @@ TranslateBmpToGopBlt (
     // BMP file may has padding data between the bmp header section and the
     // bmp data section.
     //
-    if (BmpHeader->ImageOffset - sizeof (BMP_IMAGE_HEADER) < sizeof (BMP_COLOR_MAP) * ColorMapNum) {
+    if (BmpHeader->ImageOffset - sizeof (BMP_IMAGE_HEADER) <
+        sizeof (BMP_COLOR_MAP) * ColorMapNum)
+    {
       return RETURN_UNSUPPORTED;
     }
   }
@@ -310,7 +329,11 @@ TranslateBmpToGopBlt (
     //
     // GopBlt is not allocated by caller.
     //
-    DEBUG ((DEBUG_INFO, "Bmp Support: Allocating 0x%X bytes of memory\n", BltBufferSize));
+    DEBUG ((
+      DEBUG_INFO,
+      "Bmp Support: Allocating 0x%X bytes of memory\n",
+      BltBufferSize
+      ));
     *GopBltSize = (UINTN)BltBufferSize;
     *GopBlt     = AllocatePool (*GopBltSize);
     IsAllocated = TRUE;
@@ -342,7 +365,8 @@ TranslateBmpToGopBlt (
   //
   BltBuffer = *GopBlt;
   for (Height = 0; Height < BmpHeader->PixelHeight; Height++) {
-    Blt = &BltBuffer[(BmpHeader->PixelHeight - Height - 1) * BmpHeader->PixelWidth];
+    Blt = &BltBuffer[(BmpHeader->PixelHeight - Height - 1) *
+                     BmpHeader->PixelWidth];
     for (Width = 0; Width < BmpHeader->PixelWidth; Width++, Image++, Blt++) {
       switch (BmpHeader->BitPerPixel) {
         case 1:
@@ -415,7 +439,11 @@ TranslateBmpToGopBlt (
             *GopBlt = NULL;
           }
 
-          DEBUG ((DEBUG_ERROR, "Bmp Bit format not supported.  0x%X\n", BmpHeader->BitPerPixel));
+          DEBUG ((
+            DEBUG_ERROR,
+            "Bmp Bit format not supported.  0x%X\n",
+            BmpHeader->BitPerPixel
+            ));
           return RETURN_UNSUPPORTED;
           break;
       }

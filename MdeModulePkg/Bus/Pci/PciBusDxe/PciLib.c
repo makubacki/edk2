@@ -56,7 +56,8 @@ PciGetMaxBusNumber (
   //
   BusNumberRanges = RootBridge->BusNumberRanges;
   while (BusNumberRanges->Desc != ACPI_END_TAG_DESCRIPTOR) {
-    MaxNumberInRange = BusNumberRanges->AddrRangeMin + BusNumberRanges->AddrLen - 1;
+    MaxNumberInRange = BusNumberRanges->AddrRangeMin +
+                       BusNumberRanges->AddrLen - 1;
     BusNumberRanges++;
   }
 
@@ -134,7 +135,10 @@ GetBackPcCardBar (
     (PciIoDevice->PciBar)[P2C_IO_2].BarType     = PciBarTypeIo16;
   }
 
-  if ((gPciHotPlugInit != NULL) && FeaturePcdGet (PcdPciBusHotplugDeviceSupport)) {
+  if ((gPciHotPlugInit != NULL) && FeaturePcdGet (
+                                     PcdPciBusHotplugDeviceSupport
+                                     ))
+  {
     GetResourcePaddingForHpb (PciIoDevice);
   }
 }
@@ -228,7 +232,8 @@ DumpBridgeResource (
     {
       Resource = RESOURCE_NODE_FROM_LINK (Link);
       if (Resource->ResourceUsage == PciResUsageTypical) {
-        Bar = Resource->Virtual ? Resource->PciDev->VfPciBar : Resource->PciDev->PciBar;
+        Bar = Resource->Virtual ? Resource->PciDev->VfPciBar :
+              Resource->PciDev->PciBar;
         DEBUG ((
           DEBUG_INFO,
           "   Base = 0x%lx;\tLength = 0x%lx;\tAlignment = 0x%lx;\tOwner = %s [%02x|%02x|%02x:",
@@ -243,9 +248,14 @@ DumpBridgeResource (
           Resource->PciDev->FunctionNumber
           ));
 
-        if ((!IS_PCI_BRIDGE (&Resource->PciDev->Pci) && !IS_CARDBUS_BRIDGE (&Resource->PciDev->Pci)) ||
-            (IS_PCI_BRIDGE (&Resource->PciDev->Pci) && (Resource->Bar < PPB_IO_RANGE)) ||
-            (IS_CARDBUS_BRIDGE (&Resource->PciDev->Pci) && (Resource->Bar < P2C_MEM_1))
+        if ((!IS_PCI_BRIDGE (&Resource->PciDev->Pci) && !IS_CARDBUS_BRIDGE (
+                                                           &Resource->PciDev->
+                                                             Pci
+                                                           )) ||
+            (IS_PCI_BRIDGE (&Resource->PciDev->Pci) && (Resource->Bar <
+                                                        PPB_IO_RANGE)) ||
+            (IS_CARDBUS_BRIDGE (&Resource->PciDev->Pci) && (Resource->Bar <
+                                                            P2C_MEM_1))
             )
         {
           //
@@ -259,11 +269,23 @@ DumpBridgeResource (
           DEBUG ((DEBUG_INFO, "**]"));
         }
       } else {
-        DEBUG ((DEBUG_INFO, "   Base = Padding;\tLength = 0x%lx;\tAlignment = 0x%lx", Resource->Length, Resource->Alignment));
+        DEBUG ((
+          DEBUG_INFO,
+          "   Base = Padding;\tLength = 0x%lx;\tAlignment = 0x%lx",
+          Resource->Length,
+          Resource->Alignment
+          ));
       }
 
       if (BridgeResource->ResType != Resource->ResType) {
-        DEBUG ((DEBUG_INFO, "; Type = %s", mBarTypeStr[MIN (Resource->ResType, PciBarTypeMaxType)]));
+        DEBUG ((
+          DEBUG_INFO,
+          "; Type = %s",
+          mBarTypeStr[MIN (
+                        Resource->ResType,
+                        PciBarTypeMaxType
+                        )]
+          ));
       }
 
       DEBUG ((DEBUG_INFO, "\n"));
@@ -380,11 +402,18 @@ DumpResourceMap (
         ChildResourceCount += FindResourceNode (Device, Resources[Index], NULL);
       }
 
-      ChildResources = AllocatePool (sizeof (PCI_RESOURCE_NODE *) * ChildResourceCount);
+      ChildResources = AllocatePool (
+                         sizeof (PCI_RESOURCE_NODE *) *
+                         ChildResourceCount
+                         );
       ASSERT (ChildResources != NULL);
       ChildResourceCount = 0;
       for (Index = 0; Index < ResourceCount; Index++) {
-        ChildResourceCount += FindResourceNode (Device, Resources[Index], &ChildResources[ChildResourceCount]);
+        ChildResourceCount += FindResourceNode (
+                                Device,
+                                Resources[Index],
+                                &ChildResources[ChildResourceCount]
+                                );
       }
 
       DumpResourceMap (Device, ChildResources, ChildResourceCount);
@@ -435,7 +464,9 @@ AdjustPciDeviceBarSize (
         //
         // Start to parse the bars
         //
-        for (Offset = 0x10, BarIndex = 0; Offset <= 0x24 && BarIndex < PCI_MAX_BAR; BarIndex++) {
+        for (Offset = 0x10, BarIndex = 0; Offset <= 0x24 && BarIndex <
+             PCI_MAX_BAR; BarIndex++)
+        {
           Offset = PciParseBar (PciIoDevice, Offset, BarIndex);
         }
 
@@ -518,7 +549,9 @@ PciHostBridgeResourceAllocator (
     RootBridgeDev    = NULL;
     RootBridgeHandle = 0;
 
-    while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) == EFI_SUCCESS) {
+    while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) ==
+           EFI_SUCCESS)
+    {
       //
       // Get Root Bridge Device by handle
       //
@@ -592,7 +625,14 @@ PciHostBridgeResourceAllocator (
         RootBridgeDev->PciBar[0].BarType   = PciBarTypeOpRom;
         RootBridgeDev->PciBar[0].Length    = MaxOptionRomSize;
         RootBridgeDev->PciBar[0].Alignment = MaxOptionRomSize - 1;
-        GetResourceFromDevice (RootBridgeDev, IoBridge, Mem32Bridge, PMem32Bridge, Mem64Bridge, PMem64Bridge);
+        GetResourceFromDevice (
+          RootBridgeDev,
+          IoBridge,
+          Mem32Bridge,
+          PMem32Bridge,
+          Mem64Bridge,
+          PMem64Bridge
+          );
       }
 
       //
@@ -643,7 +683,11 @@ PciHostBridgeResourceAllocator (
         // If SubmitResources returns error, PciBus isn't able to start.
         // It's a fatal error so assertion is added.
         //
-        DEBUG ((DEBUG_INFO, "PciBus: HostBridge->SubmitResources() - %r\n", Status));
+        DEBUG ((
+          DEBUG_INFO,
+          "PciBus: HostBridge->SubmitResources() - %r\n",
+          Status
+          ));
         ASSERT_EFI_ERROR (Status);
       }
 
@@ -676,7 +720,11 @@ PciHostBridgeResourceAllocator (
     // Notify platform to start to program the resource
     //
     Status = NotifyPhase (PciResAlloc, EfiPciHostBridgeAllocateResources);
-    DEBUG ((DEBUG_INFO, "PciBus: HostBridge->NotifyPhase(AllocateResources) - %r\n", Status));
+    DEBUG ((
+      DEBUG_INFO,
+      "PciBus: HostBridge->NotifyPhase(AllocateResources) - %r\n",
+      Status
+      ));
     if (!FeaturePcdGet (PcdPciBusHotplugDeviceSupport)) {
       //
       // If Hot Plug is not supported
@@ -719,7 +767,9 @@ PciHostBridgeResourceAllocator (
       Mem64ResStatus  = EFI_RESOURCE_SATISFIED;
       PMem64ResStatus = EFI_RESOURCE_SATISFIED;
 
-      while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) == EFI_SUCCESS) {
+      while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) ==
+             EFI_SUCCESS)
+      {
         //
         // Get RootBridg Device by handle
         //
@@ -731,7 +781,8 @@ PciHostBridgeResourceAllocator (
         //
         // Get host bridge handle for status report
         //
-        HandleExtendedData.Handle = RootBridgeDev->PciRootBridgeIo->ParentHandle;
+        HandleExtendedData.Handle =
+          RootBridgeDev->PciRootBridgeIo->ParentHandle;
 
         //
         // Get acpi resource node for all the resource types
@@ -854,7 +905,9 @@ PciHostBridgeResourceAllocator (
 
   RootBridgeHandle = 0;
 
-  while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) == EFI_SUCCESS) {
+  while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) ==
+         EFI_SUCCESS)
+  {
     //
     // Get RootBridg Device by handle
     //
@@ -961,7 +1014,11 @@ PciHostBridgeResourceAllocator (
       RootBridgeDev->PciBar[0].BaseAddress,
       RootBridgeDev->PciBar[0].Length
       ));
-    ProcessOptionRom (RootBridgeDev, RootBridgeDev->PciBar[0].BaseAddress, RootBridgeDev->PciBar[0].Length);
+    ProcessOptionRom (
+      RootBridgeDev,
+      RootBridgeDev->PciBar[0].BaseAddress,
+      RootBridgeDev->PciBar[0].Length
+      );
 
     IoBridge->PciDev->PciBar[IoBridge->Bar].BaseAddress         = IoBase;
     Mem32Bridge->PciDev->PciBar[Mem32Bridge->Bar].BaseAddress   = Mem32Base;
@@ -1041,8 +1098,11 @@ PciAllocateBusNumber (
   //
   BusNumberRanges = RootBridge->BusNumberRanges;
   while (BusNumberRanges->Desc != ACPI_END_TAG_DESCRIPTOR) {
-    MaxNumberInRange = BusNumberRanges->AddrRangeMin + BusNumberRanges->AddrLen - 1;
-    if ((StartBusNumber >= BusNumberRanges->AddrRangeMin) && (StartBusNumber <=  MaxNumberInRange)) {
+    MaxNumberInRange = BusNumberRanges->AddrRangeMin +
+                       BusNumberRanges->AddrLen - 1;
+    if ((StartBusNumber >= BusNumberRanges->AddrRangeMin) && (StartBusNumber <=
+                                                              MaxNumberInRange))
+    {
       NextNumber = (UINT8)(StartBusNumber + NumberOfBuses);
       while (NextNumber > MaxNumberInRange) {
         ++BusNumberRanges;
@@ -1050,8 +1110,10 @@ PciAllocateBusNumber (
           return EFI_OUT_OF_RESOURCES;
         }
 
-        NextNumber       = (UINT8)(NextNumber + (BusNumberRanges->AddrRangeMin - (MaxNumberInRange + 1)));
-        MaxNumberInRange = BusNumberRanges->AddrRangeMin + BusNumberRanges->AddrLen - 1;
+        NextNumber       = (UINT8)(NextNumber + (BusNumberRanges->AddrRangeMin -
+                                                 (MaxNumberInRange + 1)));
+        MaxNumberInRange = BusNumberRanges->AddrRangeMin +
+                           BusNumberRanges->AddrLen - 1;
       }
 
       *NextBusNumber = NextNumber;
@@ -1296,7 +1358,12 @@ PciScanBus (
         SecondBus = *SubBusNumber;
 
         Register = (UINT16)((SecondBus << 8) | (UINT16)StartBusNumber);
-        Address  = EFI_PCI_ADDRESS (StartBusNumber, Device, Func, PCI_BRIDGE_PRIMARY_BUS_REGISTER_OFFSET);
+        Address  = EFI_PCI_ADDRESS (
+                     StartBusNumber,
+                     Device,
+                     Func,
+                     PCI_BRIDGE_PRIMARY_BUS_REGISTER_OFFSET
+                     );
 
         Status = PciRootBridgeIo->Pci.Write (
                                         PciRootBridgeIo,
@@ -1315,14 +1382,19 @@ PciScanBus (
           // PCI configuration transaction to go through any PPB
           //
           Register = PciGetMaxBusNumber (Bridge);
-          Address  = EFI_PCI_ADDRESS (StartBusNumber, Device, Func, PCI_BRIDGE_SUBORDINATE_BUS_REGISTER_OFFSET);
-          Status   = PciRootBridgeIo->Pci.Write (
-                                            PciRootBridgeIo,
-                                            EfiPciWidthUint8,
-                                            Address,
-                                            1,
-                                            &Register
-                                            );
+          Address  = EFI_PCI_ADDRESS (
+                       StartBusNumber,
+                       Device,
+                       Func,
+                       PCI_BRIDGE_SUBORDINATE_BUS_REGISTER_OFFSET
+                       );
+          Status = PciRootBridgeIo->Pci.Write (
+                                          PciRootBridgeIo,
+                                          EfiPciWidthUint8,
+                                          Address,
+                                          1,
+                                          &Register
+                                          );
 
           //
           // Nofify EfiPciBeforeChildBusEnumeration for PCI Brige
@@ -1359,7 +1431,12 @@ PciScanBus (
             //
             // Reserve the larger one between the actual occupied bus number and padded bus number
             //
-            Status = PciAllocateBusNumber (PciDevice, SecondBus, (UINT8)(BusRange), &PaddedSubBus);
+            Status = PciAllocateBusNumber (
+                       PciDevice,
+                       SecondBus,
+                       (UINT8)(BusRange),
+                       &PaddedSubBus
+                       );
             if (EFI_ERROR (Status)) {
               return Status;
             }
@@ -1371,7 +1448,12 @@ PciScanBus (
         //
         // Set the current maximum bus number under the PPB
         //
-        Address = EFI_PCI_ADDRESS (StartBusNumber, Device, Func, PCI_BRIDGE_SUBORDINATE_BUS_REGISTER_OFFSET);
+        Address = EFI_PCI_ADDRESS (
+                    StartBusNumber,
+                    Device,
+                    Func,
+                    PCI_BRIDGE_SUBORDINATE_BUS_REGISTER_OFFSET
+                    );
 
         Status = PciRootBridgeIo->Pci.Write (
                                         PciRootBridgeIo,
@@ -1385,9 +1467,16 @@ PciScanBus (
         // It is device. Check PCI IOV for Bus reservation
         // Go through each function, just reserve the MAX ReservedBusNum for one device
         //
-        if (PcdGetBool (PcdSrIovSupport) && (PciDevice->SrIovCapabilityOffset != 0)) {
+        if (PcdGetBool (PcdSrIovSupport) && (PciDevice->SrIovCapabilityOffset !=
+                                             0))
+        {
           if (TempReservedBusNum < PciDevice->ReservedBusNum) {
-            Status = PciAllocateBusNumber (PciDevice, *SubBusNumber, (UINT8)(PciDevice->ReservedBusNum - TempReservedBusNum), SubBusNumber);
+            Status = PciAllocateBusNumber (
+                       PciDevice,
+                       *SubBusNumber,
+                       (UINT8)(PciDevice->ReservedBusNum - TempReservedBusNum),
+                       SubBusNumber
+                       );
             if (EFI_ERROR (Status)) {
               return Status;
             }
@@ -1395,9 +1484,17 @@ PciScanBus (
             TempReservedBusNum = PciDevice->ReservedBusNum;
 
             if (Func == 0) {
-              DEBUG ((DEBUG_INFO, "PCI-IOV ScanBus - SubBusNumber - 0x%x\n", *SubBusNumber));
+              DEBUG ((
+                DEBUG_INFO,
+                "PCI-IOV ScanBus - SubBusNumber - 0x%x\n",
+                *SubBusNumber
+                ));
             } else {
-              DEBUG ((DEBUG_INFO, "PCI-IOV ScanBus - SubBusNumber - 0x%x (Update)\n", *SubBusNumber));
+              DEBUG ((
+                DEBUG_INFO,
+                "PCI-IOV ScanBus - SubBusNumber - 0x%x (Update)\n",
+                *SubBusNumber
+                ));
             }
           }
         }
@@ -1442,7 +1539,10 @@ PciRootBridgeP2CProcess (
     Temp = PCI_IO_DEVICE_FROM_LINK (CurrentLink);
 
     if (IS_CARDBUS_BRIDGE (&Temp->Pci)) {
-      if ((gPciHotPlugInit != NULL) && Temp->Allocated && FeaturePcdGet (PcdPciBusHotplugDeviceSupport)) {
+      if ((gPciHotPlugInit != NULL) && Temp->Allocated && FeaturePcdGet (
+                                                            PcdPciBusHotplugDeviceSupport
+                                                            ))
+      {
         //
         // Raise the EFI_IOB_PCI_HPC_INIT status code
         //
@@ -1452,14 +1552,19 @@ PciRootBridgeP2CProcess (
           Temp->DevicePath
           );
 
-        PciAddress = EFI_PCI_ADDRESS (Temp->BusNumber, Temp->DeviceNumber, Temp->FunctionNumber, 0);
-        Status     = gPciHotPlugInit->InitializeRootHpc (
-                                        gPciHotPlugInit,
-                                        Temp->DevicePath,
-                                        PciAddress,
-                                        NULL,
-                                        &State
-                                        );
+        PciAddress = EFI_PCI_ADDRESS (
+                       Temp->BusNumber,
+                       Temp->DeviceNumber,
+                       Temp->FunctionNumber,
+                       0
+                       );
+        Status = gPciHotPlugInit->InitializeRootHpc (
+                                    gPciHotPlugInit,
+                                    Temp->DevicePath,
+                                    PciAddress,
+                                    NULL,
+                                    &State
+                                    );
 
         if (!EFI_ERROR (Status)) {
           Status = PciBridgeEnumerator (Temp);
@@ -1509,7 +1614,9 @@ PciHostBridgeP2CProcess (
 
   RootBridgeHandle = NULL;
 
-  while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) == EFI_SUCCESS) {
+  while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) ==
+         EFI_SUCCESS)
+  {
     //
     // Get RootBridg Device by handle
     //
@@ -1574,7 +1681,9 @@ PciHostBridgeEnumerator (
   DEBUG ((DEBUG_INFO, "PCI Bus First Scanning\n"));
   RootBridgeHandle            = NULL;
   RootBridgeEnumerationStatus = EFI_SUCCESS;
-  while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) == EFI_SUCCESS) {
+  while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) ==
+         EFI_SUCCESS)
+  {
     //
     // if a root bridge instance is found, create root bridge device for it
     //
@@ -1593,7 +1702,10 @@ PciHostBridgeEnumerator (
                RootBridgeDev
                );
 
-    if ((gPciHotPlugInit != NULL) && FeaturePcdGet (PcdPciBusHotplugDeviceSupport)) {
+    if ((gPciHotPlugInit != NULL) && FeaturePcdGet (
+                                       PcdPciBusHotplugDeviceSupport
+                                       ))
+    {
       InsertTailList (&RootBridgeList, &(RootBridgeDev->Link));
     } else {
       DestroyRootBridge (RootBridgeDev);
@@ -1613,13 +1725,17 @@ PciHostBridgeEnumerator (
     return RootBridgeEnumerationStatus;
   }
 
-  if ((gPciHotPlugInit != NULL) && FeaturePcdGet (PcdPciBusHotplugDeviceSupport)) {
+  if ((gPciHotPlugInit != NULL) && FeaturePcdGet (
+                                     PcdPciBusHotplugDeviceSupport
+                                     ))
+  {
     //
     // Reset all assigned PCI bus number in all PPB
     //
     RootBridgeHandle = NULL;
     Link             = GetFirstNode (&RootBridgeList);
-    while ((PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) == EFI_SUCCESS) &&
+    while ((PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) ==
+            EFI_SUCCESS) &&
            (!IsNull (&RootBridgeList, Link)))
     {
       RootBridgeDev = PCI_IO_DEVICE_FROM_LINK (Link);
@@ -1671,7 +1787,9 @@ PciHostBridgeEnumerator (
 
     DEBUG ((DEBUG_INFO, "PCI Bus Second Scanning\n"));
     RootBridgeHandle = NULL;
-    while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) == EFI_SUCCESS) {
+    while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) ==
+           EFI_SUCCESS)
+    {
       //
       // if a root bridge instance is found, create root bridge device for it
       //
@@ -1715,7 +1833,9 @@ PciHostBridgeEnumerator (
   }
 
   RootBridgeHandle = NULL;
-  while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) == EFI_SUCCESS) {
+  while (PciResAlloc->GetNextRootBridge (PciResAlloc, &RootBridgeHandle) ==
+         EFI_SUCCESS)
+  {
     //
     // if a root bridge instance is found, create root bridge device for it
     //
@@ -1732,7 +1852,10 @@ PciHostBridgeEnumerator (
     }
 
     PciRootBridgeIo = RootBridgeDev->PciRootBridgeIo;
-    Status          = PciRootBridgeIo->Configuration (PciRootBridgeIo, (VOID **)&Descriptors);
+    Status          = PciRootBridgeIo->Configuration (
+                                         PciRootBridgeIo,
+                                         (VOID **)&Descriptors
+                                         );
 
     if (EFI_ERROR (Status)) {
       return Status;
@@ -1818,8 +1941,12 @@ PciProgramResizableBar (
   Status             = PciIo->Pci.Read (
                                     PciIo,
                                     EfiPciIoWidthUint8,
-                                    PciIoDevice->ResizableBarOffset + sizeof (PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER),
-                                    sizeof (PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_ENTRY) * ResizableBarNumber,
+                                    PciIoDevice->ResizableBarOffset +
+                                    sizeof (
+                                                                             PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER),
+                                    sizeof (
+                                           PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_ENTRY)
+                                    * ResizableBarNumber,
                                     (VOID *)(&Entries)
                                     );
   ASSERT_EFI_ERROR (Status);
@@ -1833,8 +1960,12 @@ PciProgramResizableBar (
     // Bit 1 is set: supports operating with the BAR sized to 2 MB
     // Bit n is set: supports operating with the BAR sized to (2^n) MB
     //
-    Capabilities = LShiftU64 (Entries[Index].ResizableBarControl.Bits.BarSizeCapability, 28)
-                   | Entries[Index].ResizableBarCapability.Bits.BarSizeCapability;
+    Capabilities = LShiftU64 (
+                     Entries[Index].ResizableBarControl.Bits.BarSizeCapability,
+                     28
+                     )
+                   | Entries[Index].ResizableBarCapability.Bits.
+                     BarSizeCapability;
 
     if (ResizableBarOp == PciResizableBarMax) {
       Bit = HighBitSet64 (Capabilities);
@@ -1845,15 +1976,23 @@ PciProgramResizableBar (
 
     ASSERT (Bit >= 0);
 
-    Offset = PciIoDevice->ResizableBarOffset + sizeof (PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER)
-             + Index * sizeof (PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_ENTRY)
-             + OFFSET_OF (PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_ENTRY, ResizableBarControl);
+    Offset = PciIoDevice->ResizableBarOffset +
+             sizeof (PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER)
+             + Index *
+             sizeof (PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_ENTRY)
+             + OFFSET_OF (
+                 PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_ENTRY,
+                 ResizableBarControl
+                 );
 
     Entries[Index].ResizableBarControl.Bits.BarSize = (UINT32)Bit;
     DEBUG ((
       DEBUG_INFO,
       "   Resizable Bar: Offset = 0x%x, Bar Size Capability = 0x%016lx, New Bar Size = 0x%lx\n",
-      OFFSET_OF (PCI_TYPE00, Device.Bar[Entries[Index].ResizableBarControl.Bits.BarIndex]),
+      OFFSET_OF (
+        PCI_TYPE00,
+        Device.Bar[Entries[Index].ResizableBarControl.Bits.BarIndex]
+        ),
       Capabilities,
       LShiftU64 (SIZE_1MB, Bit)
       ));

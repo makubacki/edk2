@@ -13,9 +13,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Internal data
 //
 
-LIST_ENTRY  mEfiTimerList       = INITIALIZE_LIST_HEAD_VARIABLE (mEfiTimerList);
-EFI_LOCK    mEfiTimerLock       = EFI_INITIALIZE_LOCK_VARIABLE (TPL_HIGH_LEVEL - 1);
-EFI_EVENT   mEfiCheckTimerEvent = NULL;
+LIST_ENTRY  mEfiTimerList = INITIALIZE_LIST_HEAD_VARIABLE (mEfiTimerList);
+EFI_LOCK    mEfiTimerLock = EFI_INITIALIZE_LOCK_VARIABLE (
+                              TPL_HIGH_LEVEL -
+                              1
+                              );
+EFI_EVENT  mEfiCheckTimerEvent = NULL;
 
 EFI_LOCK  mEfiSystemTimeLock = EFI_INITIALIZE_LOCK_VARIABLE (TPL_HIGH_LEVEL);
 UINT64    mEfiSystemTime     = 0;
@@ -50,7 +53,9 @@ CoreInsertEventTimer (
   //
   // Insert the timer into the timer database in assending sorted order
   //
-  for (Link = mEfiTimerList.ForwardLink; Link != &mEfiTimerList; Link = Link->ForwardLink) {
+  for (Link = mEfiTimerList.ForwardLink; Link != &mEfiTimerList; Link =
+         Link->ForwardLink)
+  {
     Event2 = CR (Link, IEVENT, Timer.Link, EVENT_SIGNATURE);
 
     if (Event2->Timer.TriggerTime > TriggerTime) {

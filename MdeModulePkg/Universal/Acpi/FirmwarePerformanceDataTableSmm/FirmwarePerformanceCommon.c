@@ -75,8 +75,15 @@ FpdtStatusCodeListenerMm (
     return EFI_UNSUPPORTED;
   }
 
-  if ((Data != NULL) && CompareGuid (&Data->Type, &gEfiFirmwarePerformanceGuid)) {
-    DEBUG ((DEBUG_ERROR, "FpdtStatusCodeListenerMm: Performance data reported through gEfiFirmwarePerformanceGuid will not be collected by FirmwarePerformanceDataTableMm\n"));
+  if ((Data != NULL) && CompareGuid (
+                          &Data->Type,
+                          &gEfiFirmwarePerformanceGuid
+                          ))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "FpdtStatusCodeListenerMm: Performance data reported through gEfiFirmwarePerformanceGuid will not be collected by FirmwarePerformanceDataTableMm\n"
+      ));
     return EFI_UNSUPPORTED;
   }
 

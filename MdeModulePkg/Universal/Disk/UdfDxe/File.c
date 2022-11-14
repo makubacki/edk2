@@ -464,7 +464,11 @@ UdfRead (
       FreePool ((VOID *)NewFileEntryData);
       NewFileEntryData = FoundFile.FileEntry;
 
-      Status = GetFileNameFromFid (NewFileIdentifierDesc, ARRAY_SIZE (FileName), FileName);
+      Status = GetFileNameFromFid (
+                 NewFileIdentifierDesc,
+                 ARRAY_SIZE (FileName),
+                 FileName
+                 );
       if (EFI_ERROR (Status)) {
         FreePool ((VOID *)FoundFile.FileIdentifierDesc);
         goto Error_Get_FileName;
@@ -476,7 +480,13 @@ UdfRead (
       FoundFile.FileIdentifierDesc = NewFileIdentifierDesc;
       FoundFile.FileEntry          = NewFileEntryData;
 
-      Status = GetFileNameFromFid (FoundFile.FileIdentifierDesc, ARRAY_SIZE (FileName), FileName);
+      Status = GetFileNameFromFid (
+                 FoundFile.FileIdentifierDesc,
+                 ARRAY_SIZE (
+                   FileName
+                   ),
+                 FileName
+                 );
       if (EFI_ERROR (Status)) {
         goto Error_Get_FileName;
       }
@@ -800,7 +810,11 @@ UdfGetInfo (
                Buffer
                );
   } else if (CompareGuid (InformationType, &gEfiFileSystemInfoGuid)) {
-    Status = GetVolumeLabel (&PrivFsData->Volume, ARRAY_SIZE (VolumeLabel), VolumeLabel);
+    Status = GetVolumeLabel (
+               &PrivFsData->Volume,
+               ARRAY_SIZE (VolumeLabel),
+               VolumeLabel
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -838,8 +852,16 @@ UdfGetInfo (
 
     *BufferSize = FileSystemInfoLength;
     Status      = EFI_SUCCESS;
-  } else if (CompareGuid (InformationType, &gEfiFileSystemVolumeLabelInfoIdGuid)) {
-    Status = GetVolumeLabel (&PrivFsData->Volume, ARRAY_SIZE (VolumeLabel), VolumeLabel);
+  } else if (CompareGuid (
+               InformationType,
+               &gEfiFileSystemVolumeLabelInfoIdGuid
+               ))
+  {
+    Status = GetVolumeLabel (
+               &PrivFsData->Volume,
+               ARRAY_SIZE (VolumeLabel),
+               VolumeLabel
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }

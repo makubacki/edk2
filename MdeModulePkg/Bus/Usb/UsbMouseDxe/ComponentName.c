@@ -11,7 +11,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUsbMouseComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gUsbMouseComponentName = {
   UsbMouseComponentNameGetDriverName,
   UsbMouseComponentNameGetControllerName,
   "eng"
@@ -20,15 +21,18 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUsbMouseComponentNam
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gUsbMouseComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gUsbMouseComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)UsbMouseComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)UsbMouseComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  UsbMouseComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUsbMouseDriverNameTable[] = {
-  { "eng;en", L"Usb Mouse Driver" },
-  { NULL,     NULL                }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mUsbMouseDriverNameTable[] = {
+  { "eng;en", L"Usb Mouse Driver"     },
+  { NULL,     NULL                    }
 };
 
 /**

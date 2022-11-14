@@ -160,12 +160,14 @@ ConvertToTestedMemory (
                   );
   if (!EFI_ERROR (Status)) {
     Status = gDS->AddMemorySpace (
-                    ((Capabilities & EFI_MEMORY_MORE_RELIABLE) == EFI_MEMORY_MORE_RELIABLE) ?
+                    ((Capabilities & EFI_MEMORY_MORE_RELIABLE) ==
+                     EFI_MEMORY_MORE_RELIABLE) ?
                     EfiGcdMemoryTypeMoreReliable : EfiGcdMemoryTypeSystemMemory,
                     BaseAddress,
                     Length,
                     Capabilities &~
-                    (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED | EFI_MEMORY_TESTED | EFI_MEMORY_RUNTIME)
+                    (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED |
+                     EFI_MEMORY_TESTED | EFI_MEMORY_RUNTIME)
                     );
   }
 
@@ -198,7 +200,8 @@ UpdateMemoryMap (
       Range->StartAddress,
       Range->Length,
       Range->Capabilities &~
-      (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED | EFI_MEMORY_TESTED | EFI_MEMORY_RUNTIME)
+      (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED | EFI_MEMORY_TESTED |
+       EFI_MEMORY_RUNTIME)
       );
     Link = Link->ForwardLink;
   }
@@ -248,7 +251,8 @@ DirectRangeTest (
     StartAddress,
     Length,
     Capabilities &~
-    (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED | EFI_MEMORY_TESTED | EFI_MEMORY_RUNTIME)
+    (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED | EFI_MEMORY_TESTED |
+     EFI_MEMORY_RUNTIME)
     );
 
   return EFI_SUCCESS;
@@ -284,7 +288,9 @@ ConstructNonTestedMemoryRange (
 
   for (Index = 0; Index < NumberOfDescriptors; Index++) {
     if ((MemorySpaceMap[Index].GcdMemoryType == EfiGcdMemoryTypeReserved) &&
-        ((MemorySpaceMap[Index].Capabilities & (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED | EFI_MEMORY_TESTED)) ==
+        ((MemorySpaceMap[Index].Capabilities & (EFI_MEMORY_PRESENT |
+                                                EFI_MEMORY_INITIALIZED |
+                                                EFI_MEMORY_TESTED)) ==
          (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED))
         )
     {
@@ -346,7 +352,11 @@ WriteMemory (
   }
 
   while (Address < (Start + Size)) {
-    CopyMem ((VOID *)(UINTN)Address, Private->MonoPattern, Private->MonoTestSize);
+    CopyMem (
+      (VOID *)(UINTN)Address,
+      Private->MonoPattern,
+      Private->MonoTestSize
+      );
     Address += Private->CoverageSpan;
   }
 
@@ -355,7 +365,12 @@ WriteMemory (
   // if GCD do not support it or return fail, then just flush the whole cache.
   //
   if (Private->Cpu != NULL) {
-    Private->Cpu->FlushDataCache (Private->Cpu, Start, Size, EfiCpuFlushTypeWriteBackInvalidate);
+    Private->Cpu->FlushDataCache (
+                    Private->Cpu,
+                    Start,
+                    Size,
+                    EfiCpuFlushTypeWriteBackInvalidate
+                    );
   }
 
   return EFI_SUCCESS;
@@ -412,18 +427,23 @@ VerifyMemory (
       //
       // Report uncorrectable errors
       //
-      ExtendedErrorData = AllocateZeroPool (sizeof (EFI_MEMORY_EXTENDED_ERROR_DATA));
+      ExtendedErrorData = AllocateZeroPool (
+                            sizeof (EFI_MEMORY_EXTENDED_ERROR_DATA)
+                            );
       if (ExtendedErrorData == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
 
-      ExtendedErrorData->DataHeader.HeaderSize = (UINT16)sizeof (EFI_STATUS_CODE_DATA);
-      ExtendedErrorData->DataHeader.Size       = (UINT16)(sizeof (EFI_MEMORY_EXTENDED_ERROR_DATA) - sizeof (EFI_STATUS_CODE_DATA));
-      ExtendedErrorData->Granularity           = EFI_MEMORY_ERROR_DEVICE;
-      ExtendedErrorData->Operation             = EFI_MEMORY_OPERATION_READ;
-      ExtendedErrorData->Syndrome              = 0x0;
-      ExtendedErrorData->Address               = Address;
-      ExtendedErrorData->Resolution            = 0x40;
+      ExtendedErrorData->DataHeader.HeaderSize =
+        (UINT16)sizeof (EFI_STATUS_CODE_DATA);
+      ExtendedErrorData->DataHeader.Size =
+        (UINT16)(sizeof (EFI_MEMORY_EXTENDED_ERROR_DATA) -
+                 sizeof (EFI_STATUS_CODE_DATA));
+      ExtendedErrorData->Granularity = EFI_MEMORY_ERROR_DEVICE;
+      ExtendedErrorData->Operation   = EFI_MEMORY_OPERATION_READ;
+      ExtendedErrorData->Syndrome    = 0x0;
+      ExtendedErrorData->Address     = Address;
+      ExtendedErrorData->Resolution  = 0x40;
 
       REPORT_STATUS_CODE_EX (
         EFI_ERROR_CODE,
@@ -584,10 +604,13 @@ GenPerformMemoryTest (
   // the software mechanism to confirm all memory location be covered.
   //
   if (mCurrentAddress < (mCurrentRange->StartAddress + mCurrentRange->Length)) {
-    if ((mCurrentAddress + Private->BdsBlockSize) <= (mCurrentRange->StartAddress + mCurrentRange->Length)) {
+    if ((mCurrentAddress + Private->BdsBlockSize) <=
+        (mCurrentRange->StartAddress + mCurrentRange->Length))
+    {
       BlockBoundary = Private->BdsBlockSize;
     } else {
-      BlockBoundary = mCurrentRange->StartAddress + mCurrentRange->Length - mCurrentAddress;
+      BlockBoundary = mCurrentRange->StartAddress + mCurrentRange->Length -
+                      mCurrentAddress;
     }
 
     //
@@ -603,9 +626,11 @@ GenPerformMemoryTest (
       }
 
       RangeData->DataHeader.HeaderSize = (UINT16)sizeof (EFI_STATUS_CODE_DATA);
-      RangeData->DataHeader.Size       = (UINT16)(sizeof (EFI_MEMORY_RANGE_EXTENDED_DATA) - sizeof (EFI_STATUS_CODE_DATA));
-      RangeData->Start                 = mCurrentAddress;
-      RangeData->Length                = BlockBoundary;
+      RangeData->DataHeader.Size       =
+        (UINT16)(sizeof (EFI_MEMORY_RANGE_EXTENDED_DATA) -
+                 sizeof (EFI_STATUS_CODE_DATA));
+      RangeData->Start  = mCurrentAddress;
+      RangeData->Length = BlockBoundary;
 
       REPORT_STATUS_CODE_EX (
         EFI_PROGRESS_CODE,
@@ -760,7 +785,9 @@ GenCompatibleRangeTest (
     }
 
     if ((Descriptor.GcdMemoryType == EfiGcdMemoryTypeReserved) &&
-        ((Descriptor.Capabilities & (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED | EFI_MEMORY_TESTED)) ==
+        ((Descriptor.Capabilities & (EFI_MEMORY_PRESENT |
+                                     EFI_MEMORY_INITIALIZED |
+                                     EFI_MEMORY_TESTED)) ==
          (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED))
         )
     {
@@ -834,7 +861,12 @@ PerformAddressDataLineTest (
 
     if (InExtendedRange) {
       *(EFI_PHYSICAL_ADDRESS *)(UINTN)TestAddress = TestAddress;
-      Private->Cpu->FlushDataCache (Private->Cpu, TestAddress, 1, EfiCpuFlushTypeWriteBackInvalidate);
+      Private->Cpu->FlushDataCache (
+                      Private->Cpu,
+                      TestAddress,
+                      1,
+                      EfiCpuFlushTypeWriteBackInvalidate
+                      );
       if (*(EFI_PHYSICAL_ADDRESS *)(UINTN)TestAddress != TestAddress) {
         return EFI_ACCESS_DENIED;
       }

@@ -15,19 +15,19 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // to the UEFI protocol's port state (change).
 //
 USB_PORT_STATE_MAP  mUsbPortStateMap[] = {
-  { PORTSC_CONN,    USB_PORT_STAT_CONNECTION  },
-  { PORTSC_ENABLED, USB_PORT_STAT_ENABLE      },
-  { PORTSC_SUSPEND, USB_PORT_STAT_SUSPEND     },
-  { PORTSC_OVERCUR, USB_PORT_STAT_OVERCURRENT },
-  { PORTSC_RESET,   USB_PORT_STAT_RESET       },
-  { PORTSC_POWER,   USB_PORT_STAT_POWER       },
-  { PORTSC_OWNER,   USB_PORT_STAT_OWNER       }
+  { PORTSC_CONN,    USB_PORT_STAT_CONNECTION     },
+  { PORTSC_ENABLED, USB_PORT_STAT_ENABLE         },
+  { PORTSC_SUSPEND, USB_PORT_STAT_SUSPEND        },
+  { PORTSC_OVERCUR, USB_PORT_STAT_OVERCURRENT    },
+  { PORTSC_RESET,   USB_PORT_STAT_RESET          },
+  { PORTSC_POWER,   USB_PORT_STAT_POWER          },
+  { PORTSC_OWNER,   USB_PORT_STAT_OWNER          }
 };
 
 USB_PORT_STATE_MAP  mUsbPortChangeMap[] = {
-  { PORTSC_CONN_CHANGE,    USB_PORT_STAT_C_CONNECTION  },
-  { PORTSC_ENABLE_CHANGE,  USB_PORT_STAT_C_ENABLE      },
-  { PORTSC_OVERCUR_CHANGE, USB_PORT_STAT_C_OVERCURRENT }
+  { PORTSC_CONN_CHANGE,    USB_PORT_STAT_C_CONNECTION     },
+  { PORTSC_ENABLE_CHANGE,  USB_PORT_STAT_C_ENABLE         },
+  { PORTSC_OVERCUR_CHANGE, USB_PORT_STAT_C_OVERCURRENT    }
 };
 
 /**
@@ -249,7 +249,13 @@ EhcEnablePeriodSchd (
 
   EhcSetOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_ENABLE_PERIOD);
 
-  Status = EhcWaitOpRegBit (Ehc, EHC_USBSTS_OFFSET, USBSTS_PERIOD_ENABLED, TRUE, Timeout);
+  Status = EhcWaitOpRegBit (
+             Ehc,
+             EHC_USBSTS_OFFSET,
+             USBSTS_PERIOD_ENABLED,
+             TRUE,
+             Timeout
+             );
   return Status;
 }
 
@@ -273,7 +279,13 @@ EhcEnableAsyncSchd (
 
   EhcSetOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_ENABLE_ASYNC);
 
-  Status = EhcWaitOpRegBit (Ehc, EHC_USBSTS_OFFSET, USBSTS_ASYNC_ENABLED, TRUE, Timeout);
+  Status = EhcWaitOpRegBit (
+             Ehc,
+             EHC_USBSTS_OFFSET,
+             USBSTS_ASYNC_ENABLED,
+             TRUE,
+             Timeout
+             );
   return Status;
 }
 
@@ -341,7 +353,13 @@ EhcResetHC (
   }
 
   EhcSetOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_RESET);
-  Status = EhcWaitOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_RESET, FALSE, Timeout);
+  Status = EhcWaitOpRegBit (
+             Ehc,
+             EHC_USBCMD_OFFSET,
+             USBCMD_RESET,
+             FALSE,
+             Timeout
+             );
   return Status;
 }
 
@@ -387,7 +405,13 @@ EhcRunHC (
   EFI_STATUS  Status;
 
   EhcSetOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_RUN);
-  Status = EhcWaitOpRegBit (Ehc, EHC_USBSTS_OFFSET, USBSTS_HALT, FALSE, Timeout);
+  Status = EhcWaitOpRegBit (
+             Ehc,
+             EHC_USBSTS_OFFSET,
+             USBSTS_HALT,
+             FALSE,
+             Timeout
+             );
   return Status;
 }
 
@@ -943,7 +967,8 @@ EhcGetRootHubPortStatus (
     goto ON_EXIT;
   }
 
-  Offset                       = (UINT32)(EHC_PORT_STAT_OFFSET + (4 * PortNumber));
+  Offset                       = (UINT32)(EHC_PORT_STAT_OFFSET + (4 *
+                                                                  PortNumber));
   PortStatus->PortStatus       = 0;
   PortStatus->PortChangeStatus = 0;
 
@@ -968,7 +993,8 @@ EhcGetRootHubPortStatus (
 
   for (Index = 0; Index < MapSize; Index++) {
     if (EHC_BIT_IS_SET (State, mUsbPortStateMap[Index].HwState)) {
-      PortStatus->PortStatus = (UINT16)(PortStatus->PortStatus | mUsbPortStateMap[Index].UefiState);
+      PortStatus->PortStatus = (UINT16)(PortStatus->PortStatus |
+                                        mUsbPortStateMap[Index].UefiState);
     }
   }
 
@@ -976,7 +1002,8 @@ EhcGetRootHubPortStatus (
 
   for (Index = 0; Index < MapSize; Index++) {
     if (EHC_BIT_IS_SET (State, mUsbPortChangeMap[Index].HwState)) {
-      PortStatus->PortChangeStatus = (UINT16)(PortStatus->PortChangeStatus | mUsbPortChangeMap[Index].UefiState);
+      PortStatus->PortChangeStatus = (UINT16)(PortStatus->PortChangeStatus |
+                                              mUsbPortChangeMap[Index].UefiState);
     }
   }
 
@@ -1252,7 +1279,8 @@ EhcPeimEntry (
 
     EhcDev->HcStructParams = EhcReadCapRegister (EhcDev, EHC_HCSPARAMS_OFFSET);
     EhcDev->HcCapParams    = EhcReadCapRegister (EhcDev, EHC_HCCPARAMS_OFFSET);
-    EhcDev->CapLen         = EhcReadCapRegister (EhcDev, EHC_CAPLENGTH_OFFSET) & 0x0FF;
+    EhcDev->CapLen         = EhcReadCapRegister (EhcDev, EHC_CAPLENGTH_OFFSET) &
+                             0x0FF;
     //
     // Initialize Uhc's hardware
     //
@@ -1261,14 +1289,19 @@ EhcPeimEntry (
       return Status;
     }
 
-    EhcDev->Usb2HostControllerPpi.ControlTransfer         = EhcControlTransfer;
-    EhcDev->Usb2HostControllerPpi.BulkTransfer            = EhcBulkTransfer;
-    EhcDev->Usb2HostControllerPpi.GetRootHubPortNumber    = EhcGetRootHubPortNumber;
-    EhcDev->Usb2HostControllerPpi.GetRootHubPortStatus    = EhcGetRootHubPortStatus;
-    EhcDev->Usb2HostControllerPpi.SetRootHubPortFeature   = EhcSetRootHubPortFeature;
-    EhcDev->Usb2HostControllerPpi.ClearRootHubPortFeature = EhcClearRootHubPortFeature;
+    EhcDev->Usb2HostControllerPpi.ControlTransfer      = EhcControlTransfer;
+    EhcDev->Usb2HostControllerPpi.BulkTransfer         = EhcBulkTransfer;
+    EhcDev->Usb2HostControllerPpi.GetRootHubPortNumber =
+      EhcGetRootHubPortNumber;
+    EhcDev->Usb2HostControllerPpi.GetRootHubPortStatus =
+      EhcGetRootHubPortStatus;
+    EhcDev->Usb2HostControllerPpi.SetRootHubPortFeature =
+      EhcSetRootHubPortFeature;
+    EhcDev->Usb2HostControllerPpi.ClearRootHubPortFeature =
+      EhcClearRootHubPortFeature;
 
-    EhcDev->PpiDescriptor.Flags = (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
+    EhcDev->PpiDescriptor.Flags = (EFI_PEI_PPI_DESCRIPTOR_PPI |
+                                   EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
     EhcDev->PpiDescriptor.Guid  = &gPeiUsb2HostControllerPpiGuid;
     EhcDev->PpiDescriptor.Ppi   = &EhcDev->Usb2HostControllerPpi;
 
@@ -1278,7 +1311,9 @@ EhcPeimEntry (
       continue;
     }
 
-    EhcDev->EndOfPeiNotifyList.Flags  = (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
+    EhcDev->EndOfPeiNotifyList.Flags =
+      (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+       EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
     EhcDev->EndOfPeiNotifyList.Guid   = &gEfiEndOfPeiSignalPpiGuid;
     EhcDev->EndOfPeiNotifyList.Notify = EhcEndOfPei;
 

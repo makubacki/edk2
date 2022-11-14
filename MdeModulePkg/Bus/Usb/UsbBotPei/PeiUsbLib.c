@@ -103,8 +103,15 @@ PeiUsbClearEndpointHalt (
     return Status;
   }
 
-  for (EndpointIndex = 0; EndpointIndex < InterfaceDesc->NumEndpoints; EndpointIndex++) {
-    Status = UsbIoPpi->UsbGetEndpointDescriptor (PeiServices, UsbIoPpi, EndpointIndex, &EndpointDescriptor);
+  for (EndpointIndex = 0; EndpointIndex < InterfaceDesc->NumEndpoints;
+       EndpointIndex++)
+  {
+    Status = UsbIoPpi->UsbGetEndpointDescriptor (
+                         PeiServices,
+                         UsbIoPpi,
+                         EndpointIndex,
+                         &EndpointDescriptor
+                         );
     if (EFI_ERROR (Status)) {
       return EFI_INVALID_PARAMETER;
     }

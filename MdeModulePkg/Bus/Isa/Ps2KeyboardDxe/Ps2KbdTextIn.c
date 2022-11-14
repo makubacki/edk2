@@ -109,13 +109,15 @@ IsKeyRegistered (
   // Assume KeyShiftState/KeyToggleState = 0 in Registered key data means these state could be ignored.
   //
   if ((RegsiteredData->KeyState.KeyShiftState != 0) &&
-      (RegsiteredData->KeyState.KeyShiftState != InputData->KeyState.KeyShiftState))
+      (RegsiteredData->KeyState.KeyShiftState !=
+       InputData->KeyState.KeyShiftState))
   {
     return FALSE;
   }
 
   if ((RegsiteredData->KeyState.KeyToggleState != 0) &&
-      (RegsiteredData->KeyState.KeyToggleState != InputData->KeyState.KeyToggleState))
+      (RegsiteredData->KeyState.KeyToggleState !=
+       InputData->KeyState.KeyToggleState))
   {
     return FALSE;
   }
@@ -290,7 +292,9 @@ KeyboardReadKeyStroke (
     //
     // If it is partial keystroke, skip it.
     //
-    if ((KeyData.Key.ScanCode == SCAN_NULL) && (KeyData.Key.UnicodeChar == CHAR_NULL)) {
+    if ((KeyData.Key.ScanCode == SCAN_NULL) && (KeyData.Key.UnicodeChar ==
+                                                CHAR_NULL))
+    {
       continue;
     }
 
@@ -298,10 +302,16 @@ KeyboardReadKeyStroke (
     // Translate the CTRL-Alpha characters to their corresponding control value
     // (ctrl-a = 0x0001 through ctrl-Z = 0x001A)
     //
-    if ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) != 0) {
-      if ((KeyData.Key.UnicodeChar >= L'a') && (KeyData.Key.UnicodeChar <= L'z')) {
+    if ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED |
+                                           EFI_RIGHT_CONTROL_PRESSED)) != 0)
+    {
+      if ((KeyData.Key.UnicodeChar >= L'a') && (KeyData.Key.UnicodeChar <=
+                                                L'z'))
+      {
         KeyData.Key.UnicodeChar = (CHAR16)(KeyData.Key.UnicodeChar - L'a' + 1);
-      } else if ((KeyData.Key.UnicodeChar >= L'A') && (KeyData.Key.UnicodeChar <= L'Z')) {
+      } else if ((KeyData.Key.UnicodeChar >= L'A') &&
+                 (KeyData.Key.UnicodeChar <= L'Z'))
+      {
         KeyData.Key.UnicodeChar = (CHAR16)(KeyData.Key.UnicodeChar - L'A' + 1);
       }
     }
@@ -352,7 +362,9 @@ KeyboardWaitForKey (
         &(ConsoleIn->EfiKeyQueue.Buffer[ConsoleIn->EfiKeyQueue.Head]),
         sizeof (EFI_KEY_DATA)
         );
-      if ((KeyData.Key.ScanCode == SCAN_NULL) && (KeyData.Key.UnicodeChar == CHAR_NULL)) {
+      if ((KeyData.Key.ScanCode == SCAN_NULL) && (KeyData.Key.UnicodeChar ==
+                                                  CHAR_NULL))
+      {
         PopEfikeyBufHead (&ConsoleIn->EfiKeyQueue, &KeyData);
         continue;
       }
@@ -572,7 +584,9 @@ KeyboardRegisterKeyNotify (
   KEYBOARD_CONSOLE_IN_EX_NOTIFY  *CurrentNotify;
   KEYBOARD_CONSOLE_IN_EX_NOTIFY  *NewNotify;
 
-  if ((KeyData == NULL) || (NotifyHandle == NULL) || (KeyNotificationFunction == NULL)) {
+  if ((KeyData == NULL) || (NotifyHandle == NULL) || (KeyNotificationFunction ==
+                                                      NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -586,7 +600,9 @@ KeyboardRegisterKeyNotify (
   //
   // Return EFI_SUCCESS if the (KeyData, NotificationFunction) is already registered.
   //
-  for (Link = ConsoleInDev->NotifyList.ForwardLink; Link != &ConsoleInDev->NotifyList; Link = Link->ForwardLink) {
+  for (Link = ConsoleInDev->NotifyList.ForwardLink; Link !=
+       &ConsoleInDev->NotifyList; Link = Link->ForwardLink)
+  {
     CurrentNotify = CR (
                       Link,
                       KEYBOARD_CONSOLE_IN_EX_NOTIFY,
@@ -605,7 +621,10 @@ KeyboardRegisterKeyNotify (
   //
   // Allocate resource to save the notification function
   //
-  NewNotify = (KEYBOARD_CONSOLE_IN_EX_NOTIFY *)AllocateZeroPool (sizeof (KEYBOARD_CONSOLE_IN_EX_NOTIFY));
+  NewNotify = (KEYBOARD_CONSOLE_IN_EX_NOTIFY *)AllocateZeroPool (
+                                                 sizeof (
+                                                                        KEYBOARD_CONSOLE_IN_EX_NOTIFY)
+                                                 );
   if (NewNotify == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;
@@ -662,7 +681,9 @@ KeyboardUnregisterKeyNotify (
   //
   OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
 
-  for (Link = ConsoleInDev->NotifyList.ForwardLink; Link != &ConsoleInDev->NotifyList; Link = Link->ForwardLink) {
+  for (Link = ConsoleInDev->NotifyList.ForwardLink; Link !=
+       &ConsoleInDev->NotifyList; Link = Link->ForwardLink)
+  {
     CurrentNotify = CR (
                       Link,
                       KEYBOARD_CONSOLE_IN_EX_NOTIFY,
@@ -734,8 +755,15 @@ KeyNotifyProcessHandler (
       break;
     }
 
-    for (Link = GetFirstNode (NotifyList); !IsNull (NotifyList, Link); Link = GetNextNode (NotifyList, Link)) {
-      CurrentNotify = CR (Link, KEYBOARD_CONSOLE_IN_EX_NOTIFY, NotifyEntry, KEYBOARD_CONSOLE_IN_EX_NOTIFY_SIGNATURE);
+    for (Link = GetFirstNode (NotifyList); !IsNull (NotifyList, Link); Link =
+           GetNextNode (NotifyList, Link))
+    {
+      CurrentNotify = CR (
+                        Link,
+                        KEYBOARD_CONSOLE_IN_EX_NOTIFY,
+                        NotifyEntry,
+                        KEYBOARD_CONSOLE_IN_EX_NOTIFY_SIGNATURE
+                        );
       if (IsKeyRegistered (&CurrentNotify->KeyData, &KeyData)) {
         CurrentNotify->KeyNotificationFn (&KeyData);
       }

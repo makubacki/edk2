@@ -260,7 +260,10 @@ CalculateApertureIo16 (
     // become too limited to meet the requirement of most of devices.
     //
     if (mReserveIsaAliases || mReserveVgaAliases) {
-      if (!IS_PCI_BRIDGE (&(Node->PciDev->Pci)) && !IS_CARDBUS_BRIDGE (&(Node->PciDev->Pci))) {
+      if (!IS_PCI_BRIDGE (&(Node->PciDev->Pci)) && !IS_CARDBUS_BRIDGE (
+                                                      &(Node->PciDev->Pci)
+                                                      ))
+      {
         //
         // Check if there is need to support ISA/VGA decoding
         // If so, we need to avoid isa/vga aliasing range
@@ -375,7 +378,11 @@ CalculateResourceAperture (
     // Apply padding resource to meet alignment requirement
     // Node offset will be used in future real allocation
     //
-    Node->Offset = ALIGN_VALUE (Aperture[Node->ResourceUsage], Node->Alignment + 1);
+    Node->Offset = ALIGN_VALUE (
+                     Aperture[Node->ResourceUsage],
+                     Node->Alignment +
+                     1
+                     );
 
     //
     // Record the total aperture.
@@ -386,14 +393,23 @@ CalculateResourceAperture (
   //
   // Adjust the aperture with the bridge's alignment
   //
-  Aperture[PciResUsageTypical] = ALIGN_VALUE (Aperture[PciResUsageTypical], Bridge->Alignment + 1);
-  Aperture[PciResUsagePadding] = ALIGN_VALUE (Aperture[PciResUsagePadding], Bridge->Alignment + 1);
+  Aperture[PciResUsageTypical] = ALIGN_VALUE (
+                                   Aperture[PciResUsageTypical],
+                                   Bridge->Alignment + 1
+                                   );
+  Aperture[PciResUsagePadding] = ALIGN_VALUE (
+                                   Aperture[PciResUsagePadding],
+                                   Bridge->Alignment + 1
+                                   );
 
   //
   // Hotplug controller needs padding resources.
   // Use the larger one between the padding resource and actual occupied resource.
   //
-  Bridge->Length = MAX (Aperture[PciResUsageTypical], Aperture[PciResUsagePadding]);
+  Bridge->Length = MAX (
+                     Aperture[PciResUsageTypical],
+                     Aperture[PciResUsagePadding]
+                     );
 
   //
   // Adjust the bridge's alignment to the MAX (first) alignment of all children.
@@ -1038,7 +1054,8 @@ DegradeResource (
             NextChildNodeLink = ChildNodeLink->ForwardLink;
 
             if ((ResourceNode->PciDev == PciIoDevice) &&
-                (ResourceNode->Virtual || !PciIoDevice->PciBar[ResourceNode->Bar].BarTypeFixed)
+                (ResourceNode->Virtual ||
+                 !PciIoDevice->PciBar[ResourceNode->Bar].BarTypeFixed)
                 )
             {
               RemoveEntryList (ChildNodeLink);
@@ -1056,7 +1073,8 @@ DegradeResource (
             NextChildNodeLink = ChildNodeLink->ForwardLink;
 
             if ((ResourceNode->PciDev == PciIoDevice) &&
-                (ResourceNode->Virtual || !PciIoDevice->PciBar[ResourceNode->Bar].BarTypeFixed)
+                (ResourceNode->Virtual ||
+                 !PciIoDevice->PciBar[ResourceNode->Bar].BarTypeFixed)
                 )
             {
               RemoveEntryList (ChildNodeLink);
@@ -1092,7 +1110,11 @@ DegradeResource (
     //
     // if the bridge does not support MEM64, degrade MEM64 to MEM32
     //
-    if (!BridgeSupportResourceDecode (Bridge, EFI_BRIDGE_MEM64_DECODE_SUPPORTED)) {
+    if (!BridgeSupportResourceDecode (
+           Bridge,
+           EFI_BRIDGE_MEM64_DECODE_SUPPORTED
+           ))
+    {
       MergeResourceTree (
         Mem32Node,
         Mem64Node,
@@ -1103,7 +1125,11 @@ DegradeResource (
     //
     // if the bridge does not support PMEM64, degrade PMEM64 to PMEM32
     //
-    if (!BridgeSupportResourceDecode (Bridge, EFI_BRIDGE_PMEM64_DECODE_SUPPORTED)) {
+    if (!BridgeSupportResourceDecode (
+           Bridge,
+           EFI_BRIDGE_PMEM64_DECODE_SUPPORTED
+           ))
+    {
       MergeResourceTree (
         PMem32Node,
         PMem64Node,
@@ -1128,7 +1154,11 @@ DegradeResource (
   // If bridge doesn't support Pmem32
   // degrade it to mem32
   //
-  if (!BridgeSupportResourceDecode (Bridge, EFI_BRIDGE_PMEM32_DECODE_SUPPORTED)) {
+  if (!BridgeSupportResourceDecode (
+         Bridge,
+         EFI_BRIDGE_PMEM32_DECODE_SUPPORTED
+         ))
+  {
     MergeResourceTree (
       Mem32Node,
       PMem32Node,
@@ -1140,7 +1170,11 @@ DegradeResource (
   // if root bridge supports combined Pmem Mem decoding
   // merge these two type of resource
   //
-  if (BridgeSupportResourceDecode (Bridge, EFI_BRIDGE_PMEM_MEM_COMBINE_SUPPORTED)) {
+  if (BridgeSupportResourceDecode (
+        Bridge,
+        EFI_BRIDGE_PMEM_MEM_COMBINE_SUPPORTED
+        ))
+  {
     MergeResourceTree (
       Mem32Node,
       PMem32Node,
@@ -1673,8 +1707,26 @@ ProgramUpstreamBridgeForRom (
       //
       Base  = (UINT16)(OptionRomBase >> 16);
       Limit = (UINT16)((OptionRomBase + PciDevice->RomSize - 1) >> 16);
-      PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, OFFSET_OF (PCI_TYPE01, Bridge.MemoryBase), 1, &Base);
-      PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, OFFSET_OF (PCI_TYPE01, Bridge.MemoryLimit), 1, &Limit);
+      PciIo->Pci.Write (
+                   PciIo,
+                   EfiPciIoWidthUint16,
+                   OFFSET_OF (
+                     PCI_TYPE01,
+                     Bridge.MemoryBase
+                     ),
+                   1,
+                   &Base
+                   );
+      PciIo->Pci.Write (
+                   PciIo,
+                   EfiPciIoWidthUint16,
+                   OFFSET_OF (
+                     PCI_TYPE01,
+                     Bridge.MemoryLimit
+                     ),
+                   1,
+                   &Limit
+                   );
 
       PCI_ENABLE_COMMAND_REGISTER (Parent, EFI_PCI_COMMAND_MEMORY_SPACE);
     } else {
@@ -1688,13 +1740,33 @@ ProgramUpstreamBridgeForRom (
         Base  = (UINT16)gAllOne;
         Limit = (UINT16)gAllZero;
       } else {
-        Base  = (UINT16)((UINT32)Parent->PciBar[PPB_MEM32_RANGE].BaseAddress >> 16);
+        Base  = (UINT16)((UINT32)Parent->PciBar[PPB_MEM32_RANGE].BaseAddress >>
+                         16);
         Limit = (UINT16)((UINT32)(Parent->PciBar[PPB_MEM32_RANGE].BaseAddress
-                                  + Parent->PciBar[PPB_MEM32_RANGE].Length - 1) >> 16);
+                                  + Parent->PciBar[PPB_MEM32_RANGE].Length -
+                                  1) >> 16);
       }
 
-      PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, OFFSET_OF (PCI_TYPE01, Bridge.MemoryBase), 1, &Base);
-      PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, OFFSET_OF (PCI_TYPE01, Bridge.MemoryLimit), 1, &Limit);
+      PciIo->Pci.Write (
+                   PciIo,
+                   EfiPciIoWidthUint16,
+                   OFFSET_OF (
+                     PCI_TYPE01,
+                     Bridge.MemoryBase
+                     ),
+                   1,
+                   &Base
+                   );
+      PciIo->Pci.Write (
+                   PciIo,
+                   EfiPciIoWidthUint16,
+                   OFFSET_OF (
+                     PCI_TYPE01,
+                     Bridge.MemoryLimit
+                     ),
+                   1,
+                   &Limit
+                   );
 
       PCI_DISABLE_COMMAND_REGISTER (Parent, EFI_PCI_COMMAND_MEMORY_SPACE);
     }
@@ -2131,8 +2203,12 @@ ApplyResourcePadding (
   DummyBarIndex = 0;
   Ptr           = PciDev->ResourcePaddingDescriptors;
 
-  while (((EFI_ACPI_END_TAG_DESCRIPTOR *)Ptr)->Desc != ACPI_END_TAG_DESCRIPTOR) {
-    if ((Ptr->Desc == ACPI_ADDRESS_SPACE_DESCRIPTOR) && (Ptr->ResType == ACPI_ADDRESS_SPACE_TYPE_IO)) {
+  while (((EFI_ACPI_END_TAG_DESCRIPTOR *)Ptr)->Desc !=
+         ACPI_END_TAG_DESCRIPTOR)
+  {
+    if ((Ptr->Desc == ACPI_ADDRESS_SPACE_DESCRIPTOR) && (Ptr->ResType ==
+                                                         ACPI_ADDRESS_SPACE_TYPE_IO))
+    {
       if (Ptr->AddrLen != 0) {
         Node = CreateResourceNode (
                  PciDev,
@@ -2152,7 +2228,9 @@ ApplyResourcePadding (
       continue;
     }
 
-    if ((Ptr->Desc == ACPI_ADDRESS_SPACE_DESCRIPTOR) && (Ptr->ResType == ACPI_ADDRESS_SPACE_TYPE_MEM)) {
+    if ((Ptr->Desc == ACPI_ADDRESS_SPACE_DESCRIPTOR) && (Ptr->ResType ==
+                                                         ACPI_ADDRESS_SPACE_TYPE_MEM))
+    {
       if (Ptr->AddrSpaceGranularity == 32) {
         //
         // prefetchable
@@ -2267,7 +2345,10 @@ GetResourcePaddingPpb (
   IN  PCI_IO_DEVICE  *PciIoDevice
   )
 {
-  if ((gPciHotPlugInit != NULL) && FeaturePcdGet (PcdPciBusHotplugDeviceSupport)) {
+  if ((gPciHotPlugInit != NULL) && FeaturePcdGet (
+                                     PcdPciBusHotplugDeviceSupport
+                                     ))
+  {
     if (PciIoDevice->ResourcePaddingDescriptors == NULL) {
       GetResourcePaddingForHpb (PciIoDevice);
     }

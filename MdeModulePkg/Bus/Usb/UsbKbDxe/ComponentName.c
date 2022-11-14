@@ -11,7 +11,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUsbKeyboardComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gUsbKeyboardComponentName = {
   UsbKeyboardComponentNameGetDriverName,
   UsbKeyboardComponentNameGetControllerName,
   "eng"
@@ -20,15 +21,18 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUsbKeyboardComponent
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gUsbKeyboardComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gUsbKeyboardComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)UsbKeyboardComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)UsbKeyboardComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  UsbKeyboardComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUsbKeyboardDriverNameTable[] = {
-  { "eng;en", L"Usb Keyboard Driver" },
-  { NULL,     NULL                   }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mUsbKeyboardDriverNameTable[] = {
+  { "eng;en", L"Usb Keyboard Driver"     },
+  { NULL,     NULL                       }
 };
 
 /**

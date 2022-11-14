@@ -319,7 +319,11 @@ Uhci2GetCapability (
 
   Uhc->RootPorts = *PortNumber;
 
-  DEBUG ((DEBUG_INFO, "Uhci2GetCapability: %d ports\n", (UINT32)Uhc->RootPorts));
+  DEBUG ((
+    DEBUG_INFO,
+    "Uhci2GetCapability: %d ports\n",
+    (UINT32)Uhc->RootPorts
+    ));
   return EFI_SUCCESS;
 }
 
@@ -373,7 +377,11 @@ Uhci2GetRootHubPortStatus (
   }
 
   if ((PortSC & USBPORTSC_SUSP) != 0) {
-    DEBUG ((DEBUG_INFO, "Uhci2GetRootHubPortStatus: port %d is suspended\n", PortNumber));
+    DEBUG ((
+      DEBUG_INFO,
+      "Uhci2GetRootHubPortStatus: port %d is suspended\n",
+      PortNumber
+      ));
     PortStatus->PortStatus |= USB_PORT_STAT_SUSPEND;
   }
 
@@ -659,7 +667,9 @@ Uhci2ControlTransfer (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((TransferDirection != EfiUsbNoData) && ((Data == NULL) || (DataLength == NULL))) {
+  if ((TransferDirection != EfiUsbNoData) && ((Data == NULL) || (DataLength ==
+                                                                 NULL)))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -694,7 +704,15 @@ Uhci2ControlTransfer (
     goto ON_EXIT;
   }
 
-  Status = UhciMapUserData (Uhc, TransferDirection, Data, DataLength, &PktId, &DataPhy, &DataMap);
+  Status = UhciMapUserData (
+             Uhc,
+             TransferDirection,
+             Data,
+             DataLength,
+             &PktId,
+             &DataPhy,
+             &DataMap
+             );
 
   if (EFI_ERROR (Status)) {
     Uhc->PciIo->Unmap (Uhc->PciIo, RequestMap);
@@ -725,7 +743,14 @@ Uhci2ControlTransfer (
   // the execution result
   //
   UhciLinkTdToQh (Uhc, Uhc->CtrlQh, TDs);
-  Status = UhciExecuteTransfer (Uhc, Uhc->CtrlQh, TDs, TimeOut, IsSlowDevice, &QhResult);
+  Status = UhciExecuteTransfer (
+             Uhc,
+             Uhc->CtrlQh,
+             TDs,
+             TimeOut,
+             IsSlowDevice,
+             &QhResult
+             );
   UhciUnlinkTdFromQh (Uhc->CtrlQh, TDs);
 
   Uhc->PciIo->Flush (Uhc->PciIo);
@@ -807,7 +832,9 @@ Uhci2BulkTransfer (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((DataLength == NULL) || (*DataLength == 0) || (Data == NULL) || (TransferResult == NULL)) {
+  if ((DataLength == NULL) || (*DataLength == 0) || (Data == NULL) ||
+      (TransferResult == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -846,7 +873,15 @@ Uhci2BulkTransfer (
     Direction = EfiUsbDataOut;
   }
 
-  Status = UhciMapUserData (Uhc, Direction, *Data, DataLength, &PktId, &DataPhy, &DataMap);
+  Status = UhciMapUserData (
+             Uhc,
+             Direction,
+             *Data,
+             DataLength,
+             &PktId,
+             &DataPhy,
+             &DataMap
+             );
 
   if (EFI_ERROR (Status)) {
     goto ON_EXIT;
@@ -964,7 +999,12 @@ Uhci2AsyncInterruptTransfer (
   //
   if (!IsNewTransfer) {
     OldTpl = gBS->RaiseTPL (UHCI_TPL);
-    Status = UhciRemoveAsyncReq (Uhc, DeviceAddress, EndPointAddress, DataToggle);
+    Status = UhciRemoveAsyncReq (
+               Uhc,
+               DeviceAddress,
+               EndPointAddress,
+               DataToggle
+               );
 
     gBS->RestoreTPL (OldTpl);
     return Status;
@@ -1007,7 +1047,11 @@ Uhci2AsyncInterruptTransfer (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  DataPhy = (UINT8 *)(UINTN)UsbHcGetPciAddressForHostMem (Uhc->MemPool, DataPtr, DataLength);
+  DataPhy = (UINT8 *)(UINTN)UsbHcGetPciAddressForHostMem (
+                              Uhc->MemPool,
+                              DataPtr,
+                              DataLength
+                              );
 
   OldTpl = gBS->RaiseTPL (UHCI_TPL);
 
@@ -1205,7 +1249,14 @@ Uhci2SyncInterruptTransfer (
 
   UhciLinkTdToQh (Uhc, Uhc->SyncIntQh, TDs);
 
-  Status = UhciExecuteTransfer (Uhc, Uhc->SyncIntQh, TDs, TimeOut, IsSlowDevice, &QhResult);
+  Status = UhciExecuteTransfer (
+             Uhc,
+             Uhc->SyncIntQh,
+             TDs,
+             TimeOut,
+             IsSlowDevice,
+             &QhResult
+             );
 
   UhciUnlinkTdFromQh (Uhc->SyncIntQh, TDs);
   Uhc->PciIo->Flush (Uhc->PciIo);

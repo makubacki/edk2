@@ -38,19 +38,22 @@ EFI_PEI_PPI_DESCRIPTOR  mAhciStorageSecurityPpiListTemplate = {
 };
 
 EFI_PEI_NOTIFY_DESCRIPTOR  mAhciEndOfPeiNotifyListTemplate = {
-  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+   EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEfiEndOfPeiSignalPpiGuid,
   AhciPeimEndOfPei
 };
 
 EFI_PEI_NOTIFY_DESCRIPTOR  mAtaAhciHostControllerNotify = {
-  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+   EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEdkiiPeiAtaAhciHostControllerPpiGuid,
   AtaAhciHostControllerPpiInstallationCallback
 };
 
 EFI_PEI_NOTIFY_DESCRIPTOR  mPciDevicePpiNotify = {
-  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+   EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEdkiiPeiPciDevicePpiGuid,
   AtaAhciPciDevicePpiInstallationCallback
 };
@@ -156,7 +159,11 @@ AtaAhciInitPrivateData (
   //
   Status = PeiServicesGetBootMode (&BootMode);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Fail to get the current boot mode.\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Fail to get the current boot mode.\n",
+      __FUNCTION__
+      ));
     return Status;
   }
 
@@ -180,7 +187,11 @@ AtaAhciInitPrivateData (
   // will be enumerated/initialized during S3 resume.
   //
   if (BootMode == BOOT_ON_S3_RESUME) {
-    NumberOfPorts = AhciS3GetEumeratePorts (DevicePath, DevicePathLength, &PortBitMap);
+    NumberOfPorts = AhciS3GetEumeratePorts (
+                      DevicePath,
+                      DevicePathLength,
+                      &PortBitMap
+                      );
     if (NumberOfPorts == 0) {
       return EFI_SUCCESS;
     }
@@ -244,7 +255,8 @@ AtaAhciInitPrivateData (
   Private->BlkIoPpiList.Ppi = &Private->BlkIoPpi;
   PeiServicesInstallPpi (&Private->BlkIoPpiList);
 
-  Private->BlkIo2Ppi.Revision                = EFI_PEI_RECOVERY_BLOCK_IO2_PPI_REVISION;
+  Private->BlkIo2Ppi.Revision =
+    EFI_PEI_RECOVERY_BLOCK_IO2_PPI_REVISION;
   Private->BlkIo2Ppi.GetNumberOfBlockDevices = AhciBlockIoGetDeviceNo2;
   Private->BlkIo2Ppi.GetBlockDeviceMediaInfo = AhciBlockIoGetMediaInfo2;
   Private->BlkIo2Ppi.ReadBlocks              = AhciBlockIoReadBlocks2;
@@ -262,11 +274,16 @@ AtaAhciInitPrivateData (
       "%a: Security Security Command PPI will be produced.\n",
       __FUNCTION__
       ));
-    Private->StorageSecurityPpi.Revision           = EDKII_STORAGE_SECURITY_PPI_REVISION;
-    Private->StorageSecurityPpi.GetNumberofDevices = AhciStorageSecurityGetDeviceNo;
-    Private->StorageSecurityPpi.GetDevicePath      = AhciStorageSecurityGetDevicePath;
-    Private->StorageSecurityPpi.ReceiveData        = AhciStorageSecurityReceiveData;
-    Private->StorageSecurityPpi.SendData           = AhciStorageSecuritySendData;
+    Private->StorageSecurityPpi.Revision =
+      EDKII_STORAGE_SECURITY_PPI_REVISION;
+    Private->StorageSecurityPpi.GetNumberofDevices =
+      AhciStorageSecurityGetDeviceNo;
+    Private->StorageSecurityPpi.GetDevicePath =
+      AhciStorageSecurityGetDevicePath;
+    Private->StorageSecurityPpi.ReceiveData =
+      AhciStorageSecurityReceiveData;
+    Private->StorageSecurityPpi.SendData =
+      AhciStorageSecuritySendData;
     CopyMem (
       &Private->StorageSecurityPpiList,
       &mAhciStorageSecurityPpiListTemplate,

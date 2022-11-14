@@ -40,7 +40,11 @@ SmmPerformanceLibConstructor (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  mPerformanceMeasurementEnabled =  (BOOLEAN)((PcdGet8 (PcdPerformanceLibraryPropertyMask) & PERFORMANCE_LIBRARY_PROPERTY_MEASUREMENT_ENABLED) != 0);
+  mPerformanceMeasurementEnabled =  (BOOLEAN)((PcdGet8 (
+                                                 PcdPerformanceLibraryPropertyMask
+                                                 ) &
+                                               PERFORMANCE_LIBRARY_PROPERTY_MEASUREMENT_ENABLED)
+                                              != 0);
 
   return EFI_SUCCESS;
 }
@@ -66,7 +70,11 @@ GetPerformanceMeasurementProtocol (
     return EFI_SUCCESS;
   }
 
-  Status = gSmst->SmmLocateProtocol (&gEdkiiSmmPerformanceMeasurementProtocolGuid, NULL, (VOID **)&PerformanceMeasurement);
+  Status = gSmst->SmmLocateProtocol (
+                    &gEdkiiSmmPerformanceMeasurementProtocolGuid,
+                    NULL,
+                    (VOID **)&PerformanceMeasurement
+                    );
   if (!EFI_ERROR (Status)) {
     ASSERT (PerformanceMeasurement != NULL);
     //
@@ -128,7 +136,15 @@ StartPerformanceMeasurementEx (
   }
 
   if (mPerformanceMeasurement != NULL) {
-    Status = mPerformanceMeasurement->CreatePerformanceMeasurement (Handle, NULL, String, TimeStamp, 0, Identifier, PerfStartEntry);
+    Status = mPerformanceMeasurement->CreatePerformanceMeasurement (
+                                        Handle,
+                                        NULL,
+                                        String,
+                                        TimeStamp,
+                                        0,
+                                        Identifier,
+                                        PerfStartEntry
+                                        );
   } else {
     ASSERT (FALSE);
   }
@@ -187,7 +203,15 @@ EndPerformanceMeasurementEx (
   }
 
   if (mPerformanceMeasurement != NULL) {
-    Status = mPerformanceMeasurement->CreatePerformanceMeasurement (Handle, NULL, String, TimeStamp, 0, Identifier, PerfEndEntry);
+    Status = mPerformanceMeasurement->CreatePerformanceMeasurement (
+                                        Handle,
+                                        NULL,
+                                        String,
+                                        TimeStamp,
+                                        0,
+                                        Identifier,
+                                        PerfEndEntry
+                                        );
   } else {
     ASSERT (FALSE);
   }
@@ -424,7 +448,15 @@ LogPerformanceMeasurement (
   }
 
   if (mPerformanceMeasurement != NULL) {
-    Status = mPerformanceMeasurement->CreatePerformanceMeasurement (CallerIdentifier, Guid, String, 0, Address, Identifier, PerfEntry);
+    Status = mPerformanceMeasurement->CreatePerformanceMeasurement (
+                                        CallerIdentifier,
+                                        Guid,
+                                        String,
+                                        0,
+                                        Address,
+                                        Identifier,
+                                        PerfEntry
+                                        );
   } else {
     ASSERT (FALSE);
   }
@@ -453,7 +485,10 @@ LogPerformanceMeasurementEnabled (
   //
   // When Performance measurement is enabled and the type is not filtered, the performance can be logged.
   //
-  if (PerformanceMeasurementEnabled () && ((PcdGet8 (PcdPerformanceLibraryPropertyMask) & Type) == 0)) {
+  if (PerformanceMeasurementEnabled () && ((PcdGet8 (
+                                              PcdPerformanceLibraryPropertyMask
+                                              ) & Type) == 0))
+  {
     return TRUE;
   }
 

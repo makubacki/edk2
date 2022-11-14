@@ -1274,7 +1274,8 @@ NonCoherentPciIoMap (
   // a bounce buffer and copy over the data in case HostAddress >= 4 GB.
   //
   Bounce = ((Dev->Attributes & EFI_PCI_IO_ATTRIBUTE_DUAL_ADDRESS_CYCLE) == 0 &&
-            (EFI_PHYSICAL_ADDRESS)(UINTN)HostAddress + *NumberOfBytes > SIZE_4GB);
+            (EFI_PHYSICAL_ADDRESS)(UINTN)HostAddress + *NumberOfBytes >
+            SIZE_4GB);
 
   if (!Bounce) {
     switch (Operation) {
@@ -1548,7 +1549,8 @@ PciIoAttributes (
     case EfiPciIoAttributeOperationEnable:
       Attributes |= Dev->Attributes;
     case EfiPciIoAttributeOperationSet:
-      Enable          = ((~Dev->Attributes & Attributes) & EFI_PCI_DEVICE_ENABLE) != 0;
+      Enable          = ((~Dev->Attributes & Attributes) &
+                         EFI_PCI_DEVICE_ENABLE) != 0;
       Dev->Attributes = Attributes;
       break;
 
@@ -1708,9 +1710,9 @@ STATIC CONST EFI_PCI_IO_PROTOCOL  PciIoTemplate =
 {
   PciIoPollMem,
   PciIoPollIo,
-  { PciIoMemRead,             PciIoMemWrite    },
-  { PciIoIoRead,              PciIoIoWrite     },
-  { PciIoPciRead,             PciIoPciWrite    },
+  { PciIoMemRead,             PciIoMemWrite                   },
+  { PciIoIoRead,              PciIoIoWrite                    },
+  { PciIoPciRead,             PciIoPciWrite                   },
   PciIoCopyMem,
   CoherentPciIoMap,
   CoherentPciIoUnmap,

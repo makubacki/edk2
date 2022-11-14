@@ -228,7 +228,8 @@ typedef struct {
 #define LOADED_IMAGE_PRIVATE_DATA_FROM_THIS(a) \
           CR(a, LOADED_IMAGE_PRIVATE_DATA, Info, LOADED_IMAGE_PRIVATE_DATA_SIGNATURE)
 
-#define IMAGE_PROPERTIES_RECORD_CODE_SECTION_SIGNATURE  SIGNATURE_32 ('I','P','R','C')
+#define IMAGE_PROPERTIES_RECORD_CODE_SECTION_SIGNATURE  \
+  SIGNATURE_32 ('I','P','R','C')
 
 typedef struct {
   UINT32                  Signature;
@@ -275,13 +276,16 @@ extern EFI_TPL  gEfiCurrentTpl;
 extern EFI_GUID                   *gDxeCoreFileName;
 extern EFI_LOADED_IMAGE_PROTOCOL  *gDxeCoreLoadedImage;
 
-extern EFI_MEMORY_TYPE_INFORMATION  gMemoryTypeInformation[EfiMaxMemoryType + 1];
+extern EFI_MEMORY_TYPE_INFORMATION  gMemoryTypeInformation[EfiMaxMemoryType +
+                                                           1];
 
 extern BOOLEAN                    gDispatcherRunning;
 extern EFI_RUNTIME_ARCH_PROTOCOL  gRuntimeTemplate;
 
-extern EFI_LOAD_FIXED_ADDRESS_CONFIGURATION_TABLE  gLoadModuleAtFixAddressConfigurationTable;
-extern BOOLEAN                                     gLoadFixedAddressCodeMemoryReady;
+extern EFI_LOAD_FIXED_ADDRESS_CONFIGURATION_TABLE
+  gLoadModuleAtFixAddressConfigurationTable;
+extern BOOLEAN
+  gLoadFixedAddressCodeMemoryReady;
 //
 // Service Initialization Functions
 //

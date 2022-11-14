@@ -57,7 +57,11 @@ LocateImageHandle (
   ImagePathSize = GetDevicePathSize (ImagePath);
 
   for (Index = 0; Index < HandleNum; Index++) {
-    Status = gBS->HandleProtocol (Handles[Index], &gEfiLoadedImageDevicePathProtocolGuid, (VOID **)&DevicePath);
+    Status = gBS->HandleProtocol (
+                    Handles[Index],
+                    &gEfiLoadedImageDevicePathProtocolGuid,
+                    (VOID **)&DevicePath
+                    );
     if (EFI_ERROR (Status)) {
       continue;
     }
@@ -115,7 +119,9 @@ GetDriver (
 
     if (ReturnNext) {
       if (Override->DriverImageHandle == NULL) {
-        Override->DriverImageHandle = LocateImageHandle (Override->DriverImagePath);
+        Override->DriverImageHandle = LocateImageHandle (
+                                        Override->DriverImagePath
+                                        );
       }
 
       if (Override->DriverImageHandle == NULL) {

@@ -49,8 +49,12 @@ STATIC  UINT32  mCurrentTableCount = 0;
 
 // NOTE: DO NOT USE THESE MACROS on any structure that has not been validated.
 //       Current table data has already been sanitized.
-#define GET_NEXT_POLICY(CurPolicy)  (VARIABLE_POLICY_ENTRY*)((UINT8*)CurPolicy + CurPolicy->Size)
-#define GET_POLICY_NAME(CurPolicy)  (CHAR16*)((UINTN)CurPolicy + CurPolicy->OffsetToName)
+#define GET_NEXT_POLICY( \
+                       CurPolicy)  \
+      (VARIABLE_POLICY_ENTRY*)((UINT8*)CurPolicy + CurPolicy->Size)
+#define GET_POLICY_NAME( \
+                       CurPolicy)  \
+      (CHAR16*)((UINTN)CurPolicy + CurPolicy->OffsetToName)
 
 #define MATCH_PRIORITY_EXACT  0
 #define MATCH_PRIORITY_MAX    MATCH_PRIORITY_EXACT
@@ -262,7 +266,9 @@ EvaluatePolicyMatch (
   // Keep going until the end of both strings.
   while (PolicyName[Index] != CHAR_NULL || VariableName[Index] != CHAR_NULL) {
     // If we don't have a match...
-    if ((PolicyName[Index] != VariableName[Index]) || (PolicyName[Index] == '#')) {
+    if ((PolicyName[Index] != VariableName[Index]) || (PolicyName[Index] ==
+                                                       '#'))
+    {
       // If this is a numerical wildcard, we can consider
       // it a match if we alter the priority.
       if ((PolicyName[Index] == L'#') &&
@@ -328,7 +334,13 @@ GetBestPolicyMatch (
   CurrentEntry = (VARIABLE_POLICY_ENTRY *)mPolicyTable;
   for (Index = 0; Index < mCurrentTableCount; Index++) {
     // Check for a match.
-    if (EvaluatePolicyMatch (CurrentEntry, VariableName, VendorGuid, &CurrentPriority)) {
+    if (EvaluatePolicyMatch (
+          CurrentEntry,
+          VariableName,
+          VendorGuid,
+          &CurrentPriority
+          ))
+    {
       // If match is better, take it.
       if ((BestResult == NULL) || (CurrentPriority < MatchPriority)) {
         BestResult    = CurrentEntry;
@@ -530,7 +542,8 @@ ValidateSetVariable (
       }
 
       // Check for attribute constraints.
-      if (((ActivePolicy->AttributesMustHave & Attributes) != ActivePolicy->AttributesMustHave) ||
+      if (((ActivePolicy->AttributesMustHave & Attributes) !=
+           ActivePolicy->AttributesMustHave) ||
           ((ActivePolicy->AttributesCantHave & Attributes) != 0))
       {
         ReturnStatus = EFI_INVALID_PARAMETER;
@@ -554,7 +567,9 @@ ValidateSetVariable (
       ReturnStatus = EFI_WRITE_PROTECTED;
       goto Exit;
       // Check for lock on create.
-    } else if (ActivePolicy->LockPolicyType == VARIABLE_POLICY_TYPE_LOCK_ON_CREATE) {
+    } else if (ActivePolicy->LockPolicyType ==
+               VARIABLE_POLICY_TYPE_LOCK_ON_CREATE)
+    {
       StateVarSize = 0;
       Status       = mGetVariableHelper (
                        VariableName,
@@ -569,17 +584,22 @@ ValidateSetVariable (
       }
 
       // Check for lock on state variable.
-    } else if (ActivePolicy->LockPolicyType == VARIABLE_POLICY_TYPE_LOCK_ON_VAR_STATE) {
-      StateVarPolicy = (VARIABLE_LOCK_ON_VAR_STATE_POLICY *)((UINT8 *)ActivePolicy + sizeof (VARIABLE_POLICY_ENTRY));
-      StateVarName   = (CHAR16 *)((UINT8 *)StateVarPolicy + sizeof (VARIABLE_LOCK_ON_VAR_STATE_POLICY));
-      StateVarSize   = sizeof (StateVar);
-      Status         = mGetVariableHelper (
-                         StateVarName,
-                         &StateVarPolicy->Namespace,
-                         NULL,
-                         &StateVarSize,
-                         &StateVar
-                         );
+    } else if (ActivePolicy->LockPolicyType ==
+               VARIABLE_POLICY_TYPE_LOCK_ON_VAR_STATE)
+    {
+      StateVarPolicy =
+        (VARIABLE_LOCK_ON_VAR_STATE_POLICY *)((UINT8 *)ActivePolicy +
+                                              sizeof (VARIABLE_POLICY_ENTRY));
+      StateVarName = (CHAR16 *)((UINT8 *)StateVarPolicy +
+                                sizeof (VARIABLE_LOCK_ON_VAR_STATE_POLICY));
+      StateVarSize = sizeof (StateVar);
+      Status       = mGetVariableHelper (
+                       StateVarName,
+                       &StateVarPolicy->Namespace,
+                       NULL,
+                       &StateVarSize,
+                       &StateVar
+                       );
 
       // If the variable was found, check the state. If matched, this variable is locked.
       if (!EFI_ERROR (Status)) {
@@ -589,7 +609,9 @@ ValidateSetVariable (
         }
 
         // EFI_NOT_FOUND and EFI_BUFFER_TOO_SMALL indicate that the state doesn't match.
-      } else if ((Status != EFI_NOT_FOUND) && (Status != EFI_BUFFER_TOO_SMALL)) {
+      } else if ((Status != EFI_NOT_FOUND) && (Status !=
+                                               EFI_BUFFER_TOO_SMALL))
+      {
         // We don't know what happened, but it isn't good.
         ReturnStatus = EFI_ABORTED;
         goto Exit;
@@ -598,7 +620,14 @@ ValidateSetVariable (
   }
 
 Exit:
-  DEBUG ((DEBUG_VERBOSE, "%a - Variable (%g:%s) returning %r.\n", __FUNCTION__, VendorGuid, VariableName, ReturnStatus));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "%a - Variable (%g:%s) returning %r.\n",
+    __FUNCTION__,
+    VendorGuid,
+    VariableName,
+    ReturnStatus
+    ));
   return ReturnStatus;
 }
 

@@ -68,7 +68,9 @@ PrintBannerInfo (
   //
   //    for (Line = 0; Line < BANNER_HEIGHT; Line++) {
   //
-  for (Line = (UINT8)gScreenDimensions.TopRow; Line < BANNER_HEIGHT + (UINT8)gScreenDimensions.TopRow; Line++) {
+  for (Line = (UINT8)gScreenDimensions.TopRow; Line < BANNER_HEIGHT +
+       (UINT8)gScreenDimensions.TopRow; Line++)
+  {
     //
     //      for (Alignment = 0; Alignment < BANNER_COLUMNS; Alignment++) {
     //
@@ -82,8 +84,13 @@ PrintBannerInfo (
 
       ASSERT (RowIdx < BANNER_HEIGHT && ColumnIdx < BANNER_COLUMNS);
 
-      if ((gBannerData != NULL) && (gBannerData->Banner[RowIdx][ColumnIdx] != 0x0000)) {
-        StrFrontPageBanner = LibGetToken (gBannerData->Banner[RowIdx][ColumnIdx], FormData->HiiHandle);
+      if ((gBannerData != NULL) && (gBannerData->Banner[RowIdx][ColumnIdx] !=
+                                    0x0000))
+      {
+        StrFrontPageBanner = LibGetToken (
+                               gBannerData->Banner[RowIdx][ColumnIdx],
+                               FormData->HiiHandle
+                               );
       } else {
         continue;
       }
@@ -93,7 +100,12 @@ PrintBannerInfo (
           //
           // Handle left column
           //
-          PrintStringAt (gScreenDimensions.LeftColumn + BANNER_LEFT_COLUMN_INDENT, Line, StrFrontPageBanner);
+          PrintStringAt (
+            gScreenDimensions.LeftColumn +
+            BANNER_LEFT_COLUMN_INDENT,
+            Line,
+            StrFrontPageBanner
+            );
           break;
 
         case 1:
@@ -101,7 +113,8 @@ PrintBannerInfo (
           // Handle center column
           //
           PrintStringAt (
-            gScreenDimensions.LeftColumn + (gScreenDimensions.RightColumn - gScreenDimensions.LeftColumn) / 3,
+            gScreenDimensions.LeftColumn + (gScreenDimensions.RightColumn -
+                                            gScreenDimensions.LeftColumn) / 3,
             Line,
             StrFrontPageBanner
             );
@@ -112,7 +125,9 @@ PrintBannerInfo (
           // Handle right column
           //
           PrintStringAt (
-            gScreenDimensions.LeftColumn + (gScreenDimensions.RightColumn - gScreenDimensions.LeftColumn) * 2 / 3,
+            gScreenDimensions.LeftColumn + (gScreenDimensions.RightColumn -
+                                            gScreenDimensions.LeftColumn) * 2 /
+            3,
             Line,
             StrFrontPageBanner
             );
@@ -158,7 +173,9 @@ PrintFramework (
   Buffer = AllocateZeroPool (0x10000);
   ASSERT (Buffer != NULL);
   Character = BOXDRAW_HORIZONTAL;
-  for (Index = 0; Index + 2 < (gScreenDimensions.RightColumn - gScreenDimensions.LeftColumn); Index++) {
+  for (Index = 0; Index + 2 < (gScreenDimensions.RightColumn -
+                               gScreenDimensions.LeftColumn); Index++)
+  {
     Buffer[Index] = Character;
   }
 
@@ -171,14 +188,20 @@ PrintFramework (
   gST->ConOut->SetAttribute (gST->ConOut, TITLE_TEXT | TITLE_BACKGROUND);
   Character = BOXDRAW_DOWN_RIGHT;
 
-  PrintCharAt (gScreenDimensions.LeftColumn, gScreenDimensions.TopRow, Character);
+  PrintCharAt (
+    gScreenDimensions.LeftColumn,
+    gScreenDimensions.TopRow,
+    Character
+    );
   PrintStringAt ((UINTN)-1, (UINTN)-1, Buffer);
 
   Character = BOXDRAW_DOWN_LEFT;
   PrintCharAt ((UINTN)-1, (UINTN)-1, Character);
 
   Character = BOXDRAW_VERTICAL;
-  for (Row = gScreenDimensions.TopRow + 1; Row <= gScreenDimensions.TopRow + NONE_FRONT_PAGE_HEADER_HEIGHT - 2; Row++) {
+  for (Row = gScreenDimensions.TopRow + 1; Row <= gScreenDimensions.TopRow +
+       NONE_FRONT_PAGE_HEADER_HEIGHT - 2; Row++)
+  {
     PrintCharAt (gScreenDimensions.LeftColumn, Row, Character);
     PrintCharAt (gScreenDimensions.RightColumn - 1, Row, Character);
   }
@@ -188,8 +211,15 @@ PrintFramework (
   //
   TitleStr = LibGetToken (FormData->FormTitle, FormData->HiiHandle);
   ASSERT (TitleStr != NULL);
-  TitleColumn = (gScreenDimensions.RightColumn + gScreenDimensions.LeftColumn - LibGetStringWidth (TitleStr) / 2) / 2;
-  PrintStringAtWithWidth (gScreenDimensions.LeftColumn + 1, gScreenDimensions.TopRow + 1, gLibEmptyString, TitleColumn - gScreenDimensions.LeftColumn - 1);
+  TitleColumn = (gScreenDimensions.RightColumn + gScreenDimensions.LeftColumn -
+                 LibGetStringWidth (TitleStr) / 2) / 2;
+  PrintStringAtWithWidth (
+    gScreenDimensions.LeftColumn + 1,
+    gScreenDimensions.TopRow + 1,
+    gLibEmptyString,
+    TitleColumn -
+    gScreenDimensions.LeftColumn - 1
+    );
   PrintStringAtWithWidth (
     TitleColumn,
     gScreenDimensions.TopRow + 1,
@@ -199,7 +229,12 @@ PrintFramework (
   FreePool (TitleStr);
 
   Character = BOXDRAW_UP_RIGHT;
-  PrintCharAt (gScreenDimensions.LeftColumn, gScreenDimensions.TopRow + NONE_FRONT_PAGE_HEADER_HEIGHT - 1, Character);
+  PrintCharAt (
+    gScreenDimensions.LeftColumn,
+    gScreenDimensions.TopRow +
+    NONE_FRONT_PAGE_HEADER_HEIGHT - 1,
+    Character
+    );
   PrintStringAt ((UINTN)-1, (UINTN)-1, Buffer);
 
   Character = BOXDRAW_UP_LEFT;
@@ -212,14 +247,20 @@ PrintFramework (
   // +------------------------------------------------------------------------------+
   //
   Character = BOXDRAW_DOWN_RIGHT;
-  PrintCharAt (gScreenDimensions.LeftColumn, gScreenDimensions.BottomRow - STATUS_BAR_HEIGHT - gFooterHeight, Character);
+  PrintCharAt (
+    gScreenDimensions.LeftColumn,
+    gScreenDimensions.BottomRow -
+    STATUS_BAR_HEIGHT - gFooterHeight,
+    Character
+    );
 
   PrintStringAt ((UINTN)-1, (UINTN)-1, Buffer);
 
   Character = BOXDRAW_DOWN_LEFT;
   PrintCharAt ((UINTN)-1, (UINTN)-1, Character);
   Character = BOXDRAW_VERTICAL;
-  for (Row = gScreenDimensions.BottomRow - STATUS_BAR_HEIGHT - gFooterHeight + 1;
+  for (Row = gScreenDimensions.BottomRow - STATUS_BAR_HEIGHT - gFooterHeight +
+             1;
        Row <= gScreenDimensions.BottomRow - STATUS_BAR_HEIGHT - 2;
        Row++
        )
@@ -229,7 +270,12 @@ PrintFramework (
   }
 
   Character = BOXDRAW_UP_RIGHT;
-  PrintCharAt (gScreenDimensions.LeftColumn, gScreenDimensions.BottomRow - STATUS_BAR_HEIGHT - 1, Character);
+  PrintCharAt (
+    gScreenDimensions.LeftColumn,
+    gScreenDimensions.BottomRow -
+    STATUS_BAR_HEIGHT - 1,
+    Character
+    );
 
   PrintStringAt ((UINTN)-1, (UINTN)-1, Buffer);
 
@@ -263,13 +309,23 @@ ProcessUserOpcode (
       //
       // process the statement outside of form,if it is formset op, get its formsetguid or classguid and compared with gFrontPageFormSetGuid
       //
-      if (CompareMem (PcdGetPtr (PcdFrontPageFormSetGuid), &((EFI_IFR_FORM_SET *)OpCodeData)->Guid, sizeof (EFI_GUID)) == 0) {
+      if (CompareMem (
+            PcdGetPtr (PcdFrontPageFormSetGuid),
+            &((EFI_IFR_FORM_SET *)OpCodeData)->Guid,
+            sizeof (EFI_GUID)
+            ) == 0)
+      {
         gClassOfVfr = FORMSET_CLASS_FRONT_PAGE;
       } else {
         ClassGuidNum = (UINT8)(((EFI_IFR_FORM_SET *)OpCodeData)->Flags & 0x3);
-        ClassGuid    = (EFI_GUID *)(VOID *)((UINT8 *)OpCodeData + sizeof (EFI_IFR_FORM_SET));
+        ClassGuid    = (EFI_GUID *)(VOID *)((UINT8 *)OpCodeData +
+                                            sizeof (EFI_IFR_FORM_SET));
         while (ClassGuidNum-- > 0) {
-          if (CompareGuid ((EFI_GUID *)PcdGetPtr (PcdFrontPageFormSetGuid), ClassGuid)) {
+          if (CompareGuid (
+                (EFI_GUID *)PcdGetPtr (PcdFrontPageFormSetGuid),
+                ClassGuid
+                ))
+          {
             gClassOfVfr = FORMSET_CLASS_FRONT_PAGE;
             break;
           }
@@ -281,7 +337,12 @@ ProcessUserOpcode (
       break;
 
     case EFI_IFR_GUID_OP:
-      if (CompareGuid (&gEfiIfrTianoGuid, (EFI_GUID *)((CHAR8 *)OpCodeData + sizeof (EFI_IFR_OP_HEADER)))) {
+      if (CompareGuid (
+            &gEfiIfrTianoGuid,
+            (EFI_GUID *)((CHAR8 *)OpCodeData +
+                         sizeof (EFI_IFR_OP_HEADER))
+            ))
+      {
         //
         // Tiano specific GUIDed opcodes
         //
@@ -306,8 +367,11 @@ ProcessUserOpcode (
               }
 
               CopyMem (
-                &gBannerData->Banner[((EFI_IFR_GUID_BANNER *)OpCodeData)->LineNumber][
-                                                                                      ((EFI_IFR_GUID_BANNER *)OpCodeData)->Alignment],
+                &gBannerData->Banner[((EFI_IFR_GUID_BANNER *)OpCodeData)->
+                                       LineNumber][
+                                                   ((
+                                                     EFI_IFR_GUID_BANNER *)
+                                                    OpCodeData)->Alignment],
                 &((EFI_IFR_GUID_BANNER *)OpCodeData)->Title,
                 sizeof (EFI_STRING_ID)
                 );
@@ -316,7 +380,9 @@ ProcessUserOpcode (
             break;
 
           case EFI_IFR_EXTEND_OP_SUBCLASS:
-            if (((EFI_IFR_GUID_SUBCLASS *)OpCodeData)->SubClass == EFI_FRONT_PAGE_SUBCLASS) {
+            if (((EFI_IFR_GUID_SUBCLASS *)OpCodeData)->SubClass ==
+                EFI_FRONT_PAGE_SUBCLASS)
+            {
               gClassOfVfr = FORMSET_CLASS_FRONT_PAGE;
             }
 
@@ -423,7 +489,8 @@ ScreenDiemensionInfoValidate (
   // Check local dimension vs. global dimension.
   //
   if (FormData->ScreenDimensions != NULL) {
-    if ((gScreenDimensions.RightColumn < FormData->ScreenDimensions->RightColumn) ||
+    if ((gScreenDimensions.RightColumn <
+         FormData->ScreenDimensions->RightColumn) ||
         (gScreenDimensions.BottomRow < FormData->ScreenDimensions->BottomRow)
         )
     {
@@ -432,13 +499,21 @@ ScreenDiemensionInfoValidate (
       //
       // Local dimension validation.
       //
-      if ((FormData->ScreenDimensions->RightColumn > FormData->ScreenDimensions->LeftColumn) &&
-          (FormData->ScreenDimensions->BottomRow > FormData->ScreenDimensions->TopRow) &&
-          ((FormData->ScreenDimensions->RightColumn - FormData->ScreenDimensions->LeftColumn) > 2) &&
-          ((FormData->ScreenDimensions->BottomRow - FormData->ScreenDimensions->TopRow) > STATUS_BAR_HEIGHT +
+      if ((FormData->ScreenDimensions->RightColumn >
+           FormData->ScreenDimensions->LeftColumn) &&
+          (FormData->ScreenDimensions->BottomRow >
+           FormData->ScreenDimensions->TopRow) &&
+          ((FormData->ScreenDimensions->RightColumn -
+            FormData->ScreenDimensions->LeftColumn) > 2) &&
+          ((FormData->ScreenDimensions->BottomRow -
+            FormData->ScreenDimensions->TopRow) > STATUS_BAR_HEIGHT +
            FRONT_PAGE_HEADER_HEIGHT + gFooterHeight + 3))
       {
-        CopyMem (&gScreenDimensions, (VOID *)FormData->ScreenDimensions, sizeof (EFI_SCREEN_DESCRIPTOR));
+        CopyMem (
+          &gScreenDimensions,
+          (VOID *)FormData->ScreenDimensions,
+          sizeof (EFI_SCREEN_DESCRIPTOR)
+          );
       } else {
         return EFI_INVALID_PARAMETER;
       }
@@ -514,7 +589,8 @@ LibGetStringWidth (
     // Advance to the null-terminator or to the first width directive
     //
     for ( ;
-          (String[Index] != NARROW_CHAR) && (String[Index] != WIDE_CHAR) && (String[Index] != 0);
+          (String[Index] != NARROW_CHAR) && (String[Index] != WIDE_CHAR) &&
+          (String[Index] != 0);
           Index++, Count = Count + IncrementValue
           )
     {
@@ -581,7 +657,8 @@ PrintHotKeyHelpString (
   CHAR16                 *ColumnStr;
 
   CopyMem (&LocalScreen, &gScreenDimensions, sizeof (EFI_SCREEN_DESCRIPTOR));
-  ColumnWidth           = (LocalScreen.RightColumn - LocalScreen.LeftColumn) / 3;
+  ColumnWidth = (LocalScreen.RightColumn - LocalScreen.LeftColumn) /
+                3;
   BottomRowOfHotKeyHelp = LocalScreen.BottomRow - STATUS_BAR_HEIGHT - 3;
   ColumnStr             = gLibEmptyString;
 
@@ -614,7 +691,8 @@ PrintHotKeyHelpString (
     //
     BakChar = L'\0';
     if (StrLen (HotKey->HelpString) > ColumnIndexWidth) {
-      BakChar                              = HotKey->HelpString[ColumnIndexWidth];
+      BakChar =
+        HotKey->HelpString[ColumnIndexWidth];
       HotKey->HelpString[ColumnIndexWidth] = L'\0';
     }
 
@@ -625,7 +703,12 @@ PrintHotKeyHelpString (
       ColumnStr = HotKey->HelpString;
     }
 
-    PrintStringAtWithWidth (CurrentCol, CurrentRow, ColumnStr, ColumnIndexWidth);
+    PrintStringAtWithWidth (
+      CurrentCol,
+      CurrentRow,
+      ColumnStr,
+      ColumnIndexWidth
+      );
 
     if (BakChar != L'\0') {
       HotKey->HelpString[ColumnIndexWidth] = BakChar;
@@ -648,13 +731,23 @@ PrintHotKeyHelpString (
       CurrentCol       = LocalScreen.LeftColumn + 2 * ColumnWidth;
       ColumnIndexWidth = ColumnWidth - 1;
       ColumnIndex++;
-      PrintStringAtWithWidth (CurrentCol, CurrentRow, gLibEmptyString, ColumnIndexWidth);
+      PrintStringAtWithWidth (
+        CurrentCol,
+        CurrentRow,
+        gLibEmptyString,
+        ColumnIndexWidth
+        );
     }
 
     if (ColumnIndex == 1) {
       CurrentCol       = LocalScreen.LeftColumn + ColumnWidth;
       ColumnIndexWidth = ColumnWidth;
-      PrintStringAtWithWidth (CurrentCol, CurrentRow, gLibEmptyString, ColumnIndexWidth);
+      PrintStringAtWithWidth (
+        CurrentCol,
+        CurrentRow,
+        gLibEmptyString,
+        ColumnIndexWidth
+        );
     }
   }
 
@@ -714,27 +807,81 @@ InitializeLibStrings (
 {
   mLibUnknownString = L"!";
 
-  gEnterString       = LibGetToken (STRING_TOKEN (ENTER_STRING), mCDLStringPackHandle);
-  gEnterCommitString = LibGetToken (STRING_TOKEN (ENTER_COMMIT_STRING), mCDLStringPackHandle);
-  gEnterEscapeString = LibGetToken (STRING_TOKEN (ENTER_ESCAPE_STRING), mCDLStringPackHandle);
-  gEscapeString      = LibGetToken (STRING_TOKEN (ESCAPE_STRING), mCDLStringPackHandle);
-  gMoveHighlight     = LibGetToken (STRING_TOKEN (MOVE_HIGHLIGHT), mCDLStringPackHandle);
-  gDecNumericInput   = LibGetToken (STRING_TOKEN (DEC_NUMERIC_INPUT), mCDLStringPackHandle);
-  gHexNumericInput   = LibGetToken (STRING_TOKEN (HEX_NUMERIC_INPUT), mCDLStringPackHandle);
-  gToggleCheckBox    = LibGetToken (STRING_TOKEN (TOGGLE_CHECK_BOX), mCDLStringPackHandle);
+  gEnterString = LibGetToken (
+                   STRING_TOKEN (ENTER_STRING),
+                   mCDLStringPackHandle
+                   );
+  gEnterCommitString = LibGetToken (
+                         STRING_TOKEN (ENTER_COMMIT_STRING),
+                         mCDLStringPackHandle
+                         );
+  gEnterEscapeString = LibGetToken (
+                         STRING_TOKEN (ENTER_ESCAPE_STRING),
+                         mCDLStringPackHandle
+                         );
+  gEscapeString = LibGetToken (
+                    STRING_TOKEN (ESCAPE_STRING),
+                    mCDLStringPackHandle
+                    );
+  gMoveHighlight = LibGetToken (
+                     STRING_TOKEN (MOVE_HIGHLIGHT),
+                     mCDLStringPackHandle
+                     );
+  gDecNumericInput = LibGetToken (
+                       STRING_TOKEN (DEC_NUMERIC_INPUT),
+                       mCDLStringPackHandle
+                       );
+  gHexNumericInput = LibGetToken (
+                       STRING_TOKEN (HEX_NUMERIC_INPUT),
+                       mCDLStringPackHandle
+                       );
+  gToggleCheckBox = LibGetToken (
+                      STRING_TOKEN (TOGGLE_CHECK_BOX),
+                      mCDLStringPackHandle
+                      );
 
-  gAreYouSure   = LibGetToken (STRING_TOKEN (ARE_YOU_SURE), mCDLStringPackHandle);
-  gYesResponse  = LibGetToken (STRING_TOKEN (ARE_YOU_SURE_YES), mCDLStringPackHandle);
-  gNoResponse   = LibGetToken (STRING_TOKEN (ARE_YOU_SURE_NO), mCDLStringPackHandle);
-  gPlusString   = LibGetToken (STRING_TOKEN (PLUS_STRING), mCDLStringPackHandle);
-  gMinusString  = LibGetToken (STRING_TOKEN (MINUS_STRING), mCDLStringPackHandle);
-  gAdjustNumber = LibGetToken (STRING_TOKEN (ADJUST_NUMBER), mCDLStringPackHandle);
-  gSaveChanges  = LibGetToken (STRING_TOKEN (SAVE_CHANGES), mCDLStringPackHandle);
+  gAreYouSure = LibGetToken (
+                  STRING_TOKEN (ARE_YOU_SURE),
+                  mCDLStringPackHandle
+                  );
+  gYesResponse = LibGetToken (
+                   STRING_TOKEN (ARE_YOU_SURE_YES),
+                   mCDLStringPackHandle
+                   );
+  gNoResponse = LibGetToken (
+                  STRING_TOKEN (ARE_YOU_SURE_NO),
+                  mCDLStringPackHandle
+                  );
+  gPlusString = LibGetToken (
+                  STRING_TOKEN (PLUS_STRING),
+                  mCDLStringPackHandle
+                  );
+  gMinusString = LibGetToken (
+                   STRING_TOKEN (MINUS_STRING),
+                   mCDLStringPackHandle
+                   );
+  gAdjustNumber = LibGetToken (
+                    STRING_TOKEN (ADJUST_NUMBER),
+                    mCDLStringPackHandle
+                    );
+  gSaveChanges = LibGetToken (
+                   STRING_TOKEN (SAVE_CHANGES),
+                   mCDLStringPackHandle
+                   );
 
-  gLibEmptyString = LibGetToken (STRING_TOKEN (EMPTY_STRING), mCDLStringPackHandle);
+  gLibEmptyString = LibGetToken (
+                      STRING_TOKEN (EMPTY_STRING),
+                      mCDLStringPackHandle
+                      );
 
-  gNvUpdateMessage   = LibGetToken (STRING_TOKEN (NV_UPDATE_MESSAGE), mCDLStringPackHandle);
-  gInputErrorMessage = LibGetToken (STRING_TOKEN (INPUT_ERROR_MESSAGE), mCDLStringPackHandle);
+  gNvUpdateMessage = LibGetToken (
+                       STRING_TOKEN (NV_UPDATE_MESSAGE),
+                       mCDLStringPackHandle
+                       );
+  gInputErrorMessage = LibGetToken (
+                         STRING_TOKEN (INPUT_ERROR_MESSAGE),
+                         mCDLStringPackHandle
+                         );
 
   //
   // SpaceBuffer;
@@ -893,7 +1040,9 @@ PrintInternal (
   CharWidth     = 1;
 
   do {
-    for ( ; (Buffer[Index] != NARROW_CHAR) && (Buffer[Index] != WIDE_CHAR) && (Buffer[Index] != 0); Index++) {
+    for ( ; (Buffer[Index] != NARROW_CHAR) && (Buffer[Index] != WIDE_CHAR) &&
+          (Buffer[Index] != 0); Index++)
+    {
       BackupBuffer[Index] = Buffer[Index];
     }
 
@@ -946,7 +1095,11 @@ PrintInternal (
   if (PrintWidth < Width) {
     Out->Mode->Attribute = Out->Mode->Attribute & 0x7f;
     Out->SetAttribute (Out, Out->Mode->Attribute);
-    Out->OutputString (Out, &mSpaceBuffer[SPACE_BUFFER_SIZE - Width + PrintWidth]);
+    Out->OutputString (
+           Out,
+           &mSpaceBuffer[SPACE_BUFFER_SIZE - Width +
+                         PrintWidth]
+           );
   }
 
   FreePool (Buffer);

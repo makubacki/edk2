@@ -361,7 +361,12 @@ PushConditionalStack (
     //
     // Grow the stack
     //
-    Status = GrowConditionalStack (Stack, StackPtr, StackEnd, sizeof (FORM_EXPRESSION *));
+    Status = GrowConditionalStack (
+               Stack,
+               StackPtr,
+               StackEnd,
+               sizeof (FORM_EXPRESSION *)
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -735,7 +740,8 @@ SaveExpressionEvaluationStackOffset (
   UINTN  TempStackOffset;
 
   TempStackOffset                  = mExpressionEvaluationStackOffset;
-  mExpressionEvaluationStackOffset = mExpressionEvaluationStackPointer - mExpressionEvaluationStack;
+  mExpressionEvaluationStackOffset = mExpressionEvaluationStackPointer -
+                                     mExpressionEvaluationStack;
   return TempStackOffset;
 }
 
@@ -904,7 +910,9 @@ RuleIdToExpression (
   while (!IsNull (&Form->ExpressionListHead, Link)) {
     Expression = FORM_EXPRESSION_FROM_LINK (Link);
 
-    if ((Expression->Type == EFI_HII_EXPRESSION_RULE) && (Expression->RuleId == RuleId)) {
+    if ((Expression->Type == EFI_HII_EXPRESSION_RULE) && (Expression->RuleId ==
+                                                          RuleId))
+    {
       return Expression;
     }
 
@@ -1330,7 +1338,10 @@ IfrCatenate (
   }
 
   for (Index = 0; Index < 2; Index++) {
-    if ((Value[Index].Type != EFI_IFR_TYPE_STRING) && !IsTypeInBuffer (&Value[Index])) {
+    if ((Value[Index].Type != EFI_IFR_TYPE_STRING) && !IsTypeInBuffer (
+                                                         &Value[Index]
+                                                         ))
+    {
       Result->Type = EFI_IFR_TYPE_UNDEFINED;
       Status       = EFI_SUCCESS;
       goto Done;
@@ -1451,7 +1462,11 @@ IfrMatch (
   }
 
   Result->Type    = EFI_IFR_TYPE_BOOLEAN;
-  Result->Value.b = mUnicodeCollation->MetaiMatch (mUnicodeCollation, String[0], String[1]);
+  Result->Value.b = mUnicodeCollation->MetaiMatch (
+                                         mUnicodeCollation,
+                                         String[0],
+                                         String[1]
+                                         );
 
 Done:
   if (String[0] != NULL) {
@@ -1596,7 +1611,9 @@ IfrMatch2 (
       goto Done;
     }
 
-    for (GuidIndex = 0; GuidIndex < RegExSyntaxTypeListSize / sizeof (EFI_GUID); GuidIndex++) {
+    for (GuidIndex = 0; GuidIndex < RegExSyntaxTypeListSize / sizeof (EFI_GUID);
+         GuidIndex++)
+    {
       if (CompareGuid (&RegExSyntaxTypeList[GuidIndex], SyntaxType)) {
         //
         // Find the match type, return the value.
@@ -1713,7 +1730,10 @@ IfrFind (
       goto Done;
     }
 
-    String[Index] = GetToken (Value[Index + 1].Value.string, FormSet->HiiHandle);
+    String[Index] = GetToken (
+                      Value[Index + 1].Value.string,
+                      FormSet->HiiHandle
+                      );
     if (String[Index] == NULL) {
       Status = EFI_NOT_FOUND;
       goto Done;
@@ -1732,7 +1752,8 @@ IfrFind (
     Result->Value.u64 = 0xFFFFFFFFFFFFFFFFULL;
   } else {
     StringPtr         = StrStr (String[1] + Base, String[0]);
-    Result->Value.u64 = (StringPtr == NULL) ? 0xFFFFFFFFFFFFFFFFULL : (StringPtr - String[1]);
+    Result->Value.u64 = (StringPtr == NULL) ? 0xFFFFFFFFFFFFFFFFULL :
+                        (StringPtr - String[1]);
   }
 
 Done:
@@ -1836,7 +1857,9 @@ IfrMid (
       Result->BufferLen = 0;
       Result->Buffer    = NULL;
     } else {
-      Result->BufferLen = (UINT16)((BufferLen - Base) < Length ? (BufferLen - Base) : Length);
+      Result->BufferLen = (UINT16)((BufferLen - Base) < Length ? (BufferLen -
+                                                                  Base) :
+                                   Length);
       Result->Buffer    = AllocateZeroPool (Result->BufferLen);
       ASSERT (Result->Buffer != NULL);
       CopyMem (Result->Buffer, &Buffer[Base], Result->BufferLen);
@@ -1912,7 +1935,10 @@ IfrToken (
       goto Done;
     }
 
-    String[Index] = GetToken (Value[Index + 1].Value.string, FormSet->HiiHandle);
+    String[Index] = GetToken (
+                      Value[Index + 1].Value.string,
+                      FormSet->HiiHandle
+                      );
     if (String[Index] == NULL) {
       Status = EFI_NOT_FOUND;
       goto Done;
@@ -2029,7 +2055,10 @@ IfrSpan (
       goto Done;
     }
 
-    String[Index] = GetToken (Value[Index + 1].Value.string, FormSet->HiiHandle);
+    String[Index] = GetToken (
+                      Value[Index + 1].Value.string,
+                      FormSet->HiiHandle
+                      );
     if (String[Index] == NULL) {
       Status = EFI_NOT_FOUND;
       goto Done;
@@ -2048,7 +2077,9 @@ IfrSpan (
   while (*StringPtr != 0 && !Found) {
     Index = 0;
     while (Charset[Index] != 0) {
-      if ((*StringPtr >= Charset[Index]) && (*StringPtr <= Charset[Index + 1])) {
+      if ((*StringPtr >= Charset[Index]) && (*StringPtr <= Charset[Index +
+                                                                   1]))
+      {
         if (Flags == EFI_IFR_FLAGS_FIRST_MATCHING) {
           Found = TRUE;
           break;
@@ -2214,7 +2245,9 @@ CompareHiiValue (
   UINT8   *Buf2;
   UINT16  Buf2Len;
 
-  if ((Value1->Type == EFI_IFR_TYPE_STRING) && (Value2->Type == EFI_IFR_TYPE_STRING)) {
+  if ((Value1->Type == EFI_IFR_TYPE_STRING) && (Value2->Type ==
+                                                EFI_IFR_TYPE_STRING))
+  {
     if ((Value1->Value.string == 0) || (Value2->Value.string == 0)) {
       //
       // StringId 0 is reserved
@@ -2338,13 +2371,23 @@ CheckUserPrivilege (
   ///
 
   for (UserInfoHandle = NULL; ;) {
-    Status = mUserManager->GetNextInfo (mUserManager, UserProfileHandle, &UserInfoHandle);
+    Status = mUserManager->GetNextInfo (
+                             mUserManager,
+                             UserProfileHandle,
+                             &UserInfoHandle
+                             );
     if (EFI_ERROR (Status)) {
       break;
     }
 
     UserInfoSize = 0;
-    Status       = mUserManager->GetInfo (mUserManager, UserProfileHandle, UserInfoHandle, NULL, &UserInfoSize);
+    Status       = mUserManager->GetInfo (
+                                   mUserManager,
+                                   UserProfileHandle,
+                                   UserInfoHandle,
+                                   NULL,
+                                   &UserInfoSize
+                                   );
     if (Status != EFI_BUFFER_TOO_SMALL) {
       continue;
     }
@@ -2354,7 +2397,13 @@ CheckUserPrivilege (
       break;
     }
 
-    Status = mUserManager->GetInfo (mUserManager, UserProfileHandle, UserInfoHandle, UserInfo, &UserInfoSize);
+    Status = mUserManager->GetInfo (
+                             mUserManager,
+                             UserProfileHandle,
+                             UserInfoHandle,
+                             UserInfo,
+                             &UserInfoSize
+                             );
     if (EFI_ERROR (Status) ||
         (UserInfo->InfoType != EFI_USER_INFO_ACCESS_POLICY_RECORD) ||
         (UserInfo->InfoSize <= sizeof (EFI_USER_INFO)))
@@ -2366,7 +2415,10 @@ CheckUserPrivilege (
     RemainSize    = UserInfo->InfoSize - sizeof (EFI_USER_INFO);
     AccessControl = (EFI_USER_INFO_ACCESS_CONTROL *)(UserInfo + 1);
     while (RemainSize >= sizeof (EFI_USER_INFO_ACCESS_CONTROL)) {
-      if ((RemainSize < AccessControl->Size) || (AccessControl->Size < sizeof (EFI_USER_INFO_ACCESS_CONTROL))) {
+      if ((RemainSize < AccessControl->Size) || (AccessControl->Size <
+                                                 sizeof (
+                                                                              EFI_USER_INFO_ACCESS_CONTROL)))
+      {
         break;
       }
 
@@ -2376,7 +2428,8 @@ CheckUserPrivilege (
         ///
 
         UserPermissionsGuid   = (EFI_GUID *)(AccessControl + 1);
-        AccessControlDataSize = AccessControl->Size - sizeof (EFI_USER_INFO_ACCESS_CONTROL);
+        AccessControlDataSize = AccessControl->Size -
+                                sizeof (EFI_USER_INFO_ACCESS_CONTROL);
         while (AccessControlDataSize >= sizeof (EFI_GUID)) {
           if (CompareGuid (Guid, UserPermissionsGuid)) {
             FreePool (UserInfo);
@@ -2389,7 +2442,8 @@ CheckUserPrivilege (
       }
 
       RemainSize   -= AccessControl->Size;
-      AccessControl = (EFI_USER_INFO_ACCESS_CONTROL *)((UINT8 *)AccessControl + AccessControl->Size);
+      AccessControl = (EFI_USER_INFO_ACCESS_CONTROL *)((UINT8 *)AccessControl +
+                                                       AccessControl->Size);
     }
 
     FreePool (UserInfo);
@@ -2495,7 +2549,12 @@ GetQuestionValueFromForm (
   //
   // Get the question value.
   //
-  Status = GetQuestionValue (FormSet, Form, Question, GetSetValueWithEditBuffer);
+  Status = GetQuestionValue (
+             FormSet,
+             Form,
+             Question,
+             GetSetValueWithEditBuffer
+             );
   if (EFI_ERROR (Status)) {
     GetTheVal = FALSE;
     goto Done;
@@ -2600,7 +2659,12 @@ EvaluateExpression (
           break;
         }
 
-        Status = CompareHiiValue (&Question->HiiValue, &OpCode->Value, &Result, NULL);
+        Status = CompareHiiValue (
+                   &Question->HiiValue,
+                   &OpCode->Value,
+                   &Result,
+                   NULL
+                   );
         if (Status == EFI_UNSUPPORTED) {
           Status      = EFI_SUCCESS;
           Value->Type = EFI_IFR_TYPE_UNDEFINED;
@@ -2627,7 +2691,12 @@ EvaluateExpression (
           break;
         }
 
-        Status = CompareHiiValue (&Question->HiiValue, &Question2->HiiValue, &Result, FormSet->HiiHandle);
+        Status = CompareHiiValue (
+                   &Question->HiiValue,
+                   &Question2->HiiValue,
+                   &Result,
+                   FormSet->HiiHandle
+                   );
         if (Status == EFI_UNSUPPORTED) {
           Value->Type = EFI_IFR_TYPE_UNDEFINED;
           Status      = EFI_SUCCESS;
@@ -2696,14 +2765,24 @@ EvaluateExpression (
               // Get value from Edit Buffer
               //
               Value->Type = OpCode->ValueType;
-              CopyMem (&Value->Value, OpCode->VarStorage->EditBuffer + OpCode->VarStoreInfo.VarOffset, OpCode->ValueWidth);
+              CopyMem (
+                &Value->Value,
+                OpCode->VarStorage->EditBuffer +
+                OpCode->VarStoreInfo.VarOffset,
+                OpCode->ValueWidth
+                );
               break;
             case EFI_HII_VARSTORE_NAME_VALUE:
               if (OpCode->ValueType != EFI_IFR_TYPE_STRING) {
                 //
                 // Get value from string except for STRING value.
                 //
-                Status = GetValueByName (OpCode->VarStorage, OpCode->ValueName, &StrPtr, GetSetValueWithEditBuffer);
+                Status = GetValueByName (
+                           OpCode->VarStorage,
+                           OpCode->ValueName,
+                           &StrPtr,
+                           GetSetValueWithEditBuffer
+                           );
                 if (!EFI_ERROR (Status)) {
                   ASSERT (StrPtr != NULL);
                   TempLength = StrLen (StrPtr);
@@ -2717,7 +2796,8 @@ EvaluateExpression (
                       if ((Index & 1) == 0) {
                         TempBuffer[Index/2] = DigitUint8;
                       } else {
-                        TempBuffer[Index/2] = (UINT8)((DigitUint8 << 4) + TempBuffer[Index/2]);
+                        TempBuffer[Index/2] = (UINT8)((DigitUint8 << 4) +
+                                                      TempBuffer[Index/2]);
                       }
                     }
                   }
@@ -2755,7 +2835,9 @@ EvaluateExpression (
           //
           // For Time/Date Data
           //
-          if ((OpCode->ValueType != EFI_IFR_TYPE_DATE) && (OpCode->ValueType != EFI_IFR_TYPE_TIME)) {
+          if ((OpCode->ValueType != EFI_IFR_TYPE_DATE) && (OpCode->ValueType !=
+                                                           EFI_IFR_TYPE_TIME))
+          {
             //
             // Only support Data/Time data when storage doesn't exist.
             //
@@ -2826,7 +2908,9 @@ EvaluateExpression (
         //
         // Validate the expression value
         //
-        if ((Value->Type > EFI_IFR_TYPE_NUM_SIZE_64) || (Value->Value.u64 > 0xffff)) {
+        if ((Value->Type > EFI_IFR_TYPE_NUM_SIZE_64) || (Value->Value.u64 >
+                                                         0xffff))
+        {
           Value->Type = EFI_IFR_TYPE_UNDEFINED;
           break;
         }
@@ -2837,7 +2921,14 @@ EvaluateExpression (
           StrPtr = GetToken (OpCode->DevicePath, FormSet->HiiHandle);
           if ((StrPtr != NULL) && (mPathFromText != NULL)) {
             DevicePath = mPathFromText->ConvertTextToDevicePath (StrPtr);
-            if ((DevicePath != NULL) && GetQuestionValueFromForm (DevicePath, NULL, &OpCode->Guid, Value->Value.u16, &QuestionVal)) {
+            if ((DevicePath != NULL) && GetQuestionValueFromForm (
+                                          DevicePath,
+                                          NULL,
+                                          &OpCode->Guid,
+                                          Value->Value.u16,
+                                          &QuestionVal
+                                          ))
+            {
               Value = &QuestionVal;
             }
 
@@ -2850,7 +2941,14 @@ EvaluateExpression (
             FreePool (StrPtr);
           }
         } else if (IsZeroGuid (&OpCode->Guid)) {
-          if (!GetQuestionValueFromForm (NULL, FormSet->HiiHandle, &OpCode->Guid, Value->Value.u16, &QuestionVal)) {
+          if (!GetQuestionValueFromForm (
+                 NULL,
+                 FormSet->HiiHandle,
+                 &OpCode->Guid,
+                 Value->Value.u16,
+                 &QuestionVal
+                 ))
+          {
             Value->Type = EFI_IFR_TYPE_UNDEFINED;
             break;
           }
@@ -2885,7 +2983,9 @@ EvaluateExpression (
         // Evaluate this rule expression
         //
         Status = EvaluateExpression (FormSet, Form, RuleExpression);
-        if (EFI_ERROR (Status) || (RuleExpression->Result.Type == EFI_IFR_TYPE_UNDEFINED)) {
+        if (EFI_ERROR (Status) || (RuleExpression->Result.Type ==
+                                   EFI_IFR_TYPE_UNDEFINED))
+        {
           Value->Type = EFI_IFR_TYPE_UNDEFINED;
           break;
         }
@@ -2973,7 +3073,9 @@ EvaluateExpression (
         //
         // Validate the expression value
         //
-        if ((Value->Type > EFI_IFR_TYPE_NUM_SIZE_64) || (Value->Value.u64 > 0xffff)) {
+        if ((Value->Type > EFI_IFR_TYPE_NUM_SIZE_64) || (Value->Value.u64 >
+                                                         0xffff))
+        {
           Value->Type = EFI_IFR_TYPE_UNDEFINED;
           break;
         }
@@ -2999,7 +3101,9 @@ EvaluateExpression (
         //
         // Validate the expression value
         //
-        if ((Value->Type > EFI_IFR_TYPE_NUM_SIZE_64) || (Value->Value.u64 > 0xffff)) {
+        if ((Value->Type > EFI_IFR_TYPE_NUM_SIZE_64) || (Value->Value.u64 >
+                                                         0xffff))
+        {
           Value->Type = EFI_IFR_TYPE_UNDEFINED;
           break;
         }
@@ -3163,30 +3267,52 @@ EvaluateExpression (
           switch (OpCode->VarStorage->Type) {
             case EFI_HII_VARSTORE_BUFFER:
             case EFI_HII_VARSTORE_EFI_VARIABLE_BUFFER:
-              CopyMem (OpCode->VarStorage->EditBuffer + OpCode->VarStoreInfo.VarOffset, &Value->Value, OpCode->ValueWidth);
+              CopyMem (
+                OpCode->VarStorage->EditBuffer +
+                OpCode->VarStoreInfo.VarOffset,
+                &Value->Value,
+                OpCode->ValueWidth
+                );
               Data1.Value.b = TRUE;
               break;
             case EFI_HII_VARSTORE_NAME_VALUE:
               if (OpCode->ValueType != EFI_IFR_TYPE_STRING) {
-                NameValue = AllocateZeroPool ((OpCode->ValueWidth * 2 + 1) * sizeof (CHAR16));
+                NameValue = AllocateZeroPool (
+                              (OpCode->ValueWidth * 2 + 1) *
+                              sizeof (CHAR16)
+                              );
                 ASSERT (NameValue != NULL);
                 //
                 // Convert Buffer to Hex String
                 //
                 TempBuffer = (UINT8 *)&Value->Value + OpCode->ValueWidth - 1;
                 StrPtr     = NameValue;
-                for (Index = 0; Index < OpCode->ValueWidth; Index++, TempBuffer--) {
+                for (Index = 0; Index < OpCode->ValueWidth; Index++,
+                     TempBuffer--)
+                {
                   UnicodeValueToStringS (
                     StrPtr,
-                    (OpCode->ValueWidth * 2 + 1) * sizeof (CHAR16) - ((UINTN)StrPtr - (UINTN)NameValue),
+                    (OpCode->ValueWidth * 2 + 1) * sizeof (CHAR16) -
+                    ((UINTN)StrPtr - (UINTN)NameValue),
                     PREFIX_ZERO | RADIX_HEX,
                     *TempBuffer,
                     2
                     );
-                  StrPtr += StrnLenS (StrPtr, OpCode->ValueWidth * 2 + 1 - ((UINTN)StrPtr - (UINTN)NameValue) / sizeof (CHAR16));
+                  StrPtr += StrnLenS (
+                              StrPtr,
+                              OpCode->ValueWidth * 2 + 1 -
+                              ((UINTN)StrPtr - (UINTN)NameValue) /
+                              sizeof (CHAR16)
+                              );
                 }
 
-                Status = SetValueByName (OpCode->VarStorage, OpCode->ValueName, NameValue, GetSetValueWithEditBuffer, NULL);
+                Status = SetValueByName (
+                           OpCode->VarStorage,
+                           OpCode->ValueName,
+                           NameValue,
+                           GetSetValueWithEditBuffer,
+                           NULL
+                           );
                 FreePool (NameValue);
                 if (!EFI_ERROR (Status)) {
                   Data1.Value.b = TRUE;
@@ -3218,7 +3344,9 @@ EvaluateExpression (
           //
           // For Time/Date Data
           //
-          if ((OpCode->ValueType != EFI_IFR_TYPE_DATE) && (OpCode->ValueType != EFI_IFR_TYPE_TIME)) {
+          if ((OpCode->ValueType != EFI_IFR_TYPE_DATE) && (OpCode->ValueType !=
+                                                           EFI_IFR_TYPE_TIME))
+          {
             //
             // Only support Data/Time data when storage doesn't exist.
             //
@@ -3318,40 +3446,64 @@ EvaluateExpression (
 
         switch (OpCode->Operand) {
           case EFI_IFR_ADD_OP:
-            Value->Value.u64 = HiiValueToUINT64 (&Data1) + HiiValueToUINT64 (&Data2);
+            Value->Value.u64 = HiiValueToUINT64 (&Data1) + HiiValueToUINT64 (
+                                                             &Data2
+                                                             );
             break;
 
           case EFI_IFR_SUBTRACT_OP:
-            Value->Value.u64 = HiiValueToUINT64 (&Data1) - HiiValueToUINT64 (&Data2);
+            Value->Value.u64 = HiiValueToUINT64 (&Data1) - HiiValueToUINT64 (
+                                                             &Data2
+                                                             );
             break;
 
           case EFI_IFR_MULTIPLY_OP:
-            Value->Value.u64 = MultU64x32 (HiiValueToUINT64 (&Data1), (UINT32)HiiValueToUINT64 (&Data2));
+            Value->Value.u64 = MultU64x32 (
+                                 HiiValueToUINT64 (&Data1),
+                                 (UINT32)HiiValueToUINT64 (&Data2)
+                                 );
             break;
 
           case EFI_IFR_DIVIDE_OP:
-            Value->Value.u64 = DivU64x32 (HiiValueToUINT64 (&Data1), (UINT32)HiiValueToUINT64 (&Data2));
+            Value->Value.u64 = DivU64x32 (
+                                 HiiValueToUINT64 (&Data1),
+                                 (UINT32)HiiValueToUINT64 (&Data2)
+                                 );
             break;
 
           case EFI_IFR_MODULO_OP:
-            DivU64x32Remainder (HiiValueToUINT64 (&Data1), (UINT32)HiiValueToUINT64 (&Data2), &TempValue);
+            DivU64x32Remainder (
+              HiiValueToUINT64 (&Data1),
+              (UINT32)HiiValueToUINT64 (&Data2),
+              &TempValue
+              );
             Value->Value.u64 = TempValue;
             break;
 
           case EFI_IFR_BITWISE_AND_OP:
-            Value->Value.u64 = HiiValueToUINT64 (&Data1) & HiiValueToUINT64 (&Data2);
+            Value->Value.u64 = HiiValueToUINT64 (&Data1) & HiiValueToUINT64 (
+                                                             &Data2
+                                                             );
             break;
 
           case EFI_IFR_BITWISE_OR_OP:
-            Value->Value.u64 = HiiValueToUINT64 (&Data1) | HiiValueToUINT64 (&Data2);
+            Value->Value.u64 = HiiValueToUINT64 (&Data1) | HiiValueToUINT64 (
+                                                             &Data2
+                                                             );
             break;
 
           case EFI_IFR_SHIFT_LEFT_OP:
-            Value->Value.u64 = LShiftU64 (HiiValueToUINT64 (&Data1), (UINTN)HiiValueToUINT64 (&Data2));
+            Value->Value.u64 = LShiftU64 (
+                                 HiiValueToUINT64 (&Data1),
+                                 (UINTN)HiiValueToUINT64 (&Data2)
+                                 );
             break;
 
           case EFI_IFR_SHIFT_RIGHT_OP:
-            Value->Value.u64 = RShiftU64 (HiiValueToUINT64 (&Data1), (UINTN)HiiValueToUINT64 (&Data2));
+            Value->Value.u64 = RShiftU64 (
+                                 HiiValueToUINT64 (&Data1),
+                                 (UINTN)HiiValueToUINT64 (&Data2)
+                                 );
             break;
 
           default:
@@ -3592,11 +3744,20 @@ EvaluateExpression (
           //
           // Compare the expression value with current value
           //
-          if ((CompareHiiValue (&Data1, &SubExpression->Result, &Result, NULL) == EFI_SUCCESS) && (Result == 0)) {
+          if ((CompareHiiValue (
+                 &Data1,
+                 &SubExpression->Result,
+                 &Result,
+                 NULL
+                 ) == EFI_SUCCESS) && (Result == 0))
+          {
             //
             // Try get the map value.
             //
-            SubExpressionLink = GetNextNode (&OpCode->MapExpressionList, SubExpressionLink);
+            SubExpressionLink = GetNextNode (
+                                  &OpCode->MapExpressionList,
+                                  SubExpressionLink
+                                  );
             if (IsNull (&OpCode->MapExpressionList, SubExpressionLink)) {
               Status = EFI_INVALID_PARAMETER;
               goto Done;
@@ -3615,7 +3776,10 @@ EvaluateExpression (
           //
           // Skip the second expression on this pair.
           //
-          SubExpressionLink = GetNextNode (&OpCode->MapExpressionList, SubExpressionLink);
+          SubExpressionLink = GetNextNode (
+                                &OpCode->MapExpressionList,
+                                SubExpressionLink
+                                );
           if (IsNull (&OpCode->MapExpressionList, SubExpressionLink)) {
             Status = EFI_INVALID_PARAMETER;
             goto Done;
@@ -3624,7 +3788,10 @@ EvaluateExpression (
           //
           // Goto the first expression on next pair.
           //
-          SubExpressionLink = GetNextNode (&OpCode->MapExpressionList, SubExpressionLink);
+          SubExpressionLink = GetNextNode (
+                                &OpCode->MapExpressionList,
+                                SubExpressionLink
+                                );
         }
 
         //

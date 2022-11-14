@@ -332,7 +332,9 @@ EBC_ICACHE_FLUSH  mEbcICacheFlush;
 // These get set via calls by the debug agent
 //
 EFI_PERIODIC_CALLBACK   mDebugPeriodicCallback                         = NULL;
-EFI_EXCEPTION_CALLBACK  mDebugExceptionCallback[MAX_EBC_EXCEPTION + 1] = { NULL };
+EFI_EXCEPTION_CALLBACK  mDebugExceptionCallback[MAX_EBC_EXCEPTION + 1] = {
+  NULL
+};
 
 VOID        *mStackBuffer[MAX_STACK_NUM];
 EFI_HANDLE  mStackBufferIndex[MAX_STACK_NUM];
@@ -585,11 +587,15 @@ InitializeEbcDriver (
     goto ErrorExit;
   }
 
-  EbcDebugProtocol->Isa                        = IsaEbc;
-  EbcDebugProtocol->GetMaximumProcessorIndex   = EbcDebugGetMaximumProcessorIndex;
-  EbcDebugProtocol->RegisterPeriodicCallback   = EbcDebugRegisterPeriodicCallback;
-  EbcDebugProtocol->RegisterExceptionCallback  = EbcDebugRegisterExceptionCallback;
-  EbcDebugProtocol->InvalidateInstructionCache = EbcDebugInvalidateInstructionCache;
+  EbcDebugProtocol->Isa                      = IsaEbc;
+  EbcDebugProtocol->GetMaximumProcessorIndex =
+    EbcDebugGetMaximumProcessorIndex;
+  EbcDebugProtocol->RegisterPeriodicCallback =
+    EbcDebugRegisterPeriodicCallback;
+  EbcDebugProtocol->RegisterExceptionCallback =
+    EbcDebugRegisterExceptionCallback;
+  EbcDebugProtocol->InvalidateInstructionCache =
+    EbcDebugInvalidateInstructionCache;
 
   //
   // Add the protocol so the debug agent can find us
@@ -805,11 +811,13 @@ EbcDebugRegisterExceptionCallback (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((mDebugExceptionCallback[ExceptionType] == NULL) && (ExceptionCallback == NULL)) {
+  if ((mDebugExceptionCallback[ExceptionType] == NULL) && (ExceptionCallback ==
+                                                           NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((mDebugExceptionCallback[ExceptionType] != NULL) && (ExceptionCallback != NULL)) {
+  if ((mDebugExceptionCallback[ExceptionType] != NULL) && (ExceptionCallback !=
+                                                           NULL)) {
     return EFI_ALREADY_STARTED;
   }
 
@@ -1001,7 +1009,8 @@ CommonEbcExceptionHandler (
   DEBUG ((
     DEBUG_ERROR,
     "EBC Interrupter Version - 0x%016lx\n",
-    (UINT64)(((VM_MAJOR_VERSION & 0xFFFF) << 16) | ((VM_MINOR_VERSION & 0xFFFF)))
+    (UINT64)(((VM_MAJOR_VERSION & 0xFFFF) << 16) | ((VM_MINOR_VERSION &
+                                                     0xFFFF)))
     ));
   DEBUG ((
     DEBUG_ERROR,
@@ -1173,7 +1182,8 @@ EbcUnloadImage (
   //
   ReturnEBCStackByHandle (ImageHandle);
   PrevImageList = NULL;
-  for (ImageList = mEbcImageList; ImageList != NULL; ImageList = ImageList->Next) {
+  for (ImageList = mEbcImageList; ImageList != NULL; ImageList =
+         ImageList->Next) {
     if (ImageList->ImageHandle == ImageHandle) {
       break;
     }
@@ -1250,7 +1260,8 @@ EbcAddImageThunk (
   // It so far so good, then flush the instruction cache
   //
   if (mEbcICacheFlush != NULL) {
-    Status = mEbcICacheFlush ((EFI_PHYSICAL_ADDRESS)(UINTN)ThunkBuffer, ThunkSize);
+    Status = mEbcICacheFlush ((EFI_PHYSICAL_ADDRESS)(UINTN)ThunkBuffer,
+               ThunkSize);
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -1260,7 +1271,8 @@ EbcAddImageThunk (
   // Go through our list of known image handles and see if we've already
   // created a image list element for this image handle.
   //
-  for (ImageList = mEbcImageList; ImageList != NULL; ImageList = ImageList->Next) {
+  for (ImageList = mEbcImageList; ImageList != NULL; ImageList =
+         ImageList->Next) {
     if (ImageList->ImageHandle == ImageHandle) {
       break;
     }
@@ -1518,7 +1530,8 @@ InitEbcVmTestProtocol (
   // Publish the protocol
   //
   Handle = NULL;
-  Status = gBS->InstallProtocolInterface (&Handle, &gEfiEbcVmTestProtocolGuid, EFI_NATIVE_INTERFACE, EbcVmTestProtocol);
+  Status = gBS->InstallProtocolInterface (&Handle, &gEfiEbcVmTestProtocolGuid,
+                  EFI_NATIVE_INTERFACE, EbcVmTestProtocol);
   if (EFI_ERROR (Status)) {
     FreePool (EbcVmTestProtocol);
   }

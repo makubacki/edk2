@@ -50,7 +50,8 @@ HII_VENDOR_DEVICE_PATH  mBmmHiiVendorDevicePath = {
     //
     // {165A028F-0BB2-4b5f-8747-77592E3F6499}
     //
-    { 0x165a028f, 0xbb2, 0x4b5f, { 0x87, 0x47, 0x77, 0x59, 0x2e, 0x3f, 0x64, 0x99 }
+    { 0x165a028f, 0xbb2, 0x4b5f, { 0x87, 0x47, 0x77, 0x59, 0x2e, 0x3f, 0x64,
+                                   0x99 }
     }
   },
   {
@@ -216,13 +217,20 @@ BmmSetConsoleMode (
       if ((Info->HorizontalResolution == NewHorizontalResolution) &&
           (Info->VerticalResolution == NewVerticalResolution))
       {
-        if ((GraphicsOutput->Mode->Info->HorizontalResolution == NewHorizontalResolution) &&
-            (GraphicsOutput->Mode->Info->VerticalResolution == NewVerticalResolution))
+        if ((GraphicsOutput->Mode->Info->HorizontalResolution ==
+             NewHorizontalResolution) &&
+            (GraphicsOutput->Mode->Info->VerticalResolution ==
+             NewVerticalResolution))
         {
           //
           // Current resolution is same with required resolution, check if text mode need be set
           //
-          Status = SimpleTextOut->QueryMode (SimpleTextOut, SimpleTextOut->Mode->Mode, &CurrentColumn, &CurrentRow);
+          Status = SimpleTextOut->QueryMode (
+                                    SimpleTextOut,
+                                    SimpleTextOut->Mode->Mode,
+                                    &CurrentColumn,
+                                    &CurrentRow
+                                    );
           ASSERT_EFI_ERROR (Status);
           if ((CurrentColumn == NewColumns) && (CurrentRow == NewRows)) {
             //
@@ -235,7 +243,12 @@ BmmSetConsoleMode (
             // If current text mode is different from required text mode.  Set new video mode
             //
             for (Index = 0; Index < MaxTextMode; Index++) {
-              Status = SimpleTextOut->QueryMode (SimpleTextOut, Index, &CurrentColumn, &CurrentRow);
+              Status = SimpleTextOut->QueryMode (
+                                        SimpleTextOut,
+                                        Index,
+                                        &CurrentColumn,
+                                        &CurrentRow
+                                        );
               if (!EFI_ERROR (Status)) {
                 if ((CurrentColumn == NewColumns) && (CurrentRow == NewRows)) {
                   //
@@ -432,7 +445,11 @@ BmmExtractDevicePathFromHiiHandle (
     return NULL;
   }
 
-  Status = gHiiDatabase->GetPackageListHandle (gHiiDatabase, Handle, &DriverHandle);
+  Status = gHiiDatabase->GetPackageListHandle (
+                           gHiiDatabase,
+                           Handle,
+                           &DriverHandle
+                           );
   if (EFI_ERROR (Status)) {
     return NULL;
   }
@@ -440,7 +457,11 @@ BmmExtractDevicePathFromHiiHandle (
   //
   // Get device path string.
   //
-  return ConvertDevicePathToText (DevicePathFromHandle (DriverHandle), FALSE, FALSE);
+  return ConvertDevicePathToText (
+           DevicePathFromHandle (DriverHandle),
+           FALSE,
+           FALSE
+           );
 }
 
 /**
@@ -546,19 +567,24 @@ UpdateTerminalContent (
   for (Index = 0; Index < TerminalMenu.MenuNumber; Index++) {
     NewMenuEntry = BOpt_GetMenuEntry (&TerminalMenu, Index);
     ASSERT (NewMenuEntry != NULL);
-    NewTerminalContext                = (BM_TERMINAL_CONTEXT *)NewMenuEntry->VariableContext;
+    NewTerminalContext =
+      (BM_TERMINAL_CONTEXT *)NewMenuEntry->VariableContext;
     NewTerminalContext->BaudRateIndex = BmmData->COMBaudRate[Index];
     ASSERT (BmmData->COMBaudRate[Index] < (ARRAY_SIZE (BaudRateList)));
-    NewTerminalContext->BaudRate      = BaudRateList[BmmData->COMBaudRate[Index]].Value;
+    NewTerminalContext->BaudRate =
+      BaudRateList[BmmData->COMBaudRate[Index]].Value;
     NewTerminalContext->DataBitsIndex = BmmData->COMDataRate[Index];
     ASSERT (BmmData->COMDataRate[Index] < (ARRAY_SIZE (DataBitsList)));
-    NewTerminalContext->DataBits      = (UINT8)DataBitsList[BmmData->COMDataRate[Index]].Value;
+    NewTerminalContext->DataBits =
+      (UINT8)DataBitsList[BmmData->COMDataRate[Index]].Value;
     NewTerminalContext->StopBitsIndex = BmmData->COMStopBits[Index];
     ASSERT (BmmData->COMStopBits[Index] < (ARRAY_SIZE (StopBitsList)));
-    NewTerminalContext->StopBits    = (UINT8)StopBitsList[BmmData->COMStopBits[Index]].Value;
+    NewTerminalContext->StopBits =
+      (UINT8)StopBitsList[BmmData->COMStopBits[Index]].Value;
     NewTerminalContext->ParityIndex = BmmData->COMParity[Index];
     ASSERT (BmmData->COMParity[Index] < (ARRAY_SIZE (ParityList)));
-    NewTerminalContext->Parity       = (UINT8)ParityList[BmmData->COMParity[Index]].Value;
+    NewTerminalContext->Parity =
+      (UINT8)ParityList[BmmData->COMParity[Index]].Value;
     NewTerminalContext->TerminalType = BmmData->COMTerminalType[Index];
     NewTerminalContext->FlowControl  = BmmData->COMFlowControl[Index];
     ChangeTerminalDevicePath (
@@ -598,7 +624,9 @@ UpdateConsoleContent (
       NewMenuEntry       = BOpt_GetMenuEntry (&TerminalMenu, Index);
       NewTerminalContext = (BM_TERMINAL_CONTEXT *)NewMenuEntry->VariableContext;
       ASSERT (Index + ConsoleInpMenu.MenuNumber < MAX_MENU_NUMBER);
-      NewTerminalContext->IsConIn = BmmData->ConsoleInCheck[Index + ConsoleInpMenu.MenuNumber];
+      NewTerminalContext->IsConIn = BmmData->ConsoleInCheck[Index +
+                                                            ConsoleInpMenu.
+                                                              MenuNumber];
     }
   }
 
@@ -614,7 +642,9 @@ UpdateConsoleContent (
       NewMenuEntry       = BOpt_GetMenuEntry (&TerminalMenu, Index);
       NewTerminalContext = (BM_TERMINAL_CONTEXT *)NewMenuEntry->VariableContext;
       ASSERT (Index + ConsoleOutMenu.MenuNumber < MAX_MENU_NUMBER);
-      NewTerminalContext->IsConOut = BmmData->ConsoleOutCheck[Index + ConsoleOutMenu.MenuNumber];
+      NewTerminalContext->IsConOut = BmmData->ConsoleOutCheck[Index +
+                                                              ConsoleOutMenu.
+                                                                MenuNumber];
     }
   }
 
@@ -630,7 +660,9 @@ UpdateConsoleContent (
       NewMenuEntry       = BOpt_GetMenuEntry (&TerminalMenu, Index);
       NewTerminalContext = (BM_TERMINAL_CONTEXT *)NewMenuEntry->VariableContext;
       ASSERT (Index + ConsoleErrMenu.MenuNumber < MAX_MENU_NUMBER);
-      NewTerminalContext->IsStdErr = BmmData->ConsoleErrCheck[Index + ConsoleErrMenu.MenuNumber];
+      NewTerminalContext->IsStdErr = BmmData->ConsoleErrCheck[Index +
+                                                              ConsoleErrMenu.
+                                                                MenuNumber];
     }
   }
 }
@@ -678,7 +710,12 @@ BootMaintExtractConfig (
   }
 
   *Progress = Request;
-  if ((Request != NULL) && !HiiIsConfigHdrMatch (Request, &mBootMaintGuid, mBootMaintStorageName)) {
+  if ((Request != NULL) && !HiiIsConfigHdrMatch (
+                              Request,
+                              &mBootMaintGuid,
+                              mBootMaintStorageName
+                              ))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -699,12 +736,22 @@ BootMaintExtractConfig (
     // Allocate and fill a buffer large enough to hold the <ConfigHdr> template
     // followed by "&OFFSET=0&WIDTH=WWWWWWWWWWWWWWWW" followed by a Null-terminator
     //
-    ConfigRequestHdr = HiiConstructConfigHdr (&mBootMaintGuid, mBootMaintStorageName, Private->BmmDriverHandle);
-    Size             = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
-    ConfigRequest    = AllocateZeroPool (Size);
+    ConfigRequestHdr = HiiConstructConfigHdr (
+                         &mBootMaintGuid,
+                         mBootMaintStorageName,
+                         Private->BmmDriverHandle
+                         );
+    Size          = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
+    ConfigRequest = AllocateZeroPool (Size);
     ASSERT (ConfigRequest != NULL);
     AllocatedRequest = TRUE;
-    UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
+    UnicodeSPrint (
+      ConfigRequest,
+      Size,
+      L"%s&OFFSET=0&WIDTH=%016LX",
+      ConfigRequestHdr,
+      (UINT64)BufferSize
+      );
     FreePool (ConfigRequestHdr);
   }
 
@@ -803,7 +850,12 @@ BootMaintRouteConfig (
   // Check routing data in <ConfigHdr>.
   // Note: there is no name for Name/Value storage, only GUID will be checked
   //
-  if (!HiiIsConfigHdrMatch (Configuration, &mBootMaintGuid, mBootMaintStorageName)) {
+  if (!HiiIsConfigHdrMatch (
+         Configuration,
+         &mBootMaintGuid,
+         mBootMaintStorageName
+         ))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -843,7 +895,12 @@ BootMaintRouteConfig (
   //
   // Check data which located in BMM main page and save the settings if need
   //
-  if (CompareMem (&NewBmmData->BootNext, &OldBmmData->BootNext, sizeof (NewBmmData->BootNext)) != 0) {
+  if (CompareMem (
+        &NewBmmData->BootNext,
+        &OldBmmData->BootNext,
+        sizeof (NewBmmData->BootNext)
+        ) != 0)
+  {
     Status = Var_UpdateBootNext (Private);
     if (EFI_ERROR (Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, BootNext);
@@ -854,13 +911,26 @@ BootMaintRouteConfig (
   //
   // Check data which located in Boot Options Menu and save the settings if need
   //
-  if (CompareMem (NewBmmData->BootOptionDel, OldBmmData->BootOptionDel, sizeof (NewBmmData->BootOptionDel)) != 0) {
+  if (CompareMem (
+        NewBmmData->BootOptionDel,
+        OldBmmData->BootOptionDel,
+        sizeof (NewBmmData->BootOptionDel)
+        ) != 0)
+  {
     for (Index = 0;
-         ((Index < BootOptionMenu.MenuNumber) && (Index < (sizeof (NewBmmData->BootOptionDel) / sizeof (NewBmmData->BootOptionDel[0]))));
+         ((Index < BootOptionMenu.MenuNumber) && (Index <
+                                                  (sizeof (NewBmmData->
+                                                             BootOptionDel) /
+                                                   sizeof (NewBmmData->
+                                                             BootOptionDel[0]))));
          Index++)
     {
-      NewMenuEntry                         = BOpt_GetMenuEntry (&BootOptionMenu, Index);
-      NewLoadContext                       = (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
+      NewMenuEntry = BOpt_GetMenuEntry (
+                       &BootOptionMenu,
+                       Index
+                       );
+      NewLoadContext =
+        (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
       NewLoadContext->Deleted              = NewBmmData->BootOptionDel[Index];
       NewBmmData->BootOptionDel[Index]     = FALSE;
       NewBmmData->BootOptionDelMark[Index] = FALSE;
@@ -873,7 +943,12 @@ BootMaintRouteConfig (
     }
   }
 
-  if (CompareMem (NewBmmData->BootOptionOrder, OldBmmData->BootOptionOrder, sizeof (NewBmmData->BootOptionOrder)) != 0) {
+  if (CompareMem (
+        NewBmmData->BootOptionOrder,
+        OldBmmData->BootOptionOrder,
+        sizeof (NewBmmData->BootOptionOrder)
+        ) != 0)
+  {
     Status = Var_UpdateBootOrder (Private);
     if (EFI_ERROR (Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, BootOptionOrder);
@@ -881,11 +956,17 @@ BootMaintRouteConfig (
     }
   }
 
-  if (CompareMem (&NewBmmData->BootTimeOut, &OldBmmData->BootTimeOut, sizeof (NewBmmData->BootTimeOut)) != 0) {
+  if (CompareMem (
+        &NewBmmData->BootTimeOut,
+        &OldBmmData->BootTimeOut,
+        sizeof (NewBmmData->BootTimeOut)
+        ) != 0)
+  {
     Status = gRT->SetVariable (
                     L"Timeout",
                     &gEfiGlobalVariableGuid,
-                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
                     sizeof (UINT16),
                     &(NewBmmData->BootTimeOut)
                     );
@@ -900,14 +981,30 @@ BootMaintRouteConfig (
   //
   // Check data which located in Driver Options Menu and save the settings if need
   //
-  if (CompareMem (NewBmmData->DriverOptionDel, OldBmmData->DriverOptionDel, sizeof (NewBmmData->DriverOptionDel)) != 0) {
+  if (CompareMem (
+        NewBmmData->DriverOptionDel,
+        OldBmmData->DriverOptionDel,
+        sizeof (NewBmmData->DriverOptionDel)
+        ) != 0)
+  {
     for (Index = 0;
-         ((Index < DriverOptionMenu.MenuNumber) && (Index < (sizeof (NewBmmData->DriverOptionDel) / sizeof (NewBmmData->DriverOptionDel[0]))));
+         ((Index < DriverOptionMenu.MenuNumber) && (Index <
+                                                    (sizeof (NewBmmData->
+                                                               DriverOptionDel)
+                                                     /
+                                                     sizeof (NewBmmData->
+                                                               DriverOptionDel[0
+                                                             ]))));
          Index++)
     {
-      NewMenuEntry                           = BOpt_GetMenuEntry (&DriverOptionMenu, Index);
-      NewLoadContext                         = (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
-      NewLoadContext->Deleted                = NewBmmData->DriverOptionDel[Index];
+      NewMenuEntry = BOpt_GetMenuEntry (
+                       &DriverOptionMenu,
+                       Index
+                       );
+      NewLoadContext =
+        (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
+      NewLoadContext->Deleted =
+        NewBmmData->DriverOptionDel[Index];
       NewBmmData->DriverOptionDel[Index]     = FALSE;
       NewBmmData->DriverOptionDelMark[Index] = FALSE;
     }
@@ -919,7 +1016,12 @@ BootMaintRouteConfig (
     }
   }
 
-  if (CompareMem (NewBmmData->DriverOptionOrder, OldBmmData->DriverOptionOrder, sizeof (NewBmmData->DriverOptionOrder)) != 0) {
+  if (CompareMem (
+        NewBmmData->DriverOptionOrder,
+        OldBmmData->DriverOptionOrder,
+        sizeof (NewBmmData->DriverOptionOrder)
+        ) != 0)
+  {
     Status = Var_UpdateDriverOrder (Private);
     if (EFI_ERROR (Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, DriverOptionOrder);
@@ -927,7 +1029,12 @@ BootMaintRouteConfig (
     }
   }
 
-  if (CompareMem (&NewBmmData->ConsoleOutMode, &OldBmmData->ConsoleOutMode, sizeof (NewBmmData->ConsoleOutMode)) != 0) {
+  if (CompareMem (
+        &NewBmmData->ConsoleOutMode,
+        &OldBmmData->ConsoleOutMode,
+        sizeof (NewBmmData->ConsoleOutMode)
+        ) != 0)
+  {
     Status = Var_UpdateConMode (Private);
     if (EFI_ERROR (Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, ConsoleOutMode);
@@ -940,12 +1047,40 @@ BootMaintRouteConfig (
     //
     // only need update modified items
     //
-    if ((CompareMem (&NewBmmData->COMBaudRate[Index], &OldBmmData->COMBaudRate[Index], sizeof (NewBmmData->COMBaudRate[Index])) == 0) &&
-        (CompareMem (&NewBmmData->COMDataRate[Index], &OldBmmData->COMDataRate[Index], sizeof (NewBmmData->COMDataRate[Index])) == 0) &&
-        (CompareMem (&NewBmmData->COMStopBits[Index], &OldBmmData->COMStopBits[Index], sizeof (NewBmmData->COMStopBits[Index])) == 0) &&
-        (CompareMem (&NewBmmData->COMParity[Index], &OldBmmData->COMParity[Index], sizeof (NewBmmData->COMParity[Index])) == 0) &&
-        (CompareMem (&NewBmmData->COMTerminalType[Index], &OldBmmData->COMTerminalType[Index], sizeof (NewBmmData->COMTerminalType[Index])) == 0) &&
-        (CompareMem (&NewBmmData->COMFlowControl[Index], &OldBmmData->COMFlowControl[Index], sizeof (NewBmmData->COMFlowControl[Index])) == 0))
+    if ((CompareMem (
+           &NewBmmData->COMBaudRate[Index],
+           &OldBmmData->COMBaudRate[Index],
+           sizeof (NewBmmData->COMBaudRate[Index])
+           ) ==
+         0) &&
+        (CompareMem (
+           &NewBmmData->COMDataRate[Index],
+           &OldBmmData->COMDataRate[Index],
+           sizeof (NewBmmData->COMDataRate[Index])
+           ) ==
+         0) &&
+        (CompareMem (
+           &NewBmmData->COMStopBits[Index],
+           &OldBmmData->COMStopBits[Index],
+           sizeof (NewBmmData->COMStopBits[Index])
+           ) ==
+         0) &&
+        (CompareMem (
+           &NewBmmData->COMParity[Index],
+           &OldBmmData->COMParity[Index],
+           sizeof (NewBmmData->COMParity[Index])
+           ) ==
+         0) &&
+        (CompareMem (
+           &NewBmmData->COMTerminalType[Index],
+           &OldBmmData->COMTerminalType[Index],
+           sizeof (NewBmmData->COMTerminalType[Index])
+           ) == 0) &&
+        (CompareMem (
+           &NewBmmData->COMFlowControl[Index],
+           &OldBmmData->COMFlowControl[Index],
+           sizeof (NewBmmData->COMFlowControl[Index])
+           ) == 0))
     {
       continue;
     }
@@ -954,17 +1089,51 @@ BootMaintRouteConfig (
   }
 
   if (TerminalAttChange) {
-    if (CompareMem (&NewBmmData->COMBaudRate[Index], &OldBmmData->COMBaudRate[Index], sizeof (NewBmmData->COMBaudRate[Index])) != 0) {
+    if (CompareMem (
+          &NewBmmData->COMBaudRate[Index],
+          &OldBmmData->COMBaudRate[Index],
+          sizeof (NewBmmData->COMBaudRate[Index])
+          ) !=
+        0)
+    {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, COMBaudRate);
-    } else if (CompareMem (&NewBmmData->COMDataRate[Index], &OldBmmData->COMDataRate[Index], sizeof (NewBmmData->COMDataRate[Index])) != 0) {
+    } else if (CompareMem (
+                 &NewBmmData->COMDataRate[Index],
+                 &OldBmmData->COMDataRate[Index],
+                 sizeof (NewBmmData->COMDataRate[Index])
+                 ) !=
+               0)
+    {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, COMDataRate);
-    } else if (CompareMem (&NewBmmData->COMStopBits[Index], &OldBmmData->COMStopBits[Index], sizeof (NewBmmData->COMStopBits[Index])) != 0) {
+    } else if (CompareMem (
+                 &NewBmmData->COMStopBits[Index],
+                 &OldBmmData->COMStopBits[Index],
+                 sizeof (NewBmmData->COMStopBits[Index])
+                 ) !=
+               0)
+    {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, COMStopBits);
-    } else if (CompareMem (&NewBmmData->COMParity[Index], &OldBmmData->COMParity[Index], sizeof (NewBmmData->COMParity[Index])) != 0) {
+    } else if (CompareMem (
+                 &NewBmmData->COMParity[Index],
+                 &OldBmmData->COMParity[Index],
+                 sizeof (NewBmmData->COMParity[Index])
+                 ) !=
+               0)
+    {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, COMParity);
-    } else if (CompareMem (&NewBmmData->COMTerminalType[Index], &OldBmmData->COMTerminalType[Index], sizeof (NewBmmData->COMTerminalType[Index])) != 0) {
+    } else if (CompareMem (
+                 &NewBmmData->COMTerminalType[Index],
+                 &OldBmmData->COMTerminalType[Index],
+                 sizeof (NewBmmData->COMTerminalType[Index])
+                 ) != 0)
+    {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, COMTerminalType);
-    } else if (CompareMem (&NewBmmData->COMFlowControl[Index], &OldBmmData->COMFlowControl[Index], sizeof (NewBmmData->COMFlowControl[Index])) != 0) {
+    } else if (CompareMem (
+                 &NewBmmData->COMFlowControl[Index],
+                 &OldBmmData->COMFlowControl[Index],
+                 sizeof (NewBmmData->COMFlowControl[Index])
+                 ) != 0)
+    {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, COMFlowControl);
     }
 
@@ -987,7 +1156,12 @@ BootMaintRouteConfig (
   //
   // Check data which located in Console Options Menu and save the settings if need
   //
-  if (CompareMem (NewBmmData->ConsoleInCheck, OldBmmData->ConsoleInCheck, sizeof (NewBmmData->ConsoleInCheck)) != 0) {
+  if (CompareMem (
+        NewBmmData->ConsoleInCheck,
+        OldBmmData->ConsoleInCheck,
+        sizeof (NewBmmData->ConsoleInCheck)
+        ) != 0)
+  {
     Status = Var_UpdateConsoleInpOption ();
     if (EFI_ERROR (Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, ConsoleInCheck);
@@ -995,7 +1169,12 @@ BootMaintRouteConfig (
     }
   }
 
-  if (CompareMem (NewBmmData->ConsoleOutCheck, OldBmmData->ConsoleOutCheck, sizeof (NewBmmData->ConsoleOutCheck)) != 0) {
+  if (CompareMem (
+        NewBmmData->ConsoleOutCheck,
+        OldBmmData->ConsoleOutCheck,
+        sizeof (NewBmmData->ConsoleOutCheck)
+        ) != 0)
+  {
     Status = Var_UpdateConsoleOutOption ();
     if (EFI_ERROR (Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, ConsoleOutCheck);
@@ -1003,7 +1182,12 @@ BootMaintRouteConfig (
     }
   }
 
-  if (CompareMem (NewBmmData->ConsoleErrCheck, OldBmmData->ConsoleErrCheck, sizeof (NewBmmData->ConsoleErrCheck)) != 0) {
+  if (CompareMem (
+        NewBmmData->ConsoleErrCheck,
+        OldBmmData->ConsoleErrCheck,
+        sizeof (NewBmmData->ConsoleErrCheck)
+        ) != 0)
+  {
     Status = Var_UpdateErrorOutOption ();
     if (EFI_ERROR (Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, ConsoleErrCheck);
@@ -1011,13 +1195,27 @@ BootMaintRouteConfig (
     }
   }
 
-  if ((CompareMem (NewBmmData->BootDescriptionData, OldBmmData->BootDescriptionData, sizeof (NewBmmData->BootDescriptionData)) != 0) ||
-      (CompareMem (NewBmmData->BootOptionalData, OldBmmData->BootOptionalData, sizeof (NewBmmData->BootOptionalData)) != 0))
+  if ((CompareMem (
+         NewBmmData->BootDescriptionData,
+         OldBmmData->BootDescriptionData,
+         sizeof (NewBmmData->BootDescriptionData)
+         ) !=
+       0) ||
+      (CompareMem (
+         NewBmmData->BootOptionalData,
+         OldBmmData->BootOptionalData,
+         sizeof (NewBmmData->BootOptionalData)
+         ) != 0))
   {
     Status                        = Var_UpdateBootOption (Private);
     NewBmmData->BootOptionChanged = FALSE;
     if (EFI_ERROR (Status)) {
-      if (CompareMem (NewBmmData->BootDescriptionData, OldBmmData->BootDescriptionData, sizeof (NewBmmData->BootDescriptionData)) != 0) {
+      if (CompareMem (
+            NewBmmData->BootDescriptionData,
+            OldBmmData->BootDescriptionData,
+            sizeof (NewBmmData->BootDescriptionData)
+            ) != 0)
+      {
         Offset = OFFSET_OF (BMM_FAKE_NV_DATA, BootDescriptionData);
       } else {
         Offset = OFFSET_OF (BMM_FAKE_NV_DATA, BootOptionalData);
@@ -1029,8 +1227,17 @@ BootMaintRouteConfig (
     BOpt_GetBootOptions (Private);
   }
 
-  if ((CompareMem (NewBmmData->DriverDescriptionData, OldBmmData->DriverDescriptionData, sizeof (NewBmmData->DriverDescriptionData)) != 0) ||
-      (CompareMem (NewBmmData->DriverOptionalData, OldBmmData->DriverOptionalData, sizeof (NewBmmData->DriverOptionalData)) != 0))
+  if ((CompareMem (
+         NewBmmData->DriverDescriptionData,
+         OldBmmData->DriverDescriptionData,
+         sizeof (NewBmmData->DriverDescriptionData)
+         ) != 0) ||
+      (CompareMem (
+         NewBmmData->DriverOptionalData,
+         OldBmmData->DriverOptionalData,
+         sizeof (NewBmmData->DriverOptionalData)
+         ) !=
+       0))
   {
     Status = Var_UpdateDriverOption (
                Private,
@@ -1042,7 +1249,12 @@ BootMaintRouteConfig (
     NewBmmData->DriverOptionChanged = FALSE;
     NewBmmData->ForceReconnect      = TRUE;
     if (EFI_ERROR (Status)) {
-      if (CompareMem (NewBmmData->DriverDescriptionData, OldBmmData->DriverDescriptionData, sizeof (NewBmmData->DriverDescriptionData)) != 0) {
+      if (CompareMem (
+            NewBmmData->DriverDescriptionData,
+            OldBmmData->DriverDescriptionData,
+            sizeof (NewBmmData->DriverDescriptionData)
+            ) != 0)
+      {
         Offset = OFFSET_OF (BMM_FAKE_NV_DATA, DriverDescriptionData);
       } else {
         Offset = OFFSET_OF (BMM_FAKE_NV_DATA, DriverOptionalData);
@@ -1109,7 +1321,10 @@ BootMaintCallback (
   UINTN                     Index;
   EFI_DEVICE_PATH_PROTOCOL  *File;
 
-  if ((Action != EFI_BROWSER_ACTION_CHANGING) && (Action != EFI_BROWSER_ACTION_CHANGED) && (Action != EFI_BROWSER_ACTION_FORM_OPEN)) {
+  if ((Action != EFI_BROWSER_ACTION_CHANGING) && (Action !=
+                                                  EFI_BROWSER_ACTION_CHANGED) &&
+      (Action != EFI_BROWSER_ACTION_FORM_OPEN))
+  {
     //
     // Do nothing for other UEFI Action. Only do call back when data is changed or the form is open.
     //
@@ -1143,7 +1358,12 @@ BootMaintCallback (
   //
   CurrentFakeNVMap = &Private->BmmFakeNvData;
   OldFakeNVMap     = &Private->BmmOldFakeNVData;
-  HiiGetBrowserData (&mBootMaintGuid, mBootMaintStorageName, sizeof (BMM_FAKE_NV_DATA), (UINT8 *)CurrentFakeNVMap);
+  HiiGetBrowserData (
+    &mBootMaintGuid,
+    mBootMaintStorageName,
+    sizeof (BMM_FAKE_NV_DATA),
+    (UINT8 *)CurrentFakeNVMap
+    );
 
   if (Action == EFI_BROWSER_ACTION_CHANGING) {
     if (Value == NULL) {
@@ -1204,8 +1424,11 @@ BootMaintCallback (
           default:
             break;
         }
-      } else if ((QuestionId >= TERMINAL_OPTION_OFFSET) && (QuestionId < CONSOLE_OPTION_OFFSET)) {
-        Index                    = (UINT16)(QuestionId - TERMINAL_OPTION_OFFSET);
+      } else if ((QuestionId >= TERMINAL_OPTION_OFFSET) && (QuestionId <
+                                                            CONSOLE_OPTION_OFFSET))
+      {
+        Index                    = (UINT16)(QuestionId -
+                                            TERMINAL_OPTION_OFFSET);
         Private->CurrentTerminal = Index;
 
         CleanUpPage (FORM_CON_COM_SETUP_ID, Private);
@@ -1215,7 +1438,8 @@ BootMaintCallback (
 
         NewMenuEntry = BOpt_GetMenuEntry (&DriverMenu, Index);
         ASSERT (NewMenuEntry != NULL);
-        Private->HandleContext = (BM_HANDLE_CONTEXT *)NewMenuEntry->VariableContext;
+        Private->HandleContext =
+          (BM_HANDLE_CONTEXT *)NewMenuEntry->VariableContext;
 
         CleanUpPage (FORM_DRV_ADD_HANDLE_DESC_ID, Private);
 
@@ -1238,55 +1462,101 @@ BootMaintCallback (
     if (QuestionId == KEY_VALUE_SAVE_AND_EXIT_BOOT) {
       CleanUselessBeforeSubmit (Private);
       CurrentFakeNVMap->BootOptionChanged = FALSE;
-      *ActionRequest                      = EFI_BROWSER_ACTION_REQUEST_FORM_SUBMIT_EXIT;
+      *ActionRequest                      =
+        EFI_BROWSER_ACTION_REQUEST_FORM_SUBMIT_EXIT;
     } else if (QuestionId == KEY_VALUE_SAVE_AND_EXIT_DRIVER) {
       CleanUselessBeforeSubmit (Private);
       CurrentFakeNVMap->DriverOptionChanged = FALSE;
-      *ActionRequest                        = EFI_BROWSER_ACTION_REQUEST_FORM_SUBMIT_EXIT;
+      *ActionRequest                        =
+        EFI_BROWSER_ACTION_REQUEST_FORM_SUBMIT_EXIT;
     } else if (QuestionId == KEY_VALUE_NO_SAVE_AND_EXIT_DRIVER) {
       //
       // Discard changes and exit formset
       //
-      ZeroMem (CurrentFakeNVMap->DriverOptionalData, sizeof (CurrentFakeNVMap->DriverOptionalData));
-      ZeroMem (CurrentFakeNVMap->BootDescriptionData, sizeof (CurrentFakeNVMap->BootDescriptionData));
-      ZeroMem (OldFakeNVMap->DriverOptionalData, sizeof (OldFakeNVMap->DriverOptionalData));
-      ZeroMem (OldFakeNVMap->DriverDescriptionData, sizeof (OldFakeNVMap->DriverDescriptionData));
+      ZeroMem (
+        CurrentFakeNVMap->DriverOptionalData,
+        sizeof (CurrentFakeNVMap->DriverOptionalData)
+        );
+      ZeroMem (
+        CurrentFakeNVMap->BootDescriptionData,
+        sizeof (CurrentFakeNVMap->BootDescriptionData)
+        );
+      ZeroMem (
+        OldFakeNVMap->DriverOptionalData,
+        sizeof (OldFakeNVMap->DriverOptionalData)
+        );
+      ZeroMem (
+        OldFakeNVMap->DriverDescriptionData,
+        sizeof (OldFakeNVMap->DriverDescriptionData)
+        );
       CurrentFakeNVMap->DriverOptionChanged = FALSE;
       CurrentFakeNVMap->ForceReconnect      = TRUE;
-      *ActionRequest                        = EFI_BROWSER_ACTION_REQUEST_FORM_DISCARD_EXIT;
+      *ActionRequest                        =
+        EFI_BROWSER_ACTION_REQUEST_FORM_DISCARD_EXIT;
     } else if (QuestionId == KEY_VALUE_NO_SAVE_AND_EXIT_BOOT) {
       //
       // Discard changes and exit formset
       //
-      ZeroMem (CurrentFakeNVMap->BootOptionalData, sizeof (CurrentFakeNVMap->BootOptionalData));
-      ZeroMem (CurrentFakeNVMap->BootDescriptionData, sizeof (CurrentFakeNVMap->BootDescriptionData));
-      ZeroMem (OldFakeNVMap->BootOptionalData, sizeof (OldFakeNVMap->BootOptionalData));
-      ZeroMem (OldFakeNVMap->BootDescriptionData, sizeof (OldFakeNVMap->BootDescriptionData));
+      ZeroMem (
+        CurrentFakeNVMap->BootOptionalData,
+        sizeof (CurrentFakeNVMap->BootOptionalData)
+        );
+      ZeroMem (
+        CurrentFakeNVMap->BootDescriptionData,
+        sizeof (CurrentFakeNVMap->BootDescriptionData)
+        );
+      ZeroMem (
+        OldFakeNVMap->BootOptionalData,
+        sizeof (OldFakeNVMap->BootOptionalData)
+        );
+      ZeroMem (
+        OldFakeNVMap->BootDescriptionData,
+        sizeof (OldFakeNVMap->BootDescriptionData)
+        );
       CurrentFakeNVMap->BootOptionChanged = FALSE;
-      *ActionRequest                      = EFI_BROWSER_ACTION_REQUEST_FORM_DISCARD_EXIT;
-    } else if ((QuestionId == KEY_VALUE_BOOT_DESCRIPTION) || (QuestionId == KEY_VALUE_BOOT_OPTION)) {
+      *ActionRequest                      =
+        EFI_BROWSER_ACTION_REQUEST_FORM_DISCARD_EXIT;
+    } else if ((QuestionId == KEY_VALUE_BOOT_DESCRIPTION) || (QuestionId ==
+                                                              KEY_VALUE_BOOT_OPTION))
+    {
       CurrentFakeNVMap->BootOptionChanged = TRUE;
-    } else if ((QuestionId == KEY_VALUE_DRIVER_DESCRIPTION) || (QuestionId == KEY_VALUE_DRIVER_OPTION)) {
+    } else if ((QuestionId == KEY_VALUE_DRIVER_DESCRIPTION) || (QuestionId ==
+                                                                KEY_VALUE_DRIVER_OPTION))
+    {
       CurrentFakeNVMap->DriverOptionChanged = TRUE;
     }
 
-    if ((QuestionId >= BOOT_OPTION_DEL_QUESTION_ID) && (QuestionId < BOOT_OPTION_DEL_QUESTION_ID + MAX_MENU_NUMBER)) {
+    if ((QuestionId >= BOOT_OPTION_DEL_QUESTION_ID) && (QuestionId <
+                                                        BOOT_OPTION_DEL_QUESTION_ID
+                                                        + MAX_MENU_NUMBER))
+    {
       if (Value->b) {
         //
         // Means user try to delete this boot option but not press F10 or "Commit Changes and Exit" menu.
         //
-        CurrentFakeNVMap->BootOptionDelMark[QuestionId - BOOT_OPTION_DEL_QUESTION_ID] = TRUE;
+        CurrentFakeNVMap->BootOptionDelMark[QuestionId -
+                                            BOOT_OPTION_DEL_QUESTION_ID] = TRUE;
       } else {
         //
         // Means user remove the old check status.
         //
-        CurrentFakeNVMap->BootOptionDelMark[QuestionId - BOOT_OPTION_DEL_QUESTION_ID] = FALSE;
+        CurrentFakeNVMap->BootOptionDelMark[QuestionId -
+                                            BOOT_OPTION_DEL_QUESTION_ID] =
+          FALSE;
       }
-    } else if ((QuestionId >= DRIVER_OPTION_DEL_QUESTION_ID) && (QuestionId < DRIVER_OPTION_DEL_QUESTION_ID + MAX_MENU_NUMBER)) {
+    } else if ((QuestionId >= DRIVER_OPTION_DEL_QUESTION_ID) && (QuestionId <
+                                                                 DRIVER_OPTION_DEL_QUESTION_ID
+                                                                 +
+                                                                 MAX_MENU_NUMBER))
+    {
       if (Value->b) {
-        CurrentFakeNVMap->DriverOptionDelMark[QuestionId - DRIVER_OPTION_DEL_QUESTION_ID] = TRUE;
+        CurrentFakeNVMap->DriverOptionDelMark[QuestionId -
+                                              DRIVER_OPTION_DEL_QUESTION_ID] =
+          TRUE;
       } else {
-        CurrentFakeNVMap->DriverOptionDelMark[QuestionId - DRIVER_OPTION_DEL_QUESTION_ID] = FALSE;
+        CurrentFakeNVMap->DriverOptionDelMark[QuestionId -
+                                              DRIVER_OPTION_DEL_QUESTION_ID] =
+          FALSE;
       }
     } else {
       switch (QuestionId) {
@@ -1314,19 +1584,31 @@ BootMaintCallback (
     //
     // Update the content in Terminal menu and Console menu here.
     //
-    if ((QuestionId == COM_BAUD_RATE_QUESTION_ID + Private->CurrentTerminal) || (QuestionId == COM_DATA_RATE_QUESTION_ID + Private->CurrentTerminal) ||
-        (QuestionId == COM_PARITY_QUESTION_ID + Private->CurrentTerminal) || (QuestionId == COM_STOP_BITS_QUESTION_ID + Private->CurrentTerminal) ||
-        (QuestionId == COM_TERMINAL_QUESTION_ID + Private->CurrentTerminal) || (QuestionId == COM_FLOWCONTROL_QUESTION_ID + Private->CurrentTerminal)
+    if ((QuestionId == COM_BAUD_RATE_QUESTION_ID + Private->CurrentTerminal) ||
+        (QuestionId == COM_DATA_RATE_QUESTION_ID + Private->CurrentTerminal) ||
+        (QuestionId == COM_PARITY_QUESTION_ID + Private->CurrentTerminal) ||
+        (QuestionId == COM_STOP_BITS_QUESTION_ID + Private->CurrentTerminal) ||
+        (QuestionId == COM_TERMINAL_QUESTION_ID + Private->CurrentTerminal) ||
+        (QuestionId == COM_FLOWCONTROL_QUESTION_ID + Private->CurrentTerminal)
         )
     {
       UpdateTerminalContent (CurrentFakeNVMap);
     }
 
-    if ((QuestionId >= CON_IN_DEVICE_QUESTION_ID) && (QuestionId < CON_IN_DEVICE_QUESTION_ID + MAX_MENU_NUMBER)) {
+    if ((QuestionId >= CON_IN_DEVICE_QUESTION_ID) && (QuestionId <
+                                                      CON_IN_DEVICE_QUESTION_ID
+                                                      + MAX_MENU_NUMBER))
+    {
       UpdateConsoleContent (L"ConIn", CurrentFakeNVMap);
-    } else if ((QuestionId >= CON_OUT_DEVICE_QUESTION_ID) && (QuestionId < CON_OUT_DEVICE_QUESTION_ID + MAX_MENU_NUMBER)) {
+    } else if ((QuestionId >= CON_OUT_DEVICE_QUESTION_ID) && (QuestionId <
+                                                              CON_OUT_DEVICE_QUESTION_ID
+                                                              + MAX_MENU_NUMBER))
+    {
       UpdateConsoleContent (L"ConOut", CurrentFakeNVMap);
-    } else if ((QuestionId >= CON_ERR_DEVICE_QUESTION_ID) && (QuestionId < CON_ERR_DEVICE_QUESTION_ID + MAX_MENU_NUMBER)) {
+    } else if ((QuestionId >= CON_ERR_DEVICE_QUESTION_ID) && (QuestionId <
+                                                              CON_ERR_DEVICE_QUESTION_ID
+                                                              + MAX_MENU_NUMBER))
+    {
       UpdateConsoleContent (L"ErrOut", CurrentFakeNVMap);
     }
   }
@@ -1334,7 +1616,13 @@ BootMaintCallback (
   //
   // Pass changed uncommitted data back to Form Browser
   //
-  HiiSetBrowserData (&mBootMaintGuid, mBootMaintStorageName, sizeof (BMM_FAKE_NV_DATA), (UINT8 *)CurrentFakeNVMap, NULL);
+  HiiSetBrowserData (
+    &mBootMaintGuid,
+    mBootMaintStorageName,
+    sizeof (BMM_FAKE_NV_DATA),
+    (UINT8 *)CurrentFakeNVMap,
+    NULL
+    );
 
   return EFI_SUCCESS;
 }
@@ -1357,15 +1645,27 @@ DiscardChangeHandler (
 
   switch (Private->BmmPreviousPageId) {
     case FORM_BOOT_CHG_ID:
-      CopyMem (CurrentFakeNVMap->BootOptionOrder, Private->BmmOldFakeNVData.BootOptionOrder, sizeof (CurrentFakeNVMap->BootOptionOrder));
+      CopyMem (
+        CurrentFakeNVMap->BootOptionOrder,
+        Private->BmmOldFakeNVData.BootOptionOrder,
+        sizeof (CurrentFakeNVMap->BootOptionOrder)
+        );
       break;
 
     case FORM_DRV_CHG_ID:
-      CopyMem (CurrentFakeNVMap->DriverOptionOrder, Private->BmmOldFakeNVData.DriverOptionOrder, sizeof (CurrentFakeNVMap->DriverOptionOrder));
+      CopyMem (
+        CurrentFakeNVMap->DriverOptionOrder,
+        Private->BmmOldFakeNVData.DriverOptionOrder,
+        sizeof (CurrentFakeNVMap->DriverOptionOrder)
+        );
       break;
 
     case FORM_BOOT_DEL_ID:
-      ASSERT (BootOptionMenu.MenuNumber <= (sizeof (CurrentFakeNVMap->BootOptionDel) / sizeof (CurrentFakeNVMap->BootOptionDel[0])));
+      ASSERT (
+        BootOptionMenu.MenuNumber <=
+        (sizeof (CurrentFakeNVMap->BootOptionDel) /
+         sizeof (CurrentFakeNVMap->BootOptionDel[0]))
+        );
       for (Index = 0; Index < BootOptionMenu.MenuNumber; Index++) {
         CurrentFakeNVMap->BootOptionDel[Index] = FALSE;
       }
@@ -1373,7 +1673,11 @@ DiscardChangeHandler (
       break;
 
     case FORM_DRV_DEL_ID:
-      ASSERT (DriverOptionMenu.MenuNumber <= (sizeof (CurrentFakeNVMap->DriverOptionDel) / sizeof (CurrentFakeNVMap->DriverOptionDel[0])));
+      ASSERT (
+        DriverOptionMenu.MenuNumber <=
+        (sizeof (CurrentFakeNVMap->DriverOptionDel) /
+         sizeof (CurrentFakeNVMap->DriverOptionDel[0]))
+        );
       for (Index = 0; Index < DriverOptionMenu.MenuNumber; Index++) {
         CurrentFakeNVMap->DriverOptionDel[Index] = FALSE;
       }
@@ -1415,7 +1719,9 @@ CleanUselessBeforeSubmit (
 
   if (Private->BmmPreviousPageId != FORM_BOOT_DEL_ID) {
     for (Index = 0; Index < BootOptionMenu.MenuNumber; Index++) {
-      if (Private->BmmFakeNvData.BootOptionDel[Index] && !Private->BmmFakeNvData.BootOptionDelMark[Index]) {
+      if (Private->BmmFakeNvData.BootOptionDel[Index] &&
+          !Private->BmmFakeNvData.BootOptionDelMark[Index])
+      {
         Private->BmmFakeNvData.BootOptionDel[Index]    = FALSE;
         Private->BmmOldFakeNVData.BootOptionDel[Index] = FALSE;
       }
@@ -1424,7 +1730,9 @@ CleanUselessBeforeSubmit (
 
   if (Private->BmmPreviousPageId != FORM_DRV_DEL_ID) {
     for (Index = 0; Index < DriverOptionMenu.MenuNumber; Index++) {
-      if (Private->BmmFakeNvData.DriverOptionDel[Index] && !Private->BmmFakeNvData.DriverOptionDelMark[Index]) {
+      if (Private->BmmFakeNvData.DriverOptionDel[Index] &&
+          !Private->BmmFakeNvData.DriverOptionDelMark[Index])
+      {
         Private->BmmFakeNvData.DriverOptionDel[Index]    = FALSE;
         Private->BmmOldFakeNVData.DriverOptionDel[Index] = FALSE;
       }
@@ -1458,13 +1766,23 @@ CustomizeMenus (
   //
   // Create Hii Extend Label OpCode as the start opcode
   //
-  StartGuidLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (StartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  StartGuidLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                           StartOpCodeHandle,
+                                           &gEfiIfrTianoGuid,
+                                           NULL,
+                                           sizeof (EFI_IFR_GUID_LABEL)
+                                           );
   StartGuidLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   StartGuidLabel->Number       = LABEL_FORM_MAIN_START;
   //
   // Create Hii Extend Label OpCode as the end opcode
   //
-  EndGuidLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (EndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  EndGuidLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                         EndOpCodeHandle,
+                                         &gEfiIfrTianoGuid,
+                                         NULL,
+                                         sizeof (EFI_IFR_GUID_LABEL)
+                                         );
   EndGuidLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndGuidLabel->Number       = LABEL_FORM_MAIN_END;
 
@@ -1546,7 +1864,11 @@ InitializeBmmConfig (
   //
   // Backup Initialize BMM configuartion data to BmmOldFakeNVData
   //
-  CopyMem (&CallbackData->BmmOldFakeNVData, &CallbackData->BmmFakeNvData, sizeof (BMM_FAKE_NV_DATA));
+  CopyMem (
+    &CallbackData->BmmOldFakeNVData,
+    &CallbackData->BmmFakeNvData,
+    sizeof (BMM_FAKE_NV_DATA)
+    );
 }
 
 /**
@@ -1639,8 +1961,10 @@ BmmInitialBootModeInfo (
     //
     // Get current video resolution and text mode.
     //
-    mBmmBootHorizontalResolution = GraphicsOutput->Mode->Info->HorizontalResolution;
-    mBmmBootVerticalResolution   = GraphicsOutput->Mode->Info->VerticalResolution;
+    mBmmBootHorizontalResolution =
+      GraphicsOutput->Mode->Info->HorizontalResolution;
+    mBmmBootVerticalResolution =
+      GraphicsOutput->Mode->Info->VerticalResolution;
   }
 
   if (SimpleTextOut != NULL) {
@@ -1717,13 +2041,20 @@ BootMaintenanceManagerUiLibConstructor (
   //
   // Locate Formbrowser2 protocol
   //
-  Status = gBS->LocateProtocol (&gEfiFormBrowser2ProtocolGuid, NULL, (VOID **)&mBmmCallbackInfo->FormBrowser2);
+  Status = gBS->LocateProtocol (
+                  &gEfiFormBrowser2ProtocolGuid,
+                  NULL,
+                  (VOID **)&mBmmCallbackInfo->FormBrowser2
+                  );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Create LoadOption in BmmCallbackInfo for Driver Callback
   //
-  Ptr = AllocateZeroPool (sizeof (BM_LOAD_CONTEXT) + sizeof (BM_FILE_CONTEXT) + sizeof (BM_HANDLE_CONTEXT) + sizeof (BM_MENU_ENTRY));
+  Ptr = AllocateZeroPool (
+          sizeof (BM_LOAD_CONTEXT) + sizeof (BM_FILE_CONTEXT) +
+          sizeof (BM_HANDLE_CONTEXT) + sizeof (BM_MENU_ENTRY)
+          );
   ASSERT (Ptr != NULL);
 
   //

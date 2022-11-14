@@ -161,7 +161,10 @@ CheckAndMarkFixLoadingMemoryUsageBitMap (
   // indicate the status of the corresponding memory page, available or not
   //
   if (mSmmCodeMemoryRangeUsageBitMap == NULL) {
-    mSmmCodeMemoryRangeUsageBitMap = AllocateZeroPool (((SmmCodePageNumber / 64) + 1)*sizeof (UINT64));
+    mSmmCodeMemoryRangeUsageBitMap = AllocateZeroPool (
+                                       ((SmmCodePageNumber /
+                                         64) + 1)*sizeof (UINT64)
+                                       );
   }
 
   //
@@ -174,7 +177,9 @@ CheckAndMarkFixLoadingMemoryUsageBitMap (
   //
   // see if the memory range for loading the image is in the SMM code range.
   //
-  if ((SmmCodeBase + SmmCodeSize <  ImageBase + ImageSize) || (SmmCodeBase >  ImageBase)) {
+  if ((SmmCodeBase + SmmCodeSize <  ImageBase + ImageSize) || (SmmCodeBase >
+                                                               ImageBase))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -182,9 +187,17 @@ CheckAndMarkFixLoadingMemoryUsageBitMap (
   // Test if the memory is available or not.
   //
   BaseOffsetPageNumber = EFI_SIZE_TO_PAGES ((UINT32)(ImageBase - SmmCodeBase));
-  TopOffsetPageNumber  = EFI_SIZE_TO_PAGES ((UINT32)(ImageBase + ImageSize - SmmCodeBase));
+  TopOffsetPageNumber  = EFI_SIZE_TO_PAGES (
+                           (UINT32)(ImageBase + ImageSize -
+                                    SmmCodeBase)
+                           );
   for (Index = BaseOffsetPageNumber; Index < TopOffsetPageNumber; Index++) {
-    if ((mSmmCodeMemoryRangeUsageBitMap[Index / 64] & LShiftU64 (1, (Index % 64))) != 0) {
+    if ((mSmmCodeMemoryRangeUsageBitMap[Index / 64] & LShiftU64 (
+                                                        1,
+                                                        (Index %
+                                                         64)
+                                                        )) != 0)
+    {
       //
       // This page is already used.
       //
@@ -233,7 +246,9 @@ GetPeCoffImageFixLoadingAssignedAddress (
   //
   // Get PeHeader pointer
   //
-  ImgHdr              = (EFI_IMAGE_OPTIONAL_HEADER_UNION *)((CHAR8 *)ImageContext->Handle + ImageContext->PeCoffHeaderOffset);
+  ImgHdr =
+    (EFI_IMAGE_OPTIONAL_HEADER_UNION *)((CHAR8 *)ImageContext->Handle +
+                                        ImageContext->PeCoffHeaderOffset);
   SectionHeaderOffset = ImageContext->PeCoffHeaderOffset +
                         sizeof (UINT32) +
                         sizeof (EFI_IMAGE_FILE_HEADER) +
@@ -267,17 +282,25 @@ GetPeCoffImageFixLoadingAssignedAddress (
       // if a module with a loading address assigned by tools, the PointerToRelocations & PointerToLineNumbers fields
       // should not be Zero, or else, these 2 fields should be set to Zero
       //
-      ValueInSectionHeader = ReadUnaligned64 ((UINT64 *)&SectionHeader.PointerToRelocations);
+      ValueInSectionHeader = ReadUnaligned64 (
+                               (UINT64 *)&SectionHeader.PointerToRelocations
+                               );
       if (ValueInSectionHeader != 0) {
         //
         // Found first section header that doesn't point to code section in which build tool saves the
         // offset to SMRAM base as image base in PointerToRelocations & PointerToLineNumbers fields
         //
-        FixLoadingAddress = (EFI_PHYSICAL_ADDRESS)(gLoadModuleAtFixAddressSmramBase + (INT64)ValueInSectionHeader);
+        FixLoadingAddress =
+          (EFI_PHYSICAL_ADDRESS)(gLoadModuleAtFixAddressSmramBase +
+                                 (INT64)ValueInSectionHeader);
         //
         // Check if the memory range is available.
         //
-        Status = CheckAndMarkFixLoadingMemoryUsageBitMap (FixLoadingAddress, (UINTN)(ImageContext->ImageSize + ImageContext->SectionAlignment));
+        Status = CheckAndMarkFixLoadingMemoryUsageBitMap (
+                   FixLoadingAddress,
+                   (UINTN)(ImageContext->ImageSize +
+                           ImageContext->SectionAlignment)
+                   );
         if (!EFI_ERROR (Status)) {
           //
           // The assigned address is valid. Return the specified loading address
@@ -292,7 +315,12 @@ GetPeCoffImageFixLoadingAssignedAddress (
     SectionHeaderOffset += sizeof (EFI_IMAGE_SECTION_HEADER);
   }
 
-  DEBUG ((DEBUG_INFO|DEBUG_LOAD, "LOADING MODULE FIXED INFO: Loading module at fixed address %x, Status = %r\n", FixLoadingAddress, Status));
+  DEBUG ((
+    DEBUG_INFO|DEBUG_LOAD,
+    "LOADING MODULE FIXED INFO: Loading module at fixed address %x, Status = %r\n",
+    FixLoadingAddress,
+    Status
+    ));
   return Status;
 }
 
@@ -344,7 +372,11 @@ SmmLoadImage (
   //
   // Try to get the image device handle by checking the match protocol.
   //
-  Status = gBS->LocateDevicePath (&gEfiFirmwareVolume2ProtocolGuid, &HandleFilePath, &DeviceHandle);
+  Status = gBS->LocateDevicePath (
+                  &gEfiFirmwareVolume2ProtocolGuid,
+                  &HandleFilePath,
+                  &DeviceHandle
+                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -353,11 +385,19 @@ SmmLoadImage (
   // If the Security2 and Security Architectural Protocol has not been located yet, then attempt to locate it
   //
   if (mSecurity2 == NULL) {
-    gBS->LocateProtocol (&gEfiSecurity2ArchProtocolGuid, NULL, (VOID **)&mSecurity2);
+    gBS->LocateProtocol (
+           &gEfiSecurity2ArchProtocolGuid,
+           NULL,
+           (VOID **)&mSecurity2
+           );
   }
 
   if (mSecurity == NULL) {
-    gBS->LocateProtocol (&gEfiSecurityArchProtocolGuid, NULL, (VOID **)&mSecurity);
+    gBS->LocateProtocol (
+           &gEfiSecurityArchProtocolGuid,
+           NULL,
+           (VOID **)&mSecurity
+           );
   }
 
   //
@@ -369,10 +409,16 @@ SmmLoadImage (
   // Pull out just the file portion of the DevicePath for the LoadedImage FilePath
   //
   FilePath = OriginalFilePath;
-  Status   = gBS->HandleProtocol (DeviceHandle, &gEfiDevicePathProtocolGuid, (VOID **)&HandleFilePath);
+  Status   = gBS->HandleProtocol (
+                    DeviceHandle,
+                    &gEfiDevicePathProtocolGuid,
+                    (VOID **)&HandleFilePath
+                    );
   if (!EFI_ERROR (Status)) {
-    FilePathSize = GetDevicePathSize (HandleFilePath) - sizeof (EFI_DEVICE_PATH_PROTOCOL);
-    FilePath     = (EFI_DEVICE_PATH_PROTOCOL *)(((UINT8 *)FilePath) + FilePathSize);
+    FilePathSize = GetDevicePathSize (HandleFilePath) -
+                   sizeof (EFI_DEVICE_PATH_PROTOCOL);
+    FilePath = (EFI_DEVICE_PATH_PROTOCOL *)(((UINT8 *)FilePath) +
+                                            FilePathSize);
   }
 
   //
@@ -439,7 +485,9 @@ SmmLoadImage (
                                   );
   }
 
-  if (EFI_ERROR (SecurityStatus) && (SecurityStatus != EFI_SECURITY_VIOLATION)) {
+  if (EFI_ERROR (SecurityStatus) && (SecurityStatus !=
+                                     EFI_SECURITY_VIOLATION))
+  {
     Status = SecurityStatus;
     return Status;
   }
@@ -479,11 +527,17 @@ SmmLoadImage (
       PageCount = 0;
       DstBuffer = (UINTN)gLoadModuleAtFixAddressSmramBase;
     } else {
-      DEBUG ((DEBUG_INFO|DEBUG_LOAD, "LOADING MODULE FIXED ERROR: Failed to load module at fixed address. \n"));
+      DEBUG ((
+        DEBUG_INFO|DEBUG_LOAD,
+        "LOADING MODULE FIXED ERROR: Failed to load module at fixed address. \n"
+        ));
       //
       // allocate the memory to load the SMM driver
       //
-      PageCount = (UINTN)EFI_SIZE_TO_PAGES ((UINTN)ImageContext.ImageSize + ImageContext.SectionAlignment);
+      PageCount = (UINTN)EFI_SIZE_TO_PAGES (
+                           (UINTN)ImageContext.ImageSize +
+                           ImageContext.SectionAlignment
+                           );
       DstBuffer = (UINTN)(-1);
 
       Status = SmmAllocatePages (
@@ -503,7 +557,10 @@ SmmLoadImage (
       ImageContext.ImageAddress = (EFI_PHYSICAL_ADDRESS)DstBuffer;
     }
   } else {
-    PageCount = (UINTN)EFI_SIZE_TO_PAGES ((UINTN)ImageContext.ImageSize + ImageContext.SectionAlignment);
+    PageCount = (UINTN)EFI_SIZE_TO_PAGES (
+                         (UINTN)ImageContext.ImageSize +
+                         ImageContext.SectionAlignment
+                         );
     DstBuffer = (UINTN)(-1);
 
     Status = SmmAllocatePages (
@@ -527,7 +584,8 @@ SmmLoadImage (
   // Align buffer on section boundary
   //
   ImageContext.ImageAddress += ImageContext.SectionAlignment - 1;
-  ImageContext.ImageAddress &= ~((EFI_PHYSICAL_ADDRESS)ImageContext.SectionAlignment - 1);
+  ImageContext.ImageAddress &=
+    ~((EFI_PHYSICAL_ADDRESS)ImageContext.SectionAlignment - 1);
 
   //
   // Load the image to our new buffer
@@ -558,7 +616,10 @@ SmmLoadImage (
   //
   // Flush the instruction cache so the image data are written before we execute it
   //
-  InvalidateInstructionCacheRange ((VOID *)(UINTN)ImageContext.ImageAddress, (UINTN)ImageContext.ImageSize);
+  InvalidateInstructionCacheRange (
+    (VOID *)(UINTN)ImageContext.ImageAddress,
+    (UINTN)ImageContext.ImageSize
+    );
 
   //
   // Save Image EntryPoint in DriverEntry
@@ -570,7 +631,11 @@ SmmLoadImage (
   //
   // Allocate a Loaded Image Protocol in EfiBootServicesData
   //
-  Status = gBS->AllocatePool (EfiBootServicesData, sizeof (EFI_LOADED_IMAGE_PROTOCOL), (VOID **)&DriverEntry->LoadedImage);
+  Status = gBS->AllocatePool (
+                  EfiBootServicesData,
+                  sizeof (EFI_LOADED_IMAGE_PROTOCOL),
+                  (VOID **)&DriverEntry->LoadedImage
+                  );
   if (EFI_ERROR (Status)) {
     if (Buffer != NULL) {
       gBS->FreePool (Buffer);
@@ -598,7 +663,11 @@ SmmLoadImage (
   //
   // Make an EfiBootServicesData buffer copy of FilePath
   //
-  Status = gBS->AllocatePool (EfiBootServicesData, GetDevicePathSize (FilePath), (VOID **)&DriverEntry->LoadedImage->FilePath);
+  Status = gBS->AllocatePool (
+                  EfiBootServicesData,
+                  GetDevicePathSize (FilePath),
+                  (VOID **)&DriverEntry->LoadedImage->FilePath
+                  );
   if (EFI_ERROR (Status)) {
     if (Buffer != NULL) {
       gBS->FreePool (Buffer);
@@ -608,9 +677,16 @@ SmmLoadImage (
     return Status;
   }
 
-  CopyMem (DriverEntry->LoadedImage->FilePath, FilePath, GetDevicePathSize (FilePath));
+  CopyMem (
+    DriverEntry->LoadedImage->FilePath,
+    FilePath,
+    GetDevicePathSize (
+      FilePath
+      )
+    );
 
-  DriverEntry->LoadedImage->ImageBase     = (VOID *)(UINTN)ImageContext.ImageAddress;
+  DriverEntry->LoadedImage->ImageBase =
+    (VOID *)(UINTN)ImageContext.ImageAddress;
   DriverEntry->LoadedImage->ImageSize     = ImageContext.ImageSize;
   DriverEntry->LoadedImage->ImageCodeType = EfiRuntimeServicesCode;
   DriverEntry->LoadedImage->ImageDataType = EfiRuntimeServicesData;
@@ -618,7 +694,13 @@ SmmLoadImage (
   //
   // Make a buffer copy of FilePath
   //
-  Status = SmmAllocatePool (EfiRuntimeServicesData, GetDevicePathSize (FilePath), (VOID **)&DriverEntry->SmmLoadedImage.FilePath);
+  Status = SmmAllocatePool (
+             EfiRuntimeServicesData,
+             GetDevicePathSize (
+               FilePath
+               ),
+             (VOID **)&DriverEntry->SmmLoadedImage.FilePath
+             );
   if (EFI_ERROR (Status)) {
     if (Buffer != NULL) {
       gBS->FreePool (Buffer);
@@ -629,9 +711,16 @@ SmmLoadImage (
     return Status;
   }
 
-  CopyMem (DriverEntry->SmmLoadedImage.FilePath, FilePath, GetDevicePathSize (FilePath));
+  CopyMem (
+    DriverEntry->SmmLoadedImage.FilePath,
+    FilePath,
+    GetDevicePathSize (
+      FilePath
+      )
+    );
 
-  DriverEntry->SmmLoadedImage.ImageBase     = (VOID *)(UINTN)ImageContext.ImageAddress;
+  DriverEntry->SmmLoadedImage.ImageBase =
+    (VOID *)(UINTN)ImageContext.ImageAddress;
   DriverEntry->SmmLoadedImage.ImageSize     = ImageContext.ImageSize;
   DriverEntry->SmmLoadedImage.ImageCodeType = EfiRuntimeServicesCode;
   DriverEntry->SmmLoadedImage.ImageDataType = EfiRuntimeServicesData;
@@ -684,7 +773,9 @@ SmmLoadImage (
   if (ImageContext.PdbPointer != NULL) {
     StartIndex = 0;
     for (Index = 0; ImageContext.PdbPointer[Index] != 0; Index++) {
-      if ((ImageContext.PdbPointer[Index] == '\\') || (ImageContext.PdbPointer[Index] == '/')) {
+      if ((ImageContext.PdbPointer[Index] == '\\') ||
+          (ImageContext.PdbPointer[Index] == '/'))
+      {
         StartIndex = Index + 1;
       }
     }
@@ -924,14 +1015,18 @@ SmmDispatcher (
       //
       // Cache state of SmmEntryPointRegistered before calling entry point
       //
-      PreviousSmmEntryPointRegistered = gSmmCorePrivate->SmmEntryPointRegistered;
+      PreviousSmmEntryPointRegistered =
+        gSmmCorePrivate->SmmEntryPointRegistered;
 
       //
       // For each SMM driver, pass NULL as ImageHandle
       //
       RegisterSmramProfileImage (DriverEntry, TRUE);
       PERF_START_IMAGE_BEGIN (DriverEntry->ImageHandle);
-      Status = ((EFI_IMAGE_ENTRY_POINT)(UINTN)DriverEntry->ImageEntryPoint)(DriverEntry->ImageHandle, gST);
+      Status = ((EFI_IMAGE_ENTRY_POINT)(UINTN)DriverEntry->ImageEntryPoint)(
+  DriverEntry->ImageHandle,
+  gST
+  );
       PERF_START_IMAGE_END (DriverEntry->ImageHandle);
       if (EFI_ERROR (Status)) {
         DEBUG ((
@@ -977,7 +1072,9 @@ SmmDispatcher (
         sizeof (DriverEntry->ImageHandle)
         );
 
-      if (!PreviousSmmEntryPointRegistered && gSmmCorePrivate->SmmEntryPointRegistered) {
+      if (!PreviousSmmEntryPointRegistered &&
+          gSmmCorePrivate->SmmEntryPointRegistered)
+      {
         //
         // Return immediately if the SMM Entry Point was registered by the SMM
         // Driver that was just dispatched.  The SMM IPL will reinvoke the SMM
@@ -996,8 +1093,15 @@ SmmDispatcher (
     // Search DriverList for items to place on Scheduled Queue
     //
     ReadyToRun = FALSE;
-    for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
-      DriverEntry = CR (Link, EFI_SMM_DRIVER_ENTRY, Link, EFI_SMM_DRIVER_ENTRY_SIGNATURE);
+    for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link =
+           Link->ForwardLink)
+    {
+      DriverEntry = CR (
+                      Link,
+                      EFI_SMM_DRIVER_ENTRY,
+                      Link,
+                      EFI_SMM_DRIVER_ENTRY_SIGNATURE
+                      );
 
       if (DriverEntry->DepexProtocolError) {
         //
@@ -1019,8 +1123,15 @@ SmmDispatcher (
   // If there is no more SMM driver to dispatch, stop the dispatch request
   //
   gRequestDispatch = FALSE;
-  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
-    DriverEntry = CR (Link, EFI_SMM_DRIVER_ENTRY, Link, EFI_SMM_DRIVER_ENTRY_SIGNATURE);
+  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link =
+         Link->ForwardLink)
+  {
+    DriverEntry = CR (
+                    Link,
+                    EFI_SMM_DRIVER_ENTRY,
+                    Link,
+                    EFI_SMM_DRIVER_ENTRY_SIGNATURE
+                    );
 
     if (!DriverEntry->Initialized) {
       //
@@ -1058,12 +1169,33 @@ SmmInsertOnScheduledQueueWhileProcessingBeforeAndAfter (
   //
   // Process Before Dependency
   //
-  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
-    DriverEntry = CR (Link, EFI_SMM_DRIVER_ENTRY, Link, EFI_SMM_DRIVER_ENTRY_SIGNATURE);
-    if (DriverEntry->Before && DriverEntry->Dependent && (DriverEntry != InsertedDriverEntry)) {
-      DEBUG ((DEBUG_DISPATCH, "Evaluate SMM DEPEX for FFS(%g)\n", &DriverEntry->FileName));
-      DEBUG ((DEBUG_DISPATCH, "  BEFORE FFS(%g) = ", &DriverEntry->BeforeAfterGuid));
-      if (CompareGuid (&InsertedDriverEntry->FileName, &DriverEntry->BeforeAfterGuid)) {
+  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link =
+         Link->ForwardLink)
+  {
+    DriverEntry = CR (
+                    Link,
+                    EFI_SMM_DRIVER_ENTRY,
+                    Link,
+                    EFI_SMM_DRIVER_ENTRY_SIGNATURE
+                    );
+    if (DriverEntry->Before && DriverEntry->Dependent && (DriverEntry !=
+                                                          InsertedDriverEntry))
+    {
+      DEBUG ((
+        DEBUG_DISPATCH,
+        "Evaluate SMM DEPEX for FFS(%g)\n",
+        &DriverEntry->FileName
+        ));
+      DEBUG ((
+        DEBUG_DISPATCH,
+        "  BEFORE FFS(%g) = ",
+        &DriverEntry->BeforeAfterGuid
+        ));
+      if (CompareGuid (
+            &InsertedDriverEntry->FileName,
+            &DriverEntry->BeforeAfterGuid
+            ))
+      {
         //
         // Recursively process BEFORE
         //
@@ -1086,12 +1218,33 @@ SmmInsertOnScheduledQueueWhileProcessingBeforeAndAfter (
   //
   // Process After Dependency
   //
-  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
-    DriverEntry = CR (Link, EFI_SMM_DRIVER_ENTRY, Link, EFI_SMM_DRIVER_ENTRY_SIGNATURE);
-    if (DriverEntry->After && DriverEntry->Dependent && (DriverEntry != InsertedDriverEntry)) {
-      DEBUG ((DEBUG_DISPATCH, "Evaluate SMM DEPEX for FFS(%g)\n", &DriverEntry->FileName));
-      DEBUG ((DEBUG_DISPATCH, "  AFTER FFS(%g) = ", &DriverEntry->BeforeAfterGuid));
-      if (CompareGuid (&InsertedDriverEntry->FileName, &DriverEntry->BeforeAfterGuid)) {
+  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link =
+         Link->ForwardLink)
+  {
+    DriverEntry = CR (
+                    Link,
+                    EFI_SMM_DRIVER_ENTRY,
+                    Link,
+                    EFI_SMM_DRIVER_ENTRY_SIGNATURE
+                    );
+    if (DriverEntry->After && DriverEntry->Dependent && (DriverEntry !=
+                                                         InsertedDriverEntry))
+    {
+      DEBUG ((
+        DEBUG_DISPATCH,
+        "Evaluate SMM DEPEX for FFS(%g)\n",
+        &DriverEntry->FileName
+        ));
+      DEBUG ((
+        DEBUG_DISPATCH,
+        "  AFTER FFS(%g) = ",
+        &DriverEntry->BeforeAfterGuid
+        ));
+      if (CompareGuid (
+            &InsertedDriverEntry->FileName,
+            &DriverEntry->BeforeAfterGuid
+            ))
+      {
         //
         // Recursively process AFTER
         //
@@ -1122,7 +1275,9 @@ FvHasBeenProcessed (
   LIST_ENTRY    *Link;
   KNOWN_HANDLE  *KnownHandle;
 
-  for (Link = mFvHandleList.ForwardLink; Link != &mFvHandleList; Link = Link->ForwardLink) {
+  for (Link = mFvHandleList.ForwardLink; Link != &mFvHandleList; Link =
+         Link->ForwardLink)
+  {
     KnownHandle = CR (Link, KNOWN_HANDLE, Link, KNOWN_HANDLE_SIGNATURE);
     if (KnownHandle->Handle == FvHandle) {
       return TRUE;
@@ -1182,7 +1337,11 @@ SmmFvToDevicePath (
   //
   // Remember the device path of the FV
   //
-  Status = gBS->HandleProtocol (FvHandle, &gEfiDevicePathProtocolGuid, (VOID **)&FvDevicePath);
+  Status = gBS->HandleProtocol (
+                  FvHandle,
+                  &gEfiDevicePathProtocolGuid,
+                  (VOID **)&FvDevicePath
+                  );
   if (EFI_ERROR (Status)) {
     FileNameDevicePath = NULL;
   } else {
@@ -1337,7 +1496,11 @@ SmmDriverDispatchHandler (
     //
     FvIsBeingProcessed (FvHandle);
 
-    Status = gBS->HandleProtocol (FvHandle, &gEfiFirmwareVolume2ProtocolGuid, (VOID **)&Fv);
+    Status = gBS->HandleProtocol (
+                    FvHandle,
+                    &gEfiFirmwareVolume2ProtocolGuid,
+                    (VOID **)&Fv
+                    );
     if (EFI_ERROR (Status)) {
       //
       // FvHandle must have a Firmware Volume2 Protocol thus we should never get here.
@@ -1346,7 +1509,11 @@ SmmDriverDispatchHandler (
       continue;
     }
 
-    Status = gBS->HandleProtocol (FvHandle, &gEfiDevicePathProtocolGuid, (VOID **)&FvDevicePath);
+    Status = gBS->HandleProtocol (
+                    FvHandle,
+                    &gEfiDevicePathProtocolGuid,
+                    (VOID **)&FvDevicePath
+                    );
     if (EFI_ERROR (Status)) {
       //
       // The Firmware volume doesn't have device path, can't be dispatched.
@@ -1359,7 +1526,9 @@ SmmDriverDispatchHandler (
     // Process EFI_FV_FILETYPE_SMM type and then EFI_FV_FILETYPE_COMBINED_SMM_DXE
     //  EFI_FV_FILETYPE_SMM_CORE is processed to produce a Loaded Image protocol for the core
     //
-    for (SmmTypeIndex = 0; SmmTypeIndex < sizeof (mSmmFileTypes)/sizeof (EFI_FV_FILETYPE); SmmTypeIndex++) {
+    for (SmmTypeIndex = 0; SmmTypeIndex < sizeof (mSmmFileTypes)/
+         sizeof (EFI_FV_FILETYPE); SmmTypeIndex++)
+    {
       //
       // Initialize the search key
       //
@@ -1392,11 +1561,17 @@ SmmDriverDispatchHandler (
               //
               Status = gBS->AllocatePool (
                               EfiBootServicesData,
-                              GetDevicePathSize ((EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath),
+                              GetDevicePathSize (
+                                (EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath
+                                ),
                               (VOID **)&mSmmCoreLoadedImage->FilePath
                               );
               ASSERT_EFI_ERROR (Status);
-              CopyMem (mSmmCoreLoadedImage->FilePath, &mFvDevicePath, GetDevicePathSize ((EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath));
+              CopyMem (
+                mSmmCoreLoadedImage->FilePath,
+                &mFvDevicePath,
+                GetDevicePathSize ((EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath)
+                );
 
               mSmmCoreLoadedImage->DeviceHandle = FvHandle;
             }
@@ -1414,11 +1589,19 @@ SmmDriverDispatchHandler (
               //
               Status = SmmAllocatePool (
                          EfiRuntimeServicesData,
-                         GetDevicePathSize ((EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath),
+                         GetDevicePathSize (
+                           (EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath
+                           ),
                          (VOID **)&mSmmCoreDriverEntry->SmmLoadedImage.FilePath
                          );
               ASSERT_EFI_ERROR (Status);
-              CopyMem (mSmmCoreDriverEntry->SmmLoadedImage.FilePath, &mFvDevicePath, GetDevicePathSize ((EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath));
+              CopyMem (
+                mSmmCoreDriverEntry->SmmLoadedImage.FilePath,
+                &mFvDevicePath,
+                GetDevicePathSize (
+                  (EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath
+                  )
+                );
 
               mSmmCoreDriverEntry->SmmLoadedImage.DeviceHandle = FvHandle;
             }
@@ -1456,15 +1639,26 @@ SmmDriverDispatchHandler (
     //
 
     for (AprioriIndex = 0; AprioriIndex < AprioriEntryCount; AprioriIndex++) {
-      for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
-        DriverEntry = CR (Link, EFI_SMM_DRIVER_ENTRY, Link, EFI_SMM_DRIVER_ENTRY_SIGNATURE);
+      for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link =
+             Link->ForwardLink)
+      {
+        DriverEntry = CR (
+                        Link,
+                        EFI_SMM_DRIVER_ENTRY,
+                        Link,
+                        EFI_SMM_DRIVER_ENTRY_SIGNATURE
+                        );
         if (CompareGuid (&DriverEntry->FileName, &AprioriFile[AprioriIndex]) &&
             (FvHandle == DriverEntry->FvHandle))
         {
           DriverEntry->Dependent = FALSE;
           DriverEntry->Scheduled = TRUE;
           InsertTailList (&mScheduledQueue, &DriverEntry->ScheduledLink);
-          DEBUG ((DEBUG_DISPATCH, "Evaluate SMM DEPEX for FFS(%g)\n", &DriverEntry->FileName));
+          DEBUG ((
+            DEBUG_DISPATCH,
+            "Evaluate SMM DEPEX for FFS(%g)\n",
+            &DriverEntry->FileName
+            ));
           DEBUG ((DEBUG_DISPATCH, "  RESULT = TRUE (Apriori)\n"));
           break;
         }
@@ -1527,10 +1721,21 @@ SmmDisplayDiscoveredNotDispatched (
   LIST_ENTRY            *Link;
   EFI_SMM_DRIVER_ENTRY  *DriverEntry;
 
-  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
-    DriverEntry = CR (Link, EFI_SMM_DRIVER_ENTRY, Link, EFI_SMM_DRIVER_ENTRY_SIGNATURE);
+  for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link =
+         Link->ForwardLink)
+  {
+    DriverEntry = CR (
+                    Link,
+                    EFI_SMM_DRIVER_ENTRY,
+                    Link,
+                    EFI_SMM_DRIVER_ENTRY_SIGNATURE
+                    );
     if (DriverEntry->Dependent) {
-      DEBUG ((DEBUG_LOAD, "SMM Driver %g was discovered but not loaded!!\n", &DriverEntry->FileName));
+      DEBUG ((
+        DEBUG_LOAD,
+        "SMM Driver %g was discovered but not loaded!!\n",
+        &DriverEntry->FileName
+        ));
     }
   }
 }

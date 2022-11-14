@@ -176,7 +176,10 @@ UsbIoControlTransfer (
       goto ON_EXIT;
     }
 
-    DEBUG ((DEBUG_INFO, "UsbIoControlTransfer: configure changed!!! Do NOT use old UsbIo!!!\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "UsbIoControlTransfer: configure changed!!! Do NOT use old UsbIo!!!\n"
+      ));
 
     if (Dev->ActiveConfig != NULL) {
       UsbRemoveConfig (Dev);
@@ -254,7 +257,8 @@ UsbIoBulkTransfer (
   EFI_TPL            OldTpl;
   EFI_STATUS         Status;
 
-  if ((USB_ENDPOINT_ADDR (Endpoint) == 0) || (USB_ENDPOINT_ADDR (Endpoint) > 15) ||
+  if ((USB_ENDPOINT_ADDR (Endpoint) == 0) || (USB_ENDPOINT_ADDR (Endpoint) >
+                                              15) ||
       (UsbStatus == NULL))
   {
     return EFI_INVALID_PARAMETER;
@@ -267,7 +271,9 @@ UsbIoBulkTransfer (
 
   EpDesc = UsbGetEndpointDesc (UsbIf, Endpoint);
 
-  if ((EpDesc == NULL) || (USB_ENDPOINT_TYPE (&EpDesc->Desc) != USB_ENDPOINT_BULK)) {
+  if ((EpDesc == NULL) || (USB_ENDPOINT_TYPE (&EpDesc->Desc) !=
+                           USB_ENDPOINT_BULK))
+  {
     Status = EFI_INVALID_PARAMETER;
     goto ON_EXIT;
   }
@@ -347,7 +353,8 @@ UsbIoSyncInterruptTransfer (
   UINT8              Toggle;
   EFI_STATUS         Status;
 
-  if ((USB_ENDPOINT_ADDR (Endpoint) == 0) || (USB_ENDPOINT_ADDR (Endpoint) > 15) ||
+  if ((USB_ENDPOINT_ADDR (Endpoint) == 0) || (USB_ENDPOINT_ADDR (Endpoint) >
+                                              15) ||
       (UsbStatus == NULL))
   {
     return EFI_INVALID_PARAMETER;
@@ -360,7 +367,9 @@ UsbIoSyncInterruptTransfer (
 
   EpDesc = UsbGetEndpointDesc (UsbIf, Endpoint);
 
-  if ((EpDesc == NULL) || (USB_ENDPOINT_TYPE (&EpDesc->Desc) != USB_ENDPOINT_INTERRUPT)) {
+  if ((EpDesc == NULL) || (USB_ENDPOINT_TYPE (&EpDesc->Desc) !=
+                           USB_ENDPOINT_INTERRUPT))
+  {
     Status = EFI_INVALID_PARAMETER;
     goto ON_EXIT;
   }
@@ -426,7 +435,9 @@ UsbIoAsyncInterruptTransfer (
   UINT8              Toggle;
   EFI_STATUS         Status;
 
-  if ((USB_ENDPOINT_ADDR (Endpoint) == 0) || (USB_ENDPOINT_ADDR (Endpoint) > 15)) {
+  if ((USB_ENDPOINT_ADDR (Endpoint) == 0) || (USB_ENDPOINT_ADDR (Endpoint) >
+                                              15))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -436,7 +447,9 @@ UsbIoAsyncInterruptTransfer (
 
   EpDesc = UsbGetEndpointDesc (UsbIf, Endpoint);
 
-  if ((EpDesc == NULL) || (USB_ENDPOINT_TYPE (&EpDesc->Desc) != USB_ENDPOINT_INTERRUPT)) {
+  if ((EpDesc == NULL) || (USB_ENDPOINT_TYPE (&EpDesc->Desc) !=
+                           USB_ENDPOINT_INTERRUPT))
+  {
     Status = EFI_INVALID_PARAMETER;
     goto ON_EXIT;
   }
@@ -591,7 +604,11 @@ UsbIoGetActiveConfigDescriptor (
     goto ON_EXIT;
   }
 
-  CopyMem (Descriptor, &(Dev->ActiveConfig->Desc), sizeof (EFI_USB_CONFIG_DESCRIPTOR));
+  CopyMem (
+    Descriptor,
+    &(Dev->ActiveConfig->Desc),
+    sizeof (EFI_USB_CONFIG_DESCRIPTOR)
+    );
 
 ON_EXIT:
   gBS->RestoreTPL (OldTpl);
@@ -625,7 +642,11 @@ UsbIoGetInterfaceDescriptor (
   OldTpl = gBS->RaiseTPL (USB_BUS_TPL);
 
   UsbIf = USB_INTERFACE_FROM_USBIO (This);
-  CopyMem (Descriptor, &(UsbIf->IfSetting->Desc), sizeof (EFI_USB_INTERFACE_DESCRIPTOR));
+  CopyMem (
+    Descriptor,
+    &(UsbIf->IfSetting->Desc),
+    sizeof (EFI_USB_INTERFACE_DESCRIPTOR)
+    );
 
   gBS->RestoreTPL (OldTpl);
   return EFI_SUCCESS;
@@ -875,7 +896,11 @@ UsbIoPortReset (
     goto ON_EXIT;
   }
 
-  DEBUG ((DEBUG_INFO, "UsbIoPortReset: device is now ADDRESSED at %d\n", Dev->Address));
+  DEBUG ((
+    DEBUG_INFO,
+    "UsbIoPortReset: device is now ADDRESSED at %d\n",
+    Dev->Address
+    ));
 
   //
   // Reset the current active configure, after this device
@@ -945,7 +970,11 @@ UsbBusBuildProtocol (
                   );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "UsbBusStart: Failed to open device path %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbBusStart: Failed to open device path %r\n",
+      Status
+      ));
 
     FreePool (UsbBus);
     return Status;
@@ -978,7 +1007,11 @@ UsbBusBuildProtocol (
                    );
 
   if (EFI_ERROR (Status) && EFI_ERROR (Status2)) {
-    DEBUG ((DEBUG_ERROR, "UsbBusStart: Failed to open USB_HC/USB2_HC %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbBusStart: Failed to open USB_HC/USB2_HC %r\n",
+      Status
+      ));
 
     Status = EFI_DEVICE_ERROR;
     goto CLOSE_HC;
@@ -1006,7 +1039,11 @@ UsbBusBuildProtocol (
                   );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "UsbBusStart: Failed to install bus protocol %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbBusStart: Failed to install bus protocol %r\n",
+      Status
+      ));
     goto CLOSE_HC;
   }
 
@@ -1060,7 +1097,12 @@ UsbBusBuildProtocol (
 
   UsbBus->Devices[0] = RootHub;
 
-  DEBUG ((DEBUG_INFO, "UsbBusStart: usb bus started on %p, root hub %p\n", Controller, RootIf));
+  DEBUG ((
+    DEBUG_INFO,
+    "UsbBusStart: usb bus started on %p, root hub %p\n",
+    Controller,
+    RootIf
+    ));
   return EFI_SUCCESS;
 
 FREE_ROOTHUB:
@@ -1073,7 +1115,11 @@ FREE_ROOTHUB:
   }
 
 UNINSTALL_USBBUS:
-  gBS->UninstallProtocolInterface (Controller, &gEfiCallerIdGuid, &UsbBus->BusId);
+  gBS->UninstallProtocolInterface (
+         Controller,
+         &gEfiCallerIdGuid,
+         &UsbBus->BusId
+         );
 
 CLOSE_HC:
   if (UsbBus->Usb2Hc != NULL) {
@@ -1510,7 +1556,11 @@ UsbBusControllerDriverStop (
     //
     // Uninstall the bus identifier and close USB_HC/USB2_HC protocols
     //
-    gBS->UninstallProtocolInterface (Controller, &gEfiCallerIdGuid, &Bus->BusId);
+    gBS->UninstallProtocolInterface (
+           Controller,
+           &gEfiCallerIdGuid,
+           &Bus->BusId
+           );
 
     if (Bus->Usb2Hc != NULL) {
       Status = gBS->CloseProtocol (

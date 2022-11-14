@@ -47,7 +47,9 @@ GetVariableFlashInfoFromHob (
   // Assert if more than one variable flash information HOB is present.
   //
   DEBUG_CODE (
-    if ((GetNextGuidHob (&gVariableFlashInfoHobGuid, GET_NEXT_HOB (GuidHob)) != NULL)) {
+    if ((GetNextGuidHob (&gVariableFlashInfoHobGuid, GET_NEXT_HOB (GuidHob)) !=
+         NULL))
+  {
     DEBUG ((DEBUG_ERROR, "ERROR: Found two variable flash information HOBs\n"));
     ASSERT (FALSE);
   }
@@ -86,9 +88,15 @@ GetVariableFlashNvStorageInfo (
     *BaseAddress = VariableFlashInfo->NvVariableBaseAddress;
     *Length      = VariableFlashInfo->NvVariableLength;
   } else {
-    *BaseAddress = (EFI_PHYSICAL_ADDRESS)(PcdGet64 (PcdFlashNvStorageVariableBase64) != 0 ?
-                                          PcdGet64 (PcdFlashNvStorageVariableBase64) :
-                                          PcdGet32 (PcdFlashNvStorageVariableBase)
+    *BaseAddress = (EFI_PHYSICAL_ADDRESS)(PcdGet64 (
+                                            PcdFlashNvStorageVariableBase64
+                                            ) != 0 ?
+                                          PcdGet64 (
+                                            PcdFlashNvStorageVariableBase64
+                                            ) :
+                                          PcdGet32 (
+                                            PcdFlashNvStorageVariableBase
+                                            )
                                           );
     *Length = (UINT64)PcdGet32 (PcdFlashNvStorageVariableSize);
   }
@@ -127,9 +135,15 @@ GetVariableFlashFtwSpareInfo (
     *BaseAddress = VariableFlashInfo->FtwSpareBaseAddress;
     *Length      = VariableFlashInfo->FtwSpareLength;
   } else {
-    *BaseAddress = (EFI_PHYSICAL_ADDRESS)(PcdGet64 (PcdFlashNvStorageFtwSpareBase64) != 0 ?
-                                          PcdGet64 (PcdFlashNvStorageFtwSpareBase64) :
-                                          PcdGet32 (PcdFlashNvStorageFtwSpareBase)
+    *BaseAddress = (EFI_PHYSICAL_ADDRESS)(PcdGet64 (
+                                            PcdFlashNvStorageFtwSpareBase64
+                                            ) != 0 ?
+                                          PcdGet64 (
+                                            PcdFlashNvStorageFtwSpareBase64
+                                            ) :
+                                          PcdGet32 (
+                                            PcdFlashNvStorageFtwSpareBase
+                                            )
                                           );
     *Length = (UINT64)PcdGet32 (PcdFlashNvStorageFtwSpareSize);
   }
@@ -168,9 +182,15 @@ GetVariableFlashFtwWorkingInfo (
     *BaseAddress = VariableFlashInfo->FtwWorkingBaseAddress;
     *Length      = VariableFlashInfo->FtwWorkingLength;
   } else {
-    *BaseAddress = (EFI_PHYSICAL_ADDRESS)(PcdGet64 (PcdFlashNvStorageFtwWorkingBase64) != 0 ?
-                                          PcdGet64 (PcdFlashNvStorageFtwWorkingBase64) :
-                                          PcdGet32 (PcdFlashNvStorageFtwWorkingBase)
+    *BaseAddress = (EFI_PHYSICAL_ADDRESS)(PcdGet64 (
+                                            PcdFlashNvStorageFtwWorkingBase64
+                                            ) != 0 ?
+                                          PcdGet64 (
+                                            PcdFlashNvStorageFtwWorkingBase64
+                                            ) :
+                                          PcdGet32 (
+                                            PcdFlashNvStorageFtwWorkingBase
+                                            )
                                           );
     *Length = (UINT64)PcdGet32 (PcdFlashNvStorageFtwWorkingSize);
   }

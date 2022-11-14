@@ -192,7 +192,8 @@ LIST_ENTRY  mStreamRoot = INITIALIZE_LIST_HEAD_VARIABLE (mStreamRoot);
 
 EFI_HANDLE  mSectionExtractionHandle = NULL;
 
-EFI_GUIDED_SECTION_EXTRACTION_PROTOCOL  mCustomGuidedSectionExtractionProtocol = {
+EFI_GUIDED_SECTION_EXTRACTION_PROTOCOL  mCustomGuidedSectionExtractionProtocol =
+{
   CustomGuidedSectionExtract
 };
 
@@ -221,7 +222,9 @@ InitializeSectionExtraction (
   //
   // Get custom extract guided section method guid list
   //
-  ExtractHandlerNumber = ExtractGuidedSectionGetGuidList (&ExtractHandlerGuidTable);
+  ExtractHandlerNumber = ExtractGuidedSectionGetGuidList (
+                           &ExtractHandlerGuidTable
+                           );
 
   Status = EFI_SUCCESS;
   //
@@ -279,7 +282,8 @@ IsValidSectionStream (
     //
     // Move to the next byte following the section...
     //
-    SectionHeader = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)SectionHeader + SectionLength);
+    SectionHeader = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)SectionHeader +
+                                                  SectionLength);
 
     //
     // Figure out where the next section begins
@@ -470,15 +474,25 @@ ChildIsType (
     return FALSE;
   }
 
-  if ((SearchType != EFI_SECTION_GUID_DEFINED) || (SectionDefinitionGuid == NULL)) {
+  if ((SearchType != EFI_SECTION_GUID_DEFINED) || (SectionDefinitionGuid ==
+                                                   NULL))
+  {
     return TRUE;
   }
 
-  GuidedSection = (EFI_GUID_DEFINED_SECTION *)(Stream->StreamBuffer + Child->OffsetInStream);
+  GuidedSection = (EFI_GUID_DEFINED_SECTION *)(Stream->StreamBuffer +
+                                               Child->OffsetInStream);
   if (IS_SECTION2 (GuidedSection)) {
-    return CompareGuid (&(((EFI_GUID_DEFINED_SECTION2 *)GuidedSection)->SectionDefinitionGuid), SectionDefinitionGuid);
+    return CompareGuid (
+             &(((EFI_GUID_DEFINED_SECTION2 *)GuidedSection)->
+                 SectionDefinitionGuid),
+             SectionDefinitionGuid
+             );
   } else {
-    return CompareGuid (&GuidedSection->SectionDefinitionGuid, SectionDefinitionGuid);
+    return CompareGuid (
+             &GuidedSection->SectionDefinitionGuid,
+             SectionDefinitionGuid
+             );
   }
 }
 
@@ -510,18 +524,26 @@ VerifyGuidedSectionGuid (
   //
   // Check if there is the Guided Section GUID configuration table recorded the GUID itself.
   //
-  Status = EfiGetSystemConfigurationTable (GuidedSectionGuid, (VOID **)&GuidRecorded);
+  Status = EfiGetSystemConfigurationTable (
+             GuidedSectionGuid,
+             (VOID **)&GuidRecorded
+             );
   if (Status == EFI_SUCCESS) {
     if (CompareGuid (GuidRecorded, GuidedSectionGuid)) {
       //
       // Found the recorded GuidedSectionGuid.
       //
-      Status = CoreLocateProtocol (GuidedSectionGuid, NULL, (VOID **)&Interface);
+      Status = CoreLocateProtocol (
+                 GuidedSectionGuid,
+                 NULL,
+                 (VOID **)&Interface
+                 );
       if (!EFI_ERROR (Status) && (Interface != NULL)) {
         //
         // Found the supported Guided Section Extraction Porotocol for the Guided Section.
         //
-        *GuidedSectionExtraction = (EFI_GUIDED_SECTION_EXTRACTION_PROTOCOL *)Interface;
+        *GuidedSectionExtraction =
+          (EFI_GUIDED_SECTION_EXTRACTION_PROTOCOL *)Interface;
         return TRUE;
       }
 
@@ -557,10 +579,16 @@ NotifyGuidedExtraction (
 
   Context = RpnContext;
 
-  GuidedHeader = (EFI_GUID_DEFINED_SECTION *)(Context->ParentStream->StreamBuffer + Context->ChildNode->OffsetInStream);
+  GuidedHeader =
+    (EFI_GUID_DEFINED_SECTION *)(Context->ParentStream->StreamBuffer +
+                                 Context->ChildNode->OffsetInStream);
   ASSERT (GuidedHeader->CommonHeader.Type == EFI_SECTION_GUID_DEFINED);
 
-  if (!VerifyGuidedSectionGuid (Context->ChildNode->EncapsulationGuid, &GuidedExtraction)) {
+  if (!VerifyGuidedSectionGuid (
+         Context->ChildNode->EncapsulationGuid,
+         &GuidedExtraction
+         ))
+  {
     return;
   }
 
@@ -581,7 +609,8 @@ NotifyGuidedExtraction (
     //
     // OR in the parent stream's aggregate status.
     //
-    AuthenticationStatus |= Context->ParentStream->AuthenticationStatus & EFI_AUTH_STATUS_ALL;
+    AuthenticationStatus |= Context->ParentStream->AuthenticationStatus &
+                            EFI_AUTH_STATUS_ALL;
   } else {
     //
     // since there's no authentication data contributed by the section,
@@ -687,7 +716,8 @@ CreateChildNode (
 
   CORE_SECTION_CHILD_NODE  *Node;
 
-  SectionHeader = (EFI_COMMON_SECTION_HEADER *)(Stream->StreamBuffer + ChildOffset);
+  SectionHeader = (EFI_COMMON_SECTION_HEADER *)(Stream->StreamBuffer +
+                                                ChildOffset);
 
   //
   // Allocate a new node
@@ -729,13 +759,19 @@ CreateChildNode (
       CompressionHeader = (EFI_COMPRESSION_SECTION *)SectionHeader;
 
       if (IS_SECTION2 (CompressionHeader)) {
-        CompressionSource     = (VOID *)((UINT8 *)CompressionHeader + sizeof (EFI_COMPRESSION_SECTION2));
-        CompressionSourceSize = (UINT32)(SECTION2_SIZE (CompressionHeader) - sizeof (EFI_COMPRESSION_SECTION2));
-        UncompressedLength    = ((EFI_COMPRESSION_SECTION2 *)CompressionHeader)->UncompressedLength;
-        CompressionType       = ((EFI_COMPRESSION_SECTION2 *)CompressionHeader)->CompressionType;
+        CompressionSource     = (VOID *)((UINT8 *)CompressionHeader +
+                                         sizeof (EFI_COMPRESSION_SECTION2));
+        CompressionSourceSize = (UINT32)(SECTION2_SIZE (CompressionHeader) -
+                                         sizeof (EFI_COMPRESSION_SECTION2));
+        UncompressedLength    =
+          ((EFI_COMPRESSION_SECTION2 *)CompressionHeader)->UncompressedLength;
+        CompressionType =
+          ((EFI_COMPRESSION_SECTION2 *)CompressionHeader)->CompressionType;
       } else {
-        CompressionSource     = (VOID *)((UINT8 *)CompressionHeader + sizeof (EFI_COMPRESSION_SECTION));
-        CompressionSourceSize = (UINT32)(SECTION_SIZE (CompressionHeader) - sizeof (EFI_COMPRESSION_SECTION));
+        CompressionSource     = (VOID *)((UINT8 *)CompressionHeader +
+                                         sizeof (EFI_COMPRESSION_SECTION));
+        CompressionSourceSize = (UINT32)(SECTION_SIZE (CompressionHeader) -
+                                         sizeof (EFI_COMPRESSION_SECTION));
         UncompressedLength    = CompressionHeader->UncompressedLength;
         CompressionType       = CompressionHeader->CompressionType;
       }
@@ -764,7 +800,11 @@ CreateChildNode (
           //
           // Decompress the stream
           //
-          Status = CoreLocateProtocol (&gEfiDecompressProtocolGuid, NULL, (VOID **)&Decompress);
+          Status = CoreLocateProtocol (
+                     &gEfiDecompressProtocolGuid,
+                     NULL,
+                     (VOID **)&Decompress
+                     );
           ASSERT_EFI_ERROR (Status);
           ASSERT (Decompress != NULL);
 
@@ -775,7 +815,9 @@ CreateChildNode (
                                  (UINT32 *)&NewStreamBufferSize,
                                  &ScratchSize
                                  );
-          if (EFI_ERROR (Status) || (NewStreamBufferSize != UncompressedLength)) {
+          if (EFI_ERROR (Status) || (NewStreamBufferSize !=
+                                     UncompressedLength))
+          {
             CoreFreePool (Node);
             CoreFreePool (NewStreamBuffer);
             if (!EFI_ERROR (Status)) {
@@ -831,14 +873,20 @@ CreateChildNode (
     case EFI_SECTION_GUID_DEFINED:
       GuidedHeader = (EFI_GUID_DEFINED_SECTION *)SectionHeader;
       if (IS_SECTION2 (GuidedHeader)) {
-        Node->EncapsulationGuid = &(((EFI_GUID_DEFINED_SECTION2 *)GuidedHeader)->SectionDefinitionGuid);
-        GuidedSectionAttributes = ((EFI_GUID_DEFINED_SECTION2 *)GuidedHeader)->Attributes;
+        Node->EncapsulationGuid =
+          &(((EFI_GUID_DEFINED_SECTION2 *)GuidedHeader)->SectionDefinitionGuid);
+        GuidedSectionAttributes =
+          ((EFI_GUID_DEFINED_SECTION2 *)GuidedHeader)->Attributes;
       } else {
         Node->EncapsulationGuid = &GuidedHeader->SectionDefinitionGuid;
         GuidedSectionAttributes = GuidedHeader->Attributes;
       }
 
-      if (VerifyGuidedSectionGuid (Node->EncapsulationGuid, &GuidedExtraction)) {
+      if (VerifyGuidedSectionGuid (
+            Node->EncapsulationGuid,
+            &GuidedExtraction
+            ))
+      {
         //
         // NewStreamBuffer is always allocated by ExtractSection... No caller
         // allocation here.
@@ -859,11 +907,14 @@ CreateChildNode (
         // Make sure we initialize the new stream with the correct
         // authentication status for both aggregate and local status fields.
         //
-        if ((GuidedSectionAttributes & EFI_GUIDED_SECTION_AUTH_STATUS_VALID) != 0) {
+        if ((GuidedSectionAttributes & EFI_GUIDED_SECTION_AUTH_STATUS_VALID) !=
+            0)
+        {
           //
           // OR in the parent stream's aggregate status.
           //
-          AuthenticationStatus |= Stream->AuthenticationStatus & EFI_AUTH_STATUS_ALL;
+          AuthenticationStatus |= Stream->AuthenticationStatus &
+                                  EFI_AUTH_STATUS_ALL;
         } else {
           //
           // since there's no authentication data contributed by the section,
@@ -888,7 +939,9 @@ CreateChildNode (
         //
         // There's no GUIDed section extraction protocol available.
         //
-        if ((GuidedSectionAttributes & EFI_GUIDED_SECTION_PROCESSING_REQUIRED) != 0) {
+        if ((GuidedSectionAttributes &
+             EFI_GUIDED_SECTION_PROCESSING_REQUIRED) != 0)
+        {
           //
           // If the section REQUIRES an extraction protocol, register for RPN
           // when the required GUIDed extraction protocol becomes available.
@@ -900,22 +953,30 @@ CreateChildNode (
           //
           AuthenticationStatus = Stream->AuthenticationStatus;
 
-          if ((GuidedSectionAttributes & EFI_GUIDED_SECTION_AUTH_STATUS_VALID) == EFI_GUIDED_SECTION_AUTH_STATUS_VALID) {
-            AuthenticationStatus |= EFI_AUTH_STATUS_IMAGE_SIGNED | EFI_AUTH_STATUS_NOT_TESTED;
+          if ((GuidedSectionAttributes &
+               EFI_GUIDED_SECTION_AUTH_STATUS_VALID) ==
+              EFI_GUIDED_SECTION_AUTH_STATUS_VALID)
+          {
+            AuthenticationStatus |= EFI_AUTH_STATUS_IMAGE_SIGNED |
+                                    EFI_AUTH_STATUS_NOT_TESTED;
           }
 
           if (IS_SECTION2 (GuidedHeader)) {
             Status = OpenSectionStreamEx (
-                       SECTION2_SIZE (GuidedHeader) - ((EFI_GUID_DEFINED_SECTION2 *)GuidedHeader)->DataOffset,
-                       (UINT8 *)GuidedHeader + ((EFI_GUID_DEFINED_SECTION2 *)GuidedHeader)->DataOffset,
+                       SECTION2_SIZE (GuidedHeader) -
+                       ((EFI_GUID_DEFINED_SECTION2 *)GuidedHeader)->DataOffset,
+                       (UINT8 *)GuidedHeader +
+                       ((EFI_GUID_DEFINED_SECTION2 *)GuidedHeader)->DataOffset,
                        TRUE,
                        AuthenticationStatus,
                        &Node->EncapsulatedStreamHandle
                        );
           } else {
             Status = OpenSectionStreamEx (
-                       SECTION_SIZE (GuidedHeader) - ((EFI_GUID_DEFINED_SECTION *)GuidedHeader)->DataOffset,
-                       (UINT8 *)GuidedHeader + ((EFI_GUID_DEFINED_SECTION *)GuidedHeader)->DataOffset,
+                       SECTION_SIZE (GuidedHeader) -
+                       ((EFI_GUID_DEFINED_SECTION *)GuidedHeader)->DataOffset,
+                       (UINT8 *)GuidedHeader +
+                       ((EFI_GUID_DEFINED_SECTION *)GuidedHeader)->DataOffset,
                        TRUE,
                        AuthenticationStatus,
                        &Node->EncapsulatedStreamHandle
@@ -1034,11 +1095,21 @@ FindChildNode (
   // adding children until either the requested section is found, or we run
   // out of data
   //
-  CurrentChildNode = CHILD_SECTION_NODE_FROM_LINK (GetFirstNode (&SourceStream->Children));
+  CurrentChildNode = CHILD_SECTION_NODE_FROM_LINK (
+                       GetFirstNode (
+                         &SourceStream->Children
+                         )
+                       );
 
   for ( ; ;) {
     ASSERT (CurrentChildNode != NULL);
-    if (ChildIsType (SourceStream, CurrentChildNode, SearchType, SectionDefinitionGuid)) {
+    if (ChildIsType (
+          SourceStream,
+          CurrentChildNode,
+          SearchType,
+          SectionDefinitionGuid
+          ))
+    {
       //
       // The type matches, so check the instance count to see if it's the one we want
       //
@@ -1064,7 +1135,8 @@ FindChildNode (
       // If the current node is an encapsulating node, recurse into it...
       //
       Status = FindChildNode (
-                 (CORE_SECTION_STREAM_NODE *)CurrentChildNode->EncapsulatedStreamHandle,
+                 (CORE_SECTION_STREAM_NODE *)CurrentChildNode->
+                   EncapsulatedStreamHandle,
                  SearchType,
                  SectionInstance,
                  SectionDefinitionGuid,
@@ -1098,7 +1170,9 @@ FindChildNode (
         //
         ErrorStatus = Status;
       }
-    } else if ((CurrentChildNode->Type == EFI_SECTION_GUID_DEFINED) && (SearchType != EFI_SECTION_GUID_DEFINED)) {
+    } else if ((CurrentChildNode->Type == EFI_SECTION_GUID_DEFINED) &&
+               (SearchType != EFI_SECTION_GUID_DEFINED))
+    {
       //
       // When Node Type is GUIDED section, but Node has no encapsulated data, Node data should not be parsed
       // because a required GUIDED section extraction protocol does not exist.
@@ -1113,24 +1187,36 @@ FindChildNode (
       // still more nodes that have already been parsed so get the next one
       // and continue searching..
       //
-      CurrentChildNode = CHILD_SECTION_NODE_FROM_LINK (GetNextNode (&SourceStream->Children, &CurrentChildNode->Link));
+      CurrentChildNode = CHILD_SECTION_NODE_FROM_LINK (
+                           GetNextNode (
+                             &SourceStream->Children,
+                             &CurrentChildNode->Link
+                             )
+                           );
     } else {
       //
       // We've exhausted children that have already been parsed, so see if
       // there's any more data and continue parsing out more children if there
       // is.
       //
-      NextChildOffset = CurrentChildNode->OffsetInStream + CurrentChildNode->Size;
+      NextChildOffset = CurrentChildNode->OffsetInStream +
+                        CurrentChildNode->Size;
       //
       // Round up to 4 byte boundary
       //
       NextChildOffset += 3;
       NextChildOffset &= ~(UINTN)3;
-      if (NextChildOffset <= SourceStream->StreamLength - sizeof (EFI_COMMON_SECTION_HEADER)) {
+      if (NextChildOffset <= SourceStream->StreamLength -
+          sizeof (EFI_COMMON_SECTION_HEADER))
+      {
         //
         // There's an unparsed child remaining in the stream, so create a new child node
         //
-        Status = CreateChildNode (SourceStream, NextChildOffset, &CurrentChildNode);
+        Status = CreateChildNode (
+                   SourceStream,
+                   NextChildOffset,
+                   &CurrentChildNode
+                   );
         if (EFI_ERROR (Status)) {
           return Status;
         }
@@ -1171,7 +1257,12 @@ FindStreamNode (
       } else if (IsNodeAtEnd (&mStreamRoot, &StreamNode->Link)) {
         break;
       } else {
-        StreamNode = STREAM_NODE_FROM_LINK (GetNextNode (&mStreamRoot, &StreamNode->Link));
+        StreamNode = STREAM_NODE_FROM_LINK (
+                       GetNextNode (
+                         &mStreamRoot,
+                         &StreamNode->Link
+                         )
+                       );
       }
     }
   }
@@ -1315,17 +1406,22 @@ GetSection (
       goto GetSection_Done;
     }
 
-    Section = (EFI_COMMON_SECTION_HEADER *)(ChildStreamNode->StreamBuffer + ChildNode->OffsetInStream);
+    Section = (EFI_COMMON_SECTION_HEADER *)(ChildStreamNode->StreamBuffer +
+                                            ChildNode->OffsetInStream);
 
     if (IS_SECTION2 (Section)) {
       ASSERT (SECTION2_SIZE (Section) > 0x00FFFFFF);
       if (!IsFfs3Fv) {
-        DEBUG ((DEBUG_ERROR, "It is a FFS3 formatted section in a non-FFS3 formatted FV.\n"));
+        DEBUG ((
+          DEBUG_ERROR,
+          "It is a FFS3 formatted section in a non-FFS3 formatted FV.\n"
+          ));
         Status = EFI_NOT_FOUND;
         goto GetSection_Done;
       }
 
-      CopySize   = SECTION2_SIZE (Section) - sizeof (EFI_COMMON_SECTION_HEADER2);
+      CopySize = SECTION2_SIZE (Section) -
+                 sizeof (EFI_COMMON_SECTION_HEADER2);
       CopyBuffer = (UINT8 *)Section + sizeof (EFI_COMMON_SECTION_HEADER2);
     } else {
       CopySize   = SECTION_SIZE (Section) - sizeof (EFI_COMMON_SECTION_HEADER);

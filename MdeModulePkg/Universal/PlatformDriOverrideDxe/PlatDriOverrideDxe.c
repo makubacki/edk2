@@ -22,7 +22,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "PlatOverMngr.h"
 
 #define EFI_CALLBACK_INFO_SIGNATURE  SIGNATURE_32 ('C', 'l', 'b', 'k')
-#define EFI_CALLBACK_INFO_FROM_THIS(a)  CR (a, EFI_CALLBACK_INFO, ConfigAccess, EFI_CALLBACK_INFO_SIGNATURE)
+#define EFI_CALLBACK_INFO_FROM_THIS( \
+                                   a)  \
+  CR (a, EFI_CALLBACK_INFO, ConfigAccess, EFI_CALLBACK_INFO_SIGNATURE)
 
 typedef struct {
   UINTN                                    Signature;
@@ -55,8 +57,10 @@ extern UINT8  PlatDriOverrideDxeStrings[];
 //
 // module global data
 //
-CHAR16      mVariableName[]          = L"Data";
-LIST_ENTRY  mMappingDataBase         = INITIALIZE_LIST_HEAD_VARIABLE (mMappingDataBase);
+CHAR16      mVariableName[]  = L"Data";
+LIST_ENTRY  mMappingDataBase = INITIALIZE_LIST_HEAD_VARIABLE (
+                                 mMappingDataBase
+                                 );
 BOOLEAN     mEnvironmentVariableRead = FALSE;
 EFI_HANDLE  mCallerImageHandle       = NULL;
 
@@ -210,12 +214,20 @@ GetComponentName (
   //
   // Try RFC 4646 Component Name 2 protocol first.
   //
-  DriverName = GetComponentNameWorker (DriverBindingHandle, &gEfiComponentName2ProtocolGuid, L"PlatformLang");
+  DriverName = GetComponentNameWorker (
+                 DriverBindingHandle,
+                 &gEfiComponentName2ProtocolGuid,
+                 L"PlatformLang"
+                 );
   if (DriverName == NULL) {
     //
     // If we can not get driver name from Component Name 2 protocol, we can try ISO 639-2 Component Name protocol.
     //
-    DriverName = GetComponentNameWorker (DriverBindingHandle, &gEfiComponentNameProtocolGuid, L"Lang");
+    DriverName = GetComponentNameWorker (
+                   DriverBindingHandle,
+                   &gEfiComponentNameProtocolGuid,
+                   L"Lang"
+                   );
   }
 
   return DriverName;
@@ -260,12 +272,17 @@ GetImageName (
     //
     // Make sure device path node is aligned when accessing it's FV Name Guid field.
     //
-    AlignedDevPathNode = AllocateCopyPool (DevicePathNodeLength (DevPathNode), DevPathNode);
+    AlignedDevPathNode = AllocateCopyPool (
+                           DevicePathNodeLength (DevPathNode),
+                           DevPathNode
+                           );
 
     //
     // Find the Fv File path
     //
-    NameGuid = EfiGetNameGuidFromFwVolDevicePathNode ((MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)AlignedDevPathNode);
+    NameGuid = EfiGetNameGuidFromFwVolDevicePathNode (
+                 (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)AlignedDevPathNode
+                 );
     if (NameGuid != NULL) {
       FvFilePath = (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)AlignedDevPathNode;
       Status     = gBS->HandleProtocol (
@@ -365,14 +382,24 @@ UpdateDeviceSelectPage (
   //
   // Create Hii Extend Label OpCode as the start opcode
   //
-  StartLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (StartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  StartLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                       StartOpCodeHandle,
+                                       &gEfiIfrTianoGuid,
+                                       NULL,
+                                       sizeof (EFI_IFR_GUID_LABEL)
+                                       );
   StartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   StartLabel->Number       = FORM_ID_DEVICE;
 
   //
   // Create Hii Extend Label OpCode as the end opcode
   //
-  EndLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (EndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  EndLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                     EndOpCodeHandle,
+                                     &gEfiIfrTianoGuid,
+                                     NULL,
+                                     sizeof (EFI_IFR_GUID_LABEL)
+                                     );
   EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndLabel->Number       = LABEL_END;
 
@@ -392,18 +419,42 @@ UpdateDeviceSelectPage (
   // then the 'first refresh' string will be replaced by the 'refresh' string, and the two strings content are same after the replacement
   //
   NewStringToken = STRING_TOKEN (STR_FIRST_REFRESH);
-  NewString      = HiiGetString (Private->RegisteredHandle, STRING_TOKEN (STR_REFRESH), NULL);
+  NewString      = HiiGetString (
+                     Private->RegisteredHandle,
+                     STRING_TOKEN (
+                       STR_REFRESH
+                       ),
+                     NULL
+                     );
   ASSERT (NewString != NULL);
-  if (HiiSetString (Private->RegisteredHandle, NewStringToken, NewString, NULL) == 0) {
+  if (HiiSetString (
+        Private->RegisteredHandle,
+        NewStringToken,
+        NewString,
+        NULL
+        ) == 0)
+  {
     ASSERT (FALSE);
   }
 
   FreePool (NewString);
 
   NewStringToken = STRING_TOKEN (STR_FIRST_REFRESH_HELP);
-  NewString      = HiiGetString (Private->RegisteredHandle, STRING_TOKEN (STR_REFRESH_HELP), NULL);
+  NewString      = HiiGetString (
+                     Private->RegisteredHandle,
+                     STRING_TOKEN (
+                       STR_REFRESH_HELP
+                       ),
+                     NULL
+                     );
   ASSERT (NewString != NULL);
-  if (HiiSetString (Private->RegisteredHandle, NewStringToken, NewString, NULL) == 0) {
+  if (HiiSetString (
+        Private->RegisteredHandle,
+        NewStringToken,
+        NewString,
+        NULL
+        ) == 0)
+  {
     ASSERT (FALSE);
   }
 
@@ -425,9 +476,15 @@ UpdateDeviceSelectPage (
   }
 
   mMaxDeviceCount               = DevicePathHandleCount;
-  mControllerDevicePathProtocol = AllocateZeroPool (DevicePathHandleCount * sizeof (EFI_DEVICE_PATH_PROTOCOL *));
+  mControllerDevicePathProtocol = AllocateZeroPool (
+                                    DevicePathHandleCount *
+                                    sizeof (EFI_DEVICE_PATH_PROTOCOL *)
+                                    );
   ASSERT (mControllerDevicePathProtocol != NULL);
-  mControllerToken = AllocateZeroPool (DevicePathHandleCount * sizeof (EFI_STRING_ID));
+  mControllerToken = AllocateZeroPool (
+                       DevicePathHandleCount *
+                       sizeof (EFI_STRING_ID)
+                       );
   ASSERT (mControllerToken != NULL);
 
   for (Index = 0; Index < DevicePathHandleCount; Index++) {
@@ -492,7 +549,16 @@ UpdateDeviceSelectPage (
     NewStrSize = Len + StrSize (L"--");
     NewString  = AllocateZeroPool (NewStrSize);
     ASSERT (NewString != NULL);
-    if (EFI_ERROR (CheckMapping (ControllerDevicePath, NULL, &mMappingDataBase, NULL, NULL))) {
+    if (EFI_ERROR (
+          CheckMapping (
+            ControllerDevicePath,
+            NULL,
+            &mMappingDataBase,
+            NULL,
+            NULL
+            )
+          ))
+    {
       StrCatS (NewString, NewStrSize/sizeof (CHAR16), L"--");
     } else {
       StrCatS (NewString, NewStrSize/sizeof (CHAR16), L"**");
@@ -500,7 +566,12 @@ UpdateDeviceSelectPage (
 
     StrCatS (NewString, NewStrSize/sizeof (CHAR16), ControllerName);
 
-    NewStringToken = HiiSetString (Private->RegisteredHandle, mControllerToken[Index], NewString, NULL);
+    NewStringToken = HiiSetString (
+                       Private->RegisteredHandle,
+                       mControllerToken[Index],
+                       NewString,
+                       NULL
+                       );
     ASSERT (NewStringToken != 0);
     FreePool (NewString);
     //
@@ -674,14 +745,24 @@ UpdateBindingDriverSelectPage (
   //
   // Create Hii Extend Label OpCode as the start opcode
   //
-  StartLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (StartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  StartLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                       StartOpCodeHandle,
+                                       &gEfiIfrTianoGuid,
+                                       NULL,
+                                       sizeof (EFI_IFR_GUID_LABEL)
+                                       );
   StartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   StartLabel->Number       = FORM_ID_DRIVER;
 
   //
   // Create Hii Extend Label OpCode as the end opcode
   //
-  EndLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (EndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  EndLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                     EndOpCodeHandle,
+                                     &gEfiIfrTianoGuid,
+                                     NULL,
+                                     sizeof (EFI_IFR_GUID_LABEL)
+                                     );
   EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndLabel->Number       = LABEL_END;
 
@@ -711,14 +792,23 @@ UpdateBindingDriverSelectPage (
     return EFI_NOT_FOUND;
   }
 
-  mDriverImageToken = AllocateZeroPool (DriverImageHandleCount * sizeof (EFI_STRING_ID));
+  mDriverImageToken = AllocateZeroPool (
+                        DriverImageHandleCount *
+                        sizeof (EFI_STRING_ID)
+                        );
   ASSERT (mDriverImageToken != NULL);
   mDriSelection = AllocateZeroPool (DriverImageHandleCount * sizeof (BOOLEAN));
   ASSERT (mDriSelection != NULL);
 
-  DriverImageProtocol = AllocateZeroPool (DriverImageHandleCount * sizeof (EFI_LOADED_IMAGE_PROTOCOL *));
+  DriverImageProtocol = AllocateZeroPool (
+                          DriverImageHandleCount *
+                          sizeof (EFI_LOADED_IMAGE_PROTOCOL *)
+                          );
   ASSERT (DriverImageProtocol != NULL);
-  DriverImageFilePathToken = AllocateZeroPool (DriverImageHandleCount * sizeof (EFI_STRING_ID));
+  DriverImageFilePathToken = AllocateZeroPool (
+                               DriverImageHandleCount *
+                               sizeof (EFI_STRING_ID)
+                               );
   ASSERT (DriverImageFilePathToken != NULL);
 
   mDriverImageHandleCount = DriverImageHandleCount;
@@ -749,7 +839,9 @@ UpdateBindingDriverSelectPage (
     //
     // Find its related driver binding protocol
     //
-    DriverBindingHandle = GetDriverBindingHandleFromImageHandle (mDriverImageHandleBuffer[Index]);
+    DriverBindingHandle = GetDriverBindingHandleFromImageHandle (
+                            mDriverImageHandleBuffer[Index]
+                            );
     if (DriverBindingHandle == NULL) {
       mDriSelection[Index] = FALSE;
       continue;
@@ -807,7 +899,13 @@ UpdateBindingDriverSelectPage (
       //
       // give a default name
       //
-      DriverName = HiiGetString (Private->RegisteredHandle, STRING_TOKEN (STR_DRIVER_DEFAULT_NAME), NULL);
+      DriverName = HiiGetString (
+                     Private->RegisteredHandle,
+                     STRING_TOKEN (
+                       STR_DRIVER_DEFAULT_NAME
+                       ),
+                     NULL
+                     );
       ASSERT (DriverName != NULL);
       FreeDriverName = TRUE;  // the DriverName string need to free pool
     }
@@ -822,7 +920,16 @@ UpdateBindingDriverSelectPage (
     NewStrSize = StrSize (DriverName);
     NewString  = AllocateZeroPool (NewStrSize);
     ASSERT (NewString != NULL);
-    if (EFI_ERROR (CheckMapping (mControllerDevicePathProtocol[mSelectedCtrIndex], LoadedImageDevicePath, &mMappingDataBase, NULL, NULL))) {
+    if (EFI_ERROR (
+          CheckMapping (
+            mControllerDevicePathProtocol[mSelectedCtrIndex],
+            LoadedImageDevicePath,
+            &mMappingDataBase,
+            NULL,
+            NULL
+            )
+          ))
+    {
       mDriSelection[Index] = FALSE;
     } else {
       mDriSelection[Index] = TRUE;
@@ -830,7 +937,12 @@ UpdateBindingDriverSelectPage (
     }
 
     StrCatS (NewString, NewStrSize/sizeof (CHAR16), DriverName);
-    NewStringToken = HiiSetString (Private->RegisteredHandle, mDriverImageToken[Index], NewString, NULL);
+    NewStringToken = HiiSetString (
+                       Private->RegisteredHandle,
+                       mDriverImageToken[Index],
+                       NewString,
+                       NULL
+                       );
     ASSERT (NewStringToken != 0);
     mDriverImageToken[Index] = NewStringToken;
     FreePool (NewString);
@@ -847,7 +959,12 @@ UpdateBindingDriverSelectPage (
     NewString  = AllocateZeroPool (NewStrSize);
     ASSERT (NewString != NULL);
     StrCatS (NewString, NewStrSize/sizeof (CHAR16), DriverName);
-    NewStringHelpToken = HiiSetString (Private->RegisteredHandle, DriverImageFilePathToken[Index], NewString, NULL);
+    NewStringHelpToken = HiiSetString (
+                           Private->RegisteredHandle,
+                           DriverImageFilePathToken[Index],
+                           NewString,
+                           NULL
+                           );
     ASSERT (NewStringHelpToken != 0);
     DriverImageFilePathToken[Index] = NewStringHelpToken;
     FreePool (NewString);
@@ -946,14 +1063,24 @@ UpdatePrioritySelectPage (
   //
   // Create Hii Extend Label OpCode as the start opcode
   //
-  StartLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (StartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  StartLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                       StartOpCodeHandle,
+                                       &gEfiIfrTianoGuid,
+                                       NULL,
+                                       sizeof (EFI_IFR_GUID_LABEL)
+                                       );
   StartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   StartLabel->Number       = FORM_ID_ORDER;
 
   //
   // Create Hii Extend Label OpCode as the end opcode
   //
-  EndLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (EndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  EndLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                     EndOpCodeHandle,
+                                     &gEfiIfrTianoGuid,
+                                     NULL,
+                                     sizeof (EFI_IFR_GUID_LABEL)
+                                     );
   EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndLabel->Number       = LABEL_END;
 
@@ -1126,8 +1253,14 @@ CommitChanges (
   //  Following code will be run if user select 'commint changes' in third page
   //  user enter 'Commit Changes' to save the mapping database
   //
-  DeleteDriverImage (mControllerDevicePathProtocol[mSelectedCtrIndex], NULL, &mMappingDataBase);
-  for (SelectedDriverImageNum = 0; SelectedDriverImageNum < mSelectedDriverImageNum; SelectedDriverImageNum++) {
+  DeleteDriverImage (
+    mControllerDevicePathProtocol[mSelectedCtrIndex],
+    NULL,
+    &mMappingDataBase
+    );
+  for (SelectedDriverImageNum = 0; SelectedDriverImageNum <
+       mSelectedDriverImageNum; SelectedDriverImageNum++)
+  {
     //
     // DriOrder[SelectedDriverImageNum] = the driver NO. in driver binding buffer
     //
@@ -1201,7 +1334,12 @@ PlatOverMngrExtractConfig (
   }
 
   *Progress = Request;
-  if ((Request != NULL) && !HiiIsConfigHdrMatch (Request, &gPlatformOverridesManagerGuid, mVariableName)) {
+  if ((Request != NULL) && !HiiIsConfigHdrMatch (
+                              Request,
+                              &gPlatformOverridesManagerGuid,
+                              mVariableName
+                              ))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -1219,13 +1357,23 @@ PlatOverMngrExtractConfig (
     // Allocate and fill a buffer large enough to hold the <ConfigHdr> template
     // followed by "&OFFSET=0&WIDTH=WWWWWWWWWWWWWWWW" followed by a Null-terminator
     //
-    ConfigRequestHdr = HiiConstructConfigHdr (&gPlatformOverridesManagerGuid, mVariableName, Private->DriverHandle);
-    Size             = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
-    ConfigRequest    = AllocateZeroPool (Size);
+    ConfigRequestHdr = HiiConstructConfigHdr (
+                         &gPlatformOverridesManagerGuid,
+                         mVariableName,
+                         Private->DriverHandle
+                         );
+    Size          = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
+    ConfigRequest = AllocateZeroPool (Size);
     ASSERT (ConfigRequest != NULL);
     AllocatedRequest = TRUE;
     BufferSize       = sizeof (PLAT_OVER_MNGR_DATA);
-    UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
+    UnicodeSPrint (
+      ConfigRequest,
+      Size,
+      L"%s&OFFSET=0&WIDTH=%016LX",
+      ConfigRequestHdr,
+      (UINT64)BufferSize
+      );
     FreePool (ConfigRequestHdr);
   }
 
@@ -1295,14 +1443,25 @@ PlatOverMngrRouteConfig (
 
   *Progress = Configuration;
 
-  if (!HiiIsConfigHdrMatch (Configuration, &gPlatformOverridesManagerGuid, mVariableName)) {
+  if (!HiiIsConfigHdrMatch (
+         Configuration,
+         &gPlatformOverridesManagerGuid,
+         mVariableName
+         ))
+  {
     return EFI_NOT_FOUND;
   }
 
   *Progress  = Configuration + StrLen (Configuration);
   Private    = EFI_CALLBACK_INFO_FROM_THIS (This);
   FakeNvData = &Private->FakeNvData;
-  if (!HiiGetBrowserData (&gPlatformOverridesManagerGuid, mVariableName, sizeof (PLAT_OVER_MNGR_DATA), (UINT8 *)FakeNvData)) {
+  if (!HiiGetBrowserData (
+         &gPlatformOverridesManagerGuid,
+         mVariableName,
+         sizeof (PLAT_OVER_MNGR_DATA),
+         (UINT8 *)FakeNvData
+         ))
+  {
     //
     // FakeNvData can't be got from SetupBrowser, which doesn't need to be set.
     //
@@ -1357,7 +1516,9 @@ PlatOverMngrCallback (
   EFI_INPUT_KEY        Key;
   PLAT_OVER_MNGR_DATA  *FakeNvData;
 
-  if ((Action != EFI_BROWSER_ACTION_CHANGING) && (Action != EFI_BROWSER_ACTION_CHANGED)) {
+  if ((Action != EFI_BROWSER_ACTION_CHANGING) && (Action !=
+                                                  EFI_BROWSER_ACTION_CHANGED))
+  {
     //
     // All other action return unsupported.
     //
@@ -1366,7 +1527,13 @@ PlatOverMngrCallback (
 
   Private    = EFI_CALLBACK_INFO_FROM_THIS (This);
   FakeNvData = &Private->FakeNvData;
-  if (!HiiGetBrowserData (&gPlatformOverridesManagerGuid, mVariableName, sizeof (PLAT_OVER_MNGR_DATA), (UINT8 *)FakeNvData)) {
+  if (!HiiGetBrowserData (
+         &gPlatformOverridesManagerGuid,
+         mVariableName,
+         sizeof (PLAT_OVER_MNGR_DATA),
+         (UINT8 *)FakeNvData
+         ))
+  {
     return EFI_NOT_FOUND;
   }
 
@@ -1381,14 +1548,26 @@ PlatOverMngrCallback (
       // Update page title string
       //
       NewStringToken = STRING_TOKEN (STR_TITLE);
-      if (HiiSetString (Private->RegisteredHandle, NewStringToken, L"First, Select the controller by device path", NULL) == 0) {
+      if (HiiSetString (
+            Private->RegisteredHandle,
+            NewStringToken,
+            L"First, Select the controller by device path",
+            NULL
+            ) == 0)
+      {
         ASSERT (FALSE);
       }
     }
 
-    if (((KeyValue >= KEY_VALUE_DEVICE_OFFSET) && (KeyValue < KEY_VALUE_DEVICE_OFFSET + mMaxDeviceCount)) || (KeyValue == KEY_VALUE_ORDER_GOTO_PREVIOUS)) {
+    if (((KeyValue >= KEY_VALUE_DEVICE_OFFSET) && (KeyValue <
+                                                   KEY_VALUE_DEVICE_OFFSET +
+                                                   mMaxDeviceCount)) ||
+        (KeyValue ==
+         KEY_VALUE_ORDER_GOTO_PREVIOUS))
+    {
       if (KeyValue == KEY_VALUE_ORDER_GOTO_PREVIOUS) {
-        KeyValue = (EFI_QUESTION_ID)(mSelectedCtrIndex + KEY_VALUE_DEVICE_OFFSET);
+        KeyValue = (EFI_QUESTION_ID)(mSelectedCtrIndex +
+                                     KEY_VALUE_DEVICE_OFFSET);
       }
 
       UpdateBindingDriverSelectPage (Private, KeyValue, FakeNvData);
@@ -1396,7 +1575,14 @@ PlatOverMngrCallback (
       // Update page title string
       //
       NewStringToken = STRING_TOKEN (STR_TITLE);
-      if (HiiSetString (Private->RegisteredHandle, NewStringToken, L"Second, Select drivers for the previous selected controller", NULL) == 0) {
+      if (HiiSetString (
+            Private->RegisteredHandle,
+            NewStringToken,
+            L"Second, Select drivers for the previous selected controller",
+            NULL
+            ) ==
+          0)
+      {
         ASSERT (FALSE);
       }
     }
@@ -1407,7 +1593,14 @@ PlatOverMngrCallback (
       // Update page title string
       //
       NewStringToken = STRING_TOKEN (STR_TITLE);
-      if (HiiSetString (Private->RegisteredHandle, NewStringToken, L"Finally, Set the priority order for the drivers and save them", NULL) == 0) {
+      if (HiiSetString (
+            Private->RegisteredHandle,
+            NewStringToken,
+            L"Finally, Set the priority order for the drivers and save them",
+            NULL
+            ) ==
+          0)
+      {
         ASSERT (FALSE);
       }
     }
@@ -1421,7 +1614,10 @@ PlatOverMngrCallback (
       UpdateDeviceSelectPage (Private, KeyValue, FakeNvData);
     }
   } else if (Action == EFI_BROWSER_ACTION_CHANGED) {
-    if ((KeyValue >= KEY_VALUE_DRIVER_OFFSET) && (KeyValue < KEY_VALUE_DRIVER_OFFSET + mDriverImageHandleCount)) {
+    if ((KeyValue >= KEY_VALUE_DRIVER_OFFSET) && (KeyValue <
+                                                  KEY_VALUE_DRIVER_OFFSET +
+                                                  mDriverImageHandleCount))
+    {
       mDriSelection[KeyValue - KEY_VALUE_DRIVER_OFFSET] = Value->b;
     } else {
       switch (KeyValue) {
@@ -1432,7 +1628,13 @@ PlatOverMngrCallback (
           // Update page title string
           //
           NewStringToken = STRING_TOKEN (STR_TITLE);
-          if (HiiSetString (Private->RegisteredHandle, NewStringToken, L"First, Select the controller by device path", NULL) == 0) {
+          if (HiiSetString (
+                Private->RegisteredHandle,
+                NewStringToken,
+                L"First, Select the controller by device path",
+                NULL
+                ) == 0)
+          {
             ASSERT (FALSE);
           }
 
@@ -1442,7 +1644,12 @@ PlatOverMngrCallback (
           Status         = CommitChanges (Private, KeyValue, FakeNvData);
           *ActionRequest = EFI_BROWSER_ACTION_REQUEST_SUBMIT;
           if (EFI_ERROR (Status)) {
-            CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, L"Single Override Info too large, Saving Error!", NULL);
+            CreatePopUp (
+              EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
+              &Key,
+              L"Single Override Info too large, Saving Error!",
+              NULL
+              );
             return EFI_DEVICE_ERROR;
           }
 
@@ -1457,7 +1664,13 @@ PlatOverMngrCallback (
   //
   // Pass changed uncommitted data back to Form Browser
   //
-  HiiSetBrowserData (&gPlatformOverridesManagerGuid, mVariableName, sizeof (PLAT_OVER_MNGR_DATA), (UINT8 *)FakeNvData, NULL);
+  HiiSetBrowserData (
+    &gPlatformOverridesManagerGuid,
+    mVariableName,
+    sizeof (PLAT_OVER_MNGR_DATA),
+    (UINT8 *)FakeNvData,
+    NULL
+    );
 
   return EFI_SUCCESS;
 }
@@ -1512,7 +1725,11 @@ GetDriver (
 
     Status = InitOverridesMapping (&mMappingDataBase);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_INFO, "The status to Get Platform Driver Override Variable is %r\n", Status));
+      DEBUG ((
+        DEBUG_INFO,
+        "The status to Get Platform Driver Override Variable is %r\n",
+        Status
+        ));
       InitializeListHead (&mMappingDataBase);
       return EFI_NOT_FOUND;
     }
@@ -1644,8 +1861,10 @@ PlatDriOverrideDxeInit (
     return EFI_BAD_BUFFER_SIZE;
   }
 
-  mCallbackInfo->Signature                            = EFI_CALLBACK_INFO_SIGNATURE;
-  mCallbackInfo->ConfigAccess.ExtractConfig           = PlatOverMngrExtractConfig;
+  mCallbackInfo->Signature =
+    EFI_CALLBACK_INFO_SIGNATURE;
+  mCallbackInfo->ConfigAccess.ExtractConfig =
+    PlatOverMngrExtractConfig;
   mCallbackInfo->ConfigAccess.RouteConfig             = PlatOverMngrRouteConfig;
   mCallbackInfo->ConfigAccess.Callback                = PlatOverMngrCallback;
   mCallbackInfo->PlatformDriverOverride.GetDriver     = GetDriver;

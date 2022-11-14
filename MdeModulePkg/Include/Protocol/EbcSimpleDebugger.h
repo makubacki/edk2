@@ -21,7 +21,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Defines for a simple EBC debugger interface
 //
-typedef struct _EFI_EBC_SIMPLE_DEBUGGER_PROTOCOL EFI_EBC_SIMPLE_DEBUGGER_PROTOCOL;
+typedef struct _EFI_EBC_SIMPLE_DEBUGGER_PROTOCOL
+EFI_EBC_SIMPLE_DEBUGGER_PROTOCOL;
 
 /**
   Trig Exception on EBC VM.

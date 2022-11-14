@@ -40,7 +40,10 @@ Var_DelBootOption (
       continue;
     }
 
-    Status = EfiBootManagerDeleteLoadOptionVariable (NewMenuEntry->OptionNumber, LoadOptionTypeBoot);
+    Status = EfiBootManagerDeleteLoadOptionVariable (
+               NewMenuEntry->OptionNumber,
+               LoadOptionTypeBoot
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -97,7 +100,10 @@ Var_DelDriverOption (
       continue;
     }
 
-    Status = EfiBootManagerDeleteLoadOptionVariable (NewMenuEntry->OptionNumber, LoadOptionTypeDriver);
+    Status = EfiBootManagerDeleteLoadOptionVariable (
+               NewMenuEntry->OptionNumber,
+               LoadOptionTypeDriver
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -178,15 +184,22 @@ Var_UpdateConsoleOption (
     NewMenuEntry = BOpt_GetMenuEntry (&TerminalMenu, Index);
 
     NewTerminalContext = (BM_TERMINAL_CONTEXT *)NewMenuEntry->VariableContext;
-    if (((NewTerminalContext->IsConIn != 0) && (UpdatePageId == FORM_CON_IN_ID)) ||
-        ((NewTerminalContext->IsConOut != 0)  && (UpdatePageId == FORM_CON_OUT_ID)) ||
-        ((NewTerminalContext->IsStdErr  != 0) && (UpdatePageId == FORM_CON_ERR_ID))
+    if (((NewTerminalContext->IsConIn != 0) && (UpdatePageId ==
+                                                FORM_CON_IN_ID)) ||
+        ((NewTerminalContext->IsConOut != 0)  && (UpdatePageId ==
+                                                  FORM_CON_OUT_ID)) ||
+        ((NewTerminalContext->IsStdErr  != 0) && (UpdatePageId ==
+                                                  FORM_CON_ERR_ID))
         )
     {
       Vendor.Header.Type    = MESSAGING_DEVICE_PATH;
       Vendor.Header.SubType = MSG_VENDOR_DP;
 
-      ASSERT (NewTerminalContext->TerminalType < (ARRAY_SIZE (TerminalTypeGuid)));
+      ASSERT (
+        NewTerminalContext->TerminalType < (ARRAY_SIZE (
+                                              TerminalTypeGuid
+                                              ))
+        );
       CopyMem (
         &Vendor.Guid,
         &TerminalTypeGuid[NewTerminalContext->TerminalType],
@@ -351,10 +364,13 @@ Var_UpdateDriverOption (
     return Status;
   }
 
-  NewLoadContext                     = (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
+  NewLoadContext =
+    (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
   NewLoadContext->Deleted            = FALSE;
   NewLoadContext->Attributes         = LoadOption.Attributes;
-  NewLoadContext->FilePathListLength = (UINT16)GetDevicePathSize (LoadOption.FilePath);
+  NewLoadContext->FilePathListLength = (UINT16)GetDevicePathSize (
+                                                 LoadOption.FilePath
+                                                 );
 
   NewLoadContext->Description = AllocateZeroPool (StrSize (DescriptionData));
   ASSERT (NewLoadContext->Description != NULL);
@@ -365,7 +381,11 @@ Var_UpdateDriverOption (
     StrSize (DescriptionData)
     );
 
-  NewLoadContext->FilePathList = AllocateZeroPool (GetDevicePathSize (CallbackData->LoadContext->FilePathList));
+  NewLoadContext->FilePathList = AllocateZeroPool (
+                                   GetDevicePathSize (
+                                     CallbackData->LoadContext->FilePathList
+                                     )
+                                   );
   ASSERT (NewLoadContext->FilePathList != NULL);
   CopyMem (
     NewLoadContext->FilePathList,
@@ -373,13 +393,27 @@ Var_UpdateDriverOption (
     GetDevicePathSize (CallbackData->LoadContext->FilePathList)
     );
 
-  NewMenuEntry->HelpString         = UiDevicePathToStr (NewLoadContext->FilePathList);
+  NewMenuEntry->HelpString = UiDevicePathToStr (
+                               NewLoadContext->FilePathList
+                               );
   NewMenuEntry->OptionNumber       = Index;
-  NewMenuEntry->DisplayStringToken = HiiSetString (HiiHandle, 0, NewMenuEntry->DisplayString, NULL);
-  NewMenuEntry->HelpStringToken    = HiiSetString (HiiHandle, 0, NewMenuEntry->HelpString, NULL);
+  NewMenuEntry->DisplayStringToken = HiiSetString (
+                                       HiiHandle,
+                                       0,
+                                       NewMenuEntry->DisplayString,
+                                       NULL
+                                       );
+  NewMenuEntry->HelpStringToken = HiiSetString (
+                                    HiiHandle,
+                                    0,
+                                    NewMenuEntry->HelpString,
+                                    NULL
+                                    );
 
   if (OptionalDataExist) {
-    NewLoadContext->OptionalData = AllocateZeroPool (LoadOption.OptionalDataSize);
+    NewLoadContext->OptionalData = AllocateZeroPool (
+                                     LoadOption.OptionalDataSize
+                                     );
     ASSERT (NewLoadContext->OptionalData != NULL);
     CopyMem (
       NewLoadContext->OptionalData,
@@ -435,7 +469,12 @@ Var_UpdateBootOption (
   UnicodeSPrint (BootString, sizeof (BootString), L"Boot%04x", Index);
 
   if (NvRamMap->BootDescriptionData[0] == 0x0000) {
-    StrCpyS (NvRamMap->BootDescriptionData, sizeof (NvRamMap->BootDescriptionData) / sizeof (NvRamMap->BootDescriptionData[0]), BootString);
+    StrCpyS (
+      NvRamMap->BootDescriptionData,
+      sizeof (NvRamMap->BootDescriptionData) /
+      sizeof (NvRamMap->BootDescriptionData[0]),
+      BootString
+      );
   }
 
   if (NvRamMap->BootOptionalData[0] != 0x0000) {
@@ -469,12 +508,19 @@ Var_UpdateBootOption (
     return Status;
   }
 
-  NewLoadContext                     = (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
+  NewLoadContext =
+    (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
   NewLoadContext->Deleted            = FALSE;
   NewLoadContext->Attributes         = LoadOption.Attributes;
-  NewLoadContext->FilePathListLength = (UINT16)GetDevicePathSize (LoadOption.FilePath);
+  NewLoadContext->FilePathListLength = (UINT16)GetDevicePathSize (
+                                                 LoadOption.FilePath
+                                                 );
 
-  NewLoadContext->Description = AllocateZeroPool (StrSize (NvRamMap->BootDescriptionData));
+  NewLoadContext->Description = AllocateZeroPool (
+                                  StrSize (
+                                    NvRamMap->BootDescriptionData
+                                    )
+                                  );
   ASSERT (NewLoadContext->Description != NULL);
 
   NewMenuEntry->DisplayString = NewLoadContext->Description;
@@ -485,7 +531,11 @@ Var_UpdateBootOption (
     StrSize (NvRamMap->BootDescriptionData)
     );
 
-  NewLoadContext->FilePathList = AllocateZeroPool (GetDevicePathSize (CallbackData->LoadContext->FilePathList));
+  NewLoadContext->FilePathList = AllocateZeroPool (
+                                   GetDevicePathSize (
+                                     CallbackData->LoadContext->FilePathList
+                                     )
+                                   );
   ASSERT (NewLoadContext->FilePathList != NULL);
   CopyMem (
     NewLoadContext->FilePathList,
@@ -493,13 +543,27 @@ Var_UpdateBootOption (
     GetDevicePathSize (CallbackData->LoadContext->FilePathList)
     );
 
-  NewMenuEntry->HelpString         = UiDevicePathToStr (NewLoadContext->FilePathList);
+  NewMenuEntry->HelpString = UiDevicePathToStr (
+                               NewLoadContext->FilePathList
+                               );
   NewMenuEntry->OptionNumber       = Index;
-  NewMenuEntry->DisplayStringToken = HiiSetString (CallbackData->BmmHiiHandle, 0, NewMenuEntry->DisplayString, NULL);
-  NewMenuEntry->HelpStringToken    = HiiSetString (CallbackData->BmmHiiHandle, 0, NewMenuEntry->HelpString, NULL);
+  NewMenuEntry->DisplayStringToken = HiiSetString (
+                                       CallbackData->BmmHiiHandle,
+                                       0,
+                                       NewMenuEntry->DisplayString,
+                                       NULL
+                                       );
+  NewMenuEntry->HelpStringToken = HiiSetString (
+                                    CallbackData->BmmHiiHandle,
+                                    0,
+                                    NewMenuEntry->HelpString,
+                                    NULL
+                                    );
 
   if (OptionalDataExist) {
-    NewLoadContext->OptionalData = AllocateZeroPool (LoadOption.OptionalDataSize);
+    NewLoadContext->OptionalData = AllocateZeroPool (
+                                     LoadOption.OptionalDataSize
+                                     );
     ASSERT (NewLoadContext->OptionalData != NULL);
     CopyMem (
       NewLoadContext->OptionalData,
@@ -546,7 +610,8 @@ Var_UpdateBootNext (
     NewMenuEntry = BOpt_GetMenuEntry (&BootOptionMenu, Index);
     ASSERT (NULL != NewMenuEntry);
 
-    NewLoadContext             = (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
+    NewLoadContext =
+      (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
     NewLoadContext->IsBootNext = FALSE;
   }
 
@@ -606,16 +671,32 @@ Var_UpdateBootOrder (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  ASSERT (BootOptionMenu.MenuNumber <= (sizeof (CallbackData->BmmFakeNvData.BootOptionOrder) / sizeof (CallbackData->BmmFakeNvData.BootOptionOrder[0])));
+  ASSERT (
+    BootOptionMenu.MenuNumber <=
+    (sizeof (CallbackData->BmmFakeNvData.BootOptionOrder) /
+     sizeof (CallbackData->BmmFakeNvData.BootOptionOrder[0]))
+    );
 
   //
   // OptionOrder is subset of BootOrder
   //
-  for (OrderIndex = 0; (OrderIndex < BootOptionMenu.MenuNumber) && (CallbackData->BmmFakeNvData.BootOptionOrder[OrderIndex] != 0); OrderIndex++) {
+  for (OrderIndex = 0; (OrderIndex < BootOptionMenu.MenuNumber) &&
+       (CallbackData->BmmFakeNvData.BootOptionOrder[OrderIndex] != 0);
+       OrderIndex++)
+  {
     for (Index = OrderIndex; Index < BootOrderSize / sizeof (UINT16); Index++) {
-      if ((BootOrder[Index] == (UINT16)(CallbackData->BmmFakeNvData.BootOptionOrder[OrderIndex] - 1)) && (OrderIndex != Index)) {
+      if ((BootOrder[Index] ==
+           (UINT16)(CallbackData->BmmFakeNvData.BootOptionOrder[OrderIndex] -
+                    1)) &&
+          (OrderIndex != Index))
+      {
         OptionNumber = BootOrder[Index];
-        CopyMem (&BootOrder[OrderIndex + 1], &BootOrder[OrderIndex], (Index - OrderIndex) * sizeof (UINT16));
+        CopyMem (
+          &BootOrder[OrderIndex + 1],
+          &BootOrder[OrderIndex],
+          (Index -
+           OrderIndex) * sizeof (UINT16)
+          );
         BootOrder[OrderIndex] = OptionNumber;
       }
     }
@@ -665,7 +746,11 @@ Var_UpdateDriverOrder (
   //
   // First check whether DriverOrder is present in current configuration
   //
-  GetEfiGlobalVariable2 (L"DriverOrder", (VOID **)&DriverOrderList, &DriverOrderListSize);
+  GetEfiGlobalVariable2 (
+    L"DriverOrder",
+    (VOID **)&DriverOrderList,
+    &DriverOrderListSize
+    );
   NewDriverOrderList = AllocateZeroPool (DriverOrderListSize);
 
   if (NewDriverOrderList == NULL) {
@@ -680,9 +765,14 @@ Var_UpdateDriverOrder (
     FreePool (DriverOrderList);
   }
 
-  ASSERT (DriverOptionMenu.MenuNumber <= (sizeof (CallbackData->BmmFakeNvData.DriverOptionOrder) / sizeof (CallbackData->BmmFakeNvData.DriverOptionOrder[0])));
+  ASSERT (
+    DriverOptionMenu.MenuNumber <=
+    (sizeof (CallbackData->BmmFakeNvData.DriverOptionOrder) /
+     sizeof (CallbackData->BmmFakeNvData.DriverOptionOrder[0]))
+    );
   for (Index = 0; Index < DriverOptionMenu.MenuNumber; Index++) {
-    NewDriverOrderList[Index] = (UINT16)(CallbackData->BmmFakeNvData.DriverOptionOrder[Index] - 1);
+    NewDriverOrderList[Index] =
+      (UINT16)(CallbackData->BmmFakeNvData.DriverOptionOrder[Index] - 1);
   }
 
   Status = gRT->SetVariable (
@@ -721,7 +811,12 @@ Var_UpdateConMode (
 
   Mode = CallbackData->BmmFakeNvData.ConsoleOutMode;
 
-  Status = gST->ConOut->QueryMode (gST->ConOut, Mode, &(ModeInfo.Column), &(ModeInfo.Row));
+  Status = gST->ConOut->QueryMode (
+                          gST->ConOut,
+                          Mode,
+                          &(ModeInfo.Column),
+                          &(ModeInfo.Row)
+                          );
   if (!EFI_ERROR (Status)) {
     Status = PcdSet32S (PcdSetupConOutColumn, (UINT32)ModeInfo.Column);
     if (!EFI_ERROR (Status)) {

@@ -164,10 +164,13 @@ OnigurumaMatch (
         //
         // Region beg/end values represent bytes, not characters
         //
-        (*Captures)[Index].Length     = (Region->end[Index] - Region->beg[Index]) / sizeof (CHAR16);
+        (*Captures)[Index].Length     = (Region->end[Index] -
+                                         Region->beg[Index]) / sizeof (CHAR16);
         (*Captures)[Index].CapturePtr = AllocateCopyPool (
-                                          ((*Captures)[Index].Length) * sizeof (CHAR16),
-                                          (CHAR16 *)((UINTN)String + Region->beg[Index])
+                                          ((*Captures)[Index].Length) *
+                                          sizeof (CHAR16),
+                                          (CHAR16 *)((UINTN)String +
+                                                     Region->beg[Index])
                                           );
         if ((*Captures)[Index].CapturePtr == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
@@ -252,7 +255,11 @@ RegularExpressionGetInfo (
   }
 
   for (Index = 0; Index < ARRAY_SIZE (mSupportedSyntaxes); ++Index) {
-    CopyMem (&RegExSyntaxTypeList[Index], mSupportedSyntaxes[Index], sizeof (**mSupportedSyntaxes));
+    CopyMem (
+      &RegExSyntaxTypeList[Index],
+      mSupportedSyntaxes[Index],
+      sizeof (**mSupportedSyntaxes)
+      );
   }
 
   *RegExSyntaxTypeListSize = SyntaxSize;
@@ -325,7 +332,10 @@ RegularExpressionMatch (
   UINT32      Index;
   BOOLEAN     Supported;
 
-  if ((This == NULL) || (String == NULL) || (Pattern == NULL) || (Result == NULL) || (CapturesCount == NULL)) {
+  if ((This == NULL) || (String == NULL) || (Pattern == NULL) || (Result ==
+                                                                  NULL) ||
+      (CapturesCount == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -348,7 +358,14 @@ RegularExpressionMatch (
     }
   }
 
-  Status = OnigurumaMatch (String, Pattern, SyntaxType, Result, Captures, CapturesCount);
+  Status = OnigurumaMatch (
+             String,
+             Pattern,
+             SyntaxType,
+             Result,
+             Captures,
+             CapturesCount
+             );
 
   return Status;
 }

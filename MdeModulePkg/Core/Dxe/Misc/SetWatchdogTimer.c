@@ -53,7 +53,13 @@ CoreSetWatchdogTimer (
   //
   // Attempt to set the timeout
   //
-  Status = gWatchdogTimer->SetTimerPeriod (gWatchdogTimer, MultU64x32 (Timeout, WATCHDOG_TIMER_CALIBRATE_PER_SECOND));
+  Status = gWatchdogTimer->SetTimerPeriod (
+                             gWatchdogTimer,
+                             MultU64x32 (
+                               Timeout,
+                               WATCHDOG_TIMER_CALIBRATE_PER_SECOND
+                               )
+                             );
 
   //
   // Check for errors

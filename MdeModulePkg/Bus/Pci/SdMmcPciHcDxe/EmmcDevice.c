@@ -374,7 +374,8 @@ EmmcSwitch (
   SdMmcCmdBlk.CommandIndex    = EMMC_SWITCH;
   SdMmcCmdBlk.CommandType     = SdMmcCommandTypeAc;
   SdMmcCmdBlk.ResponseType    = SdMmcResponseTypeR1b;
-  SdMmcCmdBlk.CommandArgument = (Access << 24) | (Index << 16) | (Value << 8) | CmdSet;
+  SdMmcCmdBlk.CommandArgument = (Access << 24) | (Index << 16) | (Value << 8) |
+                                CmdSet;
 
   Status = SdMmcPassThruPassThru (PassThru, Slot, &Packet, NULL);
 
@@ -517,7 +518,13 @@ EmmcTuningClkForHs200 (
   // Notify the host that the sampling clock tuning procedure starts.
   //
   HostCtrl2 = BIT6;
-  Status    = SdMmcHcOrMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+  Status    = SdMmcHcOrMmio (
+                PciIo,
+                Slot,
+                SD_MMC_HC_HOST_CTRL2,
+                sizeof (HostCtrl2),
+                &HostCtrl2
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -529,11 +536,22 @@ EmmcTuningClkForHs200 (
   do {
     Status = EmmcSendTuningBlk (PassThru, Slot, BusWidth);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "EmmcTuningClkForHs200: Send tuning block fails with %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "EmmcTuningClkForHs200: Send tuning block fails with %r\n",
+        Status
+        ));
       return Status;
     }
 
-    Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL2, TRUE, sizeof (HostCtrl2), &HostCtrl2);
+    Status = SdMmcHcRwMmio (
+               PciIo,
+               Slot,
+               SD_MMC_HC_HOST_CTRL2,
+               TRUE,
+               sizeof (HostCtrl2),
+               &HostCtrl2
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -547,12 +565,23 @@ EmmcTuningClkForHs200 (
     }
   } while (++Retry < 40);
 
-  DEBUG ((DEBUG_ERROR, "EmmcTuningClkForHs200: Send tuning block fails at %d times with HostCtrl2 %02x\n", Retry, HostCtrl2));
+  DEBUG ((
+    DEBUG_ERROR,
+    "EmmcTuningClkForHs200: Send tuning block fails at %d times with HostCtrl2 %02x\n",
+    Retry,
+    HostCtrl2
+    ));
   //
   // Abort the tuning procedure and reset the tuning circuit.
   //
   HostCtrl2 = (UINT8) ~(BIT6 | BIT7);
-  Status    = SdMmcHcAndMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+  Status    = SdMmcHcAndMmio (
+                PciIo,
+                Slot,
+                SD_MMC_HC_HOST_CTRL2,
+                sizeof (HostCtrl2),
+                &HostCtrl2
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -582,7 +611,11 @@ EmmcCheckSwitchStatus (
 
   Status = EmmcSendStatus (PassThru, Slot, Rca, &DevStatus);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EmmcCheckSwitchStatus: Send status fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EmmcCheckSwitchStatus: Send status fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -590,7 +623,11 @@ EmmcCheckSwitchStatus (
   // Check the switch operation is really successful or not.
   //
   if ((DevStatus & BIT7) != 0) {
-    DEBUG ((DEBUG_ERROR, "EmmcCheckSwitchStatus: The switch operation fails as DevStatus is 0x%08x\n", DevStatus));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EmmcCheckSwitchStatus: The switch operation fails as DevStatus is 0x%08x\n",
+      DevStatus
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -651,7 +688,12 @@ EmmcSwitchBusWidth (
   CmdSet = 0;
   Status = EmmcSwitch (PassThru, Slot, Access, Index, Value, CmdSet);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EmmcSwitchBusWidth: Switch to bus width %d fails with %r\n", BusWidth, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EmmcSwitchBusWidth: Switch to bus width %d fails with %r\n",
+      BusWidth,
+      Status
+      ));
     return Status;
   }
 
@@ -725,31 +767,57 @@ EmmcSwitchBusTiming (
       Value = 0;
       break;
     default:
-      DEBUG ((DEBUG_ERROR, "EmmcSwitchBusTiming: Unsupported BusTiming(%d)\n", BusTiming));
+      DEBUG ((
+        DEBUG_ERROR,
+        "EmmcSwitchBusTiming: Unsupported BusTiming(%d)\n",
+        BusTiming
+        ));
       return EFI_INVALID_PARAMETER;
   }
 
   Status = EmmcSwitch (PassThru, Slot, Access, Index, Value, CmdSet);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EmmcSwitchBusTiming: Switch to bus timing %d fails with %r\n", BusTiming, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EmmcSwitchBusTiming: Switch to bus timing %d fails with %r\n",
+      BusTiming,
+      Status
+      ));
     return Status;
   }
 
   if ((BusTiming == SdMmcMmcHsSdr) || (BusTiming == SdMmcMmcHsDdr)) {
     HostCtrl1 = BIT2;
-    Status    = SdMmcHcOrMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
+    Status    = SdMmcHcOrMmio (
+                  PciIo,
+                  Slot,
+                  SD_MMC_HC_HOST_CTRL1,
+                  sizeof (HostCtrl1),
+                  &HostCtrl1
+                  );
     if (EFI_ERROR (Status)) {
       return Status;
     }
   } else {
     HostCtrl1 = (UINT8) ~BIT2;
-    Status    = SdMmcHcAndMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
+    Status    = SdMmcHcAndMmio (
+                  PciIo,
+                  Slot,
+                  SD_MMC_HC_HOST_CTRL1,
+                  sizeof (HostCtrl1),
+                  &HostCtrl1
+                  );
     if (EFI_ERROR (Status)) {
       return Status;
     }
   }
 
-  Status = SdMmcHcUhsSignaling (Private->ControllerHandle, PciIo, Slot, BusTiming);
+  Status = SdMmcHcUhsSignaling (
+             Private->ControllerHandle,
+             PciIo,
+             Slot,
+             BusTiming
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -778,7 +846,14 @@ EmmcSwitchBusTiming (
   //
   // Convert the clock freq unit from MHz to KHz.
   //
-  Status = SdMmcHcClockSupply (Private, Slot, BusTiming, FALSE, ClockFreq * 1000);
+  Status = SdMmcHcClockSupply (
+             Private,
+             Slot,
+             BusTiming,
+             FALSE,
+             ClockFreq *
+             1000
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -821,7 +896,9 @@ EmmcSwitchToHighSpeed (
   EFI_STATUS  Status;
   BOOLEAN     IsDdr;
 
-  if (((BusMode->BusTiming != SdMmcMmcHsSdr) && (BusMode->BusTiming != SdMmcMmcHsDdr) && (BusMode->BusTiming != SdMmcMmcLegacy)) ||
+  if (((BusMode->BusTiming != SdMmcMmcHsSdr) && (BusMode->BusTiming !=
+                                                 SdMmcMmcHsDdr) &&
+       (BusMode->BusTiming != SdMmcMmcLegacy)) ||
       (BusMode->ClockFreq > 52))
   {
     return EFI_INVALID_PARAMETER;
@@ -833,12 +910,27 @@ EmmcSwitchToHighSpeed (
     IsDdr = FALSE;
   }
 
-  Status = EmmcSwitchBusWidth (PciIo, PassThru, Slot, Rca, IsDdr, BusMode->BusWidth);
+  Status = EmmcSwitchBusWidth (
+             PciIo,
+             PassThru,
+             Slot,
+             Rca,
+             IsDdr,
+             BusMode->BusWidth
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  return EmmcSwitchBusTiming (PciIo, PassThru, Slot, Rca, BusMode->DriverStrength, BusMode->BusTiming, BusMode->ClockFreq);
+  return EmmcSwitchBusTiming (
+           PciIo,
+           PassThru,
+           Slot,
+           Rca,
+           BusMode->DriverStrength,
+           BusMode->BusTiming,
+           BusMode->ClockFreq
+           );
 }
 
 /**
@@ -874,12 +966,27 @@ EmmcSwitchToHS200 (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = EmmcSwitchBusWidth (PciIo, PassThru, Slot, Rca, FALSE, BusMode->BusWidth);
+  Status = EmmcSwitchBusWidth (
+             PciIo,
+             PassThru,
+             Slot,
+             Rca,
+             FALSE,
+             BusMode->BusWidth
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = EmmcSwitchBusTiming (PciIo, PassThru, Slot, Rca, BusMode->DriverStrength, BusMode->BusTiming, BusMode->ClockFreq);
+  Status = EmmcSwitchBusTiming (
+             PciIo,
+             PassThru,
+             Slot,
+             Rca,
+             BusMode->DriverStrength,
+             BusMode->BusTiming,
+             BusMode->ClockFreq
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -939,17 +1046,40 @@ EmmcSwitchToHS400 (
   // This step is necessary to be able to switch Bus into 8 bit DDR mode which is unsupported in HS200.
   //
   HsFreq = BusMode->ClockFreq < 52 ? BusMode->ClockFreq : 52;
-  Status = EmmcSwitchBusTiming (PciIo, PassThru, Slot, Rca, BusMode->DriverStrength, SdMmcMmcHsSdr, HsFreq);
+  Status = EmmcSwitchBusTiming (
+             PciIo,
+             PassThru,
+             Slot,
+             Rca,
+             BusMode->DriverStrength,
+             SdMmcMmcHsSdr,
+             HsFreq
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = EmmcSwitchBusWidth (PciIo, PassThru, Slot, Rca, TRUE, BusMode->BusWidth);
+  Status = EmmcSwitchBusWidth (
+             PciIo,
+             PassThru,
+             Slot,
+             Rca,
+             TRUE,
+             BusMode->BusWidth
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  return EmmcSwitchBusTiming (PciIo, PassThru, Slot, Rca, BusMode->DriverStrength, BusMode->BusTiming, BusMode->ClockFreq);
+  return EmmcSwitchBusTiming (
+           PciIo,
+           PassThru,
+           Slot,
+           Rca,
+           BusMode->DriverStrength,
+           BusMode->BusTiming,
+           BusMode->ClockFreq
+           );
 }
 
 /**
@@ -979,25 +1109,33 @@ EmmcIsBusTimingSupported (
   Supported = FALSE;
   switch (BusTiming) {
     case SdMmcMmcHs400:
-      if ((((ExtCsd->DeviceType & (BIT6 | BIT7))  != 0) && (Capabilities->Hs400 != 0)) && (Capabilities->BusWidth8 != 0)) {
+      if ((((ExtCsd->DeviceType & (BIT6 | BIT7))  != 0) &&
+           (Capabilities->Hs400 != 0)) && (Capabilities->BusWidth8 != 0))
+      {
         Supported = TRUE;
       }
 
       break;
     case SdMmcMmcHs200:
-      if ((((ExtCsd->DeviceType & (BIT4 | BIT5))  != 0) && (Capabilities->Sdr104 != 0))) {
+      if ((((ExtCsd->DeviceType & (BIT4 | BIT5))  != 0) &&
+           (Capabilities->Sdr104 != 0)))
+      {
         Supported = TRUE;
       }
 
       break;
     case SdMmcMmcHsDdr:
-      if ((((ExtCsd->DeviceType & (BIT2 | BIT3))  != 0) && (Capabilities->Ddr50 != 0))) {
+      if ((((ExtCsd->DeviceType & (BIT2 | BIT3))  != 0) &&
+           (Capabilities->Ddr50 != 0)))
+      {
         Supported = TRUE;
       }
 
       break;
     case SdMmcMmcHsSdr:
-      if ((((ExtCsd->DeviceType & BIT1)  != 0) && (Capabilities->HighSpeed != 0))) {
+      if ((((ExtCsd->DeviceType & BIT1)  != 0) && (Capabilities->HighSpeed !=
+                                                   0)))
+      {
         Supported = TRUE;
       }
 
@@ -1074,7 +1212,9 @@ EmmcIsBusWidthSupported (
     return TRUE;
   } else if ((BusWidth == 4) && (BusTiming != SdMmcMmcHs400)) {
     return TRUE;
-  } else if ((BusWidth == 1) && ((BusTiming == SdMmcMmcHsSdr) || (BusTiming == SdMmcMmcLegacy))) {
+  } else if ((BusWidth == 1) && ((BusTiming == SdMmcMmcHsSdr) || (BusTiming ==
+                                                                  SdMmcMmcLegacy)))
+  {
     return TRUE;
   }
 
@@ -1105,7 +1245,12 @@ EmmcGetTargetBusWidth (
   PreferredBusWidth = Private->Slot[SlotIndex].OperatingParameters.BusWidth;
 
   if ((PreferredBusWidth != EDKII_SD_MMC_BUS_WIDTH_IGNORE) &&
-      EmmcIsBusWidthSupported (Private, SlotIndex, BusTiming, PreferredBusWidth))
+      EmmcIsBusWidthSupported (
+        Private,
+        SlotIndex,
+        BusTiming,
+        PreferredBusWidth
+        ))
   {
     BusWidth = PreferredBusWidth;
   } else if (EmmcIsBusWidthSupported (Private, SlotIndex, BusTiming, 8)) {
@@ -1156,7 +1301,9 @@ EmmcGetTargetClockFreq (
       break;
   }
 
-  if ((PreferredClockFreq != EDKII_SD_MMC_CLOCK_FREQ_IGNORE) && (PreferredClockFreq < MaxClockFreq)) {
+  if ((PreferredClockFreq != EDKII_SD_MMC_CLOCK_FREQ_IGNORE) &&
+      (PreferredClockFreq < MaxClockFreq))
+  {
     return PreferredClockFreq;
   } else {
     return MaxClockFreq;
@@ -1184,8 +1331,9 @@ EmmcGetTargetDriverStrength (
   EDKII_SD_MMC_DRIVER_STRENGTH  PreferredDriverStrength;
   EDKII_SD_MMC_DRIVER_STRENGTH  DriverStrength;
 
-  PreferredDriverStrength = Private->Slot[SlotIndex].OperatingParameters.DriverStrength;
-  DriverStrength.Emmc     = EmmcDriverStrengthType0;
+  PreferredDriverStrength =
+    Private->Slot[SlotIndex].OperatingParameters.DriverStrength;
+  DriverStrength.Emmc = EmmcDriverStrengthType0;
 
   if ((PreferredDriverStrength.Emmc != EDKII_SD_MMC_DRIVER_STRENGTH_IGNORE) &&
       (ExtCsd->DriverStrength & (BIT0 << PreferredDriverStrength.Emmc)))
@@ -1212,10 +1360,25 @@ EmmcGetTargetBusMode (
   OUT SD_MMC_BUS_SETTINGS    *BusMode
   )
 {
-  BusMode->BusTiming      = EmmcGetTargetBusTiming (Private, SlotIndex, ExtCsd);
-  BusMode->BusWidth       = EmmcGetTargetBusWidth (Private, SlotIndex, ExtCsd, BusMode->BusTiming);
-  BusMode->ClockFreq      = EmmcGetTargetClockFreq (Private, SlotIndex, ExtCsd, BusMode->BusTiming);
-  BusMode->DriverStrength = EmmcGetTargetDriverStrength (Private, SlotIndex, ExtCsd, BusMode->BusTiming);
+  BusMode->BusTiming = EmmcGetTargetBusTiming (Private, SlotIndex, ExtCsd);
+  BusMode->BusWidth  = EmmcGetTargetBusWidth (
+                         Private,
+                         SlotIndex,
+                         ExtCsd,
+                         BusMode->BusTiming
+                         );
+  BusMode->ClockFreq = EmmcGetTargetClockFreq (
+                         Private,
+                         SlotIndex,
+                         ExtCsd,
+                         BusMode->BusTiming
+                         );
+  BusMode->DriverStrength = EmmcGetTargetDriverStrength (
+                              Private,
+                              SlotIndex,
+                              ExtCsd,
+                              BusMode->BusTiming
+                              );
 }
 
 /**
@@ -1297,7 +1460,15 @@ EmmcSetBusMode (
     Status = EmmcSwitchToHighSpeed (PciIo, PassThru, Slot, Rca, &BusMode);
   }
 
-  DEBUG ((DEBUG_INFO, "EmmcSetBusMode: Switch to %a %r\n", (BusMode.BusTiming == SdMmcMmcHs400) ? "HS400" : ((BusMode.BusTiming == SdMmcMmcHs200) ? "HS200" : "HighSpeed"), Status));
+  DEBUG ((
+    DEBUG_INFO,
+    "EmmcSetBusMode: Switch to %a %r\n",
+    (BusMode.BusTiming ==
+     SdMmcMmcHs400) ? "HS400" : ((BusMode.BusTiming == SdMmcMmcHs200) ?
+                                 "HS200" :
+                                 "HighSpeed"),
+    Status
+    ));
 
   return Status;
 }
@@ -1332,7 +1503,11 @@ EmmcIdentification (
 
   Status = EmmcReset (PassThru, Slot);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_VERBOSE, "EmmcIdentification: Executing Cmd0 fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "EmmcIdentification: Executing Cmd0 fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -1341,14 +1516,21 @@ EmmcIdentification (
   do {
     Status = EmmcGetOcr (PassThru, Slot, &Ocr);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_VERBOSE, "EmmcIdentification: Executing Cmd1 fails with %r\n", Status));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "EmmcIdentification: Executing Cmd1 fails with %r\n",
+        Status
+        ));
       return Status;
     }
 
     Ocr |= BIT30;
 
     if (Retry++ == 100) {
-      DEBUG ((DEBUG_VERBOSE, "EmmcIdentification: Executing Cmd1 fails too many times\n"));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "EmmcIdentification: Executing Cmd1 fails too many times\n"
+        ));
       return EFI_DEVICE_ERROR;
     }
 
@@ -1357,7 +1539,11 @@ EmmcIdentification (
 
   Status = EmmcGetAllCid (PassThru, Slot);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_VERBOSE, "EmmcIdentification: Executing Cmd2 fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "EmmcIdentification: Executing Cmd2 fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -1370,14 +1556,23 @@ EmmcIdentification (
   Rca    = Slot + 1;
   Status = EmmcSetRca (PassThru, Slot, Rca);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EmmcIdentification: Executing Cmd3 fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EmmcIdentification: Executing Cmd3 fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
   //
   // Enter Data Tranfer Mode.
   //
-  DEBUG ((DEBUG_INFO, "EmmcIdentification: Found a EMMC device at slot [%d], RCA [%d]\n", Slot, Rca));
+  DEBUG ((
+    DEBUG_INFO,
+    "EmmcIdentification: Found a EMMC device at slot [%d], RCA [%d]\n",
+    Slot,
+    Rca
+    ));
   Private->Slot[Slot].CardType = EmmcCardType;
 
   Status = EmmcSetBusMode (PciIo, PassThru, Slot, Rca);

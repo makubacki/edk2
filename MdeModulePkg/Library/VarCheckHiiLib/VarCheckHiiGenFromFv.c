@@ -29,7 +29,9 @@ typedef struct {
 
 LIST_ENTRY  mVfrDriverList = INITIALIZE_LIST_HEAD_VARIABLE (mVfrDriverList);
 
-#define VAR_CHECK_VFR_DRIVER_INFO_FROM_LINK(a)  CR (a, VAR_CHECK_VFR_DRIVER_INFO, Link, VAR_CHECK_VFR_DRIVER_INFO_SIGNATURE)
+#define VAR_CHECK_VFR_DRIVER_INFO_FROM_LINK( \
+                                           a)  \
+  CR (a, VAR_CHECK_VFR_DRIVER_INFO, Link, VAR_CHECK_VFR_DRIVER_INFO_SIGNATURE)
 
 #define MAX_MATCH_GUID_NUM  100
 
@@ -79,7 +81,10 @@ GetAddressByGuid (
       //
       if ((NumOfMatchingGuid != NULL) && (Offset != NULL)) {
         if (*NumOfMatchingGuid == 0) {
-          *Offset = InternalVarCheckAllocateZeroPool (sizeof (UINTN) * MAX_MATCH_GUID_NUM);
+          *Offset = InternalVarCheckAllocateZeroPool (
+                      sizeof (UINTN) *
+                      MAX_MATCH_GUID_NUM
+                      );
           ASSERT (*Offset != NULL);
         }
 
@@ -202,7 +207,13 @@ ParseFfs (
                   &AuthenticationStatus
                   );
   if (!EFI_ERROR (Status)) {
-    Status = SearchVfrBinInFfs (Buffer, 0, Size, &VfrBinBaseAddress, &NumberofMatchingVfrBin);
+    Status = SearchVfrBinInFfs (
+               Buffer,
+               0,
+               Size,
+               &VfrBinBaseAddress,
+               &NumberofMatchingVfrBin
+               );
     if (!EFI_ERROR (Status)) {
       SectionBuffer = NULL;
       Status        = Fv2->ReadSection (
@@ -216,15 +227,28 @@ ParseFfs (
                              );
       if (!EFI_ERROR (Status)) {
         DEBUG ((DEBUG_INFO, "FfsNameGuid - %g\n", DriverGuid));
-        DEBUG ((DEBUG_INFO, "NumberofMatchingVfrBin - 0x%02x\n", NumberofMatchingVfrBin));
+        DEBUG ((
+          DEBUG_INFO,
+          "NumberofMatchingVfrBin - 0x%02x\n",
+          NumberofMatchingVfrBin
+          ));
 
-        for (VfrBinIndex = 0; VfrBinIndex < NumberofMatchingVfrBin; VfrBinIndex++) {
+        for (VfrBinIndex = 0; VfrBinIndex < NumberofMatchingVfrBin;
+             VfrBinIndex++)
+        {
  #ifdef DUMP_HII_DATA
           DEBUG_CODE (
-            DumpHiiPackage ((UINT8 *)(UINTN)SectionBuffer + VfrBinBaseAddress[VfrBinIndex] + sizeof (UINT32));
+            DumpHiiPackage (
+              (UINT8 *)(UINTN)SectionBuffer +
+              VfrBinBaseAddress[VfrBinIndex] + sizeof (UINT32)
+              );
             );
  #endif
-          VarCheckParseHiiPackage ((UINT8 *)(UINTN)SectionBuffer + VfrBinBaseAddress[VfrBinIndex] + sizeof (UINT32), TRUE);
+          VarCheckParseHiiPackage (
+            (UINT8 *)(UINTN)SectionBuffer +
+            VfrBinBaseAddress[VfrBinIndex] + sizeof (UINT32),
+            TRUE
+            );
         }
 
         FreePool (SectionBuffer);

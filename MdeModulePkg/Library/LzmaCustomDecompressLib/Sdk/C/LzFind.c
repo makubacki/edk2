@@ -155,7 +155,8 @@ MatchFinder_NeedMove (
   }
 
   /* if (p->streamEndWasReached) return 0; */
-  return ((size_t)(p->bufferBase + p->blockSize - p->buffer) <= p->keepSizeAfter);
+  return ((size_t)(p->bufferBase + p->blockSize - p->buffer) <=
+          p->keepSizeAfter);
 }
 
 void
@@ -280,7 +281,8 @@ MatchFinder_Create (
     sizeReserv = historySize >> 2;
   }
 
-  sizeReserv += (keepAddBufferBefore + matchMaxLen + keepAddBufferAfter) / 2 + (1 << 19);
+  sizeReserv += (keepAddBufferBefore + matchMaxLen + keepAddBufferAfter) / 2 +
+                (1 << 19);
 
   p->keepSizeBefore = historySize + keepAddBufferBefore + 1;
   p->keepSizeAfter  = matchMaxLen + keepAddBufferAfter;
@@ -586,7 +588,8 @@ Hc_GetMatchesSpec (
 
     {
       ptrdiff_t  diff;
-      curMatch = son[_cyclicBufferPos - delta + ((delta > _cyclicBufferPos) ? _cyclicBufferSize : 0)];
+      curMatch = son[_cyclicBufferPos - delta + ((delta > _cyclicBufferPos) ?
+                                                 _cyclicBufferSize : 0)];
       diff     = (ptrdiff_t)0 - delta;
       if (cur[maxLen] == cur[maxLen + diff]) {
         const Byte  *c = cur;
@@ -641,7 +644,9 @@ GetMatchesSpec1 (
     }
 
     {
-      CLzRef      *pair = son + ((size_t)(_cyclicBufferPos - delta + ((delta > _cyclicBufferPos) ? _cyclicBufferSize : 0)) << 1);
+      CLzRef  *pair     = son + ((size_t)(_cyclicBufferPos - delta + ((delta >
+                                                                       _cyclicBufferPos)
+      ? _cyclicBufferSize : 0)) << 1);
       const Byte  *pb   = cur - delta;
       unsigned    len   = (len0 < len1 ? len0 : len1);
       UInt32      pair0 = pair[0];
@@ -705,9 +710,11 @@ SkipMatchesSpec (
     }
 
     {
-      CLzRef      *pair = son + ((size_t)(_cyclicBufferPos - delta + ((delta > _cyclicBufferPos) ? _cyclicBufferSize : 0)) << 1);
-      const Byte  *pb   = cur - delta;
-      unsigned    len   = (len0 < len1 ? len0 : len1);
+      CLzRef  *pair   = son + ((size_t)(_cyclicBufferPos - delta + ((delta >
+                                                                     _cyclicBufferPos)
+      ? _cyclicBufferSize : 0)) << 1);
+      const Byte  *pb = cur - delta;
+      unsigned    len = (len0 < len1 ? len0 : len1);
       if (pb[len] == cur[len]) {
         while (++len != lenLimit) {
           if (pb[len] != cur[len]) {
@@ -762,7 +769,9 @@ MatchFinder_MovePos (
 #define GET_MATCHES_HEADER(minLen)  GET_MATCHES_HEADER2(minLen, return 0)
 #define SKIP_HEADER(minLen)         GET_MATCHES_HEADER2(minLen, continue)
 
-#define MF_PARAMS(p)  p->pos, p->buffer, p->son, p->cyclicBufferPos, p->cyclicBufferSize, p->cutValue
+#define MF_PARAMS( \
+                 p)  \
+  p->pos, p->buffer, p->son, p->cyclicBufferPos, p->cyclicBufferSize, p->cutValue
 
 #define GET_MATCHES_FOOTER(offset, maxLen) \
   offset = (unsigned)(GetMatchesSpec1((UInt32)lenLimit, curMatch, MF_PARAMS(p), \
@@ -1305,9 +1314,11 @@ MatchFinder_CreateVTable (
   IMatchFinder  *vTable
   )
 {
-  vTable->Init                   = (Mf_Init_Func)MatchFinder_Init;
-  vTable->GetNumAvailableBytes   = (Mf_GetNumAvailableBytes_Func)MatchFinder_GetNumAvailableBytes;
-  vTable->GetPointerToCurrentPos = (Mf_GetPointerToCurrentPos_Func)MatchFinder_GetPointerToCurrentPos;
+  vTable->Init                 = (Mf_Init_Func)MatchFinder_Init;
+  vTable->GetNumAvailableBytes =
+    (Mf_GetNumAvailableBytes_Func)MatchFinder_GetNumAvailableBytes;
+  vTable->GetPointerToCurrentPos =
+    (Mf_GetPointerToCurrentPos_Func)MatchFinder_GetPointerToCurrentPos;
   if (!p->btMode) {
     /* if (p->numHashBytes <= 4) */
     {

@@ -33,7 +33,9 @@ ATA_ATAPI_PASS_THRU_INSTANCE  gAtaAtapiPassThruInstanceTemplate = {
     // bits.
     // Note that the driver doesn't support AtaPassThru non blocking I/O.
     //
-    EFI_ATA_PASS_THRU_ATTRIBUTES_PHYSICAL | EFI_ATA_PASS_THRU_ATTRIBUTES_LOGICAL | EFI_ATA_PASS_THRU_ATTRIBUTES_NONBLOCKIO,
+    EFI_ATA_PASS_THRU_ATTRIBUTES_PHYSICAL |
+    EFI_ATA_PASS_THRU_ATTRIBUTES_LOGICAL |
+    EFI_ATA_PASS_THRU_ATTRIBUTES_NONBLOCKIO,
     //
     // IoAlign
     //
@@ -60,7 +62,8 @@ ATA_ATAPI_PASS_THRU_INSTANCE  gAtaAtapiPassThruInstanceTemplate = {
     // bits.
     // Note that the driver doesn't support ExtScsiPassThru non blocking I/O.
     //
-    EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_PHYSICAL | EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_LOGICAL,
+    EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_PHYSICAL |
+    EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_LOGICAL,
     //
     // IoAlign
     //
@@ -687,7 +690,11 @@ AtaAtapiPassThruStart (
   Instance              = NULL;
   OriginalPciAttributes = 0;
 
-  DEBUG ((DEBUG_INFO, "==AtaAtapiPassThru Start== Controller = %x\n", Controller));
+  DEBUG ((
+    DEBUG_INFO,
+    "==AtaAtapiPassThru Start== Controller = %x\n",
+    Controller
+    ));
 
   Status = gBS->OpenProtocol (
                   Controller,
@@ -747,7 +754,11 @@ AtaAtapiPassThruStart (
     goto ErrorExit;
   }
 
-  Status = gBS->LocateProtocol (&gEdkiiAtaAtapiPolicyProtocolGuid, NULL, (VOID **)&mAtaAtapiPolicy);
+  Status = gBS->LocateProtocol (
+                  &gEdkiiAtaAtapiPolicyProtocolGuid,
+                  NULL,
+                  (VOID **)&mAtaAtapiPolicy
+                  );
   if (EFI_ERROR (Status)) {
     //
     // If there is no AtaAtapiPolicy exposed, use the default policy.
@@ -758,7 +769,10 @@ AtaAtapiPassThruStart (
   //
   // Allocate a buffer to store the ATA_ATAPI_PASS_THRU_INSTANCE data structure
   //
-  Instance = AllocateCopyPool (sizeof (ATA_ATAPI_PASS_THRU_INSTANCE), &gAtaAtapiPassThruInstanceTemplate);
+  Instance = AllocateCopyPool (
+               sizeof (ATA_ATAPI_PASS_THRU_INSTANCE),
+               &gAtaAtapiPassThruInstanceTemplate
+               );
   if (Instance == NULL) {
     goto ErrorExit;
   }
@@ -880,7 +894,11 @@ AtaAtapiPassThruStop (
   EFI_PCI_IO_PROTOCOL           *PciIo;
   EFI_AHCI_REGISTERS            *AhciRegisters;
 
-  DEBUG ((DEBUG_INFO, "==AtaAtapiPassThru Stop== Controller = %x\n", Controller));
+  DEBUG ((
+    DEBUG_INFO,
+    "==AtaAtapiPassThru Stop== Controller = %x\n",
+    Controller
+    ));
 
   Status = gBS->OpenProtocol (
                   Controller,
@@ -1090,7 +1108,10 @@ CreateNewDeviceInfo (
   DeviceInfo->Type           = DeviceType;
 
   if (IdentifyData != NULL) {
-    DeviceInfo->IdentifyData = AllocateCopyPool (sizeof (EFI_IDENTIFY_DATA), IdentifyData);
+    DeviceInfo->IdentifyData = AllocateCopyPool (
+                                 sizeof (EFI_IDENTIFY_DATA),
+                                 IdentifyData
+                                 );
     if (DeviceInfo->IdentifyData == NULL) {
       FreePool (DeviceInfo);
       return EFI_OUT_OF_RESOURCES;
@@ -1299,22 +1320,44 @@ AtaPassThruPassThru (
 
   Instance = ATA_PASS_THRU_PRIVATE_DATA_FROM_THIS (This);
 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (Packet->InDataBuffer, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (
+                                      Packet->InDataBuffer,
+                                      This->Mode->IoAlign
+                                      ))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (Packet->OutDataBuffer, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (
+                                      Packet->OutDataBuffer,
+                                      This->Mode->IoAlign
+                                      ))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (Packet->Asb, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (
+                                      Packet->Asb,
+                                      This->Mode->IoAlign
+                                      ))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
-  Node = SearchDeviceInfoList (Instance, Port, PortMultiplierPort, EfiIdeHarddisk);
+  Node = SearchDeviceInfoList (
+           Instance,
+           Port,
+           PortMultiplierPort,
+           EfiIdeHarddisk
+           );
 
   if (Node == NULL) {
-    Node = SearchDeviceInfoList (Instance, Port, PortMultiplierPort, EfiIdeCdrom);
+    Node = SearchDeviceInfoList (
+             Instance,
+             Port,
+             PortMultiplierPort,
+             EfiIdeCdrom
+             );
     if (Node == NULL) {
       return EFI_INVALID_PARAMETER;
     }
@@ -1328,8 +1371,11 @@ AtaPassThruPassThru (
   DeviceInfo     = ATA_ATAPI_DEVICE_INFO_FROM_THIS (Node);
   IdentifyData   = DeviceInfo->IdentifyData;
   MaxSectorCount = 0x100;
-  if ((IdentifyData->AtaData.command_set_supported_83 & (BIT10 | BIT15 | BIT14)) == 0x4400) {
-    Capacity = *((UINT64 *)IdentifyData->AtaData.maximum_lba_for_48bit_addressing);
+  if ((IdentifyData->AtaData.command_set_supported_83 & (BIT10 | BIT15 |
+                                                         BIT14)) == 0x4400)
+  {
+    Capacity =
+      *((UINT64 *)IdentifyData->AtaData.maximum_lba_for_48bit_addressing);
     if (Capacity > 0xFFFFFFF) {
       //
       // Capacity exceeds 120GB. 48-bit addressing is really needed
@@ -1340,12 +1386,16 @@ AtaPassThruPassThru (
   }
 
   BlockSize = 0x200;
-  if ((IdentifyData->AtaData.phy_logic_sector_support & (BIT14 | BIT15)) == BIT14) {
+  if ((IdentifyData->AtaData.phy_logic_sector_support & (BIT14 | BIT15)) ==
+      BIT14)
+  {
     //
     // Check logical block size
     //
     if ((IdentifyData->AtaData.phy_logic_sector_support & BIT12) != 0) {
-      BlockSize = (UINT32)(((IdentifyData->AtaData.logic_sector_size_hi << 16) | IdentifyData->AtaData.logic_sector_size_lo) * sizeof (UINT16));
+      BlockSize = (UINT32)(((IdentifyData->AtaData.logic_sector_size_hi << 16) |
+                            IdentifyData->AtaData.logic_sector_size_lo) *
+                           sizeof (UINT16));
     }
   }
 
@@ -1372,8 +1422,10 @@ AtaPassThruPassThru (
   // is too big to be transferred in a single command, then no data is transferred and EFI_BAD_BUFFER_SIZE
   // is returned.
   //
-  if (((Packet->InTransferLength != 0) && (Packet->InTransferLength > MaxSectorCount * BlockSize)) ||
-      ((Packet->OutTransferLength != 0) && (Packet->OutTransferLength > MaxSectorCount * BlockSize)))
+  if (((Packet->InTransferLength != 0) && (Packet->InTransferLength >
+                                           MaxSectorCount * BlockSize)) ||
+      ((Packet->OutTransferLength != 0) && (Packet->OutTransferLength >
+                                            MaxSectorCount * BlockSize)))
   {
     return EFI_BAD_BUFFER_SIZE;
   }
@@ -1693,13 +1745,21 @@ AtaPassThruBuildDevicePath (
     return EFI_INVALID_PARAMETER;
   }
 
-  Node = SearchDeviceInfoList (Instance, Port, PortMultiplierPort, EfiIdeHarddisk);
+  Node = SearchDeviceInfoList (
+           Instance,
+           Port,
+           PortMultiplierPort,
+           EfiIdeHarddisk
+           );
   if (Node == NULL) {
     return EFI_NOT_FOUND;
   }
 
   if (Instance->Mode == EfiAtaIdeMode) {
-    DevicePathNode = AllocateCopyPool (sizeof (ATAPI_DEVICE_PATH), &mAtapiDevicePathTemplate);
+    DevicePathNode = AllocateCopyPool (
+                       sizeof (ATAPI_DEVICE_PATH),
+                       &mAtapiDevicePathTemplate
+                       );
     if (DevicePathNode == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1708,7 +1768,10 @@ AtaPassThruBuildDevicePath (
     DevicePathNode->Atapi.SlaveMaster      = (UINT8)PortMultiplierPort;
     DevicePathNode->Atapi.Lun              = 0;
   } else {
-    DevicePathNode = AllocateCopyPool (sizeof (SATA_DEVICE_PATH), &mSataDevicePathTemplate);
+    DevicePathNode = AllocateCopyPool (
+                       sizeof (SATA_DEVICE_PATH),
+                       &mSataDevicePathTemplate
+                       );
     if (DevicePathNode == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1803,7 +1866,12 @@ AtaPassThruGetDevice (
     *PortMultiplierPort = DevicePathNode->Sata.PortMultiplierPortNumber;
   }
 
-  Node = SearchDeviceInfoList (Instance, *Port, *PortMultiplierPort, EfiIdeHarddisk);
+  Node = SearchDeviceInfoList (
+           Instance,
+           *Port,
+           *PortMultiplierPort,
+           EfiIdeHarddisk
+           );
 
   if (Node == NULL) {
     return EFI_NOT_FOUND;
@@ -1893,7 +1961,12 @@ AtaPassThruResetDevice (
 
   Instance = ATA_PASS_THRU_PRIVATE_DATA_FROM_THIS (This);
 
-  Node = SearchDeviceInfoList (Instance, Port, PortMultiplierPort, EfiIdeHarddisk);
+  Node = SearchDeviceInfoList (
+           Instance,
+           Port,
+           PortMultiplierPort,
+           EfiIdeHarddisk
+           );
 
   if (Node == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -2039,15 +2112,27 @@ ExtScsiPassThruPassThru (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (Packet->InDataBuffer, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (
+                                      Packet->InDataBuffer,
+                                      This->Mode->IoAlign
+                                      ))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (Packet->OutDataBuffer, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (
+                                      Packet->OutDataBuffer,
+                                      This->Mode->IoAlign
+                                      ))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (Packet->SenseData, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (
+                                      Packet->SenseData,
+                                      This->Mode->IoAlign
+                                      ))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -2085,7 +2170,11 @@ ExtScsiPassThruPassThru (
   // But to response EFI_DISK_INFO.Identify() request from ScsiDisk, we should handle this command.
   //
   if (*((UINT8 *)Packet->Cdb) == ATA_CMD_IDENTIFY_DEVICE) {
-    CopyMem (Packet->InDataBuffer, DeviceInfo->IdentifyData, sizeof (EFI_IDENTIFY_DATA));
+    CopyMem (
+      Packet->InDataBuffer,
+      DeviceInfo->IdentifyData,
+      sizeof (EFI_IDENTIFY_DATA)
+      );
     //
     // For IDENTIFY DEVICE cmd, we don't need to get sense data.
     //
@@ -2105,7 +2194,13 @@ ExtScsiPassThruPassThru (
         return Status;
       }
 
-      Status = AtaPacketCommandExecute (Instance->PciIo, &Instance->IdeRegisters[Port], Port, PortMultiplier, Packet);
+      Status = AtaPacketCommandExecute (
+                 Instance->PciIo,
+                 &Instance->IdeRegisters[Port],
+                 Port,
+                 PortMultiplier,
+                 Packet
+                 );
       break;
     case EfiAtaAhciMode:
       if (PortMultiplier == 0xFF) {
@@ -2116,7 +2211,13 @@ ExtScsiPassThruPassThru (
         PortMultiplier = 0;
       }
 
-      Status = AhciPacketCommandExecute (Instance->PciIo, &Instance->AhciRegisters, Port, PortMultiplier, Packet);
+      Status = AhciPacketCommandExecute (
+                 Instance->PciIo,
+                 &Instance->AhciRegisters,
+                 Port,
+                 PortMultiplier,
+                 Packet
+                 );
       break;
     default:
       Status = EFI_DEVICE_ERROR;
@@ -2126,8 +2227,15 @@ ExtScsiPassThruPassThru (
   //
   // If the cmd doesn't get executed correctly, then check sense data.
   //
-  if (EFI_ERROR (Status) && (Packet->SenseDataLength != 0) && (*((UINT8 *)Packet->Cdb) != ATA_CMD_REQUEST_SENSE)) {
-    PtrSenseData = AllocateAlignedPages (EFI_SIZE_TO_PAGES (sizeof (EFI_SCSI_SENSE_DATA)), This->Mode->IoAlign);
+  if (EFI_ERROR (Status) && (Packet->SenseDataLength != 0) &&
+      (*((UINT8 *)Packet->Cdb) != ATA_CMD_REQUEST_SENSE))
+  {
+    PtrSenseData = AllocateAlignedPages (
+                     EFI_SIZE_TO_PAGES (
+                       sizeof (EFI_SCSI_SENSE_DATA)
+                       ),
+                     This->Mode->IoAlign
+                     );
     if (PtrSenseData == NULL) {
       return EFI_DEVICE_ERROR;
     }
@@ -2145,7 +2253,11 @@ ExtScsiPassThruPassThru (
         break;
       }
 
-      CopyMem ((UINT8 *)Packet->SenseData + SenseDataLen, PtrSenseData, sizeof (EFI_SCSI_SENSE_DATA));
+      CopyMem (
+        (UINT8 *)Packet->SenseData + SenseDataLen,
+        PtrSenseData,
+        sizeof (EFI_SCSI_SENSE_DATA)
+        );
       SenseDataLen += sizeof (EFI_SCSI_SENSE_DATA);
 
       //
@@ -2153,13 +2265,19 @@ ExtScsiPassThruPassThru (
       // skip the loop.
       //
       if ((PtrSenseData->Sense_Key == EFI_SCSI_SK_NO_SENSE) ||
-          (SenseDataLen + sizeof (EFI_SCSI_SENSE_DATA) > Packet->SenseDataLength))
+          (SenseDataLen + sizeof (EFI_SCSI_SENSE_DATA) >
+           Packet->SenseDataLength))
       {
         SenseReq = FALSE;
       }
     }
 
-    FreeAlignedPages (PtrSenseData, EFI_SIZE_TO_PAGES (sizeof (EFI_SCSI_SENSE_DATA)));
+    FreeAlignedPages (
+      PtrSenseData,
+      EFI_SIZE_TO_PAGES (
+        sizeof (EFI_SCSI_SENSE_DATA)
+        )
+      );
   }
 
   //
@@ -2360,12 +2478,17 @@ ExtScsiPassThruBuildDevicePath (
     return EFI_NOT_FOUND;
   }
 
-  if (SearchDeviceInfoList (Instance, Port, PortMultiplier, EfiIdeCdrom) == NULL) {
+  if (SearchDeviceInfoList (Instance, Port, PortMultiplier, EfiIdeCdrom) ==
+      NULL)
+  {
     return EFI_NOT_FOUND;
   }
 
   if (Instance->Mode == EfiAtaIdeMode) {
-    DevicePathNode = AllocateCopyPool (sizeof (ATAPI_DEVICE_PATH), &mAtapiDevicePathTemplate);
+    DevicePathNode = AllocateCopyPool (
+                       sizeof (ATAPI_DEVICE_PATH),
+                       &mAtapiDevicePathTemplate
+                       );
     if (DevicePathNode == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -2374,7 +2497,10 @@ ExtScsiPassThruBuildDevicePath (
     DevicePathNode->Atapi.SlaveMaster      = PortMultiplier;
     DevicePathNode->Atapi.Lun              = (UINT16)Lun;
   } else {
-    DevicePathNode = AllocateCopyPool (sizeof (SATA_DEVICE_PATH), &mSataDevicePathTemplate);
+    DevicePathNode = AllocateCopyPool (
+                       sizeof (SATA_DEVICE_PATH),
+                       &mSataDevicePathTemplate
+                       );
     if (DevicePathNode == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -2386,8 +2512,9 @@ ExtScsiPassThruBuildDevicePath (
     // on a SATA port, the PortMultiplier should be translated from 0xFF
     // to 0xFFFF according to the UEFI spec.
     //
-    DevicePathNode->Sata.PortMultiplierPortNumber = PortMultiplier == 0xFF ? 0xFFFF : PortMultiplier;
-    DevicePathNode->Sata.Lun                      = (UINT16)Lun;
+    DevicePathNode->Sata.PortMultiplierPortNumber = PortMultiplier == 0xFF ?
+                                                    0xFFFF : PortMultiplier;
+    DevicePathNode->Sata.Lun = (UINT16)Lun;
   }
 
   *DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)DevicePathNode;
@@ -2466,7 +2593,12 @@ ExtScsiPassThruGetTargetLun (
     *Lun         = (UINT8)DevicePathNode->Sata.Lun;
   }
 
-  Node = SearchDeviceInfoList (Instance, (*Target)[0], (*Target)[1], EfiIdeCdrom);
+  Node = SearchDeviceInfoList (
+           Instance,
+           (*Target)[0],
+           (*Target)[1],
+           EfiIdeCdrom
+           );
 
   if (Node == NULL) {
     return EFI_NOT_FOUND;

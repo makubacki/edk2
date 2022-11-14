@@ -438,7 +438,9 @@ HiiCreateRamDisk (
   // If RAM disk is created within HII, memory should be freed when the
   // RAM disk is unregisterd.
   //
-  PrivateData               = RAM_DISK_PRIVATE_FROM_THIS (RegisteredRamDisks.BackLink);
+  PrivateData = RAM_DISK_PRIVATE_FROM_THIS (
+                  RegisteredRamDisks.BackLink
+                  );
   PrivateData->CreateMethod = RamDiskCreateHii;
 
   return EFI_SUCCESS;

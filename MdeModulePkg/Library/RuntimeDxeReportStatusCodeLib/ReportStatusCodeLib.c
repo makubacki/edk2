@@ -51,7 +51,11 @@ InternalGetReportStatusCode (
   // Check gBS just in case ReportStatusCode is called before gBS is initialized.
   //
   if ((gBS != NULL) && (gBS->LocateProtocol != NULL)) {
-    Status = gBS->LocateProtocol (&gEfiStatusCodeRuntimeProtocolGuid, NULL, (VOID **)&mReportStatusCodeLibStatusCodeProtocol);
+    Status = gBS->LocateProtocol (
+                    &gEfiStatusCodeRuntimeProtocolGuid,
+                    NULL,
+                    (VOID **)&mReportStatusCodeLibStatusCodeProtocol
+                    );
     if (EFI_ERROR (Status)) {
       mReportStatusCodeLibStatusCodeProtocol = NULL;
     }
@@ -219,9 +223,12 @@ InternalReportStatusCode (
   IN EFI_STATUS_CODE_DATA   *Data     OPTIONAL
   )
 {
-  if ((ReportProgressCodeEnabled () && (((Type) & EFI_STATUS_CODE_TYPE_MASK) == EFI_PROGRESS_CODE)) ||
-      (ReportErrorCodeEnabled () && (((Type) & EFI_STATUS_CODE_TYPE_MASK) == EFI_ERROR_CODE)) ||
-      (ReportDebugCodeEnabled () && (((Type) & EFI_STATUS_CODE_TYPE_MASK) == EFI_DEBUG_CODE)))
+  if ((ReportProgressCodeEnabled () && (((Type) & EFI_STATUS_CODE_TYPE_MASK) ==
+                                        EFI_PROGRESS_CODE)) ||
+      (ReportErrorCodeEnabled () && (((Type) & EFI_STATUS_CODE_TYPE_MASK) ==
+                                     EFI_ERROR_CODE)) ||
+      (ReportDebugCodeEnabled () && (((Type) & EFI_STATUS_CODE_TYPE_MASK) ==
+                                     EFI_DEBUG_CODE)))
   {
     //
     // If mReportStatusCodeLibStatusCodeProtocol is NULL, then check if Report Status Code Protocol is available in system.
@@ -234,7 +241,13 @@ InternalReportStatusCode (
     //
     // A Report Status Code Protocol is present in system, so pass in all the parameters to the service.
     //
-    return mReportStatusCodeLibStatusCodeProtocol->ReportStatusCode (Type, Value, Instance, (EFI_GUID *)CallerId, Data);
+    return mReportStatusCodeLibStatusCodeProtocol->ReportStatusCode (
+                                                     Type,
+                                                     Value,
+                                                     Instance,
+                                                     (EFI_GUID *)CallerId,
+                                                     Data
+                                                     );
   }
 
   return EFI_UNSUPPORTED;
@@ -281,7 +294,8 @@ CodeTypeToPostCode (
       ((CodeType & EFI_STATUS_CODE_TYPE_MASK) == EFI_ERROR_CODE))
   {
     *PostCode = (UINT8)((((Value & EFI_STATUS_CODE_CLASS_MASK) >> 24) << 5) |
-                        (((Value & EFI_STATUS_CODE_SUBCLASS_MASK) >> 16) & 0x1f));
+                        (((Value & EFI_STATUS_CODE_SUBCLASS_MASK) >> 16) &
+                         0x1f));
     return TRUE;
   }
 
@@ -341,7 +355,8 @@ ReportStatusCodeExtractAssertInfo (
 
   if (((CodeType & EFI_STATUS_CODE_TYPE_MASK)      == EFI_ERROR_CODE) &&
       ((CodeType & EFI_STATUS_CODE_SEVERITY_MASK)  == EFI_ERROR_UNRECOVERED) &&
-      ((Value    & EFI_STATUS_CODE_OPERATION_MASK) == EFI_SW_EC_ILLEGAL_SOFTWARE_STATE))
+      ((Value    & EFI_STATUS_CODE_OPERATION_MASK) ==
+       EFI_SW_EC_ILLEGAL_SOFTWARE_STATE))
   {
     AssertData   = (EFI_DEBUG_ASSERT_DATA *)(Data + 1);
     *Filename    = (CHAR8 *)(AssertData + 1);
@@ -614,12 +629,15 @@ ReportStatusCodeEx (
 {
   EFI_STATUS            Status;
   EFI_STATUS_CODE_DATA  *StatusCodeData;
-  UINT64                StatusCodeBuffer[(MAX_EXTENDED_DATA_SIZE / sizeof (UINT64)) + 1];
+  UINT64                StatusCodeBuffer[(MAX_EXTENDED_DATA_SIZE /
+                                          sizeof (UINT64)) + 1];
 
   ASSERT (!((ExtendedData == NULL) && (ExtendedDataSize != 0)));
   ASSERT (!((ExtendedData != NULL) && (ExtendedDataSize == 0)));
 
-  if (ExtendedDataSize <= (MAX_EXTENDED_DATA_SIZE - sizeof (EFI_STATUS_CODE_DATA))) {
+  if (ExtendedDataSize <= (MAX_EXTENDED_DATA_SIZE -
+                           sizeof (EFI_STATUS_CODE_DATA)))
+  {
     //
     // Use Buffer instead of allocating if possible.
     //
@@ -629,7 +647,9 @@ ReportStatusCodeEx (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    if ((gBS == NULL) || (gBS->AllocatePool == NULL) || (gBS->FreePool == NULL)) {
+    if ((gBS == NULL) || (gBS->AllocatePool == NULL) || (gBS->FreePool ==
+                                                         NULL))
+    {
       return EFI_UNSUPPORTED;
     }
 
@@ -637,7 +657,12 @@ ReportStatusCodeEx (
     // Allocate space for the Status Code Header and its buffer
     //
     StatusCodeData = NULL;
-    gBS->AllocatePool (EfiBootServicesData, sizeof (EFI_STATUS_CODE_DATA) + ExtendedDataSize, (VOID **)&StatusCodeData);
+    gBS->AllocatePool (
+           EfiBootServicesData,
+           sizeof (EFI_STATUS_CODE_DATA) +
+           ExtendedDataSize,
+           (VOID **)&StatusCodeData
+           );
     if (StatusCodeData == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -668,7 +693,13 @@ ReportStatusCodeEx (
     CallerId = &gEfiCallerIdGuid;
   }
 
-  Status = InternalReportStatusCode (Type, Value, Instance, CallerId, StatusCodeData);
+  Status = InternalReportStatusCode (
+             Type,
+             Value,
+             Instance,
+             CallerId,
+             StatusCodeData
+             );
 
   //
   // Free the allocated buffer
@@ -698,7 +729,8 @@ ReportProgressCodeEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdReportStatusCodePropertyMask) & REPORT_STATUS_CODE_PROPERTY_PROGRESS_CODE_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdReportStatusCodePropertyMask) &
+                    REPORT_STATUS_CODE_PROPERTY_PROGRESS_CODE_ENABLED) != 0);
 }
 
 /**
@@ -719,7 +751,8 @@ ReportErrorCodeEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdReportStatusCodePropertyMask) & REPORT_STATUS_CODE_PROPERTY_ERROR_CODE_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdReportStatusCodePropertyMask) &
+                    REPORT_STATUS_CODE_PROPERTY_ERROR_CODE_ENABLED) != 0);
 }
 
 /**
@@ -740,5 +773,6 @@ ReportDebugCodeEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdReportStatusCodePropertyMask) & REPORT_STATUS_CODE_PROPERTY_DEBUG_CODE_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdReportStatusCodePropertyMask) &
+                    REPORT_STATUS_CODE_PROPERTY_DEBUG_CODE_ENABLED) != 0);
 }

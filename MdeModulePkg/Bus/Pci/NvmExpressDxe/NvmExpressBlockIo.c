@@ -190,17 +190,27 @@ NvmeRead (
   OrginalBlocks = Blocks;
 
   if (Private->ControllerData->Mdts != 0) {
-    MaxTransferBlocks = (1 << (Private->ControllerData->Mdts)) * (1 << (Private->Cap.Mpsmin + 12)) / BlockSize;
+    MaxTransferBlocks = (1 << (Private->ControllerData->Mdts)) * (1 <<
+                                                                  (Private->Cap.
+                                                                     Mpsmin +
+                                                                   12)) /
+                        BlockSize;
   } else {
     MaxTransferBlocks = 1024;
   }
 
   while (Blocks > 0) {
     if (Blocks > MaxTransferBlocks) {
-      Status = ReadSectors (Device, (UINT64)(UINTN)Buffer, Lba, MaxTransferBlocks);
+      Status = ReadSectors (
+                 Device,
+                 (UINT64)(UINTN)Buffer,
+                 Lba,
+                 MaxTransferBlocks
+                 );
 
       Blocks -= MaxTransferBlocks;
-      Buffer  = (VOID *)(UINTN)((UINT64)(UINTN)Buffer + MaxTransferBlocks * BlockSize);
+      Buffer  = (VOID *)(UINTN)((UINT64)(UINTN)Buffer + MaxTransferBlocks *
+                                BlockSize);
       Lba    += MaxTransferBlocks;
     } else {
       Status = ReadSectors (Device, (UINT64)(UINTN)Buffer, Lba, (UINT32)Blocks);
@@ -276,20 +286,35 @@ NvmeWrite (
   OrginalBlocks = Blocks;
 
   if (Private->ControllerData->Mdts != 0) {
-    MaxTransferBlocks = (1 << (Private->ControllerData->Mdts)) * (1 << (Private->Cap.Mpsmin + 12)) / BlockSize;
+    MaxTransferBlocks = (1 << (Private->ControllerData->Mdts)) * (1 <<
+                                                                  (Private->Cap.
+                                                                     Mpsmin +
+                                                                   12)) /
+                        BlockSize;
   } else {
     MaxTransferBlocks = 1024;
   }
 
   while (Blocks > 0) {
     if (Blocks > MaxTransferBlocks) {
-      Status = WriteSectors (Device, (UINT64)(UINTN)Buffer, Lba, MaxTransferBlocks);
+      Status = WriteSectors (
+                 Device,
+                 (UINT64)(UINTN)Buffer,
+                 Lba,
+                 MaxTransferBlocks
+                 );
 
       Blocks -= MaxTransferBlocks;
-      Buffer  = (VOID *)(UINTN)((UINT64)(UINTN)Buffer + MaxTransferBlocks * BlockSize);
+      Buffer  = (VOID *)(UINTN)((UINT64)(UINTN)Buffer + MaxTransferBlocks *
+                                BlockSize);
       Lba    += MaxTransferBlocks;
     } else {
-      Status = WriteSectors (Device, (UINT64)(UINTN)Buffer, Lba, (UINT32)Blocks);
+      Status = WriteSectors (
+                 Device,
+                 (UINT64)(UINTN)Buffer,
+                 Lba,
+                 (UINT32)Blocks
+                 );
       Blocks = 0;
     }
 
@@ -474,7 +499,9 @@ AsyncReadSectors (
   Subtask->NamespaceId     = Device->NamespaceId;
   Subtask->BlockIo2Request = Request;
 
-  CommandPacket = AllocateZeroPool (sizeof (EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET));
+  CommandPacket = AllocateZeroPool (
+                    sizeof (EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET)
+                    );
   if (CommandPacket == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
@@ -613,7 +640,9 @@ AsyncWriteSectors (
   Subtask->NamespaceId     = Device->NamespaceId;
   Subtask->BlockIo2Request = Request;
 
-  CommandPacket = AllocateZeroPool (sizeof (EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET));
+  CommandPacket = AllocateZeroPool (
+                    sizeof (EFI_NVM_EXPRESS_PASS_THRU_COMMAND_PACKET)
+                    );
   if (CommandPacket == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
@@ -752,7 +781,11 @@ NvmeAsyncRead (
   InitializeListHead (&BlkIo2Req->SubtasksQueue);
 
   if (Private->ControllerData->Mdts != 0) {
-    MaxTransferBlocks = (1 << (Private->ControllerData->Mdts)) * (1 << (Private->Cap.Mpsmin + 12)) / BlockSize;
+    MaxTransferBlocks = (1 << (Private->ControllerData->Mdts)) * (1 <<
+                                                                  (Private->Cap.
+                                                                     Mpsmin +
+                                                                   12)) /
+                        BlockSize;
   } else {
     MaxTransferBlocks = 1024;
   }
@@ -769,7 +802,8 @@ NvmeAsyncRead (
                  );
 
       Blocks -= MaxTransferBlocks;
-      Buffer  = (VOID *)(UINTN)((UINT64)(UINTN)Buffer + MaxTransferBlocks * BlockSize);
+      Buffer  = (VOID *)(UINTN)((UINT64)(UINTN)Buffer + MaxTransferBlocks *
+                                BlockSize);
       Lba    += MaxTransferBlocks;
     } else {
       Status = AsyncReadSectors (
@@ -880,7 +914,11 @@ NvmeAsyncWrite (
   InitializeListHead (&BlkIo2Req->SubtasksQueue);
 
   if (Private->ControllerData->Mdts != 0) {
-    MaxTransferBlocks = (1 << (Private->ControllerData->Mdts)) * (1 << (Private->Cap.Mpsmin + 12)) / BlockSize;
+    MaxTransferBlocks = (1 << (Private->ControllerData->Mdts)) * (1 <<
+                                                                  (Private->Cap.
+                                                                     Mpsmin +
+                                                                   12)) /
+                        BlockSize;
   } else {
     MaxTransferBlocks = 1024;
   }
@@ -897,7 +935,8 @@ NvmeAsyncWrite (
                  );
 
       Blocks -= MaxTransferBlocks;
-      Buffer  = (VOID *)(UINTN)((UINT64)(UINTN)Buffer + MaxTransferBlocks * BlockSize);
+      Buffer  = (VOID *)(UINTN)((UINT64)(UINTN)Buffer + MaxTransferBlocks *
+                                BlockSize);
       Lba    += MaxTransferBlocks;
     } else {
       Status = AsyncWriteSectors (
@@ -1374,7 +1413,13 @@ NvmeBlockIoReadBlocksEx (
 
   if ((Token != NULL) && (Token->Event != NULL)) {
     Token->TransactionStatus = EFI_SUCCESS;
-    Status                   = NvmeAsyncRead (Device, Buffer, Lba, NumberOfBlocks, Token);
+    Status                   = NvmeAsyncRead (
+                                 Device,
+                                 Buffer,
+                                 Lba,
+                                 NumberOfBlocks,
+                                 Token
+                                 );
   } else {
     Status = NvmeRead (Device, Buffer, Lba, NumberOfBlocks);
   }
@@ -1487,7 +1532,13 @@ NvmeBlockIoWriteBlocksEx (
 
   if ((Token != NULL) && (Token->Event != NULL)) {
     Token->TransactionStatus = EFI_SUCCESS;
-    Status                   = NvmeAsyncWrite (Device, Buffer, Lba, NumberOfBlocks, Token);
+    Status                   = NvmeAsyncWrite (
+                                 Device,
+                                 Buffer,
+                                 Lba,
+                                 NumberOfBlocks,
+                                 Token
+                                 );
   } else {
     Status = NvmeWrite (Device, Buffer, Lba, NumberOfBlocks);
   }
@@ -1621,19 +1672,22 @@ TrustTransferNvmeDevice (
   //
   // Change Endianness of SecurityProtocolSpecificData
   //
-  SpecificData = (((SecurityProtocolSpecificData << 8) & 0xFF00) | (SecurityProtocolSpecificData >> 8));
+  SpecificData = (((SecurityProtocolSpecificData << 8) & 0xFF00) |
+                  (SecurityProtocolSpecificData >> 8));
 
   if (IsTrustSend) {
     Command.Cdw0.Opcode          = NVME_ADMIN_SECURITY_SEND_CMD;
     CommandPacket.TransferBuffer = Buffer;
     CommandPacket.TransferLength = (UINT32)TransferLength;
-    CommandPacket.NvmeCmd->Cdw10 = (UINT32)((SecurityProtocolId << 24) | (SpecificData << 8));
+    CommandPacket.NvmeCmd->Cdw10 = (UINT32)((SecurityProtocolId << 24) |
+                                            (SpecificData << 8));
     CommandPacket.NvmeCmd->Cdw11 = (UINT32)TransferLength;
   } else {
     Command.Cdw0.Opcode          = NVME_ADMIN_SECURITY_RECEIVE_CMD;
     CommandPacket.TransferBuffer = Buffer;
     CommandPacket.TransferLength = (UINT32)TransferLength;
-    CommandPacket.NvmeCmd->Cdw10 = (UINT32)((SecurityProtocolId << 24) | (SpecificData << 8));
+    CommandPacket.NvmeCmd->Cdw10 = (UINT32)((SecurityProtocolId << 24) |
+                                            (SpecificData << 8));
     CommandPacket.NvmeCmd->Cdw11 = (UINT32)TransferLength;
   }
 
@@ -1750,7 +1804,9 @@ NvmeStorageSecurityReceiveData (
 
   Status = EFI_SUCCESS;
 
-  if ((PayloadBuffer == NULL) || (PayloadTransferSize == NULL) || (PayloadBufferSize == 0)) {
+  if ((PayloadBuffer == NULL) || (PayloadTransferSize == NULL) ||
+      (PayloadBufferSize == 0))
+  {
     return EFI_INVALID_PARAMETER;
   }
 

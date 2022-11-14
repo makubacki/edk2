@@ -241,7 +241,11 @@ RuntimeServiceResetSystem (
     //
     // Indicate reset system runtime service is called.
     //
-    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE_EFI_RUNTIME_SERVICE | EFI_SW_RS_PC_RESET_SYSTEM));
+    REPORT_STATUS_CODE (
+      EFI_PROGRESS_CODE,
+      (EFI_SOFTWARE_EFI_RUNTIME_SERVICE |
+       EFI_SW_RS_PC_RESET_SYSTEM)
+      );
   }
 
   mResetNotifyDepth++;
@@ -260,7 +264,10 @@ RuntimeServiceResetSystem (
       //
       for ( Link = GetFirstNode (&mPlatformSpecificResetFilter.ResetNotifies)
             ; !IsNull (&mPlatformSpecificResetFilter.ResetNotifies, Link)
-            ; Link = GetNextNode (&mPlatformSpecificResetFilter.ResetNotifies, Link)
+            ; Link = GetNextNode (
+                       &mPlatformSpecificResetFilter.ResetNotifies,
+                       Link
+                       )
             )
       {
         Entry = RESET_NOTIFY_ENTRY_FROM_LINK (Link);
@@ -286,7 +293,10 @@ RuntimeServiceResetSystem (
       //
       for ( Link = GetFirstNode (&mPlatformSpecificResetHandler.ResetNotifies)
             ; !IsNull (&mPlatformSpecificResetHandler.ResetNotifies, Link)
-            ; Link = GetNextNode (&mPlatformSpecificResetHandler.ResetNotifies, Link)
+            ; Link = GetNextNode (
+                       &mPlatformSpecificResetHandler.ResetNotifies,
+                       Link
+                       )
             )
       {
         Entry = RESET_NOTIFY_ENTRY_FROM_LINK (Link);
@@ -295,7 +305,11 @@ RuntimeServiceResetSystem (
     }
   } else {
     ASSERT (ResetType < ARRAY_SIZE (mResetTypeStr));
-    DEBUG ((DEBUG_ERROR, "DXE ResetSystem2: Maximum reset call depth is met. Use the current reset type: %s!\n", mResetTypeStr[ResetType]));
+    DEBUG ((
+      DEBUG_ERROR,
+      "DXE ResetSystem2: Maximum reset call depth is met. Use the current reset type: %s!\n",
+      mResetTypeStr[ResetType]
+      ));
   }
 
   switch (ResetType) {

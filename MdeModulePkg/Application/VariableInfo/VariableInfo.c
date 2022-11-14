@@ -49,9 +49,13 @@ GetVariableStatisticsData (
   SMM_VARIABLE_COMMUNICATE_HEADER  *SmmVariableFunctionHeader;
 
   CopyGuid (&SmmCommunicateHeader->HeaderGuid, &gEfiSmmVariableProtocolGuid);
-  SmmCommunicateHeader->MessageLength = *SmmCommunicateSize - OFFSET_OF (EFI_MM_COMMUNICATE_HEADER, Data);
+  SmmCommunicateHeader->MessageLength = *SmmCommunicateSize - OFFSET_OF (
+                                                                EFI_MM_COMMUNICATE_HEADER,
+                                                                Data
+                                                                );
 
-  SmmVariableFunctionHeader           = (SMM_VARIABLE_COMMUNICATE_HEADER *)&SmmCommunicateHeader->Data[0];
+  SmmVariableFunctionHeader =
+    (SMM_VARIABLE_COMMUNICATE_HEADER *)&SmmCommunicateHeader->Data[0];
   SmmVariableFunctionHeader->Function = SMM_VARIABLE_FUNCTION_GET_STATISTICS;
 
   Status = mMmCommunication2->Communicate (
@@ -92,12 +96,20 @@ PrintInfoFromSmm (
   UINTN                                    Size;
   UINTN                                    MaxSize;
 
-  Status = gBS->LocateProtocol (&gEfiSmmVariableProtocolGuid, NULL, (VOID **)&Smmvariable);
+  Status = gBS->LocateProtocol (
+                  &gEfiSmmVariableProtocolGuid,
+                  NULL,
+                  (VOID **)&Smmvariable
+                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = gBS->LocateProtocol (&gEfiMmCommunication2ProtocolGuid, NULL, (VOID **)&mMmCommunication2);
+  Status = gBS->LocateProtocol (
+                  &gEfiMmCommunication2ProtocolGuid,
+                  NULL,
+                  (VOID **)&mMmCommunication2
+                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -116,19 +128,27 @@ PrintInfoFromSmm (
   Entry   = (EFI_MEMORY_DESCRIPTOR *)(PiSmmCommunicationRegionTable + 1);
   Size    = 0;
   MaxSize = 0;
-  for (Index = 0; Index < PiSmmCommunicationRegionTable->NumberOfEntries; Index++) {
+  for (Index = 0; Index < PiSmmCommunicationRegionTable->NumberOfEntries;
+       Index++)
+  {
     if (Entry->Type == EfiConventionalMemory) {
       Size = EFI_PAGES_TO_SIZE ((UINTN)Entry->NumberOfPages);
-      if (Size > (SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE + sizeof (VARIABLE_INFO_ENTRY))) {
+      if (Size > (SMM_COMMUNICATE_HEADER_SIZE +
+                  SMM_VARIABLE_COMMUNICATE_HEADER_SIZE +
+                  sizeof (VARIABLE_INFO_ENTRY)))
+      {
         if (Size > MaxSize) {
           MaxSize      = Size;
           RealCommSize = MaxSize;
-          CommBuffer   = (EFI_MM_COMMUNICATE_HEADER *)(UINTN)Entry->PhysicalStart;
+          CommBuffer   =
+            (EFI_MM_COMMUNICATE_HEADER *)(UINTN)Entry->PhysicalStart;
         }
       }
     }
 
-    Entry = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)Entry + PiSmmCommunicationRegionTable->DescriptorSize);
+    Entry = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)Entry +
+                                      PiSmmCommunicationRegionTable->
+                                        DescriptorSize);
   }
 
   ASSERT (CommBuffer != NULL);
@@ -139,11 +159,15 @@ PrintInfoFromSmm (
     CommSize = RealCommSize;
     Status   = GetVariableStatisticsData (CommBuffer, &CommSize);
     if (Status == EFI_BUFFER_TOO_SMALL) {
-      Print (L"The generic SMM communication buffer provided by SmmCommunicationRegionTable is too small\n");
+      Print (
+        L"The generic SMM communication buffer provided by SmmCommunicationRegionTable is too small\n"
+        );
       return Status;
     }
 
-    if (EFI_ERROR (Status) || (CommSize <= SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE)) {
+    if (EFI_ERROR (Status) || (CommSize <= SMM_COMMUNICATE_HEADER_SIZE +
+                               SMM_VARIABLE_COMMUNICATE_HEADER_SIZE))
+    {
       break;
     }
 
@@ -169,11 +193,15 @@ PrintInfoFromSmm (
     CommSize = RealCommSize;
     Status   = GetVariableStatisticsData (CommBuffer, &CommSize);
     if (Status == EFI_BUFFER_TOO_SMALL) {
-      Print (L"The generic SMM communication buffer provided by SmmCommunicationRegionTable is too small\n");
+      Print (
+        L"The generic SMM communication buffer provided by SmmCommunicationRegionTable is too small\n"
+        );
       return Status;
     }
 
-    if (EFI_ERROR (Status) || (CommSize <= SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE)) {
+    if (EFI_ERROR (Status) || (CommSize <= SMM_COMMUNICATE_HEADER_SIZE +
+                               SMM_VARIABLE_COMMUNICATE_HEADER_SIZE))
+    {
       break;
     }
 
@@ -220,9 +248,15 @@ UefiMain (
   VARIABLE_INFO_ENTRY  *VariableInfo;
   VARIABLE_INFO_ENTRY  *Entry;
 
-  RuntimeDxeStatus = EfiGetSystemConfigurationTable (&gEfiVariableGuid, (VOID **)&Entry);
+  RuntimeDxeStatus = EfiGetSystemConfigurationTable (
+                       &gEfiVariableGuid,
+                       (VOID **)&Entry
+                       );
   if (EFI_ERROR (RuntimeDxeStatus) || (Entry == NULL)) {
-    RuntimeDxeStatus = EfiGetSystemConfigurationTable (&gEfiAuthenticatedVariableGuid, (VOID **)&Entry);
+    RuntimeDxeStatus = EfiGetSystemConfigurationTable (
+                         &gEfiAuthenticatedVariableGuid,
+                         (VOID **)&Entry
+                         );
   }
 
   if (!EFI_ERROR (RuntimeDxeStatus) && (Entry != NULL)) {
@@ -266,7 +300,9 @@ UefiMain (
   SmmStatus = PrintInfoFromSmm ();
 
   if (EFI_ERROR (RuntimeDxeStatus) && EFI_ERROR (SmmStatus)) {
-    Print (L"Warning: Variable Dxe/Smm driver doesn't enable the feature of statistical information!\n");
+    Print (
+      L"Warning: Variable Dxe/Smm driver doesn't enable the feature of statistical information!\n"
+      );
     Print (L"If you want to see this info, please:\n");
     Print (L"  1. Set PcdVariableCollectStatistics as TRUE\n");
     Print (L"  2. Rebuild Variable Dxe/Smm driver\n");

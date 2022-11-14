@@ -132,7 +132,11 @@ EfiBootManagerConnectDevicePath (
     // RemainingDevicePath.
     //
     RemainingDevicePath = DevicePathToConnect;
-    Status              = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &Handle);
+    Status              = gBS->LocateDevicePath (
+                                 &gEfiDevicePathProtocolGuid,
+                                 &RemainingDevicePath,
+                                 &Handle
+                                 );
     if (!EFI_ERROR (Status)) {
       if (Handle == PreviousHandle) {
         //
@@ -169,7 +173,12 @@ EfiBootManagerConnectDevicePath (
         //    change, then avoid the dispatch, we have chance to continue the
         //    next connection
         //
-        Status = gBS->ConnectController (Handle, NULL, RemainingDevicePath, FALSE);
+        Status = gBS->ConnectController (
+                        Handle,
+                        NULL,
+                        RemainingDevicePath,
+                        FALSE
+                        );
         if (Status == EFI_NOT_FOUND) {
           Status = EFI_SUCCESS;
         }
@@ -262,7 +271,8 @@ BmConnectUsbShortFormDevicePath (
   }
 
   if ((DevicePathType (DevicePath) != MESSAGING_DEVICE_PATH) ||
-      ((DevicePathSubType (DevicePath) != MSG_USB_CLASS_DP) && (DevicePathSubType (DevicePath) != MSG_USB_WWID_DP))
+      ((DevicePathSubType (DevicePath) != MSG_USB_CLASS_DP) &&
+       (DevicePathSubType (DevicePath) != MSG_USB_WWID_DP))
       )
   {
     return EFI_INVALID_PARAMETER;
@@ -292,7 +302,8 @@ BmConnectUsbShortFormDevicePath (
         //
         Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0x09, 3, &Class);
         if (!EFI_ERROR (Status) &&
-            ((PCI_CLASS_SERIAL == Class[2]) && (PCI_CLASS_SERIAL_USB == Class[1]))
+            ((PCI_CLASS_SERIAL == Class[2]) && (PCI_CLASS_SERIAL_USB ==
+                                                Class[1]))
             )
         {
           Status = gBS->ConnectController (

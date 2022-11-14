@@ -53,7 +53,11 @@ DisplayOneSelectableOption (
     gST->ConOut->SetAttribute (gST->ConOut, GetHighlightTextColor ());
   }
 
-  PrintStringAt (SelectableOption->OptionCol, SelectableOption->OptionRow, SelectableOption->OptionString);
+  PrintStringAt (
+    SelectableOption->OptionCol,
+    SelectableOption->OptionRow,
+    SelectableOption->OptionString
+    );
   gST->ConOut->SetAttribute (gST->ConOut, GetPopupColor ());
 }
 
@@ -174,37 +178,102 @@ AddUserSelectableOptions (
       //
       // Add [Ok] option to the option list.
       //
-      OptionCol = StartCol + (ColDimension - USER_SELECTABLE_OPTION_OK_WIDTH) / 2;
-      Status    = AddOneSelectableOption (PopupType, EfiHiiPopupSelectionOk, gOkOption, OptionCol, OptionRow);
+      OptionCol = StartCol + (ColDimension - USER_SELECTABLE_OPTION_OK_WIDTH) /
+                  2;
+      Status = AddOneSelectableOption (
+                 PopupType,
+                 EfiHiiPopupSelectionOk,
+                 gOkOption,
+                 OptionCol,
+                 OptionRow
+                 );
       break;
     case EfiHiiPopupTypeOkCancel:
       //
       // Add [Ok] and [Cancel] options to the option list.
       //
-      OptionCol = StartCol + (ColDimension - USER_SELECTABLE_OPTION_OK_CAL_WIDTH) / 3;
-      Status    = AddOneSelectableOption (PopupType, EfiHiiPopupSelectionOk, gOkOption, OptionCol, OptionRow);
-      OptionCol = EndCol - (ColDimension - USER_SELECTABLE_OPTION_OK_CAL_WIDTH) / 3 - (GetStringWidth (gCancelOption) -2) / 2 + 1;
-      Status    = AddOneSelectableOption (PopupType, EfiHiiPopupSelectionCancel, gCancelOption, OptionCol, OptionRow);
+      OptionCol = StartCol + (ColDimension -
+                              USER_SELECTABLE_OPTION_OK_CAL_WIDTH) / 3;
+      Status    = AddOneSelectableOption (
+                    PopupType,
+                    EfiHiiPopupSelectionOk,
+                    gOkOption,
+                    OptionCol,
+                    OptionRow
+                    );
+      OptionCol = EndCol - (ColDimension -
+                            USER_SELECTABLE_OPTION_OK_CAL_WIDTH) / 3 -
+                  (GetStringWidth (gCancelOption) -
+                   2) / 2 +
+                  1;
+      Status = AddOneSelectableOption (
+                 PopupType,
+                 EfiHiiPopupSelectionCancel,
+                 gCancelOption,
+                 OptionCol,
+                 OptionRow
+                 );
       break;
     case EfiHiiPopupTypeYesNo:
       //
       // Add [Yes] and [No] options to the option list.
       //
-      OptionCol = StartCol + (ColDimension - USER_SELECTABLE_OPTION_YES_NO_WIDTH) / 3;
-      Status    = AddOneSelectableOption (PopupType, EfiHiiPopupSelectionYes, gYesOption, OptionCol, OptionRow);
-      OptionCol = EndCol - (ColDimension - USER_SELECTABLE_OPTION_YES_NO_WIDTH) / 3 - (GetStringWidth (gNoOption)- 2) / 2 + 1;
-      Status    = AddOneSelectableOption (PopupType, EfiHiiPopupSelectionNo, gNoOption, OptionCol, OptionRow);
+      OptionCol = StartCol + (ColDimension -
+                              USER_SELECTABLE_OPTION_YES_NO_WIDTH) / 3;
+      Status    = AddOneSelectableOption (
+                    PopupType,
+                    EfiHiiPopupSelectionYes,
+                    gYesOption,
+                    OptionCol,
+                    OptionRow
+                    );
+      OptionCol = EndCol - (ColDimension -
+                            USER_SELECTABLE_OPTION_YES_NO_WIDTH) / 3 -
+                  (GetStringWidth (gNoOption)- 2) /
+                  2 + 1;
+      Status = AddOneSelectableOption (
+                 PopupType,
+                 EfiHiiPopupSelectionNo,
+                 gNoOption,
+                 OptionCol,
+                 OptionRow
+                 );
       break;
     case EfiHiiPopupTypeYesNoCancel:
       //
       // Add [Yes], [No] and [Cancel] options to the option list.
       //
-      OptionCol = StartCol + (ColDimension - USER_SELECTABLE_OPTION_YES_NO_CAL_WIDTH) / 4;
-      Status    = AddOneSelectableOption (PopupType, EfiHiiPopupSelectionYes, gYesOption, OptionCol, OptionRow);
-      OptionCol = StartCol + (ColDimension - (GetStringWidth (gNoOption) -2) / 2) / 2;
-      Status    = AddOneSelectableOption (PopupType, EfiHiiPopupSelectionNo, gNoOption, OptionCol, OptionRow);
-      OptionCol = EndCol - (ColDimension - USER_SELECTABLE_OPTION_YES_NO_CAL_WIDTH) / 4 - (GetStringWidth (gCancelOption) - 2) / 2 + 1;
-      Status    = AddOneSelectableOption (PopupType, EfiHiiPopupSelectionCancel, gCancelOption, OptionCol, OptionRow);
+      OptionCol = StartCol + (ColDimension -
+                              USER_SELECTABLE_OPTION_YES_NO_CAL_WIDTH) / 4;
+      Status    = AddOneSelectableOption (
+                    PopupType,
+                    EfiHiiPopupSelectionYes,
+                    gYesOption,
+                    OptionCol,
+                    OptionRow
+                    );
+      OptionCol = StartCol + (ColDimension - (GetStringWidth (gNoOption) -2) /
+                              2) / 2;
+      Status    = AddOneSelectableOption (
+                    PopupType,
+                    EfiHiiPopupSelectionNo,
+                    gNoOption,
+                    OptionCol,
+                    OptionRow
+                    );
+      OptionCol = EndCol - (ColDimension -
+                            USER_SELECTABLE_OPTION_YES_NO_CAL_WIDTH) / 4 -
+                  (GetStringWidth (
+                     gCancelOption
+                     )
+                   - 2) / 2 + 1;
+      Status = AddOneSelectableOption (
+                 PopupType,
+                 EfiHiiPopupSelectionCancel,
+                 gCancelOption,
+                 OptionCol,
+                 OptionRow
+                 );
       break;
     default:
       break;
@@ -238,9 +307,15 @@ GetUserSelection (
   //
   HighlightPos = gUserSelectableOptions.ForwardLink;
   do {
-    for (Link = gUserSelectableOptions.ForwardLink; Link != &gUserSelectableOptions; Link = Link->ForwardLink) {
+    for (Link = gUserSelectableOptions.ForwardLink; Link !=
+         &gUserSelectableOptions; Link = Link->ForwardLink)
+    {
       SelectableOption = SELECTABLE_OPTION_FROM_LINK (Link);
-      DisplayOneSelectableOption (SelectableOption, (BOOLEAN)(Link == HighlightPos));
+      DisplayOneSelectableOption (
+        SelectableOption,
+        (BOOLEAN)(Link ==
+                  HighlightPos)
+        );
     }
 
     //
@@ -283,23 +358,31 @@ GetUserSelection (
         *UserSelection = HighlightOption->OptionType;
         return;
       default:
-        if (((KeyValue.UnicodeChar | UPPER_LOWER_CASE_OFFSET) == (*gConfirmOptYes | UPPER_LOWER_CASE_OFFSET)) &&
-            ((PopupType == EfiHiiPopupTypeYesNo) || (PopupType == EfiHiiPopupTypeYesNoCancel)))
+        if (((KeyValue.UnicodeChar | UPPER_LOWER_CASE_OFFSET) ==
+             (*gConfirmOptYes | UPPER_LOWER_CASE_OFFSET)) &&
+            ((PopupType == EfiHiiPopupTypeYesNo) || (PopupType ==
+                                                     EfiHiiPopupTypeYesNoCancel)))
         {
           *UserSelection = EfiHiiPopupSelectionYes;
           return;
-        } else if (((KeyValue.UnicodeChar | UPPER_LOWER_CASE_OFFSET) == (*gConfirmOptNo| UPPER_LOWER_CASE_OFFSET)) &&
-                   ((PopupType == EfiHiiPopupTypeYesNo) || (PopupType == EfiHiiPopupTypeYesNoCancel)))
+        } else if (((KeyValue.UnicodeChar | UPPER_LOWER_CASE_OFFSET) ==
+                    (*gConfirmOptNo| UPPER_LOWER_CASE_OFFSET)) &&
+                   ((PopupType == EfiHiiPopupTypeYesNo) || (PopupType ==
+                                                            EfiHiiPopupTypeYesNoCancel)))
         {
           *UserSelection = EfiHiiPopupSelectionNo;
           return;
-        } else if (((KeyValue.UnicodeChar | UPPER_LOWER_CASE_OFFSET) == (*gConfirmOptOk | UPPER_LOWER_CASE_OFFSET)) &&
-                   ((PopupType == EfiHiiPopupTypeOk) || (PopupType == EfiHiiPopupTypeOkCancel)))
+        } else if (((KeyValue.UnicodeChar | UPPER_LOWER_CASE_OFFSET) ==
+                    (*gConfirmOptOk | UPPER_LOWER_CASE_OFFSET)) &&
+                   ((PopupType == EfiHiiPopupTypeOk) || (PopupType ==
+                                                         EfiHiiPopupTypeOkCancel)))
         {
           *UserSelection = EfiHiiPopupSelectionOk;
           return;
-        } else if (((KeyValue.UnicodeChar | UPPER_LOWER_CASE_OFFSET) == (*gConfirmOptCancel| UPPER_LOWER_CASE_OFFSET)) &&
-                   ((PopupType == EfiHiiPopupTypeOkCancel) || (PopupType == EfiHiiPopupTypeYesNoCancel)))
+        } else if (((KeyValue.UnicodeChar | UPPER_LOWER_CASE_OFFSET) ==
+                    (*gConfirmOptCancel| UPPER_LOWER_CASE_OFFSET)) &&
+                   ((PopupType == EfiHiiPopupTypeOkCancel) || (PopupType ==
+                                                               EfiHiiPopupTypeYesNoCancel)))
         {
           *UserSelection = EfiHiiPopupSelectionCancel;
           return;
@@ -390,7 +473,10 @@ ParseMessageString (
   // Check the string to see if there are line break characters in the string
   //
   for (StrOffset = 0;
-       InputString[*Index + StrOffset] != CHAR_CARRIAGE_RETURN && InputString[*Index + StrOffset] != CHAR_LINEFEED && InputString[*Index + StrOffset] != CHAR_NULL;
+       InputString[*Index + StrOffset] != CHAR_CARRIAGE_RETURN &&
+       InputString[*Index + StrOffset] != CHAR_LINEFEED && InputString[*Index +
+                                                                       StrOffset
+       ] != CHAR_NULL;
        StrOffset++
        )
   {
@@ -467,7 +553,13 @@ CalculatePopupPosition (
   //
   // Calculate the row number which is needed to show the message string and the max width of the string in one row.
   //
-  for (StringIndex = 0; ParseMessageString (gMessageString, &OutputString, &OutputStrWidth, &StringIndex) != 0;) {
+  for (StringIndex = 0; ParseMessageString (
+                          gMessageString,
+                          &OutputString,
+                          &OutputStrWidth,
+                          &StringIndex
+                          ) != 0;)
+  {
     gMesStrLineNum++;
     if (gMaxRowWidth < OutputStrWidth) {
       gMaxRowWidth = OutputStrWidth;
@@ -480,13 +572,17 @@ CalculatePopupPosition (
   // Calculate the row width for the selectable options.(OptionRowWidth = Number * SkipWidth + OptionWidth)
   //
   if (PopupType == EfiHiiPopupTypeOk) {
-    OptionRowWidth = USER_SELECTABLE_OPTION_SKIP_WIDTH *2 + USER_SELECTABLE_OPTION_OK_WIDTH;
+    OptionRowWidth = USER_SELECTABLE_OPTION_SKIP_WIDTH *2 +
+                     USER_SELECTABLE_OPTION_OK_WIDTH;
   } else if (PopupType == EfiHiiPopupTypeOkCancel) {
-    OptionRowWidth = USER_SELECTABLE_OPTION_SKIP_WIDTH *3 + USER_SELECTABLE_OPTION_OK_CAL_WIDTH;
+    OptionRowWidth = USER_SELECTABLE_OPTION_SKIP_WIDTH *3 +
+                     USER_SELECTABLE_OPTION_OK_CAL_WIDTH;
   } else if (PopupType == EfiHiiPopupTypeYesNo) {
-    OptionRowWidth = USER_SELECTABLE_OPTION_SKIP_WIDTH *3 + USER_SELECTABLE_OPTION_YES_NO_WIDTH;
+    OptionRowWidth = USER_SELECTABLE_OPTION_SKIP_WIDTH *3 +
+                     USER_SELECTABLE_OPTION_YES_NO_WIDTH;
   } else if (PopupType == EfiHiiPopupTypeYesNoCancel) {
-    OptionRowWidth = USER_SELECTABLE_OPTION_SKIP_WIDTH *4 + USER_SELECTABLE_OPTION_YES_NO_CAL_WIDTH;
+    OptionRowWidth = USER_SELECTABLE_OPTION_SKIP_WIDTH *4 +
+                     USER_SELECTABLE_OPTION_YES_NO_CAL_WIDTH;
   }
 
   if (OptionRowWidth > gMaxRowWidth) {
@@ -501,17 +597,29 @@ CalculatePopupPosition (
   //
   // Select the smaller one between actual dimension of message string and the avialble dimension for message string.
   //
-  gST->ConOut->QueryMode (gST->ConOut, gST->ConOut->Mode->Mode, &Columns, &Rows);
+  gST->ConOut->QueryMode (
+                 gST->ConOut,
+                 gST->ConOut->Mode->Mode,
+                 &Columns,
+                 &Rows
+                 );
   gMaxRowWidth   = MIN (gMaxRowWidth, Columns - 2 * POPUP_BORDER);
-  gMesStrLineNum = MIN (gMesStrLineNum, Rows -1 - POPUP_FOOTER_HEIGHT - POPUP_HEADER_HEIGHT);
+  gMesStrLineNum = MIN (
+                     gMesStrLineNum,
+                     Rows -1 - POPUP_FOOTER_HEIGHT -
+                     POPUP_HEADER_HEIGHT
+                     );
 
   //
   // Calculate the start column, end column, top row and bottom row for the popup.
   //
   ScreenForPopup->LeftColumn  = (Columns -2 * POPUP_BORDER - gMaxRowWidth) / 2;
-  ScreenForPopup->RightColumn = ScreenForPopup->LeftColumn + gMaxRowWidth + 2 * POPUP_BORDER - 1;
-  ScreenForPopup->TopRow      = (Rows - 1 - POPUP_FOOTER_HEIGHT - POPUP_HEADER_HEIGHT - gMesStrLineNum) / 2;
-  ScreenForPopup->BottomRow   = ScreenForPopup->TopRow + gMesStrLineNum + POPUP_FOOTER_HEIGHT + POPUP_HEADER_HEIGHT - 1;
+  ScreenForPopup->RightColumn = ScreenForPopup->LeftColumn + gMaxRowWidth + 2 *
+                                POPUP_BORDER - 1;
+  ScreenForPopup->TopRow    = (Rows - 1 - POPUP_FOOTER_HEIGHT -
+                               POPUP_HEADER_HEIGHT - gMesStrLineNum) / 2;
+  ScreenForPopup->BottomRow = ScreenForPopup->TopRow + gMesStrLineNum +
+                              POPUP_FOOTER_HEIGHT + POPUP_HEADER_HEIGHT - 1;
 }
 
 /**
@@ -576,11 +684,26 @@ DrawMessageBox (
   PrintCharAt (StartCol, DisplayRow, Character);
   PrintCharAt (EndCol, DisplayRow, Character);
   if (PopupStyle == EfiHiiPopupStyleError) {
-    PrintStringAt ((ColDimension - (GetStringWidth (gErrorPopup) - 2) / 2) / 2 + StartCol, DisplayRow, gErrorPopup);
+    PrintStringAt (
+      (ColDimension - (GetStringWidth (gErrorPopup) - 2) / 2) / 2 +
+      StartCol,
+      DisplayRow,
+      gErrorPopup
+      );
   } else if (PopupStyle == EfiHiiPopupStyleWarning) {
-    PrintStringAt ((ColDimension - (GetStringWidth (gWarningPopup) - 2) / 2) / 2 + StartCol, DisplayRow, gWarningPopup);
+    PrintStringAt (
+      (ColDimension - (GetStringWidth (gWarningPopup) - 2) / 2) /
+      2 + StartCol,
+      DisplayRow,
+      gWarningPopup
+      );
   } else {
-    PrintStringAt ((ColDimension - (GetStringWidth (gInfoPopup) - 2) / 2) / 2 + StartCol, DisplayRow, gInfoPopup);
+    PrintStringAt (
+      (ColDimension - (GetStringWidth (gInfoPopup) - 2) / 2) / 2 +
+      StartCol,
+      DisplayRow,
+      gInfoPopup
+      );
   }
 
   //
@@ -601,7 +724,14 @@ DrawMessageBox (
   // 4. Draw the mesage string.
   //
   DisplayRow = TopRow + POPUP_HEADER_HEIGHT;
-  for (Index = DisplayRow, StringIndex = 0; ParseMessageString (gMessageString, &OutputString, &OutputStrWidth, &StringIndex) != 0 && DrawMesStrRowNum < gMesStrLineNum;) {
+  for (Index = DisplayRow, StringIndex = 0; ParseMessageString (
+                                              gMessageString,
+                                              &OutputString,
+                                              &OutputStrWidth,
+                                              &StringIndex
+                                              ) != 0 && DrawMesStrRowNum <
+       gMesStrLineNum;)
+  {
     ClearLines (StartCol, EndCol, Index, Index, GetPopupColor ());
     PrintCharAt (StartCol, Index, Character);
     PrintCharAt (EndCol, Index, Character);
@@ -618,10 +748,18 @@ DrawMessageBox (
 
       StrnCpyS (TempString, Length + 1, OutputString, Length - 3);
       StrCatS (TempString, Length + 1, L"...");
-      PrintStringAt ((ColDimension - gMaxRowWidth) / 2 + StartCol, Index, TempString);
+      PrintStringAt (
+        (ColDimension - gMaxRowWidth) / 2 + StartCol,
+        Index,
+        TempString
+        );
       FreePool (TempString);
     } else {
-      PrintStringAt ((ColDimension - OutputStrWidth) / 2 + StartCol, Index, OutputString);
+      PrintStringAt (
+        (ColDimension - OutputStrWidth) / 2 + StartCol,
+        Index,
+        OutputString
+        );
     }
 
     Index++;
@@ -639,7 +777,11 @@ DrawMessageBox (
   // Check whether the actual string row number beyond the MesStrRowNum, if yes, print the ...... in the row.
   //
   if ((OutputStrWidth > 0) && (DrawMesStrRowNum >= gMesStrLineNum)) {
-    PrintStringAt ((ColDimension - StrLen (L"......")) / 2 + StartCol, Index, L"......");
+    PrintStringAt (
+      (ColDimension - StrLen (L"......")) / 2 + StartCol,
+      Index,
+      L"......"
+      );
   }
 
   //
@@ -698,7 +840,9 @@ CreatePopup (
   EFI_SIMPLE_TEXT_OUTPUT_MODE      SavedConsoleMode;
   EFI_STATUS                       Status;
 
-  if ((PopupType < EfiHiiPopupTypeOk) || (PopupType > EfiHiiPopupTypeYesNoCancel)) {
+  if ((PopupType < EfiHiiPopupTypeOk) || (PopupType >
+                                          EfiHiiPopupTypeYesNoCancel))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -741,7 +885,11 @@ Done:
   // Restore Conout attributes and free the resources allocate before.
   //
   ConOut->EnableCursor (ConOut, SavedConsoleMode.CursorVisible);
-  ConOut->SetCursorPosition (ConOut, SavedConsoleMode.CursorColumn, SavedConsoleMode.CursorRow);
+  ConOut->SetCursorPosition (
+            ConOut,
+            SavedConsoleMode.CursorColumn,
+            SavedConsoleMode.CursorRow
+            );
   ConOut->SetAttribute (ConOut, SavedConsoleMode.Attribute);
   FreeSelectableOptions (&gUserSelectableOptions);
   FreePool (gMessageString);

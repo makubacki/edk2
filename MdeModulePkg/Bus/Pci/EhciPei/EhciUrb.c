@@ -228,7 +228,9 @@ EhcCreateQh (
       break;
 
     case EHC_BULK_TRANSFER:
-      if ((Ep->DevSpeed == EFI_USB_SPEED_HIGH) && (Ep->Direction == EfiUsbDataOut)) {
+      if ((Ep->DevSpeed == EFI_USB_SPEED_HIGH) && (Ep->Direction ==
+                                                   EfiUsbDataOut))
+      {
         QhHw->Status |= QTD_STAT_DO_PING;
       }
 
@@ -381,7 +383,14 @@ EhcCreateQtds (
   //
   if (Urb->Ep.Type == EHC_CTRL_TRANSFER) {
     Len = sizeof (EFI_USB_DEVICE_REQUEST);
-    Qtd = EhcCreateQtd (Ehc, Urb->RequestPhy, Len, QTD_PID_SETUP, 0, Ep->MaxPacket);
+    Qtd = EhcCreateQtd (
+            Ehc,
+            Urb->RequestPhy,
+            Len,
+            QTD_PID_SETUP,
+            0,
+            Ep->MaxPacket
+            );
 
     if (Qtd == NULL) {
       return EFI_OUT_OF_RESOURCES;
@@ -473,14 +482,22 @@ EhcCreateQtds (
       break;
     }
 
-    NextQtd            = EFI_LIST_CONTAINER (Entry->ForwardLink, PEI_EHC_QTD, QtdList);
+    NextQtd = EFI_LIST_CONTAINER (
+                Entry->ForwardLink,
+                PEI_EHC_QTD,
+                QtdList
+                );
     Qtd->QtdHw.NextQtd = QTD_LINK (NextQtd, FALSE);
   }
 
   //
   // Link the QTDs to the queue head
   //
-  NextQtd          = EFI_LIST_CONTAINER (Qh->Qtds.ForwardLink, PEI_EHC_QTD, QtdList);
+  NextQtd = EFI_LIST_CONTAINER (
+              Qh->Qtds.ForwardLink,
+              PEI_EHC_QTD,
+              QtdList
+              );
   Qh->QhHw.NextQtd = QTD_LINK (NextQtd, FALSE);
   return EFI_SUCCESS;
 

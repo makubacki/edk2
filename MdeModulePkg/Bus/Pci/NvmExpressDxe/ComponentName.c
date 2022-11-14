@@ -12,7 +12,8 @@
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gNvmExpressComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gNvmExpressComponentName = {
   NvmExpressComponentNameGetDriverName,
   NvmExpressComponentNameGetControllerName,
   "eng"
@@ -21,20 +22,24 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gNvmExpressComponentN
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gNvmExpressComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gNvmExpressComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)NvmExpressComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)NvmExpressComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  NvmExpressComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mNvmExpressDriverNameTable[] = {
-  { "eng;en", L"NVM Express Driver" },
-  { NULL,     NULL                  }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mNvmExpressDriverNameTable[] = {
+  { "eng;en", L"NVM Express Driver"     },
+  { NULL,     NULL                      }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mNvmExpressControllerNameTable[] = {
-  { "eng;en", L"NVM Express Controller" },
-  { NULL,     NULL                      }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mNvmExpressControllerNameTable[] = {
+  { "eng;en", L"NVM Express Controller"     },
+  { NULL,     NULL                          }
 };
 
 /**

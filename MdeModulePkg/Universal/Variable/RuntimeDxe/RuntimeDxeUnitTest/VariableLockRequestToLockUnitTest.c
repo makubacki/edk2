@@ -137,7 +137,8 @@ LibInitMocked (
   IN UNIT_TEST_CONTEXT  Context
   )
 {
-  return EFI_ERROR (InitVariablePolicyLib (StubGetVariableNull)) ? UNIT_TEST_ERROR_PREREQUISITE_NOT_MET : UNIT_TEST_PASSED;
+  return EFI_ERROR (InitVariablePolicyLib (StubGetVariableNull)) ?
+         UNIT_TEST_ERROR_PREREQUISITE_NOT_MET : UNIT_TEST_PASSED;
 }
 
 /**
@@ -482,9 +483,18 @@ UnitTestMain (
   //
   // Start setting up the test framework for running the tests.
   //
-  Status = InitUnitTestFramework (&Framework, UNIT_TEST_NAME, gEfiCallerBaseName, UNIT_TEST_VERSION);
+  Status = InitUnitTestFramework (
+             &Framework,
+             UNIT_TEST_NAME,
+             gEfiCallerBaseName,
+             UNIT_TEST_VERSION
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in InitUnitTestFramework. Status = %r\n",
+      Status
+      ));
     goto EXIT;
   }
 

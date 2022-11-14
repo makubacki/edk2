@@ -59,7 +59,9 @@ Xtoi (
       TempChar -= 'a' - 'A';
     }
 
-    if (((TempChar >= '0') && (TempChar <= '9')) || ((TempChar >= 'A') && (TempChar <= 'F'))) {
+    if (((TempChar >= '0') && (TempChar <= '9')) || ((TempChar >= 'A') &&
+                                                     (TempChar <= 'F')))
+    {
       if (RetVal > MaxVal) {
         return (UINTN)-1;
       }
@@ -126,7 +128,9 @@ LXtoi (
       TempChar -= 'a' - 'A';
     }
 
-    if (((TempChar >= '0') && (TempChar <= '9')) || ((TempChar >= 'A') && (TempChar <= 'F'))) {
+    if (((TempChar >= '0') && (TempChar <= '9')) || ((TempChar >= 'A') &&
+                                                     (TempChar <= 'F')))
+    {
       if (RetVal > MaxVal) {
         return (UINT64)-1;
       }
@@ -179,7 +183,9 @@ Atoi (
   TempChar = *(Str++);
   while (TempChar != '\0') {
     if ((TempChar >= '0') && (TempChar <= '9')) {
-      if ((RetVal > MaxVal) || ((RetVal == MaxVal) && (TempChar - '0' > (INTN)ResteVal))) {
+      if ((RetVal > MaxVal) || ((RetVal == MaxVal) && (TempChar - '0' >
+                                                       (INTN)ResteVal)))
+      {
         return (UINTN)-1;
       }
 
@@ -245,7 +251,9 @@ AsciiXtoi (
       TempChar -= 'a' - 'A';
     }
 
-    if (((TempChar >= '0') && (TempChar <= '9')) || ((TempChar >= 'A') && (TempChar <= 'F'))) {
+    if (((TempChar >= '0') && (TempChar <= '9')) || ((TempChar >= 'A') &&
+                                                     (TempChar <= 'F')))
+    {
       if (RetVal > MaxVal) {
         return (UINTN)-1;
       }
@@ -297,7 +305,9 @@ AsciiAtoi (
   TempChar = *(Str++);
   while (TempChar != '\0') {
     if ((TempChar >= '0') && (TempChar <= '9')) {
-      if ((RetVal > MaxVal) || ((RetVal == MaxVal) && (TempChar - '0' > (INTN)ResteVal))) {
+      if ((RetVal > MaxVal) || ((RetVal == MaxVal) && (TempChar - '0' >
+                                                       (INTN)ResteVal)))
+      {
         return (UINTN)-1;
       }
 

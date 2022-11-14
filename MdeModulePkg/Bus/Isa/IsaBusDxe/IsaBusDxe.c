@@ -130,7 +130,10 @@ IsaBusCreateChild (
 
   Private = ISA_BUS_PRIVATE_DATA_FROM_THIS (This);
 
-  Child = AllocateCopyPool (sizeof (mIsaBusChildPrivateTemplate), &mIsaBusChildPrivateTemplate);
+  Child = AllocateCopyPool (
+            sizeof (mIsaBusChildPrivateTemplate),
+            &mIsaBusChildPrivateTemplate
+            );
   if (Child == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -321,7 +324,10 @@ IsaBusDriverBindingStart (
     return Status;
   }
 
-  Private = AllocateCopyPool (sizeof (mIsaBusPrivateTemplate), &mIsaBusPrivateTemplate);
+  Private = AllocateCopyPool (
+              sizeof (mIsaBusPrivateTemplate),
+              &mIsaBusPrivateTemplate
+              );
   ASSERT (Private != NULL);
 
   Private->IsaHcHandle = Controller;
@@ -409,7 +415,10 @@ IsaBusDriverBindingStop (
 
   AllChildrenStopped = TRUE;
   for (Index = 0; Index < NumberOfChildren; Index++) {
-    Status = ServiceBinding->DestroyChild (ServiceBinding, ChildHandleBuffer[Index]);
+    Status = ServiceBinding->DestroyChild (
+                               ServiceBinding,
+                               ChildHandleBuffer[Index]
+                               );
     if (EFI_ERROR (Status)) {
       AllChildrenStopped = FALSE;
     }

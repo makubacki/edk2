@@ -46,7 +46,8 @@ EFI_STATUS
   IN EFI_PEI_SERVICES                                **PeiServices,
   IN PEI_SMM_CONTROL_PPI                             *This,
   IN OUT INT8                                        *ArgumentBuffer OPTIONAL,
-  IN OUT UINTN                                       *ArgumentBufferSize OPTIONAL,
+  IN OUT
+  UINTN                                       *ArgumentBufferSize OPTIONAL,
   IN BOOLEAN                                         Periodic OPTIONAL,
   IN UINTN                                           ActivationInterval OPTIONAL
   );

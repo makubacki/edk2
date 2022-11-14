@@ -90,8 +90,14 @@ FtwAllocate (
   //
   // Check if there is enough space for the coming allocation
   //
-  if (FTW_WRITE_TOTAL_SIZE (NumberOfWrites, PrivateDataSize) > FtwDevice->FtwWorkSpaceHeader->WriteQueueSize) {
-    DEBUG ((DEBUG_ERROR, "Ftw: Allocate() request exceed Workspace, Caller: %g\n", CallerId));
+  if (FTW_WRITE_TOTAL_SIZE (NumberOfWrites, PrivateDataSize) >
+      FtwDevice->FtwWorkSpaceHeader->WriteQueueSize)
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "Ftw: Allocate() request exceed Workspace, Caller: %g\n",
+      CallerId
+      ));
     return EFI_BUFFER_TOO_SMALL;
   }
 
@@ -104,7 +110,9 @@ FtwAllocate (
   //
   // Previous write has not completed, access denied.
   //
-  if ((FtwHeader->HeaderAllocated == FTW_VALID_STATE) || (FtwHeader->WritesAllocated == FTW_VALID_STATE)) {
+  if ((FtwHeader->HeaderAllocated == FTW_VALID_STATE) ||
+      (FtwHeader->WritesAllocated == FTW_VALID_STATE))
+  {
     return EFI_ACCESS_DENIED;
   }
 
@@ -112,7 +120,9 @@ FtwAllocate (
   // If workspace is not enough, then reclaim workspace
   //
   Offset = (UINT8 *)FtwHeader - (UINT8 *)FtwDevice->FtwWorkSpace;
-  if (Offset + FTW_WRITE_TOTAL_SIZE (NumberOfWrites, PrivateDataSize) > FtwDevice->FtwWorkSpaceSize) {
+  if (Offset + FTW_WRITE_TOTAL_SIZE (NumberOfWrites, PrivateDataSize) >
+      FtwDevice->FtwWorkSpaceSize)
+  {
     Status = FtwReclaimWorkSpace (FtwDevice, TRUE);
     if (EFI_ERROR (Status)) {
       return EFI_ABORTED;
@@ -236,8 +246,17 @@ FtwWriteRecord (
     //
     // Update blocks other than working block or boot block
     //
-    NumberOfWriteBlocks = FTW_BLOCKS ((UINTN)(Record->Offset + Record->Length), BlockSize);
-    Status              = FlushSpareBlockToTargetBlock (FtwDevice, Fvb, Record->Lba, BlockSize, NumberOfWriteBlocks);
+    NumberOfWriteBlocks = FTW_BLOCKS (
+                            (UINTN)(Record->Offset + Record->Length),
+                            BlockSize
+                            );
+    Status = FlushSpareBlockToTargetBlock (
+               FtwDevice,
+               Fvb,
+               Record->Lba,
+               BlockSize,
+               NumberOfWriteBlocks
+               );
   }
 
   if (EFI_ERROR (Status)) {
@@ -349,7 +368,11 @@ FtwWrite (
   Header = FtwDevice->FtwLastWriteHeader;
   Record = FtwDevice->FtwLastWriteRecord;
 
-  if (IsErasedFlashBuffer ((UINT8 *)Header, sizeof (EFI_FAULT_TOLERANT_WRITE_HEADER))) {
+  if (IsErasedFlashBuffer (
+        (UINT8 *)Header,
+        sizeof (EFI_FAULT_TOLERANT_WRITE_HEADER)
+        ))
+  {
     if (PrivateData == NULL) {
       //
       // Ftw Write Header is not allocated.
@@ -365,7 +388,10 @@ FtwWrite (
       // Additional private data is not NULL, the private data size can't be determined.
       //
       DEBUG ((DEBUG_ERROR, "Ftw: no allocates space for write record!\n"));
-      DEBUG ((DEBUG_ERROR, "Ftw: Allocate service should be called before Write service!\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Ftw: Allocate service should be called before Write service!\n"
+        ));
       return EFI_NOT_READY;
     }
   }
@@ -373,7 +399,11 @@ FtwWrite (
   //
   // If Record is out of the range of Header, return access denied.
   //
-  if (((UINTN)Record - (UINTN)Header) > FTW_WRITE_TOTAL_SIZE (Header->NumberOfWrites - 1, Header->PrivateDataSize)) {
+  if (((UINTN)Record - (UINTN)Header) > FTW_WRITE_TOTAL_SIZE (
+                                          Header->NumberOfWrites - 1,
+                                          Header->PrivateDataSize
+                                          ))
+  {
     return EFI_ACCESS_DENIED;
   }
 
@@ -388,7 +418,9 @@ FtwWrite (
     return EFI_ACCESS_DENIED;
   }
 
-  if ((Record->SpareComplete == FTW_VALID_STATE) && (Record->DestinationComplete != FTW_VALID_STATE)) {
+  if ((Record->SpareComplete == FTW_VALID_STATE) &&
+      (Record->DestinationComplete != FTW_VALID_STATE))
+  {
     return EFI_NOT_READY;
   }
 
@@ -402,7 +434,11 @@ FtwWrite (
 
   Status = Fvb->GetPhysicalAddress (Fvb, &FvbPhysicalAddress);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Ftw: Write(), Get FVB physical address - %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Ftw: Write(), Get FVB physical address - %r\n",
+      Status
+      ));
     return EFI_ABORTED;
   }
 
@@ -416,7 +452,12 @@ FtwWrite (
   }
 
   NumberOfWriteBlocks = FTW_BLOCKS (Offset + Length, BlockSize);
-  DEBUG ((DEBUG_INFO, "Ftw: Write(), BlockSize - 0x%x, NumberOfWriteBlock - 0x%x\n", BlockSize, NumberOfWriteBlocks));
+  DEBUG ((
+    DEBUG_INFO,
+    "Ftw: Write(), BlockSize - 0x%x, NumberOfWriteBlock - 0x%x\n",
+    BlockSize,
+    NumberOfWriteBlocks
+    ));
   WriteLength = NumberOfWriteBlocks * BlockSize;
 
   //
@@ -434,7 +475,10 @@ FtwWrite (
     //
     // Boot Block and Spare Block should have same block size and block numbers.
     //
-    ASSERT ((BlockSize == FtwDevice->SpareBlockSize) && (NumberOfWriteBlocks == FtwDevice->NumberOfSpareBlock));
+    ASSERT (
+      (BlockSize == FtwDevice->SpareBlockSize) && (NumberOfWriteBlocks ==
+                                                   FtwDevice->NumberOfSpareBlock)
+      );
   }
 
   //
@@ -443,7 +487,9 @@ FtwWrite (
   Record->Lba            = Lba;
   Record->Offset         = Offset;
   Record->Length         = Length;
-  Record->RelativeOffset = (INT64)(FvbPhysicalAddress + (UINTN)Lba * BlockSize) - (INT64)FtwDevice->SpareAreaAddress;
+  Record->RelativeOffset = (INT64)(FvbPhysicalAddress + (UINTN)Lba *
+                                   BlockSize) -
+                           (INT64)FtwDevice->SpareAreaAddress;
   if (PrivateData != NULL) {
     CopyMem ((Record + 1), PrivateData, (UINTN)Header->PrivateDataSize);
   }

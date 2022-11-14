@@ -126,7 +126,8 @@ DebugPrintMarker (
   //                        |       Format String    |
   //                        |------------------------|<- (UINT8 *)Buffer + sizeof(Buffer)
   //
-  TotalSize = 4 + sizeof (EFI_DEBUG_INFO) + 12 * sizeof (UINT64) + AsciiStrSize (Format);
+  TotalSize = 4 + sizeof (EFI_DEBUG_INFO) + 12 * sizeof (UINT64) +
+              AsciiStrSize (Format);
 
   //
   // If the TotalSize is larger than the maximum record size, then truncate it.
@@ -181,7 +182,9 @@ DebugPrintMarker (
     // Parse Flags and Width
     //
     for (Format++; TRUE; Format++) {
-      if ((*Format == '.') || (*Format == '-') || (*Format == '+') || (*Format == ' ')) {
+      if ((*Format == '.') || (*Format == '-') || (*Format == '+') ||
+          (*Format == ' '))
+      {
         //
         // These characters in format field are omitted.
         //
@@ -209,9 +212,15 @@ DebugPrintMarker (
         // a UINTN argument in the argument list.
         //
         if (BaseListMarker == NULL) {
-          BASE_ARG (BaseListMarkerPointer, UINTN) = VA_ARG (VaListMarker, UINTN);
+          BASE_ARG (BaseListMarkerPointer, UINTN) = VA_ARG (
+                                                      VaListMarker,
+                                                      UINTN
+                                                      );
         } else {
-          BASE_ARG (BaseListMarkerPointer, UINTN) = BASE_ARG (BaseListMarker, UINTN);
+          BASE_ARG (BaseListMarkerPointer, UINTN) = BASE_ARG (
+                                                      BaseListMarker,
+                                                      UINTN
+                                                      );
         }
 
         continue;
@@ -239,37 +248,66 @@ DebugPrintMarker (
       Long = TRUE;
     }
 
-    if ((*Format == 'p') || (*Format == 'X') || (*Format == 'x') || (*Format == 'd') || (*Format == 'u')) {
+    if ((*Format == 'p') || (*Format == 'X') || (*Format == 'x') || (*Format ==
+                                                                     'd') ||
+        (*Format == 'u'))
+    {
       if (Long) {
         if (BaseListMarker == NULL) {
-          BASE_ARG (BaseListMarkerPointer, INT64) = VA_ARG (VaListMarker, INT64);
+          BASE_ARG (BaseListMarkerPointer, INT64) = VA_ARG (
+                                                      VaListMarker,
+                                                      INT64
+                                                      );
         } else {
-          BASE_ARG (BaseListMarkerPointer, INT64) = BASE_ARG (BaseListMarker, INT64);
+          BASE_ARG (BaseListMarkerPointer, INT64) = BASE_ARG (
+                                                      BaseListMarker,
+                                                      INT64
+                                                      );
         }
       } else {
         if (BaseListMarker == NULL) {
           BASE_ARG (BaseListMarkerPointer, int) = VA_ARG (VaListMarker, int);
         } else {
-          BASE_ARG (BaseListMarkerPointer, int) = BASE_ARG (BaseListMarker, int);
+          BASE_ARG (BaseListMarkerPointer, int) = BASE_ARG (
+                                                    BaseListMarker,
+                                                    int
+                                                    );
         }
       }
-    } else if ((*Format == 's') || (*Format == 'S') || (*Format == 'a') || (*Format == 'g') || (*Format == 't')) {
+    } else if ((*Format == 's') || (*Format == 'S') || (*Format == 'a') ||
+               (*Format == 'g') || (*Format == 't'))
+    {
       if (BaseListMarker == NULL) {
-        BASE_ARG (BaseListMarkerPointer, VOID *) = VA_ARG (VaListMarker, VOID *);
+        BASE_ARG (BaseListMarkerPointer, VOID *) = VA_ARG (
+                                                     VaListMarker,
+                                                     VOID *
+                                                     );
       } else {
-        BASE_ARG (BaseListMarkerPointer, VOID *) = BASE_ARG (BaseListMarker, VOID *);
+        BASE_ARG (BaseListMarkerPointer, VOID *) = BASE_ARG (
+                                                     BaseListMarker,
+                                                     VOID *
+                                                     );
       }
     } else if (*Format == 'c') {
       if (BaseListMarker == NULL) {
         BASE_ARG (BaseListMarkerPointer, UINTN) = VA_ARG (VaListMarker, UINTN);
       } else {
-        BASE_ARG (BaseListMarkerPointer, UINTN) = BASE_ARG (BaseListMarker, UINTN);
+        BASE_ARG (BaseListMarkerPointer, UINTN) = BASE_ARG (
+                                                    BaseListMarker,
+                                                    UINTN
+                                                    );
       }
     } else if (*Format == 'r') {
       if (BaseListMarker == NULL) {
-        BASE_ARG (BaseListMarkerPointer, RETURN_STATUS) = VA_ARG (VaListMarker, RETURN_STATUS);
+        BASE_ARG (BaseListMarkerPointer, RETURN_STATUS) = VA_ARG (
+                                                            VaListMarker,
+                                                            RETURN_STATUS
+                                                            );
       } else {
-        BASE_ARG (BaseListMarkerPointer, RETURN_STATUS) = BASE_ARG (BaseListMarker, RETURN_STATUS);
+        BASE_ARG (BaseListMarkerPointer, RETURN_STATUS) = BASE_ARG (
+                                                            BaseListMarker,
+                                                            RETURN_STATUS
+                                                            );
       }
     }
 
@@ -385,7 +423,8 @@ DebugAssert (
   IN CONST CHAR8  *Description
   )
 {
-  UINT64                 Buffer[EFI_STATUS_CODE_DATA_MAX_SIZE / sizeof (UINT64)];
+  UINT64  Buffer[EFI_STATUS_CODE_DATA_MAX_SIZE /
+                 sizeof (UINT64)];
   EFI_DEBUG_ASSERT_DATA  *AssertData;
   UINTN                  HeaderSize;
   UINTN                  TotalSize;
@@ -408,7 +447,9 @@ DebugAssert (
   //
   // Make sure it will all fit in the passed in buffer.
   //
-  if (HeaderSize + ModuleNameSize + FileNameSize + DescriptionSize > sizeof (Buffer)) {
+  if (HeaderSize + ModuleNameSize + FileNameSize + DescriptionSize >
+      sizeof (Buffer))
+  {
     //
     // remove module name if it's too long to be filled into buffer
     //
@@ -454,14 +495,22 @@ DebugAssert (
   //
   // Copy Ascii FileName including NULL terminator.
   //
-  Temp                   = CopyMem (Temp + ModuleNameSize, FileName, FileNameSize);
+  Temp = CopyMem (
+           Temp + ModuleNameSize,
+           FileName,
+           FileNameSize
+           );
   Temp[FileNameSize - 1] = 0;
   TotalSize             += (ModuleNameSize + FileNameSize);
 
   //
   // Copy Ascii Description include NULL terminator.
   //
-  Temp                      = CopyMem (Temp + FileNameSize, Description, DescriptionSize);
+  Temp = CopyMem (
+           Temp + FileNameSize,
+           Description,
+           DescriptionSize
+           );
   Temp[DescriptionSize - 1] = 0;
   TotalSize                += DescriptionSize;
 
@@ -478,9 +527,13 @@ DebugAssert (
   //
   // Generate a Breakpoint, DeadLoop, or NOP based on PCD settings
   //
-  if ((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_ASSERT_BREAKPOINT_ENABLED) != 0) {
+  if ((PcdGet8 (PcdDebugPropertyMask) &
+       DEBUG_PROPERTY_ASSERT_BREAKPOINT_ENABLED) != 0)
+  {
     CpuBreakpoint ();
-  } else if ((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_ASSERT_DEADLOOP_ENABLED) != 0) {
+  } else if ((PcdGet8 (PcdDebugPropertyMask) &
+              DEBUG_PROPERTY_ASSERT_DEADLOOP_ENABLED) != 0)
+  {
     CpuDeadLoop ();
   }
 }
@@ -528,7 +581,8 @@ DebugAssertEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_DEBUG_ASSERT_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) &
+                    DEBUG_PROPERTY_DEBUG_ASSERT_ENABLED) != 0);
 }
 
 /**
@@ -547,7 +601,8 @@ DebugPrintEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_DEBUG_PRINT_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) &
+                    DEBUG_PROPERTY_DEBUG_PRINT_ENABLED) != 0);
 }
 
 /**
@@ -566,7 +621,8 @@ DebugCodeEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_DEBUG_CODE_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) &
+                    DEBUG_PROPERTY_DEBUG_CODE_ENABLED) != 0);
 }
 
 /**
@@ -585,7 +641,8 @@ DebugClearMemoryEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) & DEBUG_PROPERTY_CLEAR_MEMORY_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdDebugPropertyMask) &
+                    DEBUG_PROPERTY_CLEAR_MEMORY_ENABLED) != 0);
 }
 
 /**

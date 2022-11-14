@@ -49,7 +49,11 @@ CdExpressPeimEntry (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Status = UnicodeStrToAsciiStrS (PcdGetPtr (PcdRecoveryFileName), mRecoveryFileName, mRecoveryFileNameSize);
+  Status = UnicodeStrToAsciiStrS (
+             PcdGetPtr (PcdRecoveryFileName),
+             mRecoveryFileName,
+             mRecoveryFileNameSize
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -60,7 +64,11 @@ CdExpressPeimEntry (
   ZeroMem (PrivateData, sizeof (*PrivateData));
   PrivateData->Signature = PEI_CD_EXPRESS_PRIVATE_DATA_SIGNATURE;
 
-  PrivateData->BlockBuffer = AllocatePages (EFI_SIZE_TO_PAGES (PEI_CD_BLOCK_SIZE));
+  PrivateData->BlockBuffer = AllocatePages (
+                               EFI_SIZE_TO_PAGES (
+                                 PEI_CD_BLOCK_SIZE
+                                 )
+                               );
   if (PrivateData->BlockBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -72,11 +80,15 @@ CdExpressPeimEntry (
   //
   // Installs Ppi
   //
-  PrivateData->DeviceRecoveryPpi.GetNumberRecoveryCapsules = GetNumberRecoveryCapsules;
-  PrivateData->DeviceRecoveryPpi.GetRecoveryCapsuleInfo    = GetRecoveryCapsuleInfo;
-  PrivateData->DeviceRecoveryPpi.LoadRecoveryCapsule       = LoadRecoveryCapsule;
+  PrivateData->DeviceRecoveryPpi.GetNumberRecoveryCapsules =
+    GetNumberRecoveryCapsules;
+  PrivateData->DeviceRecoveryPpi.GetRecoveryCapsuleInfo =
+    GetRecoveryCapsuleInfo;
+  PrivateData->DeviceRecoveryPpi.LoadRecoveryCapsule =
+    LoadRecoveryCapsule;
 
-  PrivateData->PpiDescriptor.Flags = (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
+  PrivateData->PpiDescriptor.Flags = (EFI_PEI_PPI_DESCRIPTOR_PPI |
+                                      EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
   PrivateData->PpiDescriptor.Guid  = &gEfiPeiDeviceRecoveryModulePpiGuid;
   PrivateData->PpiDescriptor.Ppi   = &PrivateData->DeviceRecoveryPpi;
 
@@ -174,7 +186,9 @@ UpdateBlocksAndVolumes (
   // Find out all Block Io Ppi instances within the system
   // Assuming all device Block Io Peims are dispatched already
   //
-  for (BlockIoPpiInstance = 0; BlockIoPpiInstance < PEI_CD_EXPRESS_MAX_BLOCK_IO_PPI; BlockIoPpiInstance++) {
+  for (BlockIoPpiInstance = 0; BlockIoPpiInstance <
+       PEI_CD_EXPRESS_MAX_BLOCK_IO_PPI; BlockIoPpiInstance++)
+  {
     if (BlockIo2) {
       Status = PeiServicesLocatePpi (
                  &gEfiPeiVirtualBlockIo2PpiGuid,
@@ -220,7 +234,10 @@ UpdateBlocksAndVolumes (
     //
     // Just retrieve the first block, should emulate all blocks.
     //
-    for (IndexBlockDevice = 1; IndexBlockDevice <= NumberBlockDevices && PrivateData->CapsuleCount < PEI_CD_EXPRESS_MAX_CAPSULE_NUMBER; IndexBlockDevice++) {
+    for (IndexBlockDevice = 1; IndexBlockDevice <= NumberBlockDevices &&
+         PrivateData->CapsuleCount < PEI_CD_EXPRESS_MAX_CAPSULE_NUMBER;
+         IndexBlockDevice++)
+    {
       if (BlockIo2) {
         Status = BlockIo2Ppi->GetBlockDeviceMediaInfo (
                                 PeiServices,
@@ -230,16 +247,29 @@ UpdateBlocksAndVolumes (
                                 );
         if (EFI_ERROR (Status) ||
             !Media2.MediaPresent ||
-            ((Media2.InterfaceType != MSG_ATAPI_DP) && (Media2.InterfaceType != MSG_USB_DP)) ||
+            ((Media2.InterfaceType != MSG_ATAPI_DP) && (Media2.InterfaceType !=
+                                                        MSG_USB_DP)) ||
             (Media2.BlockSize != PEI_CD_BLOCK_SIZE)
             )
         {
           continue;
         }
 
-        DEBUG ((DEBUG_INFO, "PeiCdExpress InterfaceType is %d\n", Media2.InterfaceType));
-        DEBUG ((DEBUG_INFO, "PeiCdExpress MediaPresent is %d\n", Media2.MediaPresent));
-        DEBUG ((DEBUG_INFO, "PeiCdExpress BlockSize is  0x%x\n", Media2.BlockSize));
+        DEBUG ((
+          DEBUG_INFO,
+          "PeiCdExpress InterfaceType is %d\n",
+          Media2.InterfaceType
+          ));
+        DEBUG ((
+          DEBUG_INFO,
+          "PeiCdExpress MediaPresent is %d\n",
+          Media2.MediaPresent
+          ));
+        DEBUG ((
+          DEBUG_INFO,
+          "PeiCdExpress BlockSize is  0x%x\n",
+          Media2.BlockSize
+          ));
       } else {
         Status = BlockIoPpi->GetBlockDeviceMediaInfo (
                                PeiServices,
@@ -249,26 +279,42 @@ UpdateBlocksAndVolumes (
                                );
         if (EFI_ERROR (Status) ||
             !Media.MediaPresent ||
-            ((Media.DeviceType != IdeCDROM) && (Media.DeviceType != UsbMassStorage)) ||
+            ((Media.DeviceType != IdeCDROM) && (Media.DeviceType !=
+                                                UsbMassStorage)) ||
             (Media.BlockSize != PEI_CD_BLOCK_SIZE)
             )
         {
           continue;
         }
 
-        DEBUG ((DEBUG_INFO, "PeiCdExpress DeviceType is %d\n", Media.DeviceType));
-        DEBUG ((DEBUG_INFO, "PeiCdExpress MediaPresent is %d\n", Media.MediaPresent));
-        DEBUG ((DEBUG_INFO, "PeiCdExpress BlockSize is  0x%x\n", Media.BlockSize));
+        DEBUG ((
+          DEBUG_INFO,
+          "PeiCdExpress DeviceType is %d\n",
+          Media.DeviceType
+          ));
+        DEBUG ((
+          DEBUG_INFO,
+          "PeiCdExpress MediaPresent is %d\n",
+          Media.MediaPresent
+          ));
+        DEBUG ((
+          DEBUG_INFO,
+          "PeiCdExpress BlockSize is  0x%x\n",
+          Media.BlockSize
+          ));
       }
 
       DEBUG ((DEBUG_INFO, "PeiCdExpress Status is %d\n", Status));
 
       DEBUG ((DEBUG_INFO, "IndexBlockDevice is %d\n", IndexBlockDevice));
-      PrivateData->CapsuleData[PrivateData->CapsuleCount].IndexBlock = IndexBlockDevice;
+      PrivateData->CapsuleData[PrivateData->CapsuleCount].IndexBlock =
+        IndexBlockDevice;
       if (BlockIo2) {
-        PrivateData->CapsuleData[PrivateData->CapsuleCount].BlockIo2 = BlockIo2Ppi;
+        PrivateData->CapsuleData[PrivateData->CapsuleCount].BlockIo2 =
+          BlockIo2Ppi;
       } else {
-        PrivateData->CapsuleData[PrivateData->CapsuleCount].BlockIo = BlockIoPpi;
+        PrivateData->CapsuleData[PrivateData->CapsuleCount].BlockIo =
+          BlockIoPpi;
       }
 
       Status = FindRecoveryCapsules (PrivateData);
@@ -322,9 +368,12 @@ FindRecoveryCapsules (
   //
   // The volume descriptor starts on Lba 16
   //
-  IndexBlockDevice = PrivateData->CapsuleData[PrivateData->CapsuleCount].IndexBlock;
-  BlockIoPpi       = PrivateData->CapsuleData[PrivateData->CapsuleCount].BlockIo;
-  BlockIo2Ppi      = PrivateData->CapsuleData[PrivateData->CapsuleCount].BlockIo2;
+  IndexBlockDevice =
+    PrivateData->CapsuleData[PrivateData->CapsuleCount].IndexBlock;
+  BlockIoPpi =
+    PrivateData->CapsuleData[PrivateData->CapsuleCount].BlockIo;
+  BlockIo2Ppi =
+    PrivateData->CapsuleData[PrivateData->CapsuleCount].BlockIo2;
 
   VolumeSpaceSize = 0;
   StartOfVolume   = TRUE;
@@ -357,7 +406,13 @@ FindRecoveryCapsules (
     }
 
     StandardID = (UINT8 *)(Buffer + PEI_CD_EXPRESS_STANDARD_ID_OFFSET);
-    if (!StringCmp (StandardID, (UINT8 *)PEI_CD_STANDARD_ID, PEI_CD_EXPRESS_STANDARD_ID_SIZE, TRUE)) {
+    if (!StringCmp (
+           StandardID,
+           (UINT8 *)PEI_CD_STANDARD_ID,
+           PEI_CD_EXPRESS_STANDARD_ID_SIZE,
+           TRUE
+           ))
+    {
       break;
     }
 
@@ -385,10 +440,17 @@ FindRecoveryCapsules (
 
     VolumeSpaceSize = *(UINT32 *)(Buffer + PEI_CD_EXPRESS_VOLUME_SPACE_OFFSET);
 
-    RoorDirRecord = (PEI_CD_EXPRESS_DIR_FILE_RECORD *)(Buffer + PEI_CD_EXPRESS_ROOT_DIR_RECORD_OFFSET);
+    RoorDirRecord = (PEI_CD_EXPRESS_DIR_FILE_RECORD *)(Buffer +
+                                                       PEI_CD_EXPRESS_ROOT_DIR_RECORD_OFFSET);
     RootDirLBA    = RoorDirRecord->LocationOfExtent[0];
 
-    Status = RetrieveCapsuleFileFromRoot (PrivateData, BlockIoPpi, BlockIo2Ppi, IndexBlockDevice, RootDirLBA);
+    Status = RetrieveCapsuleFileFromRoot (
+               PrivateData,
+               BlockIoPpi,
+               BlockIo2Ppi,
+               IndexBlockDevice,
+               RootDirLBA
+               );
     if (!EFI_ERROR (Status)) {
       //
       // Just look for the first primary descriptor
@@ -487,20 +549,29 @@ RetrieveCapsuleFileFromRoot (
       continue;
     }
 
-    if (!StringCmp (FileRecord->FileID, (UINT8 *)mRecoveryFileName, mRecoveryFileNameSize - 1, FALSE)) {
+    if (!StringCmp (
+           FileRecord->FileID,
+           (UINT8 *)mRecoveryFileName,
+           mRecoveryFileNameSize - 1,
+           FALSE
+           ))
+    {
       Buffer += FileRecord->Length;
       continue;
     }
 
-    PrivateData->CapsuleData[PrivateData->CapsuleCount].CapsuleStartLBA         = FileRecord->LocationOfExtent[0];
-    PrivateData->CapsuleData[PrivateData->CapsuleCount].CapsuleBlockAlignedSize =
-      (
-       FileRecord->DataLength[0] /
-       PEI_CD_BLOCK_SIZE +
-       1
-      ) *
-      PEI_CD_BLOCK_SIZE;
-    PrivateData->CapsuleData[PrivateData->CapsuleCount].CapsuleSize = FileRecord->DataLength[0];
+    PrivateData->CapsuleData[PrivateData->CapsuleCount].CapsuleStartLBA
+      = FileRecord->LocationOfExtent[0];
+    PrivateData->CapsuleData[PrivateData->CapsuleCount].CapsuleBlockAlignedSize
+      =
+        (
+         FileRecord->DataLength[0] /
+         PEI_CD_BLOCK_SIZE +
+         1
+        ) *
+        PEI_CD_BLOCK_SIZE;
+    PrivateData->CapsuleData[PrivateData->CapsuleCount].CapsuleSize =
+      FileRecord->DataLength[0];
 
     return EFI_SUCCESS;
   }
@@ -592,7 +663,11 @@ GetRecoveryCapsuleInfo (
   UINTN                        NumberRecoveryCapsules;
   EFI_STATUS                   Status;
 
-  Status = GetNumberRecoveryCapsules (PeiServices, This, &NumberRecoveryCapsules);
+  Status = GetNumberRecoveryCapsules (
+             PeiServices,
+             This,
+             &NumberRecoveryCapsules
+             );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -648,7 +723,11 @@ LoadRecoveryCapsule (
   EFI_PEI_RECOVERY_BLOCK_IO2_PPI  *BlockIo2Ppi;
   UINTN                           NumberRecoveryCapsules;
 
-  Status = GetNumberRecoveryCapsules (PeiServices, This, &NumberRecoveryCapsules);
+  Status = GetNumberRecoveryCapsules (
+             PeiServices,
+             This,
+             &NumberRecoveryCapsules
+             );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -666,18 +745,24 @@ LoadRecoveryCapsule (
     Status = BlockIo2Ppi->ReadBlocks (
                             PeiServices,
                             BlockIo2Ppi,
-                            PrivateData->CapsuleData[CapsuleInstance - 1].IndexBlock,
-                            PrivateData->CapsuleData[CapsuleInstance - 1].CapsuleStartLBA,
-                            PrivateData->CapsuleData[CapsuleInstance - 1].CapsuleBlockAlignedSize,
+                            PrivateData->CapsuleData[CapsuleInstance -
+                                                     1].IndexBlock,
+                            PrivateData->CapsuleData[CapsuleInstance -
+                                                     1].CapsuleStartLBA,
+                            PrivateData->CapsuleData[CapsuleInstance -
+                                                     1].CapsuleBlockAlignedSize,
                             Buffer
                             );
   } else {
     Status = BlockIoPpi->ReadBlocks (
                            PeiServices,
                            BlockIoPpi,
-                           PrivateData->CapsuleData[CapsuleInstance - 1].IndexBlock,
-                           PrivateData->CapsuleData[CapsuleInstance - 1].CapsuleStartLBA,
-                           PrivateData->CapsuleData[CapsuleInstance - 1].CapsuleBlockAlignedSize,
+                           PrivateData->CapsuleData[CapsuleInstance -
+                                                    1].IndexBlock,
+                           PrivateData->CapsuleData[CapsuleInstance -
+                                                    1].CapsuleStartLBA,
+                           PrivateData->CapsuleData[CapsuleInstance -
+                                                    1].CapsuleBlockAlignedSize,
                            Buffer
                            );
   }
@@ -714,7 +799,9 @@ StringCmp (
     }
 
     if (!CaseSensitive) {
-      Dif = (UINT8)((Source1[Index] > Source2[Index]) ? (Source1[Index] - Source2[Index]) : (Source2[Index] - Source1[Index]));
+      Dif = (UINT8)((Source1[Index] > Source2[Index]) ? (Source1[Index] -
+                                                         Source2[Index]) :
+                    (Source2[Index] - Source1[Index]));
       if (Dif == ('a' - 'A')) {
         continue;
       }

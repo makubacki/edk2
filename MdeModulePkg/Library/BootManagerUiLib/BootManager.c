@@ -51,7 +51,8 @@ HII_VENDOR_DEVICE_PATH  mBootManagerHiiVendorDevicePath = {
     //
     // {1DDDBE15-481D-4d2b-8277-B191EAF66525}
     //
-    { 0x1dddbe15, 0x481d, 0x4d2b, { 0x82, 0x77, 0xb1, 0x91, 0xea, 0xf6, 0x65, 0x25 }
+    { 0x1dddbe15, 0x481d, 0x4d2b, { 0x82, 0x77, 0xb1, 0x91, 0xea, 0xf6, 0x65,
+                                    0x25 }
     }
   },
   {
@@ -180,13 +181,20 @@ BmSetConsoleMode (
       if ((Info->HorizontalResolution == NewHorizontalResolution) &&
           (Info->VerticalResolution == NewVerticalResolution))
       {
-        if ((GraphicsOutput->Mode->Info->HorizontalResolution == NewHorizontalResolution) &&
-            (GraphicsOutput->Mode->Info->VerticalResolution == NewVerticalResolution))
+        if ((GraphicsOutput->Mode->Info->HorizontalResolution ==
+             NewHorizontalResolution) &&
+            (GraphicsOutput->Mode->Info->VerticalResolution ==
+             NewVerticalResolution))
         {
           //
           // Current resolution is same with required resolution, check if text mode need be set
           //
-          Status = SimpleTextOut->QueryMode (SimpleTextOut, SimpleTextOut->Mode->Mode, &CurrentColumn, &CurrentRow);
+          Status = SimpleTextOut->QueryMode (
+                                    SimpleTextOut,
+                                    SimpleTextOut->Mode->Mode,
+                                    &CurrentColumn,
+                                    &CurrentRow
+                                    );
           ASSERT_EFI_ERROR (Status);
           if ((CurrentColumn == NewColumns) && (CurrentRow == NewRows)) {
             //
@@ -199,7 +207,12 @@ BmSetConsoleMode (
             // If current text mode is different from required text mode.  Set new video mode
             //
             for (Index = 0; Index < MaxTextMode; Index++) {
-              Status = SimpleTextOut->QueryMode (SimpleTextOut, Index, &CurrentColumn, &CurrentRow);
+              Status = SimpleTextOut->QueryMode (
+                                        SimpleTextOut,
+                                        Index,
+                                        &CurrentColumn,
+                                        &CurrentRow
+                                        );
               if (!EFI_ERROR (Status)) {
                 if ((CurrentColumn == NewColumns) && (CurrentRow == NewRows)) {
                   //
@@ -313,7 +326,11 @@ BmSetupResetReminder (
   //
   // Use BrowserEx2 protocol to check whether reset is required.
   //
-  Status = gBS->LocateProtocol (&gEdkiiFormBrowserEx2ProtocolGuid, NULL, (VOID **)&FormBrowserEx2);
+  Status = gBS->LocateProtocol (
+                  &gEdkiiFormBrowserEx2ProtocolGuid,
+                  NULL,
+                  (VOID **)&FormBrowserEx2
+                  );
   //
   // check any reset required change is applied? if yes, reset system
   //
@@ -322,13 +339,23 @@ BmSetupResetReminder (
     ASSERT (StringBuffer1 != NULL);
     StringBuffer2 = AllocateZeroPool (MAX_STRING_LEN * sizeof (CHAR16));
     ASSERT (StringBuffer2 != NULL);
-    StrCpyS (StringBuffer1, MAX_STRING_LEN, L"Configuration changed. Reset to apply it Now.");
+    StrCpyS (
+      StringBuffer1,
+      MAX_STRING_LEN,
+      L"Configuration changed. Reset to apply it Now."
+      );
     StrCpyS (StringBuffer2, MAX_STRING_LEN, L"Press ENTER to reset");
     //
     // Popup a menu to notice user
     //
     do {
-      CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, StringBuffer1, StringBuffer2, NULL);
+      CreatePopUp (
+        EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
+        &Key,
+        StringBuffer1,
+        StringBuffer2,
+        NULL
+        );
     } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
 
     FreePool (StringBuffer1);
@@ -378,7 +405,12 @@ GroupMultipleLegacyBootOption4SameType (
   }
 
   for (Index = 0; Index < BootOrderSize / sizeof (UINT16); Index++) {
-    UnicodeSPrint (OptionName, sizeof (OptionName), L"Boot%04x", BootOrder[Index]);
+    UnicodeSPrint (
+      OptionName,
+      sizeof (OptionName),
+      L"Boot%04x",
+      BootOrder[Index]
+      );
     Status = EfiBootManagerVariableToLoadOption (OptionName, &BootOption);
     ASSERT_EFI_ERROR (Status);
 
@@ -388,9 +420,19 @@ GroupMultipleLegacyBootOption4SameType (
       //
       // Legacy Boot Option
       //
-      DEBUG ((DEBUG_ERROR, "[BootManagerDxe] ==== Find Legacy Boot Option  0x%x! ==== \n", Index));
-      ASSERT ((((BBS_BBS_DEVICE_PATH *)BootOption.FilePath)->DeviceType & 0xF) < ARRAY_SIZE (DeviceTypeIndex));
-      NextIndex = &DeviceTypeIndex[((BBS_BBS_DEVICE_PATH *)BootOption.FilePath)->DeviceType & 0xF];
+      DEBUG ((
+        DEBUG_ERROR,
+        "[BootManagerDxe] ==== Find Legacy Boot Option  0x%x! ==== \n",
+        Index
+        ));
+      ASSERT (
+        (((BBS_BBS_DEVICE_PATH *)BootOption.FilePath)->DeviceType & 0xF) <
+        ARRAY_SIZE (DeviceTypeIndex)
+        );
+      NextIndex =
+        &DeviceTypeIndex[((BBS_BBS_DEVICE_PATH *)BootOption.FilePath)->
+                           DeviceType
+                         & 0xF];
 
       if (*NextIndex == (UINTN)-1) {
         //
@@ -402,14 +444,23 @@ GroupMultipleLegacyBootOption4SameType (
         // insert the current boot option before *NextIndex, causing [*Next .. Index] shift right one position
         //
         OptionNumber = BootOrder[Index];
-        CopyMem (&BootOrder[*NextIndex + 1], &BootOrder[*NextIndex], (Index - *NextIndex) * sizeof (UINT16));
+        CopyMem (
+          &BootOrder[*NextIndex + 1],
+          &BootOrder[*NextIndex],
+          (Index -
+           *NextIndex) * sizeof (UINT16)
+          );
         BootOrder[*NextIndex] = OptionNumber;
 
         //
         // Update the DeviceTypeIndex array to reflect the right shift operation
         //
-        for (DeviceIndex = 0; DeviceIndex < ARRAY_SIZE (DeviceTypeIndex); DeviceIndex++) {
-          if ((DeviceTypeIndex[DeviceIndex] != (UINTN)-1) && (DeviceTypeIndex[DeviceIndex] >= *NextIndex)) {
+        for (DeviceIndex = 0; DeviceIndex < ARRAY_SIZE (DeviceTypeIndex);
+             DeviceIndex++)
+        {
+          if ((DeviceTypeIndex[DeviceIndex] != (UINTN)-1) &&
+              (DeviceTypeIndex[DeviceIndex] >= *NextIndex))
+          {
             DeviceTypeIndex[DeviceIndex]++;
           }
         }
@@ -509,7 +560,10 @@ UpdateBootManager (
   //
   GroupMultipleLegacyBootOption4SameType ();
 
-  BootOption = EfiBootManagerGetLoadOptions (&BootOptionCount, LoadOptionTypeBoot);
+  BootOption = EfiBootManagerGetLoadOptions (
+                 &BootOptionCount,
+                 LoadOptionTypeBoot
+                 );
 
   HiiHandle = gBootManagerPrivate.HiiHandle;
 
@@ -525,14 +579,24 @@ UpdateBootManager (
   //
   // Create Hii Extend Label OpCode as the start opcode
   //
-  StartLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (StartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  StartLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                       StartOpCodeHandle,
+                                       &gEfiIfrTianoGuid,
+                                       NULL,
+                                       sizeof (EFI_IFR_GUID_LABEL)
+                                       );
   StartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   StartLabel->Number       = LABEL_BOOT_OPTION;
 
   //
   // Create Hii Extend Label OpCode as the end opcode
   //
-  EndLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (EndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  EndLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                     EndOpCodeHandle,
+                                     &gEfiIfrTianoGuid,
+                                     NULL,
+                                     sizeof (EFI_IFR_GUID_LABEL)
+                                     );
   EndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   EndLabel->Number       = LABEL_BOOT_OPTION_END;
   mKeyInput              = 0;
@@ -554,8 +618,11 @@ UpdateBootManager (
     // Group the legacy boot option in the sub title created dynamically
     //
     IsLegacyOption = (BOOLEAN)(
-                               (DevicePathType (BootOption[Index].FilePath) == BBS_DEVICE_PATH) &&
-                               (DevicePathSubType (BootOption[Index].FilePath) == BBS_BBS_DP)
+                               (DevicePathType (BootOption[Index].FilePath) ==
+                                BBS_DEVICE_PATH) &&
+                               (DevicePathSubType (
+                                  BootOption[Index].FilePath
+                                  ) == BBS_BBS_DP)
                                );
 
     if (!IsLegacyOption && NeedEndOp) {
@@ -563,20 +630,29 @@ UpdateBootManager (
       HiiCreateEndOpCode (StartOpCodeHandle);
     }
 
-    if (IsLegacyOption && (DeviceType != ((BBS_BBS_DEVICE_PATH *)BootOption[Index].FilePath)->DeviceType)) {
+    if (IsLegacyOption && (DeviceType !=
+                           ((BBS_BBS_DEVICE_PATH *)BootOption[Index].FilePath)->
+                             DeviceType))
+    {
       if (NeedEndOp) {
         HiiCreateEndOpCode (StartOpCodeHandle);
       }
 
-      DeviceType = ((BBS_BBS_DEVICE_PATH *)BootOption[Index].FilePath)->DeviceType;
-      Token      = HiiSetString (
-                     HiiHandle,
-                     0,
-                     mDeviceTypeStr[
-                                    MIN (DeviceType & 0xF, ARRAY_SIZE (mDeviceTypeStr) - 1)
-                     ],
-                     NULL
-                     );
+      DeviceType =
+        ((BBS_BBS_DEVICE_PATH *)BootOption[Index].FilePath)->DeviceType;
+      Token = HiiSetString (
+                HiiHandle,
+                0,
+                mDeviceTypeStr[
+                               MIN (
+                                 DeviceType & 0xF,
+                                 ARRAY_SIZE (
+                                   mDeviceTypeStr
+                                   ) - 1
+                                 )
+                ],
+                NULL
+                );
       HiiCreateSubTitleOpCode (StartOpCodeHandle, Token, 0, 0, 1);
       NeedEndOp = TRUE;
     }
@@ -740,8 +816,10 @@ BmInitialBootModeInfo (
     //
     // Get current video resolution and text mode.
     //
-    mBmBootHorizontalResolution = GraphicsOutput->Mode->Info->HorizontalResolution;
-    mBmBootVerticalResolution   = GraphicsOutput->Mode->Info->VerticalResolution;
+    mBmBootHorizontalResolution =
+      GraphicsOutput->Mode->Info->HorizontalResolution;
+    mBmBootVerticalResolution =
+      GraphicsOutput->Mode->Info->VerticalResolution;
   }
 
   if (SimpleTextOut != NULL) {
@@ -822,12 +900,21 @@ BootManagerCallback (
     return EFI_INVALID_PARAMETER;
   }
 
-  BootOption = EfiBootManagerGetLoadOptions (&BootOptionCount, LoadOptionTypeBoot);
+  BootOption = EfiBootManagerGetLoadOptions (
+                 &BootOptionCount,
+                 LoadOptionTypeBoot
+                 );
 
   //
   // Clear  the  screen  before.
   //
-  gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
+  gST->ConOut->SetAttribute (
+                 gST->ConOut,
+                 EFI_TEXT_ATTR (
+                   EFI_LIGHTGRAY,
+                   EFI_BLACK
+                   )
+                 );
   gST->ConOut->ClearScreen (gST->ConOut);
 
   //
@@ -845,7 +932,13 @@ BootManagerCallback (
   if (EFI_ERROR (BootOption[QuestionId - 1].Status)) {
     gST->ConOut->OutputString (
                    gST->ConOut,
-                   HiiGetString (gBootManagerPrivate.HiiHandle, STRING_TOKEN (STR_ANY_KEY_CONTINUE), NULL)
+                   HiiGetString (
+                     gBootManagerPrivate.HiiHandle,
+                     STRING_TOKEN (
+                       STR_ANY_KEY_CONTINUE
+                       ),
+                     NULL
+                     )
                    );
     gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   }

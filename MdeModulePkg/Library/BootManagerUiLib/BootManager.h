@@ -55,7 +55,8 @@ typedef struct {
 //
 // Variable created with this flag will be "Efi:...."
 //
-#define VAR_FLAG  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE
+#define VAR_FLAG  \
+  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE
 
 //
 // These are the VFR compiler generated data representing our VFR data.

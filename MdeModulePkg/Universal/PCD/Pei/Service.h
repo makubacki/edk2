@@ -37,7 +37,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // PCD_PEI_SERVICE_DRIVER_VERSION is defined in Autogen.h.
 //
 #if (PCD_SERVICE_PEIM_VERSION != PCD_PEI_SERVICE_DRIVER_VERSION)
-  #error "Please make sure the version of PCD PEIM Service and the generated PCD PEI Database match."
+  #error \
+  "Please make sure the version of PCD PEIM Service and the generated PCD PEI Database match."
 #endif
 
 /**

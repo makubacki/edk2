@@ -53,7 +53,10 @@ ReferFontInfoLocally (
   HII_FONT_INFO  *LocalFont;
   LIST_ENTRY     *Link;
 
-  ASSERT (Private != NULL && StringPackage != NULL && GlobalFontInfo != NULL && LocalFontInfo != NULL);
+  ASSERT (
+    Private != NULL && StringPackage != NULL && GlobalFontInfo != NULL &&
+    LocalFontInfo != NULL
+    );
 
   if (!DuplicateEnable) {
     for (Link = StringPackage->FontInfoList.ForwardLink;
@@ -208,11 +211,20 @@ GetStringFontInfo (
 
   ASSERT (StringFontInfo != NULL && StringPackage != NULL);
 
-  for (Link = StringPackage->FontInfoList.ForwardLink; Link != &StringPackage->FontInfoList; Link = Link->ForwardLink) {
+  for (Link = StringPackage->FontInfoList.ForwardLink; Link !=
+       &StringPackage->FontInfoList; Link = Link->ForwardLink)
+  {
     FontInfo = CR (Link, HII_FONT_INFO, Entry, HII_FONT_INFO_SIGNATURE);
     if (FontInfo->FontId == FontId) {
-      GlobalFont      = CR (FontInfo->GlobalEntry, HII_GLOBAL_FONT_INFO, Entry, HII_GLOBAL_FONT_INFO_SIGNATURE);
-      *StringFontInfo = (EFI_FONT_INFO *)AllocateZeroPool (GlobalFont->FontInfoSize);
+      GlobalFont = CR (
+                     FontInfo->GlobalEntry,
+                     HII_GLOBAL_FONT_INFO,
+                     Entry,
+                     HII_GLOBAL_FONT_INFO_SIGNATURE
+                     );
+      *StringFontInfo = (EFI_FONT_INFO *)AllocateZeroPool (
+                                           GlobalFont->FontInfoSize
+                                           );
       if (*StringFontInfo == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -291,12 +303,18 @@ FindStringBlock (
   StringSize      = 0;
 
   if ((StringId != (EFI_STRING_ID)(-1)) && (StringId != 0)) {
-    ASSERT (BlockType != NULL && StringBlockAddr != NULL && StringTextOffset != NULL);
+    ASSERT (
+      BlockType != NULL && StringBlockAddr != NULL && StringTextOffset !=
+      NULL
+      );
     if (StringId > StringPackage->MaxStringId) {
       return EFI_NOT_FOUND;
     }
   } else {
-    ASSERT (Private != NULL && Private->Signature == HII_DATABASE_PRIVATE_DATA_SIGNATURE);
+    ASSERT (
+      Private != NULL && Private->Signature ==
+      HII_DATABASE_PRIVATE_DATA_SIGNATURE
+      );
     if ((StringId == 0) && (LastStringId != NULL)) {
       *LastStringId = StringPackage->MaxStringId;
       return EFI_SUCCESS;
@@ -321,21 +339,31 @@ FindStringBlock (
         break;
 
       case EFI_HII_SIBT_STRING_SCSU_FONT:
-        Offset        = sizeof (EFI_HII_SIBT_STRING_SCSU_FONT_BLOCK) - sizeof (UINT8);
+        Offset = sizeof (EFI_HII_SIBT_STRING_SCSU_FONT_BLOCK) -
+                 sizeof (UINT8);
         StringTextPtr = BlockHdr + Offset;
         BlockSize    += Offset + AsciiStrSize ((CHAR8 *)StringTextPtr);
         CurrentStringId++;
         break;
 
       case EFI_HII_SIBT_STRINGS_SCSU:
-        CopyMem (&StringCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
-        StringTextPtr = (UINT8 *)((UINTN)BlockHdr + sizeof (EFI_HII_SIBT_STRINGS_SCSU_BLOCK) - sizeof (UINT8));
+        CopyMem (
+          &StringCount,
+          BlockHdr + sizeof (EFI_HII_STRING_BLOCK),
+          sizeof (UINT16)
+          );
+        StringTextPtr = (UINT8 *)((UINTN)BlockHdr +
+                                  sizeof (EFI_HII_SIBT_STRINGS_SCSU_BLOCK) -
+                                  sizeof (UINT8));
         BlockSize    += StringTextPtr - BlockHdr;
 
         for (Index = 0; Index < StringCount; Index++) {
           BlockSize += AsciiStrSize ((CHAR8 *)StringTextPtr);
           if (CurrentStringId == StringId) {
-            ASSERT (BlockType != NULL && StringBlockAddr != NULL && StringTextOffset != NULL);
+            ASSERT (
+              BlockType != NULL && StringBlockAddr != NULL &&
+              StringTextOffset != NULL
+              );
             *BlockType        = *BlockHdr;
             *StringBlockAddr  = BlockHdr;
             *StringTextOffset = StringTextPtr - BlockHdr;
@@ -351,16 +379,22 @@ FindStringBlock (
       case EFI_HII_SIBT_STRINGS_SCSU_FONT:
         CopyMem (
           &StringCount,
-          (UINT8 *)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) + sizeof (UINT8)),
+          (UINT8 *)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) +
+                    sizeof (UINT8)),
           sizeof (UINT16)
           );
-        StringTextPtr = (UINT8 *)((UINTN)BlockHdr + sizeof (EFI_HII_SIBT_STRINGS_SCSU_FONT_BLOCK) - sizeof (UINT8));
+        StringTextPtr = (UINT8 *)((UINTN)BlockHdr +
+                                  sizeof (EFI_HII_SIBT_STRINGS_SCSU_FONT_BLOCK)
+                                  - sizeof (UINT8));
         BlockSize    += StringTextPtr - BlockHdr;
 
         for (Index = 0; Index < StringCount; Index++) {
           BlockSize += AsciiStrSize ((CHAR8 *)StringTextPtr);
           if (CurrentStringId == StringId) {
-            ASSERT (BlockType != NULL && StringBlockAddr != NULL && StringTextOffset != NULL);
+            ASSERT (
+              BlockType != NULL && StringBlockAddr != NULL &&
+              StringTextOffset != NULL
+              );
             *BlockType        = *BlockHdr;
             *StringBlockAddr  = BlockHdr;
             *StringTextOffset = StringTextPtr - BlockHdr;
@@ -386,7 +420,8 @@ FindStringBlock (
         break;
 
       case EFI_HII_SIBT_STRING_UCS2_FONT:
-        Offset        = sizeof (EFI_HII_SIBT_STRING_UCS2_FONT_BLOCK)  - sizeof (CHAR16);
+        Offset = sizeof (EFI_HII_SIBT_STRING_UCS2_FONT_BLOCK)  -
+                 sizeof (CHAR16);
         StringTextPtr = BlockHdr + Offset;
         //
         // Use StrSize to store the size of the specified string, including the NULL
@@ -398,15 +433,23 @@ FindStringBlock (
         break;
 
       case EFI_HII_SIBT_STRINGS_UCS2:
-        Offset        = sizeof (EFI_HII_SIBT_STRINGS_UCS2_BLOCK) - sizeof (CHAR16);
+        Offset = sizeof (EFI_HII_SIBT_STRINGS_UCS2_BLOCK) -
+                 sizeof (CHAR16);
         StringTextPtr = BlockHdr + Offset;
         BlockSize    += Offset;
-        CopyMem (&StringCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
+        CopyMem (
+          &StringCount,
+          BlockHdr + sizeof (EFI_HII_STRING_BLOCK),
+          sizeof (UINT16)
+          );
         for (Index = 0; Index < StringCount; Index++) {
           GetUnicodeStringTextOrSize (NULL, StringTextPtr, &StringSize);
           BlockSize += StringSize;
           if (CurrentStringId == StringId) {
-            ASSERT (BlockType != NULL && StringBlockAddr != NULL && StringTextOffset != NULL);
+            ASSERT (
+              BlockType != NULL && StringBlockAddr != NULL &&
+              StringTextOffset != NULL
+              );
             *BlockType        = *BlockHdr;
             *StringBlockAddr  = BlockHdr;
             *StringTextOffset = StringTextPtr - BlockHdr;
@@ -420,19 +463,24 @@ FindStringBlock (
         break;
 
       case EFI_HII_SIBT_STRINGS_UCS2_FONT:
-        Offset        = sizeof (EFI_HII_SIBT_STRINGS_UCS2_FONT_BLOCK) - sizeof (CHAR16);
+        Offset = sizeof (EFI_HII_SIBT_STRINGS_UCS2_FONT_BLOCK) -
+                 sizeof (CHAR16);
         StringTextPtr = BlockHdr + Offset;
         BlockSize    += Offset;
         CopyMem (
           &StringCount,
-          (UINT8 *)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) + sizeof (UINT8)),
+          (UINT8 *)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) +
+                    sizeof (UINT8)),
           sizeof (UINT16)
           );
         for (Index = 0; Index < StringCount; Index++) {
           GetUnicodeStringTextOrSize (NULL, StringTextPtr, &StringSize);
           BlockSize += StringSize;
           if (CurrentStringId == StringId) {
-            ASSERT (BlockType != NULL && StringBlockAddr != NULL && StringTextOffset != NULL);
+            ASSERT (
+              BlockType != NULL && StringBlockAddr != NULL &&
+              StringTextOffset != NULL
+              );
             *BlockType        = *BlockHdr;
             *StringBlockAddr  = BlockHdr;
             *StringTextOffset = StringTextPtr - BlockHdr;
@@ -468,13 +516,18 @@ FindStringBlock (
         break;
 
       case EFI_HII_SIBT_SKIP1:
-        SkipCount       = (UINT16)(*(UINT8 *)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK)));
+        SkipCount       = (UINT16)(*(UINT8 *)((UINTN)BlockHdr +
+                                              sizeof (EFI_HII_STRING_BLOCK)));
         CurrentStringId = (UINT16)(CurrentStringId + SkipCount);
         BlockSize      +=  sizeof (EFI_HII_SIBT_SKIP1_BLOCK);
         break;
 
       case EFI_HII_SIBT_SKIP2:
-        CopyMem (&SkipCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
+        CopyMem (
+          &SkipCount,
+          BlockHdr + sizeof (EFI_HII_STRING_BLOCK),
+          sizeof (UINT16)
+          );
         CurrentStringId = (UINT16)(CurrentStringId + SkipCount);
         BlockSize      +=  sizeof (EFI_HII_SIBT_SKIP2_BLOCK);
         break;
@@ -482,7 +535,8 @@ FindStringBlock (
       case EFI_HII_SIBT_EXT1:
         CopyMem (
           &Length8,
-          (UINT8 *)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) + sizeof (UINT8)),
+          (UINT8 *)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) +
+                    sizeof (UINT8)),
           sizeof (UINT8)
           );
         BlockSize += Length8;
@@ -490,7 +544,9 @@ FindStringBlock (
 
       case EFI_HII_SIBT_EXT2:
         CopyMem (&Ext2, BlockHdr, sizeof (EFI_HII_SIBT_EXT2_BLOCK));
-        if ((Ext2.BlockType2 == EFI_HII_SIBT_FONT) && (StringId == (EFI_STRING_ID)(-1))) {
+        if ((Ext2.BlockType2 == EFI_HII_SIBT_FONT) && (StringId ==
+                                                       (EFI_STRING_ID)(-1)))
+        {
           //
           // Find the relationship between global font info and the font info of
           // this EFI_HII_SIBT_FONT block then backup its information in local package.
@@ -519,7 +575,14 @@ FindStringBlock (
           // Otherwise ignore this EFI_HII_SIBT_FONT block.
           //
           if (IsFontInfoExisted (Private, FontInfo, NULL, NULL, &GlobalFont)) {
-            ReferFontInfoLocally (Private, StringPackage, FontId, TRUE, GlobalFont, &LocalFont);
+            ReferFontInfoLocally (
+              Private,
+              StringPackage,
+              FontId,
+              TRUE,
+              GlobalFont,
+              &LocalFont
+              );
           }
 
           //
@@ -539,7 +602,8 @@ FindStringBlock (
       case EFI_HII_SIBT_EXT4:
         CopyMem (
           &Length32,
-          (UINT8 *)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) + sizeof (UINT8)),
+          (UINT8 *)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) +
+                    sizeof (UINT8)),
           sizeof (UINT32)
           );
 
@@ -551,7 +615,10 @@ FindStringBlock (
     }
 
     if ((StringId > 0) && (StringId != (EFI_STRING_ID)(-1))) {
-      ASSERT (BlockType != NULL && StringBlockAddr != NULL && StringTextOffset != NULL);
+      ASSERT (
+        BlockType != NULL && StringBlockAddr != NULL &&
+        StringTextOffset != NULL
+        );
       *BlockType        = *BlockHdr;
       *StringBlockAddr  = BlockHdr;
       *StringTextOffset = Offset;
@@ -560,7 +627,9 @@ FindStringBlock (
         //
         // if only one skip item, return EFI_NOT_FOUND.
         //
-        if ((*BlockType == EFI_HII_SIBT_SKIP2) || (*BlockType == EFI_HII_SIBT_SKIP1)) {
+        if ((*BlockType == EFI_HII_SIBT_SKIP2) || (*BlockType ==
+                                                   EFI_HII_SIBT_SKIP1))
+        {
           return EFI_NOT_FOUND;
         } else {
           return EFI_SUCCESS;
@@ -632,7 +701,10 @@ GetStringWorker (
   UINT8       FontId;
 
   ASSERT (StringPackage != NULL);
-  ASSERT (Private != NULL && Private->Signature == HII_DATABASE_PRIVATE_DATA_SIGNATURE);
+  ASSERT (
+    Private != NULL && Private->Signature ==
+    HII_DATABASE_PRIVATE_DATA_SIGNATURE
+    );
 
   //
   // Find the specified string block
@@ -667,7 +739,11 @@ GetStringWorker (
     case EFI_HII_SIBT_STRING_SCSU_FONT:
     case EFI_HII_SIBT_STRINGS_SCSU:
     case EFI_HII_SIBT_STRINGS_SCSU_FONT:
-      Status = ConvertToUnicodeText (String, (CHAR8 *)StringTextPtr, StringSize);
+      Status = ConvertToUnicodeText (
+                 String,
+                 (CHAR8 *)StringTextPtr,
+                 StringSize
+                 );
       break;
     case EFI_HII_SIBT_STRING_UCS2:
     case EFI_HII_SIBT_STRING_UCS2_FONT:
@@ -772,7 +848,8 @@ InsertLackStringBlock (
     NewUCSBlockLen = sizeof (EFI_HII_SIBT_STRING_UCS2_BLOCK);
   }
 
-  OldBlockSize = StringPackage->StringPkgHdr->Header.Length - StringPackage->StringPkgHdr->HdrSize;
+  OldBlockSize = StringPackage->StringPkgHdr->Header.Length -
+                 StringPackage->StringPkgHdr->HdrSize;
 
   if (StartStringId == StringId) {
     //
@@ -805,7 +882,12 @@ InsertLackStringBlock (
   //
   // Copy old block in front of skip block.
   //
-  CopyMem (StringBlock, StringPackage->StringBlock, OldStringAddr - StringPackage->StringBlock);
+  CopyMem (
+    StringBlock,
+    StringPackage->StringBlock,
+    OldStringAddr -
+    StringPackage->StringBlock
+    );
   BlockPtr = StringBlock + (OldStringAddr - StringPackage->StringBlock);
 
   if (FrontSkipNum > 0) {
@@ -813,7 +895,8 @@ InsertLackStringBlock (
     if (*BlockType == EFI_HII_SIBT_SKIP1) {
       *(BlockPtr + sizeof (EFI_HII_STRING_BLOCK)) = (UINT8)FrontSkipNum;
     } else {
-      *(UINT16 *)(BlockPtr + sizeof (EFI_HII_STRING_BLOCK)) = (UINT16)FrontSkipNum;
+      *(UINT16 *)(BlockPtr + sizeof (EFI_HII_STRING_BLOCK)) =
+        (UINT16)FrontSkipNum;
     }
 
     BlockPtr += SkipLen;
@@ -834,9 +917,12 @@ InsertLackStringBlock (
   if (IdCount > FrontSkipNum + 1) {
     *BlockPtr = *BlockType;
     if (*BlockType == EFI_HII_SIBT_SKIP1) {
-      *(BlockPtr + sizeof (EFI_HII_STRING_BLOCK)) = (UINT8)(IdCount - FrontSkipNum - 1);
+      *(BlockPtr + sizeof (EFI_HII_STRING_BLOCK)) = (UINT8)(IdCount -
+                                                            FrontSkipNum - 1);
     } else {
-      *(UINT16 *)(BlockPtr + sizeof (EFI_HII_STRING_BLOCK)) = (UINT16)(IdCount - FrontSkipNum - 1);
+      *(UINT16 *)(BlockPtr + sizeof (EFI_HII_STRING_BLOCK)) = (UINT16)(IdCount -
+                                                                       FrontSkipNum
+                                                                       - 1);
     }
 
     BlockPtr += SkipLen;
@@ -845,7 +931,12 @@ InsertLackStringBlock (
   //
   // Append a EFI_HII_SIBT_END block to the end.
   //
-  CopyMem (BlockPtr, OldStringAddr + SkipLen, OldBlockSize - (OldStringAddr - StringPackage->StringBlock) - SkipLen);
+  CopyMem (
+    BlockPtr,
+    OldStringAddr + SkipLen,
+    OldBlockSize - (OldStringAddr -
+                    StringPackage->StringBlock) - SkipLen
+    );
 
   if (FontBlock) {
     *BlockType = EFI_HII_SIBT_STRING_UCS2_FONT;
@@ -925,7 +1016,9 @@ SetStringWorker (
              NULL,
              &StartStringId
              );
-  if (EFI_ERROR (Status) && ((BlockType == EFI_HII_SIBT_SKIP1) || (BlockType == EFI_HII_SIBT_SKIP2))) {
+  if (EFI_ERROR (Status) && ((BlockType == EFI_HII_SIBT_SKIP1) || (BlockType ==
+                                                                   EFI_HII_SIBT_SKIP2)))
+  {
     Status = InsertLackStringBlock (
                StringPackage,
                StartStringId,
@@ -939,9 +1032,11 @@ SetStringWorker (
     }
 
     if (StringFontInfo != NULL) {
-      StringTextOffset = sizeof (EFI_HII_SIBT_STRING_UCS2_FONT_BLOCK) - sizeof (CHAR16);
+      StringTextOffset = sizeof (EFI_HII_SIBT_STRING_UCS2_FONT_BLOCK) -
+                         sizeof (CHAR16);
     } else {
-      StringTextOffset = sizeof (EFI_HII_SIBT_STRING_UCS2_BLOCK) - sizeof (CHAR16);
+      StringTextOffset = sizeof (EFI_HII_SIBT_STRING_UCS2_BLOCK) -
+                         sizeof (CHAR16);
     }
   }
 
@@ -989,7 +1084,8 @@ SetStringWorker (
     }
   }
 
-  OldBlockSize = StringPackage->StringPkgHdr->Header.Length - StringPackage->StringPkgHdr->HdrSize;
+  OldBlockSize = StringPackage->StringPkgHdr->Header.Length -
+                 StringPackage->StringPkgHdr->HdrSize;
 
   //
   // Set the string text and font.
@@ -1007,7 +1103,12 @@ SetStringWorker (
         return EFI_OUT_OF_RESOURCES;
       }
 
-      CopyMem (Block, StringPackage->StringBlock, StringTextPtr - StringPackage->StringBlock);
+      CopyMem (
+        Block,
+        StringPackage->StringBlock,
+        StringTextPtr -
+        StringPackage->StringBlock
+        );
       BlockPtr = Block + (StringTextPtr - StringPackage->StringBlock);
 
       while (*String != 0) {
@@ -1016,7 +1117,8 @@ SetStringWorker (
 
       *BlockPtr++ = 0;
 
-      TmpSize = OldBlockSize - (StringTextPtr - StringPackage->StringBlock) - AsciiStrSize ((CHAR8 *)StringTextPtr);
+      TmpSize = OldBlockSize - (StringTextPtr - StringPackage->StringBlock) -
+                AsciiStrSize ((CHAR8 *)StringTextPtr);
       CopyMem (
         BlockPtr,
         StringTextPtr + AsciiStrSize ((CHAR8 *)StringTextPtr),
@@ -1026,7 +1128,8 @@ SetStringWorker (
       ZeroMem (StringPackage->StringBlock, OldBlockSize);
       FreePool (StringPackage->StringBlock);
       StringPackage->StringBlock                  = Block;
-      StringPackage->StringPkgHdr->Header.Length += (UINT32)(BlockSize - OldBlockSize);
+      StringPackage->StringPkgHdr->Header.Length += (UINT32)(BlockSize -
+                                                             OldBlockSize);
       break;
 
     case EFI_HII_SIBT_STRING_UCS2:
@@ -1045,7 +1148,12 @@ SetStringWorker (
         return EFI_OUT_OF_RESOURCES;
       }
 
-      CopyMem (Block, StringPackage->StringBlock, StringTextPtr - StringPackage->StringBlock);
+      CopyMem (
+        Block,
+        StringPackage->StringBlock,
+        StringTextPtr -
+        StringPackage->StringBlock
+        );
       BlockPtr = Block + (StringTextPtr - StringPackage->StringBlock);
 
       CopyMem (BlockPtr, String, StrSize (String));
@@ -1060,7 +1168,8 @@ SetStringWorker (
       ZeroMem (StringPackage->StringBlock, OldBlockSize);
       FreePool (StringPackage->StringBlock);
       StringPackage->StringBlock                  = Block;
-      StringPackage->StringPkgHdr->Header.Length += (UINT32)(BlockSize - OldBlockSize);
+      StringPackage->StringPkgHdr->Header.Length += (UINT32)(BlockSize -
+                                                             OldBlockSize);
       break;
 
     default:
@@ -1078,9 +1187,11 @@ SetStringWorker (
     return EFI_SUCCESS;
   }
 
-  OldBlockSize = StringPackage->StringPkgHdr->Header.Length - StringPackage->StringPkgHdr->HdrSize;
-  BlockSize    = OldBlockSize + sizeof (EFI_HII_SIBT_FONT_BLOCK) - sizeof (CHAR16) +
-                 StrSize (GlobalFont->FontInfo->FontName);
+  OldBlockSize = StringPackage->StringPkgHdr->Header.Length -
+                 StringPackage->StringPkgHdr->HdrSize;
+  BlockSize = OldBlockSize + sizeof (EFI_HII_SIBT_FONT_BLOCK) -
+              sizeof (CHAR16) +
+              StrSize (GlobalFont->FontInfo->FontName);
 
   Block = AllocateZeroPool (BlockSize);
   if (Block == NULL) {
@@ -1186,7 +1297,10 @@ HiiNewString (
   HII_STRING_PACKAGE_INSTANCE         *MatchStringPackage;
   BOOLEAN                             NewStringPackageCreated;
 
-  if ((This == NULL) || (String == NULL) || (StringId == NULL) || (Language == NULL) || (PackageList == NULL)) {
+  if ((This == NULL) || (String == NULL) || (StringId == NULL) || (Language ==
+                                                                   NULL) ||
+      (PackageList == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1201,7 +1315,14 @@ HiiNewString (
   // If StringFontInfo specify a paritcular font, it should exist in current database.
   //
   if (StringFontInfo != NULL) {
-    if (!IsFontInfoExisted (Private, (EFI_FONT_INFO *)StringFontInfo, NULL, NULL, &GlobalFont)) {
+    if (!IsFontInfoExisted (
+           Private,
+           (EFI_FONT_INFO *)StringFontInfo,
+           NULL,
+           NULL,
+           &GlobalFont
+           ))
+    {
       return EFI_INVALID_PARAMETER;
     }
   }
@@ -1210,8 +1331,15 @@ HiiNewString (
   // Get the matching package list.
   //
   PackageListNode = NULL;
-  for (Link = Private->DatabaseList.ForwardLink; Link != &Private->DatabaseList; Link = Link->ForwardLink) {
-    DatabaseRecord = CR (Link, HII_DATABASE_RECORD, DatabaseEntry, HII_DATABASE_RECORD_SIGNATURE);
+  for (Link = Private->DatabaseList.ForwardLink; Link != &Private->DatabaseList;
+       Link = Link->ForwardLink)
+  {
+    DatabaseRecord = CR (
+                       Link,
+                       HII_DATABASE_RECORD,
+                       DatabaseEntry,
+                       HII_DATABASE_RECORD_SIGNATURE
+                       );
     if (DatabaseRecord->Handle == PackageList) {
       PackageListNode = DatabaseRecord->PackageList;
       break;
@@ -1235,7 +1363,12 @@ HiiNewString (
        Link = Link->ForwardLink
        )
   {
-    StringPackage = CR (Link, HII_STRING_PACKAGE_INSTANCE, StringEntry, HII_STRING_PACKAGE_SIGNATURE);
+    StringPackage = CR (
+                      Link,
+                      HII_STRING_PACKAGE_INSTANCE,
+                      StringEntry,
+                      HII_STRING_PACKAGE_SIGNATURE
+                      );
     //
     // Create a string block and corresponding font block if exists, then append them
     // to the end of the string package.
@@ -1267,10 +1400,15 @@ HiiNewString (
     //
     // Get the matched string package with language.
     //
-    if (HiiCompareLanguage (StringPackage->StringPkgHdr->Language, (CHAR8 *)Language)) {
+    if (HiiCompareLanguage (
+          StringPackage->StringPkgHdr->Language,
+          (CHAR8 *)Language
+          ))
+    {
       MatchStringPackage = StringPackage;
     } else {
-      OldBlockSize = StringPackage->StringPkgHdr->Header.Length - StringPackage->StringPkgHdr->HdrSize;
+      OldBlockSize = StringPackage->StringPkgHdr->Header.Length -
+                     StringPackage->StringPkgHdr->HdrSize;
       //
       // Create a blank EFI_HII_SIBT_STRING_UCS2_BLOCK to reserve new string ID.
       //
@@ -1285,7 +1423,12 @@ HiiNewString (
       //
       // Copy original string blocks, except the EFI_HII_SIBT_END.
       //
-      CopyMem (StringBlock, StringPackage->StringBlock, OldBlockSize - sizeof (EFI_HII_SIBT_END_BLOCK));
+      CopyMem (
+        StringBlock,
+        StringPackage->StringBlock,
+        OldBlockSize -
+        sizeof (EFI_HII_SIBT_END_BLOCK)
+        );
       //
       // Create a blank EFI_HII_SIBT_STRING_UCS2 block
       //
@@ -1343,7 +1486,9 @@ HiiNewString (
     //
     // Fill in the string package header
     //
-    HeaderSize                  = (UINT32)(AsciiStrSize ((CHAR8 *)Language) - 1 + sizeof (EFI_HII_STRING_PACKAGE_HDR));
+    HeaderSize                  = (UINT32)(AsciiStrSize ((CHAR8 *)Language) -
+                                           1 +
+                                           sizeof (EFI_HII_STRING_PACKAGE_HDR));
     StringPackage->StringPkgHdr = AllocateZeroPool (HeaderSize);
     if (StringPackage->StringPkgHdr == NULL) {
       FreePool (StringPackage);
@@ -1354,18 +1499,31 @@ HiiNewString (
     StringPackage->StringPkgHdr->Header.Type      = EFI_HII_PACKAGE_STRINGS;
     StringPackage->StringPkgHdr->HdrSize          = HeaderSize;
     StringPackage->StringPkgHdr->StringInfoOffset = HeaderSize;
-    CopyMem (StringPackage->StringPkgHdr->LanguageWindow, mLanguageWindow, 16 * sizeof (CHAR16));
+    CopyMem (
+      StringPackage->StringPkgHdr->LanguageWindow,
+      mLanguageWindow,
+      16 *
+      sizeof (CHAR16)
+      );
     StringPackage->StringPkgHdr->LanguageName = 1;
-    AsciiStrCpyS (StringPackage->StringPkgHdr->Language, (HeaderSize - OFFSET_OF (EFI_HII_STRING_PACKAGE_HDR, Language)) / sizeof (CHAR8), (CHAR8 *)Language);
+    AsciiStrCpyS (
+      StringPackage->StringPkgHdr->Language,
+      (HeaderSize -
+       OFFSET_OF (EFI_HII_STRING_PACKAGE_HDR, Language)) / sizeof (CHAR8),
+      (CHAR8 *)Language
+      );
 
     //
     // Calculate the length of the string blocks, including string block to record
     // printable language full name and EFI_HII_SIBT_END_BLOCK.
     //
     Ucs2BlockSize = (UINT32)(StrSize ((CHAR16 *)LanguageName) +
-                             (*StringId - 1) * sizeof (EFI_HII_SIBT_STRING_UCS2_BLOCK) - sizeof (CHAR16));
+                             (*StringId - 1) *
+                             sizeof (EFI_HII_SIBT_STRING_UCS2_BLOCK) -
+                             sizeof (CHAR16));
 
-    BlockSize                  = Ucs2BlockSize + sizeof (EFI_HII_SIBT_END_BLOCK);
+    BlockSize = Ucs2BlockSize +
+                sizeof (EFI_HII_SIBT_END_BLOCK);
     StringPackage->StringBlock = (UINT8 *)AllocateZeroPool (BlockSize);
     if (StringPackage->StringBlock == NULL) {
       FreePool (StringPackage->StringPkgHdr);
@@ -1380,7 +1538,13 @@ HiiNewString (
     BlockPtr  = StringPackage->StringBlock;
     *BlockPtr = EFI_HII_SIBT_STRING_UCS2;
     BlockPtr += sizeof (EFI_HII_STRING_BLOCK);
-    CopyMem (BlockPtr, (EFI_STRING)LanguageName, StrSize ((EFI_STRING)LanguageName));
+    CopyMem (
+      BlockPtr,
+      (EFI_STRING)LanguageName,
+      StrSize (
+        (EFI_STRING)LanguageName
+        )
+      );
     BlockPtr += StrSize ((EFI_STRING)LanguageName);
     for (Index = 2; Index <= *StringId - 1; Index++) {
       *BlockPtr = EFI_HII_SIBT_STRING_UCS2;
@@ -1396,18 +1560,24 @@ HiiNewString (
     // Append this string package node to string package array in this package list.
     //
     StringPackage->StringPkgHdr->Header.Length     = HeaderSize + BlockSize;
-    PackageListNode->PackageListHdr.PackageLength += StringPackage->StringPkgHdr->Header.Length;
-    InsertTailList (&PackageListNode->StringPkgHdr, &StringPackage->StringEntry);
+    PackageListNode->PackageListHdr.PackageLength +=
+      StringPackage->StringPkgHdr->Header.Length;
+    InsertTailList (
+      &PackageListNode->StringPkgHdr,
+      &StringPackage->StringEntry
+      );
     NewStringPackageCreated = TRUE;
   }
 
-  OldBlockSize = StringPackage->StringPkgHdr->Header.Length - StringPackage->StringPkgHdr->HdrSize;
+  OldBlockSize = StringPackage->StringPkgHdr->Header.Length -
+                 StringPackage->StringPkgHdr->HdrSize;
 
   if (StringFontInfo == NULL) {
     //
     // Create a EFI_HII_SIBT_STRING_UCS2_BLOCK since font info is not specified.
     //
-    Ucs2BlockSize = (UINT32)(StrSize (String) + sizeof (EFI_HII_SIBT_STRING_UCS2_BLOCK)
+    Ucs2BlockSize = (UINT32)(StrSize (String) +
+                             sizeof (EFI_HII_SIBT_STRING_UCS2_BLOCK)
                              - sizeof (CHAR16));
 
     StringBlock = (UINT8 *)AllocateZeroPool (OldBlockSize + Ucs2BlockSize);
@@ -1419,7 +1589,12 @@ HiiNewString (
     //
     // Copy original string blocks, except the EFI_HII_SIBT_END.
     //
-    CopyMem (StringBlock, StringPackage->StringBlock, OldBlockSize - sizeof (EFI_HII_SIBT_END_BLOCK));
+    CopyMem (
+      StringBlock,
+      StringPackage->StringBlock,
+      OldBlockSize -
+      sizeof (EFI_HII_SIBT_END_BLOCK)
+      );
     //
     // Create a EFI_HII_SIBT_STRING_UCS2 block
     //
@@ -1445,13 +1620,25 @@ HiiNewString (
     // only. Otherwise create a EFI_HII_SIBT_FONT block with a EFI_HII_SIBT_STRING
     // _UCS2_FONT block.
     //
-    Ucs2FontBlockSize = (UINT32)(StrSize (String) + sizeof (EFI_HII_SIBT_STRING_UCS2_FONT_BLOCK) -
+    Ucs2FontBlockSize = (UINT32)(StrSize (String) +
+                                 sizeof (EFI_HII_SIBT_STRING_UCS2_FONT_BLOCK) -
                                  sizeof (CHAR16));
-    if (ReferFontInfoLocally (Private, StringPackage, StringPackage->FontId, FALSE, GlobalFont, &LocalFont)) {
+    if (ReferFontInfoLocally (
+          Private,
+          StringPackage,
+          StringPackage->FontId,
+          FALSE,
+          GlobalFont,
+          &LocalFont
+          ))
+    {
       //
       // Create a EFI_HII_SIBT_STRING_UCS2_FONT block only.
       //
-      StringBlock = (UINT8 *)AllocateZeroPool (OldBlockSize + Ucs2FontBlockSize);
+      StringBlock = (UINT8 *)AllocateZeroPool (
+                               OldBlockSize +
+                               Ucs2FontBlockSize
+                               );
       if (StringBlock == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         goto Done;
@@ -1460,7 +1647,12 @@ HiiNewString (
       //
       // Copy original string blocks, except the EFI_HII_SIBT_END.
       //
-      CopyMem (StringBlock, StringPackage->StringBlock, OldBlockSize - sizeof (EFI_HII_SIBT_END_BLOCK));
+      CopyMem (
+        StringBlock,
+        StringPackage->StringBlock,
+        OldBlockSize -
+        sizeof (EFI_HII_SIBT_END_BLOCK)
+        );
       //
       // Create a EFI_HII_SIBT_STRING_UCS2_FONT_BLOCK
       //
@@ -1487,9 +1679,15 @@ HiiNewString (
       // create a EFI_HII_SIBT_FONT block to record the font info, then generate
       // a EFI_HII_SIBT_STRING_UCS2_FONT block to record the incoming string.
       //
-      FontBlockSize = (UINT32)(StrSize (((EFI_FONT_INFO *)StringFontInfo)->FontName) +
-                               sizeof (EFI_HII_SIBT_FONT_BLOCK) - sizeof (CHAR16));
-      StringBlock = (UINT8 *)AllocateZeroPool (OldBlockSize + FontBlockSize + Ucs2FontBlockSize);
+      FontBlockSize = (UINT32)(StrSize (
+                                 ((EFI_FONT_INFO *)StringFontInfo)->FontName
+                                 ) +
+                               sizeof (EFI_HII_SIBT_FONT_BLOCK) -
+                               sizeof (CHAR16));
+      StringBlock = (UINT8 *)AllocateZeroPool (
+                               OldBlockSize + FontBlockSize +
+                               Ucs2FontBlockSize
+                               );
       if (StringBlock == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         goto Done;
@@ -1498,7 +1696,12 @@ HiiNewString (
       //
       // Copy original string blocks, except the EFI_HII_SIBT_END.
       //
-      CopyMem (StringBlock, StringPackage->StringBlock, OldBlockSize - sizeof (EFI_HII_SIBT_END_BLOCK));
+      CopyMem (
+        StringBlock,
+        StringPackage->StringBlock,
+        OldBlockSize -
+        sizeof (EFI_HII_SIBT_END_BLOCK)
+        );
 
       //
       // Create a EFI_HII_SIBT_FONT block firstly and then backup its info in string
@@ -1514,9 +1717,17 @@ HiiNewString (
 
       *BlockPtr = LocalFont->FontId;
       BlockPtr++;
-      CopyMem (BlockPtr, &((EFI_FONT_INFO *)StringFontInfo)->FontSize, sizeof (UINT16));
+      CopyMem (
+        BlockPtr,
+        &((EFI_FONT_INFO *)StringFontInfo)->FontSize,
+        sizeof (UINT16)
+        );
       BlockPtr += sizeof (UINT16);
-      CopyMem (BlockPtr, &((EFI_FONT_INFO *)StringFontInfo)->FontStyle, sizeof (EFI_HII_FONT_STYLE));
+      CopyMem (
+        BlockPtr,
+        &((EFI_FONT_INFO *)StringFontInfo)->FontStyle,
+        sizeof (EFI_HII_FONT_STYLE)
+        );
       BlockPtr += sizeof (EFI_HII_FONT_STYLE);
       CopyMem (
         BlockPtr,
@@ -1540,9 +1751,11 @@ HiiNewString (
       *BlockPtr = EFI_HII_SIBT_END;
       ZeroMem (StringPackage->StringBlock, OldBlockSize);
       FreePool (StringPackage->StringBlock);
-      StringPackage->StringBlock                     = StringBlock;
-      StringPackage->StringPkgHdr->Header.Length    += FontBlockSize + Ucs2FontBlockSize;
-      PackageListNode->PackageListHdr.PackageLength += FontBlockSize + Ucs2FontBlockSize;
+      StringPackage->StringBlock                  = StringBlock;
+      StringPackage->StringPkgHdr->Header.Length += FontBlockSize +
+                                                    Ucs2FontBlockSize;
+      PackageListNode->PackageListHdr.PackageLength += FontBlockSize +
+                                                       Ucs2FontBlockSize;
 
       //
       // Increase the FontId to make it unique since we already add
@@ -1575,7 +1788,12 @@ Done:
          Link = Link->ForwardLink
          )
     {
-      StringPackage              = CR (Link, HII_STRING_PACKAGE_INSTANCE, StringEntry, HII_STRING_PACKAGE_SIGNATURE);
+      StringPackage = CR (
+                        Link,
+                        HII_STRING_PACKAGE_INSTANCE,
+                        StringEntry,
+                        HII_STRING_PACKAGE_SIGNATURE
+                        );
       StringPackage->MaxStringId = *StringId;
     }
   } else if (NewStringPackageCreated) {
@@ -1658,7 +1876,10 @@ HiiGetString (
   HII_DATABASE_PACKAGE_LIST_INSTANCE  *PackageListNode;
   HII_STRING_PACKAGE_INSTANCE         *StringPackage;
 
-  if ((This == NULL) || (Language == NULL) || (StringId < 1) || (StringSize == NULL) || (PackageList == NULL)) {
+  if ((This == NULL) || (Language == NULL) || (StringId < 1) || (StringSize ==
+                                                                 NULL) ||
+      (PackageList == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1673,8 +1894,15 @@ HiiGetString (
   Private         = HII_STRING_DATABASE_PRIVATE_DATA_FROM_THIS (This);
   PackageListNode = NULL;
 
-  for (Link = Private->DatabaseList.ForwardLink; Link != &Private->DatabaseList; Link = Link->ForwardLink) {
-    DatabaseRecord = CR (Link, HII_DATABASE_RECORD, DatabaseEntry, HII_DATABASE_RECORD_SIGNATURE);
+  for (Link = Private->DatabaseList.ForwardLink; Link != &Private->DatabaseList;
+       Link = Link->ForwardLink)
+  {
+    DatabaseRecord = CR (
+                       Link,
+                       HII_DATABASE_RECORD,
+                       DatabaseEntry,
+                       HII_DATABASE_RECORD_SIGNATURE
+                       );
     if (DatabaseRecord->Handle == PackageList) {
       PackageListNode = DatabaseRecord->PackageList;
       break;
@@ -1690,9 +1918,25 @@ HiiGetString (
          Link =  Link->ForwardLink
          )
     {
-      StringPackage = CR (Link, HII_STRING_PACKAGE_INSTANCE, StringEntry, HII_STRING_PACKAGE_SIGNATURE);
-      if (HiiCompareLanguage (StringPackage->StringPkgHdr->Language, (CHAR8 *)Language)) {
-        Status = GetStringWorker (Private, StringPackage, StringId, String, StringSize, StringFontInfo);
+      StringPackage = CR (
+                        Link,
+                        HII_STRING_PACKAGE_INSTANCE,
+                        StringEntry,
+                        HII_STRING_PACKAGE_SIGNATURE
+                        );
+      if (HiiCompareLanguage (
+            StringPackage->StringPkgHdr->Language,
+            (CHAR8 *)Language
+            ))
+      {
+        Status = GetStringWorker (
+                   Private,
+                   StringPackage,
+                   StringId,
+                   String,
+                   StringSize,
+                   StringFontInfo
+                   );
         if (Status != EFI_NOT_FOUND) {
           return Status;
         }
@@ -1707,8 +1951,20 @@ HiiGetString (
          Link =  Link->ForwardLink
          )
     {
-      StringPackage = CR (Link, HII_STRING_PACKAGE_INSTANCE, StringEntry, HII_STRING_PACKAGE_SIGNATURE);
-      Status        = GetStringWorker (Private, StringPackage, StringId, NULL, NULL, NULL);
+      StringPackage = CR (
+                        Link,
+                        HII_STRING_PACKAGE_INSTANCE,
+                        StringEntry,
+                        HII_STRING_PACKAGE_SIGNATURE
+                        );
+      Status = GetStringWorker (
+                 Private,
+                 StringPackage,
+                 StringId,
+                 NULL,
+                 NULL,
+                 NULL
+                 );
       if (!EFI_ERROR (Status)) {
         return EFI_INVALID_LANGUAGE;
       }
@@ -1760,7 +2016,10 @@ HiiSetString (
   HII_STRING_PACKAGE_INSTANCE         *StringPackage;
   UINT32                              OldPackageLen;
 
-  if ((This == NULL) || (Language == NULL) || (StringId < 1) || (String == NULL) || (PackageList == NULL)) {
+  if ((This == NULL) || (Language == NULL) || (StringId < 1) || (String ==
+                                                                 NULL) ||
+      (PackageList == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1773,10 +2032,18 @@ HiiSetString (
   Private         = HII_STRING_DATABASE_PRIVATE_DATA_FROM_THIS (This);
   PackageListNode = NULL;
 
-  for (Link = Private->DatabaseList.ForwardLink; Link != &Private->DatabaseList; Link = Link->ForwardLink) {
-    DatabaseRecord = CR (Link, HII_DATABASE_RECORD, DatabaseEntry, HII_DATABASE_RECORD_SIGNATURE);
+  for (Link = Private->DatabaseList.ForwardLink; Link != &Private->DatabaseList;
+       Link = Link->ForwardLink)
+  {
+    DatabaseRecord = CR (
+                       Link,
+                       HII_DATABASE_RECORD,
+                       DatabaseEntry,
+                       HII_DATABASE_RECORD_SIGNATURE
+                       );
     if (DatabaseRecord->Handle == PackageList) {
-      PackageListNode = (HII_DATABASE_PACKAGE_LIST_INSTANCE *)(DatabaseRecord->PackageList);
+      PackageListNode =
+        (HII_DATABASE_PACKAGE_LIST_INSTANCE *)(DatabaseRecord->PackageList);
     }
   }
 
@@ -1786,8 +2053,17 @@ HiiSetString (
          Link =  Link->ForwardLink
          )
     {
-      StringPackage = CR (Link, HII_STRING_PACKAGE_INSTANCE, StringEntry, HII_STRING_PACKAGE_SIGNATURE);
-      if (HiiCompareLanguage (StringPackage->StringPkgHdr->Language, (CHAR8 *)Language)) {
+      StringPackage = CR (
+                        Link,
+                        HII_STRING_PACKAGE_INSTANCE,
+                        StringEntry,
+                        HII_STRING_PACKAGE_SIGNATURE
+                        );
+      if (HiiCompareLanguage (
+            StringPackage->StringPkgHdr->Language,
+            (CHAR8 *)Language
+            ))
+      {
         OldPackageLen = StringPackage->StringPkgHdr->Header.Length;
         Status        = SetStringWorker (
                           Private,
@@ -1801,7 +2077,8 @@ HiiSetString (
           return Status;
         }
 
-        PackageListNode->PackageListHdr.PackageLength += StringPackage->StringPkgHdr->Header.Length - OldPackageLen;
+        PackageListNode->PackageListHdr.PackageLength +=
+          StringPackage->StringPkgHdr->Header.Length - OldPackageLen;
         //
         // Check whether need to get the contents of HiiDataBase.
         // Only after ReadyToBoot to do the export.
@@ -1873,8 +2150,15 @@ HiiGetLanguages (
   Private = HII_STRING_DATABASE_PRIVATE_DATA_FROM_THIS (This);
 
   PackageListNode = NULL;
-  for (Link = Private->DatabaseList.ForwardLink; Link != &Private->DatabaseList; Link = Link->ForwardLink) {
-    DatabaseRecord = CR (Link, HII_DATABASE_RECORD, DatabaseEntry, HII_DATABASE_RECORD_SIGNATURE);
+  for (Link = Private->DatabaseList.ForwardLink; Link != &Private->DatabaseList;
+       Link = Link->ForwardLink)
+  {
+    DatabaseRecord = CR (
+                       Link,
+                       HII_DATABASE_RECORD,
+                       DatabaseEntry,
+                       HII_DATABASE_RECORD_SIGNATURE
+                       );
     if (DatabaseRecord->Handle == PackageList) {
       PackageListNode = DatabaseRecord->PackageList;
       break;
@@ -1894,10 +2178,19 @@ HiiGetLanguages (
        Link = Link->ForwardLink
        )
   {
-    StringPackage = CR (Link, HII_STRING_PACKAGE_INSTANCE, StringEntry, HII_STRING_PACKAGE_SIGNATURE);
-    ResultSize   += AsciiStrSize (StringPackage->StringPkgHdr->Language);
+    StringPackage = CR (
+                      Link,
+                      HII_STRING_PACKAGE_INSTANCE,
+                      StringEntry,
+                      HII_STRING_PACKAGE_SIGNATURE
+                      );
+    ResultSize += AsciiStrSize (StringPackage->StringPkgHdr->Language);
     if (ResultSize <= *LanguagesSize) {
-      AsciiStrCpyS (Languages, *LanguagesSize / sizeof (CHAR8), StringPackage->StringPkgHdr->Language);
+      AsciiStrCpyS (
+        Languages,
+        *LanguagesSize / sizeof (CHAR8),
+        StringPackage->StringPkgHdr->Language
+        );
       Languages       += AsciiStrSize (StringPackage->StringPkgHdr->Language);
       *(Languages - 1) = L';';
     }
@@ -1968,7 +2261,9 @@ HiiGetSecondaryLanguages (
   CHAR8                               *Languages;
   UINTN                               ResultSize;
 
-  if ((This == NULL) || (PackageList == NULL) || (PrimaryLanguage == NULL) || (SecondaryLanguagesSize == NULL)) {
+  if ((This == NULL) || (PackageList == NULL) || (PrimaryLanguage == NULL) ||
+      (SecondaryLanguagesSize == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1983,10 +2278,18 @@ HiiGetSecondaryLanguages (
   Private = HII_STRING_DATABASE_PRIVATE_DATA_FROM_THIS (This);
 
   PackageListNode = NULL;
-  for (Link = Private->DatabaseList.ForwardLink; Link != &Private->DatabaseList; Link = Link->ForwardLink) {
-    DatabaseRecord = CR (Link, HII_DATABASE_RECORD, DatabaseEntry, HII_DATABASE_RECORD_SIGNATURE);
+  for (Link = Private->DatabaseList.ForwardLink; Link != &Private->DatabaseList;
+       Link = Link->ForwardLink)
+  {
+    DatabaseRecord = CR (
+                       Link,
+                       HII_DATABASE_RECORD,
+                       DatabaseEntry,
+                       HII_DATABASE_RECORD_SIGNATURE
+                       );
     if (DatabaseRecord->Handle == PackageList) {
-      PackageListNode = (HII_DATABASE_PACKAGE_LIST_INSTANCE *)(DatabaseRecord->PackageList);
+      PackageListNode =
+        (HII_DATABASE_PACKAGE_LIST_INSTANCE *)(DatabaseRecord->PackageList);
       break;
     }
   }
@@ -2002,8 +2305,17 @@ HiiGetSecondaryLanguages (
        Link1 = Link1->ForwardLink
        )
   {
-    StringPackage = CR (Link1, HII_STRING_PACKAGE_INSTANCE, StringEntry, HII_STRING_PACKAGE_SIGNATURE);
-    if (HiiCompareLanguage (StringPackage->StringPkgHdr->Language, (CHAR8 *)PrimaryLanguage)) {
+    StringPackage = CR (
+                      Link1,
+                      HII_STRING_PACKAGE_INSTANCE,
+                      StringEntry,
+                      HII_STRING_PACKAGE_SIGNATURE
+                      );
+    if (HiiCompareLanguage (
+          StringPackage->StringPkgHdr->Language,
+          (CHAR8 *)PrimaryLanguage
+          ))
+    {
       Languages = StringPackage->StringPkgHdr->Language;
       //
       // Language is a series of ';' terminated strings, first one is primary
@@ -2019,7 +2331,12 @@ HiiGetSecondaryLanguages (
 
       ResultSize = AsciiStrSize (Languages);
       if (ResultSize <= *SecondaryLanguagesSize) {
-        AsciiStrCpyS (SecondaryLanguages, *SecondaryLanguagesSize / sizeof (CHAR8), Languages);
+        AsciiStrCpyS (
+          SecondaryLanguages,
+          *SecondaryLanguagesSize /
+          sizeof (CHAR8),
+          Languages
+          );
       } else {
         *SecondaryLanguagesSize = ResultSize;
         return EFI_BUFFER_TOO_SMALL;

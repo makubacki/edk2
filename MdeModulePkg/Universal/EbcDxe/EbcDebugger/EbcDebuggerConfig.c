@@ -71,11 +71,14 @@ EdbConfigBreak (
 {
   EFI_DEBUGGER_PRIVATE_DATA  *DebuggerPrivate;
 
-  DebuggerPrivate = (EFI_DEBUGGER_PRIVATE_DATA *)DebuggerConfiguration->DebuggerPrivateData;
+  DebuggerPrivate =
+    (EFI_DEBUGGER_PRIVATE_DATA *)DebuggerConfiguration->DebuggerPrivateData;
 
   if (StriCmp (Command, L"BOC") == 0) {
     if (CommandArg == NULL) {
-      if ((DebuggerPrivate->FeatureFlags & EFI_DEBUG_FLAG_EBC_BOC) == EFI_DEBUG_FLAG_EBC_BOC) {
+      if ((DebuggerPrivate->FeatureFlags & EFI_DEBUG_FLAG_EBC_BOC) ==
+          EFI_DEBUG_FLAG_EBC_BOC)
+      {
         Print (L"BOC on\n");
       } else {
         Print (L"BOC off\n");
@@ -89,7 +92,9 @@ EdbConfigBreak (
     }
   } else if (StriCmp (Command, L"BOCX") == 0) {
     if (CommandArg == NULL) {
-      if ((DebuggerPrivate->FeatureFlags & EFI_DEBUG_FLAG_EBC_BOCX) == EFI_DEBUG_FLAG_EBC_BOCX) {
+      if ((DebuggerPrivate->FeatureFlags & EFI_DEBUG_FLAG_EBC_BOCX) ==
+          EFI_DEBUG_FLAG_EBC_BOCX)
+      {
         Print (L"BOCX on\n");
       } else {
         Print (L"BOCX off\n");
@@ -103,7 +108,9 @@ EdbConfigBreak (
     }
   } else if (StriCmp (Command, L"BOR") == 0) {
     if (CommandArg == NULL) {
-      if ((DebuggerPrivate->FeatureFlags & EFI_DEBUG_FLAG_EBC_BOR) == EFI_DEBUG_FLAG_EBC_BOR) {
+      if ((DebuggerPrivate->FeatureFlags & EFI_DEBUG_FLAG_EBC_BOR) ==
+          EFI_DEBUG_FLAG_EBC_BOR)
+      {
         Print (L"BOR on\n");
       } else {
         Print (L"BOR off\n");
@@ -117,7 +124,9 @@ EdbConfigBreak (
     }
   } else if (StriCmp (Command, L"BOE") == 0) {
     if (CommandArg == NULL) {
-      if ((DebuggerPrivate->FeatureFlags & EFI_DEBUG_FLAG_EBC_BOE) == EFI_DEBUG_FLAG_EBC_BOE) {
+      if ((DebuggerPrivate->FeatureFlags & EFI_DEBUG_FLAG_EBC_BOE) ==
+          EFI_DEBUG_FLAG_EBC_BOE)
+      {
         Print (L"BOE on\n");
       } else {
         Print (L"BOE off\n");
@@ -131,7 +140,9 @@ EdbConfigBreak (
     }
   } else if (StriCmp (Command, L"BOT") == 0) {
     if (CommandArg == NULL) {
-      if ((DebuggerPrivate->FeatureFlags & EFI_DEBUG_FLAG_EBC_BOT) == EFI_DEBUG_FLAG_EBC_BOT) {
+      if ((DebuggerPrivate->FeatureFlags & EFI_DEBUG_FLAG_EBC_BOT) ==
+          EFI_DEBUG_FLAG_EBC_BOT)
+      {
         Print (L"BOT on\n");
       } else {
         Print (L"BOT off\n");
@@ -145,7 +156,9 @@ EdbConfigBreak (
     }
   } else if (StriCmp (Command, L"BOK") == 0) {
     if (CommandArg == NULL) {
-      if ((DebuggerPrivate->FeatureFlags & EFI_DEBUG_FLAG_EBC_BOK) == EFI_DEBUG_FLAG_EBC_BOK) {
+      if ((DebuggerPrivate->FeatureFlags & EFI_DEBUG_FLAG_EBC_BOK) ==
+          EFI_DEBUG_FLAG_EBC_BOK)
+      {
         Print (L"BOK on\n");
       } else {
         Print (L"BOK off\n");

@@ -27,7 +27,9 @@ CoreNotifyProtocolEntry (
 
   ASSERT_LOCKED (&gProtocolDatabaseLock);
 
-  for (Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link = Link->ForwardLink) {
+  for (Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link =
+         Link->ForwardLink)
+  {
     ProtNotify = CR (Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
     CoreSignalEvent (ProtNotify->Event);
   }
@@ -64,7 +66,9 @@ CoreRemoveInterfaceFromProtocol (
     //
     // If there's a protocol notify location pointing to this entry, back it up one
     //
-    for (Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link = Link->ForwardLink) {
+    for (Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify;
+         Link = Link->ForwardLink)
+    {
       ProtNotify = CR (Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
 
       if (ProtNotify->Position == &Prot->ByProtocol) {

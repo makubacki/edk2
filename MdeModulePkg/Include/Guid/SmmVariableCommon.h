@@ -81,12 +81,14 @@ typedef struct {
 ///
 /// Size of SMM communicate header, without including the payload.
 ///
-#define SMM_COMMUNICATE_HEADER_SIZE  (OFFSET_OF (EFI_MM_COMMUNICATE_HEADER, Data))
+#define SMM_COMMUNICATE_HEADER_SIZE  \
+  (OFFSET_OF (EFI_MM_COMMUNICATE_HEADER, Data))
 
 ///
 /// Size of SMM variable communicate header, without including the payload.
 ///
-#define SMM_VARIABLE_COMMUNICATE_HEADER_SIZE  (OFFSET_OF (SMM_VARIABLE_COMMUNICATE_HEADER, Data))
+#define SMM_VARIABLE_COMMUNICATE_HEADER_SIZE  \
+  (OFFSET_OF (SMM_VARIABLE_COMMUNICATE_HEADER, Data))
 
 ///
 /// This structure is used to communicate with SMI handler by SetVariable and GetVariable.
@@ -118,7 +120,8 @@ typedef struct {
   UINT32    Attributes;
 } SMM_VARIABLE_COMMUNICATE_QUERY_VARIABLE_INFO;
 
-typedef SMM_VARIABLE_COMMUNICATE_GET_NEXT_VARIABLE_NAME SMM_VARIABLE_COMMUNICATE_LOCK_VARIABLE;
+typedef SMM_VARIABLE_COMMUNICATE_GET_NEXT_VARIABLE_NAME
+SMM_VARIABLE_COMMUNICATE_LOCK_VARIABLE;
 
 typedef struct {
   EFI_GUID                       Guid;

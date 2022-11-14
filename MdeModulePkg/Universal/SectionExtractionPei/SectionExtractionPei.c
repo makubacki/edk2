@@ -80,7 +80,8 @@ CustomGuidedSectionExtract (
 //
 // Module global for the Section Extraction PPI instance
 //
-CONST EFI_PEI_GUIDED_SECTION_EXTRACTION_PPI  mCustomGuidedSectionExtractionPpi = {
+CONST EFI_PEI_GUIDED_SECTION_EXTRACTION_PPI  mCustomGuidedSectionExtractionPpi =
+{
   CustomGuidedSectionExtract
 };
 
@@ -184,7 +185,9 @@ CustomGuidedSectionExtract (
     }
   }
 
-  if (((SectionAttribute & EFI_GUIDED_SECTION_PROCESSING_REQUIRED) != 0) && (OutputBufferSize > 0)) {
+  if (((SectionAttribute & EFI_GUIDED_SECTION_PROCESSING_REQUIRED) != 0) &&
+      (OutputBufferSize > 0))
+  {
     //
     // Allocate output buffer
     //
@@ -193,7 +196,12 @@ CustomGuidedSectionExtract (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    DEBUG ((DEBUG_INFO, "Customized Guided section Memory Size required is 0x%x and address is 0x%p\n", OutputBufferSize, *OutputBuffer));
+    DEBUG ((
+      DEBUG_INFO,
+      "Customized Guided section Memory Size required is 0x%x and address is 0x%p\n",
+      OutputBufferSize,
+      *OutputBuffer
+      ));
   }
 
   Status = ExtractGuidedSectionDecode (
@@ -243,19 +251,25 @@ SectionExtractionPeiEntry (
   //
   // Get custom extract guided section method guid list
   //
-  ExtractHandlerNumber = ExtractGuidedSectionGetGuidList (&ExtractHandlerGuidTable);
+  ExtractHandlerNumber = ExtractGuidedSectionGetGuidList (
+                           &ExtractHandlerGuidTable
+                           );
 
   //
   // Install custom extraction guid PPI
   //
   if (ExtractHandlerNumber > 0) {
-    GuidPpi = (EFI_PEI_PPI_DESCRIPTOR *)AllocatePool (ExtractHandlerNumber * sizeof (EFI_PEI_PPI_DESCRIPTOR));
+    GuidPpi = (EFI_PEI_PPI_DESCRIPTOR *)AllocatePool (
+                                          ExtractHandlerNumber *
+                                          sizeof (EFI_PEI_PPI_DESCRIPTOR)
+                                          );
     ASSERT (GuidPpi != NULL);
     while (ExtractHandlerNumber-- > 0) {
-      GuidPpi->Flags = EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
-      GuidPpi->Ppi   = (VOID *)&mCustomGuidedSectionExtractionPpi;
-      GuidPpi->Guid  = &ExtractHandlerGuidTable[ExtractHandlerNumber];
-      Status         = PeiServicesInstallPpi (GuidPpi++);
+      GuidPpi->Flags = EFI_PEI_PPI_DESCRIPTOR_PPI |
+                       EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
+      GuidPpi->Ppi  = (VOID *)&mCustomGuidedSectionExtractionPpi;
+      GuidPpi->Guid = &ExtractHandlerGuidTable[ExtractHandlerNumber];
+      Status        = PeiServicesInstallPpi (GuidPpi++);
       ASSERT_EFI_ERROR (Status);
     }
   }

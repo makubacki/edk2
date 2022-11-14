@@ -46,8 +46,11 @@ BufferInSmram (
   UINTN  Index;
 
   for (Index = 0; Index < mSmmCoreMemoryAllocLibSmramRangeCount; Index++) {
-    if (((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer >= mSmmCoreMemoryAllocLibSmramRanges[Index].CpuStart) &&
-        ((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer < (mSmmCoreMemoryAllocLibSmramRanges[Index].CpuStart + mSmmCoreMemoryAllocLibSmramRanges[Index].PhysicalSize)))
+    if (((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer >=
+         mSmmCoreMemoryAllocLibSmramRanges[Index].CpuStart) &&
+        ((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer <
+         (mSmmCoreMemoryAllocLibSmramRanges[Index].CpuStart +
+          mSmmCoreMemoryAllocLibSmramRanges[Index].PhysicalSize)))
     {
       return TRUE;
     }
@@ -280,7 +283,12 @@ InternalAllocateAlignedPages (
     //
     ASSERT (RealPages > Pages);
 
-    Status = SmmAllocatePages (AllocateAnyPages, MemoryType, RealPages, &Memory);
+    Status = SmmAllocatePages (
+               AllocateAnyPages,
+               MemoryType,
+               RealPages,
+               &Memory
+               );
     if (EFI_ERROR (Status)) {
       return NULL;
     }
@@ -346,7 +354,11 @@ AllocateAlignedPages (
 {
   VOID  *Buffer;
 
-  Buffer = InternalAllocateAlignedPages (EfiRuntimeServicesData, Pages, Alignment);
+  Buffer = InternalAllocateAlignedPages (
+             EfiRuntimeServicesData,
+             Pages,
+             Alignment
+             );
   if (Buffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -388,7 +400,11 @@ AllocateAlignedRuntimePages (
 {
   VOID  *Buffer;
 
-  Buffer = InternalAllocateAlignedPages (EfiRuntimeServicesData, Pages, Alignment);
+  Buffer = InternalAllocateAlignedPages (
+             EfiRuntimeServicesData,
+             Pages,
+             Alignment
+             );
   if (Buffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -785,7 +801,11 @@ AllocateCopyPool (
 {
   VOID  *NewBuffer;
 
-  NewBuffer = InternalAllocateCopyPool (EfiRuntimeServicesData, AllocationSize, Buffer);
+  NewBuffer = InternalAllocateCopyPool (
+                EfiRuntimeServicesData,
+                AllocationSize,
+                Buffer
+                );
   if (NewBuffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -826,7 +846,11 @@ AllocateRuntimeCopyPool (
 {
   VOID  *NewBuffer;
 
-  NewBuffer = InternalAllocateCopyPool (EfiRuntimeServicesData, AllocationSize, Buffer);
+  NewBuffer = InternalAllocateCopyPool (
+                EfiRuntimeServicesData,
+                AllocationSize,
+                Buffer
+                );
   if (NewBuffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -940,7 +964,12 @@ ReallocatePool (
 {
   VOID  *Buffer;
 
-  Buffer = InternalReallocatePool (EfiRuntimeServicesData, OldSize, NewSize, OldBuffer);
+  Buffer = InternalReallocatePool (
+             EfiRuntimeServicesData,
+             OldSize,
+             NewSize,
+             OldBuffer
+             );
   if (Buffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -986,7 +1015,12 @@ ReallocateRuntimePool (
 {
   VOID  *Buffer;
 
-  Buffer = InternalReallocatePool (EfiRuntimeServicesData, OldSize, NewSize, OldBuffer);
+  Buffer = InternalReallocatePool (
+             EfiRuntimeServicesData,
+             OldSize,
+             NewSize,
+             OldBuffer
+             );
   if (Buffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -1103,22 +1137,38 @@ PiSmmCoreMemoryAllocationLibConstructor (
   // so temporarily use BootServicesData to hold the SmramRanges data.
   //
   mSmmCoreMemoryAllocLibSmramRangeCount = SmmCorePrivate->SmramRangeCount;
-  Size                                  = mSmmCoreMemoryAllocLibSmramRangeCount * sizeof (EFI_SMRAM_DESCRIPTOR);
-  Status                                = gBS->AllocatePool (EfiBootServicesData, Size, (VOID **)&mSmmCoreMemoryAllocLibSmramRanges);
+  Size                                  =
+    mSmmCoreMemoryAllocLibSmramRangeCount * sizeof (EFI_SMRAM_DESCRIPTOR);
+  Status = gBS->AllocatePool (
+                  EfiBootServicesData,
+                  Size,
+                  (VOID **)&mSmmCoreMemoryAllocLibSmramRanges
+                  );
   ASSERT_EFI_ERROR (Status);
   ASSERT (mSmmCoreMemoryAllocLibSmramRanges != NULL);
-  CopyMem (mSmmCoreMemoryAllocLibSmramRanges, SmmCorePrivate->SmramRanges, Size);
+  CopyMem (
+    mSmmCoreMemoryAllocLibSmramRanges,
+    SmmCorePrivate->SmramRanges,
+    Size
+    );
 
   //
   // Initialize memory service using free SMRAM
   //
-  SmmInitializeMemoryServices (SmmCorePrivate->SmramRangeCount, SmmCorePrivate->SmramRanges);
+  SmmInitializeMemoryServices (
+    SmmCorePrivate->SmramRangeCount,
+    SmmCorePrivate->SmramRanges
+    );
 
   //
   // Move the SmramRanges data from BootServicesData to SMRAM.
   //
   BootServicesData                  = mSmmCoreMemoryAllocLibSmramRanges;
-  mSmmCoreMemoryAllocLibSmramRanges = (EFI_SMRAM_DESCRIPTOR *)AllocateCopyPool (Size, (VOID *)BootServicesData);
+  mSmmCoreMemoryAllocLibSmramRanges = (EFI_SMRAM_DESCRIPTOR *)AllocateCopyPool (
+                                                                Size,
+                                                                (VOID *)
+                                                                BootServicesData
+                                                                );
   ASSERT (mSmmCoreMemoryAllocLibSmramRanges != NULL);
 
   //

@@ -33,7 +33,8 @@ InitializeHwErrRecSupport (
     Status = gRT->SetVariable (
                     L"HwErrRecSupport",
                     &gEfiGlobalVariableGuid,
-                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
                     sizeof (UINT16),
                     &HardwareErrorRecordLevel
                     );

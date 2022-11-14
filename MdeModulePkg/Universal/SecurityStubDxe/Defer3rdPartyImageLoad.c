@@ -100,7 +100,13 @@ LookupImage (
   DevicePathSize = GetDevicePathSize (ImageDevicePath);
 
   for (Index = 0; Index < mDeferred3rdPartyImage.Count; Index++) {
-    if (CompareMem (ImageDevicePath, mDeferred3rdPartyImage.ImageInfo[Index].ImageDevicePath, DevicePathSize) == 0) {
+    if (CompareMem (
+          ImageDevicePath,
+          mDeferred3rdPartyImage.ImageInfo[Index].ImageDevicePath,
+          DevicePathSize
+          ) ==
+        0)
+    {
       ASSERT (mDeferred3rdPartyImage.ImageInfo[Index].BootOption == BootOption);
       return &mDeferred3rdPartyImage.ImageInfo[Index];
     }
@@ -128,8 +134,10 @@ QueueImage (
   // Expand memory for the new deferred image.
   //
   ImageInfo = ReallocatePool (
-                mDeferred3rdPartyImage.Count * sizeof (DEFERRED_3RD_PARTY_IMAGE_INFO),
-                (mDeferred3rdPartyImage.Count + 1) * sizeof (DEFERRED_3RD_PARTY_IMAGE_INFO),
+                mDeferred3rdPartyImage.Count *
+                sizeof (DEFERRED_3RD_PARTY_IMAGE_INFO),
+                (mDeferred3rdPartyImage.Count + 1) *
+                sizeof (DEFERRED_3RD_PARTY_IMAGE_INFO),
                 mDeferred3rdPartyImage.ImageInfo
                 );
   if (ImageInfo == NULL) {
@@ -141,7 +149,8 @@ QueueImage (
   //
   // Save the deferred image information.
   //
-  ImageInfo                  = &mDeferred3rdPartyImage.ImageInfo[mDeferred3rdPartyImage.Count];
+  ImageInfo =
+    &mDeferred3rdPartyImage.ImageInfo[mDeferred3rdPartyImage.Count];
   ImageInfo->ImageDevicePath = DuplicateDevicePath (ImageDevicePath);
   if (ImageInfo->ImageDevicePath == NULL) {
     return;
@@ -227,10 +236,11 @@ GetDefferedImageInfo (
   //
   // Get the request deferred image.
   //
-  *ImageDevicePath = mDeferred3rdPartyImage.ImageInfo[ImageIndex].ImageDevicePath;
-  *BootOption      = mDeferred3rdPartyImage.ImageInfo[ImageIndex].BootOption;
-  *Image           = NULL;
-  *ImageSize       = 0;
+  *ImageDevicePath =
+    mDeferred3rdPartyImage.ImageInfo[ImageIndex].ImageDevicePath;
+  *BootOption = mDeferred3rdPartyImage.ImageInfo[ImageIndex].BootOption;
+  *Image      = NULL;
+  *ImageSize  = 0;
 
   return EFI_SUCCESS;
 }
@@ -274,7 +284,11 @@ DxeSmmReadyToLock (
   EFI_STATUS  Status;
   VOID        *Interface;
 
-  Status = gBS->LocateProtocol (&gEfiDxeSmmReadyToLockProtocolGuid, NULL, &Interface);
+  Status = gBS->LocateProtocol (
+                  &gEfiDxeSmmReadyToLockProtocolGuid,
+                  NULL,
+                  &Interface
+                  );
   if (EFI_ERROR (Status)) {
     return;
   }

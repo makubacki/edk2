@@ -51,7 +51,11 @@ AhciS3GetEumeratePorts (
   S3InitDevices       = NULL;
   S3InitDevicesLength = sizeof (DummyData);
   EntireEnd           = FALSE;
-  Status              = RestoreLockBox (&gS3StorageDeviceInitListGuid, &DummyData, &S3InitDevicesLength);
+  Status              = RestoreLockBox (
+                          &gS3StorageDeviceInitListGuid,
+                          &DummyData,
+                          &S3InitDevicesLength
+                          );
   if (Status != EFI_BUFFER_TOO_SMALL) {
     return 0;
   } else {
@@ -60,7 +64,11 @@ AhciS3GetEumeratePorts (
       return 0;
     }
 
-    Status = RestoreLockBox (&gS3StorageDeviceInitListGuid, S3InitDevices, &S3InitDevicesLength);
+    Status = RestoreLockBox (
+               &gS3StorageDeviceInitListGuid,
+               S3InitDevices,
+               &S3InitDevicesLength
+               );
     if (EFI_ERROR (Status)) {
       return 0;
     }
@@ -87,7 +95,8 @@ AhciS3GetEumeratePorts (
     }
 
     DevicePathInst = S3InitDevices;
-    S3InitDevices  = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)S3InitDevices + DevicePathInstLength);
+    S3InitDevices  = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)S3InitDevices +
+                                                  DevicePathInstLength);
 
     if (HcDevicePathLength >= DevicePathInstLength) {
       continue;

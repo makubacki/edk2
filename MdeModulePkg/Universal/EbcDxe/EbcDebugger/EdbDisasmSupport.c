@@ -73,7 +73,9 @@ EdbPostInstructionString (
 {
   CHAR16  *Char;
 
-  for (Char = (CHAR16 *)&mInstructionString; Char < &mInstructionString.Tail; Char++) {
+  for (Char = (CHAR16 *)&mInstructionString; Char < &mInstructionString.Tail;
+       Char++)
+  {
     if (*Char == 0) {
       *Char = L' ';
     }
@@ -113,7 +115,9 @@ EdbGetNaturalIndex16 (
   NaturalUnitBit *= 2;
   Data16          = Data16 & 0xFFF;
   *NaturalUnits   = (UINTN)(Data16 & ((1 << NaturalUnitBit) - 1));
-  *ConstantUnits  = (UINTN)((Data16 >> NaturalUnitBit) & ((1 << (12 - NaturalUnitBit)) - 1));
+  *ConstantUnits  = (UINTN)((Data16 >> NaturalUnitBit) & ((1 << (12 -
+                                                                 NaturalUnitBit))
+                                                          - 1));
 
   return Sign;
 }
@@ -144,7 +148,9 @@ EdbGetNaturalIndex32 (
   NaturalUnitBit *= 4;
   Data32          = Data32 & 0xFFFFFFF;
   *NaturalUnits   = (UINTN)(Data32 & ((1 << NaturalUnitBit) - 1));
-  *ConstantUnits  = (UINTN)((Data32 >> NaturalUnitBit) & ((1 << (28 - NaturalUnitBit)) - 1));
+  *ConstantUnits  = (UINTN)((Data32 >> NaturalUnitBit) & ((1 << (28 -
+                                                                 NaturalUnitBit))
+                                                          - 1));
 
   return Sign;
 }
@@ -175,7 +181,11 @@ EdbGetNaturalIndex64 (
   NaturalUnitBit *= 8;
   Data64          = RShiftU64 (LShiftU64 (Data64, 4), 4);
   *NaturalUnits   = (UINT64)(Data64 & (LShiftU64 (1, NaturalUnitBit) - 1));
-  *ConstantUnits  = (UINT64)(RShiftU64 (Data64, NaturalUnitBit) & (LShiftU64 (1, (60 - NaturalUnitBit)) - 1));
+  *ConstantUnits  = (UINT64)(RShiftU64 (Data64, NaturalUnitBit) & (LShiftU64 (
+                                                                     1,
+                                                                     (60 -
+                                                                      NaturalUnitBit)
+                                                                     ) - 1));
 
   return Sign;
 }
@@ -427,7 +437,10 @@ EdbPrintIndexData (
     Sign ? L"-" : L"+",
     ConstantUnits
     );
-  mInstructionContentOffset = mInstructionContentOffset + 5 + EdbGetBitWidth (NaturalUnits) + EdbGetBitWidth (ConstantUnits);
+  mInstructionContentOffset = mInstructionContentOffset + 5 + EdbGetBitWidth (
+                                                                NaturalUnits
+                                                                ) +
+                              EdbGetBitWidth (ConstantUnits);
 
   return mInstructionContentOffset;
 }
@@ -460,7 +473,10 @@ EdbPrintIndexData64 (
     Sign ? L"-" : L"+",
     ConstantUnits
     );
-  mInstructionContentOffset = mInstructionContentOffset + 5 + EdbGetBitWidth (NaturalUnits) + EdbGetBitWidth (ConstantUnits);
+  mInstructionContentOffset = mInstructionContentOffset + 5 + EdbGetBitWidth (
+                                                                NaturalUnits
+                                                                ) +
+                              EdbGetBitWidth (ConstantUnits);
 
   return mInstructionContentOffset;
 }
@@ -665,7 +681,9 @@ EdbPrintImmDatan (
     L"(%d)",
     (UINTN)Data
     );
-  mInstructionContentOffset = mInstructionContentOffset + 2 + EdbGetBitWidth (Data);
+  mInstructionContentOffset = mInstructionContentOffset + 2 + EdbGetBitWidth (
+                                                                Data
+                                                                );
 
   return mInstructionContentOffset;
 }
@@ -691,7 +709,9 @@ EdbPrintImmData64n (
     L"(%ld)",
     Data64
     );
-  mInstructionContentOffset = mInstructionContentOffset + 2 + EdbGetBitWidth (Data64);
+  mInstructionContentOffset = mInstructionContentOffset + 2 + EdbGetBitWidth (
+                                                                Data64
+                                                                );
 
   return mInstructionContentOffset;
 }
@@ -847,7 +867,9 @@ EdbPrintData64n (
     L"%ld",
     Data64
     );
-  mInstructionContentOffset = mInstructionContentOffset + EdbGetBitWidth (Data64);
+  mInstructionContentOffset = mInstructionContentOffset + EdbGetBitWidth (
+                                                            Data64
+                                                            );
 
   return mInstructionContentOffset;
 }
@@ -878,7 +900,9 @@ EdbPrintData8s (
     Sign ? L"-" : L"+",
     (UINTN)(Data8 & 0x7F)
     );
-  mInstructionContentOffset = mInstructionContentOffset + 1 + EdbGetBitWidth (Data8 & 0x7F);
+  mInstructionContentOffset = mInstructionContentOffset + 1 + EdbGetBitWidth (
+                                                                Data8 & 0x7F
+                                                                );
 
   return mInstructionContentOffset;
 }
@@ -909,7 +933,9 @@ EdbPrintData16s (
     Sign ? L"-" : L"+",
     (UINTN)(Data16 & 0x7FFF)
     );
-  mInstructionContentOffset = mInstructionContentOffset + 1 + EdbGetBitWidth (Data16 & 0x7FFF);
+  mInstructionContentOffset = mInstructionContentOffset + 1 + EdbGetBitWidth (
+                                                                Data16 & 0x7FFF
+                                                                );
 
   return mInstructionContentOffset;
 }
@@ -940,7 +966,10 @@ EdbPrintData32s (
     Sign ? L"-" : L"+",
     (UINTN)(Data32 & 0x7FFFFFFF)
     );
-  mInstructionContentOffset = mInstructionContentOffset + 1 + EdbGetBitWidth (Data32 & 0x7FFFFFFF);
+  mInstructionContentOffset = mInstructionContentOffset + 1 + EdbGetBitWidth (
+                                                                Data32 &
+                                                                0x7FFFFFFF
+                                                                );
 
   return mInstructionContentOffset;
 }
@@ -973,7 +1002,9 @@ EdbPrintData64s (
     Sign ? L"-" : L"+",
     (UINT64)Data64s
     );
-  mInstructionContentOffset = mInstructionContentOffset + 1 + EdbGetBitWidth (Data64s);
+  mInstructionContentOffset = mInstructionContentOffset + 1 + EdbGetBitWidth (
+                                                                Data64s
+                                                                );
 
   return mInstructionContentOffset;
 }
@@ -1088,7 +1119,9 @@ EdbPrintRaw (
     InstructionAddress += 1;
   }
 
-  for (ByteIndex = 0; ByteIndex < EDB_BYTECODE_NUMBER_IN_LINE - ByteNumber; ByteIndex++) {
+  for (ByteIndex = 0; ByteIndex < EDB_BYTECODE_NUMBER_IN_LINE - ByteNumber;
+       ByteIndex++)
+  {
     EDBPrint (L"   ");
   }
 
@@ -1120,7 +1153,9 @@ EdbShowDisasm (
   //  UINTN                   Result;
 
   InstructionAddress = DebuggerPrivate->InstructionScope;
-  for (InstructionNumber = 0; InstructionNumber < DebuggerPrivate->InstructionNumber; InstructionNumber++) {
+  for (InstructionNumber = 0; InstructionNumber <
+       DebuggerPrivate->InstructionNumber; InstructionNumber++)
+  {
     //
     // Break each 0x10 instruction
     //
@@ -1134,7 +1169,9 @@ EdbShowDisasm (
 
     Opcode = GET_OPCODE (InstructionAddress);
     if ((Opcode < OPCODE_MAX) && (mEdbDisasmInstructionTable[Opcode] != NULL)) {
-      InstructionLength = mEdbDisasmInstructionTable[Opcode](InstructionAddress, SystemContext, &InstructionString);
+      InstructionLength = mEdbDisasmInstructionTable[Opcode](InstructionAddress,
+                                                             SystemContext,
+                                                             &InstructionString);
       if (InstructionLength != 0) {
         //
         // Print Source

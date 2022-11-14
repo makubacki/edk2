@@ -176,7 +176,11 @@ UsbCreateDesc (
   // Total length is too small that cannot hold the single descriptor header plus data.
   //
   if (Len <= sizeof (USB_DESC_HEAD)) {
-    DEBUG ((DEBUG_ERROR, "UsbCreateDesc: met mal-format descriptor, total length = %d!\n", Len));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbCreateDesc: met mal-format descriptor, total length = %d!\n",
+      Len
+      ));
     return NULL;
   }
 
@@ -193,7 +197,10 @@ UsbCreateDesc (
     Head = (USB_DESC_HEAD *)&DescBuf[Offset];
 
     if (Head->Len == 0) {
-      DEBUG ((DEBUG_ERROR, "UsbCreateDesc: met mal-format descriptor, Head->Len = 0!\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "UsbCreateDesc: met mal-format descriptor, Head->Len = 0!\n"
+        ));
       return NULL;
     }
 
@@ -201,7 +208,11 @@ UsbCreateDesc (
     // Make sure no overflow when adding Head->Len to Offset.
     //
     if (Head->Len > MAX_UINTN - Offset) {
-      DEBUG ((DEBUG_ERROR, "UsbCreateDesc: met mal-format descriptor, Head->Len = %d!\n", Head->Len));
+      DEBUG ((
+        DEBUG_ERROR,
+        "UsbCreateDesc: met mal-format descriptor, Head->Len = %d!\n",
+        Head->Len
+        ));
       return NULL;
     }
 
@@ -217,12 +228,22 @@ UsbCreateDesc (
   // Descriptor cannot be found: No such type.
   //
   if (Len < Offset) {
-    DEBUG ((DEBUG_ERROR, "UsbCreateDesc: met mal-format descriptor, Offset/Len = %d/%d!\n", Offset, Len));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbCreateDesc: met mal-format descriptor, Offset/Len = %d/%d!\n",
+      Offset,
+      Len
+      ));
     return NULL;
   }
 
   if ((Head->Type != Type) || (Head->Len < DescLen)) {
-    DEBUG ((DEBUG_ERROR, "UsbCreateDesc: descriptor cannot be found, Header(T/L) = %d/%d!\n", Head->Type, Head->Len));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbCreateDesc: descriptor cannot be found, Header(T/L) = %d/%d!\n",
+      Head->Type,
+      Head->Len
+      ));
     return NULL;
   }
 
@@ -266,7 +287,10 @@ UsbParseInterfaceDesc (
   Setting   = UsbCreateDesc (DescBuf, Len, USB_DESC_TYPE_INTERFACE, &Used);
 
   if (Setting == NULL) {
-    DEBUG ((DEBUG_ERROR, "UsbParseInterfaceDesc: failed to create interface descriptor\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbParseInterfaceDesc: failed to create interface descriptor\n"
+      ));
     return NULL;
   }
 
@@ -299,10 +323,19 @@ UsbParseInterfaceDesc (
   // Create the endpoints for this interface
   //
   for (Index = 0; (Index < NumEp) && (Offset < Len); Index++) {
-    Ep = UsbCreateDesc (DescBuf + Offset, Len - Offset, USB_DESC_TYPE_ENDPOINT, &Used);
+    Ep = UsbCreateDesc (
+           DescBuf + Offset,
+           Len - Offset,
+           USB_DESC_TYPE_ENDPOINT,
+           &Used
+           );
 
     if (Ep == NULL) {
-      DEBUG ((DEBUG_ERROR, "UsbParseInterfaceDesc: failed to create endpoint(index %d)\n", (UINT32)Index));
+      DEBUG ((
+        DEBUG_ERROR,
+        "UsbParseInterfaceDesc: failed to create endpoint(index %d)\n",
+        (UINT32)Index
+        ));
       goto ON_ERROR;
     }
 
@@ -395,10 +428,16 @@ UsbParseConfigDesc (
     Setting = UsbParseInterfaceDesc (DescBuf, Len, &Consumed);
 
     if (Setting == NULL) {
-      DEBUG ((DEBUG_ERROR, "UsbParseConfigDesc: warning: failed to get interface setting, stop parsing now.\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "UsbParseConfigDesc: warning: failed to get interface setting, stop parsing now.\n"
+        ));
       break;
     } else if (Setting->Desc.InterfaceNumber >= NumIf) {
-      DEBUG ((DEBUG_ERROR, "UsbParseConfigDesc: malformatted interface descriptor\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "UsbParseConfigDesc: malformatted interface descriptor\n"
+        ));
 
       UsbFreeInterfaceDesc (Setting);
       goto ON_ERROR;
@@ -643,13 +682,21 @@ UsbGetOneString (
   //
   // First get two bytes which contains the string length.
   //
-  Status = UsbCtrlGetDesc (UsbDev, USB_DESC_TYPE_STRING, Index, LangId, &Desc, 2);
+  Status = UsbCtrlGetDesc (
+             UsbDev,
+             USB_DESC_TYPE_STRING,
+             Index,
+             LangId,
+             &Desc,
+             2
+             );
 
   //
   // Reject if Length even cannot cover itself, or odd because Unicode string byte length should be even.
   //
   if (EFI_ERROR (Status) ||
-      (Desc.Length < OFFSET_OF (EFI_USB_STRING_DESCRIPTOR, Length) + sizeof (Desc.Length)) ||
+      (Desc.Length < OFFSET_OF (EFI_USB_STRING_DESCRIPTOR, Length) +
+       sizeof (Desc.Length)) ||
       (Desc.Length % 2 != 0)
       )
   {
@@ -769,12 +816,18 @@ UsbGetOneConfig (
     return NULL;
   }
 
-  DEBUG ((DEBUG_INFO, "UsbGetOneConfig: total length is %d\n", Desc.TotalLength));
+  DEBUG ((
+    DEBUG_INFO,
+    "UsbGetOneConfig: total length is %d\n",
+    Desc.TotalLength
+    ));
 
   //
   // Reject if TotalLength even cannot cover itself.
   //
-  if (Desc.TotalLength < OFFSET_OF (EFI_USB_CONFIG_DESCRIPTOR, TotalLength) + sizeof (Desc.TotalLength)) {
+  if (Desc.TotalLength < OFFSET_OF (EFI_USB_CONFIG_DESCRIPTOR, TotalLength) +
+      sizeof (Desc.TotalLength))
+  {
     return NULL;
   }
 
@@ -784,10 +837,21 @@ UsbGetOneConfig (
     return NULL;
   }
 
-  Status = UsbCtrlGetDesc (UsbDev, USB_DESC_TYPE_CONFIG, Index, 0, Buf, Desc.TotalLength);
+  Status = UsbCtrlGetDesc (
+             UsbDev,
+             USB_DESC_TYPE_CONFIG,
+             Index,
+             0,
+             Buf,
+             Desc.TotalLength
+             );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "UsbGetOneConfig: failed to get full descript %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbGetOneConfig: failed to get full descript %r\n",
+      Status
+      ));
 
     FreePool (Buf);
     return NULL;
@@ -826,7 +890,11 @@ UsbBuildDescTable (
   Status = UsbGetDevDesc (UsbDev);
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "UsbBuildDescTable: failed to get device descriptor - %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbBuildDescTable: failed to get device descriptor - %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -841,7 +909,11 @@ UsbBuildDescTable (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  DEBUG ((DEBUG_INFO, "UsbBuildDescTable: device has %d configures\n", NumConfig));
+  DEBUG ((
+    DEBUG_INFO,
+    "UsbBuildDescTable: device has %d configures\n",
+    NumConfig
+    ));
 
   //
   // Read each configurations, then parse them
@@ -850,7 +922,11 @@ UsbBuildDescTable (
     Config = UsbGetOneConfig (UsbDev, Index);
 
     if (Config == NULL) {
-      DEBUG ((DEBUG_ERROR, "UsbBuildDescTable: failed to get configure (index %d)\n", Index));
+      DEBUG ((
+        DEBUG_ERROR,
+        "UsbBuildDescTable: failed to get configure (index %d)\n",
+        Index
+        ));
 
       //
       // If we can get the default descriptor, it is likely that the
@@ -868,7 +944,11 @@ UsbBuildDescTable (
     FreePool (Config);
 
     if (ConfigDesc == NULL) {
-      DEBUG ((DEBUG_ERROR, "UsbBuildDescTable: failed to parse configure (index %d)\n", Index));
+      DEBUG ((
+        DEBUG_ERROR,
+        "UsbBuildDescTable: failed to parse configure (index %d)\n",
+        Index
+        ));
 
       //
       // If we can get the default descriptor, it is likely that the
@@ -891,7 +971,11 @@ UsbBuildDescTable (
   Status = UsbBuildLangTable (UsbDev);
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "UsbBuildDescTable: get language ID table %r\n", Status));
+    DEBUG ((
+      DEBUG_INFO,
+      "UsbBuildDescTable: get language ID table %r\n",
+      Status
+      ));
   }
 
   return EFI_SUCCESS;
@@ -991,11 +1075,15 @@ UsbIoClearFeature (
   UINT32                  UsbResult;
   EFI_STATUS              Status;
 
-  DevReq.RequestType = USB_REQUEST_TYPE (EfiUsbNoData, USB_REQ_TYPE_STANDARD, Target);
-  DevReq.Request     = USB_REQ_CLEAR_FEATURE;
-  DevReq.Value       = Feature;
-  DevReq.Index       = Index;
-  DevReq.Length      = 0;
+  DevReq.RequestType = USB_REQUEST_TYPE (
+                         EfiUsbNoData,
+                         USB_REQ_TYPE_STANDARD,
+                         Target
+                         );
+  DevReq.Request = USB_REQ_CLEAR_FEATURE;
+  DevReq.Value   = Feature;
+  DevReq.Index   = Index;
+  DevReq.Length  = 0;
 
   Status = UsbIo->UsbControlTransfer (
                     UsbIo,

@@ -722,10 +722,17 @@ IsGopSibling (
   EFI_DEVICE_PATH_PROTOCOL  *NodeLeft;
   EFI_DEVICE_PATH_PROTOCOL  *NodeRight;
 
-  for (NodeLeft = Left; !IsDevicePathEndType (NodeLeft); NodeLeft = NextDevicePathNode (NodeLeft)) {
-    if (((DevicePathType (NodeLeft) == ACPI_DEVICE_PATH) && (DevicePathSubType (NodeLeft) == ACPI_ADR_DP)) ||
-        ((DevicePathType (NodeLeft) == HARDWARE_DEVICE_PATH) && (DevicePathSubType (NodeLeft) == HW_CONTROLLER_DP) &&
-         (DevicePathType (NextDevicePathNode (NodeLeft)) == ACPI_DEVICE_PATH) && (DevicePathSubType (NextDevicePathNode (NodeLeft)) == ACPI_ADR_DP)))
+  for (NodeLeft = Left; !IsDevicePathEndType (NodeLeft); NodeLeft =
+         NextDevicePathNode (NodeLeft))
+  {
+    if (((DevicePathType (NodeLeft) == ACPI_DEVICE_PATH) && (DevicePathSubType (
+                                                               NodeLeft
+                                                               ) ==
+                                                             ACPI_ADR_DP)) ||
+        ((DevicePathType (NodeLeft) == HARDWARE_DEVICE_PATH) &&
+         (DevicePathSubType (NodeLeft) == HW_CONTROLLER_DP) &&
+         (DevicePathType (NextDevicePathNode (NodeLeft)) == ACPI_DEVICE_PATH) &&
+         (DevicePathSubType (NextDevicePathNode (NodeLeft)) == ACPI_ADR_DP)))
     {
       break;
     }
@@ -735,10 +742,17 @@ IsGopSibling (
     return FALSE;
   }
 
-  for (NodeRight = Right; !IsDevicePathEndType (NodeRight); NodeRight = NextDevicePathNode (NodeRight)) {
-    if (((DevicePathType (NodeRight) == ACPI_DEVICE_PATH) && (DevicePathSubType (NodeRight) == ACPI_ADR_DP)) ||
-        ((DevicePathType (NodeRight) == HARDWARE_DEVICE_PATH) && (DevicePathSubType (NodeRight) == HW_CONTROLLER_DP) &&
-         (DevicePathType (NextDevicePathNode (NodeRight)) == ACPI_DEVICE_PATH) && (DevicePathSubType (NextDevicePathNode (NodeRight)) == ACPI_ADR_DP)))
+  for (NodeRight = Right; !IsDevicePathEndType (NodeRight); NodeRight =
+         NextDevicePathNode (NodeRight))
+  {
+    if (((DevicePathType (NodeRight) == ACPI_DEVICE_PATH) &&
+         (DevicePathSubType (NodeRight) == ACPI_ADR_DP)) ||
+        ((DevicePathType (NodeRight) == HARDWARE_DEVICE_PATH) &&
+         (DevicePathSubType (NodeRight) == HW_CONTROLLER_DP) &&
+         (DevicePathType (NextDevicePathNode (NodeRight)) ==
+          ACPI_DEVICE_PATH) && (DevicePathSubType (NextDevicePathNode (
+                                                     NodeRight)) ==
+                                ACPI_ADR_DP)))
     {
       break;
     }
@@ -752,7 +766,8 @@ IsGopSibling (
     return FALSE;
   }
 
-  return (BOOLEAN)(CompareMem (Left, Right, (UINTN)NodeLeft - (UINTN)Left) == 0);
+  return (BOOLEAN)(CompareMem (Left, Right, (UINTN)NodeLeft - (UINTN)Left) ==
+                   0);
 }
 
 /**
@@ -919,7 +934,11 @@ MatchUsbWwid (
   //
   TableSize   = 0;
   LangIdTable = NULL;
-  Status      = UsbIo->UsbGetSupportedLanguages (UsbIo, &LangIdTable, &TableSize);
+  Status      = UsbIo->UsbGetSupportedLanguages (
+                         UsbIo,
+                         &LangIdTable,
+                         &TableSize
+                         );
   if (EFI_ERROR (Status) || (TableSize == 0) || (LangIdTable == NULL)) {
     return FALSE;
   }
@@ -928,7 +947,8 @@ MatchUsbWwid (
   // Serial number in USB WWID device path is the last 64-or-less UTF-16 characters.
   //
   CompareStr = (CHAR16 *)(UINTN)(UsbWwid + 1);
-  CompareLen = (DevicePathNodeLength (UsbWwid) - sizeof (USB_WWID_DEVICE_PATH)) / sizeof (CHAR16);
+  CompareLen = (DevicePathNodeLength (UsbWwid) -
+                sizeof (USB_WWID_DEVICE_PATH)) / sizeof (CHAR16);
   if (CompareStr[CompareLen - 1] == L'\0') {
     CompareLen--;
   }
@@ -950,7 +970,11 @@ MatchUsbWwid (
 
     Length = StrLen (SerialNumberStr);
     if ((Length >= CompareLen) &&
-        (CompareMem (SerialNumberStr + Length - CompareLen, CompareStr, CompareLen * sizeof (CHAR16)) == 0))
+        (CompareMem (
+           SerialNumberStr + Length - CompareLen,
+           CompareStr,
+           CompareLen * sizeof (CHAR16)
+           ) == 0))
     {
       FreePool (SerialNumberStr);
       return TRUE;
@@ -1010,7 +1034,11 @@ MatchUsbShortformDevicePath (
   //
   ParentDevicePathSize = (UINTN)ShortformNode - (UINTN)ShortformPath;
   RemainingDevicePath  = FullPath;
-  Status               = gBS->LocateDevicePath (&gEfiUsbIoProtocolGuid, &RemainingDevicePath, &Handle);
+  Status               = gBS->LocateDevicePath (
+                                &gEfiUsbIoProtocolGuid,
+                                &RemainingDevicePath,
+                                &Handle
+                                );
   if (EFI_ERROR (Status)) {
     return FALSE;
   }
@@ -1097,7 +1125,10 @@ ConPlatformMatchDevicePaths (
   //
   while (DevicePathInst != NULL) {
     if ((CompareMem (Single, DevicePathInst, Size) == 0) ||
-        IsGopSibling (Single, DevicePathInst) || MatchUsbShortformDevicePath (Single, DevicePathInst))
+        IsGopSibling (Single, DevicePathInst) || MatchUsbShortformDevicePath (
+                                                   Single,
+                                                   DevicePathInst
+                                                   ))
     {
       if (!Delete) {
         //
@@ -1236,7 +1267,8 @@ ConPlatformUpdateDeviceVariable (
     Status = gRT->SetVariable (
                     VariableName,
                     &gEfiGlobalVariableGuid,
-                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS,
                     GetDevicePathSize (NewVariableDevicePath),
                     NewVariableDevicePath
                     );
@@ -1271,7 +1303,11 @@ ConPlatformUpdateGopCandidate (
   // Check whether it's a GOP device.
   //
   TempDevicePath = DevicePath;
-  Status         = gBS->LocateDevicePath (&gEfiGraphicsOutputProtocolGuid, &TempDevicePath, &GopHandle);
+  Status         = gBS->LocateDevicePath (
+                          &gEfiGraphicsOutputProtocolGuid,
+                          &TempDevicePath,
+                          &GopHandle
+                          );
   if (EFI_ERROR (Status)) {
     return FALSE;
   }
@@ -1279,7 +1315,11 @@ ConPlatformUpdateGopCandidate (
   //
   // Get the parent PciIo handle in order to find all the children
   //
-  Status = gBS->LocateDevicePath (&gEfiPciIoProtocolGuid, &DevicePath, &PciHandle);
+  Status = gBS->LocateDevicePath (
+                  &gEfiPciIoProtocolGuid,
+                  &DevicePath,
+                  &PciHandle
+                  );
   if (EFI_ERROR (Status)) {
     return FALSE;
   }

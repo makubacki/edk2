@@ -22,7 +22,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // This capsule PEIM puts its private data at the start of the
 // coalesced capsule. Here's the structure definition.
 //
-#define EFI_CAPSULE_PEIM_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('C', 'a', 'p', 'P')
+#define EFI_CAPSULE_PEIM_PRIVATE_DATA_SIGNATURE  \
+  SIGNATURE_32 ('C', 'a', 'p', 'P')
 
 #pragma pack(1)
 typedef struct {

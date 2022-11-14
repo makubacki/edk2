@@ -76,7 +76,9 @@ typedef struct {
 //
 // Containment record for ACPI Table linked list.
 //
-#define EFI_ACPI_TABLE_LIST_FROM_LINK(_link)  CR (_link, EFI_ACPI_TABLE_LIST, Link, EFI_ACPI_TABLE_LIST_SIGNATURE)
+#define EFI_ACPI_TABLE_LIST_FROM_LINK( \
+                                     _link)  \
+  CR (_link, EFI_ACPI_TABLE_LIST, Link, EFI_ACPI_TABLE_LIST_SIGNATURE)
 
 //
 // The maximum number of tables this driver supports

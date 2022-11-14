@@ -365,7 +365,9 @@ FwVolBlockGetBlockSize (
   // Search the block map for the given block
   //
   TotalBlocks = 0;
-  while ((PtrBlockMapEntry->NumBlocks != 0) || (PtrBlockMapEntry->Length != 0)) {
+  while ((PtrBlockMapEntry->NumBlocks != 0) || (PtrBlockMapEntry->Length !=
+                                                0))
+  {
     TotalBlocks += PtrBlockMapEntry->NumBlocks;
     if (Lba < TotalBlocks) {
       //
@@ -401,7 +403,11 @@ GetFvbAuthenticationStatus (
   UINT32                   AuthenticationStatus;
 
   AuthenticationStatus = 0;
-  FvbDevice            = BASE_CR (FvbProtocol, EFI_FW_VOL_BLOCK_DEVICE, FwVolBlockInstance);
+  FvbDevice            = BASE_CR (
+                           FvbProtocol,
+                           EFI_FW_VOL_BLOCK_DEVICE,
+                           FwVolBlockInstance
+                           );
   if (FvbDevice->Signature == FVB_DEVICE_SIGNATURE) {
     AuthenticationStatus = FvbDevice->AuthenticationStatus;
   }
@@ -460,7 +466,9 @@ ProduceFVBProtocolOnBuffer (
   // can be aligned on any power-of-two boundary. A weakly aligned volume can not be moved from
   // its initial linked location and maintain its alignment.
   //
-  if ((FwVolHeader->Attributes & EFI_FVB2_WEAK_ALIGNMENT) != EFI_FVB2_WEAK_ALIGNMENT) {
+  if ((FwVolHeader->Attributes & EFI_FVB2_WEAK_ALIGNMENT) !=
+      EFI_FVB2_WEAK_ALIGNMENT)
+  {
     //
     // Get FvHeader alignment
     //
@@ -534,7 +542,9 @@ ProduceFVBProtocolOnBuffer (
   for (PtrBlockMapEntry = FwVolHeader->BlockMap;
        PtrBlockMapEntry->NumBlocks != 0; PtrBlockMapEntry++)
   {
-    for (BlockIndex2 = 0; BlockIndex2 < PtrBlockMapEntry->NumBlocks; BlockIndex2++) {
+    for (BlockIndex2 = 0; BlockIndex2 < PtrBlockMapEntry->NumBlocks;
+         BlockIndex2++)
+    {
       FvbDev->LbaCache[BlockIndex].Base   = LinearOffset;
       FvbDev->LbaCache[BlockIndex].Length = PtrBlockMapEntry->Length;
       LinearOffset                       += PtrBlockMapEntry->Length;
@@ -549,19 +559,31 @@ ProduceFVBProtocolOnBuffer (
     //
     // FV does not contains extension header, then produce MEMMAP_DEVICE_PATH
     //
-    FvbDev->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)AllocateCopyPool (sizeof (FV_MEMMAP_DEVICE_PATH), &mFvMemmapDevicePathTemplate);
+    FvbDev->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)AllocateCopyPool (
+                                                       sizeof (
+                                                                              FV_MEMMAP_DEVICE_PATH),
+                                                       &
+                                                       mFvMemmapDevicePathTemplate
+                                                       );
     if (FvbDev->DevicePath == NULL) {
       FreePool (FvbDev);
       return EFI_OUT_OF_RESOURCES;
     }
 
-    ((FV_MEMMAP_DEVICE_PATH *)FvbDev->DevicePath)->MemMapDevPath.StartingAddress = BaseAddress;
-    ((FV_MEMMAP_DEVICE_PATH *)FvbDev->DevicePath)->MemMapDevPath.EndingAddress   = BaseAddress + FwVolHeader->FvLength - 1;
+    ((FV_MEMMAP_DEVICE_PATH *)FvbDev->DevicePath)->MemMapDevPath.StartingAddress
+      = BaseAddress;
+    ((FV_MEMMAP_DEVICE_PATH *)FvbDev->DevicePath)->MemMapDevPath.EndingAddress
+      = BaseAddress + FwVolHeader->FvLength - 1;
   } else {
     //
     // FV contains extension header, then produce MEDIA_FW_VOL_DEVICE_PATH
     //
-    FvbDev->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)AllocateCopyPool (sizeof (FV_PIWG_DEVICE_PATH), &mFvPIWGDevicePathTemplate);
+    FvbDev->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)AllocateCopyPool (
+                                                       sizeof (
+                                                                              FV_PIWG_DEVICE_PATH),
+                                                       &
+                                                       mFvPIWGDevicePathTemplate
+                                                       );
     if (FvbDev->DevicePath == NULL) {
       FreePool (FvbDev);
       return EFI_OUT_OF_RESOURCES;
@@ -628,7 +650,8 @@ FwVolBlockDriverInit (
     //
     Fv3Hob.Raw = GetHobList ();
     while ((Fv3Hob.Raw = GetNextHob (EFI_HOB_TYPE_FV3, Fv3Hob.Raw)) != NULL) {
-      if ((Fv3Hob.FirmwareVolume3->BaseAddress == FvHob.FirmwareVolume->BaseAddress) &&
+      if ((Fv3Hob.FirmwareVolume3->BaseAddress ==
+           FvHob.FirmwareVolume->BaseAddress) &&
           (Fv3Hob.FirmwareVolume3->Length == FvHob.FirmwareVolume->Length))
       {
         AuthenticationStatus = Fv3Hob.FirmwareVolume3->AuthenticationStatus;
@@ -641,7 +664,13 @@ FwVolBlockDriverInit (
     //
     // Produce an FVB protocol for it
     //
-    ProduceFVBProtocolOnBuffer (FvHob.FirmwareVolume->BaseAddress, FvHob.FirmwareVolume->Length, NULL, AuthenticationStatus, NULL);
+    ProduceFVBProtocolOnBuffer (
+      FvHob.FirmwareVolume->BaseAddress,
+      FvHob.FirmwareVolume->Length,
+      NULL,
+      AuthenticationStatus,
+      NULL
+      );
     FvHob.Raw = GET_NEXT_HOB (FvHob);
   }
 
@@ -699,7 +728,11 @@ CoreProcessFirmwareVolume (
   if (!EFI_ERROR (Status)) {
     ASSERT (*FVProtocolHandle != NULL);
     Ptr    = NULL;
-    Status = CoreHandleProtocol (*FVProtocolHandle, &gEfiFirmwareVolume2ProtocolGuid, (VOID **)&Ptr);
+    Status = CoreHandleProtocol (
+               *FVProtocolHandle,
+               &gEfiFirmwareVolume2ProtocolGuid,
+               (VOID **)&Ptr
+               );
     if (EFI_ERROR (Status) || (Ptr == NULL)) {
       return EFI_VOLUME_CORRUPTED;
     }

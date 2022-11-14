@@ -92,7 +92,7 @@ HII_DATABASE_PRIVATE_DATA  mPrivate = {
     0x00000000,
     0x0000,
     0x0000,
-    { 0x00,                           0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00 }
+    { 0x00,                           0x00,                           0x00,0x00, 0x00, 0x00, 0x00, 0x00 }
   },
   NULL
 };
@@ -181,7 +181,10 @@ InitializeHiiDatabase (
   ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEfiHiiImageProtocolGuid);
   ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEfiHiiStringProtocolGuid);
   ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEfiHiiConfigRoutingProtocolGuid);
-  ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEfiConfigKeywordHandlerProtocolGuid);
+  ASSERT_PROTOCOL_ALREADY_INSTALLED (
+    NULL,
+    &gEfiConfigKeywordHandlerProtocolGuid
+    );
 
   InitializeListHead (&mPrivate.DatabaseList);
   InitializeListHead (&mPrivate.DatabaseNotifyList);

@@ -23,9 +23,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "SmmCorePerformanceLibInternal.h"
 
-#define STRING_SIZE              (FPDT_STRING_EVENT_RECORD_NAME_LENGTH * sizeof (CHAR8))
-#define FIRMWARE_RECORD_BUFFER   0x1000
-#define CACHE_HANDLE_GUID_COUNT  0x100
+#define STRING_SIZE              \
+                                               (FPDT_STRING_EVENT_RECORD_NAME_LENGTH * sizeof (CHAR8))
+#define FIRMWARE_RECORD_BUFFER                 0x1000
+#define CACHE_HANDLE_GUID_COUNT                0x100
 
 SMM_BOOT_PERFORMANCE_TABLE  *mSmmBootPerformanceTable = NULL;
 
@@ -38,7 +39,8 @@ typedef struct {
 HANDLE_GUID_MAP  mCacheHandleGuidTable[CACHE_HANDLE_GUID_COUNT];
 UINTN            mCachePairCount = 0;
 
-UINT32                mPerformanceLength    = sizeof (SMM_BOOT_PERFORMANCE_TABLE);
+UINT32  mPerformanceLength =
+  sizeof (SMM_BOOT_PERFORMANCE_TABLE);
 UINT32                mMaxPerformanceLength = 0;
 UINT32                mLoadImageCount       = 0;
 BOOLEAN               mFpdtDataIsReported   = FALSE;
@@ -77,7 +79,10 @@ GetFpdtRecordPtr (
     //
     if (mPerformanceLength + RecordSize > mMaxPerformanceLength) {
       if (!mLackSpaceIsReport) {
-        DEBUG ((DEBUG_INFO, "SmmCorePerformanceLib: No enough space to save boot records\n"));
+        DEBUG ((
+          DEBUG_INFO,
+          "SmmCorePerformanceLib: No enough space to save boot records\n"
+          ));
         mLackSpaceIsReport = TRUE;
       }
 
@@ -86,7 +91,12 @@ GetFpdtRecordPtr (
       //
       // Covert buffer to FPDT Ptr Union type.
       //
-      FpdtRecordPtr->RecordHeader = (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)((UINT8 *)mSmmBootPerformanceTable + mSmmBootPerformanceTable->Header.Length);
+      FpdtRecordPtr->RecordHeader =
+        (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)((UINT8 *)
+                                                        mSmmBootPerformanceTable
+                                                        +
+                                                        mSmmBootPerformanceTable
+                                                          ->Header.Length);
     }
   } else {
     //
@@ -95,7 +105,8 @@ GetFpdtRecordPtr (
     if (mPerformanceLength + RecordSize > mMaxPerformanceLength) {
       mSmmBootPerformanceTable = ReallocatePool (
                                    mPerformanceLength,
-                                   mPerformanceLength + RecordSize + FIRMWARE_RECORD_BUFFER,
+                                   mPerformanceLength + RecordSize +
+                                   FIRMWARE_RECORD_BUFFER,
                                    mSmmBootPerformanceTable
                                    );
 
@@ -104,13 +115,19 @@ GetFpdtRecordPtr (
       }
 
       mSmmBootPerformanceTable->Header.Length = mPerformanceLength;
-      mMaxPerformanceLength                   = mPerformanceLength + RecordSize + FIRMWARE_RECORD_BUFFER;
+      mMaxPerformanceLength                   = mPerformanceLength +
+                                                RecordSize +
+                                                FIRMWARE_RECORD_BUFFER;
     }
 
     //
     // Covert buffer to FPDT Ptr Union type.
     //
-    FpdtRecordPtr->RecordHeader = (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)((UINT8 *)mSmmBootPerformanceTable + mSmmBootPerformanceTable->Header.Length);
+    FpdtRecordPtr->RecordHeader =
+      (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)((UINT8 *)
+                                                      mSmmBootPerformanceTable +
+                                                      mSmmBootPerformanceTable->
+                                                        Header.Length);
   }
 
   FpdtRecordPtr->RecordHeader->Length = 0;
@@ -292,7 +309,11 @@ GetModuleInfoFromHandle (
     for (Count = mCachePairCount - 1; Count >= 0; Count--) {
       if (Handle == mCacheHandleGuidTable[Count].Handle) {
         CopyGuid (ModuleGuid, &mCacheHandleGuidTable[Count].ModuleGuid);
-        AsciiStrCpyS (NameString, FPDT_STRING_EVENT_RECORD_NAME_LENGTH, mCacheHandleGuidTable[Count].NameString);
+        AsciiStrCpyS (
+          NameString,
+          FPDT_STRING_EVENT_RECORD_NAME_LENGTH,
+          mCacheHandleGuidTable[Count].NameString
+          );
         return EFI_SUCCESS;
       }
     }
@@ -359,8 +380,9 @@ GetModuleInfoFromHandle (
       // Determine GUID associated with module logging performance
       //
       ModuleGuidIsGet = TRUE;
-      FvFilePath      = (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)LoadedImage->FilePath;
-      TempGuid        = &FvFilePath->FvFileName;
+      FvFilePath      =
+        (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)LoadedImage->FilePath;
+      TempGuid = &FvFilePath->FvFileName;
     }
 
     //
@@ -416,7 +438,9 @@ GetModuleInfoFromHandle (
       //
       // Method 3. Get the name string from FFS UI section
       //
-      for (Index = 0; Index < BufferSize - 1 && StringPtr[Index] != 0; Index++) {
+      for (Index = 0; Index < BufferSize - 1 && StringPtr[Index] != 0;
+           Index++)
+      {
         NameString[Index] = (CHAR8)StringPtr[Index];
       }
 
@@ -443,7 +467,11 @@ Done:
   if (mCachePairCount < CACHE_HANDLE_GUID_COUNT) {
     mCacheHandleGuidTable[mCachePairCount].Handle = Handle;
     CopyGuid (&mCacheHandleGuidTable[mCachePairCount].ModuleGuid, ModuleGuid);
-    AsciiStrCpyS (mCacheHandleGuidTable[mCachePairCount].NameString, FPDT_STRING_EVENT_RECORD_NAME_LENGTH, NameString);
+    AsciiStrCpyS (
+      mCacheHandleGuidTable[mCachePairCount].NameString,
+      FPDT_STRING_EVENT_RECORD_NAME_LENGTH,
+      NameString
+      );
     mCachePairCount++;
   }
 
@@ -557,7 +585,10 @@ InsertFpdtRecord (
     //
     if ((PerfId != 0) && (IsKnownID (PerfId)) && (!IsKnownTokens (String))) {
       return EFI_INVALID_PARAMETER;
-    } else if ((PerfId != 0) && (!IsKnownID (PerfId)) && (!IsKnownTokens (String))) {
+    } else if ((PerfId != 0) && (!IsKnownID (PerfId)) && (!IsKnownTokens (
+                                                             String
+                                                             )))
+    {
       if ((Attribute == PerfStartEntry) && ((PerfId & 0x000F) != 0)) {
         PerfId &= 0xFFF0;
       } else if ((Attribute == PerfEndEntry) && ((PerfId & 0x000F) == 0)) {
@@ -569,7 +600,12 @@ InsertFpdtRecord (
       //
       // Get ProgressID form the String Token.
       //
-      Status = GetFpdtRecordId (Attribute, CallerIdentifier, String, &ProgressId);
+      Status = GetFpdtRecordId (
+                 Attribute,
+                 CallerIdentifier,
+                 String,
+                 &ProgressId
+                 );
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -604,7 +640,12 @@ InsertFpdtRecord (
   switch (PerfId) {
     case MODULE_START_ID:
     case MODULE_END_ID:
-      GetModuleInfoFromHandle ((EFI_HANDLE)CallerIdentifier, ModuleName, sizeof (ModuleName), &ModuleGuid);
+      GetModuleInfoFromHandle (
+        (EFI_HANDLE)CallerIdentifier,
+        ModuleName,
+        sizeof (ModuleName),
+        &ModuleGuid
+        );
       StringPtr = ModuleName;
       //
       // Cache the offset of start image start record and use to update the start image end record if needed.
@@ -614,15 +655,29 @@ InsertFpdtRecord (
       }
 
       if (!PcdGetBool (PcdEdkiiFpdtStringRecordEnableOnly)) {
-        FpdtRecordPtr.GuidEvent->Header.Type     = FPDT_GUID_EVENT_TYPE;
-        FpdtRecordPtr.GuidEvent->Header.Length   = sizeof (FPDT_GUID_EVENT_RECORD);
+        FpdtRecordPtr.GuidEvent->Header.Type   = FPDT_GUID_EVENT_TYPE;
+        FpdtRecordPtr.GuidEvent->Header.Length =
+          sizeof (FPDT_GUID_EVENT_RECORD);
         FpdtRecordPtr.GuidEvent->Header.Revision = FPDT_RECORD_REVISION_1;
         FpdtRecordPtr.GuidEvent->ProgressID      = PerfId;
         FpdtRecordPtr.GuidEvent->Timestamp       = TimeStamp;
-        CopyMem (&FpdtRecordPtr.GuidEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.GuidEvent->Guid));
-        if ((CallerIdentifier == NULL) && (PerfId == MODULE_END_ID) && (mCachedLength != 0)) {
-          CachedFpdtRecordPtr.RecordHeader = (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)((UINT8 *)mSmmBootPerformanceTable + mCachedLength);
-          CopyMem (&FpdtRecordPtr.GuidEvent->Guid, &CachedFpdtRecordPtr.GuidEvent->Guid, sizeof (FpdtRecordPtr.GuidEvent->Guid));
+        CopyMem (
+          &FpdtRecordPtr.GuidEvent->Guid,
+          &ModuleGuid,
+          sizeof (FpdtRecordPtr.GuidEvent->Guid)
+          );
+        if ((CallerIdentifier == NULL) && (PerfId == MODULE_END_ID) &&
+            (mCachedLength != 0))
+        {
+          CachedFpdtRecordPtr.RecordHeader =
+            (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)((UINT8 *)
+                                                            mSmmBootPerformanceTable
+                                                            + mCachedLength);
+          CopyMem (
+            &FpdtRecordPtr.GuidEvent->Guid,
+            &CachedFpdtRecordPtr.GuidEvent->Guid,
+            sizeof (FpdtRecordPtr.GuidEvent->Guid)
+            );
           mCachedLength = 0;
         }
       }
@@ -631,7 +686,12 @@ InsertFpdtRecord (
 
     case MODULE_LOADIMAGE_START_ID:
     case MODULE_LOADIMAGE_END_ID:
-      GetModuleInfoFromHandle ((EFI_HANDLE)CallerIdentifier, ModuleName, sizeof (ModuleName), &ModuleGuid);
+      GetModuleInfoFromHandle (
+        (EFI_HANDLE)CallerIdentifier,
+        ModuleName,
+        sizeof (ModuleName),
+        &ModuleGuid
+        );
       StringPtr = ModuleName;
       if (PerfId == MODULE_LOADIMAGE_START_ID) {
         mLoadImageCount++;
@@ -644,16 +704,29 @@ InsertFpdtRecord (
       }
 
       if (!PcdGetBool (PcdEdkiiFpdtStringRecordEnableOnly)) {
-        FpdtRecordPtr.GuidQwordEvent->Header.Type     = FPDT_GUID_QWORD_EVENT_TYPE;
-        FpdtRecordPtr.GuidQwordEvent->Header.Length   = sizeof (FPDT_GUID_QWORD_EVENT_RECORD);
+        FpdtRecordPtr.GuidQwordEvent->Header.Type =
+          FPDT_GUID_QWORD_EVENT_TYPE;
+        FpdtRecordPtr.GuidQwordEvent->Header.Length =
+          sizeof (FPDT_GUID_QWORD_EVENT_RECORD);
         FpdtRecordPtr.GuidQwordEvent->Header.Revision = FPDT_RECORD_REVISION_1;
         FpdtRecordPtr.GuidQwordEvent->ProgressID      = PerfId;
         FpdtRecordPtr.GuidQwordEvent->Timestamp       = TimeStamp;
         FpdtRecordPtr.GuidQwordEvent->Qword           = mLoadImageCount;
-        CopyMem (&FpdtRecordPtr.GuidQwordEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.GuidQwordEvent->Guid));
+        CopyMem (
+          &FpdtRecordPtr.GuidQwordEvent->Guid,
+          &ModuleGuid,
+          sizeof (FpdtRecordPtr.GuidQwordEvent->Guid)
+          );
         if ((PerfId == MODULE_LOADIMAGE_END_ID) && (mCachedLength != 0)) {
-          CachedFpdtRecordPtr.RecordHeader = (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)((UINT8 *)mSmmBootPerformanceTable + mCachedLength);
-          CopyMem (&CachedFpdtRecordPtr.GuidQwordEvent->Guid, &ModuleGuid, sizeof (CachedFpdtRecordPtr.GuidQwordEvent->Guid));
+          CachedFpdtRecordPtr.RecordHeader =
+            (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)((UINT8 *)
+                                                            mSmmBootPerformanceTable
+                                                            + mCachedLength);
+          CopyMem (
+            &CachedFpdtRecordPtr.GuidQwordEvent->Guid,
+            &ModuleGuid,
+            sizeof (CachedFpdtRecordPtr.GuidQwordEvent->Guid)
+            );
           mCachedLength = 0;
         }
       }
@@ -674,14 +747,29 @@ InsertFpdtRecord (
       }
 
       if (!PcdGetBool (PcdEdkiiFpdtStringRecordEnableOnly)) {
-        FpdtRecordPtr.DualGuidStringEvent->Header.Type     = FPDT_DUAL_GUID_STRING_EVENT_TYPE;
-        FpdtRecordPtr.DualGuidStringEvent->Header.Length   = sizeof (FPDT_DUAL_GUID_STRING_EVENT_RECORD);
-        FpdtRecordPtr.DualGuidStringEvent->Header.Revision = FPDT_RECORD_REVISION_1;
-        FpdtRecordPtr.DualGuidStringEvent->ProgressID      = PerfId;
-        FpdtRecordPtr.DualGuidStringEvent->Timestamp       = TimeStamp;
-        CopyMem (&FpdtRecordPtr.DualGuidStringEvent->Guid1, CallerIdentifier, sizeof (FpdtRecordPtr.DualGuidStringEvent->Guid1));
-        CopyMem (&FpdtRecordPtr.DualGuidStringEvent->Guid2, Guid, sizeof (FpdtRecordPtr.DualGuidStringEvent->Guid2));
-        CopyStringIntoPerfRecordAndUpdateLength (FpdtRecordPtr.DualGuidStringEvent->String, StringPtr, &FpdtRecordPtr.DualGuidStringEvent->Header.Length);
+        FpdtRecordPtr.DualGuidStringEvent->Header.Type =
+          FPDT_DUAL_GUID_STRING_EVENT_TYPE;
+        FpdtRecordPtr.DualGuidStringEvent->Header.Length =
+          sizeof (FPDT_DUAL_GUID_STRING_EVENT_RECORD);
+        FpdtRecordPtr.DualGuidStringEvent->Header.Revision =
+          FPDT_RECORD_REVISION_1;
+        FpdtRecordPtr.DualGuidStringEvent->ProgressID = PerfId;
+        FpdtRecordPtr.DualGuidStringEvent->Timestamp  = TimeStamp;
+        CopyMem (
+          &FpdtRecordPtr.DualGuidStringEvent->Guid1,
+          CallerIdentifier,
+          sizeof (FpdtRecordPtr.DualGuidStringEvent->Guid1)
+          );
+        CopyMem (
+          &FpdtRecordPtr.DualGuidStringEvent->Guid2,
+          Guid,
+          sizeof (FpdtRecordPtr.DualGuidStringEvent->Guid2)
+          );
+        CopyStringIntoPerfRecordAndUpdateLength (
+          FpdtRecordPtr.DualGuidStringEvent->String,
+          StringPtr,
+          &FpdtRecordPtr.DualGuidStringEvent->Header.Length
+          );
       }
 
       break;
@@ -693,7 +781,12 @@ InsertFpdtRecord (
     case PERF_INMODULE_END_ID:
     case PERF_CROSSMODULE_START_ID:
     case PERF_CROSSMODULE_END_ID:
-      GetModuleInfoFromHandle ((EFI_HANDLE)CallerIdentifier, ModuleName, sizeof (ModuleName), &ModuleGuid);
+      GetModuleInfoFromHandle (
+        (EFI_HANDLE)CallerIdentifier,
+        ModuleName,
+        sizeof (ModuleName),
+        &ModuleGuid
+        );
       if (String != NULL) {
         StringPtr = String;
       } else {
@@ -705,20 +798,36 @@ InsertFpdtRecord (
       }
 
       if (!PcdGetBool (PcdEdkiiFpdtStringRecordEnableOnly)) {
-        FpdtRecordPtr.DynamicStringEvent->Header.Type     = FPDT_DYNAMIC_STRING_EVENT_TYPE;
-        FpdtRecordPtr.DynamicStringEvent->Header.Length   = sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD);
-        FpdtRecordPtr.DynamicStringEvent->Header.Revision = FPDT_RECORD_REVISION_1;
-        FpdtRecordPtr.DynamicStringEvent->ProgressID      = PerfId;
-        FpdtRecordPtr.DynamicStringEvent->Timestamp       = TimeStamp;
-        CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
-        CopyStringIntoPerfRecordAndUpdateLength (FpdtRecordPtr.DynamicStringEvent->String, StringPtr, &FpdtRecordPtr.DynamicStringEvent->Header.Length);
+        FpdtRecordPtr.DynamicStringEvent->Header.Type =
+          FPDT_DYNAMIC_STRING_EVENT_TYPE;
+        FpdtRecordPtr.DynamicStringEvent->Header.Length =
+          sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD);
+        FpdtRecordPtr.DynamicStringEvent->Header.Revision =
+          FPDT_RECORD_REVISION_1;
+        FpdtRecordPtr.DynamicStringEvent->ProgressID = PerfId;
+        FpdtRecordPtr.DynamicStringEvent->Timestamp  = TimeStamp;
+        CopyMem (
+          &FpdtRecordPtr.DynamicStringEvent->Guid,
+          &ModuleGuid,
+          sizeof (FpdtRecordPtr.DynamicStringEvent->Guid)
+          );
+        CopyStringIntoPerfRecordAndUpdateLength (
+          FpdtRecordPtr.DynamicStringEvent->String,
+          StringPtr,
+          &FpdtRecordPtr.DynamicStringEvent->Header.Length
+          );
       }
 
       break;
 
     default:
       if (Attribute != PerfEntry) {
-        GetModuleInfoFromHandle ((EFI_HANDLE)CallerIdentifier, ModuleName, sizeof (ModuleName), &ModuleGuid);
+        GetModuleInfoFromHandle (
+          (EFI_HANDLE)CallerIdentifier,
+          ModuleName,
+          sizeof (ModuleName),
+          &ModuleGuid
+          );
         if (String != NULL) {
           StringPtr = String;
         } else {
@@ -730,13 +839,24 @@ InsertFpdtRecord (
         }
 
         if (!PcdGetBool (PcdEdkiiFpdtStringRecordEnableOnly)) {
-          FpdtRecordPtr.DynamicStringEvent->Header.Type     = FPDT_DYNAMIC_STRING_EVENT_TYPE;
-          FpdtRecordPtr.DynamicStringEvent->Header.Length   = sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD);
-          FpdtRecordPtr.DynamicStringEvent->Header.Revision = FPDT_RECORD_REVISION_1;
-          FpdtRecordPtr.DynamicStringEvent->ProgressID      = PerfId;
-          FpdtRecordPtr.DynamicStringEvent->Timestamp       = TimeStamp;
-          CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
-          CopyStringIntoPerfRecordAndUpdateLength (FpdtRecordPtr.DynamicStringEvent->String, StringPtr, &FpdtRecordPtr.DynamicStringEvent->Header.Length);
+          FpdtRecordPtr.DynamicStringEvent->Header.Type =
+            FPDT_DYNAMIC_STRING_EVENT_TYPE;
+          FpdtRecordPtr.DynamicStringEvent->Header.Length =
+            sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD);
+          FpdtRecordPtr.DynamicStringEvent->Header.Revision =
+            FPDT_RECORD_REVISION_1;
+          FpdtRecordPtr.DynamicStringEvent->ProgressID = PerfId;
+          FpdtRecordPtr.DynamicStringEvent->Timestamp  = TimeStamp;
+          CopyMem (
+            &FpdtRecordPtr.DynamicStringEvent->Guid,
+            &ModuleGuid,
+            sizeof (FpdtRecordPtr.DynamicStringEvent->Guid)
+            );
+          CopyStringIntoPerfRecordAndUpdateLength (
+            FpdtRecordPtr.DynamicStringEvent->String,
+            StringPtr,
+            &FpdtRecordPtr.DynamicStringEvent->Header.Length
+            );
         }
       } else {
         return EFI_INVALID_PARAMETER;
@@ -753,8 +873,10 @@ InsertFpdtRecord (
       return EFI_INVALID_PARAMETER;
     }
 
-    FpdtRecordPtr.DynamicStringEvent->Header.Type     = FPDT_DYNAMIC_STRING_EVENT_TYPE;
-    FpdtRecordPtr.DynamicStringEvent->Header.Length   = sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD);
+    FpdtRecordPtr.DynamicStringEvent->Header.Type =
+      FPDT_DYNAMIC_STRING_EVENT_TYPE;
+    FpdtRecordPtr.DynamicStringEvent->Header.Length =
+      sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD);
     FpdtRecordPtr.DynamicStringEvent->Header.Revision = FPDT_RECORD_REVISION_1;
     FpdtRecordPtr.DynamicStringEvent->ProgressID      = PerfId;
     FpdtRecordPtr.DynamicStringEvent->Timestamp       = TimeStamp;
@@ -762,41 +884,81 @@ InsertFpdtRecord (
       //
       // Cache the event guid in string event record.
       //
-      CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, Guid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
+      CopyMem (
+        &FpdtRecordPtr.DynamicStringEvent->Guid,
+        Guid,
+        sizeof (FpdtRecordPtr.DynamicStringEvent->Guid)
+        );
     } else {
-      CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
+      CopyMem (
+        &FpdtRecordPtr.DynamicStringEvent->Guid,
+        &ModuleGuid,
+        sizeof (FpdtRecordPtr.DynamicStringEvent->Guid)
+        );
     }
 
     if (AsciiStrLen (StringPtr) == 0) {
       StringPtr = "unknown name";
     }
 
-    CopyStringIntoPerfRecordAndUpdateLength (FpdtRecordPtr.DynamicStringEvent->String, StringPtr, &FpdtRecordPtr.DynamicStringEvent->Header.Length);
+    CopyStringIntoPerfRecordAndUpdateLength (
+      FpdtRecordPtr.DynamicStringEvent->String,
+      StringPtr,
+      &FpdtRecordPtr.DynamicStringEvent->Header.Length
+      );
 
     if ((PerfId == MODULE_LOADIMAGE_START_ID) || (PerfId == MODULE_END_ID)) {
-      FpdtRecordPtr.DynamicStringEvent->Header.Length = (UINT8)(sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD)+ STRING_SIZE);
+      FpdtRecordPtr.DynamicStringEvent->Header.Length =
+        (UINT8)(sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD)+ STRING_SIZE);
     }
 
-    if (((PerfId == MODULE_LOADIMAGE_END_ID) || (PerfId == MODULE_END_ID)) && (mCachedLength != 0)) {
-      CachedFpdtRecordPtr.RecordHeader = (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)((UINT8 *)mSmmBootPerformanceTable + mCachedLength);
+    if (((PerfId == MODULE_LOADIMAGE_END_ID) || (PerfId == MODULE_END_ID)) &&
+        (mCachedLength != 0))
+    {
+      CachedFpdtRecordPtr.RecordHeader =
+        (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)((UINT8 *)
+                                                        mSmmBootPerformanceTable
+                                                        + mCachedLength);
       if (PerfId == MODULE_LOADIMAGE_END_ID) {
-        DestMax   = CachedFpdtRecordPtr.DynamicStringEvent->Header.Length - sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD);
+        DestMax = CachedFpdtRecordPtr.DynamicStringEvent->Header.Length -
+                  sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD);
         StringLen = AsciiStrLen (StringPtr);
         if (StringLen >= DestMax) {
           StringLen = DestMax -1;
         }
 
-        CopyMem (&CachedFpdtRecordPtr.DynamicStringEvent->Guid, &ModuleGuid, sizeof (CachedFpdtRecordPtr.DynamicStringEvent->Guid));
-        AsciiStrnCpyS (CachedFpdtRecordPtr.DynamicStringEvent->String, DestMax, StringPtr, StringLen);
+        CopyMem (
+          &CachedFpdtRecordPtr.DynamicStringEvent->Guid,
+          &ModuleGuid,
+          sizeof (CachedFpdtRecordPtr.DynamicStringEvent->Guid)
+          );
+        AsciiStrnCpyS (
+          CachedFpdtRecordPtr.DynamicStringEvent->String,
+          DestMax,
+          StringPtr,
+          StringLen
+          );
       } else if (PerfId == MODULE_END_ID) {
-        DestMax   = FpdtRecordPtr.DynamicStringEvent->Header.Length - sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD);
-        StringLen = AsciiStrLen (CachedFpdtRecordPtr.DynamicStringEvent->String);
+        DestMax = FpdtRecordPtr.DynamicStringEvent->Header.Length -
+                  sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD);
+        StringLen = AsciiStrLen (
+                      CachedFpdtRecordPtr.DynamicStringEvent->String
+                      );
         if (StringLen >= DestMax) {
           StringLen = DestMax -1;
         }
 
-        CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, &CachedFpdtRecordPtr.DynamicStringEvent->Guid, sizeof (CachedFpdtRecordPtr.DynamicStringEvent->Guid));
-        AsciiStrnCpyS (FpdtRecordPtr.DynamicStringEvent->String, DestMax, CachedFpdtRecordPtr.DynamicStringEvent->String, StringLen);
+        CopyMem (
+          &FpdtRecordPtr.DynamicStringEvent->Guid,
+          &CachedFpdtRecordPtr.DynamicStringEvent->Guid,
+          sizeof (CachedFpdtRecordPtr.DynamicStringEvent->Guid)
+          );
+        AsciiStrnCpyS (
+          FpdtRecordPtr.DynamicStringEvent->String,
+          DestMax,
+          CachedFpdtRecordPtr.DynamicStringEvent->String,
+          StringLen
+          );
       }
 
       mCachedLength = 0;
@@ -867,7 +1029,10 @@ FpdtSmiHandler (
   }
 
   if (!SmmIsBufferOutsideSmmValid ((UINTN)CommBuffer, TempCommBufferSize)) {
-    DEBUG ((DEBUG_ERROR, "FpdtSmiHandler: MM communication data buffer in MMRAM or overflow!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FpdtSmiHandler: MM communication data buffer in MMRAM or overflow!\n"
+      ));
     return EFI_SUCCESS;
   }
 
@@ -878,7 +1043,8 @@ FpdtSmiHandler (
   switch (SmmCommData->Function) {
     case SMM_FPDT_FUNCTION_GET_BOOT_RECORD_SIZE:
       if (mSmmBootPerformanceTable != NULL) {
-        mBootRecordSize = mSmmBootPerformanceTable->Header.Length - sizeof (SMM_BOOT_PERFORMANCE_TABLE);
+        mBootRecordSize = mSmmBootPerformanceTable->Header.Length -
+                          sizeof (SMM_BOOT_PERFORMANCE_TABLE);
       }
 
       SmmCommData->BootRecordSize = mBootRecordSize;
@@ -906,12 +1072,16 @@ FpdtSmiHandler (
 
       SmmCommData->BootRecordSize = BootRecordSize;
       if (!SmmIsBufferOutsideSmmValid ((UINTN)BootRecordData, BootRecordSize)) {
-        DEBUG ((DEBUG_ERROR, "FpdtSmiHandler: MM Data buffer in MMRAM or overflow!\n"));
+        DEBUG ((
+          DEBUG_ERROR,
+          "FpdtSmiHandler: MM Data buffer in MMRAM or overflow!\n"
+          ));
         Status = EFI_ACCESS_DENIED;
         break;
       }
 
-      BootRecordBuffer = ((UINT8 *)(mSmmBootPerformanceTable)) + sizeof (SMM_BOOT_PERFORMANCE_TABLE);
+      BootRecordBuffer = ((UINT8 *)(mSmmBootPerformanceTable)) +
+                         sizeof (SMM_BOOT_PERFORMANCE_TABLE);
       CopyMem (
         (UINT8 *)BootRecordData,
         BootRecordBuffer + BootRecordOffset,
@@ -970,10 +1140,17 @@ InitializeSmmCorePerformanceLib (
   // Register SMI handler.
   //
   SmiHandle = NULL;
-  Status    = gSmst->SmiHandlerRegister (FpdtSmiHandler, &gEfiFirmwarePerformanceGuid, &SmiHandle);
+  Status    = gSmst->SmiHandlerRegister (
+                       FpdtSmiHandler,
+                       &gEfiFirmwarePerformanceGuid,
+                       &SmiHandle
+                       );
   ASSERT_EFI_ERROR (Status);
 
-  Status = EfiGetSystemConfigurationTable (&gPerformanceProtocolGuid, (VOID **)&PerformanceProperty);
+  Status = EfiGetSystemConfigurationTable (
+             &gPerformanceProtocolGuid,
+             (VOID **)&PerformanceProperty
+             );
   if (EFI_ERROR (Status)) {
     //
     // Install configuration table for performance property.
@@ -984,7 +1161,10 @@ InitializeSmmCorePerformanceLib (
                                        &mPerformanceProperty.TimerStartValue,
                                        &mPerformanceProperty.TimerEndValue
                                        );
-    Status = gBS->InstallConfigurationTable (&gPerformanceProtocolGuid, &mPerformanceProperty);
+    Status = gBS->InstallConfigurationTable (
+                    &gPerformanceProtocolGuid,
+                    &mPerformanceProperty
+                    );
     ASSERT_EFI_ERROR (Status);
   }
 }
@@ -1079,7 +1259,15 @@ CreatePerformanceMeasurement (
   Status = EFI_SUCCESS;
 
   AcquireSpinLock (&mSmmFpdtLock);
-  Status = InsertFpdtRecord (CallerIdentifier, Guid, String, TimeStamp, Address, (UINT16)Identifier, Attribute);
+  Status = InsertFpdtRecord (
+             CallerIdentifier,
+             Guid,
+             String,
+             TimeStamp,
+             Address,
+             (UINT16)Identifier,
+             Attribute
+             );
   ReleaseSpinLock (&mSmmFpdtLock);
   return Status;
 }
@@ -1129,7 +1317,15 @@ StartPerformanceMeasurementEx (
     String = NULL;
   }
 
-  return (RETURN_STATUS)CreatePerformanceMeasurement (Handle, NULL, String, TimeStamp, 0, Identifier, PerfStartEntry);
+  return (RETURN_STATUS)CreatePerformanceMeasurement (
+                          Handle,
+                          NULL,
+                          String,
+                          TimeStamp,
+                          0,
+                          Identifier,
+                          PerfStartEntry
+                          );
 }
 
 /**
@@ -1178,7 +1374,15 @@ EndPerformanceMeasurementEx (
     String = NULL;
   }
 
-  return (RETURN_STATUS)CreatePerformanceMeasurement (Handle, NULL, String, TimeStamp, 0, Identifier, PerfEndEntry);
+  return (RETURN_STATUS)CreatePerformanceMeasurement (
+                          Handle,
+                          NULL,
+                          String,
+                          TimeStamp,
+                          0,
+                          Identifier,
+                          PerfEndEntry
+                          );
 }
 
 /**
@@ -1383,7 +1587,8 @@ PerformanceMeasurementEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdPerformanceLibraryPropertyMask) & PERFORMANCE_LIBRARY_PROPERTY_MEASUREMENT_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdPerformanceLibraryPropertyMask) &
+                    PERFORMANCE_LIBRARY_PROPERTY_MEASUREMENT_ENABLED) != 0);
 }
 
 /**
@@ -1411,7 +1616,15 @@ LogPerformanceMeasurement (
   IN UINT32       Identifier
   )
 {
-  return (RETURN_STATUS)CreatePerformanceMeasurement (CallerIdentifier, Guid, String, 0, Address, Identifier, PerfEntry);
+  return (RETURN_STATUS)CreatePerformanceMeasurement (
+                          CallerIdentifier,
+                          Guid,
+                          String,
+                          0,
+                          Address,
+                          Identifier,
+                          PerfEntry
+                          );
 }
 
 /**
@@ -1435,7 +1648,10 @@ LogPerformanceMeasurementEnabled (
   //
   // When Performance measurement is enabled and the type is not filtered, the performance can be logged.
   //
-  if (PerformanceMeasurementEnabled () && ((PcdGet8 (PcdPerformanceLibraryPropertyMask) & Type) == 0)) {
+  if (PerformanceMeasurementEnabled () && ((PcdGet8 (
+                                              PcdPerformanceLibraryPropertyMask
+                                              ) & Type) == 0))
+  {
     return TRUE;
   }
 

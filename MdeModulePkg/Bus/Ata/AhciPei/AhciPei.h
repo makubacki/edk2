@@ -34,7 +34,8 @@
 //
 // Structure forward declarations
 //
-typedef struct _PEI_AHCI_CONTROLLER_PRIVATE_DATA PEI_AHCI_CONTROLLER_PRIVATE_DATA;
+typedef struct _PEI_AHCI_CONTROLLER_PRIVATE_DATA
+PEI_AHCI_CONTROLLER_PRIVATE_DATA;
 
 #include "AhciPeiPassThru.h"
 #include "AhciPeiBlockIo.h"
@@ -302,7 +303,8 @@ typedef struct {
 //
 // Unique signature for private data structure.
 //
-#define AHCI_PEI_CONTROLLER_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('A','P','C','P')
+#define AHCI_PEI_CONTROLLER_PRIVATE_DATA_SIGNATURE  \
+  SIGNATURE_32 ('A','P','C','P')
 
 //
 // ATA AHCI controller private data structure.

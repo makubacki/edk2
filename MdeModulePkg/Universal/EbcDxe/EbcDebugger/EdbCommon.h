@@ -184,27 +184,37 @@ typedef struct {
 
 #define EFI_DEBUG_BREAK_TIMER_INTERVAL  10000000         // 1 second
 
-#define EFI_DEBUG_FLAG_EBC             0x80000000
-#define EFI_DEBUG_FLAG_EBC_B_BOC       0x1
-#define EFI_DEBUG_FLAG_EBC_B_BOCX      0x2
-#define EFI_DEBUG_FLAG_EBC_B_BOR       0x4
-#define EFI_DEBUG_FLAG_EBC_B_BOE       0x8
-#define EFI_DEBUG_FLAG_EBC_B_BOT       0x10
-#define EFI_DEBUG_FLAG_EBC_B_STEPOVER  0x20
-#define EFI_DEBUG_FLAG_EBC_B_STEPOUT   0x40
-#define EFI_DEBUG_FLAG_EBC_B_BP        0x80
-#define EFI_DEBUG_FLAG_EBC_B_GT        0x100
-#define EFI_DEBUG_FLAG_EBC_B_BOK       0x200
-#define EFI_DEBUG_FLAG_EBC_BOC         (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_BOC)
-#define EFI_DEBUG_FLAG_EBC_BOCX        (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_BOCX)
-#define EFI_DEBUG_FLAG_EBC_BOR         (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_BOR)
-#define EFI_DEBUG_FLAG_EBC_BOE         (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_BOE)
-#define EFI_DEBUG_FLAG_EBC_BOT         (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_BOT)
-#define EFI_DEBUG_FLAG_EBC_STEPOVER    (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_STEPOVER)
-#define EFI_DEBUG_FLAG_EBC_STEPOUT     (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_STEPOUT)
-#define EFI_DEBUG_FLAG_EBC_BP          (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_BP)
-#define EFI_DEBUG_FLAG_EBC_GT          (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_GT)
-#define EFI_DEBUG_FLAG_EBC_BOK         (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_BOK)
+#define EFI_DEBUG_FLAG_EBC                   0x80000000
+#define EFI_DEBUG_FLAG_EBC_B_BOC             0x1
+#define EFI_DEBUG_FLAG_EBC_B_BOCX            0x2
+#define EFI_DEBUG_FLAG_EBC_B_BOR             0x4
+#define EFI_DEBUG_FLAG_EBC_B_BOE             0x8
+#define EFI_DEBUG_FLAG_EBC_B_BOT             0x10
+#define EFI_DEBUG_FLAG_EBC_B_STEPOVER        0x20
+#define EFI_DEBUG_FLAG_EBC_B_STEPOUT         0x40
+#define EFI_DEBUG_FLAG_EBC_B_BP              0x80
+#define EFI_DEBUG_FLAG_EBC_B_GT              0x100
+#define EFI_DEBUG_FLAG_EBC_B_BOK             0x200
+#define EFI_DEBUG_FLAG_EBC_BOC         \
+                                             (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_BOC)
+#define EFI_DEBUG_FLAG_EBC_BOCX        \
+                                             (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_BOCX)
+#define EFI_DEBUG_FLAG_EBC_BOR         \
+                                             (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_BOR)
+#define EFI_DEBUG_FLAG_EBC_BOE         \
+                                             (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_BOE)
+#define EFI_DEBUG_FLAG_EBC_BOT         \
+                                             (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_BOT)
+#define EFI_DEBUG_FLAG_EBC_STEPOVER    \
+                                             (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_STEPOVER)
+#define EFI_DEBUG_FLAG_EBC_STEPOUT     \
+                                             (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_STEPOUT)
+#define EFI_DEBUG_FLAG_EBC_BP          \
+                                             (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_BP)
+#define EFI_DEBUG_FLAG_EBC_GT          \
+                                             (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_GT)
+#define EFI_DEBUG_FLAG_EBC_BOK         \
+                                             (EFI_DEBUG_FLAG_EBC | EFI_DEBUG_FLAG_EBC_B_BOK)
 
 //
 // Debugger private data structure
@@ -221,9 +231,13 @@ typedef struct _EFI_DEBUGGER_PRIVATE_DATA {
   EFI_DEBUGGER_COMMAND_SET               *DebuggerCommandSet;
   EFI_DEBUGGER_SYMBOL_CONTEXT            DebuggerSymbolContext;
   UINTN                                  DebuggerBreakpointCount;
-  EFI_DEBUGGER_BREAKPOINT_CONTEXT        DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX + 1];
+  EFI_DEBUGGER_BREAKPOINT_CONTEXT        DebuggerBreakpointContext[
+                                                                   EFI_DEBUGGER_BREAKPOINT_MAX
+                                                                   + 1];
   UINTN                                  CallStackEntryCount;
-  EFI_DEBUGGER_CALLSTACK_CONTEXT         CallStackEntry[EFI_DEBUGGER_CALLSTACK_MAX + 1];
+  EFI_DEBUGGER_CALLSTACK_CONTEXT         CallStackEntry[
+                                                        EFI_DEBUGGER_CALLSTACK_MAX
+                                                        + 1];
   UINTN                                  TraceEntryCount;
   EFI_DEBUGGER_TRACE_CONTEXT             TraceEntry[EFI_DEBUGGER_TRACE_MAX + 1];
   EFI_DEBUGGER_STEP_CONTEXT              StepContext;

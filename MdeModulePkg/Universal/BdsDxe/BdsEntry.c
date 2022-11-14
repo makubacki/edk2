@@ -126,7 +126,11 @@ CheckDeferredLoadImageOnReadyToBoot (
   }
 
   for (Index = 0; Index < HandleCount; Index++) {
-    Status = gBS->HandleProtocol (Handles[Index], &gEfiDeferredImageLoadProtocolGuid, (VOID **)&DeferredImage);
+    Status = gBS->HandleProtocol (
+                    Handles[Index],
+                    &gEfiDeferredImageLoadProtocolGuid,
+                    (VOID **)&DeferredImage
+                    );
     if (EFI_ERROR (Status)) {
       continue;
     }
@@ -148,7 +152,11 @@ CheckDeferredLoadImageOnReadyToBoot (
       }
 
       DevicePathStr = ConvertDevicePathToText (ImageDevicePath, FALSE, FALSE);
-      DEBUG ((DEBUG_LOAD, "[Bds] Image was deferred but not loaded: %s.\n", DevicePathStr));
+      DEBUG ((
+        DEBUG_LOAD,
+        "[Bds] Image was deferred but not loaded: %s.\n",
+        DevicePathStr
+        ));
       if (DevicePathStr != NULL) {
         FreePool (DevicePathStr);
       }
@@ -330,7 +338,10 @@ BdsWait (
                     //         Can be removed after all keyboard drivers invoke callback in timer callback.
 
     if (HotkeyTriggered != NULL) {
-      Status = BdsWaitForSingleEvent (HotkeyTriggered, EFI_TIMER_PERIOD_SECONDS (1));
+      Status = BdsWaitForSingleEvent (
+                 HotkeyTriggered,
+                 EFI_TIMER_PERIOD_SECONDS (1)
+                 );
       if (!EFI_ERROR (Status)) {
         break;
       }
@@ -383,7 +394,11 @@ BootBootOptions (
   //
   // Report Status Code to indicate BDS starts attempting booting from the UEFI BootOrder list.
   //
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_ATTEMPT_BOOT_ORDER_EVENT));
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    (EFI_SOFTWARE_DXE_BS_DRIVER |
+     EFI_SW_DXE_BS_PC_ATTEMPT_BOOT_ORDER_EVENT)
+    );
 
   //
   // Attempt boot each boot option
@@ -403,7 +418,9 @@ BootBootOptions (
     // part of the normal boot processing. Boot options with reserved category values will be
     // ignored by the boot manager.
     //
-    if ((BootOptions[Index].Attributes & LOAD_OPTION_CATEGORY) != LOAD_OPTION_CATEGORY_BOOT) {
+    if ((BootOptions[Index].Attributes & LOAD_OPTION_CATEGORY) !=
+        LOAD_OPTION_CATEGORY_BOOT)
+    {
       continue;
     }
 
@@ -419,7 +436,9 @@ BootBootOptions (
     // interactive mode, the boot manager will stop processing the BootOrder variable and
     // present a boot manager menu to the user.
     //
-    if ((BootManagerMenu != NULL) && (BootOptions[Index].Status == EFI_SUCCESS)) {
+    if ((BootManagerMenu != NULL) && (BootOptions[Index].Status ==
+                                      EFI_SUCCESS))
+    {
       EfiBootManagerBoot (BootManagerMenu);
       break;
     }
@@ -523,7 +542,8 @@ BdsFormalizeConsoleVariable (
     Status = gRT->SetVariable (
                     VariableName,
                     &gEfiGlobalVariableGuid,
-                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
                     0,
                     NULL
                     );
@@ -615,10 +635,14 @@ BdsFormalizeOSIndicationVariable (
 
   if ((DataSize != sizeof (OsIndication)) ||
       ((OsIndication & ~OsIndicationSupport) != 0) ||
-      (Attributes != (EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE))
+      (Attributes != (EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                      EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE))
       )
   {
-    DEBUG ((DEBUG_ERROR, "[Bds] Unformalized OsIndications variable exists. Delete it\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[Bds] Unformalized OsIndications variable exists. Delete it\n"
+      ));
     Status = gRT->SetVariable (
                     EFI_OS_INDICATIONS_VARIABLE_NAME,
                     &gEfiGlobalVariableGuid,
@@ -707,7 +731,10 @@ BdsEntry (
   // Fill in FirmwareVendor and FirmwareRevision from PCDs
   //
   FirmwareVendor      = (CHAR16 *)PcdGetPtr (PcdFirmwareVendor);
-  gST->FirmwareVendor = AllocateRuntimeCopyPool (StrSize (FirmwareVendor), FirmwareVendor);
+  gST->FirmwareVendor = AllocateRuntimeCopyPool (
+                          StrSize (FirmwareVendor),
+                          FirmwareVendor
+                          );
   ASSERT (gST->FirmwareVendor != NULL);
   gST->FirmwareRevision = PcdGet32 (PcdFirmwareRevision);
 
@@ -725,8 +752,16 @@ BdsEntry (
   //
   // Mark the read-only variables if the Variable Lock protocol exists
   //
-  Status = gBS->LocateProtocol (&gEdkiiVariablePolicyProtocolGuid, NULL, (VOID **)&VariablePolicy);
-  DEBUG ((DEBUG_INFO, "[BdsDxe] Locate Variable Policy protocol - %r\n", Status));
+  Status = gBS->LocateProtocol (
+                  &gEdkiiVariablePolicyProtocolGuid,
+                  NULL,
+                  (VOID **)&VariablePolicy
+                  );
+  DEBUG ((
+    DEBUG_INFO,
+    "[BdsDxe] Locate Variable Policy protocol - %r\n",
+    Status
+    ));
   if (!EFI_ERROR (Status)) {
     for (Index = 0; Index < ARRAY_SIZE (mReadOnlyVariables); Index++) {
       Status = RegisterBasicVariablePolicy (
@@ -757,7 +792,8 @@ BdsEntry (
     BdsDxeSetVariableAndReportStatusCodeOnError (
       EFI_TIME_OUT_VARIABLE_NAME,
       &gEfiGlobalVariableGuid,
-      EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+      EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS |
+      EFI_VARIABLE_NON_VOLATILE,
       sizeof (UINT16),
       &BootTimeOut
       );
@@ -767,7 +803,8 @@ BdsEntry (
   // Initialize L"BootOptionSupport" EFI global variable.
   // Lazy-ConIn implictly disables BDS hotkey.
   //
-  BootOptionSupport = EFI_BOOT_OPTION_SUPPORT_APP | EFI_BOOT_OPTION_SUPPORT_SYSPREP;
+  BootOptionSupport = EFI_BOOT_OPTION_SUPPORT_APP |
+                      EFI_BOOT_OPTION_SUPPORT_SYSPREP;
   if (!PcdGetBool (PcdConInConnectOnDemand)) {
     BootOptionSupport |= EFI_BOOT_OPTION_SUPPORT_KEY;
     SET_BOOT_OPTION_SUPPORT_KEY_COUNT (BootOptionSupport, 3);
@@ -789,7 +826,11 @@ BdsEntry (
   // Cache the "BootNext" NV variable before calling any PlatformBootManagerLib APIs
   // This could avoid the "BootNext" set by PlatformBootManagerLib be consumed in this boot.
   //
-  GetEfiGlobalVariable2 (EFI_BOOT_NEXT_VARIABLE_NAME, (VOID **)&BootNext, &DataSize);
+  GetEfiGlobalVariable2 (
+    EFI_BOOT_NEXT_VARIABLE_NAME,
+    (VOID **)&BootNext,
+    &DataSize
+    );
   if (DataSize != sizeof (UINT16)) {
     if (BootNext != NULL) {
       FreePool (BootNext);
@@ -805,7 +846,10 @@ BdsEntry (
 
   FilePath = FileDevicePath (NULL, EFI_REMOVABLE_MEDIA_FILE_NAME);
   if (FilePath == NULL) {
-    DEBUG ((DEBUG_ERROR, "Fail to allocate memory for default boot file path. Unable to boot.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Fail to allocate memory for default boot file path. Unable to boot.\n"
+      ));
     CpuDeadLoop ();
   }
 
@@ -827,8 +871,16 @@ BdsEntry (
   // file path for removable media if the platform supports Platform Recovery.
   //
   if (PcdGetBool (PcdPlatformRecoverySupport)) {
-    LoadOptions = EfiBootManagerGetLoadOptions (&LoadOptionCount, LoadOptionTypePlatformRecovery);
-    if (EfiBootManagerFindLoadOption (&PlatformDefaultBootOption, LoadOptions, LoadOptionCount) == -1) {
+    LoadOptions = EfiBootManagerGetLoadOptions (
+                    &LoadOptionCount,
+                    LoadOptionTypePlatformRecovery
+                    );
+    if (EfiBootManagerFindLoadOption (
+          &PlatformDefaultBootOption,
+          LoadOptions,
+          LoadOptionCount
+          ) == -1)
+    {
       for (Index = 0; Index < LoadOptionCount; Index++) {
         //
         // The PlatformRecovery#### options are sorted by OptionNumber.
@@ -840,7 +892,8 @@ BdsEntry (
       }
 
       PlatformDefaultBootOption.OptionNumber = Index;
-      Status                                 = EfiBootManagerLoadOptionToVariable (&PlatformDefaultBootOption);
+      Status                                 =
+        EfiBootManagerLoadOptionToVariable (&PlatformDefaultBootOption);
       ASSERT_EFI_ERROR (Status);
     }
 
@@ -895,7 +948,10 @@ BdsEntry (
   //
   // Execute Driver Options
   //
-  LoadOptions = EfiBootManagerGetLoadOptions (&LoadOptionCount, LoadOptionTypeDriver);
+  LoadOptions = EfiBootManagerGetLoadOptions (
+                  &LoadOptionCount,
+                  LoadOptionTypeDriver
+                  );
   ProcessLoadOptions (LoadOptions, LoadOptionCount);
   EfiBootManagerFreeLoadOptions (LoadOptions, LoadOptionCount);
 
@@ -960,14 +1016,22 @@ BdsEntry (
   EFI_BOOT_MANAGER_LOAD_OPTION_TYPE  LoadOptionType;
 
   DEBUG ((DEBUG_INFO, "[Bds]OsIndication: %016x\n", OsIndication));
-  DEBUG ((DEBUG_INFO, "[Bds]=============Begin Load Options Dumping ...=============\n"));
-  for (LoadOptionType = 0; LoadOptionType < LoadOptionTypeMax; LoadOptionType++) {
+  DEBUG ((
+    DEBUG_INFO,
+    "[Bds]=============Begin Load Options Dumping ...=============\n"
+    ));
+  for (LoadOptionType = 0; LoadOptionType < LoadOptionTypeMax;
+       LoadOptionType++)
+  {
     DEBUG ((
       DEBUG_INFO,
       "  %s Options:\n",
       mBdsLoadOptionName[LoadOptionType]
       ));
-    LoadOptions = EfiBootManagerGetLoadOptions (&LoadOptionCount, LoadOptionType);
+    LoadOptions = EfiBootManagerGetLoadOptions (
+                    &LoadOptionCount,
+                    LoadOptionType
+                    );
     for (Index = 0; Index < LoadOptionCount; Index++) {
       DEBUG ((
         DEBUG_INFO,
@@ -982,7 +1046,10 @@ BdsEntry (
     EfiBootManagerFreeLoadOptions (LoadOptions, LoadOptionCount);
   }
 
-  DEBUG ((DEBUG_INFO, "[Bds]=============End Load Options Dumping=============\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "[Bds]=============End Load Options Dumping=============\n"
+    ));
   DEBUG_CODE_END ();
 
   //
@@ -990,17 +1057,23 @@ BdsEntry (
   //
   BootManagerMenuStatus = EfiBootManagerGetBootManagerMenu (&BootManagerMenu);
 
-  BootFwUi         = (BOOLEAN)((OsIndication & EFI_OS_INDICATIONS_BOOT_TO_FW_UI) != 0);
-  PlatformRecovery = (BOOLEAN)((OsIndication & EFI_OS_INDICATIONS_START_PLATFORM_RECOVERY) != 0);
+  BootFwUi         = (BOOLEAN)((OsIndication &
+                                EFI_OS_INDICATIONS_BOOT_TO_FW_UI) != 0);
+  PlatformRecovery = (BOOLEAN)((OsIndication &
+                                EFI_OS_INDICATIONS_START_PLATFORM_RECOVERY) !=
+                               0);
   //
   // Clear EFI_OS_INDICATIONS_BOOT_TO_FW_UI to acknowledge OS
   //
   if (BootFwUi || PlatformRecovery) {
-    OsIndication &= ~((UINT64)(EFI_OS_INDICATIONS_BOOT_TO_FW_UI | EFI_OS_INDICATIONS_START_PLATFORM_RECOVERY));
+    OsIndication &= ~((UINT64)(EFI_OS_INDICATIONS_BOOT_TO_FW_UI |
+                               EFI_OS_INDICATIONS_START_PLATFORM_RECOVERY));
     Status        = gRT->SetVariable (
                            EFI_OS_INDICATIONS_VARIABLE_NAME,
                            &gEfiGlobalVariableGuid,
-                           EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+                           EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                           EFI_VARIABLE_RUNTIME_ACCESS |
+                           EFI_VARIABLE_NON_VOLATILE,
                            sizeof (UINT64),
                            &OsIndication
                            );
@@ -1031,7 +1104,10 @@ BdsEntry (
     //
     // Execute SysPrep####
     //
-    LoadOptions = EfiBootManagerGetLoadOptions (&LoadOptionCount, LoadOptionTypeSysPrep);
+    LoadOptions = EfiBootManagerGetLoadOptions (
+                    &LoadOptionCount,
+                    LoadOptionTypeSysPrep
+                    );
     ProcessLoadOptions (LoadOptions, LoadOptionCount);
     EfiBootManagerFreeLoadOptions (LoadOptions, LoadOptionCount);
 
@@ -1067,8 +1143,16 @@ BdsEntry (
       //
       // Boot to "BootNext"
       //
-      UnicodeSPrint (BootNextVariableName, sizeof (BootNextVariableName), L"Boot%04x", *BootNext);
-      Status = EfiBootManagerVariableToLoadOption (BootNextVariableName, &LoadOption);
+      UnicodeSPrint (
+        BootNextVariableName,
+        sizeof (BootNextVariableName),
+        L"Boot%04x",
+        *BootNext
+        );
+      Status = EfiBootManagerVariableToLoadOption (
+                 BootNextVariableName,
+                 &LoadOption
+                 );
       if (!EFI_ERROR (Status)) {
         EfiBootManagerBoot (&LoadOption);
         EfiBootManagerFreeLoadOption (&LoadOption);
@@ -1089,8 +1173,16 @@ BdsEntry (
       //
       // Retry to boot if any of the boot succeeds
       //
-      LoadOptions = EfiBootManagerGetLoadOptions (&LoadOptionCount, LoadOptionTypeBoot);
-      BootSuccess = BootBootOptions (LoadOptions, LoadOptionCount, (BootManagerMenuStatus != EFI_NOT_FOUND) ? &BootManagerMenu : NULL);
+      LoadOptions = EfiBootManagerGetLoadOptions (
+                      &LoadOptionCount,
+                      LoadOptionTypeBoot
+                      );
+      BootSuccess = BootBootOptions (
+                      LoadOptions,
+                      LoadOptionCount,
+                      (BootManagerMenuStatus != EFI_NOT_FOUND) ?
+                      &BootManagerMenu : NULL
+                      );
       EfiBootManagerFreeLoadOptions (LoadOptions, LoadOptionCount);
     } while (BootSuccess);
   }
@@ -1101,7 +1193,10 @@ BdsEntry (
 
   if (!BootSuccess) {
     if (PcdGetBool (PcdPlatformRecoverySupport)) {
-      LoadOptions = EfiBootManagerGetLoadOptions (&LoadOptionCount, LoadOptionTypePlatformRecovery);
+      LoadOptions = EfiBootManagerGetLoadOptions (
+                      &LoadOptionCount,
+                      LoadOptionTypePlatformRecovery
+                      );
       ProcessLoadOptions (LoadOptions, LoadOptionCount);
       EfiBootManagerFreeLoadOptions (LoadOptions, LoadOptionCount);
     } else {
@@ -1174,7 +1269,10 @@ BdsDxeSetVariableAndReportStatusCodeOnError (
                   );
   if (EFI_ERROR (Status)) {
     NameSize          = StrSize (VariableName);
-    SetVariableStatus = AllocatePool (sizeof (EDKII_SET_VARIABLE_STATUS) + NameSize + DataSize);
+    SetVariableStatus = AllocatePool (
+                          sizeof (EDKII_SET_VARIABLE_STATUS) +
+                          NameSize + DataSize
+                          );
     if (SetVariableStatus != NULL) {
       CopyGuid (&SetVariableStatus->Guid, VendorGuid);
       SetVariableStatus->NameSize   = NameSize;

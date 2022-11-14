@@ -374,7 +374,11 @@ NvmeDisableController (
       );
   }
 
-  DEBUG ((DEBUG_INFO, "NVMe controller is disabled with status [%r].\n", Status));
+  DEBUG ((
+    DEBUG_INFO,
+    "NVMe controller is disabled with status [%r].\n",
+    Status
+    ));
   return Status;
 }
 
@@ -448,7 +452,11 @@ NvmeEnableController (
       );
   }
 
-  DEBUG ((DEBUG_INFO, "NVMe controller is enabled with status [%r].\n", Status));
+  DEBUG ((
+    DEBUG_INFO,
+    "NVMe controller is enabled with status [%r].\n",
+    Status
+    ));
   return Status;
 }
 
@@ -611,7 +619,11 @@ NvmeCreateIoCompletionQueue (
     CrIoCq.Qid   = Index;
     CrIoCq.Qsize = QueueSize;
     CrIoCq.Pc    = 1;
-    CopyMem (&CommandPacket.NvmeCmd->Cdw10, &CrIoCq, sizeof (NVME_ADMIN_CRIOCQ));
+    CopyMem (
+      &CommandPacket.NvmeCmd->Cdw10,
+      &CrIoCq,
+      sizeof (NVME_ADMIN_CRIOCQ)
+      );
     CommandPacket.NvmeCmd->Flags = CDW10_VALID | CDW11_VALID;
 
     Status = Private->Passthru.PassThru (
@@ -685,7 +697,11 @@ NvmeCreateIoSubmissionQueue (
     CrIoSq.Pc    = 1;
     CrIoSq.Cqid  = Index;
     CrIoSq.Qprio = 0;
-    CopyMem (&CommandPacket.NvmeCmd->Cdw10, &CrIoSq, sizeof (NVME_ADMIN_CRIOSQ));
+    CopyMem (
+      &CommandPacket.NvmeCmd->Cdw10,
+      &CrIoSq,
+      sizeof (NVME_ADMIN_CRIOSQ)
+      );
     CommandPacket.NvmeCmd->Flags = CDW10_VALID | CDW11_VALID;
 
     Status = Private->Passthru.PassThru (
@@ -762,7 +778,10 @@ NvmeControllerInit (
   }
 
   if ((Private->Cap.Css & BIT0) == 0) {
-    DEBUG ((DEBUG_INFO, "NvmeControllerInit: the controller doesn't support NVMe command set\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "NvmeControllerInit: the controller doesn't support NVMe command set\n"
+      ));
     return EFI_UNSUPPORTED;
   }
 
@@ -815,26 +834,72 @@ NvmeControllerInit (
   ZeroMem (Private->Buffer, EFI_PAGES_TO_SIZE (6));
   Private->SqBuffer[0]        = (NVME_SQ *)(UINTN)(Private->Buffer);
   Private->SqBufferPciAddr[0] = (NVME_SQ *)(UINTN)(Private->BufferPciAddr);
-  Private->CqBuffer[0]        = (NVME_CQ *)(UINTN)(Private->Buffer + 1 * EFI_PAGE_SIZE);
-  Private->CqBufferPciAddr[0] = (NVME_CQ *)(UINTN)(Private->BufferPciAddr + 1 * EFI_PAGE_SIZE);
-  Private->SqBuffer[1]        = (NVME_SQ *)(UINTN)(Private->Buffer + 2 * EFI_PAGE_SIZE);
-  Private->SqBufferPciAddr[1] = (NVME_SQ *)(UINTN)(Private->BufferPciAddr + 2 * EFI_PAGE_SIZE);
-  Private->CqBuffer[1]        = (NVME_CQ *)(UINTN)(Private->Buffer + 3 * EFI_PAGE_SIZE);
-  Private->CqBufferPciAddr[1] = (NVME_CQ *)(UINTN)(Private->BufferPciAddr + 3 * EFI_PAGE_SIZE);
-  Private->SqBuffer[2]        = (NVME_SQ *)(UINTN)(Private->Buffer + 4 * EFI_PAGE_SIZE);
-  Private->SqBufferPciAddr[2] = (NVME_SQ *)(UINTN)(Private->BufferPciAddr + 4 * EFI_PAGE_SIZE);
-  Private->CqBuffer[2]        = (NVME_CQ *)(UINTN)(Private->Buffer + 5 * EFI_PAGE_SIZE);
-  Private->CqBufferPciAddr[2] = (NVME_CQ *)(UINTN)(Private->BufferPciAddr + 5 * EFI_PAGE_SIZE);
+  Private->CqBuffer[0]        = (NVME_CQ *)(UINTN)(Private->Buffer + 1 *
+                                                   EFI_PAGE_SIZE);
+  Private->CqBufferPciAddr[0] = (NVME_CQ *)(UINTN)(Private->BufferPciAddr + 1 *
+                                                   EFI_PAGE_SIZE);
+  Private->SqBuffer[1]        = (NVME_SQ *)(UINTN)(Private->Buffer + 2 *
+                                                   EFI_PAGE_SIZE);
+  Private->SqBufferPciAddr[1] = (NVME_SQ *)(UINTN)(Private->BufferPciAddr + 2 *
+                                                   EFI_PAGE_SIZE);
+  Private->CqBuffer[1]        = (NVME_CQ *)(UINTN)(Private->Buffer + 3 *
+                                                   EFI_PAGE_SIZE);
+  Private->CqBufferPciAddr[1] = (NVME_CQ *)(UINTN)(Private->BufferPciAddr + 3 *
+                                                   EFI_PAGE_SIZE);
+  Private->SqBuffer[2]        = (NVME_SQ *)(UINTN)(Private->Buffer + 4 *
+                                                   EFI_PAGE_SIZE);
+  Private->SqBufferPciAddr[2] = (NVME_SQ *)(UINTN)(Private->BufferPciAddr + 4 *
+                                                   EFI_PAGE_SIZE);
+  Private->CqBuffer[2]        = (NVME_CQ *)(UINTN)(Private->Buffer + 5 *
+                                                   EFI_PAGE_SIZE);
+  Private->CqBufferPciAddr[2] = (NVME_CQ *)(UINTN)(Private->BufferPciAddr + 5 *
+                                                   EFI_PAGE_SIZE);
 
-  DEBUG ((DEBUG_INFO, "Private->Buffer = [%016X]\n", (UINT64)(UINTN)Private->Buffer));
-  DEBUG ((DEBUG_INFO, "Admin     Submission Queue size (Aqa.Asqs) = [%08X]\n", Aqa.Asqs));
-  DEBUG ((DEBUG_INFO, "Admin     Completion Queue size (Aqa.Acqs) = [%08X]\n", Aqa.Acqs));
-  DEBUG ((DEBUG_INFO, "Admin     Submission Queue (SqBuffer[0]) = [%016X]\n", Private->SqBuffer[0]));
-  DEBUG ((DEBUG_INFO, "Admin     Completion Queue (CqBuffer[0]) = [%016X]\n", Private->CqBuffer[0]));
-  DEBUG ((DEBUG_INFO, "Sync  I/O Submission Queue (SqBuffer[1]) = [%016X]\n", Private->SqBuffer[1]));
-  DEBUG ((DEBUG_INFO, "Sync  I/O Completion Queue (CqBuffer[1]) = [%016X]\n", Private->CqBuffer[1]));
-  DEBUG ((DEBUG_INFO, "Async I/O Submission Queue (SqBuffer[2]) = [%016X]\n", Private->SqBuffer[2]));
-  DEBUG ((DEBUG_INFO, "Async I/O Completion Queue (CqBuffer[2]) = [%016X]\n", Private->CqBuffer[2]));
+  DEBUG ((
+    DEBUG_INFO,
+    "Private->Buffer = [%016X]\n",
+    (UINT64)(UINTN)Private->Buffer
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Admin     Submission Queue size (Aqa.Asqs) = [%08X]\n",
+    Aqa.Asqs
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Admin     Completion Queue size (Aqa.Acqs) = [%08X]\n",
+    Aqa.Acqs
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Admin     Submission Queue (SqBuffer[0]) = [%016X]\n",
+    Private->SqBuffer[0]
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Admin     Completion Queue (CqBuffer[0]) = [%016X]\n",
+    Private->CqBuffer[0]
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Sync  I/O Submission Queue (SqBuffer[1]) = [%016X]\n",
+    Private->SqBuffer[1]
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Sync  I/O Completion Queue (CqBuffer[1]) = [%016X]\n",
+    Private->CqBuffer[1]
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Async I/O Submission Queue (SqBuffer[2]) = [%016X]\n",
+    Private->SqBuffer[2]
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Async I/O Completion Queue (CqBuffer[2]) = [%016X]\n",
+    Private->CqBuffer[2]
+    ));
 
   //
   // Program admin queue attributes.
@@ -872,7 +937,10 @@ NvmeControllerInit (
   // Allocate buffer for Identify Controller data
   //
   if (Private->ControllerData == NULL) {
-    Private->ControllerData = (NVME_ADMIN_CONTROLLER_DATA *)AllocateZeroPool (sizeof (NVME_ADMIN_CONTROLLER_DATA));
+    Private->ControllerData = (NVME_ADMIN_CONTROLLER_DATA *)AllocateZeroPool (
+                                                              sizeof (
+                                                                                     NVME_ADMIN_CONTROLLER_DATA)
+                                                              );
 
     if (Private->ControllerData == NULL) {
       return EFI_OUT_OF_RESOURCES;
@@ -893,20 +961,48 @@ NvmeControllerInit (
   //
   // Dump NvmExpress Identify Controller Data
   //
-  CopyMem (Sn, Private->ControllerData->Sn, sizeof (Private->ControllerData->Sn));
+  CopyMem (
+    Sn,
+    Private->ControllerData->Sn,
+    sizeof (Private->ControllerData->Sn)
+    );
   Sn[20] = 0;
-  CopyMem (Mn, Private->ControllerData->Mn, sizeof (Private->ControllerData->Mn));
+  CopyMem (
+    Mn,
+    Private->ControllerData->Mn,
+    sizeof (Private->ControllerData->Mn)
+    );
   Mn[40] = 0;
   DEBUG ((DEBUG_INFO, " == NVME IDENTIFY CONTROLLER DATA ==\n"));
   DEBUG ((DEBUG_INFO, "    PCI VID   : 0x%x\n", Private->ControllerData->Vid));
-  DEBUG ((DEBUG_INFO, "    PCI SSVID : 0x%x\n", Private->ControllerData->Ssvid));
+  DEBUG ((
+    DEBUG_INFO,
+    "    PCI SSVID : 0x%x\n",
+    Private->ControllerData->Ssvid
+    ));
   DEBUG ((DEBUG_INFO, "    SN        : %a\n", Sn));
   DEBUG ((DEBUG_INFO, "    MN        : %a\n", Mn));
-  DEBUG ((DEBUG_INFO, "    FR        : 0x%x\n", *((UINT64 *)Private->ControllerData->Fr)));
-  DEBUG ((DEBUG_INFO, "    TNVMCAP (high 8-byte) : 0x%lx\n", *((UINT64 *)(Private->ControllerData->Tnvmcap + 8))));
-  DEBUG ((DEBUG_INFO, "    TNVMCAP (low 8-byte)  : 0x%lx\n", *((UINT64 *)Private->ControllerData->Tnvmcap)));
+  DEBUG ((
+    DEBUG_INFO,
+    "    FR        : 0x%x\n",
+    *((UINT64 *)Private->ControllerData->Fr)
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "    TNVMCAP (high 8-byte) : 0x%lx\n",
+    *((UINT64 *)(Private->ControllerData->Tnvmcap + 8))
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "    TNVMCAP (low 8-byte)  : 0x%lx\n",
+    *((UINT64 *)Private->ControllerData->Tnvmcap)
+    ));
   DEBUG ((DEBUG_INFO, "    RAB       : 0x%x\n", Private->ControllerData->Rab));
-  DEBUG ((DEBUG_INFO, "    IEEE      : 0x%x\n", *(UINT32 *)Private->ControllerData->Ieee_oui));
+  DEBUG ((
+    DEBUG_INFO,
+    "    IEEE      : 0x%x\n",
+    *(UINT32 *)Private->ControllerData->Ieee_oui
+    ));
   DEBUG ((DEBUG_INFO, "    AERL      : 0x%x\n", Private->ControllerData->Aerl));
   DEBUG ((DEBUG_INFO, "    SQES      : 0x%x\n", Private->ControllerData->Sqes));
   DEBUG ((DEBUG_INFO, "    CQES      : 0x%x\n", Private->ControllerData->Cqes));
@@ -994,7 +1090,8 @@ NvmeShutdownAllControllers (
       // Find all the NVME controller managed by this driver.
       // gImageHandle equals to DriverBinding handle for this driver.
       //
-      if (((OpenInfos[OpenInfoIndex].Attributes & EFI_OPEN_PROTOCOL_BY_DRIVER) != 0) &&
+      if (((OpenInfos[OpenInfoIndex].Attributes &
+            EFI_OPEN_PROTOCOL_BY_DRIVER) != 0) &&
           (OpenInfos[OpenInfoIndex].AgentHandle == gImageHandle))
       {
         Status = gBS->OpenProtocol (
@@ -1036,8 +1133,14 @@ NvmeShutdownAllControllers (
         //
         for (Index = 0; Index < NVME_SHUTDOWN_PROCESS_TIMEOUT * 100; Index++) {
           Status = ReadNvmeControllerStatus (Private, &Csts);
-          if (!EFI_ERROR (Status) && (Csts.Shst == NVME_CSTS_SHST_SHUTDOWN_COMPLETED)) {
-            DEBUG ((DEBUG_INFO, "NvmeShutdownController: shutdown processing is completed after %dms.\n", Index * 10));
+          if (!EFI_ERROR (Status) && (Csts.Shst ==
+                                      NVME_CSTS_SHST_SHUTDOWN_COMPLETED))
+          {
+            DEBUG ((
+              DEBUG_INFO,
+              "NvmeShutdownController: shutdown processing is completed after %dms.\n",
+              Index * 10
+              ));
             break;
           }
 
@@ -1048,7 +1151,10 @@ NvmeShutdownAllControllers (
         }
 
         if (Index == NVME_SHUTDOWN_PROCESS_TIMEOUT * 100) {
-          DEBUG ((DEBUG_ERROR, "NvmeShutdownController: shutdown processing is timed out\n"));
+          DEBUG ((
+            DEBUG_ERROR,
+            "NvmeShutdownController: shutdown processing is timed out\n"
+            ));
         }
       }
     }
@@ -1070,12 +1176,22 @@ NvmeRegisterShutdownNotification (
 
   mNvmeControllerNumber++;
   if (mNvmeControllerNumber == 1) {
-    Status = gBS->LocateProtocol (&gEfiResetNotificationProtocolGuid, NULL, (VOID **)&ResetNotify);
+    Status = gBS->LocateProtocol (
+                    &gEfiResetNotificationProtocolGuid,
+                    NULL,
+                    (VOID **)&ResetNotify
+                    );
     if (!EFI_ERROR (Status)) {
-      Status = ResetNotify->RegisterResetNotify (ResetNotify, NvmeShutdownAllControllers);
+      Status = ResetNotify->RegisterResetNotify (
+                              ResetNotify,
+                              NvmeShutdownAllControllers
+                              );
       ASSERT_EFI_ERROR (Status);
     } else {
-      DEBUG ((DEBUG_WARN, "NVME: ResetNotification absent! Shutdown notification cannot be performed!\n"));
+      DEBUG ((
+        DEBUG_WARN,
+        "NVME: ResetNotification absent! Shutdown notification cannot be performed!\n"
+        ));
     }
   }
 }
@@ -1095,9 +1211,16 @@ NvmeUnregisterShutdownNotification (
 
   mNvmeControllerNumber--;
   if (mNvmeControllerNumber == 0) {
-    Status = gBS->LocateProtocol (&gEfiResetNotificationProtocolGuid, NULL, (VOID **)&ResetNotify);
+    Status = gBS->LocateProtocol (
+                    &gEfiResetNotificationProtocolGuid,
+                    NULL,
+                    (VOID **)&ResetNotify
+                    );
     if (!EFI_ERROR (Status)) {
-      Status = ResetNotify->UnregisterResetNotify (ResetNotify, NvmeShutdownAllControllers);
+      Status = ResetNotify->UnregisterResetNotify (
+                              ResetNotify,
+                              NvmeShutdownAllControllers
+                              );
       ASSERT_EFI_ERROR (Status);
     }
   }

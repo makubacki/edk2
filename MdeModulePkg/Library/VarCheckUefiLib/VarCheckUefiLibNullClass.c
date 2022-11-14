@@ -177,7 +177,9 @@ InternalVarCheckAsciiString (
   if (String[DataSize - 1] == '\0') {
     return EFI_SUCCESS;
   } else {
-    for (Index = 1; Index < DataSize && (String[DataSize - 1 - Index] != '\0'); Index++) {
+    for (Index = 1; Index < DataSize && (String[DataSize - 1 - Index] != '\0');
+         Index++)
+    {
     }
 
     if (Index == DataSize) {
@@ -704,7 +706,8 @@ VarCheckUefiIsHexaDecimalDigitCharacter (
   IN CHAR16  Char
   )
 {
-  return (BOOLEAN)((Char >= L'0' && Char <= L'9') || (Char >= L'A' && Char <= L'F'));
+  return (BOOLEAN)((Char >= L'0' && Char <= L'9') || (Char >= L'A' && Char <=
+                                                      L'F'));
 }
 
 /**
@@ -766,7 +769,9 @@ GetUefiDefinedVarCheckFunction (
     //
     // Try list 1, exactly match.
     //
-    for (Index = 0; Index < sizeof (mGlobalVariableList)/sizeof (mGlobalVariableList[0]); Index++) {
+    for (Index = 0; Index < sizeof (mGlobalVariableList)/
+         sizeof (mGlobalVariableList[0]); Index++)
+    {
       if (StrCmp (mGlobalVariableList[Index].Name, VariableName) == 0) {
         *VariableProperty = &(mGlobalVariableList[Index].VariableProperty);
         return mGlobalVariableList[Index].CheckFunction;
@@ -777,13 +782,30 @@ GetUefiDefinedVarCheckFunction (
     // Try list 2.
     //
     NameLength = StrLen (VariableName) - 4;
-    for (Index = 0; Index < sizeof (mGlobalVariableList2)/sizeof (mGlobalVariableList2[0]); Index++) {
-      if ((StrLen (VariableName) == StrLen (mGlobalVariableList2[Index].Name)) &&
-          (StrnCmp (VariableName, mGlobalVariableList2[Index].Name, NameLength) == 0) &&
+    for (Index = 0; Index < sizeof (mGlobalVariableList2)/
+         sizeof (mGlobalVariableList2[0]); Index++)
+    {
+      if ((StrLen (VariableName) == StrLen (
+                                      mGlobalVariableList2[Index].Name
+                                      )) &&
+          (StrnCmp (
+             VariableName,
+             mGlobalVariableList2[Index].Name,
+             NameLength
+             ) == 0) &&
           VarCheckUefiIsHexaDecimalDigitCharacter (VariableName[NameLength]) &&
-          VarCheckUefiIsHexaDecimalDigitCharacter (VariableName[NameLength + 1]) &&
-          VarCheckUefiIsHexaDecimalDigitCharacter (VariableName[NameLength + 2]) &&
-          VarCheckUefiIsHexaDecimalDigitCharacter (VariableName[NameLength + 3]))
+          VarCheckUefiIsHexaDecimalDigitCharacter (
+            VariableName[NameLength +
+                         1]
+            ) &&
+          VarCheckUefiIsHexaDecimalDigitCharacter (
+            VariableName[NameLength +
+                         2]
+            ) &&
+          VarCheckUefiIsHexaDecimalDigitCharacter (
+            VariableName[NameLength +
+                         3]
+            ))
       {
         *VariableProperty = &(mGlobalVariableList2[Index].VariableProperty);
         return mGlobalVariableList2[Index].CheckFunction;
@@ -825,22 +847,33 @@ SetVariableCheckHandlerUefiDefined (
   VAR_CHECK_VARIABLE_PROPERTY  *VarCheckProperty;
   INTERNAL_VAR_CHECK_FUNCTION  VarCheckFunction;
 
-  if ((((Attributes & EFI_VARIABLE_APPEND_WRITE) == 0) && (DataSize == 0)) || (Attributes == 0)) {
+  if ((((Attributes & EFI_VARIABLE_APPEND_WRITE) == 0) && (DataSize == 0)) ||
+      (Attributes == 0))
+  {
     //
     // Do not check delete variable.
     //
     return EFI_SUCCESS;
   }
 
-  if ((Attributes & EFI_VARIABLE_HARDWARE_ERROR_RECORD) == EFI_VARIABLE_HARDWARE_ERROR_RECORD) {
+  if ((Attributes & EFI_VARIABLE_HARDWARE_ERROR_RECORD) ==
+      EFI_VARIABLE_HARDWARE_ERROR_RECORD)
+  {
     if (!IsHwErrRecVariable (VariableName, VendorGuid)) {
       return EFI_INVALID_PARAMETER;
     }
   }
 
-  for (Index = 0; Index < sizeof (mUefiDefinedGuid)/sizeof (mUefiDefinedGuid[0]); Index++) {
+  for (Index = 0; Index < sizeof (mUefiDefinedGuid)/
+       sizeof (mUefiDefinedGuid[0]); Index++)
+  {
     if (CompareGuid (VendorGuid, mUefiDefinedGuid[Index])) {
-      if (VarCheckLibVariablePropertyGet (VariableName, VendorGuid, &Property) == EFI_NOT_FOUND) {
+      if (VarCheckLibVariablePropertyGet (
+            VariableName,
+            VendorGuid,
+            &Property
+            ) == EFI_NOT_FOUND)
+      {
         //
         // To prevent name collisions with possible future globally defined variables,
         // other internal firmware data variables that are not defined here must be
@@ -849,7 +882,13 @@ SetVariableCheckHandlerUefiDefined (
         // only permit the creation of variables with a UEFI Specification-defined
         // VendorGuid when these variables are documented in the UEFI Specification.
         //
-        DEBUG ((DEBUG_INFO, "UEFI Variable Check fail %r - %s not in %g namespace\n", EFI_INVALID_PARAMETER, VariableName, VendorGuid));
+        DEBUG ((
+          DEBUG_INFO,
+          "UEFI Variable Check fail %r - %s not in %g namespace\n",
+          EFI_INVALID_PARAMETER,
+          VariableName,
+          VendorGuid
+          ));
         return EFI_INVALID_PARAMETER;
       }
     }
@@ -860,7 +899,11 @@ SetVariableCheckHandlerUefiDefined (
   }
 
   VarCheckProperty = NULL;
-  VarCheckFunction = GetUefiDefinedVarCheckFunction (VariableName, VendorGuid, &VarCheckProperty);
+  VarCheckFunction = GetUefiDefinedVarCheckFunction (
+                       VariableName,
+                       VendorGuid,
+                       &VarCheckProperty
+                       );
   if (VarCheckFunction != NULL) {
     Status = VarCheckFunction (
                VarCheckProperty,
@@ -868,7 +911,13 @@ SetVariableCheckHandlerUefiDefined (
                Data
                );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_INFO, "UEFI Variable Check function fail %r - %g:%s\n", Status, VendorGuid, VariableName));
+      DEBUG ((
+        DEBUG_INFO,
+        "UEFI Variable Check function fail %r - %g:%s\n",
+        Status,
+        VendorGuid,
+        VariableName
+        ));
       return Status;
     }
   }
@@ -890,7 +939,9 @@ VariablePropertySetUefiDefined (
   //
   // EFI_GLOBAL_VARIABLE
   //
-  for (Index = 0; Index < sizeof (mGlobalVariableList)/sizeof (mGlobalVariableList[0]); Index++) {
+  for (Index = 0; Index < sizeof (mGlobalVariableList)/
+       sizeof (mGlobalVariableList[0]); Index++)
+  {
     VarCheckLibVariablePropertySet (
       mGlobalVariableList[Index].Name,
       &gEfiGlobalVariableGuid,
@@ -898,7 +949,9 @@ VariablePropertySetUefiDefined (
       );
   }
 
-  for (Index = 0; Index < sizeof (mGlobalVariableList2)/sizeof (mGlobalVariableList2[0]); Index++) {
+  for (Index = 0; Index < sizeof (mGlobalVariableList2)/
+       sizeof (mGlobalVariableList2[0]); Index++)
+  {
     VarCheckLibVariablePropertySet (
       mGlobalVariableList2[Index].Name,
       &gEfiGlobalVariableGuid,
@@ -909,7 +962,9 @@ VariablePropertySetUefiDefined (
   //
   // EFI_IMAGE_SECURITY_DATABASE_GUID
   //
-  for (Index = 0; Index < sizeof (mImageSecurityVariableList)/sizeof (mImageSecurityVariableList[0]); Index++) {
+  for (Index = 0; Index < sizeof (mImageSecurityVariableList)/
+       sizeof (mImageSecurityVariableList[0]); Index++)
+  {
     VarCheckLibVariablePropertySet (
       mImageSecurityVariableList[Index].Name,
       &gEfiImageSecurityDatabaseGuid,
@@ -941,7 +996,9 @@ VarCheckUefiLibNullClassConstructor (
   )
 {
   VariablePropertySetUefiDefined ();
-  VarCheckLibRegisterSetVariableCheckHandler (SetVariableCheckHandlerUefiDefined);
+  VarCheckLibRegisterSetVariableCheckHandler (
+    SetVariableCheckHandlerUefiDefined
+    );
 
   return RETURN_SUCCESS;
 }

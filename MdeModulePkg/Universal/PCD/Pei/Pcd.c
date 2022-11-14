@@ -162,24 +162,43 @@ PcdSetNvStoreDefaultIdCallBack (
   SkuId     = GetPcdDatabase ()->SystemSkuId;
   IsFound   = FALSE;
 
-  if (PeiPcdGetSizeEx (&gEfiMdeModulePkgTokenSpaceGuid, PcdToken (PcdNvStoreDefaultValueBuffer)) > sizeof (PCD_NV_STORE_DEFAULT_BUFFER_HEADER)) {
-    DataBuffer = (UINT8 *)PeiPcdGetPtrEx (&gEfiMdeModulePkgTokenSpaceGuid, PcdToken (PcdNvStoreDefaultValueBuffer));
+  if (PeiPcdGetSizeEx (
+        &gEfiMdeModulePkgTokenSpaceGuid,
+        PcdToken (
+          PcdNvStoreDefaultValueBuffer
+          )
+        ) >
+      sizeof (PCD_NV_STORE_DEFAULT_BUFFER_HEADER))
+  {
+    DataBuffer = (UINT8 *)PeiPcdGetPtrEx (
+                            &gEfiMdeModulePkgTokenSpaceGuid,
+                            PcdToken (PcdNvStoreDefaultValueBuffer)
+                            );
     FullSize   = ((PCD_NV_STORE_DEFAULT_BUFFER_HEADER *)DataBuffer)->Length;
-    DataHeader = (PCD_DEFAULT_DATA *)(DataBuffer + sizeof (PCD_NV_STORE_DEFAULT_BUFFER_HEADER));
+    DataHeader = (PCD_DEFAULT_DATA *)(DataBuffer +
+                                      sizeof (PCD_NV_STORE_DEFAULT_BUFFER_HEADER));
     //
     // The first section data includes NV storage default setting.
     //
-    NvStoreBuffer   = (VARIABLE_STORE_HEADER *)((UINT8 *)DataHeader + sizeof (DataHeader->DataSize) + DataHeader->HeaderSize);
-    VarStoreHobData = (UINT8 *)BuildGuidHob (&NvStoreBuffer->Signature, NvStoreBuffer->Size);
+    NvStoreBuffer   = (VARIABLE_STORE_HEADER *)((UINT8 *)DataHeader +
+                                                sizeof (DataHeader->DataSize) +
+                                                DataHeader->HeaderSize);
+    VarStoreHobData = (UINT8 *)BuildGuidHob (
+                                 &NvStoreBuffer->Signature,
+                                 NvStoreBuffer->Size
+                                 );
     ASSERT (VarStoreHobData != NULL);
     CopyMem (VarStoreHobData, NvStoreBuffer, NvStoreBuffer->Size);
     //
     // Find the matched SkuId and DefaultId in the first section
     //
     DefaultInfo = &(DataHeader->DefaultInfo[0]);
-    BufferEnd   = (UINT8 *)DataHeader + sizeof (DataHeader->DataSize) + DataHeader->HeaderSize;
+    BufferEnd   = (UINT8 *)DataHeader + sizeof (DataHeader->DataSize) +
+                  DataHeader->HeaderSize;
     while ((UINT8 *)DefaultInfo < BufferEnd) {
-      if ((DefaultInfo->DefaultId == DefaultId) && (DefaultInfo->SkuId == SkuId)) {
+      if ((DefaultInfo->DefaultId == DefaultId) && (DefaultInfo->SkuId ==
+                                                    SkuId))
+      {
         IsFound = TRUE;
         break;
       }
@@ -190,13 +209,17 @@ PcdSetNvStoreDefaultIdCallBack (
     //
     // Find the matched SkuId and DefaultId in the remaining section
     //
-    Index      = sizeof (PCD_NV_STORE_DEFAULT_BUFFER_HEADER) + ((DataHeader->DataSize + 7) & (~7));
+    Index = sizeof (PCD_NV_STORE_DEFAULT_BUFFER_HEADER) +
+            ((DataHeader->DataSize + 7) & (~7));
     DataHeader = (PCD_DEFAULT_DATA *)(DataBuffer + Index);
     while (!IsFound && Index < FullSize && DataHeader->DataSize != 0xFFFFFFFF) {
       DefaultInfo = &(DataHeader->DefaultInfo[0]);
-      BufferEnd   = (UINT8 *)DataHeader + sizeof (DataHeader->DataSize) + DataHeader->HeaderSize;
+      BufferEnd   = (UINT8 *)DataHeader + sizeof (DataHeader->DataSize) +
+                    DataHeader->HeaderSize;
       while ((UINT8 *)DefaultInfo < BufferEnd) {
-        if ((DefaultInfo->DefaultId == DefaultId) && (DefaultInfo->SkuId == SkuId)) {
+        if ((DefaultInfo->DefaultId == DefaultId) && (DefaultInfo->SkuId ==
+                                                      SkuId))
+        {
           IsFound = TRUE;
           break;
         }
@@ -292,7 +315,11 @@ EndOfPeiSignalPpiNotifyCallback (
     // Find PcdDb file from the beginning in this firmware volume.
     //
     FileHandle = NULL;
-    Status     = PeiServicesFfsFindFileByName (&gEfiCallerIdGuid, VolumeHandle, &FileHandle);
+    Status     = PeiServicesFfsFindFileByName (
+                   &gEfiCallerIdGuid,
+                   VolumeHandle,
+                   &FileHandle
+                   );
     if (!EFI_ERROR (Status)) {
       //
       // Find PcdPeim FileHandle in this volume
@@ -320,7 +347,8 @@ EndOfPeiSignalPpiNotifyCallback (
 
 EFI_PEI_NOTIFY_DESCRIPTOR  mEndOfPeiSignalPpiNotifyList[] = {
   {
-    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+     EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
     &gEfiEndOfPeiSignalPpiGuid,
     EndOfPeiSignalPpiNotifyCallback
   }
@@ -597,7 +625,11 @@ PeiPcdSetSku (
       // Find PcdDb file from the beginning in this firmware volume.
       //
       FileHandle = NULL;
-      Status     = PeiServicesFfsFindFileByName (&gEfiCallerIdGuid, VolumeHandle, &FileHandle);
+      Status     = PeiServicesFfsFindFileByName (
+                     &gEfiCallerIdGuid,
+                     VolumeHandle,
+                     &FileHandle
+                     );
       if (!EFI_ERROR (Status)) {
         //
         // Find PcdPeim FileHandle in this volume
@@ -614,7 +646,11 @@ PeiPcdSetSku (
     //
     // Find the delta data between the different Skus
     //
-    Status = PeiServicesFfsFindSectionData (EFI_SECTION_RAW, FileHandle, &PcdDb);
+    Status = PeiServicesFfsFindSectionData (
+               EFI_SECTION_RAW,
+               FileHandle,
+               &PcdDb
+               );
     ASSERT_EFI_ERROR (Status);
     Length   = PeiPcdDb->LengthForAllSkus;
     Index    = (PeiPcdDb->Length + 7) & (~7);
@@ -634,12 +670,17 @@ PeiPcdSetSku (
     if ((Index < Length) && (SkuDelta != NULL)) {
       SkuDeltaData = (PCD_DATA_DELTA *)(SkuDelta + 1);
       while ((UINT8 *)SkuDeltaData < (UINT8 *)SkuDelta + SkuDelta->Length) {
-        *((UINT8 *)PeiPcdDb + SkuDeltaData->Offset) = (UINT8)SkuDeltaData->Value;
+        *((UINT8 *)PeiPcdDb + SkuDeltaData->Offset) =
+          (UINT8)SkuDeltaData->Value;
         SkuDeltaData++;
       }
 
       PeiPcdDb->SystemSkuId = (SKU_ID)SkuId;
-      DEBUG ((DEBUG_INFO, "PcdPei - Set current SKU Id to 0x%lx.\n", (SKU_ID)SkuId));
+      DEBUG ((
+        DEBUG_INFO,
+        "PcdPei - Set current SKU Id to 0x%lx.\n",
+        (SKU_ID)SkuId
+        ));
       return;
     }
   }
@@ -647,7 +688,10 @@ PeiPcdSetSku (
   //
   // Invalid input SkuId, the default SKU Id will be still used for the system.
   //
-  DEBUG ((DEBUG_ERROR, "PcdPei - Invalid input SkuId, the default SKU Id will be still used.\n"));
+  DEBUG ((
+    DEBUG_ERROR,
+    "PcdPei - Invalid input SkuId, the default SKU Id will be still used.\n"
+    ));
 
   return;
 }
@@ -812,7 +856,9 @@ PeiPcdGetSize (
   // comparison.
   ASSERT (TokenNumber + 1 < (LocalTokenCount + 1));
 
-  Size = (*((UINT32 *)((UINT8 *)PeiPcdDb + PeiPcdDb->LocalTokenNumberTableOffset) + TokenNumber) & PCD_DATUM_TYPE_ALL_SET) >> PCD_DATUM_TYPE_SHIFT;
+  Size = (*((UINT32 *)((UINT8 *)PeiPcdDb +
+                       PeiPcdDb->LocalTokenNumberTableOffset) + TokenNumber) &
+          PCD_DATUM_TYPE_ALL_SET) >> PCD_DATUM_TYPE_SHIFT;
 
   if (Size == 0) {
     //
@@ -1364,7 +1410,12 @@ PeiRegisterCallBackOnSet (
     return EFI_INVALID_PARAMETER;
   }
 
-  return PeiRegisterCallBackWorker (ExTokenNumber, Guid, CallBackFunction, TRUE);
+  return PeiRegisterCallBackWorker (
+           ExTokenNumber,
+           Guid,
+           CallBackFunction,
+           TRUE
+           );
 }
 
 /**
@@ -1395,7 +1446,12 @@ PcdUnRegisterCallBackOnSet (
     return EFI_INVALID_PARAMETER;
   }
 
-  return PeiRegisterCallBackWorker (ExTokenNumber, Guid, CallBackFunction, FALSE);
+  return PeiRegisterCallBackWorker (
+           ExTokenNumber,
+           Guid,
+           CallBackFunction,
+           FALSE
+           );
 }
 
 /**
@@ -1446,7 +1502,8 @@ PeiPcdGetNextToken (
 
   PeiPcdDb          = GetPcdDatabase ();
   PeiNexTokenNumber = PeiPcdDb->LocalTokenCount - PeiPcdDb->ExTokenCount;
-  GuidTable         = (EFI_GUID *)((UINT8 *)PeiPcdDb + PeiPcdDb->GuidTableOffset);
+  GuidTable         = (EFI_GUID *)((UINT8 *)PeiPcdDb +
+                                   PeiPcdDb->GuidTableOffset);
 
   if (PeiPcdDb->ExTokenCount == 0) {
     PeiExMapTableEmpty = TRUE;
@@ -1471,7 +1528,12 @@ PeiPcdGetNextToken (
       return EFI_NOT_FOUND;
     }
 
-    MatchGuid = ScanGuid (GuidTable, PeiPcdDb->GuidTableCount * sizeof (EFI_GUID), Guid);
+    MatchGuid = ScanGuid (
+                  GuidTable,
+                  PeiPcdDb->GuidTableCount *
+                  sizeof (EFI_GUID),
+                  Guid
+                  );
 
     if (MatchGuid == NULL) {
       return EFI_NOT_FOUND;
@@ -1479,7 +1541,8 @@ PeiPcdGetNextToken (
 
     GuidTableIdx = MatchGuid - GuidTable;
 
-    ExMapTable = (DYNAMICEX_MAPPING *)((UINT8 *)PeiPcdDb + PeiPcdDb->ExMapTableOffset);
+    ExMapTable = (DYNAMICEX_MAPPING *)((UINT8 *)PeiPcdDb +
+                                       PeiPcdDb->ExMapTableOffset);
 
     Found = FALSE;
     //
@@ -1503,7 +1566,9 @@ PeiPcdGetNextToken (
       }
 
       for ( ; Index < PeiPcdDb->ExTokenCount; Index++) {
-        if ((ExMapTable[Index].ExTokenNumber == *TokenNumber) && (ExMapTable[Index].ExGuidIndex == GuidTableIdx)) {
+        if ((ExMapTable[Index].ExTokenNumber == *TokenNumber) &&
+            (ExMapTable[Index].ExGuidIndex == GuidTableIdx))
+        {
           break;
         }
       }
@@ -1580,7 +1645,8 @@ PeiPcdGetNextTokenSpace (
     return EFI_NOT_FOUND;
   }
 
-  ExMapTable = (DYNAMICEX_MAPPING *)((UINT8 *)PeiPcdDb + PeiPcdDb->ExMapTableOffset);
+  ExMapTable = (DYNAMICEX_MAPPING *)((UINT8 *)PeiPcdDb +
+                                     PeiPcdDb->ExMapTableOffset);
   GuidTable  = (EFI_GUID *)((UINT8 *)PeiPcdDb + PeiPcdDb->GuidTableOffset);
 
   if (*Guid == NULL) {
@@ -1591,7 +1657,12 @@ PeiPcdGetNextTokenSpace (
     return EFI_SUCCESS;
   }
 
-  MatchGuid = ScanGuid (GuidTable, PeiPcdDb->GuidTableCount * sizeof (GuidTable[0]), *Guid);
+  MatchGuid = ScanGuid (
+                GuidTable,
+                PeiPcdDb->GuidTableCount *
+                sizeof (GuidTable[0]),
+                *Guid
+                );
 
   if (MatchGuid == NULL) {
     return EFI_NOT_FOUND;
@@ -1623,7 +1694,8 @@ PeiPcdGetNextTokenSpace (
         }
 
         if (!Found) {
-          *Guid = (EFI_GUID *)((UINT8 *)PeiPcdDb + PeiPcdDb->GuidTableOffset) + ExMapTable[Index].ExGuidIndex;
+          *Guid = (EFI_GUID *)((UINT8 *)PeiPcdDb + PeiPcdDb->GuidTableOffset) +
+                  ExMapTable[Index].ExGuidIndex;
           return EFI_SUCCESS;
         }
       }
@@ -1661,9 +1733,14 @@ GetPtrTypeSize (
 
   SizeTableIdx = GetSizeTableIndex (LocalTokenNumberTableIdx, Database);
 
-  LocalTokenNumber = *((UINT32 *)((UINT8 *)Database + Database->LocalTokenNumberTableOffset) + LocalTokenNumberTableIdx);
+  LocalTokenNumber = *((UINT32 *)((UINT8 *)Database +
+                                  Database->LocalTokenNumberTableOffset) +
+                       LocalTokenNumberTableIdx);
 
-  ASSERT ((LocalTokenNumber & PCD_DATUM_TYPE_ALL_SET) == PCD_DATUM_TYPE_POINTER);
+  ASSERT (
+    (LocalTokenNumber & PCD_DATUM_TYPE_ALL_SET) ==
+    PCD_DATUM_TYPE_POINTER
+    );
 
   SizeTable = (SIZE_INFO *)((UINT8 *)Database + Database->SizeTableOffset);
 
@@ -1718,9 +1795,14 @@ SetPtrTypeSize (
 
   SizeTableIdx = GetSizeTableIndex (LocalTokenNumberTableIdx, Database);
 
-  LocalTokenNumber = *((UINT32 *)((UINT8 *)Database + Database->LocalTokenNumberTableOffset) + LocalTokenNumberTableIdx);
+  LocalTokenNumber = *((UINT32 *)((UINT8 *)Database +
+                                  Database->LocalTokenNumberTableOffset) +
+                       LocalTokenNumberTableIdx);
 
-  ASSERT ((LocalTokenNumber & PCD_DATUM_TYPE_ALL_SET) == PCD_DATUM_TYPE_POINTER);
+  ASSERT (
+    (LocalTokenNumber & PCD_DATUM_TYPE_ALL_SET) ==
+    PCD_DATUM_TYPE_POINTER
+    );
 
   SizeTable = (SIZE_INFO *)((UINT8 *)Database + Database->SizeTableOffset);
 

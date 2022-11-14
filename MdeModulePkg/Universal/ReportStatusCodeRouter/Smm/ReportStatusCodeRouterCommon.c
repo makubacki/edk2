@@ -9,7 +9,9 @@
 
 #include "ReportStatusCodeRouterCommon.h"
 
-LIST_ENTRY  mCallbackListHead = INITIALIZE_LIST_HEAD_VARIABLE (mCallbackListHead);
+LIST_ENTRY  mCallbackListHead = INITIALIZE_LIST_HEAD_VARIABLE (
+                                  mCallbackListHead
+                                  );
 
 //
 // Report operation nest status.
@@ -55,8 +57,20 @@ Register (
     return EFI_INVALID_PARAMETER;
   }
 
-  for (Link = GetFirstNode (&mCallbackListHead); !IsNull (&mCallbackListHead, Link); Link = GetNextNode (&mCallbackListHead, Link)) {
-    CallbackEntry = CR (Link, MM_RSC_HANDLER_CALLBACK_ENTRY, Node, MM_RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE);
+  for (Link = GetFirstNode (&mCallbackListHead); !IsNull (
+                                                    &mCallbackListHead,
+                                                    Link
+                                                    ); Link = GetNextNode (
+                                                                &
+                                                                mCallbackListHead,
+                                                                Link))
+  {
+    CallbackEntry = CR (
+                      Link,
+                      MM_RSC_HANDLER_CALLBACK_ENTRY,
+                      Node,
+                      MM_RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE
+                      );
     if (CallbackEntry->RscHandlerCallback == Callback) {
       //
       // If the function was already registered. It can't be registered again.
@@ -65,7 +79,10 @@ Register (
     }
   }
 
-  CallbackEntry = (MM_RSC_HANDLER_CALLBACK_ENTRY *)AllocatePool (sizeof (MM_RSC_HANDLER_CALLBACK_ENTRY));
+  CallbackEntry = (MM_RSC_HANDLER_CALLBACK_ENTRY *)AllocatePool (
+                                                     sizeof (
+                                                                        MM_RSC_HANDLER_CALLBACK_ENTRY)
+                                                     );
   ASSERT (CallbackEntry != NULL);
 
   CallbackEntry->Signature          = MM_RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE;
@@ -102,8 +119,20 @@ Unregister (
     return EFI_INVALID_PARAMETER;
   }
 
-  for (Link = GetFirstNode (&mCallbackListHead); !IsNull (&mCallbackListHead, Link); Link = GetNextNode (&mCallbackListHead, Link)) {
-    CallbackEntry = CR (Link, MM_RSC_HANDLER_CALLBACK_ENTRY, Node, MM_RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE);
+  for (Link = GetFirstNode (&mCallbackListHead); !IsNull (
+                                                    &mCallbackListHead,
+                                                    Link
+                                                    ); Link = GetNextNode (
+                                                                &
+                                                                mCallbackListHead,
+                                                                Link))
+  {
+    CallbackEntry = CR (
+                      Link,
+                      MM_RSC_HANDLER_CALLBACK_ENTRY,
+                      Node,
+                      MM_RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE
+                      );
     if (CallbackEntry->RscHandlerCallback == Callback) {
       //
       // If the function is found in list, delete it and return.
@@ -158,8 +187,17 @@ ReportDispatcher (
     return EFI_DEVICE_ERROR;
   }
 
-  for (Link = GetFirstNode (&mCallbackListHead); !IsNull (&mCallbackListHead, Link);) {
-    CallbackEntry = CR (Link, MM_RSC_HANDLER_CALLBACK_ENTRY, Node, MM_RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE);
+  for (Link = GetFirstNode (&mCallbackListHead); !IsNull (
+                                                    &mCallbackListHead,
+                                                    Link
+                                                    );)
+  {
+    CallbackEntry = CR (
+                      Link,
+                      MM_RSC_HANDLER_CALLBACK_ENTRY,
+                      Node,
+                      MM_RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE
+                      );
     //
     // The handler may remove itself, so get the next handler in advance.
     //

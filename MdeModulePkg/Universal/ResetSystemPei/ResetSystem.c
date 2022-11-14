@@ -109,8 +109,14 @@ RegisterResetNotify (
 
   ResetFilter = (RESET_FILTER_INSTANCE *)This;
   ASSERT (
-    CompareGuid (ResetFilter->Guid, &gEdkiiPlatformSpecificResetFilterPpiGuid) ||
-    CompareGuid (ResetFilter->Guid, &gEdkiiPlatformSpecificResetNotificationPpiGuid) ||
+    CompareGuid (
+      ResetFilter->Guid,
+      &gEdkiiPlatformSpecificResetFilterPpiGuid
+      ) ||
+    CompareGuid (
+      ResetFilter->Guid,
+      &gEdkiiPlatformSpecificResetNotificationPpiGuid
+      ) ||
     CompareGuid (ResetFilter->Guid, &gEdkiiPlatformSpecificResetHandlerPpiGuid)
     );
 
@@ -121,7 +127,9 @@ RegisterResetNotify (
     //
     List = (RESET_FILTER_LIST *)BuildGuidHob (
                                   ResetFilter->Guid,
-                                  sizeof (RESET_FILTER_LIST) + sizeof (EFI_RESET_SYSTEM) * PcdGet32 (PcdMaximumPeiResetNotifies)
+                                  sizeof (RESET_FILTER_LIST) +
+                                  sizeof (EFI_RESET_SYSTEM) * PcdGet32 (
+                                                                PcdMaximumPeiResetNotifies)
                                   );
     if (List == NULL) {
       return EFI_OUT_OF_RESOURCES;
@@ -199,8 +207,14 @@ UnregisterResetNotify (
 
   ResetFilter = (RESET_FILTER_INSTANCE *)This;
   ASSERT (
-    CompareGuid (ResetFilter->Guid, &gEdkiiPlatformSpecificResetFilterPpiGuid) ||
-    CompareGuid (ResetFilter->Guid, &gEdkiiPlatformSpecificResetNotificationPpiGuid) ||
+    CompareGuid (
+      ResetFilter->Guid,
+      &gEdkiiPlatformSpecificResetFilterPpiGuid
+      ) ||
+    CompareGuid (
+      ResetFilter->Guid,
+      &gEdkiiPlatformSpecificResetNotificationPpiGuid
+      ) ||
     CompareGuid (ResetFilter->Guid, &gEdkiiPlatformSpecificResetHandlerPpiGuid)
     );
 
@@ -295,7 +309,11 @@ ResetSystem2 (
   Hob = GetFirstGuidHob (&gEfiCallerIdGuid);
   if (Hob == NULL) {
     RecursionDepth        = 0;
-    RecursionDepthPointer = BuildGuidDataHob (&gEfiCallerIdGuid, &RecursionDepth, sizeof (RecursionDepth));
+    RecursionDepthPointer = BuildGuidDataHob (
+                              &gEfiCallerIdGuid,
+                              &RecursionDepth,
+                              sizeof (RecursionDepth)
+                              );
   } else {
     RecursionDepthPointer = (UINT8 *)GET_GUID_HOB_DATA (Hob);
   }
@@ -307,20 +325,30 @@ ResetSystem2 (
     //
     // Indicate reset system PEI service is called.
     //
-    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE_PEI_SERVICE | EFI_SW_PS_PC_RESET_SYSTEM));
+    REPORT_STATUS_CODE (
+      EFI_PROGRESS_CODE,
+      (EFI_SOFTWARE_PEI_SERVICE |
+       EFI_SW_PS_PC_RESET_SYSTEM)
+      );
   }
 
   //
   // Increase the call depth
   //
   (*RecursionDepthPointer)++;
-  DEBUG ((DEBUG_INFO, "PEI ResetSystem2: Reset call depth = %d.\n", *RecursionDepthPointer));
+  DEBUG ((
+    DEBUG_INFO,
+    "PEI ResetSystem2: Reset call depth = %d.\n",
+    *RecursionDepthPointer
+    ));
 
   if (*RecursionDepthPointer <= MAX_RESET_NOTIFY_DEPTH) {
     //
     // Iteratively call Reset Filters and Reset Handlers.
     //
-    for (OrderIndex = 0; OrderIndex < ARRAY_SIZE (mProcessingOrder); OrderIndex++) {
+    for (OrderIndex = 0; OrderIndex < ARRAY_SIZE (mProcessingOrder);
+         OrderIndex++)
+    {
       Hob = GetFirstGuidHob (mProcessingOrder[OrderIndex]);
       if (Hob != NULL) {
         List = (RESET_FILTER_LIST *)GET_GUID_HOB_DATA (Hob);
@@ -328,14 +356,19 @@ ResetSystem2 (
 
         for (Index = 0; Index < List->Count; Index++) {
           if (List->ResetFilters[Index] != NULL) {
-            List->ResetFilters[Index](ResetType, ResetStatus, DataSize, ResetData);
+            List->ResetFilters[Index](ResetType, ResetStatus, DataSize,
+                                      ResetData);
           }
         }
       }
     }
   } else {
     ASSERT (ResetType < ARRAY_SIZE (mResetTypeStr));
-    DEBUG ((DEBUG_ERROR, "PEI ResetSystem2: Maximum reset call depth is met. Use the current reset type: %s!\n", mResetTypeStr[ResetType]));
+    DEBUG ((
+      DEBUG_ERROR,
+      "PEI ResetSystem2: Maximum reset call depth is met. Use the current reset type: %s!\n",
+      mResetTypeStr[ResetType]
+      ));
   }
 
   switch (ResetType) {

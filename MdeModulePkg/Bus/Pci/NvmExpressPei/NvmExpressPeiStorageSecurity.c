@@ -75,19 +75,22 @@ TrustTransferNvmeDevice (
   //
   // Change Endianness of SecurityProtocolSpecificData
   //
-  SpecificData = (((SecurityProtocolSpecificData << 8) & 0xFF00) | (SecurityProtocolSpecificData >> 8));
+  SpecificData = (((SecurityProtocolSpecificData << 8) & 0xFF00) |
+                  (SecurityProtocolSpecificData >> 8));
 
   if (IsTrustSend) {
     Command.Cdw0.Opcode          = NVME_ADMIN_SECURITY_SEND_CMD;
     CommandPacket.TransferBuffer = Buffer;
     CommandPacket.TransferLength = (UINT32)TransferLength;
-    CommandPacket.NvmeCmd->Cdw10 = (UINT32)((SecurityProtocolId << 24) | (SpecificData << 8));
+    CommandPacket.NvmeCmd->Cdw10 = (UINT32)((SecurityProtocolId << 24) |
+                                            (SpecificData << 8));
     CommandPacket.NvmeCmd->Cdw11 = (UINT32)TransferLength;
   } else {
     Command.Cdw0.Opcode          = NVME_ADMIN_SECURITY_RECEIVE_CMD;
     CommandPacket.TransferBuffer = Buffer;
     CommandPacket.TransferLength = (UINT32)TransferLength;
-    CommandPacket.NvmeCmd->Cdw10 = (UINT32)((SecurityProtocolId << 24) | (SpecificData << 8));
+    CommandPacket.NvmeCmd->Cdw10 = (UINT32)((SecurityProtocolId << 24) |
+                                            (SpecificData << 8));
     CommandPacket.NvmeCmd->Cdw11 = (UINT32)TransferLength;
   }
 
@@ -136,7 +139,9 @@ NvmeStorageSecurityGetDeviceNo (
     return EFI_INVALID_PARAMETER;
   }
 
-  Private          = GET_NVME_PEIM_HC_PRIVATE_DATA_FROM_THIS_STROAGE_SECURITY (This);
+  Private = GET_NVME_PEIM_HC_PRIVATE_DATA_FROM_THIS_STROAGE_SECURITY (
+              This
+              );
   *NumberofDevices = Private->ActiveNamespaceNum;
 
   return EFI_SUCCESS;
@@ -298,7 +303,9 @@ NvmeStorageSecurityReceiveData (
   PEI_NVME_CONTROLLER_PRIVATE_DATA  *Private;
   EFI_STATUS                        Status;
 
-  if ((PayloadBuffer == NULL) || (PayloadTransferSize == NULL) || (PayloadBufferSize == 0)) {
+  if ((PayloadBuffer == NULL) || (PayloadTransferSize == NULL) ||
+      (PayloadBufferSize == 0))
+  {
     return EFI_INVALID_PARAMETER;
   }
 

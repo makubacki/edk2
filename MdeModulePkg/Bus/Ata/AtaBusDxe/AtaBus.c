@@ -70,22 +70,22 @@ ATA_DEVICE  gAtaDeviceTemplate = {
     AtaStorageSecurityReceiveData,
     AtaStorageSecuritySendData
   },
-  NULL,                                       // AtaBusDriverData
-  0,                                          // Port
-  0,                                          // PortMultiplierPort
-  { 0,                                     }, // Packet
+  NULL,                                                                   // AtaBusDriverData
+  0,                                                                      // Port
+  0,                                                                      // PortMultiplierPort
+  { 0,                                                                 }, // Packet
   {
     { 0 },
-  },                                          // Acb
-  NULL,                                       // Asb
-  FALSE,                                      // UdmaValid
-  FALSE,                                      // Lba48Bit
-  NULL,                                       // IdentifyData
-  NULL,                                       // ControllerNameTable
-  { L'\0',                                 }, // ModelName
-  { NULL,                            NULL  }, // AtaTaskList
-  { NULL,                            NULL  }, // AtaSubTaskList
-  FALSE                                       // Abort
+  },                                                                      // Acb
+  NULL,                                                                   // Asb
+  FALSE,                                                                  // UdmaValid
+  FALSE,                                                                  // Lba48Bit
+  NULL,                                                                   // IdentifyData
+  NULL,                                                                   // ControllerNameTable
+  { L'\0',                                                             }, // ModelName
+  { NULL,                            NULL                              }, // AtaTaskList
+  { NULL,                            NULL                              }, // AtaSubTaskList
+  FALSE                                                                   // Abort
 };
 
 /**
@@ -107,7 +107,10 @@ AllocateAlignedBuffer (
   IN UINTN       BufferSize
   )
 {
-  return AllocateAlignedPages (EFI_SIZE_TO_PAGES (BufferSize), AtaDevice->AtaBusDriverData->AtaPassThru->Mode->IoAlign);
+  return AllocateAlignedPages (
+           EFI_SIZE_TO_PAGES (BufferSize),
+           AtaDevice->AtaBusDriverData->AtaPassThru->Mode->IoAlign
+           );
 }
 
 /**
@@ -237,12 +240,20 @@ RegisterAtaDevice (
   // Build device path
   //
   AtaPassThru = AtaBusDriverData->AtaPassThru;
-  Status      = AtaPassThru->BuildDevicePath (AtaPassThru, Port, PortMultiplierPort, &NewDevicePathNode);
+  Status      = AtaPassThru->BuildDevicePath (
+                               AtaPassThru,
+                               Port,
+                               PortMultiplierPort,
+                               &NewDevicePathNode
+                               );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
-  DevicePath = AppendDevicePathNode (AtaBusDriverData->ParentDevicePath, NewDevicePathNode);
+  DevicePath = AppendDevicePathNode (
+                 AtaBusDriverData->ParentDevicePath,
+                 NewDevicePathNode
+                 );
   if (DevicePath == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -250,8 +261,15 @@ RegisterAtaDevice (
 
   DeviceHandle        = NULL;
   RemainingDevicePath = DevicePath;
-  Status              = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &DeviceHandle);
-  if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd (RemainingDevicePath)) {
+  Status              = gBS->LocateDevicePath (
+                               &gEfiDevicePathProtocolGuid,
+                               &RemainingDevicePath,
+                               &DeviceHandle
+                               );
+  if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd (
+                                                         RemainingDevicePath
+                                                         ))
+  {
     Status = EFI_ALREADY_STARTED;
     FreePool (DevicePath);
     goto Done;
@@ -275,13 +293,19 @@ RegisterAtaDevice (
   AtaDevice->DevicePath         = DevicePath;
   AtaDevice->Port               = Port;
   AtaDevice->PortMultiplierPort = PortMultiplierPort;
-  AtaDevice->Asb                = AllocateAlignedBuffer (AtaDevice, sizeof (EFI_ATA_STATUS_BLOCK));
+  AtaDevice->Asb                = AllocateAlignedBuffer (
+                                    AtaDevice,
+                                    sizeof (EFI_ATA_STATUS_BLOCK)
+                                    );
   if (AtaDevice->Asb == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
 
-  AtaDevice->IdentifyData = AllocateAlignedBuffer (AtaDevice, sizeof (ATA_IDENTIFY_DATA));
+  AtaDevice->IdentifyData = AllocateAlignedBuffer (
+                              AtaDevice,
+                              sizeof (ATA_IDENTIFY_DATA)
+                              );
   if (AtaDevice->IdentifyData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -364,7 +388,12 @@ RegisterAtaDevice (
   // If yes, then install Storage Security Protocol at the ata device handle.
   //
   if ((AtaDevice->IdentifyData->trusted_computing_support & BIT0) != 0) {
-    DEBUG ((DEBUG_INFO, "Found TCG support in Port %x PortMultiplierPort %x\n", Port, PortMultiplierPort));
+    DEBUG ((
+      DEBUG_INFO,
+      "Found TCG support in Port %x PortMultiplierPort %x\n",
+      Port,
+      PortMultiplierPort
+      ));
     Status = gBS->InstallProtocolInterface (
                     &AtaDevice->Handle,
                     &gEfiStorageSecurityCommandProtocolGuid,
@@ -375,7 +404,10 @@ RegisterAtaDevice (
       goto Done;
     }
 
-    DEBUG ((DEBUG_INFO, "Successfully Install Storage Security Protocol on the ATA device\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "Successfully Install Storage Security Protocol on the ATA device\n"
+      ));
   }
 
   gBS->OpenProtocol (
@@ -394,7 +426,13 @@ Done:
 
   if (EFI_ERROR (Status) && (AtaDevice != NULL)) {
     ReleaseAtaResources (AtaDevice);
-    DEBUG ((DEBUG_ERROR | DEBUG_INIT, "Failed to initialize Port %x PortMultiplierPort %x, status = %r\n", Port, PortMultiplierPort, Status));
+    DEBUG ((
+      DEBUG_ERROR | DEBUG_INIT,
+      "Failed to initialize Port %x PortMultiplierPort %x, status = %r\n",
+      Port,
+      PortMultiplierPort,
+      Status
+      ));
   }
 
   return Status;
@@ -619,7 +657,9 @@ AtaBusDriverBindingSupported (
   //
   // Test to see if this ATA Pass Thru Protocol is for a LOGICAL channel
   //
-  if ((AtaPassThru->Mode->Attributes & EFI_ATA_PASS_THRU_ATTRIBUTES_LOGICAL) == 0) {
+  if ((AtaPassThru->Mode->Attributes & EFI_ATA_PASS_THRU_ATTRIBUTES_LOGICAL) ==
+      0)
+  {
     //
     // Close the I/O Abstraction(s) used to perform the supported test
     //
@@ -636,7 +676,12 @@ AtaBusDriverBindingSupported (
   // Test RemainingDevicePath is valid or not.
   //
   if ((RemainingDevicePath != NULL) && !IsDevicePathEnd (RemainingDevicePath)) {
-    Status = AtaPassThru->GetDevice (AtaPassThru, RemainingDevicePath, &Port, &PortMultiplierPort);
+    Status = AtaPassThru->GetDevice (
+                            AtaPassThru,
+                            RemainingDevicePath,
+                            &Port,
+                            &PortMultiplierPort
+                            );
     if (EFI_ERROR (Status)) {
       //
       // Close the I/O Abstraction(s) used to perform the supported test
@@ -821,7 +866,11 @@ AtaBusDriverBindingStart (
 
       PortMultiplierPort = 0xFFFF;
       while (TRUE) {
-        Status = AtaPassThru->GetNextDevice (AtaPassThru, Port, &PortMultiplierPort);
+        Status = AtaPassThru->GetNextDevice (
+                                AtaPassThru,
+                                Port,
+                                &PortMultiplierPort
+                                );
         if (EFI_ERROR (Status)) {
           //
           // We cannot find more legal port multiplier port number for ATA device
@@ -836,7 +885,12 @@ AtaBusDriverBindingStart (
 
     Status = EFI_SUCCESS;
   } else if (!IsDevicePathEnd (RemainingDevicePath)) {
-    Status = AtaPassThru->GetDevice (AtaPassThru, RemainingDevicePath, &Port, &PortMultiplierPort);
+    Status = AtaPassThru->GetDevice (
+                            AtaPassThru,
+                            RemainingDevicePath,
+                            &Port,
+                            &PortMultiplierPort
+                            );
     if (!EFI_ERROR (Status)) {
       Status = RegisterAtaDevice (AtaBusDriverData, Port, PortMultiplierPort);
     }
@@ -1081,7 +1135,14 @@ BlockIoReadWrite (
   //
   // Invoke low level AtaDevice Access Routine.
   //
-  Status = AccessAtaDevice (AtaDevice, Buffer, Lba, NumberOfBlocks, IsWrite, Token);
+  Status = AccessAtaDevice (
+             AtaDevice,
+             Buffer,
+             Lba,
+             NumberOfBlocks,
+             IsWrite,
+             Token
+             );
 
   gBS->RestoreTPL (OldTpl);
 
@@ -1117,7 +1178,16 @@ AtaBlockIoReadBlocks (
   OUT VOID                   *Buffer
   )
 {
-  return BlockIoReadWrite ((VOID *)This, MediaId, Lba, NULL, BufferSize, Buffer, FALSE, FALSE);
+  return BlockIoReadWrite (
+           (VOID *)This,
+           MediaId,
+           Lba,
+           NULL,
+           BufferSize,
+           Buffer,
+           FALSE,
+           FALSE
+           );
 }
 
 /**
@@ -1150,7 +1220,16 @@ AtaBlockIoWriteBlocks (
   IN  VOID                   *Buffer
   )
 {
-  return BlockIoReadWrite ((VOID *)This, MediaId, Lba, NULL, BufferSize, Buffer, FALSE, TRUE);
+  return BlockIoReadWrite (
+           (VOID *)This,
+           MediaId,
+           Lba,
+           NULL,
+           BufferSize,
+           Buffer,
+           FALSE,
+           TRUE
+           );
 }
 
 /**
@@ -1250,7 +1329,16 @@ AtaBlockIoReadBlocksEx (
   OUT VOID                    *Buffer
   )
 {
-  return BlockIoReadWrite ((VOID *)This, MediaId, Lba, Token, BufferSize, Buffer, TRUE, FALSE);
+  return BlockIoReadWrite (
+           (VOID *)This,
+           MediaId,
+           Lba,
+           Token,
+           BufferSize,
+           Buffer,
+           TRUE,
+           FALSE
+           );
 }
 
 /**
@@ -1286,7 +1374,16 @@ AtaBlockIoWriteBlocksEx (
   IN  VOID                    *Buffer
   )
 {
-  return BlockIoReadWrite ((VOID *)This, MediaId, Lba, Token, BufferSize, Buffer, TRUE, TRUE);
+  return BlockIoReadWrite (
+           (VOID *)This,
+           MediaId,
+           Lba,
+           Token,
+           BufferSize,
+           Buffer,
+           TRUE,
+           TRUE
+           );
 }
 
 /**
@@ -1534,7 +1631,9 @@ AtaStorageSecurityReceiveData (
   EFI_TPL     OldTpl;
 
   DEBUG ((DEBUG_INFO, "EFI Storage Security Protocol - Read\n"));
-  if (((PayloadBuffer == NULL) || (PayloadTransferSize == NULL)) && (PayloadBufferSize != 0)) {
+  if (((PayloadBuffer == NULL) || (PayloadTransferSize == NULL)) &&
+      (PayloadBufferSize != 0))
+  {
     return EFI_INVALID_PARAMETER;
   }
 

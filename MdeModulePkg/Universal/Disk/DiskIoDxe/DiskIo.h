@@ -38,8 +38,12 @@ typedef struct {
   EFI_LOCK                  TaskQueueLock;
   LIST_ENTRY                TaskQueue;
 } DISK_IO_PRIVATE_DATA;
-#define DISK_IO_PRIVATE_DATA_FROM_DISK_IO(a)   CR (a, DISK_IO_PRIVATE_DATA, DiskIo,  DISK_IO_PRIVATE_DATA_SIGNATURE)
-#define DISK_IO_PRIVATE_DATA_FROM_DISK_IO2(a)  CR (a, DISK_IO_PRIVATE_DATA, DiskIo2, DISK_IO_PRIVATE_DATA_SIGNATURE)
+#define DISK_IO_PRIVATE_DATA_FROM_DISK_IO( \
+                                         a)   \
+      CR (a, DISK_IO_PRIVATE_DATA, DiskIo,  DISK_IO_PRIVATE_DATA_SIGNATURE)
+#define DISK_IO_PRIVATE_DATA_FROM_DISK_IO2( \
+                                          a)  \
+      CR (a, DISK_IO_PRIVATE_DATA, DiskIo2, DISK_IO_PRIVATE_DATA_SIGNATURE)
 
 #define DISK_IO2_TASK_SIGNATURE  SIGNATURE_32 ('d', 'i', 'a', 't')
 typedef struct {

@@ -142,8 +142,15 @@ DebuggerDisplaySymbolAccrodingToAddress (
   //
   // Find the nearest symbol address
   //
-  CandidateAddress = EbdFindSymbolAddress (Address, EdbMatchSymbolTypeNearestAddress, &Object, &Entry);
-  if ((CandidateAddress == 0) || (CandidateAddress == (UINTN)-1) || (Entry == NULL)) {
+  CandidateAddress = EbdFindSymbolAddress (
+                       Address,
+                       EdbMatchSymbolTypeNearestAddress,
+                       &Object,
+                       &Entry
+                       );
+  if ((CandidateAddress == 0) || (CandidateAddress == (UINTN)-1) || (Entry ==
+                                                                     NULL))
+  {
     EDBPrint (L"Symbole at Address not found!\n");
     return EFI_DEBUG_CONTINUE;
   } else if (Address != CandidateAddress) {
@@ -214,7 +221,9 @@ DebuggerDisplaySymbolAccrodingToName (
   // Go throuth each symbol file
   //
   Object = DebuggerPrivate->DebuggerSymbolContext.Object;
-  for (Index = 0; Index < DebuggerPrivate->DebuggerSymbolContext.ObjectCount; Index++, Object++) {
+  for (Index = 0; Index < DebuggerPrivate->DebuggerSymbolContext.ObjectCount;
+       Index++, Object++)
+  {
     if ((SymbolFileName != NULL) &&
         (StriCmp (SymbolFileName, Object->Name) != 0))
     {
@@ -375,7 +384,11 @@ DebuggerListSymbol (
   //
   // display symbol according to name
   //
-  return DebuggerDisplaySymbolAccrodingToName (SymbolFileName, SymbolName, DebuggerPrivate);
+  return DebuggerDisplaySymbolAccrodingToName (
+           SymbolFileName,
+           SymbolName,
+           DebuggerPrivate
+           );
 }
 
 /**
@@ -441,7 +454,13 @@ DebuggerLoadSymbol (
   //
   // Read MAP file to memory
   //
-  Status = ReadFileToBuffer (DebuggerPrivate, CommandArg, &BufferSize, &Buffer, TRUE);
+  Status = ReadFileToBuffer (
+             DebuggerPrivate,
+             CommandArg,
+             &BufferSize,
+             &Buffer,
+             TRUE
+             );
   if (EFI_ERROR (Status)) {
     EDBPrint (L"SymbolFile read error!\n");
     return EFI_DEBUG_CONTINUE;
@@ -463,9 +482,16 @@ DebuggerLoadSymbol (
   //
   // Patch Symbol for RVA
   //
-  Status = EdbPatchSymbolRVA (DebuggerPrivate, FileName, EdbEbcImageRvaSearchTypeLast);
+  Status = EdbPatchSymbolRVA (
+             DebuggerPrivate,
+             FileName,
+             EdbEbcImageRvaSearchTypeLast
+             );
   if (EFI_ERROR (Status)) {
-    EDBPrint (L"PatchSymbol RVA  - %r! Using the RVA in symbol file.\n", Status);
+    EDBPrint (
+      L"PatchSymbol RVA  - %r! Using the RVA in symbol file.\n",
+      Status
+      );
   } else {
     DEBUG ((DEBUG_ERROR, "PatchSymbol RVA successfully!\n"));
   }
@@ -499,39 +525,81 @@ DebuggerLoadSymbol (
     //
     // read cod file to memory
     //
-    Status = ReadFileToBuffer (DebuggerPrivate, ConstructFullPath (CodFile, CodFileName, EFI_DEBUGGER_SYMBOL_NAME_MAX - StrLen (CodFile) - 2), &BufferSize, &Buffer, FALSE);
+    Status = ReadFileToBuffer (
+               DebuggerPrivate,
+               ConstructFullPath (
+                 CodFile,
+                 CodFileName,
+                 EFI_DEBUGGER_SYMBOL_NAME_MAX - StrLen (CodFile) - 2
+                 ),
+               &BufferSize,
+               &Buffer,
+               FALSE
+               );
     if (EFI_ERROR (Status)) {
       EDBPrint (L"CodeFile read error!\n");
-      CodFileName = GetFileNameUnderDir (DebuggerPrivate, DirName, L".cod", &Index);
+      CodFileName = GetFileNameUnderDir (
+                      DebuggerPrivate,
+                      DirName,
+                      L".cod",
+                      &Index
+                      );
       continue;
     }
 
     //
     // Load Code
     //
-    Status = EdbLoadCode (DebuggerPrivate, FileName, CodFileName, BufferSize, Buffer);
+    Status = EdbLoadCode (
+               DebuggerPrivate,
+               FileName,
+               CodFileName,
+               BufferSize,
+               Buffer
+               );
     if (EFI_ERROR (Status)) {
       EDBPrint (L"LoadCode error!\n");
       gBS->FreePool (Buffer);
-      CodFileName = GetFileNameUnderDir (DebuggerPrivate, DirName, L".cod", &Index);
+      CodFileName = GetFileNameUnderDir (
+                      DebuggerPrivate,
+                      DirName,
+                      L".cod",
+                      &Index
+                      );
       continue;
     }
 
     //
     // Record the buffer
     //
-    Status = EdbAddCodeBuffer (DebuggerPrivate, FileName, CodFileName, BufferSize, Buffer);
+    Status = EdbAddCodeBuffer (
+               DebuggerPrivate,
+               FileName,
+               CodFileName,
+               BufferSize,
+               Buffer
+               );
     if (EFI_ERROR (Status)) {
       EDBPrint (L"AddCodeBuffer error!\n");
       gBS->FreePool (Buffer);
-      CodFileName = GetFileNameUnderDir (DebuggerPrivate, DirName, L".cod", &Index);
+      CodFileName = GetFileNameUnderDir (
+                      DebuggerPrivate,
+                      DirName,
+                      L".cod",
+                      &Index
+                      );
       continue;
     }
 
     //
     // Get next file
     //
-    CodFileName = GetFileNameUnderDir (DebuggerPrivate, DirName, L".cod", &Index);
+    CodFileName = GetFileNameUnderDir (
+                    DebuggerPrivate,
+                    DirName,
+                    L".cod",
+                    &Index
+                    );
   }
 
   //
@@ -606,24 +674,44 @@ DebuggerUnloadSymbol (
     Status = EdbUnloadCode (DebuggerPrivate, FileName, CodFileName, &BufferPtr);
     if (EFI_ERROR (Status)) {
       EDBPrint (L"UnloadCode error!\n");
-      CodFileName = GetFileNameUnderDir (DebuggerPrivate, DirName, L".cod", &Index);
+      CodFileName = GetFileNameUnderDir (
+                      DebuggerPrivate,
+                      DirName,
+                      L".cod",
+                      &Index
+                      );
       continue;
     }
 
     //
     // Delete the code buffer
     //
-    Status = EdbDeleteCodeBuffer (DebuggerPrivate, FileName, CodFileName, BufferPtr);
+    Status = EdbDeleteCodeBuffer (
+               DebuggerPrivate,
+               FileName,
+               CodFileName,
+               BufferPtr
+               );
     if (EFI_ERROR (Status)) {
       EDBPrint (L"DeleteCodeBuffer error!\n");
-      CodFileName = GetFileNameUnderDir (DebuggerPrivate, DirName, L".cod", &Index);
+      CodFileName = GetFileNameUnderDir (
+                      DebuggerPrivate,
+                      DirName,
+                      L".cod",
+                      &Index
+                      );
       continue;
     }
 
     //
     // Get next file
     //
-    CodFileName = GetFileNameUnderDir (DebuggerPrivate, DirName, L".cod", &Index);
+    CodFileName = GetFileNameUnderDir (
+                    DebuggerPrivate,
+                    DirName,
+                    L".cod",
+                    &Index
+                    );
   }
 
   //
@@ -661,7 +749,8 @@ DebuggerDisplaySymbol (
   )
 {
   if (CommandArg == NULL) {
-    DebuggerPrivate->DebuggerSymbolContext.DisplaySymbol = !DebuggerPrivate->DebuggerSymbolContext.DisplaySymbol;
+    DebuggerPrivate->DebuggerSymbolContext.DisplaySymbol =
+      !DebuggerPrivate->DebuggerSymbolContext.DisplaySymbol;
     EdbShowDisasm (DebuggerPrivate, SystemContext);
   } else if (StriCmp (CommandArg, L"on") == 0) {
     DebuggerPrivate->DebuggerSymbolContext.DisplaySymbol = TRUE;
@@ -740,7 +829,13 @@ DebuggerLoadCode (
   //
   // read cod file to memory
   //
-  Status = ReadFileToBuffer (DebuggerPrivate, CommandArg, &BufferSize, &Buffer, TRUE);
+  Status = ReadFileToBuffer (
+             DebuggerPrivate,
+             CommandArg,
+             &BufferSize,
+             &Buffer,
+             TRUE
+             );
   if (EFI_ERROR (Status)) {
     EDBPrint (L"CodeFile read error!\n");
     return EFI_DEBUG_CONTINUE;
@@ -751,7 +846,13 @@ DebuggerLoadCode (
   //
   // Load Code
   //
-  Status = EdbLoadCode (DebuggerPrivate, MapFileName, FileName, BufferSize, Buffer);
+  Status = EdbLoadCode (
+             DebuggerPrivate,
+             MapFileName,
+             FileName,
+             BufferSize,
+             Buffer
+             );
   if (EFI_ERROR (Status)) {
     EDBPrint (L"LoadCode error!\n");
     gBS->FreePool (Buffer);
@@ -761,7 +862,13 @@ DebuggerLoadCode (
   //
   // Record the buffer
   //
-  Status = EdbAddCodeBuffer (DebuggerPrivate, MapFileName, FileName, BufferSize, Buffer);
+  Status = EdbAddCodeBuffer (
+             DebuggerPrivate,
+             MapFileName,
+             FileName,
+             BufferSize,
+             Buffer
+             );
   if (EFI_ERROR (Status)) {
     EDBPrint (L"AddCodeBuffer error!\n");
     gBS->FreePool (Buffer);
@@ -829,7 +936,12 @@ DebuggerUnloadCode (
   //
   // Delete Code buffer
   //
-  Status = EdbDeleteCodeBuffer (DebuggerPrivate, MapFileName, FileName, BufferPtr);
+  Status = EdbDeleteCodeBuffer (
+             DebuggerPrivate,
+             MapFileName,
+             FileName,
+             BufferPtr
+             );
   if (EFI_ERROR (Status)) {
     EDBPrint (L"DeleteCodeBuffer error!\n");
   }
@@ -861,7 +973,8 @@ DebuggerDisplayCode (
   )
 {
   if (CommandArg == NULL) {
-    DebuggerPrivate->DebuggerSymbolContext.DisplayCodeOnly = !DebuggerPrivate->DebuggerSymbolContext.DisplayCodeOnly;
+    DebuggerPrivate->DebuggerSymbolContext.DisplayCodeOnly =
+      !DebuggerPrivate->DebuggerSymbolContext.DisplayCodeOnly;
     EdbShowDisasm (DebuggerPrivate, SystemContext);
   } else if (StriCmp (CommandArg, L"on") == 0) {
     DebuggerPrivate->DebuggerSymbolContext.DisplayCodeOnly = TRUE;

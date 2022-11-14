@@ -48,7 +48,9 @@ typedef struct {
   LIST_ENTRY             AllocatedHandleListHead;
 } SMBIOS_INSTANCE;
 
-#define SMBIOS_INSTANCE_FROM_THIS(this)  CR (this, SMBIOS_INSTANCE, Smbios, SMBIOS_INSTANCE_SIGNATURE)
+#define SMBIOS_INSTANCE_FROM_THIS( \
+                                 this)  \
+  CR (this, SMBIOS_INSTANCE, Smbios, SMBIOS_INSTANCE_SIGNATURE)
 
 //
 // SMBIOS record Header
@@ -83,7 +85,9 @@ typedef struct {
   BOOLEAN                     Smbios64BitTable;
 } EFI_SMBIOS_ENTRY;
 
-#define SMBIOS_ENTRY_FROM_LINK(link)  CR (link, EFI_SMBIOS_ENTRY, Link, EFI_SMBIOS_ENTRY_SIGNATURE)
+#define SMBIOS_ENTRY_FROM_LINK( \
+                              link)  \
+  CR (link, EFI_SMBIOS_ENTRY, Link, EFI_SMBIOS_ENTRY_SIGNATURE)
 
 //
 // Private data to contain the Smbios handle that already allocated.
@@ -99,7 +103,9 @@ typedef struct {
   EFI_SMBIOS_HANDLE    SmbiosHandle;
 } SMBIOS_HANDLE_ENTRY;
 
-#define SMBIOS_HANDLE_ENTRY_FROM_LINK(link)  CR (link, SMBIOS_HANDLE_ENTRY, Link, SMBIOS_HANDLE_ENTRY_SIGNATURE)
+#define SMBIOS_HANDLE_ENTRY_FROM_LINK( \
+                                     link)  \
+  CR (link, SMBIOS_HANDLE_ENTRY, Link, SMBIOS_HANDLE_ENTRY_SIGNATURE)
 
 typedef struct {
   EFI_SMBIOS_TABLE_HEADER    Header;

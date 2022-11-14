@@ -106,7 +106,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED UINT64  mIncompatiblePciDeviceList[] = {
   // Device Adaptec 9004
   //
   DEVICE_INF_TAG,
-  PCI_DEVICE_ID (0x9004,     MAX_UINT64,  MAX_UINT64, MAX_UINT64, MAX_UINT64),
+  PCI_DEVICE_ID (0x9004,     MAX_UINT64,      MAX_UINT64,      MAX_UINT64,
+    MAX_UINT64),
   DEVICE_RES_TAG,
   ACPI_ADDRESS_SPACE_TYPE_IO,
   0,
@@ -120,7 +121,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED UINT64  mIncompatiblePciDeviceList[] = {
   // Device Adaptec 9005
   //
   DEVICE_INF_TAG,
-  PCI_DEVICE_ID (0x9005,     MAX_UINT64,  MAX_UINT64, MAX_UINT64, MAX_UINT64),
+  PCI_DEVICE_ID (0x9005,     MAX_UINT64,      MAX_UINT64,      MAX_UINT64,
+    MAX_UINT64),
   DEVICE_RES_TAG,
   ACPI_ADDRESS_SPACE_TYPE_IO,
   0,
@@ -134,7 +136,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED UINT64  mIncompatiblePciDeviceList[] = {
   // Device QLogic  1007
   //
   DEVICE_INF_TAG,
-  PCI_DEVICE_ID (0x1077,     MAX_UINT64,  MAX_UINT64, MAX_UINT64, MAX_UINT64),
+  PCI_DEVICE_ID (0x1077,     MAX_UINT64,      MAX_UINT64,      MAX_UINT64,
+    MAX_UINT64),
   DEVICE_RES_TAG,
   ACPI_ADDRESS_SPACE_TYPE_IO,
   0,
@@ -148,7 +151,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED UINT64  mIncompatiblePciDeviceList[] = {
   // Device Agilent 103C
   //
   DEVICE_INF_TAG,
-  PCI_DEVICE_ID (0x103C,     MAX_UINT64,  MAX_UINT64, MAX_UINT64, MAX_UINT64),
+  PCI_DEVICE_ID (0x103C,     MAX_UINT64,      MAX_UINT64,      MAX_UINT64,
+    MAX_UINT64),
   DEVICE_RES_TAG,
   ACPI_ADDRESS_SPACE_TYPE_IO,
   0,
@@ -162,7 +166,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED UINT64  mIncompatiblePciDeviceList[] = {
   // Device Agilent 15BC
   //
   DEVICE_INF_TAG,
-  PCI_DEVICE_ID (0x15BC,     MAX_UINT64,  MAX_UINT64, MAX_UINT64, MAX_UINT64),
+  PCI_DEVICE_ID (0x15BC,     MAX_UINT64,      MAX_UINT64,      MAX_UINT64,
+    MAX_UINT64),
   DEVICE_RES_TAG,
   ACPI_ADDRESS_SPACE_TYPE_IO,
   0,
@@ -272,7 +277,8 @@ PCheckDevice (
     switch (Tag) {
       case DEVICE_INF_TAG:
         Header  = (EFI_PCI_DEVICE_HEADER_INFO *)(ListPtr + 1);
-        ListPtr = ListPtr + 1 + sizeof (EFI_PCI_DEVICE_HEADER_INFO) / sizeof (UINT64);
+        ListPtr = ListPtr + 1 + sizeof (EFI_PCI_DEVICE_HEADER_INFO) /
+                  sizeof (UINT64);
         //
         // See if the Header matches the parameters passed in
         //
@@ -294,13 +300,17 @@ PCheckDevice (
           }
         }
 
-        if ((Header->SubsystemVendorId != MAX_UINT64) && (SubsystemVendorId != MAX_UINTN)) {
+        if ((Header->SubsystemVendorId != MAX_UINT64) && (SubsystemVendorId !=
+                                                          MAX_UINTN))
+        {
           if (SubsystemVendorId != Header->SubsystemVendorId) {
             continue;
           }
         }
 
-        if ((Header->SubsystemDeviceId != MAX_UINT64) && (SubsystemDeviceId != MAX_UINTN)) {
+        if ((Header->SubsystemDeviceId != MAX_UINT64) && (SubsystemDeviceId !=
+                                                          MAX_UINTN))
+        {
           if (SubsystemDeviceId != Header->SubsystemDeviceId) {
             continue;
           }
@@ -312,8 +322,12 @@ PCheckDevice (
         //
         // Count the resource items so that to allocate space
         //
-        for (Index = 0, TempListPtr = ListPtr; *TempListPtr == DEVICE_RES_TAG; Index++) {
-          TempListPtr = TempListPtr + 1 + ((sizeof (EFI_PCI_RESOUCE_DESCRIPTOR)) / sizeof (UINT64));
+        for (Index = 0, TempListPtr = ListPtr; *TempListPtr == DEVICE_RES_TAG;
+             Index++)
+        {
+          TempListPtr = TempListPtr + 1 +
+                        ((sizeof (EFI_PCI_RESOUCE_DESCRIPTOR)) /
+                         sizeof (UINT64));
         }
 
         //
@@ -324,7 +338,10 @@ PCheckDevice (
           return EFI_UNSUPPORTED;
         }
 
-        AcpiPtr = AllocateZeroPool (sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) * Index + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR));
+        AcpiPtr = AllocateZeroPool (
+                    sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) *
+                    Index + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)
+                    );
         if (AcpiPtr == NULL) {
           return EFI_OUT_OF_RESOURCES;
         }
@@ -337,8 +354,9 @@ PCheckDevice (
         for ( ; *ListPtr == DEVICE_RES_TAG;) {
           Dsc = (EFI_PCI_RESOUCE_DESCRIPTOR *)(ListPtr + 1);
 
-          AcpiPtr->Desc                  = ACPI_ADDRESS_SPACE_DESCRIPTOR;
-          AcpiPtr->Len                   = (UINT16)sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3;
+          AcpiPtr->Desc = ACPI_ADDRESS_SPACE_DESCRIPTOR;
+          AcpiPtr->Len  =
+            (UINT16)sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3;
           AcpiPtr->ResType               = (UINT8)Dsc->ResType;
           AcpiPtr->GenFlag               = (UINT8)Dsc->GenFlag;
           AcpiPtr->SpecificFlag          = (UINT8)Dsc->SpecificFlag;
@@ -348,7 +366,8 @@ PCheckDevice (
           AcpiPtr->AddrTranslationOffset = Dsc->AddrTranslationOffset;
           AcpiPtr->AddrLen               = Dsc->AddrLen;
 
-          ListPtr = ListPtr + 1 + ((sizeof (EFI_PCI_RESOUCE_DESCRIPTOR)) / sizeof (UINT64));
+          ListPtr = ListPtr + 1 + ((sizeof (EFI_PCI_RESOUCE_DESCRIPTOR)) /
+                                   sizeof (UINT64));
           AcpiPtr++;
         }
 
@@ -367,7 +386,8 @@ PCheckDevice (
         //
         // Adjust the pointer to the next PCI resource descriptor item
         //
-        ListPtr = ListPtr + 1 + ((sizeof (EFI_PCI_RESOUCE_DESCRIPTOR)) / sizeof (UINT64));
+        ListPtr = ListPtr + 1 + ((sizeof (EFI_PCI_RESOUCE_DESCRIPTOR)) /
+                                 sizeof (UINT64));
         break;
 
       default:

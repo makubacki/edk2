@@ -220,9 +220,16 @@ SetUefiImageMemoryAttributes (
   Status = CoreGetMemorySpaceDescriptor (BaseAddress, &Descriptor);
   ASSERT_EFI_ERROR (Status);
 
-  FinalAttributes = (Descriptor.Attributes & EFI_CACHE_ATTRIBUTE_MASK) | (Attributes & EFI_MEMORY_ATTRIBUTE_MASK);
+  FinalAttributes = (Descriptor.Attributes & EFI_CACHE_ATTRIBUTE_MASK) |
+                    (Attributes & EFI_MEMORY_ATTRIBUTE_MASK);
 
-  DEBUG ((DEBUG_INFO, "SetUefiImageMemoryAttributes - 0x%016lx - 0x%016lx (0x%016lx)\n", BaseAddress, Length, FinalAttributes));
+  DEBUG ((
+    DEBUG_INFO,
+    "SetUefiImageMemoryAttributes - 0x%016lx - 0x%016lx (0x%016lx)\n",
+    BaseAddress,
+    Length,
+    FinalAttributes
+    ));
 
   ASSERT (gCpu != NULL);
   gCpu->SetMemoryAttributes (gCpu, BaseAddress, Length, FinalAttributes);
@@ -281,7 +288,8 @@ SetUefiImageProtectionAttributes (
       ImageRecordCodeSection->CodeSegmentSize,
       EFI_MEMORY_RO
       );
-    CurrentBase = ImageRecordCodeSection->CodeSegmentBase + ImageRecordCodeSection->CodeSegmentSize;
+    CurrentBase = ImageRecordCodeSection->CodeSegmentBase +
+                  ImageRecordCodeSection->CodeSegmentSize;
   }
 
   //
@@ -406,13 +414,21 @@ ProtectUefiImage (
   UINT32                                ProtectionPolicy;
 
   DEBUG ((DEBUG_INFO, "ProtectUefiImageCommon - 0x%x\n", LoadedImage));
-  DEBUG ((DEBUG_INFO, "  - 0x%016lx - 0x%016lx\n", (EFI_PHYSICAL_ADDRESS)(UINTN)LoadedImage->ImageBase, LoadedImage->ImageSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "  - 0x%016lx - 0x%016lx\n",
+    (EFI_PHYSICAL_ADDRESS)(UINTN)LoadedImage->ImageBase,
+    LoadedImage->ImageSize
+    ));
 
   if (gCpu == NULL) {
     return;
   }
 
-  ProtectionPolicy = GetUefiImageProtectionPolicy (LoadedImage, LoadedImageDevicePath);
+  ProtectionPolicy = GetUefiImageProtectionPolicy (
+                       LoadedImage,
+                       LoadedImageDevicePath
+                       );
   switch (ProtectionPolicy) {
     case DO_NOT_PROTECT:
       return;
@@ -452,9 +468,14 @@ ProtectUefiImage (
     PeCoffHeaderOffset = DosHdr->e_lfanew;
   }
 
-  Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINT8 *)(UINTN)ImageAddress + PeCoffHeaderOffset);
+  Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINT8 *)(UINTN)ImageAddress +
+                                        PeCoffHeaderOffset);
   if (Hdr.Pe32->Signature != EFI_IMAGE_NT_SIGNATURE) {
-    DEBUG ((DEBUG_VERBOSE, "Hdr.Pe32->Signature invalid - 0x%x\n", Hdr.Pe32->Signature));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "Hdr.Pe32->Signature invalid - 0x%x\n",
+      Hdr.Pe32->Signature
+      ));
     // It might be image in SMM.
     goto Finish;
   }
@@ -468,7 +489,10 @@ ProtectUefiImage (
     SectionAlignment = Hdr.Pe32Plus->OptionalHeader.SectionAlignment;
   }
 
-  IsAligned = IsMemoryProtectionSectionAligned (SectionAlignment, LoadedImage->ImageCodeType);
+  IsAligned = IsMemoryProtectionSectionAligned (
+                SectionAlignment,
+                LoadedImage->ImageCodeType
+                );
   if (!IsAligned) {
     DEBUG ((
       DEBUG_VERBOSE,
@@ -488,7 +512,8 @@ ProtectUefiImage (
                                          PeCoffHeaderOffset +
                                          sizeof (UINT32) +
                                          sizeof (EFI_IMAGE_FILE_HEADER) +
-                                         Hdr.Pe32->FileHeader.SizeOfOptionalHeader
+                                         Hdr.Pe32->FileHeader.
+                                           SizeOfOptionalHeader
                                          );
   ImageRecord->CodeSegmentCount = 0;
   InitializeListHead (&ImageRecord->CodeSegmentList);
@@ -515,16 +540,55 @@ ProtectUefiImage (
     // This adheres more closely to the PE/COFF spec, and avoids issues with
     // Linux OS loaders that may consist of a single read/write/execute section.
     //
-    if ((Section[Index].Characteristics & (EFI_IMAGE_SCN_MEM_WRITE | EFI_IMAGE_SCN_MEM_EXECUTE)) == EFI_IMAGE_SCN_MEM_EXECUTE) {
-      DEBUG ((DEBUG_VERBOSE, "  VirtualSize          - 0x%08x\n", Section[Index].Misc.VirtualSize));
-      DEBUG ((DEBUG_VERBOSE, "  VirtualAddress       - 0x%08x\n", Section[Index].VirtualAddress));
-      DEBUG ((DEBUG_VERBOSE, "  SizeOfRawData        - 0x%08x\n", Section[Index].SizeOfRawData));
-      DEBUG ((DEBUG_VERBOSE, "  PointerToRawData     - 0x%08x\n", Section[Index].PointerToRawData));
-      DEBUG ((DEBUG_VERBOSE, "  PointerToRelocations - 0x%08x\n", Section[Index].PointerToRelocations));
-      DEBUG ((DEBUG_VERBOSE, "  PointerToLinenumbers - 0x%08x\n", Section[Index].PointerToLinenumbers));
-      DEBUG ((DEBUG_VERBOSE, "  NumberOfRelocations  - 0x%08x\n", Section[Index].NumberOfRelocations));
-      DEBUG ((DEBUG_VERBOSE, "  NumberOfLinenumbers  - 0x%08x\n", Section[Index].NumberOfLinenumbers));
-      DEBUG ((DEBUG_VERBOSE, "  Characteristics      - 0x%08x\n", Section[Index].Characteristics));
+    if ((Section[Index].Characteristics & (EFI_IMAGE_SCN_MEM_WRITE |
+                                           EFI_IMAGE_SCN_MEM_EXECUTE)) ==
+        EFI_IMAGE_SCN_MEM_EXECUTE)
+    {
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "  VirtualSize          - 0x%08x\n",
+        Section[Index].Misc.VirtualSize
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "  VirtualAddress       - 0x%08x\n",
+        Section[Index].VirtualAddress
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "  SizeOfRawData        - 0x%08x\n",
+        Section[Index].SizeOfRawData
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "  PointerToRawData     - 0x%08x\n",
+        Section[Index].PointerToRawData
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "  PointerToRelocations - 0x%08x\n",
+        Section[Index].PointerToRelocations
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "  PointerToLinenumbers - 0x%08x\n",
+        Section[Index].PointerToLinenumbers
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "  NumberOfRelocations  - 0x%08x\n",
+        Section[Index].NumberOfRelocations
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "  NumberOfLinenumbers  - 0x%08x\n",
+        Section[Index].NumberOfLinenumbers
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "  Characteristics      - 0x%08x\n",
+        Section[Index].Characteristics
+        ));
 
       //
       // Step 2: record code section
@@ -534,14 +598,27 @@ ProtectUefiImage (
         return;
       }
 
-      ImageRecordCodeSection->Signature = IMAGE_PROPERTIES_RECORD_CODE_SECTION_SIGNATURE;
+      ImageRecordCodeSection->Signature =
+        IMAGE_PROPERTIES_RECORD_CODE_SECTION_SIGNATURE;
 
-      ImageRecordCodeSection->CodeSegmentBase = (UINTN)ImageAddress + Section[Index].VirtualAddress;
-      ImageRecordCodeSection->CodeSegmentSize = ALIGN_VALUE (Section[Index].SizeOfRawData, SectionAlignment);
+      ImageRecordCodeSection->CodeSegmentBase = (UINTN)ImageAddress +
+                                                Section[Index].VirtualAddress;
+      ImageRecordCodeSection->CodeSegmentSize = ALIGN_VALUE (
+                                                  Section[Index].SizeOfRawData,
+                                                  SectionAlignment
+                                                  );
 
-      DEBUG ((DEBUG_VERBOSE, "ImageCode: 0x%016lx - 0x%016lx\n", ImageRecordCodeSection->CodeSegmentBase, ImageRecordCodeSection->CodeSegmentSize));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "ImageCode: 0x%016lx - 0x%016lx\n",
+        ImageRecordCodeSection->CodeSegmentBase,
+        ImageRecordCodeSection->CodeSegmentSize
+        ));
 
-      InsertTailList (&ImageRecord->CodeSegmentList, &ImageRecordCodeSection->Link);
+      InsertTailList (
+        &ImageRecord->CodeSegmentList,
+        &ImageRecordCodeSection->Link
+        );
       ImageRecord->CodeSegmentCount++;
     }
   }
@@ -555,7 +632,10 @@ ProtectUefiImage (
     // One example that elicits this is (some) Linux kernels (with the EFI stub
     // of course).
     //
-    DEBUG ((DEBUG_WARN, "!!!!!!!!  ProtectUefiImageCommon - CodeSegmentCount is 0  !!!!!!!!\n"));
+    DEBUG ((
+      DEBUG_WARN,
+      "!!!!!!!!  ProtectUefiImageCommon - CodeSegmentCount is 0  !!!!!!!!\n"
+      ));
     PdbPointer = PeCoffLoaderGetPdbPointer ((VOID *)(UINTN)ImageAddress);
     if (PdbPointer != NULL) {
       DEBUG ((DEBUG_WARN, "!!!!!!!!  Image - %a  !!!!!!!!\n", PdbPointer));
@@ -623,7 +703,9 @@ UnprotectUefiImage (
                       IMAGE_PROPERTIES_RECORD_SIGNATURE
                       );
 
-      if (ImageRecord->ImageBase == (EFI_PHYSICAL_ADDRESS)(UINTN)LoadedImage->ImageBase) {
+      if (ImageRecord->ImageBase ==
+          (EFI_PHYSICAL_ADDRESS)(UINTN)LoadedImage->ImageBase)
+      {
         SetUefiImageMemoryAttributes (
           ImageRecord->ImageBase,
           ImageRecord->ImageSize,
@@ -688,20 +770,42 @@ SortMemoryMap (
 
   MemoryMapEntry     = MemoryMap;
   NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (MemoryMapEntry, DescriptorSize);
-  MemoryMapEnd       = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap + MemoryMapSize);
+  MemoryMapEnd       = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap +
+                                                 MemoryMapSize);
   while (MemoryMapEntry < MemoryMapEnd) {
     while (NextMemoryMapEntry < MemoryMapEnd) {
       if (MemoryMapEntry->PhysicalStart > NextMemoryMapEntry->PhysicalStart) {
-        CopyMem (&TempMemoryMap, MemoryMapEntry, sizeof (EFI_MEMORY_DESCRIPTOR));
-        CopyMem (MemoryMapEntry, NextMemoryMapEntry, sizeof (EFI_MEMORY_DESCRIPTOR));
-        CopyMem (NextMemoryMapEntry, &TempMemoryMap, sizeof (EFI_MEMORY_DESCRIPTOR));
+        CopyMem (
+          &TempMemoryMap,
+          MemoryMapEntry,
+          sizeof (EFI_MEMORY_DESCRIPTOR)
+          );
+        CopyMem (
+          MemoryMapEntry,
+          NextMemoryMapEntry,
+          sizeof (EFI_MEMORY_DESCRIPTOR)
+          );
+        CopyMem (
+          NextMemoryMapEntry,
+          &TempMemoryMap,
+          sizeof (EFI_MEMORY_DESCRIPTOR)
+          );
       }
 
-      NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (NextMemoryMapEntry, DescriptorSize);
+      NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (
+                             NextMemoryMapEntry,
+                             DescriptorSize
+                             );
     }
 
-    MemoryMapEntry     = NEXT_MEMORY_DESCRIPTOR (MemoryMapEntry, DescriptorSize);
-    NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (MemoryMapEntry, DescriptorSize);
+    MemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (
+                       MemoryMapEntry,
+                       DescriptorSize
+                       );
+    NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (
+                           MemoryMapEntry,
+                           DescriptorSize
+                           );
   }
 }
 
@@ -735,34 +839,54 @@ MergeMemoryMapForProtectionPolicy (
 
   MemoryMapEntry    = MemoryMap;
   NewMemoryMapEntry = MemoryMap;
-  MemoryMapEnd      = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap + *MemoryMapSize);
+  MemoryMapEnd      = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap +
+                                                *MemoryMapSize);
   while ((UINTN)MemoryMapEntry < (UINTN)MemoryMapEnd) {
     CopyMem (NewMemoryMapEntry, MemoryMapEntry, sizeof (EFI_MEMORY_DESCRIPTOR));
-    NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (MemoryMapEntry, DescriptorSize);
+    NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (
+                           MemoryMapEntry,
+                           DescriptorSize
+                           );
 
     do {
-      MemoryBlockLength = (UINT64)(EFI_PAGES_TO_SIZE ((UINTN)MemoryMapEntry->NumberOfPages));
-      Attributes        = GetPermissionAttributeForMemoryType (MemoryMapEntry->Type);
+      MemoryBlockLength = (UINT64)(EFI_PAGES_TO_SIZE (
+                                     (UINTN)MemoryMapEntry->NumberOfPages
+                                     ));
+      Attributes        = GetPermissionAttributeForMemoryType (
+                            MemoryMapEntry->Type
+                            );
 
       if (((UINTN)NextMemoryMapEntry < (UINTN)MemoryMapEnd) &&
-          (Attributes == GetPermissionAttributeForMemoryType (NextMemoryMapEntry->Type)) &&
-          ((MemoryMapEntry->PhysicalStart + MemoryBlockLength) == NextMemoryMapEntry->PhysicalStart))
+          (Attributes == GetPermissionAttributeForMemoryType (
+                           NextMemoryMapEntry->Type
+                           )) &&
+          ((MemoryMapEntry->PhysicalStart + MemoryBlockLength) ==
+           NextMemoryMapEntry->PhysicalStart))
       {
         MemoryMapEntry->NumberOfPages += NextMemoryMapEntry->NumberOfPages;
         if (NewMemoryMapEntry != MemoryMapEntry) {
           NewMemoryMapEntry->NumberOfPages += NextMemoryMapEntry->NumberOfPages;
         }
 
-        NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (NextMemoryMapEntry, DescriptorSize);
+        NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (
+                               NextMemoryMapEntry,
+                               DescriptorSize
+                               );
         continue;
       } else {
-        MemoryMapEntry = PREVIOUS_MEMORY_DESCRIPTOR (NextMemoryMapEntry, DescriptorSize);
+        MemoryMapEntry = PREVIOUS_MEMORY_DESCRIPTOR (
+                           NextMemoryMapEntry,
+                           DescriptorSize
+                           );
         break;
       }
     } while (TRUE);
 
     MemoryMapEntry    = NEXT_MEMORY_DESCRIPTOR (MemoryMapEntry, DescriptorSize);
-    NewMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (NewMemoryMapEntry, DescriptorSize);
+    NewMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (
+                          NewMemoryMapEntry,
+                          DescriptorSize
+                          );
   }
 
   *MemoryMapSize = (UINTN)NewMemoryMapEntry - (UINTN)MemoryMap;
@@ -832,9 +956,15 @@ InitializeDxeNxMemoryProtectionPolicy (
     // Get the base of stack from Hob.
     //
     Hob.Raw = GetHobList ();
-    while ((Hob.Raw = GetNextHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, Hob.Raw)) != NULL) {
+    while ((Hob.Raw = GetNextHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, Hob.Raw)) !=
+           NULL)
+    {
       MemoryHob = Hob.MemoryAllocation;
-      if (CompareGuid (&gEfiHobMemoryAllocStackGuid, &MemoryHob->AllocDescriptor.Name)) {
+      if (CompareGuid (
+            &gEfiHobMemoryAllocStackGuid,
+            &MemoryHob->AllocDescriptor.Name
+            ))
+      {
         DEBUG ((
           DEBUG_INFO,
           "%a: StackBase = 0x%016lx  StackSize = 0x%016lx\n",
@@ -870,7 +1000,8 @@ InitializeDxeNxMemoryProtectionPolicy (
   MergeMemoryMapForProtectionPolicy (MemoryMap, &MemoryMapSize, DescriptorSize);
 
   MemoryMapEntry = MemoryMap;
-  MemoryMapEnd   = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap + MemoryMapSize);
+  MemoryMapEnd   = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap +
+                                             MemoryMapSize);
   while ((UINTN)MemoryMapEntry < (UINTN)MemoryMapEnd) {
     Attributes = GetPermissionAttributeForMemoryType (MemoryMapEntry->Type);
     if (Attributes != 0) {
@@ -937,10 +1068,13 @@ InitializeDxeNxMemoryProtectionPolicy (
 
       if ((Entry->GcdMemoryType == EfiGcdMemoryTypeReserved) &&
           (Entry->EndAddress < MAX_ADDRESS) &&
-          ((Entry->Capabilities & (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED | EFI_MEMORY_TESTED)) ==
+          ((Entry->Capabilities & (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED |
+                                   EFI_MEMORY_TESTED)) ==
            (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED)))
       {
-        Attributes = GetPermissionAttributeForMemoryType (EfiConventionalMemory) |
+        Attributes = GetPermissionAttributeForMemoryType (
+                       EfiConventionalMemory
+                       ) |
                      (Entry->Attributes & EFI_CACHE_ATTRIBUTE_MASK);
 
         DEBUG ((
@@ -1071,9 +1205,15 @@ MemoryProtectionExitBootServicesCallback (
   // OS may set protection on RT based upon EFI_MEMORY_ATTRIBUTES_TABLE later.
   //
   if (mImageProtectionPolicy != 0) {
-    for (Link = gRuntime->ImageHead.ForwardLink; Link != &gRuntime->ImageHead; Link = Link->ForwardLink) {
+    for (Link = gRuntime->ImageHead.ForwardLink; Link != &gRuntime->ImageHead;
+         Link = Link->ForwardLink)
+    {
       RuntimeImage = BASE_CR (Link, EFI_RUNTIME_IMAGE_ENTRY, Link);
-      SetUefiImageMemoryAttributes ((UINT64)(UINTN)RuntimeImage->ImageBase, ALIGN_VALUE (RuntimeImage->ImageSize, EFI_PAGE_SIZE), 0);
+      SetUefiImageMemoryAttributes (
+        (UINT64)(UINTN)RuntimeImage->ImageBase,
+        ALIGN_VALUE (RuntimeImage->ImageSize, EFI_PAGE_SIZE),
+        0
+        );
     }
   }
 }
@@ -1154,9 +1294,18 @@ CoreInitializeMemoryProtection (
   // - EfiConventionalMemory and EfiBootServicesData should use the
   //   same attribute
   //
-  ASSERT ((GetPermissionAttributeForMemoryType (EfiBootServicesCode) & EFI_MEMORY_XP) == 0);
-  ASSERT ((GetPermissionAttributeForMemoryType (EfiRuntimeServicesCode) & EFI_MEMORY_XP) == 0);
-  ASSERT ((GetPermissionAttributeForMemoryType (EfiLoaderCode) & EFI_MEMORY_XP) == 0);
+  ASSERT (
+    (GetPermissionAttributeForMemoryType (EfiBootServicesCode) &
+     EFI_MEMORY_XP) == 0
+    );
+  ASSERT (
+    (GetPermissionAttributeForMemoryType (EfiRuntimeServicesCode) &
+     EFI_MEMORY_XP) == 0
+    );
+  ASSERT (
+    (GetPermissionAttributeForMemoryType (EfiLoaderCode) &
+     EFI_MEMORY_XP) == 0
+    );
   ASSERT (
     GetPermissionAttributeForMemoryType (EfiBootServicesData) ==
     GetPermissionAttributeForMemoryType (EfiConventionalMemory)

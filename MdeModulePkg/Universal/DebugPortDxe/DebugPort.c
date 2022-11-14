@@ -59,7 +59,12 @@ GetDebugPortVariable (
   EFI_DEVICE_PATH_PROTOCOL  *DebugPortVariable;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
 
-  GetVariable2 (EFI_DEBUGPORT_VARIABLE_NAME, &gEfiDebugPortVariableGuid, (VOID **)&DebugPortVariable, &DataSize);
+  GetVariable2 (
+    EFI_DEBUGPORT_VARIABLE_NAME,
+    &gEfiDebugPortVariableGuid,
+    (VOID **)&DebugPortVariable,
+    &DataSize
+    );
   if (DebugPortVariable == NULL) {
     return NULL;
   }
@@ -179,7 +184,12 @@ DebugPortSupported (
   // Check to see that there's not a debugport protocol already published,
   // since only one standard UART serial port could be supported by this driver.
   //
-  if (gBS->LocateProtocol (&gEfiDebugPortProtocolGuid, NULL, (VOID **)&DebugPortInterface) != EFI_NOT_FOUND) {
+  if (gBS->LocateProtocol (
+             &gEfiDebugPortProtocolGuid,
+             NULL,
+             (VOID **)&DebugPortInterface
+             ) != EFI_NOT_FOUND)
+  {
     return EFI_UNSUPPORTED;
   }
 
@@ -214,7 +224,11 @@ DebugPortSupported (
       Status = EFI_UNSUPPORTED;
     }
 
-    if ((Status == EFI_SUCCESS) && !CompareGuid (&gEfiDebugPortDevicePathGuid, (GUID *)(DevicePath + 1))) {
+    if ((Status == EFI_SUCCESS) && !CompareGuid (
+                                      &gEfiDebugPortDevicePathGuid,
+                                      (GUID *)(DevicePath + 1)
+                                      ))
+    {
       Status = EFI_UNSUPPORTED;
     }
 
@@ -305,15 +319,23 @@ DebugPortStart (
     mDebugPortDevice.DataBits         = 0;
     mDebugPortDevice.StopBits         = DefaultStopBits;
     mDebugPortDevice.ReceiveFifoDepth = 0;
-    Status                            = mDebugPortDevice.SerialIoBinding->SetAttributes (
-                                                                            mDebugPortDevice.SerialIoBinding,
-                                                                            mDebugPortDevice.BaudRate,
-                                                                            mDebugPortDevice.ReceiveFifoDepth,
-                                                                            mDebugPortDevice.Timeout,
-                                                                            mDebugPortDevice.Parity,
-                                                                            mDebugPortDevice.DataBits,
-                                                                            mDebugPortDevice.StopBits
-                                                                            );
+    Status                            =
+      mDebugPortDevice.SerialIoBinding->SetAttributes (
+                                          mDebugPortDevice
+                                            .SerialIoBinding,
+                                          mDebugPortDevice
+                                            .BaudRate,
+                                          mDebugPortDevice
+                                            .ReceiveFifoDepth,
+                                          mDebugPortDevice
+                                            .Timeout,
+                                          mDebugPortDevice
+                                            .Parity,
+                                          mDebugPortDevice
+                                            .DataBits,
+                                          mDebugPortDevice
+                                            .StopBits
+                                          );
     if (EFI_ERROR (Status)) {
       gBS->CloseProtocol (
              ControllerHandle,
@@ -341,7 +363,11 @@ DebugPortStart (
     SetDevicePathEndNode (Dp1);
   }
 
-  mDebugPortDevice.DebugPortDevicePath = AppendDevicePathNode (Dp1, (EFI_DEVICE_PATH_PROTOCOL *)&DebugPortDP);
+  mDebugPortDevice.DebugPortDevicePath = AppendDevicePathNode (
+                                           Dp1,
+                                           (EFI_DEVICE_PATH_PROTOCOL *)&
+                                           DebugPortDP
+                                           );
   if (mDebugPortDevice.DebugPortDevicePath == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -549,7 +575,8 @@ DebugPortRead (
 
   do {
     Status = DebugPortDevice->SerialIoBinding->Read (
-                                                 DebugPortDevice->SerialIoBinding,
+                                                 DebugPortDevice->
+                                                   SerialIoBinding,
                                                  &LocalBufferSize,
                                                  BufferPtr
                                                  );
@@ -606,7 +633,9 @@ DebugPortWrite (
   DebugPortDevice = DEBUGPORT_DEVICE_FROM_THIS (This);
 
   WriteSize = 8;
-  for (Position = 0; Position < *BufferSize && !EFI_ERROR (Status); Position += WriteSize) {
+  for (Position = 0; Position < *BufferSize && !EFI_ERROR (Status); Position +=
+         WriteSize)
+  {
     DebugPortDevice->SerialIoBinding->GetControl (
                                         DebugPortDevice->SerialIoBinding,
                                         &SerialControl
@@ -616,7 +645,8 @@ DebugPortWrite (
     }
 
     Status = DebugPortDevice->SerialIoBinding->Write (
-                                                 DebugPortDevice->SerialIoBinding,
+                                                 DebugPortDevice->
+                                                   SerialIoBinding,
                                                  &WriteSize,
                                                  &((UINT8 *)Buffer)[Position]
                                                  );
@@ -695,12 +725,20 @@ ImageUnloadHandler (
   //
   // Driver is stopped already.
   //
-  Status = gBS->HandleProtocol (ImageHandle, &gEfiComponentNameProtocolGuid, &ComponentName);
+  Status = gBS->HandleProtocol (
+                  ImageHandle,
+                  &gEfiComponentNameProtocolGuid,
+                  &ComponentName
+                  );
   if (EFI_ERROR (Status)) {
     ComponentName = NULL;
   }
 
-  Status = gBS->HandleProtocol (ImageHandle, &gEfiComponentName2ProtocolGuid, &ComponentName2);
+  Status = gBS->HandleProtocol (
+                  ImageHandle,
+                  &gEfiComponentName2ProtocolGuid,
+                  &ComponentName2
+                  );
   if (EFI_ERROR (Status)) {
     ComponentName2 = NULL;
   }

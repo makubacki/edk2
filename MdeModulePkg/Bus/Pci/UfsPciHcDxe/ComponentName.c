@@ -12,7 +12,8 @@
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUfsHcComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUfsHcComponentName =
+{
   UfsHcComponentNameGetDriverName,
   UfsHcComponentNameGetControllerName,
   "eng"
@@ -21,13 +22,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUfsHcComponentName =
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gUfsHcComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gUfsHcComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)UfsHcComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)UfsHcComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUfsHcDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mUfsHcDriverNameTable[] = {
   {
     "eng;en",
     L"Universal Flash Storage (UFS) Pci Host Controller Driver"
@@ -38,7 +41,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUfsHcDriverNameTable[] 
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUfsHcControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mUfsHcControllerNameTable[] = {
   {
     "eng;en",
     L"Universal Flash Storage (UFS) Pci Host Controller"

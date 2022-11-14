@@ -66,16 +66,24 @@ GetSmiHandlerProfileDatabase (
   SMI_HANDLER_PROFILE_PARAMETER_GET_DATA_BY_OFFSET  *CommGetData;
   EFI_SMM_COMMUNICATION_PROTOCOL                    *SmmCommunication;
   UINTN                                             MinimalSizeNeeded;
-  EDKII_PI_SMM_COMMUNICATION_REGION_TABLE           *PiSmmCommunicationRegionTable;
-  UINT32                                            Index;
-  EFI_MEMORY_DESCRIPTOR                             *Entry;
-  VOID                                              *Buffer;
-  UINTN                                             Size;
-  UINTN                                             Offset;
+  EDKII_PI_SMM_COMMUNICATION_REGION_TABLE           *
+                         PiSmmCommunicationRegionTable;
+  UINT32                 Index;
+  EFI_MEMORY_DESCRIPTOR  *Entry;
+  VOID                   *Buffer;
+  UINTN                  Size;
+  UINTN                  Offset;
 
-  Status = gBS->LocateProtocol (&gEfiSmmCommunicationProtocolGuid, NULL, (VOID **)&SmmCommunication);
+  Status = gBS->LocateProtocol (
+                  &gEfiSmmCommunicationProtocolGuid,
+                  NULL,
+                  (VOID **)&SmmCommunication
+                  );
   if (EFI_ERROR (Status)) {
-    Print (L"SmiHandlerProfile: Locate SmmCommunication protocol - %r\n", Status);
+    Print (
+      L"SmiHandlerProfile: Locate SmmCommunication protocol - %r\n",
+      Status
+      );
     return;
   }
 
@@ -86,14 +94,19 @@ GetSmiHandlerProfileDatabase (
              (VOID **)&PiSmmCommunicationRegionTable
              );
   if (EFI_ERROR (Status)) {
-    Print (L"SmiHandlerProfile: Get PiSmmCommunicationRegionTable - %r\n", Status);
+    Print (
+      L"SmiHandlerProfile: Get PiSmmCommunicationRegionTable - %r\n",
+      Status
+      );
     return;
   }
 
   ASSERT (PiSmmCommunicationRegionTable != NULL);
   Entry = (EFI_MEMORY_DESCRIPTOR *)(PiSmmCommunicationRegionTable + 1);
   Size  = 0;
-  for (Index = 0; Index < PiSmmCommunicationRegionTable->NumberOfEntries; Index++) {
+  for (Index = 0; Index < PiSmmCommunicationRegionTable->NumberOfEntries;
+       Index++)
+  {
     if (Entry->Type == EfiConventionalMemory) {
       Size = EFI_PAGES_TO_SIZE ((UINTN)Entry->NumberOfPages);
       if (Size >= MinimalSizeNeeded) {
@@ -101,7 +114,9 @@ GetSmiHandlerProfileDatabase (
       }
     }
 
-    Entry = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)Entry + PiSmmCommunicationRegionTable->DescriptorSize);
+    Entry = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)Entry +
+                                      PiSmmCommunicationRegionTable->
+                                        DescriptorSize);
   }
 
   ASSERT (Index < PiSmmCommunicationRegionTable->NumberOfEntries);
@@ -111,24 +126,39 @@ GetSmiHandlerProfileDatabase (
   // Get Size
   //
   CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];
-  CopyMem (&CommHeader->HeaderGuid, &gSmiHandlerProfileGuid, sizeof (gSmiHandlerProfileGuid));
+  CopyMem (
+    &CommHeader->HeaderGuid,
+    &gSmiHandlerProfileGuid,
+    sizeof (gSmiHandlerProfileGuid)
+    );
   CommHeader->MessageLength = sizeof (SMI_HANDLER_PROFILE_PARAMETER_GET_INFO);
 
-  CommGetInfo                      = (SMI_HANDLER_PROFILE_PARAMETER_GET_INFO *)&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
+  CommGetInfo =
+    (SMI_HANDLER_PROFILE_PARAMETER_GET_INFO *)&CommBuffer[OFFSET_OF (
+                                                            EFI_SMM_COMMUNICATE_HEADER,
+                                                            Data
+                                                            )];
   CommGetInfo->Header.Command      = SMI_HANDLER_PROFILE_COMMAND_GET_INFO;
   CommGetInfo->Header.DataLength   = sizeof (*CommGetInfo);
   CommGetInfo->Header.ReturnStatus = (UINT64)-1;
   CommGetInfo->DataSize            = 0;
 
   CommSize = sizeof (EFI_GUID) + sizeof (UINTN) + CommHeader->MessageLength;
-  Status   = SmmCommunication->Communicate (SmmCommunication, CommBuffer, &CommSize);
+  Status   = SmmCommunication->Communicate (
+                                 SmmCommunication,
+                                 CommBuffer,
+                                 &CommSize
+                                 );
   if (EFI_ERROR (Status)) {
     Print (L"SmiHandlerProfile: SmmCommunication - %r\n", Status);
     return;
   }
 
   if (CommGetInfo->Header.ReturnStatus != 0) {
-    Print (L"SmiHandlerProfile: GetInfo - 0x%0x\n", CommGetInfo->Header.ReturnStatus);
+    Print (
+      L"SmiHandlerProfile: GetInfo - 0x%0x\n",
+      CommGetInfo->Header.ReturnStatus
+      );
     return;
   }
 
@@ -137,19 +167,35 @@ GetSmiHandlerProfileDatabase (
   //
   // Get Data
   //
-  mSmiHandlerProfileDatabase = AllocateZeroPool (mSmiHandlerProfileDatabaseSize);
+  mSmiHandlerProfileDatabase = AllocateZeroPool (
+                                 mSmiHandlerProfileDatabaseSize
+                                 );
   if (mSmiHandlerProfileDatabase == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
-    Print (L"SmiHandlerProfile: AllocateZeroPool (0x%x) for dump buffer - %r\n", mSmiHandlerProfileDatabaseSize, Status);
+    Print (
+      L"SmiHandlerProfile: AllocateZeroPool (0x%x) for dump buffer - %r\n",
+      mSmiHandlerProfileDatabaseSize,
+      Status
+      );
     return;
   }
 
   CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];
-  CopyMem (&CommHeader->HeaderGuid, &gSmiHandlerProfileGuid, sizeof (gSmiHandlerProfileGuid));
-  CommHeader->MessageLength = sizeof (SMI_HANDLER_PROFILE_PARAMETER_GET_DATA_BY_OFFSET);
+  CopyMem (
+    &CommHeader->HeaderGuid,
+    &gSmiHandlerProfileGuid,
+    sizeof (gSmiHandlerProfileGuid)
+    );
+  CommHeader->MessageLength =
+    sizeof (SMI_HANDLER_PROFILE_PARAMETER_GET_DATA_BY_OFFSET);
 
-  CommGetData                      = (SMI_HANDLER_PROFILE_PARAMETER_GET_DATA_BY_OFFSET *)&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
-  CommGetData->Header.Command      = SMI_HANDLER_PROFILE_COMMAND_GET_DATA_BY_OFFSET;
+  CommGetData =
+    (SMI_HANDLER_PROFILE_PARAMETER_GET_DATA_BY_OFFSET *)&CommBuffer[OFFSET_OF (
+                                                                      EFI_SMM_COMMUNICATE_HEADER,
+                                                                      Data
+                                                                      )];
+  CommGetData->Header.Command =
+    SMI_HANDLER_PROFILE_COMMAND_GET_DATA_BY_OFFSET;
   CommGetData->Header.DataLength   = sizeof (*CommGetData);
   CommGetData->Header.ReturnStatus = (UINT64)-1;
 
@@ -164,23 +210,39 @@ GetSmiHandlerProfileDatabase (
     if (Size <= (mSmiHandlerProfileDatabaseSize - CommGetData->DataOffset)) {
       CommGetData->DataSize = (UINT64)Size;
     } else {
-      CommGetData->DataSize = (UINT64)(mSmiHandlerProfileDatabaseSize - CommGetData->DataOffset);
+      CommGetData->DataSize = (UINT64)(mSmiHandlerProfileDatabaseSize -
+                                       CommGetData->DataOffset);
     }
 
-    Status = SmmCommunication->Communicate (SmmCommunication, CommBuffer, &CommSize);
+    Status = SmmCommunication->Communicate (
+                                 SmmCommunication,
+                                 CommBuffer,
+                                 &CommSize
+                                 );
     ASSERT_EFI_ERROR (Status);
 
     if (CommGetData->Header.ReturnStatus != 0) {
       FreePool (mSmiHandlerProfileDatabase);
       mSmiHandlerProfileDatabase = NULL;
-      Print (L"SmiHandlerProfile: GetData - 0x%x\n", CommGetData->Header.ReturnStatus);
+      Print (
+        L"SmiHandlerProfile: GetData - 0x%x\n",
+        CommGetData->Header.ReturnStatus
+        );
       return;
     }
 
-    CopyMem ((UINT8 *)mSmiHandlerProfileDatabase + Offset, (VOID *)(UINTN)CommGetData->DataBuffer, (UINTN)CommGetData->DataSize);
+    CopyMem (
+      (UINT8 *)mSmiHandlerProfileDatabase + Offset,
+      (VOID *)(UINTN)CommGetData->DataBuffer,
+      (UINTN)CommGetData->DataSize
+      );
   }
 
-  DEBUG ((DEBUG_INFO, "SmiHandlerProfileSize - 0x%x\n", mSmiHandlerProfileDatabaseSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "SmiHandlerProfileSize - 0x%x\n",
+    mSmiHandlerProfileDatabaseSize
+    ));
 
   return;
 }
@@ -268,7 +330,11 @@ GetDriverNameString (
   // Method 1: Get the name string from image PDB
   //
   if (ImageStruct->PdbStringOffset != 0) {
-    GetShortPdbFileName ((CHAR8 *)((UINTN)ImageStruct + ImageStruct->PdbStringOffset), mNameString);
+    GetShortPdbFileName (
+      (CHAR8 *)((UINTN)ImageStruct +
+                ImageStruct->PdbStringOffset),
+      mNameString
+      );
     return mNameString;
   }
 
@@ -321,7 +387,9 @@ GetImageFromRef (
   SMM_CORE_IMAGE_DATABASE_STRUCTURE  *ImageStruct;
 
   ImageStruct = (VOID *)mSmiHandlerProfileDatabase;
-  while ((UINTN)ImageStruct < (UINTN)mSmiHandlerProfileDatabase + mSmiHandlerProfileDatabaseSize) {
+  while ((UINTN)ImageStruct < (UINTN)mSmiHandlerProfileDatabase +
+         mSmiHandlerProfileDatabaseSize)
+  {
     if (ImageStruct->Header.Signature == SMM_CORE_IMAGE_DATABASE_SIGNATURE) {
       if (ImageStruct->ImageRef == ImageRef) {
         return ImageStruct;
@@ -347,11 +415,17 @@ DumpSmmLoadedImage (
   CHAR8                              *NameString;
 
   ImageStruct = (VOID *)mSmiHandlerProfileDatabase;
-  while ((UINTN)ImageStruct < (UINTN)mSmiHandlerProfileDatabase + mSmiHandlerProfileDatabaseSize) {
+  while ((UINTN)ImageStruct < (UINTN)mSmiHandlerProfileDatabase +
+         mSmiHandlerProfileDatabaseSize)
+  {
     if (ImageStruct->Header.Signature == SMM_CORE_IMAGE_DATABASE_SIGNATURE) {
       NameString = GetDriverNameString (ImageStruct);
       Print (L"  <Image Name=\"%a\"", NameString);
-      Print (L" Base=\"0x%lx\" Size=\"0x%lx\"", ImageStruct->ImageBase, ImageStruct->ImageSize);
+      Print (
+        L" Base=\"0x%lx\" Size=\"0x%lx\"",
+        ImageStruct->ImageBase,
+        ImageStruct->ImageSize
+        );
       if (ImageStruct->EntryPoint != 0) {
         Print (L" EntryPoint=\"0x%lx\"", ImageStruct->EntryPoint);
       }
@@ -360,7 +434,8 @@ DumpSmmLoadedImage (
       Print (L" RefId=\"0x%x\"", ImageStruct->ImageRef);
       Print (L">\n");
       if (ImageStruct->PdbStringOffset != 0) {
-        PdbString = (CHAR8 *)((UINTN)ImageStruct + ImageStruct->PdbStringOffset);
+        PdbString = (CHAR8 *)((UINTN)ImageStruct +
+                              ImageStruct->PdbStringOffset);
         Print (L"    <Pdb>%a</Pdb>\n", PdbString);
       }
 
@@ -545,26 +620,93 @@ DumpSmiChildContext (
   CHAR16  *Str;
 
   if (CompareGuid (HandlerType, &gEfiSmmSwDispatch2ProtocolGuid)) {
-    Print (L" SwSmi=\"0x%lx\"", ((SMI_HANDLER_PROFILE_SW_REGISTER_CONTEXT *)Context)->SwSmiInputValue);
+    Print (
+      L" SwSmi=\"0x%lx\"",
+      ((SMI_HANDLER_PROFILE_SW_REGISTER_CONTEXT *)Context)->SwSmiInputValue
+      );
   } else if (CompareGuid (HandlerType, &gEfiSmmSxDispatch2ProtocolGuid)) {
-    Print (L" SxType=\"%a\"", SxTypeToString (((EFI_SMM_SX_REGISTER_CONTEXT *)Context)->Type));
-    Print (L" SxPhase=\"%a\"", SxPhaseToString (((EFI_SMM_SX_REGISTER_CONTEXT *)Context)->Phase));
-  } else if (CompareGuid (HandlerType, &gEfiSmmPowerButtonDispatch2ProtocolGuid)) {
-    Print (L" PowerButtonPhase=\"%a\"", PowerButtonPhaseToString (((EFI_SMM_POWER_BUTTON_REGISTER_CONTEXT *)Context)->Phase));
-  } else if (CompareGuid (HandlerType, &gEfiSmmStandbyButtonDispatch2ProtocolGuid)) {
-    Print (L" StandbyButtonPhase=\"%a\"", StandbyButtonPhaseToString (((EFI_SMM_STANDBY_BUTTON_REGISTER_CONTEXT *)Context)->Phase));
-  } else if (CompareGuid (HandlerType, &gEfiSmmPeriodicTimerDispatch2ProtocolGuid)) {
-    Print (L" PeriodicTimerPeriod=\"%ld\"", ((EFI_SMM_PERIODIC_TIMER_REGISTER_CONTEXT *)Context)->Period);
-    Print (L" PeriodicTimerSmiTickInterval=\"%ld\"", ((EFI_SMM_PERIODIC_TIMER_REGISTER_CONTEXT *)Context)->SmiTickInterval);
+    Print (
+      L" SxType=\"%a\"",
+      SxTypeToString (
+        ((EFI_SMM_SX_REGISTER_CONTEXT *)Context)->Type
+        )
+      );
+    Print (
+      L" SxPhase=\"%a\"",
+      SxPhaseToString (
+        ((EFI_SMM_SX_REGISTER_CONTEXT *)Context)->Phase
+        )
+      );
+  } else if (CompareGuid (
+               HandlerType,
+               &gEfiSmmPowerButtonDispatch2ProtocolGuid
+               ))
+  {
+    Print (
+      L" PowerButtonPhase=\"%a\"",
+      PowerButtonPhaseToString (
+        ((EFI_SMM_POWER_BUTTON_REGISTER_CONTEXT *)Context)->Phase
+        )
+      );
+  } else if (CompareGuid (
+               HandlerType,
+               &gEfiSmmStandbyButtonDispatch2ProtocolGuid
+               ))
+  {
+    Print (
+      L" StandbyButtonPhase=\"%a\"",
+      StandbyButtonPhaseToString (
+        ((EFI_SMM_STANDBY_BUTTON_REGISTER_CONTEXT *)Context)->Phase
+        )
+      );
+  } else if (CompareGuid (
+               HandlerType,
+               &gEfiSmmPeriodicTimerDispatch2ProtocolGuid
+               ))
+  {
+    Print (
+      L" PeriodicTimerPeriod=\"%ld\"",
+      ((EFI_SMM_PERIODIC_TIMER_REGISTER_CONTEXT *)Context)->Period
+      );
+    Print (
+      L" PeriodicTimerSmiTickInterval=\"%ld\"",
+      ((EFI_SMM_PERIODIC_TIMER_REGISTER_CONTEXT *)Context)->SmiTickInterval
+      );
   } else if (CompareGuid (HandlerType, &gEfiSmmGpiDispatch2ProtocolGuid)) {
-    Print (L" GpiNum=\"0x%lx\"", ((EFI_SMM_GPI_REGISTER_CONTEXT *)Context)->GpiNum);
+    Print (
+      L" GpiNum=\"0x%lx\"",
+      ((EFI_SMM_GPI_REGISTER_CONTEXT *)Context)->GpiNum
+      );
   } else if (CompareGuid (HandlerType, &gEfiSmmIoTrapDispatch2ProtocolGuid)) {
-    Print (L" IoTrapAddress=\"0x%x\"", ((EFI_SMM_IO_TRAP_REGISTER_CONTEXT *)Context)->Address);
-    Print (L" IoTrapLength=\"0x%x\"", ((EFI_SMM_IO_TRAP_REGISTER_CONTEXT *)Context)->Length);
-    Print (L" IoTrapType=\"%a\"", IoTrapTypeToString (((EFI_SMM_IO_TRAP_REGISTER_CONTEXT *)Context)->Type));
+    Print (
+      L" IoTrapAddress=\"0x%x\"",
+      ((EFI_SMM_IO_TRAP_REGISTER_CONTEXT *)Context)->Address
+      );
+    Print (
+      L" IoTrapLength=\"0x%x\"",
+      ((EFI_SMM_IO_TRAP_REGISTER_CONTEXT *)Context)->Length
+      );
+    Print (
+      L" IoTrapType=\"%a\"",
+      IoTrapTypeToString (
+        ((EFI_SMM_IO_TRAP_REGISTER_CONTEXT *)Context)->Type
+        )
+      );
   } else if (CompareGuid (HandlerType, &gEfiSmmUsbDispatch2ProtocolGuid)) {
-    Print (L" UsbType=\"0x%x\"", UsbTypeToString (((SMI_HANDLER_PROFILE_USB_REGISTER_CONTEXT *)Context)->Type));
-    Str = ConvertDevicePathToText ((EFI_DEVICE_PATH_PROTOCOL *)(((SMI_HANDLER_PROFILE_USB_REGISTER_CONTEXT *)Context) + 1), TRUE, TRUE);
+    Print (
+      L" UsbType=\"0x%x\"",
+      UsbTypeToString (
+        ((SMI_HANDLER_PROFILE_USB_REGISTER_CONTEXT *)Context)->Type
+        )
+      );
+    Str = ConvertDevicePathToText (
+            (EFI_DEVICE_PATH_PROTOCOL *)(((
+                                                                 SMI_HANDLER_PROFILE_USB_REGISTER_CONTEXT
+                                                                 *)
+                                          Context) + 1),
+            TRUE,
+            TRUE
+            );
     Print (L" UsbDevicePath=\"%s\"", Str);
     if (Str != NULL) {
       FreePool (Str);
@@ -593,8 +735,12 @@ DumpSmiHandler (
   CHAR8                              *NameString;
 
   SmiStruct = (VOID *)mSmiHandlerProfileDatabase;
-  while ((UINTN)SmiStruct < (UINTN)mSmiHandlerProfileDatabase + mSmiHandlerProfileDatabaseSize) {
-    if ((SmiStruct->Header.Signature == SMM_CORE_SMI_DATABASE_SIGNATURE) && (SmiStruct->HandlerCategory == HandlerCategory)) {
+  while ((UINTN)SmiStruct < (UINTN)mSmiHandlerProfileDatabase +
+         mSmiHandlerProfileDatabaseSize)
+  {
+    if ((SmiStruct->Header.Signature == SMM_CORE_SMI_DATABASE_SIGNATURE) &&
+        (SmiStruct->HandlerCategory == HandlerCategory))
+    {
       SmiHandlerStruct = (VOID *)(SmiStruct + 1);
       Print (L"  <SmiEntry");
       if (!IsZeroGuid (&SmiStruct->HandlerType)) {
@@ -605,31 +751,56 @@ DumpSmiHandler (
       for (Index = 0; Index < SmiStruct->HandlerCount; Index++) {
         Print (L"    <SmiHandler");
         if (SmiHandlerStruct->ContextBufferSize != 0) {
-          DumpSmiChildContext (&SmiStruct->HandlerType, (UINT8 *)SmiHandlerStruct + SmiHandlerStruct->ContextBufferOffset, SmiHandlerStruct->ContextBufferSize);
+          DumpSmiChildContext (
+            &SmiStruct->HandlerType,
+            (UINT8 *)SmiHandlerStruct + SmiHandlerStruct->ContextBufferOffset,
+            SmiHandlerStruct->ContextBufferSize
+            );
         }
 
         Print (L">\n");
         ImageStruct = GetImageFromRef ((UINTN)SmiHandlerStruct->ImageRef);
         NameString  = GetDriverNameString (ImageStruct);
-        Print (L"      <Module RefId=\"0x%x\" Name=\"%a\">\n", SmiHandlerStruct->ImageRef, NameString);
+        Print (
+          L"      <Module RefId=\"0x%x\" Name=\"%a\">\n",
+          SmiHandlerStruct->ImageRef,
+          NameString
+          );
         if ((ImageStruct != NULL) && (ImageStruct->PdbStringOffset != 0)) {
-          Print (L"      <Pdb>%a</Pdb>\n", (UINT8 *)ImageStruct + ImageStruct->PdbStringOffset);
+          Print (
+            L"      <Pdb>%a</Pdb>\n",
+            (UINT8 *)ImageStruct +
+            ImageStruct->PdbStringOffset
+            );
         }
 
         Print (L"      </Module>\n");
-        Print (L"      <Handler Address=\"0x%lx\">\n", SmiHandlerStruct->Handler);
+        Print (
+          L"      <Handler Address=\"0x%lx\">\n",
+          SmiHandlerStruct->Handler
+          );
         if (ImageStruct != NULL) {
-          Print (L"         <RVA>0x%x</RVA>\n", (UINTN)(SmiHandlerStruct->Handler - ImageStruct->ImageBase));
+          Print (
+            L"         <RVA>0x%x</RVA>\n",
+            (UINTN)(SmiHandlerStruct->Handler - ImageStruct->ImageBase)
+            );
         }
 
         Print (L"      </Handler>\n", SmiHandlerStruct->Handler);
-        Print (L"      <Caller Address=\"0x%lx\">\n", SmiHandlerStruct->CallerAddr);
+        Print (
+          L"      <Caller Address=\"0x%lx\">\n",
+          SmiHandlerStruct->CallerAddr
+          );
         if (ImageStruct != NULL) {
-          Print (L"         <RVA>0x%x</RVA>\n", (UINTN)(SmiHandlerStruct->CallerAddr - ImageStruct->ImageBase));
+          Print (
+            L"         <RVA>0x%x</RVA>\n",
+            (UINTN)(SmiHandlerStruct->CallerAddr - ImageStruct->ImageBase)
+            );
         }
 
         Print (L"      </Caller>\n", SmiHandlerStruct->Handler);
-        SmiHandlerStruct = (VOID *)((UINTN)SmiHandlerStruct + SmiHandlerStruct->Length);
+        SmiHandlerStruct = (VOID *)((UINTN)SmiHandlerStruct +
+                                    SmiHandlerStruct->Length);
         Print (L"    </SmiHandler>\n");
       }
 
@@ -690,7 +861,9 @@ SmiHandlerProfileInfoEntrypoint (
   Print (L"  </SmiHandlerCategory>\n\n");
 
   Print (L"  <SmiHandlerCategory Name=\"HardwareSmi\">\n");
-  Print (L"  <!-- The hardware SMI Handler registered by SmmChildDispatcher -->\n");
+  Print (
+    L"  <!-- The hardware SMI Handler registered by SmmChildDispatcher -->\n"
+    );
   DumpSmiHandler (SmmCoreSmiHandlerCategoryHardwareHandler);
   Print (L"  </SmiHandlerCategory>\n\n");
 

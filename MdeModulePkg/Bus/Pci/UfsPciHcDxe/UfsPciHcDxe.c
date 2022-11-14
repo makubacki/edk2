@@ -123,14 +123,23 @@ UfsHcMap (
   EFI_PCI_IO_PROTOCOL               *PciIo;
   EFI_STATUS                        Status;
 
-  if ((This == NULL) || (HostAddress == NULL) || (NumberOfBytes == NULL) || (DeviceAddress == NULL) || (Mapping == NULL)) {
+  if ((This == NULL) || (HostAddress == NULL) || (NumberOfBytes == NULL) ||
+      (DeviceAddress == NULL) || (Mapping == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
   Private = UFS_HOST_CONTROLLER_PRIVATE_DATA_FROM_UFSHC (This);
   PciIo   = Private->PciIo;
 
-  Status = PciIo->Map (PciIo, (EFI_PCI_IO_PROTOCOL_OPERATION)Operation, HostAddress, NumberOfBytes, DeviceAddress, Mapping);
+  Status = PciIo->Map (
+                    PciIo,
+                    (EFI_PCI_IO_PROTOCOL_OPERATION)Operation,
+                    HostAddress,
+                    NumberOfBytes,
+                    DeviceAddress,
+                    Mapping
+                    );
   return Status;
 }
 
@@ -208,7 +217,14 @@ UfsHcAllocateBuffer (
   Private = UFS_HOST_CONTROLLER_PRIVATE_DATA_FROM_UFSHC (This);
   PciIo   = Private->PciIo;
 
-  Status = PciIo->AllocateBuffer (PciIo, Type, MemoryType, Pages, HostAddress, Attributes);
+  Status = PciIo->AllocateBuffer (
+                    PciIo,
+                    Type,
+                    MemoryType,
+                    Pages,
+                    HostAddress,
+                    Attributes
+                    );
   return Status;
 }
 
@@ -312,7 +328,14 @@ UfsHcMmioRead (
   PciIo    = Private->PciIo;
   BarIndex = Private->BarIndex;
 
-  Status = PciIo->Mem.Read (PciIo, (EFI_PCI_IO_PROTOCOL_WIDTH)Width, BarIndex, Offset, Count, Buffer);
+  Status = PciIo->Mem.Read (
+                        PciIo,
+                        (EFI_PCI_IO_PROTOCOL_WIDTH)Width,
+                        BarIndex,
+                        Offset,
+                        Count,
+                        Buffer
+                        );
 
   return Status;
 }
@@ -354,7 +377,14 @@ UfsHcMmioWrite (
   PciIo    = Private->PciIo;
   BarIndex = Private->BarIndex;
 
-  Status = PciIo->Mem.Write (PciIo, (EFI_PCI_IO_PROTOCOL_WIDTH)Width, BarIndex, Offset, Count, Buffer);
+  Status = PciIo->Mem.Write (
+                        PciIo,
+                        (EFI_PCI_IO_PROTOCOL_WIDTH)Width,
+                        BarIndex,
+                        Offset,
+                        Count,
+                        Buffer
+                        );
 
   return Status;
 }
@@ -592,7 +622,10 @@ UfsHcDriverBindingStart (
     return Status;
   }
 
-  Private = AllocateCopyPool (sizeof (UFS_HOST_CONTROLLER_PRIVATE_DATA), &gUfsHcTemplate);
+  Private = AllocateCopyPool (
+              sizeof (UFS_HOST_CONTROLLER_PRIVATE_DATA),
+              &gUfsHcTemplate
+              );
   if (Private == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;

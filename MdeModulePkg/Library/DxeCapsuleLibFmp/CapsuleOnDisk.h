@@ -48,9 +48,10 @@
 //
 // (20 * (6+5+2))+1) unicode characters from EFI FAT spec (doubled for bytes)
 //
-#define MAX_FILE_NAME_SIZE  522
-#define MAX_FILE_NAME_LEN   (MAX_FILE_NAME_SIZE / sizeof(CHAR16))
-#define MAX_FILE_INFO_LEN   (OFFSET_OF(EFI_FILE_INFO, FileName) + MAX_FILE_NAME_LEN)
+#define MAX_FILE_NAME_SIZE    522
+#define MAX_FILE_NAME_LEN     (MAX_FILE_NAME_SIZE / sizeof(CHAR16))
+#define MAX_FILE_INFO_LEN   \
+                              (OFFSET_OF(EFI_FILE_INFO, FileName) + MAX_FILE_NAME_LEN)
 
 typedef struct {
   UINTN            Signature;

@@ -51,7 +51,11 @@ CoreInstallConfigurationTable (
   // Search all the table for an entry that matches Guid
   //
   for (Index = 0; Index < gDxeCoreST->NumberOfTableEntries; Index++) {
-    if (CompareGuid (Guid, &(gDxeCoreST->ConfigurationTable[Index].VendorGuid))) {
+    if (CompareGuid (
+          Guid,
+          &(gDxeCoreST->ConfigurationTable[Index].VendorGuid)
+          ))
+    {
       break;
     }
   }
@@ -86,7 +90,8 @@ CoreInstallConfigurationTable (
     CopyMem (
       &(EfiConfigurationTable[Index]),
       &(gDxeCoreST->ConfigurationTable[Index + 1]),
-      (gDxeCoreST->NumberOfTableEntries - Index) * sizeof (EFI_CONFIGURATION_TABLE)
+      (gDxeCoreST->NumberOfTableEntries - Index) *
+      sizeof (EFI_CONFIGURATION_TABLE)
       );
   } else {
     //
@@ -103,12 +108,17 @@ CoreInstallConfigurationTable (
     //
     // Assume that Index == gDxeCoreST->NumberOfTableEntries
     //
-    if ((Index * sizeof (EFI_CONFIGURATION_TABLE)) >= mSystemTableAllocateSize) {
+    if ((Index * sizeof (EFI_CONFIGURATION_TABLE)) >=
+        mSystemTableAllocateSize)
+    {
       //
       // Allocate a table with one additional entry.
       //
-      mSystemTableAllocateSize += (CONFIG_TABLE_SIZE_INCREASED * sizeof (EFI_CONFIGURATION_TABLE));
-      EfiConfigurationTable     = AllocateRuntimePool (mSystemTableAllocateSize);
+      mSystemTableAllocateSize += (CONFIG_TABLE_SIZE_INCREASED *
+                                   sizeof (EFI_CONFIGURATION_TABLE));
+      EfiConfigurationTable     = AllocateRuntimePool (
+                                    mSystemTableAllocateSize
+                                    );
       if (EfiConfigurationTable == NULL) {
         //
         // If a new table could not be allocated, then return an error.

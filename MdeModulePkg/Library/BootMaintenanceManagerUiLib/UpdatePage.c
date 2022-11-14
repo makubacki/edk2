@@ -29,13 +29,23 @@ CreateUpdateData (
   //
   // Create Hii Extend Label OpCode as the start opcode
   //
-  mStartLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (mStartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  mStartLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                        mStartOpCodeHandle,
+                                        &gEfiIfrTianoGuid,
+                                        NULL,
+                                        sizeof (EFI_IFR_GUID_LABEL)
+                                        );
   mStartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
 
   //
   // Create Hii Extend Label OpCode as the end opcode
   //
-  mEndLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (mEndOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  mEndLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                      mEndOpCodeHandle,
+                                      &gEfiIfrTianoGuid,
+                                      NULL,
+                                      sizeof (EFI_IFR_GUID_LABEL)
+                                      );
   mEndLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
   mEndLabel->Number       = LABEL_END;
 }
@@ -64,7 +74,12 @@ RefreshUpdateData (
   //
   // Create Hii Extend Label OpCode as the start opcode
   //
-  mStartLabel               = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (mStartOpCodeHandle, &gEfiIfrTianoGuid, NULL, sizeof (EFI_IFR_GUID_LABEL));
+  mStartLabel = (EFI_IFR_GUID_LABEL *)HiiCreateGuidOpCode (
+                                        mStartOpCodeHandle,
+                                        &gEfiIfrTianoGuid,
+                                        NULL,
+                                        sizeof (EFI_IFR_GUID_LABEL)
+                                        );
   mStartLabel->ExtendOpCode = EFI_IFR_EXTEND_OP_LABEL;
 }
 
@@ -236,7 +251,11 @@ UpdateBootDelPage (
 
   UpdatePageStart (CallbackData);
 
-  ASSERT (BootOptionMenu.MenuNumber <= (sizeof (CallbackData->BmmFakeNvData.BootOptionDel) / sizeof (CallbackData->BmmFakeNvData.BootOptionDel[0])));
+  ASSERT (
+    BootOptionMenu.MenuNumber <=
+    (sizeof (CallbackData->BmmFakeNvData.BootOptionDel) /
+     sizeof (CallbackData->BmmFakeNvData.BootOptionDel[0]))
+    );
   for (Index = 0; Index < BootOptionMenu.MenuNumber; Index++) {
     NewMenuEntry   = BOpt_GetMenuEntry (&BootOptionMenu, Index);
     NewLoadContext = (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
@@ -246,7 +265,9 @@ UpdateBootDelPage (
 
     NewLoadContext->Deleted = FALSE;
 
-    if (CallbackData->BmmFakeNvData.BootOptionDel[Index] && !CallbackData->BmmFakeNvData.BootOptionDelMark[Index]) {
+    if (CallbackData->BmmFakeNvData.BootOptionDel[Index] &&
+        !CallbackData->BmmFakeNvData.BootOptionDelMark[Index])
+    {
       //
       // CallbackData->BmmFakeNvData.BootOptionDel[Index] == TRUE means browser knows this boot option is selected
       // CallbackData->BmmFakeNvData.BootOptionDelMark[Index] = FALSE means BDS knows the selected boot option has
@@ -327,14 +348,20 @@ UpdateDrvDelPage (
 
   UpdatePageStart (CallbackData);
 
-  ASSERT (DriverOptionMenu.MenuNumber <= (sizeof (CallbackData->BmmFakeNvData.DriverOptionDel) / sizeof (CallbackData->BmmFakeNvData.DriverOptionDel[0])));
+  ASSERT (
+    DriverOptionMenu.MenuNumber <=
+    (sizeof (CallbackData->BmmFakeNvData.DriverOptionDel) /
+     sizeof (CallbackData->BmmFakeNvData.DriverOptionDel[0]))
+    );
   for (Index = 0; Index < DriverOptionMenu.MenuNumber; Index++) {
     NewMenuEntry = BOpt_GetMenuEntry (&DriverOptionMenu, Index);
 
     NewLoadContext          = (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
     NewLoadContext->Deleted = FALSE;
 
-    if (CallbackData->BmmFakeNvData.DriverOptionDel[Index] && !CallbackData->BmmFakeNvData.DriverOptionDelMark[Index]) {
+    if (CallbackData->BmmFakeNvData.DriverOptionDel[Index] &&
+        !CallbackData->BmmFakeNvData.DriverOptionDelMark[Index])
+    {
       //
       // CallbackData->BmmFakeNvData.BootOptionDel[Index] == TRUE means browser knows this boot option is selected
       // CallbackData->BmmFakeNvData.BootOptionDelMark[Index] = FALSE means BDS knows the selected boot option has
@@ -522,9 +549,12 @@ UpdateConsolePage (
     NewTerminalContext = (BM_TERMINAL_CONTEXT *)NewMenuEntry->VariableContext;
 
     ASSERT (Index < MAX_MENU_NUMBER);
-    if (((NewTerminalContext->IsConIn != 0) && (UpdatePageId == FORM_CON_IN_ID)) ||
-        ((NewTerminalContext->IsConOut != 0) && (UpdatePageId == FORM_CON_OUT_ID)) ||
-        ((NewTerminalContext->IsStdErr != 0) && (UpdatePageId == FORM_CON_ERR_ID))
+    if (((NewTerminalContext->IsConIn != 0) && (UpdatePageId ==
+                                                FORM_CON_IN_ID)) ||
+        ((NewTerminalContext->IsConOut != 0) && (UpdatePageId ==
+                                                 FORM_CON_OUT_ID)) ||
+        ((NewTerminalContext->IsStdErr != 0) && (UpdatePageId ==
+                                                 FORM_CON_ERR_ID))
         )
     {
       CheckFlags         |= EFI_IFR_CHECKBOX_DEFAULT;
@@ -590,7 +620,12 @@ UpdateOrderPage (
       // else means browser maintains some uncommitted date which are not saved in BootOptionMenu,
       // so we should not get the data from BootOptionMenu to show it.
       //
-      if (CompareMem (CallbackData->BmmFakeNvData.BootOptionOrder, CallbackData->BmmOldFakeNVData.BootOptionOrder, sizeof (CallbackData->BmmFakeNvData.BootOptionOrder)) == 0) {
+      if (CompareMem (
+            CallbackData->BmmFakeNvData.BootOptionOrder,
+            CallbackData->BmmOldFakeNVData.BootOptionOrder,
+            sizeof (CallbackData->BmmFakeNvData.BootOptionOrder)
+            ) == 0)
+      {
         GetBootOrder (CallbackData);
       }
 
@@ -606,7 +641,12 @@ UpdateOrderPage (
       // else means browser maintains some uncommitted date which are not saved in DriverOptionMenu,
       // so we should not get the data from DriverOptionMenu to show it.
       //
-      if (CompareMem (CallbackData->BmmFakeNvData.DriverOptionOrder, CallbackData->BmmOldFakeNVData.DriverOptionOrder, sizeof (CallbackData->BmmFakeNvData.DriverOptionOrder)) == 0) {
+      if (CompareMem (
+            CallbackData->BmmFakeNvData.DriverOptionOrder,
+            CallbackData->BmmOldFakeNVData.DriverOptionOrder,
+            sizeof (CallbackData->BmmFakeNvData.DriverOptionOrder)
+            ) == 0)
+      {
         GetDriverOrder (CallbackData);
       }
 
@@ -622,11 +662,15 @@ UpdateOrderPage (
   ASSERT (OptionsOpCodeHandle != NULL);
 
   NewMenuEntry = NULL;
-  for (OptionIndex = 0; (OptionOrder[OptionIndex] != 0 && OptionIndex < MAX_MENU_NUMBER); OptionIndex++) {
+  for (OptionIndex = 0; (OptionOrder[OptionIndex] != 0 && OptionIndex <
+                         MAX_MENU_NUMBER); OptionIndex++)
+  {
     BootOptionFound = FALSE;
     for (Index = 0; Index < OptionMenu->MenuNumber; Index++) {
       NewMenuEntry = BOpt_GetMenuEntry (OptionMenu, Index);
-      if ((UINT32)(NewMenuEntry->OptionNumber + 1) == OptionOrder[OptionIndex]) {
+      if ((UINT32)(NewMenuEntry->OptionNumber + 1) ==
+          OptionOrder[OptionIndex])
+      {
         BootOptionFound = TRUE;
         break;
       }
@@ -749,7 +793,12 @@ UpdateConModePage (
       0
       );
 
-    ModeToken[Index] = HiiSetString (CallbackData->BmmHiiHandle, 0, ModeString, NULL);
+    ModeToken[Index] = HiiSetString (
+                         CallbackData->BmmHiiHandle,
+                         0,
+                         ModeString,
+                         NULL
+                         );
 
     if (Mode == CallbackData->BmmFakeNvData.ConsoleOutMode) {
       HiiCreateOneOfOptionOpCode (
@@ -826,7 +875,9 @@ UpdateTerminalPage (
   OptionsOpCodeHandle = HiiAllocateOpCodeHandle ();
   ASSERT (OptionsOpCodeHandle != NULL);
 
-  for (Index = 0; Index < sizeof (BaudRateList) / sizeof (BaudRateList[0]); Index++) {
+  for (Index = 0; Index < sizeof (BaudRateList) / sizeof (BaudRateList[0]);
+       Index++)
+  {
     CheckFlags = 0;
     if (BaudRateList[Index].Value == 115200) {
       CheckFlags |= EFI_IFR_OPTION_DEFAULT;
@@ -1045,7 +1096,13 @@ UpdateOptionPage (
   }
 
   if (String == NULL) {
-    String = HiiGetString (CallbackData->BmmHiiHandle, STRING_TOKEN (STR_NULL_STRING), NULL);
+    String = HiiGetString (
+               CallbackData->BmmHiiHandle,
+               STRING_TOKEN (
+                 STR_NULL_STRING
+                 ),
+               NULL
+               );
     ASSERT (String != NULL);
   }
 
@@ -1054,17 +1111,41 @@ UpdateOptionPage (
 
   if (FormId == FORM_BOOT_ADD_ID) {
     if (!CallbackData->BmmFakeNvData.BootOptionChanged) {
-      ZeroMem (CallbackData->BmmFakeNvData.BootOptionalData, sizeof (CallbackData->BmmFakeNvData.BootOptionalData));
-      ZeroMem (CallbackData->BmmFakeNvData.BootDescriptionData, sizeof (CallbackData->BmmFakeNvData.BootDescriptionData));
-      ZeroMem (CallbackData->BmmOldFakeNVData.BootOptionalData, sizeof (CallbackData->BmmOldFakeNVData.BootOptionalData));
-      ZeroMem (CallbackData->BmmOldFakeNVData.BootDescriptionData, sizeof (CallbackData->BmmOldFakeNVData.BootDescriptionData));
+      ZeroMem (
+        CallbackData->BmmFakeNvData.BootOptionalData,
+        sizeof (CallbackData->BmmFakeNvData.BootOptionalData)
+        );
+      ZeroMem (
+        CallbackData->BmmFakeNvData.BootDescriptionData,
+        sizeof (CallbackData->BmmFakeNvData.BootDescriptionData)
+        );
+      ZeroMem (
+        CallbackData->BmmOldFakeNVData.BootOptionalData,
+        sizeof (CallbackData->BmmOldFakeNVData.BootOptionalData)
+        );
+      ZeroMem (
+        CallbackData->BmmOldFakeNVData.BootDescriptionData,
+        sizeof (CallbackData->BmmOldFakeNVData.BootDescriptionData)
+        );
     }
   } else if (FormId == FORM_DRV_ADD_FILE_ID) {
     if (!CallbackData->BmmFakeNvData.DriverOptionChanged) {
-      ZeroMem (CallbackData->BmmFakeNvData.DriverOptionalData, sizeof (CallbackData->BmmFakeNvData.DriverOptionalData));
-      ZeroMem (CallbackData->BmmFakeNvData.DriverDescriptionData, sizeof (CallbackData->BmmFakeNvData.DriverDescriptionData));
-      ZeroMem (CallbackData->BmmOldFakeNVData.DriverOptionalData, sizeof (CallbackData->BmmOldFakeNVData.DriverOptionalData));
-      ZeroMem (CallbackData->BmmOldFakeNVData.DriverDescriptionData, sizeof (CallbackData->BmmOldFakeNVData.DriverDescriptionData));
+      ZeroMem (
+        CallbackData->BmmFakeNvData.DriverOptionalData,
+        sizeof (CallbackData->BmmFakeNvData.DriverOptionalData)
+        );
+      ZeroMem (
+        CallbackData->BmmFakeNvData.DriverDescriptionData,
+        sizeof (CallbackData->BmmFakeNvData.DriverDescriptionData)
+        );
+      ZeroMem (
+        CallbackData->BmmOldFakeNVData.DriverOptionalData,
+        sizeof (CallbackData->BmmOldFakeNVData.DriverOptionalData)
+        );
+      ZeroMem (
+        CallbackData->BmmOldFakeNVData.DriverDescriptionData,
+        sizeof (CallbackData->BmmOldFakeNVData.DriverDescriptionData)
+        );
     }
   }
 
@@ -1147,12 +1228,16 @@ UpdatePageId (
     // If we select a handle to add driver option, advance to the add handle description page.
     //
     NewPageId = FORM_DRV_ADD_HANDLE_DESC_ID;
-  } else if ((NewPageId == KEY_VALUE_SAVE_AND_EXIT) || (NewPageId == KEY_VALUE_NO_SAVE_AND_EXIT)) {
+  } else if ((NewPageId == KEY_VALUE_SAVE_AND_EXIT) || (NewPageId ==
+                                                        KEY_VALUE_NO_SAVE_AND_EXIT))
+  {
     //
     // Return to main page after "Save Changes" or "Discard Changes".
     //
     NewPageId = FORM_MAIN_ID;
-  } else if ((NewPageId >= TERMINAL_OPTION_OFFSET) && (NewPageId < CONSOLE_OPTION_OFFSET)) {
+  } else if ((NewPageId >= TERMINAL_OPTION_OFFSET) && (NewPageId <
+                                                       CONSOLE_OPTION_OFFSET))
+  {
     NewPageId = FORM_CON_COM_SETUP_ID;
   }
 

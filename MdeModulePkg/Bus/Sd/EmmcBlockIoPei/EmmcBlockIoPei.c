@@ -131,7 +131,8 @@ EMMC_PEIM_HC_PRIVATE_DATA  gEmmcHcPrivateTemplate = {
     NULL
   },
   {                               // EndOfPeiNotifyList
-    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+     EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
     &gEfiEndOfPeiSignalPpiGuid,
     EmmcBlockIoPeimEndOfPei
   },
@@ -274,8 +275,9 @@ EmmcBlockIoPeimGetMediaInfo (
 
   MediaInfo->DeviceType   = EMMC;
   MediaInfo->MediaPresent = TRUE;
-  MediaInfo->LastBlock    = (UINTN)Private->Slot[SlotNum].Media[MediaNum].LastBlock;
-  MediaInfo->BlockSize    = Private->Slot[SlotNum].Media[MediaNum].BlockSize;
+  MediaInfo->LastBlock    =
+    (UINTN)Private->Slot[SlotNum].Media[MediaNum].LastBlock;
+  MediaInfo->BlockSize = Private->Slot[SlotNum].Media[MediaNum].BlockSize;
 
   return EFI_SUCCESS;
 }
@@ -387,7 +389,9 @@ EmmcBlockIoPeimReadBlocks (
   // Check if needs to switch partition access.
   //
   PartitionConfig = Private->Slot[SlotNum].ExtCsd.PartitionConfig;
-  if ((PartitionConfig & 0x7) != Private->Slot[SlotNum].PartitionType[MediaNum]) {
+  if ((PartitionConfig & 0x7) !=
+      Private->Slot[SlotNum].PartitionType[MediaNum])
+  {
     PartitionConfig &= (UINT8) ~0x7;
     PartitionConfig |= Private->Slot[SlotNum].PartitionType[MediaNum];
     Status           = EmmcPeimSwitch (
@@ -417,13 +421,23 @@ EmmcBlockIoPeimReadBlocks (
       NumberOfBlocks = MaxBlock;
     }
 
-    Status = EmmcPeimSetBlkCount (&Private->Slot[SlotNum], (UINT16)NumberOfBlocks);
+    Status = EmmcPeimSetBlkCount (
+               &Private->Slot[SlotNum],
+               (UINT16)NumberOfBlocks
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
 
     BufferSize = NumberOfBlocks * BlockSize;
-    Status     = EmmcPeimRwMultiBlocks (&Private->Slot[SlotNum], StartLBA, BlockSize, Buffer, BufferSize, TRUE);
+    Status     = EmmcPeimRwMultiBlocks (
+                   &Private->Slot[SlotNum],
+                   StartLBA,
+                   BlockSize,
+                   Buffer,
+                   BufferSize,
+                   TRUE
+                   );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -558,7 +572,11 @@ EmmcBlockIoPeimGetMediaInfo2 (
     }
   }
 
-  CopyMem (MediaInfo, &(Private->Slot[SlotNum].Media[MediaNum]), sizeof (EFI_PEI_BLOCK_IO2_MEDIA));
+  CopyMem (
+    MediaInfo,
+    &(Private->Slot[SlotNum].Media[MediaNum]),
+    sizeof (EFI_PEI_BLOCK_IO2_MEDIA)
+    );
   return EFI_SUCCESS;
 }
 
@@ -713,7 +731,12 @@ InitializeEmmcBlockIoPeim (
   Controller = 0;
   MmioBase   = NULL;
   while (TRUE) {
-    Status = SdMmcHcPpi->GetSdMmcHcMmioBar (SdMmcHcPpi, Controller, &MmioBase, &BarNum);
+    Status = SdMmcHcPpi->GetSdMmcHcMmioBar (
+                           SdMmcHcPpi,
+                           Controller,
+                           &MmioBase,
+                           &BarNum
+                           );
     //
     // When status is error, meant no controller is found
     //
@@ -726,7 +749,10 @@ InitializeEmmcBlockIoPeim (
       continue;
     }
 
-    Private = AllocateCopyPool (sizeof (EMMC_PEIM_HC_PRIVATE_DATA), &gEmmcHcPrivateTemplate);
+    Private = AllocateCopyPool (
+                sizeof (EMMC_PEIM_HC_PRIVATE_DATA),
+                &gEmmcHcPrivateTemplate
+                );
     if (Private == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       break;
@@ -750,7 +776,11 @@ InitializeEmmcBlockIoPeim (
       }
 
       if (Capability.SlotType != 0x1) {
-        DEBUG ((DEBUG_INFO, "The slot at 0x%x is not embedded slot type\n", MmioBase[Index]));
+        DEBUG ((
+          DEBUG_INFO,
+          "The slot at 0x%x is not embedded slot type\n",
+          MmioBase[Index]
+          ));
         Status = EFI_UNSUPPORTED;
         continue;
       }
@@ -784,18 +814,26 @@ InitializeEmmcBlockIoPeim (
 
       ExtCsd = &Slot->ExtCsd;
       if (ExtCsd->ExtCsdRev < 5) {
-        DEBUG ((DEBUG_ERROR, "The EMMC device version is too low, we don't support!!!\n"));
+        DEBUG ((
+          DEBUG_ERROR,
+          "The EMMC device version is too low, we don't support!!!\n"
+          ));
         Status = EFI_UNSUPPORTED;
         continue;
       }
 
       if ((ExtCsd->PartitioningSupport & BIT0) != BIT0) {
-        DEBUG ((DEBUG_ERROR, "The EMMC device doesn't support Partition Feature!!!\n"));
+        DEBUG ((
+          DEBUG_ERROR,
+          "The EMMC device doesn't support Partition Feature!!!\n"
+          ));
         Status = EFI_UNSUPPORTED;
         continue;
       }
 
-      for (PartitionIndex = 0; PartitionIndex < EMMC_PEIM_MAX_PARTITIONS; PartitionIndex++) {
+      for (PartitionIndex = 0; PartitionIndex < EMMC_PEIM_MAX_PARTITIONS;
+           PartitionIndex++)
+      {
         switch (PartitionIndex) {
           case EmmcPartitionUserData:
             SecCount = *(UINT32 *)&ExtCsd->SecCount;
@@ -809,20 +847,61 @@ InitializeEmmcBlockIoPeim (
             Capacity = ExtCsd->RpmbSizeMult * SIZE_128KB;
             break;
           case EmmcPartitionGP1:
-            GpSizeMult = (ExtCsd->GpSizeMult[0] | (ExtCsd->GpSizeMult[1] << 8) | (ExtCsd->GpSizeMult[2] << 16));
-            Capacity   = MultU64x32 (MultU64x32 (MultU64x32 ((UINT64)GpSizeMult, ExtCsd->HcWpGrpSize), ExtCsd->HcEraseGrpSize), SIZE_512KB);
+            GpSizeMult = (ExtCsd->GpSizeMult[0] | (ExtCsd->GpSizeMult[1] << 8) |
+                          (ExtCsd->GpSizeMult[2] << 16));
+            Capacity   = MultU64x32 (
+                           MultU64x32 (
+                             MultU64x32 (
+                               (UINT64)GpSizeMult,
+                               ExtCsd->HcWpGrpSize
+                               ),
+                             ExtCsd->HcEraseGrpSize
+                             ),
+                           SIZE_512KB
+                           );
             break;
           case EmmcPartitionGP2:
-            GpSizeMult = (ExtCsd->GpSizeMult[3] | (ExtCsd->GpSizeMult[4] << 8) | (ExtCsd->GpSizeMult[5] << 16));
-            Capacity   = MultU64x32 (MultU64x32 (MultU64x32 ((UINT64)GpSizeMult, ExtCsd->HcWpGrpSize), ExtCsd->HcEraseGrpSize), SIZE_512KB);
+            GpSizeMult = (ExtCsd->GpSizeMult[3] | (ExtCsd->GpSizeMult[4] << 8) |
+                          (ExtCsd->GpSizeMult[5] << 16));
+            Capacity   = MultU64x32 (
+                           MultU64x32 (
+                             MultU64x32 (
+                               (UINT64)GpSizeMult,
+                               ExtCsd->HcWpGrpSize
+                               ),
+                             ExtCsd->HcEraseGrpSize
+                             ),
+                           SIZE_512KB
+                           );
             break;
           case EmmcPartitionGP3:
-            GpSizeMult = (ExtCsd->GpSizeMult[6] | (ExtCsd->GpSizeMult[7] << 8) | (ExtCsd->GpSizeMult[8] << 16));
-            Capacity   = MultU64x32 (MultU64x32 (MultU64x32 ((UINT64)GpSizeMult, ExtCsd->HcWpGrpSize), ExtCsd->HcEraseGrpSize), SIZE_512KB);
+            GpSizeMult = (ExtCsd->GpSizeMult[6] | (ExtCsd->GpSizeMult[7] << 8) |
+                          (ExtCsd->GpSizeMult[8] << 16));
+            Capacity   = MultU64x32 (
+                           MultU64x32 (
+                             MultU64x32 (
+                               (UINT64)GpSizeMult,
+                               ExtCsd->HcWpGrpSize
+                               ),
+                             ExtCsd->HcEraseGrpSize
+                             ),
+                           SIZE_512KB
+                           );
             break;
           case EmmcPartitionGP4:
-            GpSizeMult = (ExtCsd->GpSizeMult[9] | (ExtCsd->GpSizeMult[10] << 8) | (ExtCsd->GpSizeMult[11] << 16));
-            Capacity   = MultU64x32 (MultU64x32 (MultU64x32 ((UINT64)GpSizeMult, ExtCsd->HcWpGrpSize), ExtCsd->HcEraseGrpSize), SIZE_512KB);
+            GpSizeMult = (ExtCsd->GpSizeMult[9] | (ExtCsd->GpSizeMult[10] <<
+                                                   8) |
+                          (ExtCsd->GpSizeMult[11] << 16));
+            Capacity   = MultU64x32 (
+                           MultU64x32 (
+                             MultU64x32 (
+                               (UINT64)GpSizeMult,
+                               ExtCsd->HcWpGrpSize
+                               ),
+                             ExtCsd->HcEraseGrpSize
+                             ),
+                           SIZE_512KB
+                           );
             break;
           default:
             ASSERT (FALSE);
@@ -831,8 +910,11 @@ InitializeEmmcBlockIoPeim (
 
         MediaNum = Slot->MediaNum;
         if (Capacity != 0) {
-          Slot->Media[MediaNum].LastBlock = DivU64x32 (Capacity, Slot->Media[MediaNum].BlockSize) - 1;
-          Slot->PartitionType[MediaNum]   = PartitionIndex;
+          Slot->Media[MediaNum].LastBlock = DivU64x32 (
+                                              Capacity,
+                                              Slot->Media[MediaNum].BlockSize
+                                              ) - 1;
+          Slot->PartitionType[MediaNum] = PartitionIndex;
           Private->TotalBlkIoDevices++;
           Slot->MediaNum++;
         }

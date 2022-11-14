@@ -1385,9 +1385,14 @@ EbcExecuteInstructions (
   // call it if it's not null.
   //
   while (InstructionsLeft != 0) {
-    ExecFunc = (UINTN)mVmOpcodeTable[(*VmPtr->Ip & OPCODE_M_OPCODE)].ExecuteFunction;
+    ExecFunc = (UINTN)mVmOpcodeTable[(*VmPtr->Ip &
+                                      OPCODE_M_OPCODE)].ExecuteFunction;
     if (ExecFunc == (UINTN)NULL) {
-      EbcDebugSignalException (EXCEPT_EBC_INVALID_OPCODE, EXCEPTION_FLAG_FATAL, VmPtr);
+      EbcDebugSignalException (
+        EXCEPT_EBC_INVALID_OPCODE,
+        EXCEPTION_FLAG_FATAL,
+        VmPtr
+        );
       return EFI_UNSUPPORTED;
     } else {
       mVmOpcodeTable[(*VmPtr->Ip & OPCODE_M_OPCODE)].ExecuteFunction (VmPtr);
@@ -1480,9 +1485,14 @@ EbcExecute (
     // Use the opcode bits to index into the opcode dispatch table. If the
     // function pointer is null then generate an exception.
     //
-    ExecFunc = (UINTN)mVmOpcodeTable[(*VmPtr->Ip & OPCODE_M_OPCODE)].ExecuteFunction;
+    ExecFunc = (UINTN)mVmOpcodeTable[(*VmPtr->Ip &
+                                      OPCODE_M_OPCODE)].ExecuteFunction;
     if (ExecFunc == (UINTN)NULL) {
-      EbcDebugSignalException (EXCEPT_EBC_INVALID_OPCODE, EXCEPTION_FLAG_FATAL, VmPtr);
+      EbcDebugSignalException (
+        EXCEPT_EBC_INVALID_OPCODE,
+        EXCEPTION_FLAG_FATAL,
+        VmPtr
+        );
       Status = EFI_UNSUPPORTED;
       goto Done;
     }
@@ -1512,13 +1522,25 @@ EbcExecute (
     //
     // Make sure stack has not been corrupted. Only report it once though.
     //
-    if ((StackCorrupted == 0) && (*VmPtr->StackMagicPtr != (UINTN)VM_STACK_KEY_VALUE)) {
-      EbcDebugSignalException (EXCEPT_EBC_STACK_FAULT, EXCEPTION_FLAG_FATAL, VmPtr);
+    if ((StackCorrupted == 0) && (*VmPtr->StackMagicPtr !=
+                                  (UINTN)VM_STACK_KEY_VALUE))
+    {
+      EbcDebugSignalException (
+        EXCEPT_EBC_STACK_FAULT,
+        EXCEPTION_FLAG_FATAL,
+        VmPtr
+        );
       StackCorrupted = 1;
     }
 
-    if ((StackCorrupted == 0) && ((UINT64)VmPtr->Gpr[0] <= (UINT64)(UINTN)VmPtr->StackTop)) {
-      EbcDebugSignalException (EXCEPT_EBC_STACK_FAULT, EXCEPTION_FLAG_FATAL, VmPtr);
+    if ((StackCorrupted == 0) && ((UINT64)VmPtr->Gpr[0] <=
+                                  (UINT64)(UINTN)VmPtr->StackTop))
+    {
+      EbcDebugSignalException (
+        EXCEPT_EBC_STACK_FAULT,
+        EXCEPTION_FLAG_FATAL,
+        VmPtr
+        );
       StackCorrupted = 1;
     }
   }
@@ -1662,7 +1684,9 @@ ExecuteMOVxx (
   } else if ((OpcMasked == OPCODE_MOVDW) || (OpcMasked == OPCODE_MOVDD)) {
     MoveSize = DATA_SIZE_32;
     DataMask = 0xFFFFFFFF;
-  } else if ((OpcMasked == OPCODE_MOVQW) || (OpcMasked == OPCODE_MOVQD) || (OpcMasked == OPCODE_MOVQQ)) {
+  } else if ((OpcMasked == OPCODE_MOVQW) || (OpcMasked == OPCODE_MOVQD) ||
+             (OpcMasked == OPCODE_MOVQQ))
+  {
     MoveSize = DATA_SIZE_64;
     DataMask = (UINT64) ~0;
   } else if ((OpcMasked == OPCODE_MOVNW) || (OpcMasked == OPCODE_MOVND)) {
@@ -1843,7 +1867,11 @@ ExecuteBREAK (
     // Runaway program break. Generate an exception and terminate
     //
     case 0:
-      EbcDebugSignalException (EXCEPT_EBC_BAD_BREAK, EXCEPTION_FLAG_FATAL, VmPtr);
+      EbcDebugSignalException (
+        EXCEPT_EBC_BAD_BREAK,
+        EXCEPTION_FLAG_FATAL,
+        VmPtr
+        );
       break;
 
     //
@@ -1918,7 +1946,11 @@ ExecuteBREAK (
     // Unhandled break code. Signal exception.
     //
     default:
-      EbcDebugSignalException (EXCEPT_EBC_BAD_BREAK, EXCEPTION_FLAG_FATAL, VmPtr);
+      EbcDebugSignalException (
+        EXCEPT_EBC_BAD_BREAK,
+        EXCEPTION_FLAG_FATAL,
+        VmPtr
+        );
       break;
   }
 
@@ -2583,7 +2615,8 @@ ExecuteMOVsnw (
   //
   // Get the data from the source.
   //
-  Op2 = (UINT64)(INT64)(INTN)(VmPtr->Gpr[OPERAND2_REGNUM (Operands)] + Op2Index);
+  Op2 = (UINT64)(INT64)(INTN)(VmPtr->Gpr[OPERAND2_REGNUM (Operands)] +
+                              Op2Index);
   if (OPERAND2_INDIRECT (Operands)) {
     Op2 = (UINT64)(INT64)(INTN)VmReadMemN (VmPtr, (UINTN)Op2);
   }
@@ -2594,7 +2627,12 @@ ExecuteMOVsnw (
   if (!OPERAND1_INDIRECT (Operands)) {
     VmPtr->Gpr[OPERAND1_REGNUM (Operands)] = Op2;
   } else {
-    VmWriteMemN (VmPtr, (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] + Op1Index), (UINTN)Op2);
+    VmWriteMemN (
+      VmPtr,
+      (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] +
+              Op1Index),
+      (UINTN)Op2
+      );
   }
 
   //
@@ -2678,7 +2716,8 @@ ExecuteMOVsnd (
   //
   // Get the data from the source.
   //
-  Op2 = (UINT64)(INT64)(INTN)(INT64)(VmPtr->Gpr[OPERAND2_REGNUM (Operands)] + Op2Index);
+  Op2 = (UINT64)(INT64)(INTN)(INT64)(VmPtr->Gpr[OPERAND2_REGNUM (Operands)] +
+                                     Op2Index);
   if (OPERAND2_INDIRECT (Operands)) {
     Op2 = (UINT64)(INT64)(INTN)(INT64)VmReadMemN (VmPtr, (UINTN)Op2);
   }
@@ -2689,7 +2728,12 @@ ExecuteMOVsnd (
   if (!OPERAND1_INDIRECT (Operands)) {
     VmPtr->Gpr[OPERAND1_REGNUM (Operands)] = Op2;
   } else {
-    VmWriteMemN (VmPtr, (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] + Op1Index), (UINTN)Op2);
+    VmWriteMemN (
+      VmPtr,
+      (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] +
+              Op1Index),
+      (UINTN)Op2
+      );
   }
 
   //
@@ -2746,7 +2790,11 @@ ExecutePUSHn (
   // Get the data to push
   //
   if (OPERAND1_INDIRECT (Operands)) {
-    DataN = VmReadMemN (VmPtr, (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] + Index16));
+    DataN = VmReadMemN (
+              VmPtr,
+              (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] +
+                      Index16)
+              );
   } else {
     DataN = (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] + Index16);
   }
@@ -2807,7 +2855,12 @@ ExecutePUSH (
   //
   if ((Opcode & PUSHPOP_M_64) != 0) {
     if (OPERAND1_INDIRECT (Operands)) {
-      Data64 = VmReadMem64 (VmPtr, (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] + Index16));
+      Data64 = VmReadMem64 (
+                 VmPtr,
+                 (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (
+                                      Operands
+                                      )] + Index16)
+                 );
     } else {
       Data64 = (UINT64)VmPtr->Gpr[OPERAND1_REGNUM (Operands)] + Index16;
     }
@@ -2822,7 +2875,12 @@ ExecutePUSH (
     // 32-bit data
     //
     if (OPERAND1_INDIRECT (Operands)) {
-      Data32 = VmReadMem32 (VmPtr, (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] + Index16));
+      Data32 = VmReadMem32 (
+                 VmPtr,
+                 (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (
+                                      Operands
+                                      )] + Index16)
+                 );
     } else {
       Data32 = (UINT32)VmPtr->Gpr[OPERAND1_REGNUM (Operands)] + Index16;
     }
@@ -2888,9 +2946,15 @@ ExecutePOPn (
   // Do the write-back
   //
   if (OPERAND1_INDIRECT (Operands)) {
-    VmWriteMemN (VmPtr, (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] + Index16), DataN);
+    VmWriteMemN (
+      VmPtr,
+      (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] +
+              Index16),
+      DataN
+      );
   } else {
-    VmPtr->Gpr[OPERAND1_REGNUM (Operands)] = (INT64)(UINT64)(UINTN)(DataN + Index16);
+    VmPtr->Gpr[OPERAND1_REGNUM (Operands)] = (INT64)(UINT64)(UINTN)(DataN +
+                                                                    Index16);
   }
 
   return EFI_SUCCESS;
@@ -2952,7 +3016,12 @@ ExecutePOP (
     // Do the write-back
     //
     if (OPERAND1_INDIRECT (Operands)) {
-      VmWriteMem64 (VmPtr, (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] + Index16), Data64);
+      VmWriteMem64 (
+        VmPtr,
+        (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] +
+                Index16),
+        Data64
+        );
     } else {
       VmPtr->Gpr[OPERAND1_REGNUM (Operands)] = Data64 + Index16;
     }
@@ -2966,7 +3035,12 @@ ExecutePOP (
     // Do the write-back
     //
     if (OPERAND1_INDIRECT (Operands)) {
-      VmWriteMem32 (VmPtr, (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] + Index16), Data32);
+      VmWriteMem32 (
+        VmPtr,
+        (UINTN)(VmPtr->Gpr[OPERAND1_REGNUM (Operands)] +
+                Index16),
+        Data32
+        );
     } else {
       VmPtr->Gpr[OPERAND1_REGNUM (Operands)] = (INT64)Data32 + Index16;
     }
@@ -3054,7 +3128,12 @@ ExecuteCALL (
     VmWriteMemN (VmPtr, (UINTN)VmPtr->Gpr[0], (UINTN)FramePtr);
     VmPtr->FramePtr = (VOID *)(UINTN)VmPtr->Gpr[0];
     VmPtr->Gpr[0]  -= 8;
-    VmWriteMem64 (VmPtr, (UINTN)VmPtr->Gpr[0], (UINT64)(UINTN)(VmPtr->Ip + Size));
+    VmWriteMem64 (
+      VmPtr,
+      (UINTN)VmPtr->Gpr[0],
+      (UINT64)(UINTN)(VmPtr->Ip +
+                      Size)
+      );
   }
 
   //
@@ -3086,7 +3165,11 @@ ExecuteCALL (
     // Get final address
     //
     if (OPERAND1_INDIRECT (Operands)) {
-      Immed64 = (INT64)(UINT64)(UINTN)VmReadMemN (VmPtr, (UINTN)(Immed64 + Immed32));
+      Immed64 = (INT64)(UINT64)(UINTN)VmReadMemN (
+                                        VmPtr,
+                                        (UINTN)(Immed64 +
+                                                Immed32)
+                                        );
     } else {
       Immed64 += Immed32;
     }
@@ -3109,13 +3192,25 @@ ExecuteCALL (
       // Native call. Relative or absolute?
       //
       if ((Operands & OPERAND_M_RELATIVE_ADDR) != 0) {
-        EbcLLCALLEX (VmPtr, (UINTN)(Immed64 + VmPtr->Ip + Size), (UINTN)VmPtr->Gpr[0], FramePtr, Size);
+        EbcLLCALLEX (
+          VmPtr,
+          (UINTN)(Immed64 + VmPtr->Ip + Size),
+          (UINTN)VmPtr->Gpr[0],
+          FramePtr,
+          Size
+          );
       } else {
         if ((VmPtr->StopFlags & STOPFLAG_BREAK_ON_CALLEX) != 0) {
           CpuBreakpoint ();
         }
 
-        EbcLLCALLEX (VmPtr, (UINTN)Immed64, (UINTN)VmPtr->Gpr[0], FramePtr, Size);
+        EbcLLCALLEX (
+          VmPtr,
+          (UINTN)Immed64,
+          (UINTN)VmPtr->Gpr[0],
+          FramePtr,
+          Size
+          );
       }
     }
   }
@@ -3235,12 +3330,21 @@ ExecuteCMP (
   //
   if (OPERAND2_INDIRECT (Operands)) {
     if ((Opcode & OPCODE_M_64BIT) != 0) {
-      Op2 = (INT64)VmReadMem64 (VmPtr, (UINTN)(VmPtr->Gpr[OPERAND2_REGNUM (Operands)] + Index16));
+      Op2 = (INT64)VmReadMem64 (
+                     VmPtr,
+                     (UINTN)(VmPtr->Gpr[OPERAND2_REGNUM (
+                                          Operands
+                                          )] + Index16)
+                     );
     } else {
       //
       // 32-bit operations. 0-extend the values for all cases.
       //
-      Op2 = (INT64)(UINT64)((UINT32)VmReadMem32 (VmPtr, (UINTN)(VmPtr->Gpr[OPERAND2_REGNUM (Operands)] + Index16)));
+      Op2 = (INT64)(UINT64)((UINT32)VmReadMem32 (
+                                      VmPtr,
+                                      (UINTN)(VmPtr->Gpr[OPERAND2_REGNUM (
+                                                           Operands)] + Index16)
+                                      ));
     }
   } else {
     Op2 = VmPtr->Gpr[OPERAND2_REGNUM (Operands)] + Index16;
@@ -4372,7 +4476,9 @@ ExecuteLOADSP (
       // Spec states that this instruction will not modify reserved bits in
       // the flags register.
       //
-      VmPtr->Flags = (VmPtr->Flags &~VMFLAGS_ALL_VALID) | (VmPtr->Gpr[OPERAND2_REGNUM (Operands)] & VMFLAGS_ALL_VALID);
+      VmPtr->Flags = (VmPtr->Flags &~VMFLAGS_ALL_VALID) |
+                     (VmPtr->Gpr[OPERAND2_REGNUM (Operands)] &
+                      VMFLAGS_ALL_VALID);
       break;
 
     default:
@@ -4424,7 +4530,8 @@ ExecuteSTORESP (
       //
       // Retrieve the value in the flags register, then clear reserved bits
       //
-      VmPtr->Gpr[OPERAND1_REGNUM (Operands)] = (UINT64)(VmPtr->Flags & VMFLAGS_ALL_VALID);
+      VmPtr->Gpr[OPERAND1_REGNUM (Operands)] = (UINT64)(VmPtr->Flags &
+                                                        VMFLAGS_ALL_VALID);
       break;
 
     //
@@ -4641,7 +4748,10 @@ VmReadIndex64 (
   //
   // Now compute ConstUnits
   //
-  ConstUnits = ARShiftU64 (((Index &~0xF000000000000000ULL) & Mask), (UINTN)NBits);
+  ConstUnits = ARShiftU64 (
+                 ((Index &~0xF000000000000000ULL) & Mask),
+                 (UINTN)NBits
+                 );
 
   Offset = MultU64x64 ((UINT64)NaturalUnits, sizeof (UINTN)) + ConstUnits;
 
@@ -4745,7 +4855,9 @@ VmWriteMem16 (
     }
 
     MemoryFence ();
-    if ((Status = VmWriteMem8 (VmPtr, Addr + 1, (UINT8)(Data >> 8))) != EFI_SUCCESS) {
+    if ((Status = VmWriteMem8 (VmPtr, Addr + 1, (UINT8)(Data >> 8))) !=
+        EFI_SUCCESS)
+    {
       return Status;
     }
 
@@ -4807,7 +4919,13 @@ VmWriteMem32 (
     }
 
     MemoryFence ();
-    if ((Status = VmWriteMem16 (VmPtr, Addr + sizeof (UINT16), (UINT16)(Data >> 16))) != EFI_SUCCESS) {
+    if ((Status = VmWriteMem16 (
+                    VmPtr,
+                    Addr + sizeof (UINT16),
+                    (UINT16)(Data >>
+                             16)
+                    )) != EFI_SUCCESS)
+    {
       return Status;
     }
 
@@ -4869,7 +4987,12 @@ VmWriteMem64 (
     }
 
     MemoryFence ();
-    if ((Status = VmWriteMem32 (VmPtr, Addr + sizeof (UINT32), (UINT32)RShiftU64 (Data, 32))) != EFI_SUCCESS) {
+    if ((Status = VmWriteMem32 (
+                    VmPtr,
+                    Addr + sizeof (UINT32),
+                    (UINT32)RShiftU64 (Data, 32)
+                    )) != EFI_SUCCESS)
+    {
       return Status;
     }
 
@@ -4927,7 +5050,11 @@ VmWriteMemN (
   } else {
     for (Index = 0; Index < sizeof (UINTN) / sizeof (UINT32); Index++) {
       MemoryFence ();
-      Status = VmWriteMem32 (VmPtr, Addr + Index * sizeof (UINT32), (UINT32)Data);
+      Status = VmWriteMem32 (
+                 VmPtr,
+                 Addr + Index * sizeof (UINT32),
+                 (UINT32)Data
+                 );
       MemoryFence ();
       Data = (UINTN)RShiftU64 ((UINT64)Data, 32);
     }
@@ -5001,7 +5128,9 @@ VmReadImmed16 (
   //
   // Return unaligned data
   //
-  return (INT16)(*(UINT8 *)(VmPtr->Ip + Offset) + (*(UINT8 *)(VmPtr->Ip + Offset + 1) << 8));
+  return (INT16)(*(UINT8 *)(VmPtr->Ip + Offset) + (*(UINT8 *)(VmPtr->Ip +
+                                                              Offset + 1) <<
+                                                   8));
 }
 
 /**
@@ -5121,7 +5250,9 @@ VmReadCode16 (
   //
   // Return unaligned data
   //
-  return (UINT16)(*(UINT8 *)(VmPtr->Ip + Offset) + (*(UINT8 *)(VmPtr->Ip + Offset + 1) << 8));
+  return (UINT16)(*(UINT8 *)(VmPtr->Ip + Offset) + (*(UINT8 *)(VmPtr->Ip +
+                                                               Offset + 1) <<
+                                                    8));
 }
 
 /**
@@ -5419,5 +5550,6 @@ GetVmVersion (
   VOID
   )
 {
-  return (UINT64)(((VM_MAJOR_VERSION & 0xFFFF) << 16) | ((VM_MINOR_VERSION & 0xFFFF)));
+  return (UINT64)(((VM_MAJOR_VERSION & 0xFFFF) << 16) | ((VM_MINOR_VERSION &
+                                                          0xFFFF)));
 }

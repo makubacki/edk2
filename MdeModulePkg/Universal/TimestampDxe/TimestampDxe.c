@@ -95,7 +95,11 @@ TimestampDriverGetProperties (
   //
   // Get timestamp properties
   //
-  CopyMem ((VOID *)Properties, (VOID *)&mTimestampProperties, sizeof (mTimestampProperties));
+  CopyMem (
+    (VOID *)Properties,
+    (VOID *)&mTimestampProperties,
+    sizeof (mTimestampProperties)
+    );
 
   return EFI_SUCCESS;
 }
@@ -133,7 +137,10 @@ TimestampDriverInitialize (
   //
   // Get the start value, end value and frequency in Timerlib
   //
-  mTimestampProperties.Frequency = GetPerformanceCounterProperties (&mTimerLibStartValue, &mTimerLibEndValue);
+  mTimestampProperties.Frequency = GetPerformanceCounterProperties (
+                                     &mTimerLibStartValue,
+                                     &mTimerLibEndValue
+                                     );
 
   //
   // Set the EndValue
@@ -144,7 +151,13 @@ TimestampDriverInitialize (
     mTimestampProperties.EndValue = mTimerLibStartValue - mTimerLibEndValue;
   }
 
-  DEBUG ((DEBUG_INFO, "TimerFrequency:0x%lx, TimerLibStartTime:0x%lx, TimerLibEndtime:0x%lx\n", mTimestampProperties.Frequency, mTimerLibStartValue, mTimerLibEndValue));
+  DEBUG ((
+    DEBUG_INFO,
+    "TimerFrequency:0x%lx, TimerLibStartTime:0x%lx, TimerLibEndtime:0x%lx\n",
+    mTimestampProperties.Frequency,
+    mTimerLibStartValue,
+    mTimerLibEndValue
+    ));
 
   //
   // Install the Timestamp Protocol onto a new handle

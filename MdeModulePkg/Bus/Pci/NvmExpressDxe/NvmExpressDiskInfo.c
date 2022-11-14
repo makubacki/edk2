@@ -30,7 +30,11 @@ InitializeDiskInfo (
   IN  NVME_DEVICE_PRIVATE_DATA  *Device
   )
 {
-  CopyMem (&Device->DiskInfo, &gNvmExpressDiskInfoProtocolTemplate, sizeof (EFI_DISK_INFO_PROTOCOL));
+  CopyMem (
+    &Device->DiskInfo,
+    &gNvmExpressDiskInfoProtocolTemplate,
+    sizeof (EFI_DISK_INFO_PROTOCOL)
+    );
 }
 
 /**
@@ -94,7 +98,11 @@ NvmExpressDiskInfoIdentify (
   Status = EFI_BUFFER_TOO_SMALL;
   if (*IdentifyDataSize >= sizeof (Device->NamespaceData)) {
     Status = EFI_SUCCESS;
-    CopyMem (IdentifyData, &Device->NamespaceData, sizeof (Device->NamespaceData));
+    CopyMem (
+      IdentifyData,
+      &Device->NamespaceData,
+      sizeof (Device->NamespaceData)
+      );
   }
 
   *IdentifyDataSize = sizeof (Device->NamespaceData);

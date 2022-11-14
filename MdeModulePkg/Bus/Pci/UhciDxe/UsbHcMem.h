@@ -49,7 +49,9 @@ typedef struct _USBHC_MEM_POOL {
 #define USBHC_MEM_UNIT_MASK      (USBHC_MEM_UNIT - 1)
 #define USBHC_MEM_DEFAULT_PAGES  16
 
-#define USBHC_MEM_ROUND(Len)  (((Len) + USBHC_MEM_UNIT_MASK) & (~USBHC_MEM_UNIT_MASK))
+#define USBHC_MEM_ROUND( \
+                       Len)  \
+  (((Len) + USBHC_MEM_UNIT_MASK) & (~USBHC_MEM_UNIT_MASK))
 
 //
 // Advance the byte and bit to the next bit, adjust byte accordingly.

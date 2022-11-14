@@ -226,13 +226,18 @@ USBKeyboardDriverBindingStart (
              &EndpointDescriptor
              );
 
-    if (((EndpointDescriptor.Attributes & (BIT0 | BIT1)) == USB_ENDPOINT_INTERRUPT) &&
+    if (((EndpointDescriptor.Attributes & (BIT0 | BIT1)) ==
+         USB_ENDPOINT_INTERRUPT) &&
         ((EndpointDescriptor.EndpointAddress & USB_ENDPOINT_DIR_IN) != 0))
     {
       //
       // We only care interrupt endpoint here
       //
-      CopyMem (&UsbKeyboardDevice->IntEndpointDescriptor, &EndpointDescriptor, sizeof (EndpointDescriptor));
+      CopyMem (
+        &UsbKeyboardDevice->IntEndpointDescriptor,
+        &EndpointDescriptor,
+        sizeof (EndpointDescriptor)
+        );
       Found = TRUE;
       break;
     }
@@ -263,11 +268,14 @@ USBKeyboardDriverBindingStart (
   UsbKeyboardDevice->SimpleInput.Reset         = USBKeyboardReset;
   UsbKeyboardDevice->SimpleInput.ReadKeyStroke = USBKeyboardReadKeyStroke;
 
-  UsbKeyboardDevice->SimpleInputEx.Reset               = USBKeyboardResetEx;
-  UsbKeyboardDevice->SimpleInputEx.ReadKeyStrokeEx     = USBKeyboardReadKeyStrokeEx;
-  UsbKeyboardDevice->SimpleInputEx.SetState            = USBKeyboardSetState;
-  UsbKeyboardDevice->SimpleInputEx.RegisterKeyNotify   = USBKeyboardRegisterKeyNotify;
-  UsbKeyboardDevice->SimpleInputEx.UnregisterKeyNotify = USBKeyboardUnregisterKeyNotify;
+  UsbKeyboardDevice->SimpleInputEx.Reset           = USBKeyboardResetEx;
+  UsbKeyboardDevice->SimpleInputEx.ReadKeyStrokeEx =
+    USBKeyboardReadKeyStrokeEx;
+  UsbKeyboardDevice->SimpleInputEx.SetState          = USBKeyboardSetState;
+  UsbKeyboardDevice->SimpleInputEx.RegisterKeyNotify =
+    USBKeyboardRegisterKeyNotify;
+  UsbKeyboardDevice->SimpleInputEx.UnregisterKeyNotify =
+    USBKeyboardUnregisterKeyNotify;
 
   InitializeListHead (&UsbKeyboardDevice->NotifyList);
 
@@ -279,7 +287,11 @@ USBKeyboardDriverBindingStart (
                   &UsbKeyboardDevice->TimerEvent
                   );
   if (!EFI_ERROR (Status)) {
-    Status = gBS->SetTimer (UsbKeyboardDevice->TimerEvent, TimerPeriodic, KEYBOARD_TIMER_INTERVAL);
+    Status = gBS->SetTimer (
+                    UsbKeyboardDevice->TimerEvent,
+                    TimerPeriodic,
+                    KEYBOARD_TIMER_INTERVAL
+                    );
   }
 
   if (EFI_ERROR (Status)) {
@@ -377,7 +389,8 @@ USBKeyboardDriverBindingStart (
   //
   EndpointAddr    = UsbKeyboardDevice->IntEndpointDescriptor.EndpointAddress;
   PollingInterval = UsbKeyboardDevice->IntEndpointDescriptor.Interval;
-  PacketSize      = (UINT8)(UsbKeyboardDevice->IntEndpointDescriptor.MaxPacketSize);
+  PacketSize      =
+    (UINT8)(UsbKeyboardDevice->IntEndpointDescriptor.MaxPacketSize);
 
   Status = UsbIo->UsbAsyncInterruptTransfer (
                     UsbIo,
@@ -531,7 +544,8 @@ USBKeyboardDriverBindingStop (
   //
   UsbKeyboardDevice->UsbIo->UsbAsyncInterruptTransfer (
                               UsbKeyboardDevice->UsbIo,
-                              UsbKeyboardDevice->IntEndpointDescriptor.EndpointAddress,
+                              UsbKeyboardDevice->IntEndpointDescriptor.
+                                EndpointAddress,
                               FALSE,
                               UsbKeyboardDevice->IntEndpointDescriptor.Interval,
                               0,
@@ -721,7 +735,9 @@ USBKeyboardReadKeyStroke (
     //
     // SimpleTextIn Protocol doesn't support partial keystroke;
     //
-    if ((KeyData.Key.ScanCode == CHAR_NULL) && (KeyData.Key.UnicodeChar == SCAN_NULL)) {
+    if ((KeyData.Key.ScanCode == CHAR_NULL) && (KeyData.Key.UnicodeChar ==
+                                                SCAN_NULL))
+    {
       continue;
     }
 
@@ -729,10 +745,16 @@ USBKeyboardReadKeyStroke (
     // Translate the CTRL-Alpha characters to their corresponding control value
     // (ctrl-a = 0x0001 through ctrl-Z = 0x001A)
     //
-    if ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) != 0) {
-      if ((KeyData.Key.UnicodeChar >= L'a') && (KeyData.Key.UnicodeChar <= L'z')) {
+    if ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED |
+                                           EFI_RIGHT_CONTROL_PRESSED)) != 0)
+    {
+      if ((KeyData.Key.UnicodeChar >= L'a') && (KeyData.Key.UnicodeChar <=
+                                                L'z'))
+      {
         KeyData.Key.UnicodeChar = (CHAR16)(KeyData.Key.UnicodeChar - L'a' + 1);
-      } else if ((KeyData.Key.UnicodeChar >= L'A') && (KeyData.Key.UnicodeChar <= L'Z')) {
+      } else if ((KeyData.Key.UnicodeChar >= L'A') &&
+                 (KeyData.Key.UnicodeChar <= L'Z'))
+      {
         KeyData.Key.UnicodeChar = (CHAR16)(KeyData.Key.UnicodeChar - L'A' + 1);
       }
     }
@@ -783,8 +805,14 @@ USBKeyboardWaitForKey (
       UsbKeyboardDevice->EfiKeyQueue.Buffer[UsbKeyboardDevice->EfiKeyQueue.Head],
       sizeof (EFI_KEY_DATA)
       );
-    if ((KeyData.Key.ScanCode == SCAN_NULL) && (KeyData.Key.UnicodeChar == CHAR_NULL)) {
-      Dequeue (&UsbKeyboardDevice->EfiKeyQueue, &KeyData, sizeof (EFI_KEY_DATA));
+    if ((KeyData.Key.ScanCode == SCAN_NULL) && (KeyData.Key.UnicodeChar ==
+                                                CHAR_NULL))
+    {
+      Dequeue (
+        &UsbKeyboardDevice->EfiKeyQueue,
+        &KeyData,
+        sizeof (EFI_KEY_DATA)
+        );
       continue;
     }
 
@@ -864,7 +892,12 @@ KbdFreeNotifyList (
 
   while (!IsListEmpty (NotifyList)) {
     Link       = GetFirstNode (NotifyList);
-    NotifyNode = CR (Link, KEYBOARD_CONSOLE_IN_EX_NOTIFY, NotifyEntry, USB_KB_CONSOLE_IN_EX_NOTIFY_SIGNATURE);
+    NotifyNode = CR (
+                   Link,
+                   KEYBOARD_CONSOLE_IN_EX_NOTIFY,
+                   NotifyEntry,
+                   USB_KB_CONSOLE_IN_EX_NOTIFY_SIGNATURE
+                   );
     RemoveEntryList (Link);
     FreePool (NotifyNode);
   }
@@ -900,13 +933,15 @@ IsKeyRegistered (
   // Assume KeyShiftState/KeyToggleState = 0 in Registered key data means these state could be ignored.
   //
   if ((RegsiteredData->KeyState.KeyShiftState != 0) &&
-      (RegsiteredData->KeyState.KeyShiftState != InputData->KeyState.KeyShiftState))
+      (RegsiteredData->KeyState.KeyShiftState !=
+       InputData->KeyState.KeyShiftState))
   {
     return FALSE;
   }
 
   if ((RegsiteredData->KeyState.KeyToggleState != 0) &&
-      (RegsiteredData->KeyState.KeyToggleState != InputData->KeyState.KeyToggleState))
+      (RegsiteredData->KeyState.KeyToggleState !=
+       InputData->KeyState.KeyToggleState))
   {
     return FALSE;
   }
@@ -952,7 +987,10 @@ USBKeyboardResetEx (
 
   UsbKeyboardDevice = TEXT_INPUT_EX_USB_KB_DEV_FROM_THIS (This);
 
-  Status = UsbKeyboardDevice->SimpleInput.Reset (&UsbKeyboardDevice->SimpleInput, ExtendedVerification);
+  Status = UsbKeyboardDevice->SimpleInput.Reset (
+                                            &UsbKeyboardDevice->SimpleInput,
+                                            ExtendedVerification
+                                            );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -1024,7 +1062,8 @@ USBKeyboardSetState (
 
   UsbKeyboardDevice = TEXT_INPUT_EX_USB_KB_DEV_FROM_THIS (This);
 
-  if (((UsbKeyboardDevice->KeyState.KeyToggleState & EFI_TOGGLE_STATE_VALID) != EFI_TOGGLE_STATE_VALID) ||
+  if (((UsbKeyboardDevice->KeyState.KeyToggleState & EFI_TOGGLE_STATE_VALID) !=
+       EFI_TOGGLE_STATE_VALID) ||
       ((*KeyToggleState & EFI_TOGGLE_STATE_VALID) != EFI_TOGGLE_STATE_VALID))
   {
     return EFI_UNSUPPORTED;
@@ -1096,7 +1135,9 @@ USBKeyboardRegisterKeyNotify (
   LIST_ENTRY                     *NotifyList;
   KEYBOARD_CONSOLE_IN_EX_NOTIFY  *CurrentNotify;
 
-  if ((KeyData == NULL) || (NotifyHandle == NULL) || (KeyNotificationFunction == NULL)) {
+  if ((KeyData == NULL) || (NotifyHandle == NULL) || (KeyNotificationFunction ==
+                                                      NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1128,7 +1169,10 @@ USBKeyboardRegisterKeyNotify (
   //
   // Allocate resource to save the notification function
   //
-  NewNotify = (KEYBOARD_CONSOLE_IN_EX_NOTIFY *)AllocateZeroPool (sizeof (KEYBOARD_CONSOLE_IN_EX_NOTIFY));
+  NewNotify = (KEYBOARD_CONSOLE_IN_EX_NOTIFY *)AllocateZeroPool (
+                                                 sizeof (
+                                                                        KEYBOARD_CONSOLE_IN_EX_NOTIFY)
+                                                 );
   if (NewNotify == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1234,7 +1278,11 @@ KeyNotifyProcessHandler (
     // Enter critical section
     //
     OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
-    Status = Dequeue (&UsbKeyboardDevice->EfiKeyQueueForNotify, &KeyData, sizeof (KeyData));
+    Status = Dequeue (
+               &UsbKeyboardDevice->EfiKeyQueueForNotify,
+               &KeyData,
+               sizeof (KeyData)
+               );
     //
     // Leave critical section
     //
@@ -1243,8 +1291,15 @@ KeyNotifyProcessHandler (
       break;
     }
 
-    for (Link = GetFirstNode (NotifyList); !IsNull (NotifyList, Link); Link = GetNextNode (NotifyList, Link)) {
-      CurrentNotify = CR (Link, KEYBOARD_CONSOLE_IN_EX_NOTIFY, NotifyEntry, USB_KB_CONSOLE_IN_EX_NOTIFY_SIGNATURE);
+    for (Link = GetFirstNode (NotifyList); !IsNull (NotifyList, Link); Link =
+           GetNextNode (NotifyList, Link))
+    {
+      CurrentNotify = CR (
+                        Link,
+                        KEYBOARD_CONSOLE_IN_EX_NOTIFY,
+                        NotifyEntry,
+                        USB_KB_CONSOLE_IN_EX_NOTIFY_SIGNATURE
+                        );
       if (IsKeyRegistered (&CurrentNotify->KeyData, &KeyData)) {
         CurrentNotify->KeyNotificationFn (&KeyData);
       }

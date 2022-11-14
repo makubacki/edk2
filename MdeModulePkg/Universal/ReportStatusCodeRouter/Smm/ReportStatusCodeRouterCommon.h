@@ -19,7 +19,8 @@
 #include <Library/MmServicesTableLib.h>
 #include <Library/MemoryAllocationLib.h>
 
-#define MM_RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE  SIGNATURE_32 ('s', 'h', 'c', 'e')
+#define MM_RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE  \
+  SIGNATURE_32 ('s', 'h', 'c', 'e')
 
 typedef struct {
   UINTN                          Signature;

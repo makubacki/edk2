@@ -110,7 +110,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED TEXT_IN_SPLITTER_PRIVATE_DATA  mConIn = {
 //
 // Uga Draw Protocol Private Data template
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UGA_DRAW_PROTOCOL  mUgaDrawProtocolTemplate = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UGA_DRAW_PROTOCOL  mUgaDrawProtocolTemplate =
+{
   ConSplitterUgaDrawGetMode,
   ConSplitterUgaDrawSetMode,
   ConSplitterUgaDrawBlt
@@ -119,7 +120,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UGA_DRAW_PROTOCOL  mUgaDrawProtocolTemplate = 
 //
 // Graphics Output Protocol Private Data template
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_GRAPHICS_OUTPUT_PROTOCOL  mGraphicsOutputProtocolTemplate = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_GRAPHICS_OUTPUT_PROTOCOL
+  mGraphicsOutputProtocolTemplate = {
   ConSplitterGraphicsOutputQueryMode,
   ConSplitterGraphicsOutputSetMode,
   ConSplitterGraphicsOutputBlt,
@@ -316,7 +318,8 @@ ToggleStateSyncKeyNotify (
 {
   UINTN  Index;
 
-  if (((KeyData->KeyState.KeyToggleState & KEY_STATE_VALID_EXPOSED) == KEY_STATE_VALID_EXPOSED) &&
+  if (((KeyData->KeyState.KeyToggleState & KEY_STATE_VALID_EXPOSED) ==
+       KEY_STATE_VALID_EXPOSED) &&
       (KeyData->KeyState.KeyToggleState != mConIn.PhysicalKeyToggleState))
   {
     //
@@ -330,7 +333,11 @@ ToggleStateSyncKeyNotify (
     }
 
     mConIn.PhysicalKeyToggleState = KeyData->KeyState.KeyToggleState;
-    DEBUG ((DEBUG_INFO, "Current toggle state is 0x%02x\n", mConIn.PhysicalKeyToggleState));
+    DEBUG ((
+      DEBUG_INFO,
+      "Current toggle state is 0x%02x\n",
+      mConIn.PhysicalKeyToggleState
+      ));
   }
 
   return EFI_SUCCESS;
@@ -758,11 +765,19 @@ ConSplitterTextOutConstructor (
   // Copy protocols template
   //
   if (FeaturePcdGet (PcdConOutUgaSupport)) {
-    CopyMem (&ConOutPrivate->UgaDraw, &mUgaDrawProtocolTemplate, sizeof (EFI_UGA_DRAW_PROTOCOL));
+    CopyMem (
+      &ConOutPrivate->UgaDraw,
+      &mUgaDrawProtocolTemplate,
+      sizeof (EFI_UGA_DRAW_PROTOCOL)
+      );
   }
 
   if (FeaturePcdGet (PcdConOutGopSupport)) {
-    CopyMem (&ConOutPrivate->GraphicsOutput, &mGraphicsOutputProtocolTemplate, sizeof (EFI_GRAPHICS_OUTPUT_PROTOCOL));
+    CopyMem (
+      &ConOutPrivate->GraphicsOutput,
+      &mGraphicsOutputProtocolTemplate,
+      sizeof (EFI_GRAPHICS_OUTPUT_PROTOCOL)
+      );
   }
 
   //
@@ -817,11 +832,19 @@ ConSplitterTextOutConstructor (
     //
     // Setup resource for mode information in Graphics Output Protocol interface
     //
-    if ((ConOutPrivate->GraphicsOutput.Mode = AllocateZeroPool (sizeof (EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE))) == NULL) {
+    if ((ConOutPrivate->GraphicsOutput.Mode = AllocateZeroPool (
+                                                sizeof (
+                                                                       EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE)
+                                                )) == NULL)
+    {
       return EFI_OUT_OF_RESOURCES;
     }
 
-    if ((ConOutPrivate->GraphicsOutput.Mode->Info = AllocateZeroPool (sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION))) == NULL) {
+    if ((ConOutPrivate->GraphicsOutput.Mode->Info = AllocateZeroPool (
+                                                      sizeof (
+                                                                             EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
+                                                      )) == NULL)
+    {
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -829,7 +852,11 @@ ConSplitterTextOutConstructor (
     // Setup the DevNullGraphicsOutput to 800 x 600 x 32 bits per pixel
     // DevNull will be updated to user-defined mode after driver has started.
     //
-    if ((ConOutPrivate->GraphicsOutputModeBuffer = AllocateZeroPool (sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION))) == NULL) {
+    if ((ConOutPrivate->GraphicsOutputModeBuffer = AllocateZeroPool (
+                                                     sizeof (
+                                                                            EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
+                                                     )) == NULL)
+    {
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -839,14 +866,20 @@ ConSplitterTextOutConstructor (
     Info->VerticalResolution   = 600;
     Info->PixelFormat          = PixelBltOnly;
     Info->PixelsPerScanLine    = 800;
-    CopyMem (ConOutPrivate->GraphicsOutput.Mode->Info, Info, sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
-    ConOutPrivate->GraphicsOutput.Mode->SizeOfInfo = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
+    CopyMem (
+      ConOutPrivate->GraphicsOutput.Mode->Info,
+      Info,
+      sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
+      );
+    ConOutPrivate->GraphicsOutput.Mode->SizeOfInfo =
+      sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
 
     //
     // Initialize the following items, theset items remain unchanged in GraphicsOutput->SetMode()
     // GraphicsOutputMode->FrameBufferBase, GraphicsOutputMode->FrameBufferSize
     //
-    ConOutPrivate->GraphicsOutput.Mode->FrameBufferBase = (EFI_PHYSICAL_ADDRESS)(UINTN)NULL;
+    ConOutPrivate->GraphicsOutput.Mode->FrameBufferBase =
+      (EFI_PHYSICAL_ADDRESS)(UINTN)NULL;
     ConOutPrivate->GraphicsOutput.Mode->FrameBufferSize = 0;
 
     ConOutPrivate->GraphicsOutput.Mode->MaxMode = 1;
@@ -1393,15 +1426,31 @@ ConSplitterConOutDriverBindingStart (
   // If both ConOut and StdErr incorporate the same Text Out device,
   // their MaxMode and QueryData should be the intersection of both.
   //
-  Status = ConSplitterTextOutAddDevice (&mConOut, TextOut, GraphicsOutput, UgaDraw);
-  ConSplitterTextOutSetAttribute (&mConOut.TextOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
+  Status = ConSplitterTextOutAddDevice (
+             &mConOut,
+             TextOut,
+             GraphicsOutput,
+             UgaDraw
+             );
+  ConSplitterTextOutSetAttribute (
+    &mConOut.TextOut,
+    EFI_TEXT_ATTR (
+      EFI_LIGHTGRAY,
+      EFI_BLACK
+      )
+    );
 
   if (FeaturePcdGet (PcdConOutUgaSupport)) {
     //
     // Get the UGA mode data of ConOut from the current mode
     //
     if (GraphicsOutput != NULL) {
-      Status = GraphicsOutput->QueryMode (GraphicsOutput, GraphicsOutput->Mode->Mode, &SizeOfInfo, &Info);
+      Status = GraphicsOutput->QueryMode (
+                                 GraphicsOutput,
+                                 GraphicsOutput->Mode->Mode,
+                                 &SizeOfInfo,
+                                 &Info
+                                 );
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -1478,7 +1527,13 @@ ConSplitterStdErrDriverBindingStart (
   // their MaxMode and QueryData should be the intersection of both.
   //
   Status = ConSplitterTextOutAddDevice (&mStdErr, TextOut, NULL, NULL);
-  ConSplitterTextOutSetAttribute (&mStdErr.TextOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
+  ConSplitterTextOutSetAttribute (
+    &mStdErr.TextOut,
+    EFI_TEXT_ATTR (
+      EFI_LIGHTGRAY,
+      EFI_BLACK
+      )
+    );
 
   return Status;
 }
@@ -1965,7 +2020,9 @@ ConSplitterTextInExAddDevice (
   // Enlarge the NotifyHandleList and the TextInExList
   //
   if (Private->CurrentNumberOfExConsoles >= Private->TextInExListCount) {
-    for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList; Link = Link->ForwardLink) {
+    for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList;
+         Link = Link->ForwardLink)
+    {
       CurrentNotify     = TEXT_IN_EX_SPLITTER_NOTIFY_FROM_THIS (Link);
       TextInExListCount = Private->TextInExListCount;
 
@@ -2002,20 +2059,27 @@ ConSplitterTextInExAddDevice (
   //
   // Register the key notify in the new text-in device
   //
-  for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList; Link = Link->ForwardLink) {
+  for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList;
+       Link = Link->ForwardLink)
+  {
     CurrentNotify = TEXT_IN_EX_SPLITTER_NOTIFY_FROM_THIS (Link);
     Status        = TextInEx->RegisterKeyNotify (
                                 TextInEx,
                                 &CurrentNotify->KeyData,
                                 CurrentNotify->KeyNotificationFn,
-                                &CurrentNotify->NotifyHandleList[Private->CurrentNumberOfExConsoles]
+                                &CurrentNotify->NotifyHandleList[Private->
+                                                                   CurrentNumberOfExConsoles
+                                ]
                                 );
     if (EFI_ERROR (Status)) {
-      for (Link = Link->BackLink; Link != &Private->NotifyList; Link = Link->BackLink) {
+      for (Link = Link->BackLink; Link != &Private->NotifyList; Link =
+             Link->BackLink)
+      {
         CurrentNotify = TEXT_IN_EX_SPLITTER_NOTIFY_FROM_THIS (Link);
         TextInEx->UnregisterKeyNotify (
                     TextInEx,
-                    CurrentNotify->NotifyHandleList[Private->CurrentNumberOfExConsoles]
+                    CurrentNotify->NotifyHandleList[Private->
+                                                      CurrentNumberOfExConsoles]
                     );
       }
 
@@ -2176,7 +2240,9 @@ ConSplitterAbsolutePointerAddDevice (
   //
   // If the Absolute Pointer List is full, enlarge it by calling ConSplitterGrowBuffer().
   //
-  if (Private->CurrentNumberOfAbsolutePointers >= Private->AbsolutePointerListCount) {
+  if (Private->CurrentNumberOfAbsolutePointers >=
+      Private->AbsolutePointerListCount)
+  {
     Status = ConSplitterGrowBuffer (
                sizeof (EFI_ABSOLUTE_POINTER_PROTOCOL *),
                &Private->AbsolutePointerListCount,
@@ -2190,7 +2256,8 @@ ConSplitterAbsolutePointerAddDevice (
   //
   // Add the new text-in device data structure into the Absolute Pointer List.
   //
-  Private->AbsolutePointerList[Private->CurrentNumberOfAbsolutePointers] = AbsolutePointer;
+  Private->AbsolutePointerList[Private->CurrentNumberOfAbsolutePointers] =
+    AbsolutePointer;
   Private->CurrentNumberOfAbsolutePointers++;
 
   return EFI_SUCCESS;
@@ -2221,7 +2288,8 @@ ConSplitterAbsolutePointerDeleteDevice (
   for (Index = 0; Index < Private->CurrentNumberOfAbsolutePointers; Index++) {
     if (Private->AbsolutePointerList[Index] == AbsolutePointer) {
       for ( ; Index < Private->CurrentNumberOfAbsolutePointers - 1; Index++) {
-        Private->AbsolutePointerList[Index] = Private->AbsolutePointerList[Index + 1];
+        Private->AbsolutePointerList[Index] =
+          Private->AbsolutePointerList[Index + 1];
       }
 
       Private->CurrentNumberOfAbsolutePointers--;
@@ -2541,7 +2609,9 @@ ConSplitterSyncOutputMode (
     Index = 0;
     while (Index < CurrentMaxMode) {
       QueryMode = *(TextOutModeMap + Index * StepSize);
-      if ((TextOutQueryData[QueryMode].Rows == Rows) && (TextOutQueryData[QueryMode].Columns == Columns)) {
+      if ((TextOutQueryData[QueryMode].Rows == Rows) &&
+          (TextOutQueryData[QueryMode].Columns == Columns))
+      {
         MapTable[Index * StepSize] = Mode;
         break;
       }
@@ -2791,15 +2861,25 @@ ConSplitterAddGraphicsOutputMode (
       //
       CurrentGraphicsOutputMode->MaxMode = GraphicsOutput->Mode->MaxMode;
       CurrentGraphicsOutputMode->Mode    = GraphicsOutput->Mode->Mode;
-      CopyMem (CurrentGraphicsOutputMode->Info, GraphicsOutput->Mode->Info, GraphicsOutput->Mode->SizeOfInfo);
-      CurrentGraphicsOutputMode->SizeOfInfo      = GraphicsOutput->Mode->SizeOfInfo;
-      CurrentGraphicsOutputMode->FrameBufferBase = GraphicsOutput->Mode->FrameBufferBase;
-      CurrentGraphicsOutputMode->FrameBufferSize = GraphicsOutput->Mode->FrameBufferSize;
+      CopyMem (
+        CurrentGraphicsOutputMode->Info,
+        GraphicsOutput->Mode->Info,
+        GraphicsOutput->Mode->SizeOfInfo
+        );
+      CurrentGraphicsOutputMode->SizeOfInfo =
+        GraphicsOutput->Mode->SizeOfInfo;
+      CurrentGraphicsOutputMode->FrameBufferBase =
+        GraphicsOutput->Mode->FrameBufferBase;
+      CurrentGraphicsOutputMode->FrameBufferSize =
+        GraphicsOutput->Mode->FrameBufferSize;
 
       //
       // Allocate resource for the private mode buffer
       //
-      ModeBuffer = AllocatePool (sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION) * GraphicsOutput->Mode->MaxMode);
+      ModeBuffer = AllocatePool (
+                     sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION) *
+                     GraphicsOutput->Mode->MaxMode
+                     );
       if (ModeBuffer == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -2815,7 +2895,12 @@ ConSplitterAddGraphicsOutputMode (
         //
         // The Info buffer would be allocated by callee
         //
-        Status = GraphicsOutput->QueryMode (GraphicsOutput, (UINT32)Index, &SizeOfInfo, &Info);
+        Status = GraphicsOutput->QueryMode (
+                                   GraphicsOutput,
+                                   (UINT32)Index,
+                                   &SizeOfInfo,
+                                   &Info
+                                   );
         if (EFI_ERROR (Status)) {
           return Status;
         }
@@ -2829,7 +2914,10 @@ ConSplitterAddGraphicsOutputMode (
       //
       // Check intersection of display mode
       //
-      ModeBuffer = AllocatePool (sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION) * CurrentGraphicsOutputMode->MaxMode);
+      ModeBuffer = AllocatePool (
+                     sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION) *
+                     CurrentGraphicsOutputMode->MaxMode
+                     );
       if (ModeBuffer == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -2839,11 +2927,18 @@ ConSplitterAddGraphicsOutputMode (
       for (Index = 0; Index < CurrentGraphicsOutputMode->MaxMode; Index++) {
         Match = FALSE;
 
-        for (NumberIndex = 0; NumberIndex < GraphicsOutput->Mode->MaxMode; NumberIndex++) {
+        for (NumberIndex = 0; NumberIndex < GraphicsOutput->Mode->MaxMode;
+             NumberIndex++)
+        {
           //
           // The Info buffer would be allocated by callee
           //
-          Status = GraphicsOutput->QueryMode (GraphicsOutput, (UINT32)NumberIndex, &SizeOfInfo, &Info);
+          Status = GraphicsOutput->QueryMode (
+                                     GraphicsOutput,
+                                     (UINT32)NumberIndex,
+                                     &SizeOfInfo,
+                                     &Info
+                                     );
           if (EFI_ERROR (Status)) {
             return Status;
           }
@@ -2879,14 +2974,21 @@ ConSplitterAddGraphicsOutputMode (
           }
 
           if (!AlreadyExist) {
-            CopyMem (MatchedMode, Mode, sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
+            CopyMem (
+              MatchedMode,
+              Mode,
+              sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
+              );
 
             //
             // Physical frame buffer is no longer available, change PixelFormat to PixelBltOnly
             //
             MatchedMode->Version     = 0;
             MatchedMode->PixelFormat = PixelBltOnly;
-            ZeroMem (&MatchedMode->PixelInformation, sizeof (EFI_PIXEL_BITMASK));
+            ZeroMem (
+              &MatchedMode->PixelInformation,
+              sizeof (EFI_PIXEL_BITMASK)
+              );
 
             MatchedMode++;
           }
@@ -2904,11 +3006,18 @@ ConSplitterAddGraphicsOutputMode (
       //
       // Physical frame buffer is no longer available when there are more than one physical GOP devices
       //
-      CurrentGraphicsOutputMode->MaxMode           = (UINT32)(((UINTN)MatchedMode - (UINTN)ModeBuffer) / sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
+      CurrentGraphicsOutputMode->MaxMode =
+        (UINT32)(((UINTN)MatchedMode - (UINTN)ModeBuffer) /
+                 sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
       CurrentGraphicsOutputMode->Info->PixelFormat = PixelBltOnly;
-      ZeroMem (&CurrentGraphicsOutputMode->Info->PixelInformation, sizeof (EFI_PIXEL_BITMASK));
-      CurrentGraphicsOutputMode->SizeOfInfo      = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
-      CurrentGraphicsOutputMode->FrameBufferBase = (EFI_PHYSICAL_ADDRESS)(UINTN)NULL;
+      ZeroMem (
+        &CurrentGraphicsOutputMode->Info->PixelInformation,
+        sizeof (EFI_PIXEL_BITMASK)
+        );
+      CurrentGraphicsOutputMode->SizeOfInfo =
+        sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
+      CurrentGraphicsOutputMode->FrameBufferBase =
+        (EFI_PHYSICAL_ADDRESS)(UINTN)NULL;
       CurrentGraphicsOutputMode->FrameBufferSize = 0;
     }
 
@@ -2917,8 +3026,10 @@ ConSplitterAddGraphicsOutputMode (
     //
     for (Index = 0; Index < CurrentGraphicsOutputMode->MaxMode; Index++) {
       Mode = &Private->GraphicsOutputModeBuffer[Index];
-      if ((Mode->HorizontalResolution == GraphicsOutput->Mode->Info->HorizontalResolution) &&
-          (Mode->VerticalResolution == GraphicsOutput->Mode->Info->VerticalResolution))
+      if ((Mode->HorizontalResolution ==
+           GraphicsOutput->Mode->Info->HorizontalResolution) &&
+          (Mode->VerticalResolution ==
+           GraphicsOutput->Mode->Info->VerticalResolution))
       {
         CurrentIndex = Index;
         break;
@@ -2931,7 +3042,9 @@ ConSplitterAddGraphicsOutputMode (
       //
       for (Index = 0; Index < CurrentGraphicsOutputMode->MaxMode; Index++) {
         Mode = &Private->GraphicsOutputModeBuffer[Index];
-        if ((Mode->HorizontalResolution == 800) && (Mode->VerticalResolution == 600)) {
+        if ((Mode->HorizontalResolution == 800) && (Mode->VerticalResolution ==
+                                                    600))
+        {
           CurrentIndex = Index;
           break;
         }
@@ -2950,21 +3063,28 @@ ConSplitterAddGraphicsOutputMode (
                &UgaRefreshRate
                );
 
-    CurrentGraphicsOutputMode->MaxMode         = 1;
-    Info                                       = CurrentGraphicsOutputMode->Info;
-    Info->Version                              = 0;
-    Info->HorizontalResolution                 = UgaHorizontalResolution;
-    Info->VerticalResolution                   = UgaVerticalResolution;
-    Info->PixelFormat                          = PixelBltOnly;
-    Info->PixelsPerScanLine                    = UgaHorizontalResolution;
-    CurrentGraphicsOutputMode->SizeOfInfo      = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
-    CurrentGraphicsOutputMode->FrameBufferBase = (EFI_PHYSICAL_ADDRESS)(UINTN)NULL;
+    CurrentGraphicsOutputMode->MaxMode = 1;
+    Info                               =
+      CurrentGraphicsOutputMode->Info;
+    Info->Version                         = 0;
+    Info->HorizontalResolution            = UgaHorizontalResolution;
+    Info->VerticalResolution              = UgaVerticalResolution;
+    Info->PixelFormat                     = PixelBltOnly;
+    Info->PixelsPerScanLine               = UgaHorizontalResolution;
+    CurrentGraphicsOutputMode->SizeOfInfo =
+      sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
+    CurrentGraphicsOutputMode->FrameBufferBase =
+      (EFI_PHYSICAL_ADDRESS)(UINTN)NULL;
     CurrentGraphicsOutputMode->FrameBufferSize = 0;
 
     //
     // Update the private mode buffer
     //
-    CopyMem (&Private->GraphicsOutputModeBuffer[0], Info, sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
+    CopyMem (
+      &Private->GraphicsOutputModeBuffer[0],
+      Info,
+      sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
+      );
 
     //
     // Only mode 0 is available to be set
@@ -2988,24 +3108,37 @@ Done:
 
   Mode = &Private->GraphicsOutputModeBuffer[CurrentIndex];
   if ((GraphicsOutput != NULL) &&
-      (Mode->HorizontalResolution == CurrentGraphicsOutputMode->Info->HorizontalResolution) &&
-      (Mode->VerticalResolution == CurrentGraphicsOutputMode->Info->VerticalResolution))
+      (Mode->HorizontalResolution ==
+       CurrentGraphicsOutputMode->Info->HorizontalResolution) &&
+      (Mode->VerticalResolution ==
+       CurrentGraphicsOutputMode->Info->VerticalResolution))
   {
     CurrentGraphicsOutputMode->Mode = (UINT32)CurrentIndex;
-    if ((Mode->HorizontalResolution != GraphicsOutput->Mode->Info->HorizontalResolution) ||
-        (Mode->VerticalResolution != GraphicsOutput->Mode->Info->VerticalResolution))
+    if ((Mode->HorizontalResolution !=
+         GraphicsOutput->Mode->Info->HorizontalResolution) ||
+        (Mode->VerticalResolution !=
+         GraphicsOutput->Mode->Info->VerticalResolution))
     {
       //
       // If all existing video device has been set to common mode, only set new GOP device to
       // the common mode
       //
-      for (NumberIndex = 0; NumberIndex < GraphicsOutput->Mode->MaxMode; NumberIndex++) {
-        Status = GraphicsOutput->QueryMode (GraphicsOutput, (UINT32)NumberIndex, &SizeOfInfo, &Info);
+      for (NumberIndex = 0; NumberIndex < GraphicsOutput->Mode->MaxMode;
+           NumberIndex++)
+      {
+        Status = GraphicsOutput->QueryMode (
+                                   GraphicsOutput,
+                                   (UINT32)NumberIndex,
+                                   &SizeOfInfo,
+                                   &Info
+                                   );
         if (EFI_ERROR (Status)) {
           return Status;
         }
 
-        if ((Info->HorizontalResolution == Mode->HorizontalResolution) && (Info->VerticalResolution == Mode->VerticalResolution)) {
+        if ((Info->HorizontalResolution == Mode->HorizontalResolution) &&
+            (Info->VerticalResolution == Mode->VerticalResolution))
+        {
           FreePool (Info);
           break;
         }
@@ -3023,14 +3156,18 @@ Done:
     //
     // Graphics console can ensure all GOP devices have the same mode which can be taken as current mode.
     //
-    Status = Private->GraphicsOutput.SetMode (&Private->GraphicsOutput, (UINT32)CurrentIndex);
+    Status = Private->GraphicsOutput.SetMode (
+                                       &Private->GraphicsOutput,
+                                       (UINT32)CurrentIndex
+                                       );
     if (EFI_ERROR (Status)) {
       //
       // If user defined mode is not valid for display device, set to the default mode 800x600.
       //
       (Private->GraphicsOutputModeBuffer[0]).HorizontalResolution = 800;
       (Private->GraphicsOutputModeBuffer[0]).VerticalResolution   = 600;
-      Status                                                      = Private->GraphicsOutput.SetMode (&Private->GraphicsOutput, 0);
+      Status                                                      =
+        Private->GraphicsOutput.SetMode (&Private->GraphicsOutput, 0);
     }
   }
 
@@ -3216,7 +3353,11 @@ ConSplitterTextOutAddDevice (
   // This device display mode will be added into Graphics Ouput modes.
   //
   if ((GraphicsOutput != NULL) || (UgaDraw != NULL)) {
-    DeviceStatus = ConSplitterAddGraphicsOutputMode (Private, GraphicsOutput, UgaDraw);
+    DeviceStatus = ConSplitterAddGraphicsOutputMode (
+                     Private,
+                     GraphicsOutput,
+                     UgaDraw
+                     );
   }
 
   if (FeaturePcdGet (PcdConOutUgaSupport)) {
@@ -3224,7 +3365,12 @@ ConSplitterTextOutAddDevice (
     // If UGA is produced by Consplitter
     //
     if (GraphicsOutput != NULL) {
-      Status = GraphicsOutput->QueryMode (GraphicsOutput, GraphicsOutput->Mode->Mode, &SizeOfInfo, &Info);
+      Status = GraphicsOutput->QueryMode (
+                                 GraphicsOutput,
+                                 GraphicsOutput->Mode->Mode,
+                                 &SizeOfInfo,
+                                 &Info
+                                 );
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -3272,7 +3418,8 @@ ConSplitterTextOutAddDevice (
   }
 
   if (((!EFI_ERROR (DeviceStatus)) || (!EFI_ERROR (Status))) &&
-      ((Private->CurrentNumberOfGraphicsOutput + Private->CurrentNumberOfUgaDraw) == 1))
+      ((Private->CurrentNumberOfGraphicsOutput +
+        Private->CurrentNumberOfUgaDraw) == 1))
   {
     if (!FeaturePcdGet (PcdConOutGopSupport)) {
       //
@@ -3361,7 +3508,12 @@ ConSplitterTextOutDeleteDevice (
         Private->CurrentNumberOfGraphicsOutput--;
       }
 
-      CopyMem (TextOutList, TextOutList + 1, sizeof (TEXT_OUT_AND_GOP_DATA) * Index);
+      CopyMem (
+        TextOutList,
+        TextOutList + 1,
+        sizeof (TEXT_OUT_AND_GOP_DATA) *
+        Index
+        );
       CurrentNumOfConsoles--;
       break;
     }
@@ -3377,7 +3529,9 @@ ConSplitterTextOutDeleteDevice (
     return EFI_NOT_FOUND;
   }
 
-  if ((Private->CurrentNumberOfGraphicsOutput == 0) && (Private->CurrentNumberOfUgaDraw == 0)) {
+  if ((Private->CurrentNumberOfGraphicsOutput == 0) &&
+      (Private->CurrentNumberOfUgaDraw == 0))
+  {
     //
     // If there is not any physical GOP and UGA device in system,
     // Consplitter GOP or UGA protocol will be uninstalled
@@ -3486,7 +3640,9 @@ ConSplitterTextInReset (
   //
   // return the worst status met
   //
-  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index < Private->CurrentNumberOfConsoles; Index++) {
+  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index <
+       Private->CurrentNumberOfConsoles; Index++)
+  {
     Status = Private->TextInList[Index]->Reset (
                                            Private->TextInList[Index],
                                            ExtendedVerification
@@ -3573,7 +3729,9 @@ ConSplitterTextInPrivateReadKeyStroke (
       break;
     }
 
-    if ((KeyData.Key.ScanCode != CHAR_NULL) || (KeyData.Key.UnicodeChar != SCAN_NULL)) {
+    if ((KeyData.Key.ScanCode != CHAR_NULL) || (KeyData.Key.UnicodeChar !=
+                                                SCAN_NULL))
+    {
       CopyMem (Key, &KeyData.Key, sizeof (EFI_INPUT_KEY));
       return Status;
     }
@@ -3597,7 +3755,9 @@ ConSplitterTextInPrivateReadKeyStroke (
       // If it is not partial keystorke, return the key. Otherwise, continue
       // to read key from THIS physical console input device.
       //
-      if ((KeyData.Key.ScanCode != CHAR_NULL) || (KeyData.Key.UnicodeChar != SCAN_NULL)) {
+      if ((KeyData.Key.ScanCode != CHAR_NULL) || (KeyData.Key.UnicodeChar !=
+                                                  SCAN_NULL))
+      {
         CopyMem (Key, &KeyData.Key, sizeof (EFI_INPUT_KEY));
         return Status;
       }
@@ -3642,7 +3802,10 @@ ConSplitterTextInReadKeyStroke (
   // Signal ConnectConIn event on first call in Lazy ConIn mode
   //
   if (!mConInIsConnect && PcdGetBool (PcdConInConnectOnDemand)) {
-    DEBUG ((DEBUG_INFO, "Connect ConIn in first ReadKeyStoke in Lazy ConIn mode.\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "Connect ConIn in first ReadKeyStoke in Lazy ConIn mode.\n"
+      ));
     gBS->SignalEvent (Private->ConnectConInEvent);
     mConInIsConnect = TRUE;
   }
@@ -3726,13 +3889,15 @@ IsKeyRegistered (
   // Assume KeyShiftState/KeyToggleState = 0 in Registered key data means these state could be ignored.
   //
   if ((RegsiteredData->KeyState.KeyShiftState != 0) &&
-      (RegsiteredData->KeyState.KeyShiftState != InputData->KeyState.KeyShiftState))
+      (RegsiteredData->KeyState.KeyShiftState !=
+       InputData->KeyState.KeyShiftState))
   {
     return FALSE;
   }
 
   if ((RegsiteredData->KeyState.KeyToggleState != 0) &&
-      (RegsiteredData->KeyState.KeyToggleState != InputData->KeyState.KeyToggleState))
+      (RegsiteredData->KeyState.KeyToggleState !=
+       InputData->KeyState.KeyToggleState))
   {
     return FALSE;
   }
@@ -3770,7 +3935,9 @@ ConSplitterTextInResetEx (
   //
   // return the worst status met
   //
-  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index < Private->CurrentNumberOfExConsoles; Index++) {
+  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index <
+       Private->CurrentNumberOfExConsoles; Index++)
+  {
     Status = Private->TextInExList[Index]->Reset (
                                              Private->TextInExList[Index],
                                              ExtendedVerification
@@ -3832,7 +3999,10 @@ ConSplitterTextInReadKeyStrokeEx (
   // Signal ConnectConIn event on first call in Lazy ConIn mode
   //
   if (!mConInIsConnect && PcdGetBool (PcdConInConnectOnDemand)) {
-    DEBUG ((DEBUG_INFO, "Connect ConIn in first ReadKeyStoke in Lazy ConIn mode.\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "Connect ConIn in first ReadKeyStoke in Lazy ConIn mode.\n"
+      ));
     gBS->SignalEvent (Private->ConnectConInEvent);
     mConInIsConnect = TRUE;
   }
@@ -3871,7 +4041,9 @@ ConSplitterTextInReadKeyStrokeEx (
       KeyState.KeyShiftState |= CurrentKeyData.KeyState.KeyShiftState;
     }
 
-    if ((CurrentKeyData.KeyState.KeyToggleState & EFI_TOGGLE_STATE_VALID) != 0) {
+    if ((CurrentKeyData.KeyState.KeyToggleState & EFI_TOGGLE_STATE_VALID) !=
+        0)
+    {
       KeyState.KeyToggleState |= CurrentKeyData.KeyState.KeyToggleState;
     }
 
@@ -3900,7 +4072,11 @@ ConSplitterTextInReadKeyStrokeEx (
   // Consolidate the key state for all keys in Private->KeyQueue[]
   //
   for (Index = 0; Index < Private->CurrentNumberOfKeys; Index++) {
-    CopyMem (&Private->KeyQueue[Index].KeyState, &KeyState, sizeof (EFI_KEY_STATE));
+    CopyMem (
+      &Private->KeyQueue[Index].KeyState,
+      &KeyState,
+      sizeof (EFI_KEY_STATE)
+      );
   }
 
   //
@@ -3979,7 +4155,8 @@ ConSplitterTextInSetState (
   //
   // Get if virtual KeyState has been required to be exposed.
   //
-  Private->VirtualKeyStateExported = (((*KeyToggleState) & EFI_KEY_STATE_EXPOSED) != 0);
+  Private->VirtualKeyStateExported = (((*KeyToggleState) &
+                                       EFI_KEY_STATE_EXPOSED) != 0);
 
   return EFI_SUCCESS;
 }
@@ -4022,7 +4199,9 @@ ConSplitterTextInRegisterKeyNotify (
   LIST_ENTRY                     *Link;
   TEXT_IN_EX_SPLITTER_NOTIFY     *CurrentNotify;
 
-  if ((KeyData == NULL) || (NotifyHandle == NULL) || (KeyNotificationFunction == NULL)) {
+  if ((KeyData == NULL) || (NotifyHandle == NULL) || (KeyNotificationFunction ==
+                                                      NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -4031,7 +4210,9 @@ ConSplitterTextInRegisterKeyNotify (
   //
   // Return EFI_SUCCESS if the (KeyData, NotificationFunction) is already registered.
   //
-  for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList; Link = Link->ForwardLink) {
+  for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList;
+       Link = Link->ForwardLink)
+  {
     CurrentNotify = TEXT_IN_EX_SPLITTER_NOTIFY_FROM_THIS (Link);
     if (IsKeyRegistered (&CurrentNotify->KeyData, KeyData)) {
       if (CurrentNotify->KeyNotificationFn == KeyNotificationFunction) {
@@ -4044,12 +4225,17 @@ ConSplitterTextInRegisterKeyNotify (
   //
   // Allocate resource to save the notification function
   //
-  NewNotify = (TEXT_IN_EX_SPLITTER_NOTIFY *)AllocateZeroPool (sizeof (TEXT_IN_EX_SPLITTER_NOTIFY));
+  NewNotify = (TEXT_IN_EX_SPLITTER_NOTIFY *)AllocateZeroPool (
+                                              sizeof (TEXT_IN_EX_SPLITTER_NOTIFY)
+                                              );
   if (NewNotify == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  NewNotify->NotifyHandleList = (VOID **)AllocateZeroPool (sizeof (VOID *) *  Private->TextInExListCount);
+  NewNotify->NotifyHandleList = (VOID **)AllocateZeroPool (
+                                           sizeof (VOID *) *
+                                           Private->TextInExListCount
+                                           );
   if (NewNotify->NotifyHandleList == NULL) {
     gBS->FreePool (NewNotify);
     return EFI_OUT_OF_RESOURCES;
@@ -4124,7 +4310,9 @@ ConSplitterTextInUnregisterKeyNotify (
 
   Private = TEXT_IN_EX_SPLITTER_PRIVATE_DATA_FROM_THIS (This);
 
-  for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList; Link = Link->ForwardLink) {
+  for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList;
+       Link = Link->ForwardLink)
+  {
     CurrentNotify = TEXT_IN_EX_SPLITTER_NOTIFY_FROM_THIS (Link);
     if (CurrentNotify == NotificationHandle) {
       for (Index = 0; Index < Private->CurrentNumberOfExConsoles; Index++) {
@@ -4182,7 +4370,9 @@ ConSplitterSimplePointerReset (
   //
   // return the worst status met
   //
-  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index < Private->CurrentNumberOfPointers; Index++) {
+  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index <
+       Private->CurrentNumberOfPointers; Index++)
+  {
     Status = Private->PointerList[Index]->Reset (
                                             Private->PointerList[Index],
                                             ExtendedVerification
@@ -4250,16 +4440,34 @@ ConSplitterSimplePointerPrivateGetState (
         State->RightButton = TRUE;
       }
 
-      if ((CurrentState.RelativeMovementX != 0) && (Private->PointerList[Index]->Mode->ResolutionX != 0)) {
-        State->RelativeMovementX += (CurrentState.RelativeMovementX * (INT32)Private->SimplePointerMode.ResolutionX) / (INT32)Private->PointerList[Index]->Mode->ResolutionX;
+      if ((CurrentState.RelativeMovementX != 0) &&
+          (Private->PointerList[Index]->Mode->ResolutionX != 0))
+      {
+        State->RelativeMovementX += (CurrentState.RelativeMovementX *
+                                     (INT32)Private->SimplePointerMode.
+                                       ResolutionX) /
+                                    (INT32)Private->PointerList[Index]->Mode->
+                                      ResolutionX;
       }
 
-      if ((CurrentState.RelativeMovementY != 0) && (Private->PointerList[Index]->Mode->ResolutionY != 0)) {
-        State->RelativeMovementY += (CurrentState.RelativeMovementY * (INT32)Private->SimplePointerMode.ResolutionY) / (INT32)Private->PointerList[Index]->Mode->ResolutionY;
+      if ((CurrentState.RelativeMovementY != 0) &&
+          (Private->PointerList[Index]->Mode->ResolutionY != 0))
+      {
+        State->RelativeMovementY += (CurrentState.RelativeMovementY *
+                                     (INT32)Private->SimplePointerMode.
+                                       ResolutionY) /
+                                    (INT32)Private->PointerList[Index]->Mode->
+                                      ResolutionY;
       }
 
-      if ((CurrentState.RelativeMovementZ != 0) && (Private->PointerList[Index]->Mode->ResolutionZ != 0)) {
-        State->RelativeMovementZ += (CurrentState.RelativeMovementZ * (INT32)Private->SimplePointerMode.ResolutionZ) / (INT32)Private->PointerList[Index]->Mode->ResolutionZ;
+      if ((CurrentState.RelativeMovementZ != 0) &&
+          (Private->PointerList[Index]->Mode->ResolutionZ != 0))
+      {
+        State->RelativeMovementZ += (CurrentState.RelativeMovementZ *
+                                     (INT32)Private->SimplePointerMode.
+                                       ResolutionZ) /
+                                    (INT32)Private->PointerList[Index]->Mode->
+                                      ResolutionZ;
       }
     } else if (Status == EFI_DEVICE_ERROR) {
       ReturnStatus = EFI_DEVICE_ERROR;
@@ -4375,9 +4583,12 @@ ConSplitterAbsolutePointerReset (
   //
   // return the worst status met
   //
-  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index < Private->CurrentNumberOfAbsolutePointers; Index++) {
+  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index <
+       Private->CurrentNumberOfAbsolutePointers; Index++)
+  {
     Status = Private->AbsolutePointerList[Index]->Reset (
-                                                    Private->AbsolutePointerList[Index],
+                                                    Private->AbsolutePointerList
+                                                    [Index],
                                                     ExtendedVerification
                                                     );
     if (EFI_ERROR (Status)) {
@@ -4452,7 +4663,8 @@ ConSplitterAbsolutePointerGetState (
   ReturnStatus = EFI_NOT_READY;
   for (Index = 0; Index < Private->CurrentNumberOfAbsolutePointers; Index++) {
     Status = Private->AbsolutePointerList[Index]->GetState (
-                                                    Private->AbsolutePointerList[Index],
+                                                    Private->AbsolutePointerList
+                                                    [Index],
                                                     &CurrentState
                                                     );
     if (!EFI_ERROR (Status)) {
@@ -4548,7 +4760,9 @@ ConSplitterAbsolutePointerWaitForInput (
   // if any physical console input device has key input, signal the event.
   //
   for (Index = 0; Index < Private->CurrentNumberOfAbsolutePointers; Index++) {
-    Status = gBS->CheckEvent (Private->AbsolutePointerList[Index]->WaitForInput);
+    Status = gBS->CheckEvent (
+                    Private->AbsolutePointerList[Index]->WaitForInput
+                    );
     if (!EFI_ERROR (Status)) {
       gBS->SignalEvent (Event);
       Private->AbsoluteInputEventSignalState = TRUE;
@@ -4585,9 +4799,12 @@ ConSplitterTextOutReset (
   //
   // return the worst status met
   //
-  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index < Private->CurrentNumberOfConsoles; Index++) {
+  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index <
+       Private->CurrentNumberOfConsoles; Index++)
+  {
     Status = Private->TextOutList[Index].TextOut->Reset (
-                                                    Private->TextOutList[Index].TextOut,
+                                                    Private->TextOutList[Index].
+                                                      TextOut,
                                                     ExtendedVerification
                                                     );
     if (EFI_ERROR (Status)) {
@@ -4595,7 +4812,13 @@ ConSplitterTextOutReset (
     }
   }
 
-  This->SetAttribute (This, EFI_TEXT_ATTR (This->Mode->Attribute & 0x0F, EFI_BLACK));
+  This->SetAttribute (
+          This,
+          EFI_TEXT_ATTR (
+            This->Mode->Attribute & 0x0F,
+            EFI_BLACK
+            )
+          );
 
   //
   // reset all mode parameters
@@ -4645,9 +4868,12 @@ ConSplitterTextOutOutputString (
   //
   // return the worst status met
   //
-  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index < Private->CurrentNumberOfConsoles; Index++) {
+  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index <
+       Private->CurrentNumberOfConsoles; Index++)
+  {
     Status = Private->TextOutList[Index].TextOut->OutputString (
-                                                    Private->TextOutList[Index].TextOut,
+                                                    Private->TextOutList[Index].
+                                                      TextOut,
                                                     WString
                                                     );
     if (EFI_ERROR (Status)) {
@@ -4656,8 +4882,10 @@ ConSplitterTextOutOutputString (
   }
 
   if (Private->CurrentNumberOfConsoles > 0) {
-    Private->TextOutMode.CursorColumn = Private->TextOutList[0].TextOut->Mode->CursorColumn;
-    Private->TextOutMode.CursorRow    = Private->TextOutList[0].TextOut->Mode->CursorRow;
+    Private->TextOutMode.CursorColumn =
+      Private->TextOutList[0].TextOut->Mode->CursorColumn;
+    Private->TextOutMode.CursorRow =
+      Private->TextOutList[0].TextOut->Mode->CursorRow;
   } else {
     //
     // When there is no real console devices in system,
@@ -4672,7 +4900,9 @@ ConSplitterTextOutOutputString (
     for ( ; *WString != CHAR_NULL; WString++) {
       switch (*WString) {
         case CHAR_BACKSPACE:
-          if ((Private->TextOutMode.CursorColumn == 0) && (Private->TextOutMode.CursorRow > 0)) {
+          if ((Private->TextOutMode.CursorColumn == 0) &&
+              (Private->TextOutMode.CursorRow > 0))
+          {
             Private->TextOutMode.CursorRow--;
             Private->TextOutMode.CursorColumn = (INT32)(MaxColumn - 1);
           } else if (Private->TextOutMode.CursorColumn > 0) {
@@ -4742,9 +4972,12 @@ ConSplitterTextOutTestString (
   //
   // return the worst status met
   //
-  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index < Private->CurrentNumberOfConsoles; Index++) {
+  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index <
+       Private->CurrentNumberOfConsoles; Index++)
+  {
     Status = Private->TextOutList[Index].TextOut->TestString (
-                                                    Private->TextOutList[Index].TextOut,
+                                                    Private->TextOutList[Index].
+                                                      TextOut,
                                                     WString
                                                     );
     if (EFI_ERROR (Status)) {
@@ -4808,10 +5041,11 @@ ConSplitterTextOutQueryMode (
   // We get the available mode from mode intersection map if it's available
   //
   if (Private->TextOutModeMap != NULL) {
-    TextOutModeMap = Private->TextOutModeMap + Private->TextOutListCount * ModeNumber;
-    CurrentMode    = (UINTN)(*TextOutModeMap);
-    *Columns       = Private->TextOutQueryData[CurrentMode].Columns;
-    *Rows          = Private->TextOutQueryData[CurrentMode].Rows;
+    TextOutModeMap = Private->TextOutModeMap + Private->TextOutListCount *
+                     ModeNumber;
+    CurrentMode = (UINTN)(*TextOutModeMap);
+    *Columns    = Private->TextOutQueryData[CurrentMode].Columns;
+    *Rows       = Private->TextOutQueryData[CurrentMode].Rows;
   } else {
     *Columns = Private->TextOutQueryData[ModeNumber].Columns;
     *Rows    = Private->TextOutQueryData[ModeNumber].Rows;
@@ -4873,16 +5107,21 @@ ConSplitterTextOutSetMode (
   //
   // return the worst status met
   //
-  TextOutModeMap = Private->TextOutModeMap + Private->TextOutListCount * ModeNumber;
-  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index < Private->CurrentNumberOfConsoles; Index++) {
+  TextOutModeMap = Private->TextOutModeMap + Private->TextOutListCount *
+                   ModeNumber;
+  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index <
+       Private->CurrentNumberOfConsoles; Index++)
+  {
     //
     // While adding a console out device do not set same mode again for the same device.
     //
     if ((!Private->AddingConOutDevice) ||
-        (TextOutModeMap[Index] != Private->TextOutList[Index].TextOut->Mode->Mode))
+        (TextOutModeMap[Index] !=
+         Private->TextOutList[Index].TextOut->Mode->Mode))
     {
       Status = Private->TextOutList[Index].TextOut->SetMode (
-                                                      Private->TextOutList[Index].TextOut,
+                                                      Private->TextOutList[Index
+                                                      ].TextOut,
                                                       TextOutModeMap[Index]
                                                       );
       if (EFI_ERROR (Status)) {
@@ -4940,9 +5179,12 @@ ConSplitterTextOutSetAttribute (
   //
   // return the worst status met
   //
-  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index < Private->CurrentNumberOfConsoles; Index++) {
+  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index <
+       Private->CurrentNumberOfConsoles; Index++)
+  {
     Status = Private->TextOutList[Index].TextOut->SetAttribute (
-                                                    Private->TextOutList[Index].TextOut,
+                                                    Private->TextOutList[Index].
+                                                      TextOut,
                                                     Attribute
                                                     );
     if (EFI_ERROR (Status)) {
@@ -4983,8 +5225,13 @@ ConSplitterTextOutClearScreen (
   //
   // return the worst status met
   //
-  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index < Private->CurrentNumberOfConsoles; Index++) {
-    Status = Private->TextOutList[Index].TextOut->ClearScreen (Private->TextOutList[Index].TextOut);
+  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index <
+       Private->CurrentNumberOfConsoles; Index++)
+  {
+    Status = Private->TextOutList[Index].TextOut->ClearScreen (
+                                                    Private->TextOutList[Index].
+                                                      TextOut
+                                                    );
     if (EFI_ERROR (Status)) {
       ReturnStatus = Status;
     }
@@ -5047,8 +5294,9 @@ ConSplitterTextOutSetCursorPosition (
   // Get current MaxColumn and MaxRow from intersection map
   //
   if (Private->TextOutModeMap != NULL) {
-    TextOutModeMap = Private->TextOutModeMap + Private->TextOutListCount * ModeNumber;
-    CurrentMode    = *TextOutModeMap;
+    TextOutModeMap = Private->TextOutModeMap + Private->TextOutListCount *
+                     ModeNumber;
+    CurrentMode = *TextOutModeMap;
   } else {
     CurrentMode = ModeNumber;
   }
@@ -5063,9 +5311,12 @@ ConSplitterTextOutSetCursorPosition (
   //
   // return the worst status met
   //
-  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index < Private->CurrentNumberOfConsoles; Index++) {
+  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index <
+       Private->CurrentNumberOfConsoles; Index++)
+  {
     Status = Private->TextOutList[Index].TextOut->SetCursorPosition (
-                                                    Private->TextOutList[Index].TextOut,
+                                                    Private->TextOutList[Index].
+                                                      TextOut,
                                                     Column,
                                                     Row
                                                     );
@@ -5116,9 +5367,12 @@ ConSplitterTextOutEnableCursor (
   //
   // return the worst status met
   //
-  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index < Private->CurrentNumberOfConsoles; Index++) {
+  for (Index = 0, ReturnStatus = EFI_SUCCESS; Index <
+       Private->CurrentNumberOfConsoles; Index++)
+  {
     Status = Private->TextOutList[Index].TextOut->EnableCursor (
-                                                    Private->TextOutList[Index].TextOut,
+                                                    Private->TextOutList[Index].
+                                                      TextOut,
                                                     Visible
                                                     );
     if (EFI_ERROR (Status)) {

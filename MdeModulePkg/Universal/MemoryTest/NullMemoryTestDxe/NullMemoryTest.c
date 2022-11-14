@@ -76,12 +76,14 @@ ConvertToTestedMemory (
                   );
   if (!EFI_ERROR (Status)) {
     Status = gDS->AddMemorySpace (
-                    ((Capabilities & EFI_MEMORY_MORE_RELIABLE) == EFI_MEMORY_MORE_RELIABLE) ?
+                    ((Capabilities & EFI_MEMORY_MORE_RELIABLE) ==
+                     EFI_MEMORY_MORE_RELIABLE) ?
                     EfiGcdMemoryTypeMoreReliable : EfiGcdMemoryTypeSystemMemory,
                     BaseAddress,
                     Length,
                     Capabilities &~
-                    (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED | EFI_MEMORY_TESTED | EFI_MEMORY_RUNTIME)
+                    (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED |
+                     EFI_MEMORY_TESTED | EFI_MEMORY_RUNTIME)
                     );
   }
 
@@ -121,7 +123,9 @@ InitializeMemoryTest (
   gDS->GetMemorySpaceMap (&NumberOfDescriptors, &MemorySpaceMap);
   for (Index = 0; Index < NumberOfDescriptors; Index++) {
     if ((MemorySpaceMap[Index].GcdMemoryType == EfiGcdMemoryTypeReserved) &&
-        ((MemorySpaceMap[Index].Capabilities & (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED | EFI_MEMORY_TESTED)) ==
+        ((MemorySpaceMap[Index].Capabilities & (EFI_MEMORY_PRESENT |
+                                                EFI_MEMORY_INITIALIZED |
+                                                EFI_MEMORY_TESTED)) ==
          (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED))
         )
     {
@@ -136,8 +140,10 @@ InitializeMemoryTest (
       ASSERT_EFI_ERROR (Status);
       mTestedSystemMemory += MemorySpaceMap[Index].Length;
       mTotalSystemMemory  += MemorySpaceMap[Index].Length;
-    } else if ((MemorySpaceMap[Index].GcdMemoryType == EfiGcdMemoryTypeSystemMemory) ||
-               (MemorySpaceMap[Index].GcdMemoryType == EfiGcdMemoryTypeMoreReliable))
+    } else if ((MemorySpaceMap[Index].GcdMemoryType ==
+                EfiGcdMemoryTypeSystemMemory) ||
+               (MemorySpaceMap[Index].GcdMemoryType ==
+                EfiGcdMemoryTypeMoreReliable))
     {
       mTotalSystemMemory += MemorySpaceMap[Index].Length;
     }
@@ -261,7 +267,9 @@ GenCompatibleRangeTest (
     }
 
     if ((Descriptor.GcdMemoryType == EfiGcdMemoryTypeReserved) &&
-        ((Descriptor.Capabilities & (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED | EFI_MEMORY_TESTED)) ==
+        ((Descriptor.Capabilities & (EFI_MEMORY_PRESENT |
+                                     EFI_MEMORY_INITIALIZED |
+                                     EFI_MEMORY_TESTED)) ==
          (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED))
         )
     {

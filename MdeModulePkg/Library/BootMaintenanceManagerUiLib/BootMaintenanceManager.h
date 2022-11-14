@@ -58,7 +58,8 @@ typedef struct {
 //
 // Variable created with this flag will be "Efi:...."
 //
-#define VAR_FLAG  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE
+#define VAR_FLAG  \
+  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE
 
 extern EFI_GUID  mBootMaintGuid;
 extern CHAR16    mBootMaintStorageName[];
@@ -80,7 +81,9 @@ extern UINT8  BootMaintenanceManagerBin[];
 // Callback function helper
 //
 #define BMM_CALLBACK_DATA_SIGNATURE  SIGNATURE_32 ('C', 'b', 'c', 'k')
-#define BMM_CALLBACK_DATA_FROM_THIS(a)  CR (a, BMM_CALLBACK_DATA, BmmConfigAccess, BMM_CALLBACK_DATA_SIGNATURE)
+#define BMM_CALLBACK_DATA_FROM_THIS( \
+                                   a)  \
+  CR (a, BMM_CALLBACK_DATA, BmmConfigAccess, BMM_CALLBACK_DATA_SIGNATURE)
 
 //
 // Enumeration type definition
@@ -148,7 +151,9 @@ typedef enum _TYPE_OF_TERMINAL {
 // all these values are computed from the structure
 // defined below
 //
-#define VAR_OFFSET(Field)  ((UINT16) ((UINTN) &(((BMM_FAKE_NV_DATA *) 0)->Field)))
+#define VAR_OFFSET( \
+                  Field)  \
+  ((UINT16) ((UINTN) &(((BMM_FAKE_NV_DATA *) 0)->Field)))
 
 //
 // Question Id of Zero is invalid, so add an offset to it
@@ -193,43 +198,80 @@ typedef enum _TYPE_OF_TERMINAL {
 #define COM_TERMINAL_VAR_OFFSET         VAR_OFFSET (COMTerminalType)
 #define COM_FLOWCONTROL_VAR_OFFSET      VAR_OFFSET (COMFlowControl)
 
-#define BOOT_TIME_OUT_QUESTION_ID        QUESTION_ID (BootTimeOut)
-#define BOOT_NEXT_QUESTION_ID            QUESTION_ID (BootNext)
-#define COM1_BAUD_RATE_QUESTION_ID       QUESTION_ID (COM1BaudRate)
-#define COM1_DATA_RATE_QUESTION_ID       QUESTION_ID (COM1DataRate)
-#define COM1_STOP_BITS_QUESTION_ID       QUESTION_ID (COM1StopBits)
-#define COM1_PARITY_QUESTION_ID          QUESTION_ID (COM1Parity)
-#define COM1_TERMINAL_QUESTION_ID        QUESTION_ID (COM2TerminalType)
-#define COM2_BAUD_RATE_QUESTION_ID       QUESTION_ID (COM2BaudRate)
-#define COM2_DATA_RATE_QUESTION_ID       QUESTION_ID (COM2DataRate)
-#define COM2_STOP_BITS_QUESTION_ID       QUESTION_ID (COM2StopBits)
-#define COM2_PARITY_QUESTION_ID          QUESTION_ID (COM2Parity)
-#define COM2_TERMINAL_QUESTION_ID        QUESTION_ID (COM2TerminalType)
-#define DRV_ADD_HANDLE_DESC_QUESTION_ID  QUESTION_ID (DriverAddHandleDesc)
-#define DRV_ADD_ACTIVE_QUESTION_ID       QUESTION_ID (DriverAddActive)
-#define DRV_ADD_RECON_QUESTION_ID        QUESTION_ID (DriverAddForceReconnect)
-#define CON_IN_COM1_QUESTION_ID          QUESTION_ID (ConsoleInputCOM1)
-#define CON_IN_COM2_QUESTION_ID          QUESTION_ID (ConsoleInputCOM2)
-#define CON_OUT_COM1_QUESTION_ID         QUESTION_ID (ConsoleOutputCOM1)
-#define CON_OUT_COM2_QUESTION_ID         QUESTION_ID (ConsoleOutputCOM2)
-#define CON_ERR_COM1_QUESTION_ID         QUESTION_ID (ConsoleErrorCOM1)
-#define CON_ERR_COM2_QUESTION_ID         QUESTION_ID (ConsoleErrorCOM2)
-#define CON_MODE_QUESTION_ID             QUESTION_ID (ConsoleOutMode)
-#define CON_DEVICE_QUESTION_ID           QUESTION_ID (ConsoleCheck)
-#define CON_IN_DEVICE_QUESTION_ID        QUESTION_ID (ConsoleInCheck)
-#define CON_OUT_DEVICE_QUESTION_ID       QUESTION_ID (ConsoleOutCheck)
-#define CON_ERR_DEVICE_QUESTION_ID       QUESTION_ID (ConsoleErrCheck)
-#define BOOT_OPTION_ORDER_QUESTION_ID    QUESTION_ID (BootOptionOrder)
-#define DRIVER_OPTION_ORDER_QUESTION_ID  QUESTION_ID (DriverOptionOrder)
-#define BOOT_OPTION_DEL_QUESTION_ID      QUESTION_ID (BootOptionDel)
-#define DRIVER_OPTION_DEL_QUESTION_ID    QUESTION_ID (DriverOptionDel)
-#define DRIVER_ADD_OPTION_QUESTION_ID    QUESTION_ID (DriverAddHandleOptionalData)
-#define COM_BAUD_RATE_QUESTION_ID        QUESTION_ID (COMBaudRate)
-#define COM_DATA_RATE_QUESTION_ID        QUESTION_ID (COMDataRate)
-#define COM_STOP_BITS_QUESTION_ID        QUESTION_ID (COMStopBits)
-#define COM_PARITY_QUESTION_ID           QUESTION_ID (COMParity)
-#define COM_TERMINAL_QUESTION_ID         QUESTION_ID (COMTerminalType)
-#define COM_FLOWCONTROL_QUESTION_ID      QUESTION_ID (COMFlowControl)
+#define BOOT_TIME_OUT_QUESTION_ID        \
+                                                               QUESTION_ID (BootTimeOut)
+#define BOOT_NEXT_QUESTION_ID            \
+                                                               QUESTION_ID (BootNext)
+#define COM1_BAUD_RATE_QUESTION_ID       \
+                                                               QUESTION_ID (COM1BaudRate)
+#define COM1_DATA_RATE_QUESTION_ID       \
+                                                               QUESTION_ID (COM1DataRate)
+#define COM1_STOP_BITS_QUESTION_ID       \
+                                                               QUESTION_ID (COM1StopBits)
+#define COM1_PARITY_QUESTION_ID          \
+                                                               QUESTION_ID (COM1Parity)
+#define COM1_TERMINAL_QUESTION_ID        \
+                                                               QUESTION_ID (COM2TerminalType)
+#define COM2_BAUD_RATE_QUESTION_ID       \
+                                                               QUESTION_ID (COM2BaudRate)
+#define COM2_DATA_RATE_QUESTION_ID       \
+                                                               QUESTION_ID (COM2DataRate)
+#define COM2_STOP_BITS_QUESTION_ID       \
+                                                               QUESTION_ID (COM2StopBits)
+#define COM2_PARITY_QUESTION_ID          \
+                                                               QUESTION_ID (COM2Parity)
+#define COM2_TERMINAL_QUESTION_ID        \
+                                                               QUESTION_ID (COM2TerminalType)
+#define DRV_ADD_HANDLE_DESC_QUESTION_ID  \
+                                                               QUESTION_ID (DriverAddHandleDesc)
+#define DRV_ADD_ACTIVE_QUESTION_ID       \
+                                                               QUESTION_ID (DriverAddActive)
+#define DRV_ADD_RECON_QUESTION_ID        \
+                                                               QUESTION_ID (DriverAddForceReconnect)
+#define CON_IN_COM1_QUESTION_ID          \
+                                                               QUESTION_ID (ConsoleInputCOM1)
+#define CON_IN_COM2_QUESTION_ID          \
+                                                               QUESTION_ID (ConsoleInputCOM2)
+#define CON_OUT_COM1_QUESTION_ID         \
+                                                               QUESTION_ID (ConsoleOutputCOM1)
+#define CON_OUT_COM2_QUESTION_ID         \
+                                                               QUESTION_ID (ConsoleOutputCOM2)
+#define CON_ERR_COM1_QUESTION_ID         \
+                                                               QUESTION_ID (ConsoleErrorCOM1)
+#define CON_ERR_COM2_QUESTION_ID         \
+                                                               QUESTION_ID (ConsoleErrorCOM2)
+#define CON_MODE_QUESTION_ID             \
+                                                               QUESTION_ID (ConsoleOutMode)
+#define CON_DEVICE_QUESTION_ID           \
+                                                               QUESTION_ID (ConsoleCheck)
+#define CON_IN_DEVICE_QUESTION_ID        \
+                                                               QUESTION_ID (ConsoleInCheck)
+#define CON_OUT_DEVICE_QUESTION_ID       \
+                                                               QUESTION_ID (ConsoleOutCheck)
+#define CON_ERR_DEVICE_QUESTION_ID       \
+                                                               QUESTION_ID (ConsoleErrCheck)
+#define BOOT_OPTION_ORDER_QUESTION_ID    \
+                                                               QUESTION_ID (BootOptionOrder)
+#define DRIVER_OPTION_ORDER_QUESTION_ID  \
+                                                               QUESTION_ID (DriverOptionOrder)
+#define BOOT_OPTION_DEL_QUESTION_ID      \
+                                                               QUESTION_ID (BootOptionDel)
+#define DRIVER_OPTION_DEL_QUESTION_ID    \
+                                                               QUESTION_ID (DriverOptionDel)
+#define DRIVER_ADD_OPTION_QUESTION_ID    \
+                                                               QUESTION_ID (DriverAddHandleOptionalData)
+#define COM_BAUD_RATE_QUESTION_ID        \
+                                                               QUESTION_ID (COMBaudRate)
+#define COM_DATA_RATE_QUESTION_ID        \
+                                                               QUESTION_ID (COMDataRate)
+#define COM_STOP_BITS_QUESTION_ID        \
+                                                               QUESTION_ID (COMStopBits)
+#define COM_PARITY_QUESTION_ID           \
+                                                               QUESTION_ID (COMParity)
+#define COM_TERMINAL_QUESTION_ID         \
+                                                               QUESTION_ID (COMTerminalType)
+#define COM_FLOWCONTROL_QUESTION_ID      \
+                                                               QUESTION_ID (COMFlowControl)
 
 #define STRING_DEPOSITORY_NUMBER  8
 

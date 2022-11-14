@@ -83,7 +83,9 @@ GetDevicePath (
   //
   // Find the 'PATH=' of <PathHdr> and skip it.
   //
-  for ( ; (*String != 0 && StrnCmp (String, L"PATH=", StrLen (L"PATH=")) != 0); String++) {
+  for ( ; (*String != 0 && StrnCmp (String, L"PATH=", StrLen (L"PATH=")) != 0);
+        String++)
+  {
   }
 
   if (*String == 0) {
@@ -135,7 +137,8 @@ GetDevicePath (
     if ((Index & 1) == 0) {
       DevicePathBuffer[Index/2] = DigitUint8;
     } else {
-      DevicePathBuffer[Index/2] = (UINT8)((DevicePathBuffer[Index/2] << 4) + DigitUint8);
+      DevicePathBuffer[Index/2] = (UINT8)((DevicePathBuffer[Index/2] << 4) +
+                                          DigitUint8);
     }
   }
 
@@ -144,7 +147,9 @@ GetDevicePath (
   //
   DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)DevicePathBuffer;
   while (!IsDevicePathEnd (DevicePath)) {
-    if ((DevicePath->Type == 0) || (DevicePath->SubType == 0) || (DevicePathNodeLength (DevicePath) < sizeof (EFI_DEVICE_PATH_PROTOCOL))) {
+    if ((DevicePath->Type == 0) || (DevicePath->SubType == 0) ||
+        (DevicePathNodeLength (DevicePath) < sizeof (EFI_DEVICE_PATH_PROTOCOL)))
+    {
       //
       // Invalid device path
       //
@@ -415,7 +420,9 @@ AppendToMultiString (
   UINTN  MultiStringSize;
   UINTN  MaxLen;
 
-  if ((MultiString == NULL) || (*MultiString == NULL) || (AppendString == NULL)) {
+  if ((MultiString == NULL) || (*MultiString == NULL) || (AppendString ==
+                                                          NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -481,7 +488,9 @@ GetValueOfNumber (
   UINTN       Index;
   CHAR16      TemStr[2];
 
-  if ((StringPtr == NULL) || (*StringPtr == L'\0') || (Number == NULL) || (Len == NULL)) {
+  if ((StringPtr == NULL) || (*StringPtr == L'\0') || (Number == NULL) ||
+      (Len == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -573,7 +582,12 @@ FindSameBlockElement (
     }
 
     ASSERT (TempBuffer != NULL);
-    if ((BufferLen == Length) && (0 == CompareMem (Buffer, TempBuffer, Length))) {
+    if ((BufferLen == Length) && (0 == CompareMem (
+                                         Buffer,
+                                         TempBuffer,
+                                         Length
+                                         )))
+    {
       *Found = TRUE;
       FreePool (TempBuffer);
       TempBuffer = NULL;
@@ -654,7 +668,13 @@ CompareBlockElementDefault (
     //
     // To find the same "&OFFSET=<Number>" block in ConfigAltResp.
     //
-    Status = FindSameBlockElement (StringPtr, L"&OFFSET=", TempBuffer, &FoundOffset, OffsetLength);
+    Status = FindSameBlockElement (
+               StringPtr,
+               L"&OFFSET=",
+               TempBuffer,
+               &FoundOffset,
+               OffsetLength
+               );
     if (TempBuffer != NULL) {
       FreePool (TempBuffer);
       TempBuffer = NULL;
@@ -682,8 +702,16 @@ CompareBlockElementDefault (
       // Copy the <BlockConfig> to AppendString.
       //
       if (AppendString == NULL) {
-        AppendString = (EFI_STRING)AllocateZeroPool (AppendSize + sizeof (CHAR16));
-        StrnCatS (AppendString, AppendSize / sizeof (CHAR16) + 1, BlockPtrStart, AppendSize / sizeof (CHAR16));
+        AppendString = (EFI_STRING)AllocateZeroPool (
+                                     AppendSize +
+                                     sizeof (CHAR16)
+                                     );
+        StrnCatS (
+          AppendString,
+          AppendSize / sizeof (CHAR16) + 1,
+          BlockPtrStart,
+          AppendSize / sizeof (CHAR16)
+          );
       } else {
         TotalSize    = StrSize (AppendString) + AppendSize + sizeof (CHAR16);
         AppendString = (EFI_STRING)ReallocatePool (
@@ -696,7 +724,12 @@ CompareBlockElementDefault (
           goto Exit;
         }
 
-        StrnCatS (AppendString, TotalSize / sizeof (CHAR16), BlockPtrStart, AppendSize / sizeof (CHAR16));
+        StrnCatS (
+          AppendString,
+          TotalSize / sizeof (CHAR16),
+          BlockPtrStart,
+          AppendSize / sizeof (CHAR16)
+          );
       }
     } else {
       //
@@ -710,7 +743,8 @@ CompareBlockElementDefault (
     //
     // Reallocate ConfigAltResp to copy the AppendString.
     //
-    TotalSize      = StrSize (*ConfigAltResp) + StrSize (AppendString) + sizeof (CHAR16);
+    TotalSize = StrSize (*ConfigAltResp) + StrSize (AppendString) +
+                sizeof (CHAR16);
     *ConfigAltResp = (EFI_STRING)ReallocatePool (
                                    StrSize (*ConfigAltResp),
                                    TotalSize,
@@ -818,8 +852,16 @@ CompareNameElementDefault (
       // Copy the <NvConfig> to AppendString.
       //
       if (AppendString == NULL) {
-        AppendString = (EFI_STRING)AllocateZeroPool (AppendSize + sizeof (CHAR16));
-        StrnCatS (AppendString, AppendSize / sizeof (CHAR16) + 1, NvConfigStart, AppendSize / sizeof (CHAR16));
+        AppendString = (EFI_STRING)AllocateZeroPool (
+                                     AppendSize +
+                                     sizeof (CHAR16)
+                                     );
+        StrnCatS (
+          AppendString,
+          AppendSize / sizeof (CHAR16) + 1,
+          NvConfigStart,
+          AppendSize / sizeof (CHAR16)
+          );
       } else {
         TotalSize    = StrSize (AppendString) + AppendSize + sizeof (CHAR16);
         AppendString = (EFI_STRING)ReallocatePool (
@@ -832,7 +874,12 @@ CompareNameElementDefault (
           goto Exit;
         }
 
-        StrnCatS (AppendString, TotalSize / sizeof (CHAR16), NvConfigStart, AppendSize / sizeof (CHAR16));
+        StrnCatS (
+          AppendString,
+          TotalSize / sizeof (CHAR16),
+          NvConfigStart,
+          AppendSize / sizeof (CHAR16)
+          );
       }
     } else {
       //
@@ -847,10 +894,14 @@ CompareNameElementDefault (
     //
     // Reallocate ConfigAltResp to copy the AppendString.
     //
-    TotalSize      = StrSize (*ConfigAltResp) + StrSize (AppendString) + sizeof (CHAR16);
+    TotalSize = StrSize (*ConfigAltResp) + StrSize (AppendString) +
+                sizeof (CHAR16);
     *ConfigAltResp = (EFI_STRING)ReallocatePool (
                                    StrSize (*ConfigAltResp),
-                                   StrSize (*ConfigAltResp) + StrSize (AppendString) + sizeof (CHAR16),
+                                   StrSize (*ConfigAltResp) + StrSize (
+                                                                AppendString
+                                                                ) +
+                                   sizeof (CHAR16),
                                    *ConfigAltResp
                                    );
     if (*ConfigAltResp == NULL) {
@@ -959,7 +1010,12 @@ CompareAndMergeDefaultString (
     // Call function CompareBlockElementDefault to compare the <BlockConfig> in DefaultAltCfgResp and ConfigAltResp.
     // The ConfigAltResp which may contain the new <BlockConfig> get from DefaultAltCfgResp.
     //
-    Status = CompareBlockElementDefault (DefaultAltCfgResp, &ConfigAltResp, AltConfigHdr, &ConfigAltRespChanged);
+    Status = CompareBlockElementDefault (
+               DefaultAltCfgResp,
+               &ConfigAltResp,
+               AltConfigHdr,
+               &ConfigAltRespChanged
+               );
     if (EFI_ERROR (Status)) {
       goto Exit;
     }
@@ -969,7 +1025,12 @@ CompareAndMergeDefaultString (
     // Call function CompareNameElementDefault to compare the <NvConfig> in DefaultAltCfgResp and ConfigAltResp.
     // The ConfigAltResp which may contain the new <NvConfig> get from DefaultAltCfgResp.
     //
-    Status = CompareNameElementDefault (DefaultAltCfgResp, &ConfigAltResp, AltConfigHdr, &ConfigAltRespChanged);
+    Status = CompareNameElementDefault (
+               DefaultAltCfgResp,
+               &ConfigAltResp,
+               AltConfigHdr,
+               &ConfigAltRespChanged
+               );
     if (EFI_ERROR (Status)) {
       goto Exit;
     }
@@ -994,7 +1055,8 @@ CompareAndMergeDefaultString (
   // ConfigAltResp has been changed, need to update the content in AltCfgResp.
   //
   if (StringPtrNext != NULL) {
-    ReallocateSize = StrSize (ConfigAltResp) + StrSize (StringPtrNext) + sizeof (CHAR16);
+    ReallocateSize = StrSize (ConfigAltResp) + StrSize (StringPtrNext) +
+                     sizeof (CHAR16);
   } else {
     ReallocateSize = StrSize (ConfigAltResp) + sizeof (CHAR16);
   }
@@ -1079,11 +1141,25 @@ MergeDefaultString (
     return EFI_INVALID_PARAMETER;
   }
 
-  while (*StringPtr != L'\0' && StrnCmp (StringPtr, L"&NAME=", StrLen (L"&NAME=")) != 0) {
+  while (*StringPtr != L'\0' && StrnCmp (
+                                  StringPtr,
+                                  L"&NAME=",
+                                  StrLen (
+                                    L"&NAME="
+                                    )
+                                  ) != 0)
+  {
     StringPtr++;
   }
 
-  while (*StringPtr != L'\0' && StrnCmp (StringPtr, L"&PATH=", StrLen (L"&PATH=")) != 0) {
+  while (*StringPtr != L'\0' && StrnCmp (
+                                  StringPtr,
+                                  L"&PATH=",
+                                  StrLen (
+                                    L"&PATH="
+                                    )
+                                  ) != 0)
+  {
     StringPtr++;
   }
 
@@ -1167,14 +1243,21 @@ MergeDefaultString (
       // If the <ConfigElement> in <AltCfgResp> in the DefaultAltCfgResp but not in the
       // related <AltCfgResp> in AltCfgResp, merge it to AltCfgResp. else no need to merge.
       //
-      CompareAndMergeDefaultString (AltCfgResp, DefaultAltCfgResp, AltConfigHdr);
+      CompareAndMergeDefaultString (
+        AltCfgResp,
+        DefaultAltCfgResp,
+        AltConfigHdr
+        );
     }
 
     //
     // Find next AltCfg String
     //
     *(AltConfigHdr + HeaderLength) = L'\0';
-    StringPtrDefault               = StrStr (StringPtrDefault + 1, AltConfigHdr);
+    StringPtrDefault               = StrStr (
+                                       StringPtrDefault + 1,
+                                       AltConfigHdr
+                                       );
   }
 
   FreePool (AltConfigHdr);
@@ -1200,18 +1283,27 @@ InsertDefaultValue (
 
   DefaultLink = &BlockData->DefaultValueEntry;
 
-  for (Link = DefaultLink->ForwardLink; Link != DefaultLink; Link = Link->ForwardLink) {
+  for (Link = DefaultLink->ForwardLink; Link != DefaultLink; Link =
+         Link->ForwardLink)
+  {
     DefaultValueArray = BASE_CR (Link, IFR_DEFAULT_DATA, Entry);
     if (DefaultValueArray->DefaultId == DefaultValueData->DefaultId) {
       //
       // DEFAULT_VALUE_FROM_OPCODE has high priority, DEFAULT_VALUE_FROM_DEFAULT has low priority.
       // When default types are DEFAULT_VALUE_FROM_OTHER_DEFAULT, the default value can be overrode.
       //
-      if ((DefaultValueData->Type > DefaultValueArray->Type) || ((DefaultValueData->Type == DefaultValueArray->Type) && (DefaultValueData->Type == DefaultValueFromOtherDefault))) {
+      if ((DefaultValueData->Type > DefaultValueArray->Type) ||
+          ((DefaultValueData->Type == DefaultValueArray->Type) &&
+           (DefaultValueData->Type == DefaultValueFromOtherDefault)))
+      {
         //
         // Update the default value array in BlockData.
         //
-        CopyMem (&DefaultValueArray->Value, &DefaultValueData->Value, sizeof (EFI_IFR_TYPE_VALUE));
+        CopyMem (
+          &DefaultValueArray->Value,
+          &DefaultValueData->Value,
+          sizeof (EFI_IFR_TYPE_VALUE)
+          );
         DefaultValueArray->Type    = DefaultValueData->Type;
         DefaultValueArray->Cleaned = DefaultValueData->Cleaned;
       }
@@ -1256,10 +1348,15 @@ InsertBlockData (
   //
   // Insert block data in its Offset and Width order.
   //
-  for (Link = BlockLink->ForwardLink; Link != BlockLink; Link = Link->ForwardLink) {
+  for (Link = BlockLink->ForwardLink; Link != BlockLink; Link =
+         Link->ForwardLink)
+  {
     BlockArray = BASE_CR (Link, IFR_BLOCK_DATA, Entry);
     if (BlockArray->Offset == BlockSingleData->Offset) {
-      if ((BlockArray->Width > BlockSingleData->Width) || (BlockSingleData->IsBitVar && (BlockArray->Width == BlockSingleData->Width))) {
+      if ((BlockArray->Width > BlockSingleData->Width) ||
+          (BlockSingleData->IsBitVar && (BlockArray->Width ==
+                                         BlockSingleData->Width)))
+      {
         //
         // Insert this block data in the front of block array
         //
@@ -1267,7 +1364,9 @@ InsertBlockData (
         return;
       }
 
-      if ((!BlockSingleData->IsBitVar) && (BlockArray->Width == BlockSingleData->Width)) {
+      if ((!BlockSingleData->IsBitVar) && (BlockArray->Width ==
+                                           BlockSingleData->Width))
+      {
         //
         // The same block array has been added.
         //
@@ -1327,7 +1426,12 @@ GetSupportedLanguages (
   // Retrieve the size required for the supported languages buffer.
   //
   LanguageSize = 0;
-  Status       = mPrivate.HiiString.GetLanguages (&mPrivate.HiiString, HiiHandle, &TempSupportedLanguages, &LanguageSize);
+  Status       = mPrivate.HiiString.GetLanguages (
+                                      &mPrivate.HiiString,
+                                      HiiHandle,
+                                      &TempSupportedLanguages,
+                                      &LanguageSize
+                                      );
 
   //
   // If GetLanguages() returns EFI_SUCCESS for a zero size,
@@ -1356,7 +1460,12 @@ GetSupportedLanguages (
   //
   // Retrieve the supported languages string
   //
-  Status = mPrivate.HiiString.GetLanguages (&mPrivate.HiiString, HiiHandle, SupportedLanguages, &LanguageSize);
+  Status = mPrivate.HiiString.GetLanguages (
+                                &mPrivate.HiiString,
+                                HiiHandle,
+                                SupportedLanguages,
+                                &LanguageSize
+                                );
   if (EFI_ERROR (Status)) {
     //
     // Free the buffer and return NULL if the supported languages can not be retrieved.
@@ -1548,7 +1657,9 @@ BlockArrayCheck (
   //
   // Check the input var is in the request block range.
   //
-  for (Link = RequestBlockArray->Entry.ForwardLink; Link != &RequestBlockArray->Entry; Link = Link->ForwardLink) {
+  for (Link = RequestBlockArray->Entry.ForwardLink; Link !=
+       &RequestBlockArray->Entry; Link = Link->ForwardLink)
+  {
     BlockData = BASE_CR (Link, IFR_BLOCK_DATA, Entry);
 
     if (IsNameValueType) {
@@ -1562,7 +1673,10 @@ BlockArrayCheck (
 
       FreePool (Name);
     } else {
-      if ((VarOffset >= BlockData->Offset) && ((VarOffset + VarWidth) <= (BlockData->Offset + BlockData->Width))) {
+      if ((VarOffset >= BlockData->Offset) && ((VarOffset + VarWidth) <=
+                                               (BlockData->Offset +
+                                                BlockData->Width)))
+      {
         return TRUE;
       }
     }
@@ -1590,7 +1704,9 @@ GetFormPackageData (
   UINTN       Size;
   UINTN       ResultSize;
 
-  if ((DataBaseRecord == NULL) || (HiiFormPackage == NULL) || (PackageSize == NULL)) {
+  if ((DataBaseRecord == NULL) || (HiiFormPackage == NULL) || (PackageSize ==
+                                                               NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1725,10 +1841,26 @@ GetVarStoreType (
         goto Done;
       }
 
-      AsciiStrToUnicodeStrS ((CHAR8 *)IfrEfiVarStore->Name, VarStoreName, NameSize);
+      AsciiStrToUnicodeStrS (
+        (CHAR8 *)IfrEfiVarStore->Name,
+        VarStoreName,
+        NameSize
+        );
 
-      GenerateSubStr (L"GUID=", sizeof (EFI_GUID), (VOID *)&IfrEfiVarStore->Guid, 1, &GuidStr);
-      GenerateSubStr (L"NAME=", StrLen (VarStoreName) * sizeof (CHAR16), (VOID *)VarStoreName, 2, &NameStr);
+      GenerateSubStr (
+        L"GUID=",
+        sizeof (EFI_GUID),
+        (VOID *)&IfrEfiVarStore->Guid,
+        1,
+        &GuidStr
+        );
+      GenerateSubStr (
+        L"NAME=",
+        StrLen (VarStoreName) * sizeof (CHAR16),
+        (VOID *)VarStoreName,
+        2,
+        &NameStr
+        );
       LengthString = StrLen (GuidStr);
       LengthString = LengthString + StrLen (NameStr) + 1;
       TempStr      = AllocateZeroPool (LengthString * sizeof (CHAR16));
@@ -1742,8 +1874,17 @@ GetVarStoreType (
 
       StrCpyS (TempStr, LengthString, GuidStr);
       StrCatS (TempStr, LengthString, NameStr);
-      if ((ConfigHdr == NULL) || (StrnCmp (ConfigHdr, TempStr, StrLen (TempStr)) == 0)) {
-        *EfiVarStore = (EFI_IFR_VARSTORE_EFI *)AllocateZeroPool (IfrOpHdr->Length);
+      if ((ConfigHdr == NULL) || (StrnCmp (
+                                    ConfigHdr,
+                                    TempStr,
+                                    StrLen (
+                                      TempStr
+                                      )
+                                    ) == 0))
+      {
+        *EfiVarStore = (EFI_IFR_VARSTORE_EFI *)AllocateZeroPool (
+                                                 IfrOpHdr->Length
+                                                 );
         if (*EfiVarStore == NULL) {
           FreePool (VarStoreName);
           FreePool (GuidStr);
@@ -1803,7 +1944,11 @@ GetElementsFromRequest (
   TmpRequest = StrStr (ConfigRequest, L"PATH=");
   ASSERT (TmpRequest != NULL);
 
-  if ((StrStr (TmpRequest, L"&OFFSET=") != NULL) || (StrStr (TmpRequest, L"&") != NULL)) {
+  if ((StrStr (TmpRequest, L"&OFFSET=") != NULL) || (StrStr (
+                                                       TmpRequest,
+                                                       L"&"
+                                                       ) != NULL))
+  {
     return TRUE;
   }
 
@@ -1841,13 +1986,27 @@ IsThisVarstore (
   //
   // If ConfigHdr has name field and varstore not has name, return FALSE.
   //
-  if ((Name == NULL) && (ConfigHdr != NULL) && (StrStr (ConfigHdr, L"NAME=&") == NULL)) {
+  if ((Name == NULL) && (ConfigHdr != NULL) && (StrStr (ConfigHdr, L"NAME=&") ==
+                                                NULL))
+  {
     return FALSE;
   }
 
-  GenerateSubStr (L"GUID=", sizeof (EFI_GUID), (VOID *)VarstoreGuid, 1, &GuidStr);
+  GenerateSubStr (
+    L"GUID=",
+    sizeof (EFI_GUID),
+    (VOID *)VarstoreGuid,
+    1,
+    &GuidStr
+    );
   if (Name != NULL) {
-    GenerateSubStr (L"NAME=", StrLen (Name) * sizeof (CHAR16), (VOID *)Name, 2, &NameStr);
+    GenerateSubStr (
+      L"NAME=",
+      StrLen (Name) * sizeof (CHAR16),
+      (VOID *)Name,
+      2,
+      &NameStr
+      );
   } else {
     GenerateSubStr (L"NAME=", 0, NULL, 2, &NameStr);
   }
@@ -1862,7 +2021,9 @@ IsThisVarstore (
   StrCpyS (TempStr, LengthString, GuidStr);
   StrCatS (TempStr, LengthString, NameStr);
 
-  if ((ConfigHdr == NULL) || (StrnCmp (ConfigHdr, TempStr, StrLen (TempStr)) == 0)) {
+  if ((ConfigHdr == NULL) || (StrnCmp (ConfigHdr, TempStr, StrLen (TempStr)) ==
+                              0))
+  {
     RetVal = TRUE;
   }
 
@@ -1952,9 +2113,18 @@ IsThisPackageList (
           goto Done;
         }
 
-        AsciiStrToUnicodeStrS ((CHAR8 *)IfrVarStore->Name, VarStoreName, NameSize);
+        AsciiStrToUnicodeStrS (
+          (CHAR8 *)IfrVarStore->Name,
+          VarStoreName,
+          NameSize
+          );
 
-        if (IsThisVarstore ((VOID *)&IfrVarStore->Guid, VarStoreName, ConfigHdr)) {
+        if (IsThisVarstore (
+              (VOID *)&IfrVarStore->Guid,
+              VarStoreName,
+              ConfigHdr
+              ))
+        {
           FindVarstore = TRUE;
           goto Done;
         } else {
@@ -1972,7 +2142,11 @@ IsThisPackageList (
           goto Done;
         }
 
-        AsciiStrToUnicodeStrS ((CHAR8 *)IfrEfiVarStore->Name, VarStoreName, NameSize);
+        AsciiStrToUnicodeStrS (
+          (CHAR8 *)IfrEfiVarStore->Name,
+          VarStoreName,
+          NameSize
+          );
 
         if (IsThisVarstore (&IfrEfiVarStore->Guid, VarStoreName, ConfigHdr)) {
           FindVarstore = TRUE;
@@ -2057,7 +2231,8 @@ IsThisOpcodeRequired (
   VarOffset      = 0;
   BitOffset      = 0;
   BitWidth       = 0;
-  IfrQuestionHdr = (EFI_IFR_QUESTION_HEADER  *)((CHAR8 *)IfrOpHdr + sizeof (EFI_IFR_OP_HEADER));
+  IfrQuestionHdr = (EFI_IFR_QUESTION_HEADER  *)((CHAR8 *)IfrOpHdr +
+                                                sizeof (EFI_IFR_OP_HEADER));
 
   if (VarStorageData->Type == EFI_HII_VARSTORE_NAME_VALUE) {
     NameId = IfrQuestionHdr->VarStoreInfo.VarName;
@@ -2093,7 +2268,14 @@ IsThisOpcodeRequired (
     //
     // Check whether this question is in requested block array.
     //
-    if (!BlockArrayCheck (RequestBlockArray, VarOffset, VarWidth, FALSE, HiiHandle)) {
+    if (!BlockArrayCheck (
+           RequestBlockArray,
+           VarOffset,
+           VarWidth,
+           FALSE,
+           HiiHandle
+           ))
+    {
       //
       // This question is not in the requested string. Skip it.
       //
@@ -2261,13 +2443,25 @@ ParseIfrData (
           goto Done;
         }
 
-        AsciiStrToUnicodeStrS ((CHAR8 *)IfrVarStore->Name, VarStoreName, NameSize);
+        AsciiStrToUnicodeStrS (
+          (CHAR8 *)IfrVarStore->Name,
+          VarStoreName,
+          NameSize
+          );
 
-        if (IsThisVarstore ((VOID *)&IfrVarStore->Guid, VarStoreName, ConfigHdr)) {
+        if (IsThisVarstore (
+              (VOID *)&IfrVarStore->Guid,
+              VarStoreName,
+              ConfigHdr
+              ))
+        {
           //
           // Find the matched VarStore
           //
-          CopyGuid (&VarStorageData->Guid, (EFI_GUID *)(VOID *)&IfrVarStore->Guid);
+          CopyGuid (
+            &VarStorageData->Guid,
+            (EFI_GUID *)(VOID *)&IfrVarStore->Guid
+            );
           VarStorageData->Size = IfrVarStore->Size;
           VarStorageData->Name = VarStoreName;
           VarStorageData->Type = EFI_HII_VARSTORE_BUFFER;
@@ -2305,25 +2499,45 @@ ParseIfrData (
           goto Done;
         }
 
-        AsciiStrToUnicodeStrS ((CHAR8 *)IfrEfiVarStore->Name, VarStoreName, NameSize);
+        AsciiStrToUnicodeStrS (
+          (CHAR8 *)IfrEfiVarStore->Name,
+          VarStoreName,
+          NameSize
+          );
         if (IfrEfiVarStoreTmp != NULL) {
           FreePool (IfrEfiVarStoreTmp);
         }
 
-        IfrEfiVarStoreTmp = AllocatePool (IfrEfiVarStore->Header.Length + AsciiStrSize ((CHAR8 *)IfrEfiVarStore->Name));
+        IfrEfiVarStoreTmp = AllocatePool (
+                              IfrEfiVarStore->Header.Length +
+                              AsciiStrSize ((CHAR8 *)IfrEfiVarStore->Name)
+                              );
         if (IfrEfiVarStoreTmp == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
           goto Done;
         }
 
-        CopyMem (IfrEfiVarStoreTmp, IfrEfiVarStore, IfrEfiVarStore->Header.Length);
-        AsciiStrToUnicodeStrS ((CHAR8 *)IfrEfiVarStore->Name, (CHAR16 *)&(IfrEfiVarStoreTmp->Name[0]), AsciiStrSize ((CHAR8 *)IfrEfiVarStore->Name) * sizeof (CHAR16));
+        CopyMem (
+          IfrEfiVarStoreTmp,
+          IfrEfiVarStore,
+          IfrEfiVarStore->Header.Length
+          );
+        AsciiStrToUnicodeStrS (
+          (CHAR8 *)IfrEfiVarStore->Name,
+          (CHAR16 *)&(IfrEfiVarStoreTmp->Name[0]),
+          AsciiStrSize (
+            (CHAR8 *)IfrEfiVarStore->Name
+            ) * sizeof (CHAR16)
+          );
 
         if (IsThisVarstore (&IfrEfiVarStore->Guid, VarStoreName, ConfigHdr)) {
           //
           // Find the matched VarStore
           //
-          CopyGuid (&VarStorageData->Guid, (EFI_GUID *)(VOID *)&IfrEfiVarStore->Guid);
+          CopyGuid (
+            &VarStorageData->Guid,
+            (EFI_GUID *)(VOID *)&IfrEfiVarStore->Guid
+            );
           VarStorageData->Size = IfrEfiVarStore->Size;
           VarStorageData->Name = VarStoreName;
           VarStorageData->Type = EFI_HII_VARSTORE_EFI_VARIABLE_BUFFER;
@@ -2349,7 +2563,10 @@ ParseIfrData (
           //
           // Find the matched VarStore
           //
-          CopyGuid (&VarStorageData->Guid, (EFI_GUID *)(VOID *)&IfrNameValueVarStore->Guid);
+          CopyGuid (
+            &VarStorageData->Guid,
+            (EFI_GUID *)(VOID *)&IfrNameValueVarStore->Guid
+            );
           VarStorageData->Type = EFI_HII_VARSTORE_NAME_VALUE;
           VarStoreId           = IfrNameValueVarStore->VarStoreId;
         }
@@ -2360,13 +2577,16 @@ ParseIfrData (
         //
         // Add new the map between default id and default name.
         //
-        DefaultDataPtr = (IFR_DEFAULT_DATA *)AllocateZeroPool (sizeof (IFR_DEFAULT_DATA));
+        DefaultDataPtr = (IFR_DEFAULT_DATA *)AllocateZeroPool (
+                                               sizeof (IFR_DEFAULT_DATA)
+                                               );
         if (DefaultDataPtr == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
           goto Done;
         }
 
-        DefaultDataPtr->DefaultId = ((EFI_IFR_DEFAULTSTORE *)IfrOpHdr)->DefaultId;
+        DefaultDataPtr->DefaultId =
+          ((EFI_IFR_DEFAULTSTORE *)IfrOpHdr)->DefaultId;
         InsertTailList (&DefaultIdArray->Entry, &DefaultDataPtr->Entry);
         DefaultDataPtr = NULL;
         break;
@@ -2409,7 +2629,15 @@ ParseIfrData (
           BlockData = NULL;
         }
 
-        Status = IsThisOpcodeRequired (RequestBlockArray, HiiHandle, VarStorageData, IfrOpHdr, VarWidth, &BlockData, FALSE);
+        Status = IsThisOpcodeRequired (
+                   RequestBlockArray,
+                   HiiHandle,
+                   VarStorageData,
+                   IfrOpHdr,
+                   VarWidth,
+                   &BlockData,
+                   FALSE
+                   );
         if (EFI_ERROR (Status)) {
           if (Status == EFI_NOT_FOUND) {
             //
@@ -2458,7 +2686,15 @@ ParseIfrData (
           BlockData = NULL;
         }
 
-        Status = IsThisOpcodeRequired (RequestBlockArray, HiiHandle, VarStorageData, IfrOpHdr, VarWidth, &BlockData, QuestionReferBitField);
+        Status = IsThisOpcodeRequired (
+                   RequestBlockArray,
+                   HiiHandle,
+                   VarStorageData,
+                   IfrOpHdr,
+                   VarWidth,
+                   &BlockData,
+                   QuestionReferBitField
+                   );
         if (EFI_ERROR (Status)) {
           if (Status == EFI_NOT_FOUND) {
             //
@@ -2489,7 +2725,11 @@ ParseIfrData (
             //
             // Since default value in bit field was stored as UINT32 type.
             //
-            CopyMem (&DefaultData.Value.u32, &IfrOneOf->data.u32.MinValue, sizeof (UINT32));
+            CopyMem (
+              &DefaultData.Value.u32,
+              &IfrOneOf->data.u32.MinValue,
+              sizeof (UINT32)
+              );
           } else {
             switch (IfrOneOf->Flags & EFI_IFR_NUMERIC_SIZE) {
               case EFI_IFR_NUMERIC_SIZE_1:
@@ -2497,15 +2737,27 @@ ParseIfrData (
                 break;
 
               case EFI_IFR_NUMERIC_SIZE_2:
-                CopyMem (&DefaultData.Value.u16, &IfrOneOf->data.u16.MinValue, sizeof (UINT16));
+                CopyMem (
+                  &DefaultData.Value.u16,
+                  &IfrOneOf->data.u16.MinValue,
+                  sizeof (UINT16)
+                  );
                 break;
 
               case EFI_IFR_NUMERIC_SIZE_4:
-                CopyMem (&DefaultData.Value.u32, &IfrOneOf->data.u32.MinValue, sizeof (UINT32));
+                CopyMem (
+                  &DefaultData.Value.u32,
+                  &IfrOneOf->data.u32.MinValue,
+                  sizeof (UINT32)
+                  );
                 break;
 
               case EFI_IFR_NUMERIC_SIZE_8:
-                CopyMem (&DefaultData.Value.u64, &IfrOneOf->data.u64.MinValue, sizeof (UINT64));
+                CopyMem (
+                  &DefaultData.Value.u64,
+                  &IfrOneOf->data.u64.MinValue,
+                  sizeof (UINT64)
+                  );
                 break;
 
               default:
@@ -2518,11 +2770,22 @@ ParseIfrData (
           // Set default value base on the DefaultId list get from IFR data.
           //
           NvDefaultStoreSize = PcdGetSize (PcdNvStoreDefaultValueBuffer);
-          for (LinkData = DefaultIdArray->Entry.ForwardLink; LinkData != &DefaultIdArray->Entry; LinkData = LinkData->ForwardLink) {
+          for (LinkData = DefaultIdArray->Entry.ForwardLink; LinkData !=
+               &DefaultIdArray->Entry; LinkData = LinkData->ForwardLink)
+          {
             DefaultDataPtr        = BASE_CR (LinkData, IFR_DEFAULT_DATA, Entry);
             DefaultData.DefaultId = DefaultDataPtr->DefaultId;
-            if (NvDefaultStoreSize > sizeof (PCD_NV_STORE_DEFAULT_BUFFER_HEADER)) {
-              FindQuestionDefaultSetting (DefaultData.DefaultId, IfrEfiVarStoreTmp, &(IfrOneOf->Question), &DefaultData.Value, VarWidth, QuestionReferBitField);
+            if (NvDefaultStoreSize >
+                sizeof (PCD_NV_STORE_DEFAULT_BUFFER_HEADER))
+            {
+              FindQuestionDefaultSetting (
+                DefaultData.DefaultId,
+                IfrEfiVarStoreTmp,
+                &(IfrOneOf->Question),
+                &DefaultData.Value,
+                VarWidth,
+                QuestionReferBitField
+                );
             }
 
             InsertDefaultValue (BlockData, &DefaultData);
@@ -2564,7 +2827,15 @@ ParseIfrData (
           BlockData = NULL;
         }
 
-        Status = IsThisOpcodeRequired (RequestBlockArray, HiiHandle, VarStorageData, IfrOpHdr, VarWidth, &BlockData, FALSE);
+        Status = IsThisOpcodeRequired (
+                   RequestBlockArray,
+                   HiiHandle,
+                   VarStorageData,
+                   IfrOpHdr,
+                   VarWidth,
+                   &BlockData,
+                   FALSE
+                   );
         if (EFI_ERROR (Status)) {
           if (Status == EFI_NOT_FOUND) {
             //
@@ -2617,7 +2888,15 @@ ParseIfrData (
           VarWidth = 1;
         }
 
-        Status = IsThisOpcodeRequired (RequestBlockArray, HiiHandle, VarStorageData, IfrOpHdr, VarWidth, &BlockData, QuestionReferBitField);
+        Status = IsThisOpcodeRequired (
+                   RequestBlockArray,
+                   HiiHandle,
+                   VarStorageData,
+                   IfrOpHdr,
+                   VarWidth,
+                   &BlockData,
+                   QuestionReferBitField
+                   );
         if (EFI_ERROR (Status)) {
           if (Status == EFI_NOT_FOUND) {
             //
@@ -2644,7 +2923,9 @@ ParseIfrData (
         // Prepare new DefaultValue
         //
         DefaultData.DefaultId = VarDefaultId;
-        if ((IfrCheckBox->Flags & EFI_IFR_CHECKBOX_DEFAULT) == EFI_IFR_CHECKBOX_DEFAULT) {
+        if ((IfrCheckBox->Flags & EFI_IFR_CHECKBOX_DEFAULT) ==
+            EFI_IFR_CHECKBOX_DEFAULT)
+        {
           //
           // When flag is set, default value is TRUE.
           //
@@ -2674,7 +2955,9 @@ ParseIfrData (
         // Prepare new DefaultValue
         //
         DefaultData.DefaultId = VarDefaultId;
-        if ((IfrCheckBox->Flags & EFI_IFR_CHECKBOX_DEFAULT_MFG) == EFI_IFR_CHECKBOX_DEFAULT_MFG) {
+        if ((IfrCheckBox->Flags & EFI_IFR_CHECKBOX_DEFAULT_MFG) ==
+            EFI_IFR_CHECKBOX_DEFAULT_MFG)
+        {
           //
           // When flag is set, default value is TRUE.
           //
@@ -2710,7 +2993,9 @@ ParseIfrData (
           //
           // Set default value for all the default id in the DefaultId list.
           //
-          for (LinkData = DefaultIdArray->Entry.ForwardLink; LinkData != &DefaultIdArray->Entry; LinkData = LinkData->ForwardLink) {
+          for (LinkData = DefaultIdArray->Entry.ForwardLink; LinkData !=
+               &DefaultIdArray->Entry; LinkData = LinkData->ForwardLink)
+          {
             DefaultDataPtr        = BASE_CR (LinkData, IFR_DEFAULT_DATA, Entry);
             DefaultData.DefaultId = DefaultDataPtr->DefaultId;
             InsertDefaultValue (BlockData, &DefaultData);
@@ -2729,7 +3014,9 @@ ParseIfrData (
           //
           // Set default value for all the default id in the DefaultId list.
           //
-          for (LinkData = DefaultIdArray->Entry.ForwardLink; LinkData != &DefaultIdArray->Entry; LinkData = LinkData->ForwardLink) {
+          for (LinkData = DefaultIdArray->Entry.ForwardLink; LinkData !=
+               &DefaultIdArray->Entry; LinkData = LinkData->ForwardLink)
+          {
             DefaultDataPtr        = BASE_CR (LinkData, IFR_DEFAULT_DATA, Entry);
             DefaultData.DefaultId = DefaultDataPtr->DefaultId;
             InsertDefaultValue (BlockData, &DefaultData);
@@ -2769,7 +3056,15 @@ ParseIfrData (
         }
 
         VarWidth = (UINT16)sizeof (EFI_HII_DATE);
-        Status   = IsThisOpcodeRequired (RequestBlockArray, HiiHandle, VarStorageData, IfrOpHdr, VarWidth, &BlockData, FALSE);
+        Status   = IsThisOpcodeRequired (
+                     RequestBlockArray,
+                     HiiHandle,
+                     VarStorageData,
+                     IfrOpHdr,
+                     VarWidth,
+                     &BlockData,
+                     FALSE
+                     );
         if (EFI_ERROR (Status)) {
           if (Status == EFI_NOT_FOUND) {
             //
@@ -2814,7 +3109,15 @@ ParseIfrData (
         }
 
         VarWidth = (UINT16)sizeof (EFI_HII_TIME);
-        Status   = IsThisOpcodeRequired (RequestBlockArray, HiiHandle, VarStorageData, IfrOpHdr, VarWidth, &BlockData, FALSE);
+        Status   = IsThisOpcodeRequired (
+                     RequestBlockArray,
+                     HiiHandle,
+                     VarStorageData,
+                     IfrOpHdr,
+                     VarWidth,
+                     &BlockData,
+                     FALSE
+                     );
         if (EFI_ERROR (Status)) {
           if (Status == EFI_NOT_FOUND) {
             //
@@ -2859,7 +3162,15 @@ ParseIfrData (
         }
 
         VarWidth = (UINT16)(IfrString->MaxSize * sizeof (UINT16));
-        Status   = IsThisOpcodeRequired (RequestBlockArray, HiiHandle, VarStorageData, IfrOpHdr, VarWidth, &BlockData, FALSE);
+        Status   = IsThisOpcodeRequired (
+                     RequestBlockArray,
+                     HiiHandle,
+                     VarStorageData,
+                     IfrOpHdr,
+                     VarWidth,
+                     &BlockData,
+                     FALSE
+                     );
         if (EFI_ERROR (Status)) {
           if (Status == EFI_NOT_FOUND) {
             //
@@ -2904,7 +3215,15 @@ ParseIfrData (
         }
 
         VarWidth = (UINT16)(IfrPassword->MaxSize * sizeof (UINT16));
-        Status   = IsThisOpcodeRequired (RequestBlockArray, HiiHandle, VarStorageData, IfrOpHdr, VarWidth, &BlockData, FALSE);
+        Status   = IsThisOpcodeRequired (
+                     RequestBlockArray,
+                     HiiHandle,
+                     VarStorageData,
+                     IfrOpHdr,
+                     VarWidth,
+                     &BlockData,
+                     FALSE
+                     );
         if (EFI_ERROR (Status)) {
           if (Status == EFI_NOT_FOUND) {
             //
@@ -2939,7 +3258,9 @@ ParseIfrData (
           //
           // Get ordered list option data type.
           //
-          if ((IfrOneOfOption->Type == EFI_IFR_TYPE_NUM_SIZE_8) || (IfrOneOfOption->Type == EFI_IFR_TYPE_BOOLEAN)) {
+          if ((IfrOneOfOption->Type == EFI_IFR_TYPE_NUM_SIZE_8) ||
+              (IfrOneOfOption->Type == EFI_IFR_TYPE_BOOLEAN))
+          {
             VarWidth = 1;
           } else if (IfrOneOfOption->Type == EFI_IFR_TYPE_NUM_SIZE_16) {
             VarWidth = 2;
@@ -2967,7 +3288,14 @@ ParseIfrData (
           //
           // Check whether this question is in requested block array.
           //
-          if (!BlockArrayCheck (RequestBlockArray, BlockData->Offset, BlockData->Width, (BOOLEAN)(BlockData->Name != NULL), HiiHandle)) {
+          if (!BlockArrayCheck (
+                 RequestBlockArray,
+                 BlockData->Offset,
+                 BlockData->Width,
+                 (BOOLEAN)(BlockData->Name != NULL),
+                 HiiHandle
+                 ))
+          {
             //
             // This question is not in the requested string. Skip it.
             //
@@ -2983,7 +3311,10 @@ ParseIfrData (
           //
           // Check this var question is in the var storage
           //
-          if ((BlockData->Name == NULL) && ((BlockData->Offset + BlockData->Width) > VarStorageData->Size)) {
+          if ((BlockData->Name == NULL) && ((BlockData->Offset +
+                                             BlockData->Width) >
+                                            VarStorageData->Size))
+          {
             Status = EFI_INVALID_PARAMETER;
             FreePool (BlockData);
             goto Done;
@@ -3003,8 +3334,10 @@ ParseIfrData (
         // 1. Set default value for OneOf option when flag field has default attribute.
         //    And set the default value with the smallest default id for other default id in the DefaultId list.
         //
-        if (((IfrOneOfOption->Flags & EFI_IFR_OPTION_DEFAULT) == EFI_IFR_OPTION_DEFAULT) ||
-            ((IfrOneOfOption->Flags & EFI_IFR_OPTION_DEFAULT_MFG) == EFI_IFR_OPTION_DEFAULT_MFG))
+        if (((IfrOneOfOption->Flags & EFI_IFR_OPTION_DEFAULT) ==
+             EFI_IFR_OPTION_DEFAULT) ||
+            ((IfrOneOfOption->Flags & EFI_IFR_OPTION_DEFAULT_MFG) ==
+             EFI_IFR_OPTION_DEFAULT_MFG))
         {
           //
           // This flag is used to specify whether this option is the first. Set it to FALSE for the following options.
@@ -3017,8 +3350,17 @@ ParseIfrData (
           // Prepare new DefaultValue
           //
           DefaultData.Type = DefaultValueFromFlag;
-          CopyMem (&DefaultData.Value, &IfrOneOfOption->Value, IfrOneOfOption->Header.Length - OFFSET_OF (EFI_IFR_ONE_OF_OPTION, Value));
-          if ((IfrOneOfOption->Flags & EFI_IFR_OPTION_DEFAULT) == EFI_IFR_OPTION_DEFAULT) {
+          CopyMem (
+            &DefaultData.Value,
+            &IfrOneOfOption->Value,
+            IfrOneOfOption->Header.Length - OFFSET_OF (
+                                              EFI_IFR_ONE_OF_OPTION,
+                                              Value
+                                              )
+            );
+          if ((IfrOneOfOption->Flags & EFI_IFR_OPTION_DEFAULT) ==
+              EFI_IFR_OPTION_DEFAULT)
+          {
             DefaultData.DefaultId = EFI_HII_DEFAULT_CLASS_STANDARD;
             InsertDefaultValue (BlockData, &DefaultData);
             if (SmallestDefaultId > EFI_HII_DEFAULT_CLASS_STANDARD) {
@@ -3030,7 +3372,9 @@ ParseIfrData (
             }
           }
 
-          if ((IfrOneOfOption->Flags & EFI_IFR_OPTION_DEFAULT_MFG) == EFI_IFR_OPTION_DEFAULT_MFG) {
+          if ((IfrOneOfOption->Flags & EFI_IFR_OPTION_DEFAULT_MFG) ==
+              EFI_IFR_OPTION_DEFAULT_MFG)
+          {
             DefaultData.DefaultId = EFI_HII_DEFAULT_CLASS_MANUFACTURING;
             InsertDefaultValue (BlockData, &DefaultData);
             if (SmallestDefaultId > EFI_HII_DEFAULT_CLASS_MANUFACTURING) {
@@ -3050,8 +3394,14 @@ ParseIfrData (
             //
             // Set default value for other default id in the DefaultId list.
             //
-            for (LinkData = DefaultIdArray->Entry.ForwardLink; LinkData != &DefaultIdArray->Entry; LinkData = LinkData->ForwardLink) {
-              DefaultDataPtr        = BASE_CR (LinkData, IFR_DEFAULT_DATA, Entry);
+            for (LinkData = DefaultIdArray->Entry.ForwardLink; LinkData !=
+                 &DefaultIdArray->Entry; LinkData = LinkData->ForwardLink)
+            {
+              DefaultDataPtr = BASE_CR (
+                                 LinkData,
+                                 IFR_DEFAULT_DATA,
+                                 Entry
+                                 );
               DefaultData.DefaultId = DefaultDataPtr->DefaultId;
               InsertDefaultValue (BlockData, &DefaultData);
             }
@@ -3070,8 +3420,17 @@ ParseIfrData (
           // Prepare new DefaultValue
           //
           DefaultData.Type = DefaultValueFromDefault;
-          CopyMem (&DefaultData.Value, &IfrOneOfOption->Value, IfrOneOfOption->Header.Length - OFFSET_OF (EFI_IFR_ONE_OF_OPTION, Value));
-          for (LinkData = DefaultIdArray->Entry.ForwardLink; LinkData != &DefaultIdArray->Entry; LinkData = LinkData->ForwardLink) {
+          CopyMem (
+            &DefaultData.Value,
+            &IfrOneOfOption->Value,
+            IfrOneOfOption->Header.Length - OFFSET_OF (
+                                              EFI_IFR_ONE_OF_OPTION,
+                                              Value
+                                              )
+            );
+          for (LinkData = DefaultIdArray->Entry.ForwardLink; LinkData !=
+               &DefaultIdArray->Entry; LinkData = LinkData->ForwardLink)
+          {
             DefaultDataPtr        = BASE_CR (LinkData, IFR_DEFAULT_DATA, Entry);
             DefaultData.DefaultId = DefaultDataPtr->DefaultId;
             InsertDefaultValue (BlockData, &DefaultData);
@@ -3102,9 +3461,17 @@ ParseIfrData (
         DefaultData.Type      = DefaultValueFromOpcode;
         DefaultData.DefaultId = VarDefaultId;
         if (QuestionReferBitField) {
-          CopyMem (&DefaultData.Value.u32, &IfrDefault->Value.u32, sizeof (UINT32));
+          CopyMem (
+            &DefaultData.Value.u32,
+            &IfrDefault->Value.u32,
+            sizeof (UINT32)
+            );
         } else {
-          CopyMem (&DefaultData.Value, &IfrDefault->Value, IfrDefault->Header.Length - OFFSET_OF (EFI_IFR_DEFAULT, Value));
+          CopyMem (
+            &DefaultData.Value,
+            &IfrDefault->Value,
+            IfrDefault->Header.Length - OFFSET_OF (EFI_IFR_DEFAULT, Value)
+            );
         }
 
         // If the value field is expression, set the cleaned flag.
@@ -3123,10 +3490,15 @@ ParseIfrData (
         // If the two defaults are both from default opcode, use the first default as the default value of other default Id.
         // If one from flag and the other form default opcode, use the default opcode value as the default value of other default Id.
         //
-        if ((SmallestDefaultId > VarDefaultId) || ((SmallestDefaultId == VarDefaultId) && !FromOtherDefaultOpcode)) {
+        if ((SmallestDefaultId > VarDefaultId) || ((SmallestDefaultId ==
+                                                    VarDefaultId) &&
+                                                   !FromOtherDefaultOpcode))
+        {
           FromOtherDefaultOpcode = TRUE;
           SmallestDefaultId      = VarDefaultId;
-          for (LinkData = DefaultIdArray->Entry.ForwardLink; LinkData != &DefaultIdArray->Entry; LinkData = LinkData->ForwardLink) {
+          for (LinkData = DefaultIdArray->Entry.ForwardLink; LinkData !=
+               &DefaultIdArray->Entry; LinkData = LinkData->ForwardLink)
+          {
             DefaultDataPtr = BASE_CR (LinkData, IFR_DEFAULT_DATA, Entry);
             if (DefaultDataPtr->DefaultId != DefaultData.DefaultId) {
               DefaultData.Type      = DefaultValueFromOtherDefault;
@@ -3167,7 +3539,12 @@ ParseIfrData (
         break;
 
       case EFI_IFR_GUID_OP:
-        if (CompareGuid ((EFI_GUID *)((UINT8 *)IfrOpHdr + sizeof (EFI_IFR_OP_HEADER)), &gEdkiiIfrBitVarstoreGuid)) {
+        if (CompareGuid (
+              (EFI_GUID *)((UINT8 *)IfrOpHdr +
+                           sizeof (EFI_IFR_OP_HEADER)),
+              &gEdkiiIfrBitVarstoreGuid
+              ))
+        {
           QuestionReferBitField = TRUE;
         }
 
@@ -3200,9 +3577,13 @@ ParseIfrData (
   }
 
 Done:
-  for (LinkData = VarStorageData->BlockEntry.ForwardLink; LinkData != &VarStorageData->BlockEntry; LinkData = LinkData->ForwardLink) {
+  for (LinkData = VarStorageData->BlockEntry.ForwardLink; LinkData !=
+       &VarStorageData->BlockEntry; LinkData = LinkData->ForwardLink)
+  {
     BlockData = BASE_CR (LinkData, IFR_BLOCK_DATA, Entry);
-    for (LinkDefault = BlockData->DefaultValueEntry.ForwardLink; LinkDefault != &BlockData->DefaultValueEntry; ) {
+    for (LinkDefault = BlockData->DefaultValueEntry.ForwardLink; LinkDefault !=
+         &BlockData->DefaultValueEntry; )
+    {
       DefaultDataPtr = BASE_CR (LinkDefault, IFR_DEFAULT_DATA, Entry);
       LinkDefault    = LinkDefault->ForwardLink;
       if (DefaultDataPtr->Cleaned == TRUE) {
@@ -3249,7 +3630,9 @@ GetBlockElement (
   //
   // Init RequestBlockArray
   //
-  RequestBlockArray = (IFR_BLOCK_DATA *)AllocateZeroPool (sizeof (IFR_BLOCK_DATA));
+  RequestBlockArray = (IFR_BLOCK_DATA *)AllocateZeroPool (
+                                          sizeof (IFR_BLOCK_DATA)
+                                          );
   if (RequestBlockArray == NULL) {
     goto Done;
   }
@@ -3267,7 +3650,14 @@ GetBlockElement (
   // <BlockName> ::= &'OFFSET='<Number>&'WIDTH='<Number>
   //
   StringPtr = ConfigRequest;
-  while (*StringPtr != 0 && StrnCmp (StringPtr, L"&OFFSET=", StrLen (L"&OFFSET=")) == 0) {
+  while (*StringPtr != 0 && StrnCmp (
+                              StringPtr,
+                              L"&OFFSET=",
+                              StrLen (
+                                L"&OFFSET="
+                                )
+                              ) == 0)
+  {
     //
     // Skip the OFFSET string
     //
@@ -3285,7 +3675,8 @@ GetBlockElement (
     CopyMem (
       &Offset,
       TmpBuffer,
-      (((Length + 1) / 2) < sizeof (UINT16)) ? ((Length + 1) / 2) : sizeof (UINT16)
+      (((Length + 1) / 2) < sizeof (UINT16)) ? ((Length + 1) / 2) :
+      sizeof (UINT16)
       );
     FreePool (TmpBuffer);
 
@@ -3308,7 +3699,8 @@ GetBlockElement (
     CopyMem (
       &Width,
       TmpBuffer,
-      (((Length + 1) / 2) < sizeof (UINT16)) ? ((Length + 1) / 2) : sizeof (UINT16)
+      (((Length + 1) / 2) < sizeof (UINT16)) ? ((Length + 1) / 2) :
+      sizeof (UINT16)
       );
     FreePool (TmpBuffer);
 
@@ -3362,12 +3754,19 @@ GetBlockElement (
   // Merge the requested block data.
   //
   Link = RequestBlockArray->Entry.ForwardLink;
-  while ((Link != &RequestBlockArray->Entry) && (Link->ForwardLink != &RequestBlockArray->Entry)) {
+  while ((Link != &RequestBlockArray->Entry) && (Link->ForwardLink !=
+                                                 &RequestBlockArray->Entry))
+  {
     BlockData     = BASE_CR (Link, IFR_BLOCK_DATA, Entry);
     NextBlockData = BASE_CR (Link->ForwardLink, IFR_BLOCK_DATA, Entry);
-    if ((NextBlockData->Offset >= BlockData->Offset) && (NextBlockData->Offset <= (BlockData->Offset + BlockData->Width))) {
-      if ((NextBlockData->Offset + NextBlockData->Width) > (BlockData->Offset + BlockData->Width)) {
-        BlockData->Width = (UINT16)(NextBlockData->Offset + NextBlockData->Width - BlockData->Offset);
+    if ((NextBlockData->Offset >= BlockData->Offset) &&
+        (NextBlockData->Offset <= (BlockData->Offset + BlockData->Width)))
+    {
+      if ((NextBlockData->Offset + NextBlockData->Width) > (BlockData->Offset +
+                                                            BlockData->Width))
+      {
+        BlockData->Width = (UINT16)(NextBlockData->Offset +
+                                    NextBlockData->Width - BlockData->Offset);
       }
 
       RemoveEntryList (Link->ForwardLink);
@@ -3386,7 +3785,11 @@ Done:
     // Free Link Array RequestBlockArray
     //
     while (!IsListEmpty (&RequestBlockArray->Entry)) {
-      BlockData = BASE_CR (RequestBlockArray->Entry.ForwardLink, IFR_BLOCK_DATA, Entry);
+      BlockData = BASE_CR (
+                    RequestBlockArray->Entry.ForwardLink,
+                    IFR_BLOCK_DATA,
+                    Entry
+                    );
       RemoveEntryList (&BlockData->Entry);
       FreePool (BlockData);
     }
@@ -3422,7 +3825,9 @@ GetNameElement (
   //
   // Init RequestBlockArray
   //
-  RequestBlockArray = (IFR_BLOCK_DATA *)AllocateZeroPool (sizeof (IFR_BLOCK_DATA));
+  RequestBlockArray = (IFR_BLOCK_DATA *)AllocateZeroPool (
+                                          sizeof (IFR_BLOCK_DATA)
+                                          );
   if (RequestBlockArray == NULL) {
     goto Done;
   }
@@ -3491,7 +3896,11 @@ Done:
     // Free Link Array RequestBlockArray
     //
     while (!IsListEmpty (&RequestBlockArray->Entry)) {
-      BlockData = BASE_CR (RequestBlockArray->Entry.ForwardLink, IFR_BLOCK_DATA, Entry);
+      BlockData = BASE_CR (
+                    RequestBlockArray->Entry.ForwardLink,
+                    IFR_BLOCK_DATA,
+                    Entry
+                    );
       RemoveEntryList (&BlockData->Entry);
       if (BlockData->Name != NULL) {
         FreePool (BlockData->Name);
@@ -3549,7 +3958,9 @@ GenerateConfigRequest (
   DataExist = FALSE;
   Length    = StrLen (ConfigHdr) + 1;
 
-  for (Link = VarStorageData->BlockEntry.ForwardLink; Link != &VarStorageData->BlockEntry; Link = Link->ForwardLink) {
+  for (Link = VarStorageData->BlockEntry.ForwardLink; Link !=
+       &VarStorageData->BlockEntry; Link = Link->ForwardLink)
+  {
     DataExist = TRUE;
     BlockData = BASE_CR (Link, IFR_BLOCK_DATA, Entry);
     if (VarStorageData->Type == EFI_HII_VARSTORE_NAME_VALUE) {
@@ -3599,7 +4010,9 @@ GenerateConfigRequest (
   //
   // Loop through all the Offset/Width pairs and append them to ConfigRequest
   //
-  for (Link = VarStorageData->BlockEntry.ForwardLink; Link != &VarStorageData->BlockEntry; Link = Link->ForwardLink) {
+  for (Link = VarStorageData->BlockEntry.ForwardLink; Link !=
+       &VarStorageData->BlockEntry; Link = Link->ForwardLink)
+  {
     BlockData = BASE_CR (Link, IFR_BLOCK_DATA, Entry);
     if (VarStorageData->Type == EFI_HII_VARSTORE_NAME_VALUE) {
       //
@@ -3672,9 +4085,21 @@ GenerateHdr (
   //
   // Construct <ConfigHdr> : "GUID=...&NAME=...&PATH=..." by VarStorageData Guid, Name and DriverHandle
   //
-  GenerateSubStr (L"GUID=", sizeof (EFI_GUID), (VOID *)&VarStorageData->Guid, 1, &GuidStr);
+  GenerateSubStr (
+    L"GUID=",
+    sizeof (EFI_GUID),
+    (VOID *)&VarStorageData->Guid,
+    1,
+    &GuidStr
+    );
   if (VarStorageData->Name != NULL) {
-    GenerateSubStr (L"NAME=", StrLen (VarStorageData->Name) * sizeof (CHAR16), (VOID *)VarStorageData->Name, 2, &NameStr);
+    GenerateSubStr (
+      L"NAME=",
+      StrLen (VarStorageData->Name) * sizeof (CHAR16),
+      (VOID *)VarStorageData->Name,
+      2,
+      &NameStr
+      );
   } else {
     GenerateSubStr (L"NAME=", 0, NULL, 2, &NameStr);
   }
@@ -3764,7 +4189,9 @@ UpdateDefaultValue (
   UINTN             EndBit;
   UINT32            BitFieldDefaultValue;
 
-  for ( Link = BlockLink->ForwardLink; Link != BlockLink; Link = Link->ForwardLink) {
+  for ( Link = BlockLink->ForwardLink; Link != BlockLink; Link =
+          Link->ForwardLink)
+  {
     BlockData = BASE_CR (Link, IFR_BLOCK_DATA, Entry);
     if (!BlockData->IsBitVar) {
       continue;
@@ -3774,7 +4201,9 @@ UpdateDefaultValue (
     //
     // Update the default value in the block data with all existing default id.
     //
-    for (LinkDefault = ListEntry->ForwardLink; LinkDefault != ListEntry; LinkDefault = LinkDefault->ForwardLink) {
+    for (LinkDefault = ListEntry->ForwardLink; LinkDefault != ListEntry;
+         LinkDefault = LinkDefault->ForwardLink)
+    {
       //
       // Get the default data, and the value of the default data is for some field in the block.
       // Note: Default value for bit field question is stored as UINT32.
@@ -3788,7 +4217,12 @@ UpdateDefaultValue (
       //
       // Set the bit field default value to related bit filed, then we will got the new default vaule for the block data.
       //
-      DefaultValueData->Value.u32 = BitFieldWrite32 (0, StartBit, EndBit, BitFieldDefaultValue);
+      DefaultValueData->Value.u32 = BitFieldWrite32 (
+                                      0,
+                                      StartBit,
+                                      EndBit,
+                                      BitFieldDefaultValue
+                                      );
     }
   }
 }
@@ -3849,12 +4283,22 @@ MergeBlockDefaultValue (
   UINT16            OffsetShift;
 
   FirstListEntry = &FirstBlock->DefaultValueEntry;
-  for (FirstDefaultLink = FirstListEntry->ForwardLink; FirstDefaultLink != FirstListEntry; FirstDefaultLink = FirstDefaultLink->ForwardLink) {
+  for (FirstDefaultLink = FirstListEntry->ForwardLink; FirstDefaultLink !=
+       FirstListEntry; FirstDefaultLink = FirstDefaultLink->ForwardLink)
+  {
     FirstDefaultValueData = BASE_CR (FirstDefaultLink, IFR_DEFAULT_DATA, Entry);
     SecondListEntry       = &SecondBlock->DefaultValueEntry;
-    for (SecondDefaultLink = SecondListEntry->ForwardLink; SecondDefaultLink != SecondListEntry; SecondDefaultLink = SecondDefaultLink->ForwardLink) {
-      SecondDefaultValueData = BASE_CR (SecondDefaultLink, IFR_DEFAULT_DATA, Entry);
-      if (FirstDefaultValueData->DefaultId != SecondDefaultValueData->DefaultId) {
+    for (SecondDefaultLink = SecondListEntry->ForwardLink; SecondDefaultLink !=
+         SecondListEntry; SecondDefaultLink = SecondDefaultLink->ForwardLink)
+    {
+      SecondDefaultValueData = BASE_CR (
+                                 SecondDefaultLink,
+                                 IFR_DEFAULT_DATA,
+                                 Entry
+                                 );
+      if (FirstDefaultValueData->DefaultId !=
+          SecondDefaultValueData->DefaultId)
+      {
         continue;
       }
 
@@ -3870,17 +4314,42 @@ MergeBlockDefaultValue (
       //    on the offset and width of FirstBlock and SecondBlock.
       //
       if (FirstBlock->Offset > SecondBlock->Offset) {
-        OffsetShift         = FirstBlock->Offset - SecondBlock->Offset;
-        ShiftedValue        = LShiftU64 ((UINT64)(*FirstDefaultValue), OffsetShift * 8);
+        OffsetShift  = FirstBlock->Offset - SecondBlock->Offset;
+        ShiftedValue = LShiftU64 (
+                         (UINT64)(*FirstDefaultValue),
+                         OffsetShift * 8
+                         );
         TotalValue          = ShiftedValue | (UINT64)(*SecondDefaultValue);
-        *SecondDefaultValue = (UINT32)BitFieldRead64 (TotalValue, 0, SecondBlock->Width * 8 -1);
-        *FirstDefaultValue  = (UINT32)BitFieldRead64 (TotalValue, OffsetShift * 8, OffsetShift * 8 + FirstBlock->Width *8 -1);
+        *SecondDefaultValue = (UINT32)BitFieldRead64 (
+                                        TotalValue,
+                                        0,
+                                        SecondBlock->Width * 8 -1
+                                        );
+        *FirstDefaultValue = (UINT32)BitFieldRead64 (
+                                       TotalValue,
+                                       OffsetShift *
+                                       8,
+                                       OffsetShift * 8 + FirstBlock->Width *8 -1
+                                       );
       } else {
-        OffsetShift         = SecondBlock->Offset -FirstBlock->Offset;
-        ShiftedValue        = LShiftU64 ((UINT64)(*SecondDefaultValue), OffsetShift * 8);
-        TotalValue          = ShiftedValue | (UINT64)(*FirstDefaultValue);
-        *FirstDefaultValue  = (UINT32)BitFieldRead64 (TotalValue, 0, FirstBlock->Width * 8 -1);
-        *SecondDefaultValue = (UINT32)BitFieldRead64 (TotalValue, OffsetShift * 8, OffsetShift * 8 + SecondBlock->Width *8 -1);
+        OffsetShift  = SecondBlock->Offset -FirstBlock->Offset;
+        ShiftedValue = LShiftU64 (
+                         (UINT64)(*SecondDefaultValue),
+                         OffsetShift * 8
+                         );
+        TotalValue         = ShiftedValue | (UINT64)(*FirstDefaultValue);
+        *FirstDefaultValue = (UINT32)BitFieldRead64 (
+                                       TotalValue,
+                                       0,
+                                       FirstBlock->Width * 8 -1
+                                       );
+        *SecondDefaultValue = (UINT32)BitFieldRead64 (
+                                        TotalValue,
+                                        OffsetShift *
+                                        8,
+                                        OffsetShift * 8 + SecondBlock->Width *
+                                        8 -1
+                                        );
       }
     }
   }
@@ -3916,15 +4385,24 @@ UpdateBlockDataArray (
   // 2.Update default value for overlap BitVar blcok datas.
   // For block datas have overlap region, we need to merge the default value in different blocks.
   //
-  for (Link = BlockLink->ForwardLink; Link != BlockLink; Link = Link->ForwardLink) {
+  for (Link = BlockLink->ForwardLink; Link != BlockLink; Link =
+         Link->ForwardLink)
+  {
     BlockData = BASE_CR (Link, IFR_BLOCK_DATA, Entry);
     if (!BlockData->IsBitVar) {
       continue;
     }
 
-    for (TempLink = Link->ForwardLink; TempLink != BlockLink; TempLink = TempLink->ForwardLink) {
+    for (TempLink = Link->ForwardLink; TempLink != BlockLink; TempLink =
+           TempLink->ForwardLink)
+    {
       NextBlockData = BASE_CR (TempLink, IFR_BLOCK_DATA, Entry);
-      if (!NextBlockData->IsBitVar || (NextBlockData->Offset >= BlockData->Offset + BlockData->Width) || (BlockData->Offset >= NextBlockData->Offset + NextBlockData->Width)) {
+      if (!NextBlockData->IsBitVar || (NextBlockData->Offset >=
+                                       BlockData->Offset + BlockData->Width) ||
+          (BlockData->Offset >=
+           NextBlockData
+             ->Offset + NextBlockData->Width))
+      {
         continue;
       }
 
@@ -3982,7 +4460,9 @@ GenerateAltConfigResp (
 
   UpdateBlockDataArray (&VarStorageData->BlockEntry);
 
-  for (Link = DefaultIdArray->Entry.ForwardLink; Link != &DefaultIdArray->Entry; Link = Link->ForwardLink) {
+  for (Link = DefaultIdArray->Entry.ForwardLink; Link != &DefaultIdArray->Entry;
+       Link = Link->ForwardLink)
+  {
     DefaultId = BASE_CR (Link, IFR_DEFAULT_DATA, Entry);
     //
     // Add length for "&<ConfigHdr>&ALTCFG=XXXX"
@@ -3990,10 +4470,14 @@ GenerateAltConfigResp (
     //
     Length += (1 + StrLen (ConfigHdr) + 8 + 4);
 
-    for (LinkData = VarStorageData->BlockEntry.ForwardLink; LinkData != &VarStorageData->BlockEntry; LinkData = LinkData->ForwardLink) {
+    for (LinkData = VarStorageData->BlockEntry.ForwardLink; LinkData !=
+         &VarStorageData->BlockEntry; LinkData = LinkData->ForwardLink)
+    {
       BlockData = BASE_CR (LinkData, IFR_BLOCK_DATA, Entry);
       ListEntry = &BlockData->DefaultValueEntry;
-      for (LinkDefault = ListEntry->ForwardLink; LinkDefault != ListEntry; LinkDefault = LinkDefault->ForwardLink) {
+      for (LinkDefault = ListEntry->ForwardLink; LinkDefault != ListEntry;
+           LinkDefault = LinkDefault->ForwardLink)
+      {
         DefaultValueData = BASE_CR (LinkDefault, IFR_DEFAULT_DATA, Entry);
         if (DefaultValueData->DefaultId != DefaultId->DefaultId) {
           continue;
@@ -4041,7 +4525,9 @@ GenerateAltConfigResp (
   StrCpyS (StringPtr, Length, ConfigHdr);
   StringPtr += StrLen (StringPtr);
 
-  for (Link = DefaultIdArray->Entry.ForwardLink; Link != &DefaultIdArray->Entry; Link = Link->ForwardLink) {
+  for (Link = DefaultIdArray->Entry.ForwardLink; Link != &DefaultIdArray->Entry;
+       Link = Link->ForwardLink)
+  {
     DefaultId = BASE_CR (Link, IFR_DEFAULT_DATA, Entry);
     //
     // Add <AltConfigHdr> of the form "&<ConfigHdr>&ALTCFG=XXXX\0"
@@ -4056,10 +4542,14 @@ GenerateAltConfigResp (
       );
     StringPtr += StrLen (StringPtr);
 
-    for (LinkData = VarStorageData->BlockEntry.ForwardLink; LinkData != &VarStorageData->BlockEntry; LinkData = LinkData->ForwardLink) {
+    for (LinkData = VarStorageData->BlockEntry.ForwardLink; LinkData !=
+         &VarStorageData->BlockEntry; LinkData = LinkData->ForwardLink)
+    {
       BlockData = BASE_CR (LinkData, IFR_BLOCK_DATA, Entry);
       ListEntry = &BlockData->DefaultValueEntry;
-      for (LinkDefault = ListEntry->ForwardLink; LinkDefault != ListEntry; LinkDefault = LinkDefault->ForwardLink) {
+      for (LinkDefault = ListEntry->ForwardLink; LinkDefault != ListEntry;
+           LinkDefault = LinkDefault->ForwardLink)
+      {
         DefaultValueData = BASE_CR (LinkDefault, IFR_DEFAULT_DATA, Entry);
         if (DefaultValueData->DefaultId != DefaultId->DefaultId) {
           continue;
@@ -4094,8 +4584,11 @@ GenerateAltConfigResp (
         // NOTE: This is in the opposite byte that GUID and PATH use
         //
         if (BlockData->OpCode == EFI_IFR_STRING_OP) {
-          DefaultString = InternalGetString (HiiHandle, DefaultValueData->Value.string);
-          TmpBuffer     = AllocateZeroPool (Width);
+          DefaultString = InternalGetString (
+                            HiiHandle,
+                            DefaultValueData->Value.string
+                            );
+          TmpBuffer = AllocateZeroPool (Width);
           ASSERT (TmpBuffer != NULL);
           if (DefaultString != NULL) {
             StrSize = StrLen (DefaultString)* sizeof (CHAR16);
@@ -4112,12 +4605,17 @@ GenerateAltConfigResp (
         for ( ; Width > 0 && (TmpBuffer != NULL); Width--) {
           UnicodeValueToStringS (
             StringPtr,
-            Length * sizeof (CHAR16) - ((UINTN)StringPtr - (UINTN)*DefaultAltCfgResp),
+            Length * sizeof (CHAR16) - ((UINTN)StringPtr -
+                                        (UINTN)*DefaultAltCfgResp),
             PREFIX_ZERO | RADIX_HEX,
             TmpBuffer[Width - 1],
             2
             );
-          StringPtr += StrnLenS (StringPtr, Length - ((UINTN)StringPtr - (UINTN)*DefaultAltCfgResp) / sizeof (CHAR16));
+          StringPtr += StrnLenS (
+                         StringPtr,
+                         Length - ((UINTN)StringPtr -
+                                   (UINTN)*DefaultAltCfgResp) / sizeof (CHAR16)
+                         );
         }
 
         if (DefaultString != NULL) {
@@ -4205,7 +4703,9 @@ GetFullStringFromHiiFormPackages (
   EFI_STRING           StringPtr;
   EFI_STRING           Progress;
 
-  if ((DataBaseRecord == NULL) || (DevicePath == NULL) || (Request == NULL) || (AltCfgResp == NULL)) {
+  if ((DataBaseRecord == NULL) || (DevicePath == NULL) || (Request == NULL) ||
+      (AltCfgResp == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -4241,7 +4741,14 @@ GetFullStringFromHiiFormPackages (
     }
 
     StringPtr += StrLen (L"GUID=");
-    while (*StringPtr != L'\0' && StrnCmp (StringPtr, L"&NAME=", StrLen (L"&NAME=")) != 0) {
+    while (*StringPtr != L'\0' && StrnCmp (
+                                    StringPtr,
+                                    L"&NAME=",
+                                    StrLen (
+                                      L"&NAME="
+                                      )
+                                    ) != 0)
+    {
       StringPtr++;
     }
 
@@ -4251,7 +4758,14 @@ GetFullStringFromHiiFormPackages (
     }
 
     StringPtr += StrLen (L"&NAME=");
-    while (*StringPtr != L'\0' && StrnCmp (StringPtr, L"&PATH=", StrLen (L"&PATH=")) != 0) {
+    while (*StringPtr != L'\0' && StrnCmp (
+                                    StringPtr,
+                                    L"&PATH=",
+                                    StrLen (
+                                      L"&PATH="
+                                      )
+                                    ) != 0)
+    {
       StringPtr++;
     }
 
@@ -4292,7 +4806,9 @@ GetFullStringFromHiiFormPackages (
   //
   // Initialize DefaultIdArray to store the map between DeaultId and DefaultName
   //
-  DefaultIdArray = (IFR_DEFAULT_DATA *)AllocateZeroPool (sizeof (IFR_DEFAULT_DATA));
+  DefaultIdArray = (IFR_DEFAULT_DATA *)AllocateZeroPool (
+                                         sizeof (IFR_DEFAULT_DATA)
+                                         );
   if (DefaultIdArray == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -4303,7 +4819,9 @@ GetFullStringFromHiiFormPackages (
   //
   // Initialize VarStorageData to store the var store Block and Default value information.
   //
-  VarStorageData = (IFR_VARSTORAGE_DATA *)AllocateZeroPool (sizeof (IFR_VARSTORAGE_DATA));
+  VarStorageData = (IFR_VARSTORAGE_DATA *)AllocateZeroPool (
+                                            sizeof (IFR_VARSTORAGE_DATA)
+                                            );
   if (VarStorageData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -4359,7 +4877,13 @@ GetFullStringFromHiiFormPackages (
   // Go through all VarStorageData Entry and get the DefaultId array for each one
   // Then construct them all to : ConfigHdr AltConfigHdr ConfigBody AltConfigHdr ConfigBody
   //
-  Status = GenerateAltConfigResp (DataBaseRecord->Handle, ConfigHdr, VarStorageData, DefaultIdArray, &DefaultAltCfgResp);
+  Status = GenerateAltConfigResp (
+             DataBaseRecord->Handle,
+             ConfigHdr,
+             VarStorageData,
+             DefaultIdArray,
+             &DefaultAltCfgResp
+             );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -4380,7 +4904,11 @@ Done:
     // Free Link Array RequestBlockArray
     //
     while (!IsListEmpty (&RequestBlockArray->Entry)) {
-      BlockData = BASE_CR (RequestBlockArray->Entry.ForwardLink, IFR_BLOCK_DATA, Entry);
+      BlockData = BASE_CR (
+                    RequestBlockArray->Entry.ForwardLink,
+                    IFR_BLOCK_DATA,
+                    Entry
+                    );
       RemoveEntryList (&BlockData->Entry);
       if (BlockData->Name != NULL) {
         FreePool (BlockData->Name);
@@ -4397,7 +4925,11 @@ Done:
     // Free link array VarStorageData
     //
     while (!IsListEmpty (&VarStorageData->BlockEntry)) {
-      BlockData = BASE_CR (VarStorageData->BlockEntry.ForwardLink, IFR_BLOCK_DATA, Entry);
+      BlockData = BASE_CR (
+                    VarStorageData->BlockEntry.ForwardLink,
+                    IFR_BLOCK_DATA,
+                    Entry
+                    );
       RemoveEntryList (&BlockData->Entry);
       if (BlockData->Name != NULL) {
         FreePool (BlockData->Name);
@@ -4407,7 +4939,11 @@ Done:
       // Free default value link array
       //
       while (!IsListEmpty (&BlockData->DefaultValueEntry)) {
-        DefaultValueData = BASE_CR (BlockData->DefaultValueEntry.ForwardLink, IFR_DEFAULT_DATA, Entry);
+        DefaultValueData = BASE_CR (
+                             BlockData->DefaultValueEntry.ForwardLink,
+                             IFR_DEFAULT_DATA,
+                             Entry
+                             );
         RemoveEntryList (&DefaultValueData->Entry);
         FreePool (DefaultValueData);
       }
@@ -4428,7 +4964,11 @@ Done:
     // Free DefaultId Array
     //
     while (!IsListEmpty (&DefaultIdArray->Entry)) {
-      DefaultId = BASE_CR (DefaultIdArray->Entry.ForwardLink, IFR_DEFAULT_DATA, Entry);
+      DefaultId = BASE_CR (
+                    DefaultIdArray->Entry.ForwardLink,
+                    IFR_DEFAULT_DATA,
+                    Entry
+                    );
       RemoveEntryList (&DefaultId->Entry);
       FreePool (DefaultId);
     }
@@ -4517,21 +5057,44 @@ GetConfigRespFromEfiVarStore (
     goto Done;
   }
 
-  AsciiStrToUnicodeStrS ((CHAR8 *)EfiVarStoreInfo->Name, VarStoreName, NameSize);
+  AsciiStrToUnicodeStrS (
+    (CHAR8 *)EfiVarStoreInfo->Name,
+    VarStoreName,
+    NameSize
+    );
 
-  Status = gRT->GetVariable (VarStoreName, &EfiVarStoreInfo->Guid, NULL, &BufferSize, NULL);
+  Status = gRT->GetVariable (
+                  VarStoreName,
+                  &EfiVarStoreInfo->Guid,
+                  NULL,
+                  &BufferSize,
+                  NULL
+                  );
   if (Status != EFI_BUFFER_TOO_SMALL) {
     goto Done;
   }
 
   VarStore = AllocateZeroPool (BufferSize);
   ASSERT (VarStore != NULL);
-  Status = gRT->GetVariable (VarStoreName, &EfiVarStoreInfo->Guid, NULL, &BufferSize, VarStore);
+  Status = gRT->GetVariable (
+                  VarStoreName,
+                  &EfiVarStoreInfo->Guid,
+                  NULL,
+                  &BufferSize,
+                  VarStore
+                  );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
 
-  Status = HiiBlockToConfig (This, Request, VarStore, BufferSize, RequestResp, AccessProgress);
+  Status = HiiBlockToConfig (
+             This,
+             Request,
+             VarStore,
+             BufferSize,
+             RequestResp,
+             AccessProgress
+             );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -4594,9 +5157,19 @@ RouteConfigRespForEfiVarStore (
     goto Done;
   }
 
-  AsciiStrToUnicodeStrS ((CHAR8 *)EfiVarStoreInfo->Name, VarStoreName, NameSize);
+  AsciiStrToUnicodeStrS (
+    (CHAR8 *)EfiVarStoreInfo->Name,
+    VarStoreName,
+    NameSize
+    );
 
-  Status = gRT->GetVariable (VarStoreName, &EfiVarStoreInfo->Guid, NULL, &BufferSize, NULL);
+  Status = gRT->GetVariable (
+                  VarStoreName,
+                  &EfiVarStoreInfo->Guid,
+                  NULL,
+                  &BufferSize,
+                  NULL
+                  );
   if (Status != EFI_BUFFER_TOO_SMALL) {
     DEBUG ((DEBUG_ERROR, "The variable does not exist!"));
     goto Done;
@@ -4605,7 +5178,13 @@ RouteConfigRespForEfiVarStore (
   BlockSize = BufferSize;
   VarStore  = AllocateZeroPool (BufferSize);
   ASSERT (VarStore != NULL);
-  Status = gRT->GetVariable (VarStoreName, &EfiVarStoreInfo->Guid, NULL, &BufferSize, VarStore);
+  Status = gRT->GetVariable (
+                  VarStoreName,
+                  &EfiVarStoreInfo->Guid,
+                  NULL,
+                  &BufferSize,
+                  VarStore
+                  );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -4615,7 +5194,13 @@ RouteConfigRespForEfiVarStore (
     goto Done;
   }
 
-  Status = gRT->SetVariable (VarStoreName, &EfiVarStoreInfo->Guid, EfiVarStoreInfo->Attributes, BufferSize, VarStore);
+  Status = gRT->SetVariable (
+                  VarStoreName,
+                  &EfiVarStoreInfo->Guid,
+                  EfiVarStoreInfo->Attributes,
+                  BufferSize,
+                  VarStore
+                  );
   if (EFI_ERROR (Status)) {
     *Result = RequestResp;
     goto Done;
@@ -4658,7 +5243,14 @@ OffsetWidthValidate (
       return RetVal;
     }
 
-    while (*StringPtr != L'\0' && StrnCmp (StringPtr, L"&WIDTH=", StrLen (L"&WIDTH=")) != 0) {
+    while (*StringPtr != L'\0' && StrnCmp (
+                                    StringPtr,
+                                    L"&WIDTH=",
+                                    StrLen (
+                                      L"&WIDTH="
+                                      )
+                                    ) != 0)
+    {
       StringPtr++;
     }
 
@@ -4667,7 +5259,14 @@ OffsetWidthValidate (
     }
 
     StringPtr += StrLen (L"&WIDTH=");
-    while (*StringPtr != L'\0' && StrnCmp (StringPtr, L"&OFFSET=", StrLen (L"&OFFSET=")) != 0) {
+    while (*StringPtr != L'\0' && StrnCmp (
+                                    StringPtr,
+                                    L"&OFFSET=",
+                                    StrLen (
+                                      L"&OFFSET="
+                                      )
+                                    ) != 0)
+    {
       StringPtr++;
     }
 
@@ -4741,7 +5340,14 @@ ConfigRequestValidate (
   }
 
   StringPtr += StrLen (L"GUID=");
-  while (*StringPtr != L'\0' && StrnCmp (StringPtr, L"&NAME=", StrLen (L"&NAME=")) != 0) {
+  while (*StringPtr != L'\0' && StrnCmp (
+                                  StringPtr,
+                                  L"&NAME=",
+                                  StrLen (
+                                    L"&NAME="
+                                    )
+                                  ) != 0)
+  {
     StringPtr++;
   }
 
@@ -4754,7 +5360,14 @@ ConfigRequestValidate (
     HasNameField = FALSE;
   }
 
-  while (*StringPtr != L'\0' && StrnCmp (StringPtr, L"&PATH=", StrLen (L"&PATH=")) != 0) {
+  while (*StringPtr != L'\0' && StrnCmp (
+                                  StringPtr,
+                                  L"&PATH=",
+                                  StrLen (
+                                    L"&PATH="
+                                    )
+                                  ) != 0)
+  {
     StringPtr++;
   }
 
@@ -4906,7 +5519,9 @@ HiiConfigRoutingExtractConfig (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  while (*StringPtr != 0 && StrnCmp (StringPtr, L"GUID=", StrLen (L"GUID=")) == 0) {
+  while (*StringPtr != 0 && StrnCmp (StringPtr, L"GUID=", StrLen (L"GUID=")) ==
+         0)
+  {
     //
     // If parsing error, set Progress to the beginning of the <MultiConfigRequest>
     // or most recent & before the error.
@@ -4921,7 +5536,10 @@ HiiConfigRoutingExtractConfig (
     // Process each <ConfigRequest> of <MultiConfigRequest>
     //
     Length        = CalculateConfigStringLen (StringPtr);
-    ConfigRequest = AllocateCopyPool ((Length + 1) * sizeof (CHAR16), StringPtr);
+    ConfigRequest = AllocateCopyPool (
+                      (Length + 1) * sizeof (CHAR16),
+                      StringPtr
+                      );
     if (ConfigRequest == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Done;
@@ -4948,11 +5566,20 @@ HiiConfigRoutingExtractConfig (
          Link = Link->ForwardLink
          )
     {
-      Database = CR (Link, HII_DATABASE_RECORD, DatabaseEntry, HII_DATABASE_RECORD_SIGNATURE);
+      Database = CR (
+                   Link,
+                   HII_DATABASE_RECORD,
+                   DatabaseEntry,
+                   HII_DATABASE_RECORD_SIGNATURE
+                   );
       if ((DevicePathPkg = Database->PackageList->DevicePathPkg) != NULL) {
         CurrentDevicePath = DevicePathPkg + sizeof (EFI_HII_PACKAGE_HEADER);
-        DevicePathSize    = GetDevicePathSize ((EFI_DEVICE_PATH_PROTOCOL *)CurrentDevicePath);
-        if ((CompareMem (DevicePath, CurrentDevicePath, DevicePathSize) == 0) && IsThisPackageList (Database, ConfigRequest)) {
+        DevicePathSize    = GetDevicePathSize (
+                              (EFI_DEVICE_PATH_PROTOCOL *)CurrentDevicePath
+                              );
+        if ((CompareMem (DevicePath, CurrentDevicePath, DevicePathSize) == 0) &&
+            IsThisPackageList (Database, ConfigRequest))
+        {
           DriverHandle = Database->DriverHandle;
           HiiHandle    = Database->Handle;
           break;
@@ -5000,7 +5627,13 @@ HiiConfigRoutingExtractConfig (
       // Get the full request string from IFR when HiiPackage is registered to HiiHandle
       //
       IfrDataParsedFlag = TRUE;
-      Status            = GetFullStringFromHiiFormPackages (Database, DevicePath, &ConfigRequest, &DefaultResults, &AccessProgress);
+      Status            = GetFullStringFromHiiFormPackages (
+                            Database,
+                            DevicePath,
+                            &ConfigRequest,
+                            &DefaultResults,
+                            &AccessProgress
+                            );
       if (EFI_ERROR (Status)) {
         //
         // AccessProgress indicates the parsing progress on <ConfigRequest>.
@@ -5015,7 +5648,10 @@ HiiConfigRoutingExtractConfig (
       // Not any request block is found.
       //
       if (!GetElementsFromRequest (ConfigRequest)) {
-        AccessResults = AllocateCopyPool (StrSize (ConfigRequest), ConfigRequest);
+        AccessResults = AllocateCopyPool (
+                          StrSize (ConfigRequest),
+                          ConfigRequest
+                          );
         goto NextConfigString;
       }
     }
@@ -5023,7 +5659,12 @@ HiiConfigRoutingExtractConfig (
     //
     // Check whether this ConfigRequest is search from Efi varstore type storage.
     //
-    Status = GetVarStoreType (Database, ConfigRequest, &IsEfiVarStore, &EfiVarStoreInfo);
+    Status = GetVarStoreType (
+               Database,
+               ConfigRequest,
+               &IsEfiVarStore,
+               &EfiVarStoreInfo
+               );
     if (EFI_ERROR (Status)) {
       goto Done;
     }
@@ -5032,7 +5673,13 @@ HiiConfigRoutingExtractConfig (
       //
       // Call the GetVariable function to extract settings.
       //
-      Status = GetConfigRespFromEfiVarStore (This, EfiVarStoreInfo, ConfigRequest, &AccessResults, &AccessProgress);
+      Status = GetConfigRespFromEfiVarStore (
+                 This,
+                 EfiVarStoreInfo,
+                 ConfigRequest,
+                 &AccessResults,
+                 &AccessProgress
+                 );
       FreePool (EfiVarStoreInfo);
       if (EFI_ERROR (Status)) {
         //
@@ -5068,16 +5715,25 @@ HiiConfigRoutingExtractConfig (
           //
           // Merge the AltCfgResp in AccessResultsBackup to AccessResults
           //
-          if ((AccessResultsBackup != NULL) && (StrStr (AccessResultsBackup, L"&ALTCFG=") != NULL)) {
+          if ((AccessResultsBackup != NULL) && (StrStr (
+                                                  AccessResultsBackup,
+                                                  L"&ALTCFG="
+                                                  ) != NULL))
+          {
             ConigStringSize        = StrSize (AccessResults);
             ConfigStringPtr        = StrStr (AccessResultsBackup, L"&GUID=");
-            ConigStringSizeNewsize = StrSize (ConfigStringPtr) + ConigStringSize + sizeof (CHAR16);
-            AccessResults          = (EFI_STRING)ReallocatePool (
-                                                   ConigStringSize,
-                                                   ConigStringSizeNewsize,
-                                                   AccessResults
-                                                   );
-            StrCatS (AccessResults, ConigStringSizeNewsize / sizeof (CHAR16), ConfigStringPtr);
+            ConigStringSizeNewsize = StrSize (ConfigStringPtr) +
+                                     ConigStringSize + sizeof (CHAR16);
+            AccessResults = (EFI_STRING)ReallocatePool (
+                                          ConigStringSize,
+                                          ConigStringSizeNewsize,
+                                          AccessResults
+                                          );
+            StrCatS (
+              AccessResults,
+              ConigStringSizeNewsize / sizeof (CHAR16),
+              ConfigStringPtr
+              );
           }
         } else {
           //
@@ -5132,7 +5788,13 @@ HiiConfigRoutingExtractConfig (
     // Update AccessResults by getting default setting from IFR when HiiPackage is registered to HiiHandle
     //
     if (!IfrDataParsedFlag && (HiiHandle != NULL)) {
-      Status = GetFullStringFromHiiFormPackages (Database, DevicePath, &ConfigRequest, &DefaultResults, NULL);
+      Status = GetFullStringFromHiiFormPackages (
+                 Database,
+                 DevicePath,
+                 &ConfigRequest,
+                 &DefaultResults,
+                 NULL
+                 );
       ASSERT_EFI_ERROR (Status);
     }
 
@@ -5303,13 +5965,20 @@ HiiConfigRoutingExportConfig (
            Link = Link->ForwardLink
            )
       {
-        Database = CR (Link, HII_DATABASE_RECORD, DatabaseEntry, HII_DATABASE_RECORD_SIGNATURE);
+        Database = CR (
+                     Link,
+                     HII_DATABASE_RECORD,
+                     DatabaseEntry,
+                     HII_DATABASE_RECORD_SIGNATURE
+                     );
         if ((DevicePathPkg = Database->PackageList->DevicePathPkg) != NULL) {
           CurrentDevicePath = DevicePathPkg + sizeof (EFI_HII_PACKAGE_HEADER);
           if (CompareMem (
                 DevicePath,
                 CurrentDevicePath,
-                GetDevicePathSize ((EFI_DEVICE_PATH_PROTOCOL *)CurrentDevicePath)
+                GetDevicePathSize (
+                  (EFI_DEVICE_PATH_PROTOCOL *)CurrentDevicePath
+                  )
                 ) == 0)
           {
             HiiHandle = Database->Handle;
@@ -5331,7 +6000,13 @@ HiiConfigRoutingExportConfig (
       //
       if ((HiiHandle != NULL) && (DevicePath != NULL)) {
         IfrDataParsedFlag = TRUE;
-        Status            = GetFullStringFromHiiFormPackages (Database, DevicePath, &ConfigRequest, &DefaultResults, NULL);
+        Status            = GetFullStringFromHiiFormPackages (
+                              Database,
+                              DevicePath,
+                              &ConfigRequest,
+                              &DefaultResults,
+                              NULL
+                              );
         //
         // Get the full request string to get the Current setting again.
         //
@@ -5360,7 +6035,13 @@ HiiConfigRoutingExportConfig (
         }
 
         if (GetElementsFromRequest (AccessResults)) {
-          Status = GetFullStringFromHiiFormPackages (Database, DevicePath, &AccessResults, &DefaultResults, NULL);
+          Status = GetFullStringFromHiiFormPackages (
+                     Database,
+                     DevicePath,
+                     &AccessResults,
+                     &DefaultResults,
+                     NULL
+                     );
           ASSERT_EFI_ERROR (Status);
         }
 
@@ -5479,7 +6160,9 @@ HiiConfigRoutingRouteConfig (
     return EFI_INVALID_PARAMETER;
   }
 
-  while (*StringPtr != 0 && StrnCmp (StringPtr, L"GUID=", StrLen (L"GUID=")) == 0) {
+  while (*StringPtr != 0 && StrnCmp (StringPtr, L"GUID=", StrLen (L"GUID=")) ==
+         0)
+  {
     //
     // If parsing error, set Progress to the beginning of the <MultiConfigResp>
     // or most recent & before the error.
@@ -5522,12 +6205,21 @@ HiiConfigRoutingRouteConfig (
          Link = Link->ForwardLink
          )
     {
-      Database = CR (Link, HII_DATABASE_RECORD, DatabaseEntry, HII_DATABASE_RECORD_SIGNATURE);
+      Database = CR (
+                   Link,
+                   HII_DATABASE_RECORD,
+                   DatabaseEntry,
+                   HII_DATABASE_RECORD_SIGNATURE
+                   );
 
       if ((DevicePathPkg = Database->PackageList->DevicePathPkg) != NULL) {
         CurrentDevicePath = DevicePathPkg + sizeof (EFI_HII_PACKAGE_HEADER);
-        DevicePathSize    = GetDevicePathSize ((EFI_DEVICE_PATH_PROTOCOL *)CurrentDevicePath);
-        if ((CompareMem (DevicePath, CurrentDevicePath, DevicePathSize) == 0) && IsThisPackageList (Database, ConfigResp)) {
+        DevicePathSize    = GetDevicePathSize (
+                              (EFI_DEVICE_PATH_PROTOCOL *)CurrentDevicePath
+                              );
+        if ((CompareMem (DevicePath, CurrentDevicePath, DevicePathSize) == 0) &&
+            IsThisPackageList (Database, ConfigResp))
+        {
           DriverHandle = Database->DriverHandle;
           break;
         }
@@ -5561,7 +6253,12 @@ HiiConfigRoutingRouteConfig (
     //
     // Check whether this ConfigRequest is search from Efi varstore type storage.
     //
-    Status = GetVarStoreType (Database, ConfigResp, &IsEfiVarstore, &EfiVarStoreInfo);
+    Status = GetVarStoreType (
+               Database,
+               ConfigResp,
+               &IsEfiVarstore,
+               &EfiVarStoreInfo
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -5570,7 +6267,12 @@ HiiConfigRoutingRouteConfig (
       //
       // Call the SetVariable function to route settings.
       //
-      Status = RouteConfigRespForEfiVarStore (This, EfiVarStoreInfo, ConfigResp, &AccessProgress);
+      Status = RouteConfigRespForEfiVarStore (
+                 This,
+                 EfiVarStoreInfo,
+                 ConfigResp,
+                 &AccessProgress
+                 );
       FreePool (EfiVarStoreInfo);
     } else {
       //
@@ -5722,7 +6424,9 @@ HiiBlockToConfig (
     goto Exit;
   }
 
-  while (*StringPtr != 0 && StrnCmp (StringPtr, L"PATH=", StrLen (L"PATH=")) != 0) {
+  while (*StringPtr != 0 && StrnCmp (StringPtr, L"PATH=", StrLen (L"PATH=")) !=
+         0)
+  {
     StringPtr++;
   }
 
@@ -5753,7 +6457,11 @@ HiiBlockToConfig (
   //
   // Copy <ConfigHdr> and an additional '&' to <ConfigResp>
   //
-  TemString = AllocateCopyPool (sizeof (CHAR16) * (StringPtr - ConfigRequest + 1), ConfigRequest);
+  TemString = AllocateCopyPool (
+                sizeof (CHAR16) * (StringPtr - ConfigRequest +
+                                   1),
+                ConfigRequest
+                );
   if (TemString == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -5767,7 +6475,14 @@ HiiBlockToConfig (
   // Only <BlockName> format is supported by this help function.
   // <BlockName> ::= 'OFFSET='<Number>&'WIDTH='<Number>
   //
-  while (*StringPtr != 0 && StrnCmp (StringPtr, L"OFFSET=", StrLen (L"OFFSET=")) == 0) {
+  while (*StringPtr != 0 && StrnCmp (
+                              StringPtr,
+                              L"OFFSET=",
+                              StrLen (
+                                L"OFFSET="
+                                )
+                              ) == 0)
+  {
     //
     // Back up the header of one <BlockName>
     //
@@ -5787,7 +6502,8 @@ HiiBlockToConfig (
     CopyMem (
       &Offset,
       TmpBuffer,
-      (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) : sizeof (UINTN)
+      (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) :
+      sizeof (UINTN)
       );
     FreePool (TmpBuffer);
 
@@ -5813,7 +6529,8 @@ HiiBlockToConfig (
     CopyMem (
       &Width,
       TmpBuffer,
-      (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) : sizeof (UINTN)
+      (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) :
+      sizeof (UINTN)
       );
     FreePool (TmpBuffer);
 
@@ -5860,7 +6577,11 @@ HiiBlockToConfig (
         *TemBuffer,
         2
         );
-      TemString += StrnLenS (TemString, Length - ((UINTN)TemString - (UINTN)ValueStr) / sizeof (CHAR16));
+      TemString += StrnLenS (
+                     TemString,
+                     Length - ((UINTN)TemString -
+                               (UINTN)ValueStr) / sizeof (CHAR16)
+                     );
     }
 
     FreePool (Value);
@@ -6031,7 +6752,9 @@ HiiConfigToBlock (
     goto Exit;
   }
 
-  while (*StringPtr != 0 && StrnCmp (StringPtr, L"PATH=", StrLen (L"PATH=")) != 0) {
+  while (*StringPtr != 0 && StrnCmp (StringPtr, L"PATH=", StrLen (L"PATH=")) !=
+         0)
+  {
     StringPtr++;
   }
 
@@ -6056,7 +6779,14 @@ HiiConfigToBlock (
   // Only '&'<BlockConfig> format is supported by this help function.
   // <BlockConfig> ::= 'OFFSET='<Number>&'WIDTH='<Number>&'VALUE='<Number>
   //
-  while (*StringPtr != 0 && StrnCmp (StringPtr, L"&OFFSET=", StrLen (L"&OFFSET=")) == 0) {
+  while (*StringPtr != 0 && StrnCmp (
+                              StringPtr,
+                              L"&OFFSET=",
+                              StrLen (
+                                L"&OFFSET="
+                                )
+                              ) == 0)
+  {
     TmpPtr     = StringPtr;
     StringPtr += StrLen (L"&OFFSET=");
     //
@@ -6072,7 +6802,8 @@ HiiConfigToBlock (
     CopyMem (
       &Offset,
       TmpBuffer,
-      (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) : sizeof (UINTN)
+      (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) :
+      sizeof (UINTN)
       );
     FreePool (TmpBuffer);
 
@@ -6098,7 +6829,8 @@ HiiConfigToBlock (
     CopyMem (
       &Width,
       TmpBuffer,
-      (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) : sizeof (UINTN)
+      (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) :
+      sizeof (UINTN)
       );
     FreePool (TmpBuffer);
 
@@ -6283,11 +7015,23 @@ HiiGetAltCfg (
     &PathStr
     );
   if (AltCfgId != NULL) {
-    GenerateSubStr (L"ALTCFG=", sizeof (UINT16), (VOID *)AltCfgId, 3, &AltIdStr);
+    GenerateSubStr (
+      L"ALTCFG=",
+      sizeof (UINT16),
+      (VOID *)AltCfgId,
+      3,
+      &AltIdStr
+      );
   }
 
   if (Name != NULL) {
-    GenerateSubStr (L"NAME=", StrLen (Name) * sizeof (CHAR16), (VOID *)Name, 2, &NameStr);
+    GenerateSubStr (
+      L"NAME=",
+      StrLen (Name) * sizeof (CHAR16),
+      (VOID *)Name,
+      2,
+      &NameStr
+      );
   } else {
     GenerateSubStr (L"NAME=", 0, NULL, 2, &NameStr);
   }

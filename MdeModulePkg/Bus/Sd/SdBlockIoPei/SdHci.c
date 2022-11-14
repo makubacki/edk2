@@ -305,7 +305,12 @@ SdPeimHcReset (
   UINT8       SwReset;
 
   SwReset = 0xFF;
-  Status  = SdPeimHcRwMmio (Bar + SD_HC_SW_RST, FALSE, sizeof (SwReset), &SwReset);
+  Status  = SdPeimHcRwMmio (
+              Bar + SD_HC_SW_RST,
+              FALSE,
+              sizeof (SwReset),
+              &SwReset
+              );
 
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "SdPeimHcReset: write full 1 fails: %r\n", Status));
@@ -354,7 +359,12 @@ SdPeimHcEnableInterrupt (
   // Enable all bits in Error Interrupt Status Enable Register
   //
   IntStatus = 0xFFFF;
-  Status    = SdPeimHcRwMmio (Bar + SD_HC_ERR_INT_STS_EN, FALSE, sizeof (IntStatus), &IntStatus);
+  Status    = SdPeimHcRwMmio (
+                Bar + SD_HC_ERR_INT_STS_EN,
+                FALSE,
+                sizeof (IntStatus),
+                &IntStatus
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -363,7 +373,12 @@ SdPeimHcEnableInterrupt (
   // Enable all bits in Normal Interrupt Status Enable Register
   //
   IntStatus = 0xFFFF;
-  Status    = SdPeimHcRwMmio (Bar + SD_HC_NOR_INT_STS_EN, FALSE, sizeof (IntStatus), &IntStatus);
+  Status    = SdPeimHcRwMmio (
+                Bar + SD_HC_NOR_INT_STS_EN,
+                FALSE,
+                sizeof (IntStatus),
+                &IntStatus
+                );
 
   return Status;
 }
@@ -432,7 +447,12 @@ SdPeimHcCardDetect (
     // Clear BIT6 and BIT7 by writing 1 to these two bits if set.
     //
     Data  &= BIT6 | BIT7;
-    Status = SdPeimHcRwMmio (Bar + SD_HC_NOR_INT_STS, FALSE, sizeof (Data), &Data);
+    Status = SdPeimHcRwMmio (
+               Bar + SD_HC_NOR_INT_STS,
+               FALSE,
+               sizeof (Data),
+               &Data
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -441,7 +461,12 @@ SdPeimHcCardDetect (
   //
   // Check Present State Register to see if there is a card presented.
   //
-  Status = SdPeimHcRwMmio (Bar + SD_HC_PRESENT_STATE, TRUE, sizeof (PresentState), &PresentState);
+  Status = SdPeimHcRwMmio (
+             Bar + SD_HC_PRESENT_STATE,
+             TRUE,
+             sizeof (PresentState),
+             &PresentState
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -493,7 +518,11 @@ SdPeimHcStopClock (
   // Set SD Clock Enable in the Clock Control register to 0
   //
   ClockCtrl = (UINT16) ~BIT2;
-  Status    = SdPeimHcAndMmio (Bar + SD_HC_CLOCK_CTRL, sizeof (ClockCtrl), &ClockCtrl);
+  Status    = SdPeimHcAndMmio (
+                Bar + SD_HC_CLOCK_CTRL,
+                sizeof (ClockCtrl),
+                &ClockCtrl
+                );
 
   return Status;
 }
@@ -564,9 +593,20 @@ SdPeimHcClockSupply (
     }
   }
 
-  DEBUG ((DEBUG_INFO, "BaseClkFreq %dMHz Divisor %d ClockFreq %dKhz\n", BaseClkFreq, Divisor, ClockFreq));
+  DEBUG ((
+    DEBUG_INFO,
+    "BaseClkFreq %dMHz Divisor %d ClockFreq %dKhz\n",
+    BaseClkFreq,
+    Divisor,
+    ClockFreq
+    ));
 
-  Status = SdPeimHcRwMmio (Bar + SD_HC_CTRL_VER, TRUE, sizeof (ControllerVer), &ControllerVer);
+  Status = SdPeimHcRwMmio (
+             Bar + SD_HC_CTRL_VER,
+             TRUE,
+             sizeof (ControllerVer),
+             &ControllerVer
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -588,7 +628,11 @@ SdPeimHcClockSupply (
     ASSERT (Divisor <= 0x80);
     ClockCtrl = (Divisor & 0xFF) << 8;
   } else {
-    DEBUG ((DEBUG_ERROR, "Unknown SD Host Controller Spec version [0x%x]!!!\n", ControllerVer));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Unknown SD Host Controller Spec version [0x%x]!!!\n",
+      ControllerVer
+      ));
     return EFI_UNSUPPORTED;
   }
 
@@ -604,9 +648,17 @@ SdPeimHcClockSupply (
   // Supply clock frequency with specified divisor
   //
   ClockCtrl |= BIT0;
-  Status     = SdPeimHcRwMmio (Bar + SD_HC_CLOCK_CTRL, FALSE, sizeof (ClockCtrl), &ClockCtrl);
+  Status     = SdPeimHcRwMmio (
+                 Bar + SD_HC_CLOCK_CTRL,
+                 FALSE,
+                 sizeof (ClockCtrl),
+                 &ClockCtrl
+                 );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Set SDCLK Frequency Select and Internal Clock Enable fields fails\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Set SDCLK Frequency Select and Internal Clock Enable fields fails\n"
+      ));
     return Status;
   }
 
@@ -628,7 +680,11 @@ SdPeimHcClockSupply (
   // Set SD Clock Enable in the Clock Control register to 1
   //
   ClockCtrl = BIT2;
-  Status    = SdPeimHcOrMmio (Bar + SD_HC_CLOCK_CTRL, sizeof (ClockCtrl), &ClockCtrl);
+  Status    = SdPeimHcOrMmio (
+                Bar + SD_HC_CLOCK_CTRL,
+                sizeof (ClockCtrl),
+                &ClockCtrl
+                );
 
   return Status;
 }
@@ -657,7 +713,12 @@ SdPeimHcPowerControl (
   // Clr SD Bus Power
   //
   PowerCtrl &= (UINT8) ~BIT0;
-  Status     = SdPeimHcRwMmio (Bar + SD_HC_POWER_CTRL, FALSE, sizeof (PowerCtrl), &PowerCtrl);
+  Status     = SdPeimHcRwMmio (
+                 Bar + SD_HC_POWER_CTRL,
+                 FALSE,
+                 sizeof (PowerCtrl),
+                 &PowerCtrl
+                 );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -666,7 +727,12 @@ SdPeimHcPowerControl (
   // Set SD Bus Voltage Select and SD Bus Power fields in Power Control Register
   //
   PowerCtrl |= BIT0;
-  Status     = SdPeimHcRwMmio (Bar + SD_HC_POWER_CTRL, FALSE, sizeof (PowerCtrl), &PowerCtrl);
+  Status     = SdPeimHcRwMmio (
+                 Bar + SD_HC_POWER_CTRL,
+                 FALSE,
+                 sizeof (PowerCtrl),
+                 &PowerCtrl
+                 );
 
   return Status;
 }
@@ -694,25 +760,49 @@ SdPeimHcSetBusWidth (
 
   if (BusWidth == 1) {
     HostCtrl1 = (UINT8) ~(BIT5 | BIT1);
-    Status    = SdPeimHcAndMmio (Bar + SD_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
+    Status    = SdPeimHcAndMmio (
+                  Bar + SD_HC_HOST_CTRL1,
+                  sizeof (HostCtrl1),
+                  &HostCtrl1
+                  );
   } else if (BusWidth == 4) {
-    Status = SdPeimHcRwMmio (Bar + SD_HC_HOST_CTRL1, TRUE, sizeof (HostCtrl1), &HostCtrl1);
+    Status = SdPeimHcRwMmio (
+               Bar + SD_HC_HOST_CTRL1,
+               TRUE,
+               sizeof (HostCtrl1),
+               &HostCtrl1
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
 
     HostCtrl1 |= BIT1;
     HostCtrl1 &= (UINT8) ~BIT5;
-    Status     = SdPeimHcRwMmio (Bar + SD_HC_HOST_CTRL1, FALSE, sizeof (HostCtrl1), &HostCtrl1);
+    Status     = SdPeimHcRwMmio (
+                   Bar + SD_HC_HOST_CTRL1,
+                   FALSE,
+                   sizeof (HostCtrl1),
+                   &HostCtrl1
+                   );
   } else if (BusWidth == 8) {
-    Status = SdPeimHcRwMmio (Bar + SD_HC_HOST_CTRL1, TRUE, sizeof (HostCtrl1), &HostCtrl1);
+    Status = SdPeimHcRwMmio (
+               Bar + SD_HC_HOST_CTRL1,
+               TRUE,
+               sizeof (HostCtrl1),
+               &HostCtrl1
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
 
     HostCtrl1 &= (UINT8) ~BIT1;
     HostCtrl1 |= BIT5;
-    Status     = SdPeimHcRwMmio (Bar + SD_HC_HOST_CTRL1, FALSE, sizeof (HostCtrl1), &HostCtrl1);
+    Status     = SdPeimHcRwMmio (
+                   Bar + SD_HC_HOST_CTRL1,
+                   FALSE,
+                   sizeof (HostCtrl1),
+                   &HostCtrl1
+                   );
   } else {
     ASSERT (FALSE);
     return EFI_INVALID_PARAMETER;
@@ -810,7 +900,11 @@ SdPeimHcInitPowerVoltage (
     //
     MaxVoltage = 0x0A;
     HostCtrl2  = BIT3;
-    Status     = SdPeimHcOrMmio (Bar + SD_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+    Status     = SdPeimHcOrMmio (
+                   Bar + SD_HC_HOST_CTRL2,
+                   sizeof (HostCtrl2),
+                   &HostCtrl2
+                   );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -849,7 +943,12 @@ SdPeimHcInitTimeoutCtrl (
   UINT8       Timeout;
 
   Timeout = 0x0E;
-  Status  = SdPeimHcRwMmio (Bar + SD_HC_TIMEOUT_CTRL, FALSE, sizeof (Timeout), &Timeout);
+  Status  = SdPeimHcRwMmio (
+              Bar + SD_HC_TIMEOUT_CTRL,
+              FALSE,
+              sizeof (Timeout),
+              &Timeout
+              );
 
   return Status;
 }
@@ -906,10 +1005,18 @@ SdPeimHcLedOnOff (
 
   if (On) {
     HostCtrl1 = BIT0;
-    Status    = SdPeimHcOrMmio (Bar + SD_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
+    Status    = SdPeimHcOrMmio (
+                  Bar + SD_HC_HOST_CTRL1,
+                  sizeof (HostCtrl1),
+                  &HostCtrl1
+                  );
   } else {
     HostCtrl1 = (UINT8) ~BIT0;
-    Status    = SdPeimHcAndMmio (Bar + SD_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
+    Status    = SdPeimHcAndMmio (
+                  Bar + SD_HC_HOST_CTRL1,
+                  sizeof (HostCtrl1),
+                  &HostCtrl1
+                  );
   }
 
   return Status;
@@ -952,13 +1059,26 @@ BuildAdmaDescTable (
   // for 32-bit address descriptor table.
   //
   if ((Data & (BIT0 | BIT1)) != 0) {
-    DEBUG ((DEBUG_INFO, "The buffer [0x%x] to construct ADMA desc is not aligned to 4 bytes boundary!\n", Data));
+    DEBUG ((
+      DEBUG_INFO,
+      "The buffer [0x%x] to construct ADMA desc is not aligned to 4 bytes boundary!\n",
+      Data
+      ));
   }
 
-  Entries = DivU64x32 ((DataLen + ADMA_MAX_DATA_PER_LINE - 1), ADMA_MAX_DATA_PER_LINE);
+  Entries = DivU64x32 (
+              (DataLen + ADMA_MAX_DATA_PER_LINE - 1),
+              ADMA_MAX_DATA_PER_LINE
+              );
 
-  Trb->AdmaDescSize = (UINTN)MultU64x32 (Entries, sizeof (SD_HC_ADMA_DESC_LINE));
-  Trb->AdmaDesc     = SdPeimAllocateMem (Trb->Slot->Private->Pool, Trb->AdmaDescSize);
+  Trb->AdmaDescSize = (UINTN)MultU64x32 (
+                               Entries,
+                               sizeof (SD_HC_ADMA_DESC_LINE)
+                               );
+  Trb->AdmaDesc = SdPeimAllocateMem (
+                    Trb->Slot->Private->Pool,
+                    Trb->AdmaDescSize
+                    );
   if (Trb->AdmaDesc == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1033,11 +1153,15 @@ SdPeimCreateTrb (
     Trb->Data    = Packet->InDataBuffer;
     Trb->DataLen = Packet->InTransferLength;
     Trb->Read    = TRUE;
-  } else if ((Packet->OutTransferLength != 0) && (Packet->OutDataBuffer != NULL)) {
+  } else if ((Packet->OutTransferLength != 0) && (Packet->OutDataBuffer !=
+                                                  NULL))
+  {
     Trb->Data    = Packet->OutDataBuffer;
     Trb->DataLen = Packet->OutTransferLength;
     Trb->Read    = FALSE;
-  } else if ((Packet->InTransferLength == 0) && (Packet->OutTransferLength == 0)) {
+  } else if ((Packet->InTransferLength == 0) && (Packet->OutTransferLength ==
+                                                 0))
+  {
     Trb->Data    = NULL;
     Trb->DataLen = 0;
   } else {
@@ -1059,7 +1183,13 @@ SdPeimCreateTrb (
 
     if (Trb->DataLen != 0) {
       MapLength = Trb->DataLen;
-      Status    = IoMmuMap (MapOp, Trb->Data, &MapLength, &Trb->DataPhy, &Trb->DataMap);
+      Status    = IoMmuMap (
+                    MapOp,
+                    Trb->Data,
+                    &MapLength,
+                    &Trb->DataPhy,
+                    &Trb->DataMap
+                    );
 
       if (EFI_ERROR (Status) || (MapLength != Trb->DataLen)) {
         DEBUG ((DEBUG_ERROR, "SdPeimCreateTrb: Fail to map data buffer.\n"));
@@ -1251,7 +1381,12 @@ SdPeimExecTrb (
   // Clear all bits in Error Interrupt Status Register
   //
   IntStatus = 0xFFFF;
-  Status    = SdPeimHcRwMmio (Bar + SD_HC_ERR_INT_STS, FALSE, sizeof (IntStatus), &IntStatus);
+  Status    = SdPeimHcRwMmio (
+                Bar + SD_HC_ERR_INT_STS,
+                FALSE,
+                sizeof (IntStatus),
+                &IntStatus
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1260,7 +1395,12 @@ SdPeimExecTrb (
   // Clear all bits in Normal Interrupt Status Register
   //
   IntStatus = 0xFFFF;
-  Status    = SdPeimHcRwMmio (Bar + SD_HC_NOR_INT_STS, FALSE, sizeof (IntStatus), &IntStatus);
+  Status    = SdPeimHcRwMmio (
+                Bar + SD_HC_NOR_INT_STS,
+                FALSE,
+                sizeof (IntStatus),
+                &IntStatus
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1270,7 +1410,11 @@ SdPeimExecTrb (
   //
   if (Trb->Mode == SdAdmaMode) {
     HostCtrl1 = BIT4;
-    Status    = SdPeimHcOrMmio (Bar + SD_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
+    Status    = SdPeimHcOrMmio (
+                  Bar + SD_HC_HOST_CTRL1,
+                  sizeof (HostCtrl1),
+                  &HostCtrl1
+                  );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -1284,13 +1428,23 @@ SdPeimExecTrb (
     }
 
     SdmaAddr = (UINT32)(UINTN)Trb->DataPhy;
-    Status   = SdPeimHcRwMmio (Bar + SD_HC_SDMA_ADDR, FALSE, sizeof (SdmaAddr), &SdmaAddr);
+    Status   = SdPeimHcRwMmio (
+                 Bar + SD_HC_SDMA_ADDR,
+                 FALSE,
+                 sizeof (SdmaAddr),
+                 &SdmaAddr
+                 );
     if (EFI_ERROR (Status)) {
       return Status;
     }
   } else if (Trb->Mode == SdAdmaMode) {
     AdmaAddr = (UINT64)(UINTN)Trb->AdmaDesc;
-    Status   = SdPeimHcRwMmio (Bar + SD_HC_ADMA_SYS_ADDR, FALSE, sizeof (AdmaAddr), &AdmaAddr);
+    Status   = SdPeimHcRwMmio (
+                 Bar + SD_HC_ADMA_SYS_ADDR,
+                 FALSE,
+                 sizeof (AdmaAddr),
+                 &AdmaAddr
+                 );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -1304,7 +1458,12 @@ SdPeimExecTrb (
     BlkSize |= 0x7000;
   }
 
-  Status = SdPeimHcRwMmio (Bar + SD_HC_BLK_SIZE, FALSE, sizeof (BlkSize), &BlkSize);
+  Status = SdPeimHcRwMmio (
+             Bar + SD_HC_BLK_SIZE,
+             FALSE,
+             sizeof (BlkSize),
+             &BlkSize
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1317,13 +1476,23 @@ SdPeimExecTrb (
     BlkCount = (UINT16)(Trb->DataLen / Trb->BlockSize);
   }
 
-  Status = SdPeimHcRwMmio (Bar + SD_HC_BLK_COUNT, FALSE, sizeof (BlkCount), &BlkCount);
+  Status = SdPeimHcRwMmio (
+             Bar + SD_HC_BLK_COUNT,
+             FALSE,
+             sizeof (BlkCount),
+             &BlkCount
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   Argument = Packet->SdCmdBlk->CommandArgument;
-  Status   = SdPeimHcRwMmio (Bar + SD_HC_ARG1, FALSE, sizeof (Argument), &Argument);
+  Status   = SdPeimHcRwMmio (
+               Bar + SD_HC_ARG1,
+               FALSE,
+               sizeof (Argument),
+               &Argument
+               );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1350,7 +1519,12 @@ SdPeimExecTrb (
     }
   }
 
-  Status = SdPeimHcRwMmio (Bar + SD_HC_TRANS_MOD, FALSE, sizeof (TransMode), &TransMode);
+  Status = SdPeimHcRwMmio (
+             Bar + SD_HC_TRANS_MOD,
+             FALSE,
+             sizeof (TransMode),
+             &TransMode
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1570,12 +1744,23 @@ SdPeimCheckTrbResult (
       // Clear Buffer Read Ready interrupt at first.
       //
       IntStatus = BIT5;
-      SdPeimHcRwMmio (Bar + SD_HC_NOR_INT_STS, FALSE, sizeof (IntStatus), &IntStatus);
+      SdPeimHcRwMmio (
+        Bar + SD_HC_NOR_INT_STS,
+        FALSE,
+        sizeof (IntStatus),
+        &IntStatus
+        );
       //
       // Read data out from Buffer Port register
       //
       for (PioLength = 0; PioLength < Trb->DataLen; PioLength += 4) {
-        SdPeimHcRwMmio (Bar + SD_HC_BUF_DAT_PORT, TRUE, 4, (UINT8 *)Trb->Data + PioLength);
+        SdPeimHcRwMmio (
+          Bar + SD_HC_BUF_DAT_PORT,
+          TRUE,
+          4,
+          (UINT8 *)Trb->Data +
+          PioLength
+          );
       }
 
       Status = EFI_SUCCESS;
@@ -1945,7 +2130,8 @@ SdPeimSendOpCond (
   Switch                   = S18r ? BIT24 : 0;
   MaxPower                 = Xpc ? BIT28 : 0;
   HostCapacity             = Hcs ? BIT30 : 0;
-  SdCmdBlk.CommandArgument = (VoltageWindow & 0xFFFFFF) | Switch | MaxPower | HostCapacity;
+  SdCmdBlk.CommandArgument = (VoltageWindow & 0xFFFFFF) | Switch | MaxPower |
+                             HostCapacity;
 
   Status = SdPeimExecCmd (Slot, &Packet);
   if (!EFI_ERROR (Status)) {
@@ -2285,7 +2471,8 @@ SdPeimSwitch (
 
   ModeValue                = Mode ? BIT31 : 0;
   SdCmdBlk.CommandArgument = (AccessMode & 0xF) | ((PowerLimit & 0xF) << 4) | \
-                             ((DriveStrength & 0xF) << 8) | ((DriveStrength & 0xF) << 12) | \
+                             ((DriveStrength & 0xF) << 8) | ((DriveStrength &
+                                                              0xF) << 12) | \
                              ModeValue;
   Packet.InDataBuffer     = SwitchResp;
   Packet.InTransferLength = 64;
@@ -2561,7 +2748,11 @@ SdPeimTuningClock (
   // Notify the host that the sampling clock tuning procedure starts.
   //
   HostCtrl2 = BIT6;
-  Status    = SdPeimHcOrMmio (Slot->SdHcBase + SD_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+  Status    = SdPeimHcOrMmio (
+                Slot->SdHcBase + SD_HC_HOST_CTRL2,
+                sizeof (HostCtrl2),
+                &HostCtrl2
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -2576,7 +2767,12 @@ SdPeimTuningClock (
       return Status;
     }
 
-    Status = SdPeimHcRwMmio (Slot->SdHcBase + SD_HC_HOST_CTRL2, TRUE, sizeof (HostCtrl2), &HostCtrl2);
+    Status = SdPeimHcRwMmio (
+               Slot->SdHcBase + SD_HC_HOST_CTRL2,
+               TRUE,
+               sizeof (HostCtrl2),
+               &HostCtrl2
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -2590,12 +2786,21 @@ SdPeimTuningClock (
     }
   } while (++Retry < 40);
 
-  DEBUG ((DEBUG_ERROR, "SdPeimTuningClock: Send tuning block fails at %d times with HostCtrl2 %02x\n", Retry, HostCtrl2));
+  DEBUG ((
+    DEBUG_ERROR,
+    "SdPeimTuningClock: Send tuning block fails at %d times with HostCtrl2 %02x\n",
+    Retry,
+    HostCtrl2
+    ));
   //
   // Abort the tuning procedure and reset the tuning circuit.
   //
   HostCtrl2 = (UINT8) ~(BIT6 | BIT7);
-  Status    = SdPeimHcAndMmio (Slot->SdHcBase + SD_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+  Status    = SdPeimHcAndMmio (
+                Slot->SdHcBase + SD_HC_HOST_CTRL2,
+                sizeof (HostCtrl2),
+                &HostCtrl2
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -2681,7 +2886,11 @@ SdPeimSetBusMode (
 
   Status = SdPeimGetCsd (Slot, Rca, &Slot->Csd);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "SdPeimSetBusMode: SdPeimGetCsd fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SdPeimSetBusMode: SdPeimGetCsd fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -2692,14 +2901,22 @@ SdPeimSetBusMode (
 
   Status = SdPeimSelect (Slot, Rca);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "SdPeimSetBusMode: SdPeimSelect fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SdPeimSetBusMode: SdPeimSelect fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
   BusWidth = 4;
   Status   = SdPeimSwitchBusWidth (Slot, Rca, BusWidth);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "SdPeimSetBusMode: SdPeimSwitchBusWidth fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SdPeimSetBusMode: SdPeimSwitchBusWidth fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -2719,10 +2936,14 @@ SdPeimSetBusMode (
   if (S18a && (Capability.Sdr104 != 0) && ((SwitchResp[13] & BIT3) != 0)) {
     ClockFreq  = 208;
     AccessMode = 3;
-  } else if (S18a && (Capability.Sdr50 != 0) && ((SwitchResp[13] & BIT2) != 0)) {
+  } else if (S18a && (Capability.Sdr50 != 0) && ((SwitchResp[13] & BIT2) !=
+                                                 0))
+  {
     ClockFreq  = 100;
     AccessMode = 2;
-  } else if (S18a && (Capability.Ddr50 != 0) && ((SwitchResp[13] & BIT4) != 0)) {
+  } else if (S18a && (Capability.Ddr50 != 0) && ((SwitchResp[13] & BIT4) !=
+                                                 0))
+  {
     ClockFreq  = 50;
     AccessMode = 4;
   } else if ((SwitchResp[13] & BIT1) != 0) {
@@ -2733,16 +2954,33 @@ SdPeimSetBusMode (
     AccessMode = 0;
   }
 
-  DEBUG ((DEBUG_INFO, "SdPeimSetBusMode: AccessMode %d ClockFreq %d BusWidth %d\n", AccessMode, ClockFreq, BusWidth));
+  DEBUG ((
+    DEBUG_INFO,
+    "SdPeimSetBusMode: AccessMode %d ClockFreq %d BusWidth %d\n",
+    AccessMode,
+    ClockFreq,
+    BusWidth
+    ));
 
   Status = SdPeimSwitch (Slot, AccessMode, 0xF, 0xF, 0xF, TRUE, SwitchResp);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "SdPeimSetBusMode: SdPeimSwitch fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SdPeimSetBusMode: SdPeimSwitch fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
   if ((SwitchResp[16] & 0xF) != AccessMode) {
-    DEBUG ((DEBUG_ERROR, "SdPeimSetBusMode: SdPeimSwitch to AccessMode %d ClockFreq %d BusWidth %d fails! The Switch response is 0x%1x\n", AccessMode, ClockFreq, BusWidth, SwitchResp[16] & 0xF));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SdPeimSetBusMode: SdPeimSwitch to AccessMode %d ClockFreq %d BusWidth %d fails! The Switch response is 0x%1x\n",
+      AccessMode,
+      ClockFreq,
+      BusWidth,
+      SwitchResp[16] & 0xF
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -2751,20 +2989,32 @@ SdPeimSetBusMode (
   //
   if (AccessMode == 1) {
     HostCtrl1 = BIT2;
-    Status    = SdPeimHcOrMmio (Slot->SdHcBase + SD_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
+    Status    = SdPeimHcOrMmio (
+                  Slot->SdHcBase + SD_HC_HOST_CTRL1,
+                  sizeof (HostCtrl1),
+                  &HostCtrl1
+                  );
     if (EFI_ERROR (Status)) {
       return Status;
     }
   }
 
   HostCtrl2 = (UINT8) ~0x7;
-  Status    = SdPeimHcAndMmio (Slot->SdHcBase + SD_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+  Status    = SdPeimHcAndMmio (
+                Slot->SdHcBase + SD_HC_HOST_CTRL2,
+                sizeof (HostCtrl2),
+                &HostCtrl2
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   HostCtrl2 = AccessMode;
-  Status    = SdPeimHcOrMmio (Slot->SdHcBase + SD_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+  Status    = SdPeimHcOrMmio (
+                Slot->SdHcBase + SD_HC_HOST_CTRL2,
+                sizeof (HostCtrl2),
+                &HostCtrl2
+                );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -2775,10 +3025,16 @@ SdPeimSetBusMode (
     return Status;
   }
 
-  if ((AccessMode == 3) || ((AccessMode == 2) && (Capability.TuningSDR50 != 0))) {
+  if ((AccessMode == 3) || ((AccessMode == 2) && (Capability.TuningSDR50 !=
+                                                  0)))
+  {
     Status = SdPeimTuningClock (Slot);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "SdPeimSetBusMode: SdPeimTuningClock fails with %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "SdPeimSetBusMode: SdPeimTuningClock fails with %r\n",
+        Status
+        ));
       return Status;
     }
   }
@@ -2823,7 +3079,11 @@ SdPeimIdentification (
   //
   Status = SdPeimReset (Slot);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "SdPeimIdentification: Executing Cmd0 fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SdPeimIdentification: Executing Cmd0 fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -2832,7 +3092,11 @@ SdPeimIdentification (
   //
   Status = SdPeimVoltageCheck (Slot, 0x1, 0xFF);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "SdPeimIdentification: Executing Cmd8 fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SdPeimIdentification: Executing Cmd8 fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -2841,7 +3105,10 @@ SdPeimIdentification (
   //
   Status = SdioSendOpCond (Slot, 0, FALSE);
   if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "SdPeimIdentification: Found SDIO device, ignore it as we don't support\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SdPeimIdentification: Found SDIO device, ignore it as we don't support\n"
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -2850,7 +3117,11 @@ SdPeimIdentification (
   //
   Status = SdPeimSendOpCond (Slot, 0, 0, FALSE, FALSE, FALSE, &Ocr);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "SdPeimIdentification: Executing SdPeimSendOpCond fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SdPeimIdentification: Executing SdPeimSendOpCond fails with %r\n",
+      Status
+      ));
     return EFI_DEVICE_ERROR;
   }
 
@@ -2859,7 +3130,12 @@ SdPeimIdentification (
     return Status;
   }
 
-  Status = SdPeimHcRwMmio (Slot->SdHcBase + SD_HC_MAX_CURRENT_CAP, TRUE, sizeof (Current), &Current);
+  Status = SdPeimHcRwMmio (
+             Slot->SdHcBase + SD_HC_MAX_CURRENT_CAP,
+             TRUE,
+             sizeof (Current),
+             &Current
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -2890,7 +3166,12 @@ SdPeimIdentification (
     Xpc = FALSE;
   }
 
-  Status = SdPeimHcRwMmio (Slot->SdHcBase + SD_HC_CTRL_VER, TRUE, sizeof (ControllerVer), &ControllerVer);
+  Status = SdPeimHcRwMmio (
+             Slot->SdHcBase + SD_HC_CTRL_VER,
+             TRUE,
+             sizeof (ControllerVer),
+             &ControllerVer
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -2914,12 +3195,22 @@ SdPeimIdentification (
   do {
     Status = SdPeimSendOpCond (Slot, 0, Ocr, S18r, Xpc, TRUE, &Ocr);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "SdPeimIdentification: SdPeimSendOpCond fails with %r Ocr %x, S18r %x, Xpc %x\n", Status, Ocr, S18r, Xpc));
+      DEBUG ((
+        DEBUG_ERROR,
+        "SdPeimIdentification: SdPeimSendOpCond fails with %r Ocr %x, S18r %x, Xpc %x\n",
+        Status,
+        Ocr,
+        S18r,
+        Xpc
+        ));
       return EFI_DEVICE_ERROR;
     }
 
     if (Retry++ == 100) {
-      DEBUG ((DEBUG_ERROR, "SdPeimIdentification: SdPeimSendOpCond fails too many times\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "SdPeimIdentification: SdPeimSendOpCond fails too many times\n"
+        ));
       return EFI_DEVICE_ERROR;
     }
 
@@ -2938,7 +3229,11 @@ SdPeimIdentification (
   {
     Status = SdPeimVoltageSwitch (Slot);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "SdPeimIdentification: Executing SdPeimVoltageSwitch fails with %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "SdPeimIdentification: Executing SdPeimVoltageSwitch fails with %r\n",
+        Status
+        ));
       Status = EFI_DEVICE_ERROR;
       goto Error;
     } else {
@@ -2948,21 +3243,43 @@ SdPeimIdentification (
         goto Error;
       }
 
-      SdPeimHcRwMmio (Slot->SdHcBase + SD_HC_PRESENT_STATE, TRUE, sizeof (PresentState), &PresentState);
+      SdPeimHcRwMmio (
+        Slot->SdHcBase + SD_HC_PRESENT_STATE,
+        TRUE,
+        sizeof (PresentState),
+        &PresentState
+        );
       if (((PresentState >> 20) & 0xF) != 0) {
-        DEBUG ((DEBUG_ERROR, "SdPeimIdentification: SwitchVoltage fails with PresentState = 0x%x\n", PresentState));
+        DEBUG ((
+          DEBUG_ERROR,
+          "SdPeimIdentification: SwitchVoltage fails with PresentState = 0x%x\n",
+          PresentState
+          ));
         Status = EFI_DEVICE_ERROR;
         goto Error;
       }
 
       HostCtrl2 = BIT3;
-      SdPeimHcOrMmio (Slot->SdHcBase + SD_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
+      SdPeimHcOrMmio (
+        Slot->SdHcBase + SD_HC_HOST_CTRL2,
+        sizeof (HostCtrl2),
+        &HostCtrl2
+        );
 
       MicroSecondDelay (5000);
 
-      SdPeimHcRwMmio (Slot->SdHcBase + SD_HC_HOST_CTRL2, TRUE, sizeof (HostCtrl2), &HostCtrl2);
+      SdPeimHcRwMmio (
+        Slot->SdHcBase + SD_HC_HOST_CTRL2,
+        TRUE,
+        sizeof (HostCtrl2),
+        &HostCtrl2
+        );
       if ((HostCtrl2 & BIT3) == 0) {
-        DEBUG ((DEBUG_ERROR, "SdPeimIdentification: SwitchVoltage fails with HostCtrl2 = 0x%x\n", HostCtrl2));
+        DEBUG ((
+          DEBUG_ERROR,
+          "SdPeimIdentification: SwitchVoltage fails with HostCtrl2 = 0x%x\n",
+          HostCtrl2
+          ));
         Status = EFI_DEVICE_ERROR;
         goto Error;
       }
@@ -2971,26 +3288,46 @@ SdPeimIdentification (
 
       MicroSecondDelay (1000);
 
-      SdPeimHcRwMmio (Slot->SdHcBase + SD_HC_PRESENT_STATE, TRUE, sizeof (PresentState), &PresentState);
+      SdPeimHcRwMmio (
+        Slot->SdHcBase + SD_HC_PRESENT_STATE,
+        TRUE,
+        sizeof (PresentState),
+        &PresentState
+        );
       if (((PresentState >> 20) & 0xF) != 0xF) {
-        DEBUG ((DEBUG_ERROR, "SdPeimIdentification: SwitchVoltage fails with PresentState = 0x%x, It should be 0xF\n", PresentState));
+        DEBUG ((
+          DEBUG_ERROR,
+          "SdPeimIdentification: SwitchVoltage fails with PresentState = 0x%x, It should be 0xF\n",
+          PresentState
+          ));
         Status = EFI_DEVICE_ERROR;
         goto Error;
       }
     }
 
-    DEBUG ((DEBUG_INFO, "SdPeimIdentification: Switch to 1.8v signal voltage success\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "SdPeimIdentification: Switch to 1.8v signal voltage success\n"
+      ));
   }
 
   Status = SdPeimAllSendCid (Slot);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "SdPeimIdentification: Executing SdPeimAllSendCid fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SdPeimIdentification: Executing SdPeimAllSendCid fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
   Status = SdPeimSetRca (Slot, &Rca);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "SdPeimIdentification: Executing SdPeimSetRca fails with %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SdPeimIdentification: Executing SdPeimSetRca fails with %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -3008,6 +3345,10 @@ Error:
   // Set SD Bus Power = 0
   //
   PowerCtrl = (UINT8) ~BIT0;
-  Status    = SdPeimHcAndMmio (Slot->SdHcBase + SD_HC_POWER_CTRL, sizeof (PowerCtrl), &PowerCtrl);
+  Status    = SdPeimHcAndMmio (
+                Slot->SdHcBase + SD_HC_POWER_CTRL,
+                sizeof (PowerCtrl),
+                &PowerCtrl
+                );
   return EFI_DEVICE_ERROR;
 }

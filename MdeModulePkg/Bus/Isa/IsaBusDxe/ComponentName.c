@@ -12,15 +12,17 @@
 //
 // Driver name table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mIsaBusDriverNameTable[] = {
-  { "eng;en", L"PI ISA BUS Driver" },
-  { NULL,     NULL                 }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mIsaBusDriverNameTable[] = {
+  { "eng;en", L"PI ISA BUS Driver"     },
+  { NULL,     NULL                     }
 };
 
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gIsaBusComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gIsaBusComponentName = {
   IsaBusComponentNameGetDriverName,
   IsaBusComponentNameGetControllerName,
   "eng"
@@ -29,7 +31,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gIsaBusComponentName 
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gIsaBusComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gIsaBusComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)IsaBusComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)IsaBusComponentNameGetControllerName,
   "en"

@@ -211,13 +211,18 @@ USBMouseDriverBindingStart (
              &EndpointDescriptor
              );
 
-    if (((EndpointDescriptor.Attributes & (BIT0 | BIT1)) == USB_ENDPOINT_INTERRUPT) &&
+    if (((EndpointDescriptor.Attributes & (BIT0 | BIT1)) ==
+         USB_ENDPOINT_INTERRUPT) &&
         ((EndpointDescriptor.EndpointAddress & USB_ENDPOINT_DIR_IN) != 0))
     {
       //
       // We only care interrupt endpoint here
       //
-      CopyMem (&UsbMouseDevice->IntEndpointDescriptor, &EndpointDescriptor, sizeof (EndpointDescriptor));
+      CopyMem (
+        &UsbMouseDevice->IntEndpointDescriptor,
+        &EndpointDescriptor,
+        sizeof (EndpointDescriptor)
+        );
       Found = TRUE;
       break;
     }
@@ -306,7 +311,8 @@ USBMouseDriverBindingStart (
   //
   EndpointAddr    = UsbMouseDevice->IntEndpointDescriptor.EndpointAddress;
   PollingInterval = UsbMouseDevice->IntEndpointDescriptor.Interval;
-  PacketSize      = (UINT8)(UsbMouseDevice->IntEndpointDescriptor.MaxPacketSize);
+  PacketSize      =
+    (UINT8)(UsbMouseDevice->IntEndpointDescriptor.MaxPacketSize);
 
   Status = UsbIo->UsbAsyncInterruptTransfer (
                     UsbIo,
@@ -574,7 +580,8 @@ InitializeUsbMouseDevice (
 
   Status = UsbGetDescriptor (
              UsbIo,
-             (UINT16)((USB_DESC_TYPE_CONFIG << 8) | (ConfigDesc.ConfigurationValue - 1)),
+             (UINT16)((USB_DESC_TYPE_CONFIG << 8) |
+                      (ConfigDesc.ConfigurationValue - 1)),
              0,
              ConfigDesc.TotalLength,
              Buf,
@@ -597,8 +604,10 @@ InitializeUsbMouseDevice (
   //
   while (Total < ConfigDesc.TotalLength) {
     if (Head->Type == USB_DESC_TYPE_INTERFACE) {
-      if ((((USB_INTERFACE_DESCRIPTOR *)Head)->InterfaceNumber == UsbMouseDev->InterfaceDescriptor.InterfaceNumber) &&
-          (((USB_INTERFACE_DESCRIPTOR *)Head)->AlternateSetting == UsbMouseDev->InterfaceDescriptor.AlternateSetting))
+      if ((((USB_INTERFACE_DESCRIPTOR *)Head)->InterfaceNumber ==
+           UsbMouseDev->InterfaceDescriptor.InterfaceNumber) &&
+          (((USB_INTERFACE_DESCRIPTOR *)Head)->AlternateSetting ==
+           UsbMouseDev->InterfaceDescriptor.AlternateSetting))
       {
         Start = TRUE;
       }
@@ -630,7 +639,9 @@ InitializeUsbMouseDevice (
     return EFI_UNSUPPORTED;
   }
 
-  ReportDesc = AllocateZeroPool (MouseHidDesc->HidClassDesc[0].DescriptorLength);
+  ReportDesc = AllocateZeroPool (
+                 MouseHidDesc->HidClassDesc[0].DescriptorLength
+                 );
   ASSERT (ReportDesc != NULL);
 
   Status = UsbGetReportDescriptor (
@@ -825,8 +836,10 @@ OnMouseInterruptComplete (
 
   UsbMouseDevice->StateChanged = TRUE;
 
-  UsbMouseDevice->State.LeftButton         = (BOOLEAN)((*(UINT8 *)Data & BIT0) != 0);
-  UsbMouseDevice->State.RightButton        = (BOOLEAN)((*(UINT8 *)Data & BIT1) != 0);
+  UsbMouseDevice->State.LeftButton         = (BOOLEAN)((*(UINT8 *)Data &
+                                                        BIT0) != 0);
+  UsbMouseDevice->State.RightButton        = (BOOLEAN)((*(UINT8 *)Data &
+                                                        BIT1) != 0);
   UsbMouseDevice->State.RelativeMovementX += *((INT8 *)Data + 1);
   UsbMouseDevice->State.RelativeMovementY += *((INT8 *)Data + 2);
 

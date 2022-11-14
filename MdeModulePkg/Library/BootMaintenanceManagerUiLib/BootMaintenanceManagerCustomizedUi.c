@@ -44,7 +44,12 @@ UiCustomizeBMMPage (
   //
   // Find third party drivers which need to be shown in the Bmm page.
   //
-  BmmListThirdPartyDrivers (HiiHandle, &gEfiIfrBootMaintenanceGuid, NULL, StartOpCodeHandle);
+  BmmListThirdPartyDrivers (
+    HiiHandle,
+    &gEfiIfrBootMaintenanceGuid,
+    NULL,
+    StartOpCodeHandle
+    );
 
   //
   // Create empty line.

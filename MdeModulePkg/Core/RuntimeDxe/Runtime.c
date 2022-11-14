@@ -67,7 +67,8 @@ EFI_RUNTIME_ARCH_PROTOCOL  mRuntime = {
   // prevent people from having pointer math bugs in their code.
   // now you have to use *DescriptorSize to make things work.
   //
-  sizeof (EFI_MEMORY_DESCRIPTOR) + sizeof (UINT64) - (sizeof (EFI_MEMORY_DESCRIPTOR) % sizeof (UINT64)),
+  sizeof (EFI_MEMORY_DESCRIPTOR) + sizeof (UINT64) -
+  (sizeof (EFI_MEMORY_DESCRIPTOR) % sizeof (UINT64)),
   EFI_MEMORY_DESCRIPTOR_VERSION,
   0,
   NULL,
@@ -163,16 +164,21 @@ RuntimeDriverConvertPointer (
     //  platforms. If you get this ASSERT remove the UINTN and do a 64-bit
     //  multiply.
     //
-    ASSERT (((UINTN)VirtEntry->NumberOfPages < 0xffffffff) || (sizeof (UINTN) > 4));
+    ASSERT (
+      ((UINTN)VirtEntry->NumberOfPages < 0xffffffff) || (sizeof (UINTN) >
+                                                         4)
+      );
 
     if ((VirtEntry->Attribute & EFI_MEMORY_RUNTIME) == EFI_MEMORY_RUNTIME) {
       if (Address >= VirtEntry->PhysicalStart) {
-        VirtEndOfRange = VirtEntry->PhysicalStart + (((UINTN)VirtEntry->NumberOfPages) * EFI_PAGE_SIZE);
+        VirtEndOfRange = VirtEntry->PhysicalStart +
+                         (((UINTN)VirtEntry->NumberOfPages) * EFI_PAGE_SIZE);
         if (Address < VirtEndOfRange) {
           //
           // Compute new address
           //
-          *ConvertAddress = (VOID *)(Address - (UINTN)VirtEntry->PhysicalStart + (UINTN)VirtEntry->VirtualStart);
+          *ConvertAddress = (VOID *)(Address - (UINTN)VirtEntry->PhysicalStart +
+                                     (UINTN)VirtEntry->VirtualStart);
           return EFI_SUCCESS;
         }
       }
@@ -255,7 +261,10 @@ RuntimeDriverSetVirtualAddressMap (
   //
   // Only understand the original descriptor format
   //
-  if ((DescriptorVersion != EFI_MEMORY_DESCRIPTOR_VERSION) || (DescriptorSize < sizeof (EFI_MEMORY_DESCRIPTOR))) {
+  if ((DescriptorVersion != EFI_MEMORY_DESCRIPTOR_VERSION) || (DescriptorSize <
+                                                               sizeof (
+                                                                                       EFI_MEMORY_DESCRIPTOR)))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -275,20 +284,32 @@ RuntimeDriverSetVirtualAddressMap (
   //
   // ReporstStatusCodeLib will check and make sure this service can be called in runtime mode.
   //
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE_EFI_RUNTIME_SERVICE | EFI_SW_RS_PC_SET_VIRTUAL_ADDRESS_MAP));
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    (EFI_SOFTWARE_EFI_RUNTIME_SERVICE |
+     EFI_SW_RS_PC_SET_VIRTUAL_ADDRESS_MAP)
+    );
 
   //
   // Report Status Code here since EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE event will be signalled.
   //
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_VIRTUAL_ADDRESS_CHANGE_EVENT));
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    (EFI_SOFTWARE_DXE_BS_DRIVER |
+     EFI_SW_DXE_BS_PC_VIRTUAL_ADDRESS_CHANGE_EVENT)
+    );
 
   //
   // Signal all the EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE events.
   // All runtime events are stored in a list in Runtime AP.
   //
-  for (Link = mRuntime.EventHead.ForwardLink; Link != &mRuntime.EventHead; Link = Link->ForwardLink) {
+  for (Link = mRuntime.EventHead.ForwardLink; Link != &mRuntime.EventHead;
+       Link = Link->ForwardLink)
+  {
     RuntimeEvent = BASE_CR (Link, EFI_RUNTIME_EVENT_ENTRY, Link);
-    if ((RuntimeEvent->Type & EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE) == EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE) {
+    if ((RuntimeEvent->Type & EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE) ==
+        EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE)
+    {
       //
       // Work around the bug in the Platform Init specification (v1.7),
       // reported as Mantis#2017: "EFI_RUNTIME_EVENT_ENTRY.Event" should have
@@ -307,7 +328,9 @@ RuntimeDriverSetVirtualAddressMap (
   //
   // Relocate runtime images. All runtime images are stored in a list in Runtime AP.
   //
-  for (Link = mRuntime.ImageHead.ForwardLink; Link != &mRuntime.ImageHead; Link = Link->ForwardLink) {
+  for (Link = mRuntime.ImageHead.ForwardLink; Link != &mRuntime.ImageHead;
+       Link = Link->ForwardLink)
+  {
     RuntimeImage = BASE_CR (Link, EFI_RUNTIME_IMAGE_ENTRY, Link);
     //
     // We don't want to relocate our selves, as we only run in physical mode.
@@ -324,7 +347,10 @@ RuntimeDriverSetVirtualAddressMap (
         RuntimeImage->RelocationData
         );
 
-      InvalidateInstructionCacheRange (RuntimeImage->ImageBase, (UINTN)RuntimeImage->ImageSize);
+      InvalidateInstructionCacheRange (
+        RuntimeImage->ImageBase,
+        (UINTN)RuntimeImage->ImageSize
+        );
     }
   }
 
@@ -337,7 +363,9 @@ RuntimeDriverSetVirtualAddressMap (
   RuntimeDriverConvertInternalPointer ((VOID **)&gRT->GetWakeupTime);
   RuntimeDriverConvertInternalPointer ((VOID **)&gRT->SetWakeupTime);
   RuntimeDriverConvertInternalPointer ((VOID **)&gRT->ResetSystem);
-  RuntimeDriverConvertInternalPointer ((VOID **)&gRT->GetNextHighMonotonicCount);
+  RuntimeDriverConvertInternalPointer (
+    (VOID **)&gRT->GetNextHighMonotonicCount
+    );
   RuntimeDriverConvertInternalPointer ((VOID **)&gRT->GetVariable);
   RuntimeDriverConvertInternalPointer ((VOID **)&gRT->SetVariable);
   RuntimeDriverConvertInternalPointer ((VOID **)&gRT->GetNextVariableName);

@@ -22,8 +22,10 @@
 
 extern EFI_SYSTEM_RESOURCE_TABLE  *mEsrtTable;
 extern BOOLEAN                    mIsVirtualAddrConverted;
-EFI_EVENT                         mDxeRuntimeCapsuleLibVirtualAddressChangeEvent = NULL;
-EFI_EVENT                         mDxeRuntimeCapsuleLibReadyToBootEvent          = NULL;
+EFI_EVENT                         mDxeRuntimeCapsuleLibVirtualAddressChangeEvent
+  = NULL;
+EFI_EVENT  mDxeRuntimeCapsuleLibReadyToBootEvent
+  = NULL;
 
 /**
   Convert EsrtTable physical address to virtual address.
@@ -85,7 +87,8 @@ DxeCapsuleLibReadyToBootEventNotify (
 
     mEsrtTable = AllocateRuntimeCopyPool (
                    sizeof (EFI_SYSTEM_RESOURCE_TABLE) +
-                   EsrtTable->FwResourceCount * sizeof (EFI_SYSTEM_RESOURCE_ENTRY),
+                   EsrtTable->FwResourceCount *
+                   sizeof (EFI_SYSTEM_RESOURCE_ENTRY),
                    EsrtTable
                    );
     ASSERT (mEsrtTable != NULL);

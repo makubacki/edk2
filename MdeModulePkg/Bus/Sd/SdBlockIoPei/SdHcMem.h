@@ -38,7 +38,9 @@ typedef struct _SD_PEIM_MEM_POOL {
 #define SD_PEIM_MEM_UNIT_MASK      (SD_PEIM_MEM_UNIT - 1)
 #define SD_PEIM_MEM_DEFAULT_PAGES  16
 
-#define SD_PEIM_MEM_ROUND(Len)  (((Len) + SD_PEIM_MEM_UNIT_MASK) & (~SD_PEIM_MEM_UNIT_MASK))
+#define SD_PEIM_MEM_ROUND( \
+                         Len)  \
+  (((Len) + SD_PEIM_MEM_UNIT_MASK) & (~SD_PEIM_MEM_UNIT_MASK))
 
 //
 // Advance the byte and bit to the next bit, adjust byte accordingly.

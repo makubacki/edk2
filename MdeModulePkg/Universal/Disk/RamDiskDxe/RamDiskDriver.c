@@ -139,7 +139,10 @@ RamDiskDxeEntryPoint (
   //
   // Create a private data structure.
   //
-  ConfigPrivate = AllocateCopyPool (sizeof (RAM_DISK_CONFIG_PRIVATE_DATA), &mRamDiskConfigPrivateDataTemplate);
+  ConfigPrivate = AllocateCopyPool (
+                    sizeof (RAM_DISK_CONFIG_PRIVATE_DATA),
+                    &mRamDiskConfigPrivateDataTemplate
+                    );
   if (ConfigPrivate == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

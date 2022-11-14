@@ -155,12 +155,19 @@ S3BootScriptInternalCloseTable (
   //
   ScriptTerminate.OpCode = S3_BOOT_SCRIPT_LIB_TERMINATE_OPCODE;
   ScriptTerminate.Length = (UINT8)sizeof (EFI_BOOT_SCRIPT_TERMINATE);
-  CopyMem (mS3BootScriptTablePtr->TableBase + mS3BootScriptTablePtr->TableLength, &ScriptTerminate, sizeof (EFI_BOOT_SCRIPT_TERMINATE));
+  CopyMem (
+    mS3BootScriptTablePtr->TableBase +
+    mS3BootScriptTablePtr->TableLength,
+    &ScriptTerminate,
+    sizeof (EFI_BOOT_SCRIPT_TERMINATE)
+    );
   //
   // fill the table length
   //
-  ScriptTableInfo              = (EFI_BOOT_SCRIPT_TABLE_HEADER *)(mS3BootScriptTablePtr->TableBase);
-  ScriptTableInfo->TableLength = mS3BootScriptTablePtr->TableLength + sizeof (EFI_BOOT_SCRIPT_TERMINATE);
+  ScriptTableInfo =
+    (EFI_BOOT_SCRIPT_TABLE_HEADER *)(mS3BootScriptTablePtr->TableBase);
+  ScriptTableInfo->TableLength = mS3BootScriptTablePtr->TableLength +
+                                 sizeof (EFI_BOOT_SCRIPT_TERMINATE);
 
   return S3TableBase;
   //
@@ -193,7 +200,10 @@ SaveBootScriptDataToLockBox (
              );
   ASSERT_EFI_ERROR (Status);
 
-  Status = SetLockBoxAttributes (&mBootScriptDataGuid, LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE);
+  Status = SetLockBoxAttributes (
+             &mBootScriptDataGuid,
+             LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE
+             );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -207,7 +217,10 @@ SaveBootScriptDataToLockBox (
              );
   ASSERT_EFI_ERROR (Status);
 
-  Status = SetLockBoxAttributes (&mBootScriptTableBaseGuid, LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE);
+  Status = SetLockBoxAttributes (
+             &mBootScriptTableBaseGuid,
+             LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE
+             );
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -295,7 +308,11 @@ S3BootScriptSmmEventCallBack (
   // Save a SMM copy. If TableBase is NOT null, it means SMM copy has been ready, skip copy mem.
   //
   if (mS3BootScriptTableSmmPtr->TableBase == NULL) {
-    CopyMem (mS3BootScriptTableSmmPtr, mS3BootScriptTablePtr, sizeof (*mS3BootScriptTablePtr));
+    CopyMem (
+      mS3BootScriptTableSmmPtr,
+      mS3BootScriptTablePtr,
+      sizeof (*mS3BootScriptTablePtr)
+      );
 
     //
     // Set InSmm, we allow boot script update when InSmm, but not allow boot script outside SMM.
@@ -374,7 +391,10 @@ SaveSmmPriviateDataToLockBoxAtRuntime (
                                         );
   ASSERT_EFI_ERROR (Status);
 
-  Status = SetLockBoxAttributes (&mBootScriptSmmPrivateDataGuid, LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE);
+  Status = SetLockBoxAttributes (
+             &mBootScriptSmmPrivateDataGuid,
+             LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE
+             );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -402,7 +422,9 @@ S3BootScriptSmmAtRuntimeCallBack (
   )
 {
   if (!mS3BootScriptTablePtr->AtRuntime) {
-    mS3BootScriptTablePtr->BootTimeScriptLength = (UINT32)(mS3BootScriptTablePtr->TableLength + sizeof (EFI_BOOT_SCRIPT_TERMINATE));
+    mS3BootScriptTablePtr->BootTimeScriptLength =
+      (UINT32)(mS3BootScriptTablePtr->TableLength +
+               sizeof (EFI_BOOT_SCRIPT_TERMINATE));
     SaveBootTimeDataToLockBox ();
 
     mS3BootScriptTablePtr->AtRuntime = TRUE;
@@ -440,11 +462,17 @@ S3BootScriptLibInitialize (
 
   if (!PcdGetBool (PcdAcpiS3Enable)) {
     mS3BootScriptAcpiS3Enable = FALSE;
-    DEBUG ((DEBUG_INFO, "%a: Skip S3BootScript because ACPI S3 disabled.\n", gEfiCallerBaseName));
+    DEBUG ((
+      DEBUG_INFO,
+      "%a: Skip S3BootScript because ACPI S3 disabled.\n",
+      gEfiCallerBaseName
+      ));
     return RETURN_SUCCESS;
   }
 
-  S3TablePtr = (SCRIPT_TABLE_PRIVATE_DATA *)(UINTN)PcdGet64 (PcdS3BootScriptTablePrivateDataPtr);
+  S3TablePtr = (SCRIPT_TABLE_PRIVATE_DATA *)(UINTN)PcdGet64 (
+                                                     PcdS3BootScriptTablePrivateDataPtr
+                                                     );
   //
   // The Boot script private data is not be initialized. create it
   //
@@ -460,7 +488,10 @@ S3BootScriptLibInitialize (
     mS3BootScriptTableAllocated = TRUE;
     S3TablePtr                  = (VOID *)(UINTN)Buffer;
 
-    Status = PcdSet64S (PcdS3BootScriptTablePrivateDataPtr, (UINT64)(UINTN)S3TablePtr);
+    Status = PcdSet64S (
+               PcdS3BootScriptTablePrivateDataPtr,
+               (UINT64)(UINTN)S3TablePtr
+               );
     ASSERT_EFI_ERROR (Status);
     ZeroMem (S3TablePtr, sizeof (SCRIPT_TABLE_PRIVATE_DATA));
     //
@@ -481,7 +512,11 @@ S3BootScriptLibInitialize (
   //
   // Get InSmm, we need to register SmmReadyToLock if this library is linked to SMM driver.
   //
-  Status = gBS->LocateProtocol (&gEfiSmmBase2ProtocolGuid, NULL, (VOID **)&SmmBase2);
+  Status = gBS->LocateProtocol (
+                  &gEfiSmmBase2ProtocolGuid,
+                  NULL,
+                  (VOID **)&SmmBase2
+                  );
   if (EFI_ERROR (Status)) {
     return RETURN_SUCCESS;
   }
@@ -503,7 +538,9 @@ S3BootScriptLibInitialize (
     return RETURN_SUCCESS;
   }
 
-  S3TableSmmPtr = (SCRIPT_TABLE_PRIVATE_DATA *)(UINTN)PcdGet64 (PcdS3BootScriptTablePrivateSmmDataPtr);
+  S3TableSmmPtr = (SCRIPT_TABLE_PRIVATE_DATA *)(UINTN)PcdGet64 (
+                                                        PcdS3BootScriptTablePrivateSmmDataPtr
+                                                        );
   //
   // The Boot script private data in SMM is not be initialized. create it
   //
@@ -516,7 +553,10 @@ S3BootScriptLibInitialize (
     ASSERT_EFI_ERROR (Status);
     mS3BootScriptTableSmmAllocated = TRUE;
 
-    Status = PcdSet64S (PcdS3BootScriptTablePrivateSmmDataPtr, (UINT64)(UINTN)S3TableSmmPtr);
+    Status = PcdSet64S (
+               PcdS3BootScriptTablePrivateSmmDataPtr,
+               (UINT64)(UINTN)S3TableSmmPtr
+               );
     ASSERT_EFI_ERROR (Status);
     ZeroMem (S3TableSmmPtr, sizeof (SCRIPT_TABLE_PRIVATE_DATA));
 
@@ -631,7 +671,10 @@ S3BootScriptLibDeinitialize (
   // Free the resources allocated and set PCDs to 0.
   //
   if (mS3BootScriptTableAllocated) {
-    Status = gBS->FreePages ((EFI_PHYSICAL_ADDRESS)(UINTN)mS3BootScriptTablePtr, EFI_SIZE_TO_PAGES (sizeof (SCRIPT_TABLE_PRIVATE_DATA)));
+    Status = gBS->FreePages (
+                    (EFI_PHYSICAL_ADDRESS)(UINTN)mS3BootScriptTablePtr,
+                    EFI_SIZE_TO_PAGES (sizeof (SCRIPT_TABLE_PRIVATE_DATA))
+                    );
     ASSERT_EFI_ERROR (Status);
     Status = PcdSet64S (PcdS3BootScriptTablePrivateDataPtr, 0);
     ASSERT_EFI_ERROR (Status);
@@ -680,7 +723,9 @@ S3BootScriptGetBootTimeEntryAddAddress (
     Status      = gBS->AllocatePages (
                          AllocateMaxAddress,
                          EfiReservedMemoryType,
-                         2 + PcdGet16 (PcdS3BootScriptRuntimeTableReservePageNumber),
+                         2 + PcdGet16 (
+                               PcdS3BootScriptRuntimeTableReservePageNumber
+                               ),
                          (EFI_PHYSICAL_ADDRESS *)&S3TableBase
                          );
 
@@ -692,20 +737,30 @@ S3BootScriptGetBootTimeEntryAddAddress (
     //
     // Fill Table Header
     //
-    ScriptTableInfo                              = (EFI_BOOT_SCRIPT_TABLE_HEADER *)(UINTN)S3TableBase;
-    ScriptTableInfo->OpCode                      = S3_BOOT_SCRIPT_LIB_TABLE_OPCODE;
-    ScriptTableInfo->Length                      = (UINT8)sizeof (EFI_BOOT_SCRIPT_TABLE_HEADER);
-    ScriptTableInfo->Version                     = BOOT_SCRIPT_TABLE_VERSION;
-    ScriptTableInfo->TableLength                 = 0; // will be calculate at CloseTable
-    mS3BootScriptTablePtr->TableLength           = sizeof (EFI_BOOT_SCRIPT_TABLE_HEADER);
+    ScriptTableInfo =
+      (EFI_BOOT_SCRIPT_TABLE_HEADER *)(UINTN)S3TableBase;
+    ScriptTableInfo->OpCode =
+      S3_BOOT_SCRIPT_LIB_TABLE_OPCODE;
+    ScriptTableInfo->Length =
+      (UINT8)sizeof (EFI_BOOT_SCRIPT_TABLE_HEADER);
+    ScriptTableInfo->Version           = BOOT_SCRIPT_TABLE_VERSION;
+    ScriptTableInfo->TableLength       = 0;           // will be calculate at CloseTable
+    mS3BootScriptTablePtr->TableLength =
+      sizeof (EFI_BOOT_SCRIPT_TABLE_HEADER);
     mS3BootScriptTablePtr->TableBase             = (UINT8 *)(UINTN)S3TableBase;
-    mS3BootScriptTablePtr->TableMemoryPageNumber = (UINT16)(2 + PcdGet16 (PcdS3BootScriptRuntimeTableReservePageNumber));
+    mS3BootScriptTablePtr->TableMemoryPageNumber = (UINT16)(2 + PcdGet16 (
+                                                                  PcdS3BootScriptRuntimeTableReservePageNumber
+                                                                  ));
   }
 
   // Here we do not count the reserved memory for runtime script table.
-  PageNumber  = (UINT16)(mS3BootScriptTablePtr->TableMemoryPageNumber - PcdGet16 (PcdS3BootScriptRuntimeTableReservePageNumber));
+  PageNumber  = (UINT16)(mS3BootScriptTablePtr->TableMemoryPageNumber -
+                         PcdGet16 (
+                           PcdS3BootScriptRuntimeTableReservePageNumber));
   TableLength =  mS3BootScriptTablePtr->TableLength;
-  if (EFI_PAGES_TO_SIZE ((UINTN)PageNumber) < (TableLength + EntryLength + sizeof (EFI_BOOT_SCRIPT_TERMINATE))) {
+  if (EFI_PAGES_TO_SIZE ((UINTN)PageNumber) < (TableLength + EntryLength +
+                                               sizeof (EFI_BOOT_SCRIPT_TERMINATE)))
+  {
     //
     // The buffer is too small to hold the table, Reallocate the buffer
     //
@@ -713,7 +768,9 @@ S3BootScriptGetBootTimeEntryAddAddress (
     Status         = gBS->AllocatePages (
                             AllocateMaxAddress,
                             EfiReservedMemoryType,
-                            2 + PageNumber + PcdGet16 (PcdS3BootScriptRuntimeTableReservePageNumber),
+                            2 + PageNumber + PcdGet16 (
+                                               PcdS3BootScriptRuntimeTableReservePageNumber
+                                               ),
                             (EFI_PHYSICAL_ADDRESS *)&NewS3TableBase
                             );
 
@@ -722,11 +779,18 @@ S3BootScriptGetBootTimeEntryAddAddress (
       return 0;
     }
 
-    CopyMem ((VOID *)(UINTN)NewS3TableBase, (VOID *)(UINTN)S3TableBase, TableLength);
+    CopyMem (
+      (VOID *)(UINTN)NewS3TableBase,
+      (VOID *)(UINTN)S3TableBase,
+      TableLength
+      );
     gBS->FreePages (S3TableBase, mS3BootScriptTablePtr->TableMemoryPageNumber);
 
-    mS3BootScriptTablePtr->TableBase             = (UINT8 *)(UINTN)NewS3TableBase;
-    mS3BootScriptTablePtr->TableMemoryPageNumber =  (UINT16)(2 + PageNumber + PcdGet16 (PcdS3BootScriptRuntimeTableReservePageNumber));
+    mS3BootScriptTablePtr->TableBase =
+      (UINT8 *)(UINTN)NewS3TableBase;
+    mS3BootScriptTablePtr->TableMemoryPageNumber =  (UINT16)(2 + PageNumber +
+                                                             PcdGet16 (
+                                                               PcdS3BootScriptRuntimeTableReservePageNumber));
   }
 
   //
@@ -768,9 +832,16 @@ S3BootScriptGetRuntimeEntryAddAddress (
   //
   // Check if the memory range reserved for S3 Boot Script table is large enough to hold the node.
   //
-  if ((mS3BootScriptTablePtr->TableLength + EntryLength + sizeof (EFI_BOOT_SCRIPT_TERMINATE)) <= EFI_PAGES_TO_SIZE ((UINTN)(mS3BootScriptTablePtr->TableMemoryPageNumber))) {
-    NewEntryPtr                        = mS3BootScriptTablePtr->TableBase + mS3BootScriptTablePtr->TableLength;
-    mS3BootScriptTablePtr->TableLength = mS3BootScriptTablePtr->TableLength + EntryLength;
+  if ((mS3BootScriptTablePtr->TableLength + EntryLength +
+       sizeof (EFI_BOOT_SCRIPT_TERMINATE)) <= EFI_PAGES_TO_SIZE (
+                                                (UINTN)(mS3BootScriptTablePtr->
+                                                          TableMemoryPageNumber)
+                                                ))
+  {
+    NewEntryPtr = mS3BootScriptTablePtr->TableBase +
+                  mS3BootScriptTablePtr->TableLength;
+    mS3BootScriptTablePtr->TableLength = mS3BootScriptTablePtr->TableLength +
+                                         EntryLength;
     //
     // Append a terminate node on every insert
     //
@@ -817,7 +888,9 @@ RestoreBootTimeDataFromLockBox (
   //
   // Update TableLength.
   //
-  mS3BootScriptTablePtr->TableLength = (UINT32)(mS3BootScriptTablePtr->BootTimeScriptLength - sizeof (EFI_BOOT_SCRIPT_TERMINATE));
+  mS3BootScriptTablePtr->TableLength =
+    (UINT32)(mS3BootScriptTablePtr->BootTimeScriptLength -
+             sizeof (EFI_BOOT_SCRIPT_TERMINATE));
 }
 
 /**
@@ -847,7 +920,10 @@ S3BootScriptGetEntryAddAddress (
       // Add DEBUG ERROR, so that we can find it after SmmReadyToLock.
       // Do not use ASSERT, because we may have test to invoke this interface.
       //
-      DEBUG ((DEBUG_ERROR, "FATAL ERROR: Set boot script outside SMM after SmmReadyToLock!!!\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "FATAL ERROR: Set boot script outside SMM after SmmReadyToLock!!!\n"
+        ));
       return NULL;
     }
 
@@ -893,7 +969,8 @@ SyncBootScript (
 
   ScriptOffset = (UINT32)(Script - mS3BootScriptTablePtr->TableBase);
 
-  TotalScriptLength = (UINT32)(mS3BootScriptTablePtr->TableLength + sizeof (EFI_BOOT_SCRIPT_TERMINATE));
+  TotalScriptLength = (UINT32)(mS3BootScriptTablePtr->TableLength +
+                               sizeof (EFI_BOOT_SCRIPT_TERMINATE));
 
   //
   // Update BootScriptData
@@ -966,7 +1043,8 @@ S3BootScriptCloseTable (
   // Append the termination record the S3 boot script table
   //
   S3BootScriptInternalCloseTable ();
-  TableLength = mS3BootScriptTablePtr->TableLength + sizeof (EFI_BOOT_SCRIPT_TERMINATE);
+  TableLength = mS3BootScriptTablePtr->TableLength +
+                sizeof (EFI_BOOT_SCRIPT_TERMINATE);
   //
   // Allocate the buffer and copy the boot script to the buffer.
   //
@@ -1047,8 +1125,16 @@ S3BootScriptSaveIoWrite (
   ScriptIoWrite.Width   = Width;
   ScriptIoWrite.Address = Address;
   ScriptIoWrite.Count   = (UINT32)Count;
-  CopyMem ((VOID *)Script, (VOID *)&ScriptIoWrite, sizeof (EFI_BOOT_SCRIPT_IO_WRITE));
-  CopyMem ((VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_IO_WRITE)), Buffer, WidthInByte * Count);
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptIoWrite,
+    sizeof (EFI_BOOT_SCRIPT_IO_WRITE)
+    );
+  CopyMem (
+    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_IO_WRITE)),
+    Buffer,
+    WidthInByte * Count
+    );
 
   SyncBootScript (Script);
 
@@ -1081,7 +1167,8 @@ S3BootScriptSaveIoReadWrite (
   EFI_BOOT_SCRIPT_IO_READ_WRITE  ScriptIoReadWrite;
 
   WidthInByte = (UINT8)(0x01 << (Width & 0x03));
-  Length      = (UINT8)(sizeof (EFI_BOOT_SCRIPT_IO_READ_WRITE) + (WidthInByte * 2));
+  Length      = (UINT8)(sizeof (EFI_BOOT_SCRIPT_IO_READ_WRITE) + (WidthInByte *
+                                                                  2));
 
   Script = S3BootScriptGetEntryAddAddress (Length);
   if (Script == NULL) {
@@ -1096,9 +1183,22 @@ S3BootScriptSaveIoReadWrite (
   ScriptIoReadWrite.Width   = Width;
   ScriptIoReadWrite.Address = Address;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptIoReadWrite, sizeof (EFI_BOOT_SCRIPT_IO_READ_WRITE));
-  CopyMem ((VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_IO_READ_WRITE)), Data, WidthInByte);
-  CopyMem ((VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_IO_READ_WRITE) + WidthInByte), DataMask, WidthInByte);
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptIoReadWrite,
+    sizeof (EFI_BOOT_SCRIPT_IO_READ_WRITE)
+    );
+  CopyMem (
+    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_IO_READ_WRITE)),
+    Data,
+    WidthInByte
+    );
+  CopyMem (
+    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_IO_READ_WRITE) +
+             WidthInByte),
+    DataMask,
+    WidthInByte
+    );
 
   SyncBootScript (Script);
 
@@ -1157,8 +1257,16 @@ S3BootScriptSaveMemWrite (
   ScriptMemWrite.Address = Address;
   ScriptMemWrite.Count   = (UINT32)Count;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptMemWrite, sizeof (EFI_BOOT_SCRIPT_MEM_WRITE));
-  CopyMem ((VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_MEM_WRITE)), Buffer, WidthInByte * Count);
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptMemWrite,
+    sizeof (EFI_BOOT_SCRIPT_MEM_WRITE)
+    );
+  CopyMem (
+    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_MEM_WRITE)),
+    Buffer,
+    WidthInByte * Count
+    );
 
   SyncBootScript (Script);
 
@@ -1191,7 +1299,8 @@ S3BootScriptSaveMemReadWrite (
   EFI_BOOT_SCRIPT_MEM_READ_WRITE  ScriptMemReadWrite;
 
   WidthInByte = (UINT8)(0x01 << (Width & 0x03));
-  Length      = (UINT8)(sizeof (EFI_BOOT_SCRIPT_MEM_READ_WRITE) + (WidthInByte * 2));
+  Length      = (UINT8)(sizeof (EFI_BOOT_SCRIPT_MEM_READ_WRITE) + (WidthInByte *
+                                                                   2));
 
   Script = S3BootScriptGetEntryAddAddress (Length);
   if (Script == NULL) {
@@ -1206,9 +1315,22 @@ S3BootScriptSaveMemReadWrite (
   ScriptMemReadWrite.Width   = Width;
   ScriptMemReadWrite.Address = Address;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptMemReadWrite, sizeof (EFI_BOOT_SCRIPT_MEM_READ_WRITE));
-  CopyMem ((VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_MEM_READ_WRITE)), Data, WidthInByte);
-  CopyMem ((VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_MEM_READ_WRITE) + WidthInByte), DataMask, WidthInByte);
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptMemReadWrite,
+    sizeof (EFI_BOOT_SCRIPT_MEM_READ_WRITE)
+    );
+  CopyMem (
+    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_MEM_READ_WRITE)),
+    Data,
+    WidthInByte
+    );
+  CopyMem (
+    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_MEM_READ_WRITE) +
+             WidthInByte),
+    DataMask,
+    WidthInByte
+    );
 
   SyncBootScript (Script);
 
@@ -1255,12 +1377,14 @@ S3BootScriptSavePciCfgWrite (
   // Truncation check
   //
   if ((Count > MAX_UINT8) ||
-      (WidthInByte * Count > MAX_UINT8 - sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_WRITE)))
+      (WidthInByte * Count > MAX_UINT8 -
+       sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_WRITE)))
   {
     return RETURN_OUT_OF_RESOURCES;
   }
 
-  Length = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_WRITE) + (WidthInByte * Count));
+  Length = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_WRITE) + (WidthInByte *
+                                                                Count));
 
   Script = S3BootScriptGetEntryAddAddress (Length);
   if (Script == NULL) {
@@ -1276,8 +1400,16 @@ S3BootScriptSavePciCfgWrite (
   ScriptPciWrite.Address = Address;
   ScriptPciWrite.Count   = (UINT32)Count;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptPciWrite, sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_WRITE));
-  CopyMem ((VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_WRITE)), Buffer, WidthInByte * Count);
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptPciWrite,
+    sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_WRITE)
+    );
+  CopyMem (
+    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_WRITE)),
+    Buffer,
+    WidthInByte * Count
+    );
 
   SyncBootScript (Script);
 
@@ -1319,7 +1451,8 @@ S3BootScriptSavePciCfgReadWrite (
   }
 
   WidthInByte = (UINT8)(0x01 << (Width & 0x03));
-  Length      = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_READ_WRITE) + (WidthInByte * 2));
+  Length      = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_READ_WRITE) +
+                        (WidthInByte * 2));
 
   Script = S3BootScriptGetEntryAddAddress (Length);
   if (Script == NULL) {
@@ -1334,10 +1467,19 @@ S3BootScriptSavePciCfgReadWrite (
   ScriptPciReadWrite.Width   = Width;
   ScriptPciReadWrite.Address = Address;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptPciReadWrite, sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_READ_WRITE));
-  CopyMem ((VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_READ_WRITE)), Data, WidthInByte);
   CopyMem (
-    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_READ_WRITE) + WidthInByte),
+    (VOID *)Script,
+    (VOID *)&ScriptPciReadWrite,
+    sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_READ_WRITE)
+    );
+  CopyMem (
+    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_READ_WRITE)),
+    Data,
+    WidthInByte
+    );
+  CopyMem (
+    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_READ_WRITE) +
+             WidthInByte),
     DataMask,
     WidthInByte
     );
@@ -1389,12 +1531,14 @@ S3BootScriptSavePciCfg2Write (
   // Truncation check
   //
   if ((Count > MAX_UINT8) ||
-      (WidthInByte * Count > MAX_UINT8 - sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_WRITE)))
+      (WidthInByte * Count > MAX_UINT8 -
+       sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_WRITE)))
   {
     return RETURN_OUT_OF_RESOURCES;
   }
 
-  Length = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_WRITE) + (WidthInByte * Count));
+  Length = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_WRITE) + (WidthInByte *
+                                                                 Count));
 
   Script = S3BootScriptGetEntryAddAddress (Length);
   if (Script == NULL) {
@@ -1411,8 +1555,16 @@ S3BootScriptSavePciCfg2Write (
   ScriptPciWrite2.Segment = Segment;
   ScriptPciWrite2.Count   = (UINT32)Count;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptPciWrite2, sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_WRITE));
-  CopyMem ((VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_WRITE)), Buffer, WidthInByte * Count);
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptPciWrite2,
+    sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_WRITE)
+    );
+  CopyMem (
+    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_WRITE)),
+    Buffer,
+    WidthInByte * Count
+    );
 
   SyncBootScript (Script);
 
@@ -1456,7 +1608,8 @@ S3BootScriptSavePciCfg2ReadWrite (
   }
 
   WidthInByte = (UINT8)(0x01 << (Width & 0x03));
-  Length      = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_READ_WRITE) + (WidthInByte * 2));
+  Length      = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_READ_WRITE) +
+                        (WidthInByte * 2));
 
   Script = S3BootScriptGetEntryAddAddress (Length);
   if (Script == NULL) {
@@ -1472,10 +1625,19 @@ S3BootScriptSavePciCfg2ReadWrite (
   ScriptPciReadWrite2.Segment = Segment;
   ScriptPciReadWrite2.Address = Address;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptPciReadWrite2, sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_READ_WRITE));
-  CopyMem ((VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_READ_WRITE)), Data, WidthInByte);
   CopyMem (
-    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_READ_WRITE) + WidthInByte),
+    (VOID *)Script,
+    (VOID *)&ScriptPciReadWrite2,
+    sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_READ_WRITE)
+    );
+  CopyMem (
+    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_READ_WRITE)),
+    Data,
+    WidthInByte
+    );
+  CopyMem (
+    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_READ_WRITE) +
+             WidthInByte),
     DataMask,
     WidthInByte
     );
@@ -1652,7 +1814,11 @@ S3BootScriptSaveSmbusExecute (
   ScriptSmbusExecute.Operation    = Operation;
   ScriptSmbusExecute.DataSize     = (UINT32)BufferLength;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptSmbusExecute, sizeof (EFI_BOOT_SCRIPT_SMBUS_EXECUTE));
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptSmbusExecute,
+    sizeof (EFI_BOOT_SCRIPT_SMBUS_EXECUTE)
+    );
   CopyMem (
     (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_SMBUS_EXECUTE)),
     Buffer,
@@ -1696,7 +1862,11 @@ S3BootScriptSaveStall (
   ScriptStall.Length   = Length;
   ScriptStall.Duration = Duration;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptStall, sizeof (EFI_BOOT_SCRIPT_STALL));
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptStall,
+    sizeof (EFI_BOOT_SCRIPT_STALL)
+    );
 
   SyncBootScript (Script);
 
@@ -1738,7 +1908,11 @@ S3BootScriptSaveDispatch2 (
   ScriptDispatch2.EntryPoint = (EFI_PHYSICAL_ADDRESS)(UINTN)EntryPoint;
   ScriptDispatch2.Context    =   (EFI_PHYSICAL_ADDRESS)(UINTN)Context;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptDispatch2, sizeof (EFI_BOOT_SCRIPT_DISPATCH_2));
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptDispatch2,
+    sizeof (EFI_BOOT_SCRIPT_DISPATCH_2)
+    );
 
   SyncBootScript (Script);
 
@@ -1800,9 +1974,21 @@ S3BootScriptSaveMemPoll (
   ScriptMemPoll.Duration  = Duration;
   ScriptMemPoll.LoopTimes = LoopTimes;
 
-  CopyMem ((UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_MEM_POLL)), BitValue, WidthInByte);
-  CopyMem ((UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_MEM_POLL) + WidthInByte), BitMask, WidthInByte);
-  CopyMem ((VOID *)Script, (VOID *)&ScriptMemPoll, sizeof (EFI_BOOT_SCRIPT_MEM_POLL));
+  CopyMem (
+    (UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_MEM_POLL)),
+    BitValue,
+    WidthInByte
+    );
+  CopyMem (
+    (UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_MEM_POLL) + WidthInByte),
+    BitMask,
+    WidthInByte
+    );
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptMemPoll,
+    sizeof (EFI_BOOT_SCRIPT_MEM_POLL)
+    );
 
   SyncBootScript (Script);
 
@@ -1853,8 +2039,16 @@ S3BootScriptSaveInformation (
 
   ScriptInformation.InformationLength = InformationLength;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptInformation, sizeof (EFI_BOOT_SCRIPT_INFORMATION));
-  CopyMem ((VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_INFORMATION)), (VOID *)Information, (UINTN)InformationLength);
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptInformation,
+    sizeof (EFI_BOOT_SCRIPT_INFORMATION)
+    );
+  CopyMem (
+    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_INFORMATION)),
+    (VOID *)Information,
+    (UINTN)InformationLength
+    );
 
   SyncBootScript (Script);
 
@@ -1915,7 +2109,11 @@ S3BootScriptSaveDispatch (
   ScriptDispatch.Length     = Length;
   ScriptDispatch.EntryPoint = (EFI_PHYSICAL_ADDRESS)(UINTN)EntryPoint;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptDispatch, sizeof (EFI_BOOT_SCRIPT_DISPATCH));
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptDispatch,
+    sizeof (EFI_BOOT_SCRIPT_DISPATCH)
+    );
 
   SyncBootScript (Script);
 
@@ -1965,14 +2163,27 @@ S3BootScriptSaveIoPoll (
   // Build script data
   //
   ScriptIoPoll.OpCode  = EFI_BOOT_SCRIPT_IO_POLL_OPCODE;
-  ScriptIoPoll.Length  = (UINT8)(sizeof (EFI_BOOT_SCRIPT_IO_POLL) + (WidthInByte * 2));
+  ScriptIoPoll.Length  = (UINT8)(sizeof (EFI_BOOT_SCRIPT_IO_POLL) +
+                                 (WidthInByte * 2));
   ScriptIoPoll.Width   = Width;
   ScriptIoPoll.Address = Address;
   ScriptIoPoll.Delay   = Delay;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptIoPoll, sizeof (EFI_BOOT_SCRIPT_IO_POLL));
-  CopyMem ((UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_IO_POLL)), Data, WidthInByte);
-  CopyMem ((UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_IO_POLL) + WidthInByte), DataMask, WidthInByte);
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptIoPoll,
+    sizeof (EFI_BOOT_SCRIPT_IO_POLL)
+    );
+  CopyMem (
+    (UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_IO_POLL)),
+    Data,
+    WidthInByte
+    );
+  CopyMem (
+    (UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_IO_POLL) + WidthInByte),
+    DataMask,
+    WidthInByte
+    );
 
   SyncBootScript (Script);
 
@@ -2019,7 +2230,8 @@ S3BootScriptSavePciPoll (
   }
 
   WidthInByte = (UINT8)(0x01 << (Width & 0x03));
-  Length      = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_POLL) + (WidthInByte * 2));
+  Length      = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_POLL) +
+                        (WidthInByte * 2));
 
   Script = S3BootScriptGetEntryAddAddress (Length);
   if (Script == NULL) {
@@ -2030,14 +2242,28 @@ S3BootScriptSavePciPoll (
   // Build script data
   //
   ScriptPciPoll.OpCode  = EFI_BOOT_SCRIPT_PCI_CONFIG_POLL_OPCODE;
-  ScriptPciPoll.Length  = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_POLL) + (WidthInByte * 2));
+  ScriptPciPoll.Length  = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_POLL) +
+                                  (WidthInByte * 2));
   ScriptPciPoll.Width   = Width;
   ScriptPciPoll.Address = Address;
   ScriptPciPoll.Delay   = Delay;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptPciPoll, sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_POLL));
-  CopyMem ((UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_POLL)), Data, WidthInByte);
-  CopyMem ((UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_POLL) + WidthInByte), DataMask, WidthInByte);
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptPciPoll,
+    sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_POLL)
+    );
+  CopyMem (
+    (UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_POLL)),
+    Data,
+    WidthInByte
+    );
+  CopyMem (
+    (UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_POLL) +
+              WidthInByte),
+    DataMask,
+    WidthInByte
+    );
 
   SyncBootScript (Script);
 
@@ -2086,7 +2312,8 @@ S3BootScriptSavePci2Poll (
   }
 
   WidthInByte = (UINT8)(0x01 << (Width & 0x03));
-  Length      = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL) + (WidthInByte * 2));
+  Length      = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL) +
+                        (WidthInByte * 2));
 
   Script = S3BootScriptGetEntryAddAddress (Length);
   if (Script == NULL) {
@@ -2097,15 +2324,29 @@ S3BootScriptSavePci2Poll (
   // Build script data
   //
   ScriptPci2Poll.OpCode  = EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL_OPCODE;
-  ScriptPci2Poll.Length  = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL) + (WidthInByte * 2));
+  ScriptPci2Poll.Length  = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL) +
+                                   (WidthInByte * 2));
   ScriptPci2Poll.Width   = Width;
   ScriptPci2Poll.Segment = Segment;
   ScriptPci2Poll.Address = Address;
   ScriptPci2Poll.Delay   = Delay;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptPci2Poll, sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL));
-  CopyMem ((UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL)), Data, WidthInByte);
-  CopyMem ((UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL) + WidthInByte), DataMask, WidthInByte);
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptPci2Poll,
+    sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL)
+    );
+  CopyMem (
+    (UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL)),
+    Data,
+    WidthInByte
+    );
+  CopyMem (
+    (UINT8 *)(Script + sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL) +
+              WidthInByte),
+    DataMask,
+    WidthInByte
+    );
 
   SyncBootScript (Script);
 
@@ -2150,14 +2391,22 @@ S3BootScriptCalculateInsertAddress (
     // If the BeforeOrAfter is FALSE, that means to insert the node right after the node.
     //
     if (!BeforeOrAfter) {
-      CopyMem ((VOID *)&ScriptHeader, Position, sizeof (EFI_BOOT_SCRIPT_COMMON_HEADER));
+      CopyMem (
+        (VOID *)&ScriptHeader,
+        Position,
+        sizeof (EFI_BOOT_SCRIPT_COMMON_HEADER)
+        );
       PositionOffset += (ScriptHeader.Length);
     }
 
     //
     // Insert the node before the adjusted Position
     //
-    CopyMem (S3TableBase+PositionOffset+EntryLength, S3TableBase+PositionOffset, TableLength - PositionOffset);
+    CopyMem (
+      S3TableBase+PositionOffset+EntryLength,
+      S3TableBase+PositionOffset,
+      TableLength - PositionOffset
+      );
     //
     // calculate the the start address for the new entry.
     //
@@ -2173,7 +2422,12 @@ S3BootScriptCalculateInsertAddress (
       // Insert the node to the beginning of the table
       //
       PositionOffset = (UINTN)sizeof (EFI_BOOT_SCRIPT_TABLE_HEADER);
-      CopyMem (S3TableBase+PositionOffset+EntryLength, S3TableBase+PositionOffset, TableLength - PositionOffset);
+      CopyMem (
+        S3TableBase+PositionOffset+EntryLength,
+        S3TableBase+
+        PositionOffset,
+        TableLength - PositionOffset
+        );
       *Script = S3TableBase + PositionOffset;
     }
   }
@@ -2208,7 +2462,8 @@ S3BootScriptMoveLastOpcode (
   EFI_BOOT_SCRIPT_COMMON_HEADER  ScriptHeader;
   BOOLEAN                        ValidatePosition;
   UINT8                          *LastOpcode;
-  UINT8                          TempBootScriptEntry[BOOT_SCRIPT_NODE_MAX_LENGTH];
+  UINT8                          TempBootScriptEntry[BOOT_SCRIPT_NODE_MAX_LENGTH
+  ];
 
   ValidatePosition = FALSE;
   TempPosition     = (Position == NULL) ? NULL : (*Position);
@@ -2231,7 +2486,11 @@ S3BootScriptMoveLastOpcode (
   // Find the last boot Script Entry which is not the terminate node
   //
   while ((UINTN)Script < (UINTN)(StartAddress + TableLength)) {
-    CopyMem ((VOID *)&ScriptHeader, Script, sizeof (EFI_BOOT_SCRIPT_COMMON_HEADER));
+    CopyMem (
+      (VOID *)&ScriptHeader,
+      Script,
+      sizeof (EFI_BOOT_SCRIPT_COMMON_HEADER)
+      );
     if ((TempPosition != NULL) && (TempPosition == Script)) {
       //
       // If the position is specified, the position must be pointed to a boot script entry start address.
@@ -2253,7 +2512,11 @@ S3BootScriptMoveLastOpcode (
     return RETURN_INVALID_PARAMETER;
   }
 
-  CopyMem ((VOID *)&ScriptHeader, LastOpcode, sizeof (EFI_BOOT_SCRIPT_COMMON_HEADER));
+  CopyMem (
+    (VOID *)&ScriptHeader,
+    LastOpcode,
+    sizeof (EFI_BOOT_SCRIPT_COMMON_HEADER)
+    );
 
   CopyMem ((VOID *)TempBootScriptEntry, LastOpcode, ScriptHeader.Length);
   //
@@ -2335,8 +2598,16 @@ S3BootScriptLabelInternal (
 
   ScriptInformation.InformationLength = InformationLength;
 
-  CopyMem ((VOID *)Script, (VOID *)&ScriptInformation, sizeof (EFI_BOOT_SCRIPT_INFORMATION));
-  CopyMem ((VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_INFORMATION)), (VOID *)Information, (UINTN)InformationLength);
+  CopyMem (
+    (VOID *)Script,
+    (VOID *)&ScriptInformation,
+    sizeof (EFI_BOOT_SCRIPT_INFORMATION)
+    );
+  CopyMem (
+    (VOID *)(Script + sizeof (EFI_BOOT_SCRIPT_INFORMATION)),
+    (VOID *)Information,
+    (UINTN)InformationLength
+    );
 
   SyncBootScript (Script);
 
@@ -2418,9 +2689,18 @@ S3BootScriptLabel (
   TableLength  = mS3BootScriptTablePtr->TableLength;
   Script       =     Script + TableHeader.Length;
   while ((UINTN)Script < (UINTN)(StartAddress + TableLength)) {
-    CopyMem ((VOID *)&ScriptHeader, Script, sizeof (EFI_BOOT_SCRIPT_COMMON_HEADER));
+    CopyMem (
+      (VOID *)&ScriptHeader,
+      Script,
+      sizeof (EFI_BOOT_SCRIPT_COMMON_HEADER)
+      );
     if (ScriptHeader.OpCode == S3_BOOT_SCRIPT_LIB_LABEL_OPCODE) {
-      if (AsciiStrCmp ((CHAR8 *)(UINTN)(Script+sizeof (EFI_BOOT_SCRIPT_INFORMATION)), Label) == 0) {
+      if (AsciiStrCmp (
+            (CHAR8 *)(UINTN)(Script+
+                             sizeof (EFI_BOOT_SCRIPT_INFORMATION)),
+            Label
+            ) == 0)
+      {
         (*Position) = Script;
         return EFI_SUCCESS;
       }
@@ -2431,7 +2711,12 @@ S3BootScriptLabel (
 
   if (CreateIfNotFound) {
     LabelLength = (UINT32)AsciiStrSize (Label);
-    return S3BootScriptLabelInternal (BeforeOrAfter, Position, LabelLength, Label);
+    return S3BootScriptLabelInternal (
+             BeforeOrAfter,
+             Position,
+             LabelLength,
+             Label
+             );
   } else {
     return EFI_NOT_FOUND;
   }
@@ -2479,7 +2764,8 @@ S3BootScriptCompare (
   //
   // mS3BootScriptTablePtr->TableLength does not include the termination node, so add it up
   //
-  TableLength = mS3BootScriptTablePtr->TableLength + sizeof (EFI_BOOT_SCRIPT_TERMINATE);
+  TableLength = mS3BootScriptTablePtr->TableLength +
+                sizeof (EFI_BOOT_SCRIPT_TERMINATE);
   if ((Position1 < Script) || (Position1 > Script+TableLength)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -2488,7 +2774,8 @@ S3BootScriptCompare (
     return EFI_INVALID_PARAMETER;
   }
 
-  *RelativePosition = (Position1 < Position2) ? -1 : ((Position1 == Position2) ? 0 : 1);
+  *RelativePosition = (Position1 < Position2) ? -1 : ((Position1 == Position2) ?
+                                                      0 : 1);
 
   return EFI_SUCCESS;
 }

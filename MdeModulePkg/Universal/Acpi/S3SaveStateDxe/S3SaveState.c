@@ -241,7 +241,13 @@ BootScriptWritePciCfg2ReadWrite (
   Data     = VA_ARG (Marker, UINT8 *);
   DataMask = VA_ARG (Marker, UINT8 *);
 
-  return S3BootScriptSavePciCfg2ReadWrite (Width, Segment, Address, Data, DataMask);
+  return S3BootScriptSavePciCfg2ReadWrite (
+           Width,
+           Segment,
+           Address,
+           Data,
+           DataMask
+           );
 }
 
 /**
@@ -271,11 +277,21 @@ BootScriptWriteSmbusExecute (
   Command                         = VA_ARG (Marker, EFI_SMBUS_DEVICE_COMMAND);
   Operation                       = VA_ARG (Marker, EFI_SMBUS_OPERATION);
   PecCheck                        = VA_ARG (Marker, BOOLEAN);
-  SmBusAddress                    = SMBUS_LIB_ADDRESS (SlaveAddress.SmbusDeviceAddress, Command, 0, PecCheck);
-  DataSize                        = VA_ARG (Marker, UINTN *);
-  Buffer                          = VA_ARG (Marker, VOID *);
+  SmBusAddress                    = SMBUS_LIB_ADDRESS (
+                                      SlaveAddress.SmbusDeviceAddress,
+                                      Command,
+                                      0,
+                                      PecCheck
+                                      );
+  DataSize = VA_ARG (Marker, UINTN *);
+  Buffer   = VA_ARG (Marker, VOID *);
 
-  return S3BootScriptSaveSmbusExecute (SmBusAddress, Operation, DataSize, Buffer);
+  return S3BootScriptSaveSmbusExecute (
+           SmBusAddress,
+           Operation,
+           DataSize,
+           Buffer
+           );
 }
 
 /**
@@ -417,7 +433,10 @@ BootScriptWriteInformation (
 
   InformationLength = VA_ARG (Marker, UINT32);
   Information       = VA_ARG (Marker, EFI_PHYSICAL_ADDRESS);
-  return S3BootScriptSaveInformation (InformationLength, (VOID *)(UINTN)Information);
+  return S3BootScriptSaveInformation (
+           InformationLength,
+           (VOID *)(UINTN)Information
+           );
 }
 
 /**
@@ -508,7 +527,14 @@ BootScriptWritePciConfig2Poll (
   DataMask = VA_ARG (Marker, VOID *);
   Delay    = (UINT64)VA_ARG (Marker, UINT64);
 
-  return S3BootScriptSavePci2Poll (Width, Segment, Address, Data, DataMask, Delay);
+  return S3BootScriptSavePci2Poll (
+           Width,
+           Segment,
+           Address,
+           Data,
+           DataMask,
+           Delay
+           );
 }
 
 /**
@@ -861,7 +887,12 @@ BootScriptLabel (
   IN CONST CHAR8                        *Label
   )
 {
-  return S3BootScriptLabel (BeforeOrAfter, CreateIfNotFound, (VOID **)Position, Label);
+  return S3BootScriptLabel (
+           BeforeOrAfter,
+           CreateIfNotFound,
+           (VOID **)Position,
+           Label
+           );
 }
 
 /**

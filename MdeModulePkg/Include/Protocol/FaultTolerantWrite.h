@@ -20,7 +20,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Forward reference for pure ANSI compatability
 //
-typedef struct _EFI_FAULT_TOLERANT_WRITE_PROTOCOL EFI_FAULT_TOLERANT_WRITE_PROTOCOL;
+typedef struct _EFI_FAULT_TOLERANT_WRITE_PROTOCOL
+EFI_FAULT_TOLERANT_WRITE_PROTOCOL;
 
 /**
   Get the size of the largest block that can be updated in a fault-tolerant manner.

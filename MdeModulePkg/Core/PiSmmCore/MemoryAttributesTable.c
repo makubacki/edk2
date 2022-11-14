@@ -25,7 +25,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define PREVIOUS_MEMORY_DESCRIPTOR(MemoryDescriptor, Size) \
   ((EFI_MEMORY_DESCRIPTOR *)((UINT8 *)(MemoryDescriptor) - (Size)))
 
-#define IMAGE_PROPERTIES_RECORD_CODE_SECTION_SIGNATURE  SIGNATURE_32 ('I','P','R','C')
+#define IMAGE_PROPERTIES_RECORD_CODE_SECTION_SIGNATURE  \
+  SIGNATURE_32 ('I','P','R','C')
 
 typedef struct {
   UINT32                  Signature;
@@ -61,9 +62,11 @@ IMAGE_PROPERTIES_PRIVATE_DATA  mImagePropertiesPrivateData = {
   INITIALIZE_LIST_HEAD_VARIABLE (mImagePropertiesPrivateData.ImageRecordList)
 };
 
-#define EFI_MEMORY_ATTRIBUTES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA  BIT0
+#define EFI_MEMORY_ATTRIBUTES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA  \
+  BIT0
 
-UINT64  mMemoryProtectionAttribute = EFI_MEMORY_ATTRIBUTES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA;
+UINT64  mMemoryProtectionAttribute =
+  EFI_MEMORY_ATTRIBUTES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA;
 
 //
 // Below functions are for MemoryMap
@@ -105,7 +108,8 @@ EfiSizeToPages (
   IN UINT64  Size
   )
 {
-  return RShiftU64 (Size, EFI_PAGE_SHIFT) + ((((UINTN)Size) & EFI_PAGE_MASK) ? 1 : 0);
+  return RShiftU64 (Size, EFI_PAGE_SHIFT) + ((((UINTN)Size) & EFI_PAGE_MASK) ?
+                                             1 : 0);
 }
 
 /**
@@ -131,20 +135,42 @@ SortMemoryMap (
 
   MemoryMapEntry     = MemoryMap;
   NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (MemoryMapEntry, DescriptorSize);
-  MemoryMapEnd       = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap + MemoryMapSize);
+  MemoryMapEnd       = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap +
+                                                 MemoryMapSize);
   while (MemoryMapEntry < MemoryMapEnd) {
     while (NextMemoryMapEntry < MemoryMapEnd) {
       if (MemoryMapEntry->PhysicalStart > NextMemoryMapEntry->PhysicalStart) {
-        CopyMem (&TempMemoryMap, MemoryMapEntry, sizeof (EFI_MEMORY_DESCRIPTOR));
-        CopyMem (MemoryMapEntry, NextMemoryMapEntry, sizeof (EFI_MEMORY_DESCRIPTOR));
-        CopyMem (NextMemoryMapEntry, &TempMemoryMap, sizeof (EFI_MEMORY_DESCRIPTOR));
+        CopyMem (
+          &TempMemoryMap,
+          MemoryMapEntry,
+          sizeof (EFI_MEMORY_DESCRIPTOR)
+          );
+        CopyMem (
+          MemoryMapEntry,
+          NextMemoryMapEntry,
+          sizeof (EFI_MEMORY_DESCRIPTOR)
+          );
+        CopyMem (
+          NextMemoryMapEntry,
+          &TempMemoryMap,
+          sizeof (EFI_MEMORY_DESCRIPTOR)
+          );
       }
 
-      NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (NextMemoryMapEntry, DescriptorSize);
+      NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (
+                             NextMemoryMapEntry,
+                             DescriptorSize
+                             );
     }
 
-    MemoryMapEntry     = NEXT_MEMORY_DESCRIPTOR (MemoryMapEntry, DescriptorSize);
-    NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (MemoryMapEntry, DescriptorSize);
+    MemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (
+                       MemoryMapEntry,
+                       DescriptorSize
+                       );
+    NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (
+                           MemoryMapEntry,
+                           DescriptorSize
+                           );
   }
 
   return;
@@ -177,33 +203,49 @@ MergeMemoryMap (
 
   MemoryMapEntry    = MemoryMap;
   NewMemoryMapEntry = MemoryMap;
-  MemoryMapEnd      = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap + *MemoryMapSize);
+  MemoryMapEnd      = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap +
+                                                *MemoryMapSize);
   while ((UINTN)MemoryMapEntry < (UINTN)MemoryMapEnd) {
     CopyMem (NewMemoryMapEntry, MemoryMapEntry, sizeof (EFI_MEMORY_DESCRIPTOR));
-    NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (MemoryMapEntry, DescriptorSize);
+    NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (
+                           MemoryMapEntry,
+                           DescriptorSize
+                           );
 
     do {
-      MemoryBlockLength = (UINT64)(EfiPagesToSize (MemoryMapEntry->NumberOfPages));
+      MemoryBlockLength = (UINT64)(EfiPagesToSize (
+                                     MemoryMapEntry->NumberOfPages
+                                     ));
       if (((UINTN)NextMemoryMapEntry < (UINTN)MemoryMapEnd) &&
           (MemoryMapEntry->Type == NextMemoryMapEntry->Type) &&
           (MemoryMapEntry->Attribute == NextMemoryMapEntry->Attribute) &&
-          ((MemoryMapEntry->PhysicalStart + MemoryBlockLength) == NextMemoryMapEntry->PhysicalStart))
+          ((MemoryMapEntry->PhysicalStart + MemoryBlockLength) ==
+           NextMemoryMapEntry->PhysicalStart))
       {
         MemoryMapEntry->NumberOfPages += NextMemoryMapEntry->NumberOfPages;
         if (NewMemoryMapEntry != MemoryMapEntry) {
           NewMemoryMapEntry->NumberOfPages += NextMemoryMapEntry->NumberOfPages;
         }
 
-        NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (NextMemoryMapEntry, DescriptorSize);
+        NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (
+                               NextMemoryMapEntry,
+                               DescriptorSize
+                               );
         continue;
       } else {
-        MemoryMapEntry = PREVIOUS_MEMORY_DESCRIPTOR (NextMemoryMapEntry, DescriptorSize);
+        MemoryMapEntry = PREVIOUS_MEMORY_DESCRIPTOR (
+                           NextMemoryMapEntry,
+                           DescriptorSize
+                           );
         break;
       }
     } while (TRUE);
 
     MemoryMapEntry    = NEXT_MEMORY_DESCRIPTOR (MemoryMapEntry, DescriptorSize);
-    NewMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (NewMemoryMapEntry, DescriptorSize);
+    NewMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (
+                          NewMemoryMapEntry,
+                          DescriptorSize
+                          );
   }
 
   *MemoryMapSize = (UINTN)NewMemoryMapEntry - (UINTN)MemoryMap;
@@ -232,7 +274,8 @@ EnforceMemoryMapAttribute (
   EFI_MEMORY_DESCRIPTOR  *MemoryMapEnd;
 
   MemoryMapEntry = MemoryMap;
-  MemoryMapEnd   = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap + MemoryMapSize);
+  MemoryMapEnd   = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap +
+                                             MemoryMapSize);
   while ((UINTN)MemoryMapEntry < (UINTN)MemoryMapEnd) {
     if (MemoryMapEntry->Attribute != 0) {
       // It is PE image, the attribute is already set.
@@ -328,7 +371,9 @@ SetNewRecord (
   UINT64                                ImageEnd;
 
   CopyMem (&TempRecord, OldRecord, sizeof (EFI_MEMORY_DESCRIPTOR));
-  PhysicalEnd    = TempRecord.PhysicalStart + EfiPagesToSize (TempRecord.NumberOfPages);
+  PhysicalEnd = TempRecord.PhysicalStart + EfiPagesToSize (
+                                             TempRecord.NumberOfPages
+                                             );
   NewRecordCount = 0;
 
   //
@@ -338,12 +383,21 @@ SetNewRecord (
     NewRecord->Type          = TempRecord.Type;
     NewRecord->PhysicalStart = TempRecord.PhysicalStart;
     NewRecord->VirtualStart  = 0;
-    NewRecord->NumberOfPages = EfiSizeToPages (ImageRecord->ImageBase - TempRecord.PhysicalStart);
-    NewRecord->Attribute     = TempRecord.Attribute;
-    NewRecord                = NEXT_MEMORY_DESCRIPTOR (NewRecord, DescriptorSize);
+    NewRecord->NumberOfPages = EfiSizeToPages (
+                                 ImageRecord->ImageBase -
+                                 TempRecord.PhysicalStart
+                                 );
+    NewRecord->Attribute = TempRecord.Attribute;
+    NewRecord            = NEXT_MEMORY_DESCRIPTOR (
+                             NewRecord,
+                             DescriptorSize
+                             );
     NewRecordCount++;
     TempRecord.PhysicalStart = ImageRecord->ImageBase;
-    TempRecord.NumberOfPages = EfiSizeToPages (PhysicalEnd - TempRecord.PhysicalStart);
+    TempRecord.NumberOfPages = EfiSizeToPages (
+                                 PhysicalEnd -
+                                 TempRecord.PhysicalStart
+                                 );
   }
 
   ImageRecordCodeSectionList = &ImageRecord->CodeSegmentList;
@@ -366,8 +420,11 @@ SetNewRecord (
       NewRecord->Type          = EfiRuntimeServicesData;
       NewRecord->PhysicalStart = TempRecord.PhysicalStart;
       NewRecord->VirtualStart  = 0;
-      NewRecord->NumberOfPages = EfiSizeToPages (ImageRecordCodeSection->CodeSegmentBase - NewRecord->PhysicalStart);
-      NewRecord->Attribute     = TempRecord.Attribute | EFI_MEMORY_XP;
+      NewRecord->NumberOfPages = EfiSizeToPages (
+                                   ImageRecordCodeSection->CodeSegmentBase -
+                                   NewRecord->PhysicalStart
+                                   );
+      NewRecord->Attribute = TempRecord.Attribute | EFI_MEMORY_XP;
       if (NewRecord->NumberOfPages != 0) {
         NewRecord = NEXT_MEMORY_DESCRIPTOR (NewRecord, DescriptorSize);
         NewRecordCount++;
@@ -379,15 +436,24 @@ SetNewRecord (
       NewRecord->Type          = EfiRuntimeServicesCode;
       NewRecord->PhysicalStart = ImageRecordCodeSection->CodeSegmentBase;
       NewRecord->VirtualStart  = 0;
-      NewRecord->NumberOfPages = EfiSizeToPages (ImageRecordCodeSection->CodeSegmentSize);
-      NewRecord->Attribute     = (TempRecord.Attribute & (~EFI_MEMORY_XP)) | EFI_MEMORY_RO;
+      NewRecord->NumberOfPages = EfiSizeToPages (
+                                   ImageRecordCodeSection->CodeSegmentSize
+                                   );
+      NewRecord->Attribute = (TempRecord.Attribute & (~EFI_MEMORY_XP)) |
+                             EFI_MEMORY_RO;
       if (NewRecord->NumberOfPages != 0) {
         NewRecord = NEXT_MEMORY_DESCRIPTOR (NewRecord, DescriptorSize);
         NewRecordCount++;
       }
 
-      TempRecord.PhysicalStart = ImageRecordCodeSection->CodeSegmentBase + EfiPagesToSize (EfiSizeToPages (ImageRecordCodeSection->CodeSegmentSize));
-      TempRecord.NumberOfPages = EfiSizeToPages (PhysicalEnd - TempRecord.PhysicalStart);
+      TempRecord.PhysicalStart = ImageRecordCodeSection->CodeSegmentBase +
+                                 EfiPagesToSize (EfiSizeToPages (
+                                                   ImageRecordCodeSection->
+                                                     CodeSegmentSize));
+      TempRecord.NumberOfPages = EfiSizeToPages (
+                                   PhysicalEnd -
+                                   TempRecord.PhysicalStart
+                                   );
       if (TempRecord.NumberOfPages == 0) {
         break;
       }
@@ -403,8 +469,11 @@ SetNewRecord (
     NewRecord->Type          = EfiRuntimeServicesData;
     NewRecord->PhysicalStart = TempRecord.PhysicalStart;
     NewRecord->VirtualStart  = 0;
-    NewRecord->NumberOfPages = EfiSizeToPages (ImageEnd - TempRecord.PhysicalStart);
-    NewRecord->Attribute     = TempRecord.Attribute | EFI_MEMORY_XP;
+    NewRecord->NumberOfPages = EfiSizeToPages (
+                                 ImageEnd -
+                                 TempRecord.PhysicalStart
+                                 );
+    NewRecord->Attribute = TempRecord.Attribute | EFI_MEMORY_XP;
     NewRecordCount++;
   }
 
@@ -433,10 +502,16 @@ GetMaxSplitRecordCount (
 
   SplitRecordCount = 0;
   PhysicalStart    = OldRecord->PhysicalStart;
-  PhysicalEnd      = OldRecord->PhysicalStart + EfiPagesToSize (OldRecord->NumberOfPages);
+  PhysicalEnd      = OldRecord->PhysicalStart + EfiPagesToSize (
+                                                  OldRecord->NumberOfPages
+                                                  );
 
   do {
-    ImageRecord = GetImageRecordByAddress (PhysicalStart, PhysicalEnd - PhysicalStart);
+    ImageRecord = GetImageRecordByAddress (
+                    PhysicalStart,
+                    PhysicalEnd -
+                    PhysicalStart
+                    );
     if (ImageRecord == NULL) {
       break;
     }
@@ -492,11 +567,17 @@ SplitRecord (
   //
   CopyMem (&TempRecord, OldRecord, sizeof (EFI_MEMORY_DESCRIPTOR));
   PhysicalStart = TempRecord.PhysicalStart;
-  PhysicalEnd   = TempRecord.PhysicalStart + EfiPagesToSize (TempRecord.NumberOfPages);
+  PhysicalEnd   = TempRecord.PhysicalStart + EfiPagesToSize (
+                                               TempRecord.NumberOfPages
+                                               );
 
   ImageRecord = NULL;
   do {
-    NewImageRecord = GetImageRecordByAddress (PhysicalStart, PhysicalEnd - PhysicalStart);
+    NewImageRecord = GetImageRecordByAddress (
+                       PhysicalStart,
+                       PhysicalEnd -
+                       PhysicalStart
+                       );
     if (NewImageRecord == NULL) {
       //
       // No more image covered by this range, stop
@@ -521,9 +602,16 @@ SplitRecord (
     //
     // Set new record
     //
-    NewRecordCount       = SetNewRecord (ImageRecord, NewRecord, &TempRecord, DescriptorSize);
+    NewRecordCount = SetNewRecord (
+                       ImageRecord,
+                       NewRecord,
+                       &TempRecord,
+                       DescriptorSize
+                       );
     TotalNewRecordCount += NewRecordCount;
-    NewRecord            = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)NewRecord + NewRecordCount * DescriptorSize);
+    NewRecord            = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)NewRecord +
+                                                     NewRecordCount *
+                                                     DescriptorSize);
 
     //
     // Update PhysicalStart, in order to exclude the image buffer already splitted.
@@ -603,7 +691,8 @@ SplitTable (
   UINTN  TotalSplitRecordCount;
   UINTN  AdditionalRecordCount;
 
-  AdditionalRecordCount = (2 * mImagePropertiesPrivateData.CodeSegmentCountMax + 2) * mImagePropertiesPrivateData.ImageRecordCount;
+  AdditionalRecordCount = (2 * mImagePropertiesPrivateData.CodeSegmentCountMax +
+                           2) * mImagePropertiesPrivateData.ImageRecordCount;
 
   TotalSplitRecordCount = 0;
   //
@@ -615,14 +704,21 @@ SplitTable (
   //
   IndexNew = ((*MemoryMapSize) / DescriptorSize) - 1 + AdditionalRecordCount;
   for ( ; IndexOld >= 0; IndexOld--) {
-    MaxSplitRecordCount = GetMaxSplitRecordCount ((EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap + IndexOld * DescriptorSize));
+    MaxSplitRecordCount = GetMaxSplitRecordCount (
+                            (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap +
+                                                      IndexOld * DescriptorSize)
+                            );
     //
     // Split this MemoryMap record
     //
     IndexNew            -= MaxSplitRecordCount;
     RealSplitRecordCount = SplitRecord (
-                             (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap + IndexOld * DescriptorSize),
-                             (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap + IndexNew * DescriptorSize),
+                             (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap +
+                                                       IndexOld *
+                                                       DescriptorSize),
+                             (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap +
+                                                       IndexNew *
+                                                       DescriptorSize),
                              MaxSplitRecordCount,
                              DescriptorSize
                              );
@@ -631,13 +727,15 @@ SplitTable (
     //
     if (MaxSplitRecordCount != RealSplitRecordCount) {
       CopyMem (
-        ((UINT8 *)MemoryMap + (IndexNew + MaxSplitRecordCount - RealSplitRecordCount) * DescriptorSize),
+        ((UINT8 *)MemoryMap + (IndexNew + MaxSplitRecordCount -
+                               RealSplitRecordCount) * DescriptorSize),
         ((UINT8 *)MemoryMap + IndexNew * DescriptorSize),
         (RealSplitRecordCount + 1) * DescriptorSize
         );
     }
 
-    IndexNew               = IndexNew + MaxSplitRecordCount - RealSplitRecordCount;
+    IndexNew = IndexNew + MaxSplitRecordCount -
+               RealSplitRecordCount;
     TotalSplitRecordCount += RealSplitRecordCount;
     IndexNew--;
   }
@@ -647,7 +745,8 @@ SplitTable (
   //
   CopyMem (
     MemoryMap,
-    (UINT8 *)MemoryMap + (AdditionalRecordCount - TotalSplitRecordCount) * DescriptorSize,
+    (UINT8 *)MemoryMap + (AdditionalRecordCount - TotalSplitRecordCount) *
+    DescriptorSize,
     (*MemoryMapSize) + TotalSplitRecordCount * DescriptorSize
     );
 
@@ -721,23 +820,43 @@ SmmCoreGetMemoryMapMemoryAttributesTable (
   //
   // If PE code/data is not aligned, just return.
   //
-  if ((mMemoryProtectionAttribute & EFI_MEMORY_ATTRIBUTES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA) == 0) {
-    return SmmCoreGetMemoryMap (MemoryMapSize, MemoryMap, MapKey, DescriptorSize, DescriptorVersion);
+  if ((mMemoryProtectionAttribute &
+       EFI_MEMORY_ATTRIBUTES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA)
+      ==
+      0)
+  {
+    return SmmCoreGetMemoryMap (
+             MemoryMapSize,
+             MemoryMap,
+             MapKey,
+             DescriptorSize,
+             DescriptorVersion
+             );
   }
 
   if (MemoryMapSize == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  AdditionalRecordCount = (2 * mImagePropertiesPrivateData.CodeSegmentCountMax + 2) * mImagePropertiesPrivateData.ImageRecordCount;
+  AdditionalRecordCount = (2 * mImagePropertiesPrivateData.CodeSegmentCountMax +
+                           2) * mImagePropertiesPrivateData.ImageRecordCount;
 
   OldMemoryMapSize = *MemoryMapSize;
-  Status           = SmmCoreGetMemoryMap (MemoryMapSize, MemoryMap, MapKey, DescriptorSize, DescriptorVersion);
+  Status           = SmmCoreGetMemoryMap (
+                       MemoryMapSize,
+                       MemoryMap,
+                       MapKey,
+                       DescriptorSize,
+                       DescriptorVersion
+                       );
   if (Status == EFI_BUFFER_TOO_SMALL) {
     *MemoryMapSize = *MemoryMapSize + (*DescriptorSize) * AdditionalRecordCount;
   } else if (Status == EFI_SUCCESS) {
-    if (OldMemoryMapSize - *MemoryMapSize < (*DescriptorSize) * AdditionalRecordCount) {
-      *MemoryMapSize = *MemoryMapSize + (*DescriptorSize) * AdditionalRecordCount;
+    if (OldMemoryMapSize - *MemoryMapSize < (*DescriptorSize) *
+        AdditionalRecordCount)
+    {
+      *MemoryMapSize = *MemoryMapSize + (*DescriptorSize) *
+                       AdditionalRecordCount;
       //
       // Need update status to buffer too small
       //
@@ -770,10 +889,17 @@ SetMemoryAttributesTableSectionAlignment (
   )
 {
   if (((SectionAlignment & (RUNTIME_PAGE_ALLOCATION_GRANULARITY - 1)) != 0) &&
-      ((mMemoryProtectionAttribute & EFI_MEMORY_ATTRIBUTES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA) != 0))
+      ((mMemoryProtectionAttribute &
+        EFI_MEMORY_ATTRIBUTES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA)
+       != 0))
   {
-    DEBUG ((DEBUG_VERBOSE, "SMM SetMemoryAttributesTableSectionAlignment - Clear\n"));
-    mMemoryProtectionAttribute &= ~((UINT64)EFI_MEMORY_ATTRIBUTES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA);
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "SMM SetMemoryAttributesTableSectionAlignment - Clear\n"
+      ));
+    mMemoryProtectionAttribute &=
+      ~((UINT64)
+        EFI_MEMORY_ATTRIBUTES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA);
   }
 }
 
@@ -792,14 +918,20 @@ SwapImageRecordCodeSection (
 {
   IMAGE_PROPERTIES_RECORD_CODE_SECTION  TempImageRecordCodeSection;
 
-  TempImageRecordCodeSection.CodeSegmentBase = FirstImageRecordCodeSection->CodeSegmentBase;
-  TempImageRecordCodeSection.CodeSegmentSize = FirstImageRecordCodeSection->CodeSegmentSize;
+  TempImageRecordCodeSection.CodeSegmentBase =
+    FirstImageRecordCodeSection->CodeSegmentBase;
+  TempImageRecordCodeSection.CodeSegmentSize =
+    FirstImageRecordCodeSection->CodeSegmentSize;
 
-  FirstImageRecordCodeSection->CodeSegmentBase = SecondImageRecordCodeSection->CodeSegmentBase;
-  FirstImageRecordCodeSection->CodeSegmentSize = SecondImageRecordCodeSection->CodeSegmentSize;
+  FirstImageRecordCodeSection->CodeSegmentBase =
+    SecondImageRecordCodeSection->CodeSegmentBase;
+  FirstImageRecordCodeSection->CodeSegmentSize =
+    SecondImageRecordCodeSection->CodeSegmentSize;
 
-  SecondImageRecordCodeSection->CodeSegmentBase = TempImageRecordCodeSection.CodeSegmentBase;
-  SecondImageRecordCodeSection->CodeSegmentSize = TempImageRecordCodeSection.CodeSegmentSize;
+  SecondImageRecordCodeSection->CodeSegmentBase =
+    TempImageRecordCodeSection.CodeSegmentBase;
+  SecondImageRecordCodeSection->CodeSegmentSize =
+    TempImageRecordCodeSection.CodeSegmentSize;
 }
 
 /**
@@ -839,11 +971,17 @@ SortImageRecordCodeSection (
                                      Link,
                                      IMAGE_PROPERTIES_RECORD_CODE_SECTION_SIGNATURE
                                      );
-      if (ImageRecordCodeSection->CodeSegmentBase > NextImageRecordCodeSection->CodeSegmentBase) {
-        SwapImageRecordCodeSection (ImageRecordCodeSection, NextImageRecordCodeSection);
+      if (ImageRecordCodeSection->CodeSegmentBase >
+          NextImageRecordCodeSection->CodeSegmentBase)
+      {
+        SwapImageRecordCodeSection (
+          ImageRecordCodeSection,
+          NextImageRecordCodeSection
+          );
       }
 
-      NextImageRecordCodeSectionLink = NextImageRecordCodeSectionLink->ForwardLink;
+      NextImageRecordCodeSectionLink =
+        NextImageRecordCodeSectionLink->ForwardLink;
     }
 
     ImageRecordCodeSectionLink     = ImageRecordCodeSectionLink->ForwardLink;
@@ -871,7 +1009,11 @@ IsImageRecordCodeSectionValid (
   LIST_ENTRY                            *ImageRecordCodeSectionEndLink;
   LIST_ENTRY                            *ImageRecordCodeSectionList;
 
-  DEBUG ((DEBUG_VERBOSE, "SMM ImageCode SegmentCount - 0x%x\n", ImageRecord->CodeSegmentCount));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "SMM ImageCode SegmentCount - 0x%x\n",
+    ImageRecord->CodeSegmentCount
+    ));
 
   ImageRecordCodeSectionList = &ImageRecord->CodeSegmentList;
 
@@ -893,16 +1035,24 @@ IsImageRecordCodeSectionValid (
       return FALSE;
     }
 
-    if (ImageRecordCodeSection->CodeSegmentBase >= MAX_ADDRESS - ImageRecordCodeSection->CodeSegmentSize) {
+    if (ImageRecordCodeSection->CodeSegmentBase >= MAX_ADDRESS -
+        ImageRecordCodeSection->CodeSegmentSize)
+    {
       return FALSE;
     }
 
-    if ((ImageRecordCodeSection->CodeSegmentBase + ImageRecordCodeSection->CodeSegmentSize) > (ImageRecord->ImageBase + ImageRecord->ImageSize)) {
+    if ((ImageRecordCodeSection->CodeSegmentBase +
+         ImageRecordCodeSection->CodeSegmentSize) > (ImageRecord->ImageBase +
+                                                     ImageRecord->ImageSize))
+    {
       return FALSE;
     }
 
     if (LastImageRecordCodeSection != NULL) {
-      if ((LastImageRecordCodeSection->CodeSegmentBase + LastImageRecordCodeSection->CodeSegmentSize) > ImageRecordCodeSection->CodeSegmentBase) {
+      if ((LastImageRecordCodeSection->CodeSegmentBase +
+           LastImageRecordCodeSection->CodeSegmentSize) >
+          ImageRecordCodeSection->CodeSegmentBase)
+      {
         return FALSE;
       }
     }
@@ -941,7 +1091,10 @@ SwapImageRecord (
   SecondImageRecord->ImageSize        = TempImageRecord.ImageSize;
   SecondImageRecord->CodeSegmentCount = TempImageRecord.CodeSegmentCount;
 
-  SwapListEntries (&FirstImageRecord->CodeSegmentList, &SecondImageRecord->CodeSegmentList);
+  SwapListEntries (
+    &FirstImageRecord->CodeSegmentList,
+    &SecondImageRecord->CodeSegmentList
+    );
 }
 
 /**
@@ -1017,7 +1170,13 @@ DumpImageRecord (
                     Link,
                     IMAGE_PROPERTIES_RECORD_SIGNATURE
                     );
-    DEBUG ((DEBUG_VERBOSE, "SMM  Image[%d]: 0x%016lx - 0x%016lx\n", Index, ImageRecord->ImageBase, ImageRecord->ImageSize));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "SMM  Image[%d]: 0x%016lx - 0x%016lx\n",
+      Index,
+      ImageRecord->ImageBase,
+      ImageRecord->ImageSize
+      ));
   }
 }
 
@@ -1044,7 +1203,12 @@ SmmInsertImageRecord (
   IMAGE_PROPERTIES_RECORD_CODE_SECTION  *ImageRecordCodeSection;
 
   DEBUG ((DEBUG_VERBOSE, "SMM InsertImageRecord - 0x%x\n", DriverEntry));
-  DEBUG ((DEBUG_VERBOSE, "SMM InsertImageRecord - 0x%016lx - 0x%08x\n", DriverEntry->ImageBuffer, DriverEntry->NumberOfPage));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "SMM InsertImageRecord - 0x%016lx - 0x%08x\n",
+    DriverEntry->ImageBuffer,
+    DriverEntry->NumberOfPage
+    ));
 
   ImageRecord = AllocatePool (sizeof (*ImageRecord));
   if (ImageRecord == NULL) {
@@ -1053,7 +1217,11 @@ SmmInsertImageRecord (
 
   ImageRecord->Signature = IMAGE_PROPERTIES_RECORD_SIGNATURE;
 
-  DEBUG ((DEBUG_VERBOSE, "SMM ImageRecordCount - 0x%x\n", mImagePropertiesPrivateData.ImageRecordCount));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "SMM ImageRecordCount - 0x%x\n",
+    mImagePropertiesPrivateData.ImageRecordCount
+    ));
 
   //
   // Step 1: record whole region
@@ -1077,9 +1245,14 @@ SmmInsertImageRecord (
     PeCoffHeaderOffset = DosHdr->e_lfanew;
   }
 
-  Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINT8 *)(UINTN)ImageAddress + PeCoffHeaderOffset);
+  Hdr.Pe32 = (EFI_IMAGE_NT_HEADERS32 *)((UINT8 *)(UINTN)ImageAddress +
+                                        PeCoffHeaderOffset);
   if (Hdr.Pe32->Signature != EFI_IMAGE_NT_SIGNATURE) {
-    DEBUG ((DEBUG_VERBOSE, "SMM Hdr.Pe32->Signature invalid - 0x%x\n", Hdr.Pe32->Signature));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "SMM Hdr.Pe32->Signature invalid - 0x%x\n",
+      Hdr.Pe32->Signature
+      ));
     goto Finish;
   }
 
@@ -1113,7 +1286,8 @@ SmmInsertImageRecord (
                                          PeCoffHeaderOffset +
                                          sizeof (UINT32) +
                                          sizeof (EFI_IMAGE_FILE_HEADER) +
-                                         Hdr.Pe32->FileHeader.SizeOfOptionalHeader
+                                         Hdr.Pe32->FileHeader.
+                                           SizeOfOptionalHeader
                                          );
   ImageRecord->CodeSegmentCount = 0;
   InitializeListHead (&ImageRecord->CodeSegmentList);
@@ -1133,15 +1307,51 @@ SmmInsertImageRecord (
       ));
 
     if ((Section[Index].Characteristics & EFI_IMAGE_SCN_CNT_CODE) != 0) {
-      DEBUG ((DEBUG_VERBOSE, "SMM   VirtualSize          - 0x%08x\n", Section[Index].Misc.VirtualSize));
-      DEBUG ((DEBUG_VERBOSE, "SMM   VirtualAddress       - 0x%08x\n", Section[Index].VirtualAddress));
-      DEBUG ((DEBUG_VERBOSE, "SMM   SizeOfRawData        - 0x%08x\n", Section[Index].SizeOfRawData));
-      DEBUG ((DEBUG_VERBOSE, "SMM   PointerToRawData     - 0x%08x\n", Section[Index].PointerToRawData));
-      DEBUG ((DEBUG_VERBOSE, "SMM   PointerToRelocations - 0x%08x\n", Section[Index].PointerToRelocations));
-      DEBUG ((DEBUG_VERBOSE, "SMM   PointerToLinenumbers - 0x%08x\n", Section[Index].PointerToLinenumbers));
-      DEBUG ((DEBUG_VERBOSE, "SMM   NumberOfRelocations  - 0x%08x\n", Section[Index].NumberOfRelocations));
-      DEBUG ((DEBUG_VERBOSE, "SMM   NumberOfLinenumbers  - 0x%08x\n", Section[Index].NumberOfLinenumbers));
-      DEBUG ((DEBUG_VERBOSE, "SMM   Characteristics      - 0x%08x\n", Section[Index].Characteristics));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "SMM   VirtualSize          - 0x%08x\n",
+        Section[Index].Misc.VirtualSize
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "SMM   VirtualAddress       - 0x%08x\n",
+        Section[Index].VirtualAddress
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "SMM   SizeOfRawData        - 0x%08x\n",
+        Section[Index].SizeOfRawData
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "SMM   PointerToRawData     - 0x%08x\n",
+        Section[Index].PointerToRawData
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "SMM   PointerToRelocations - 0x%08x\n",
+        Section[Index].PointerToRelocations
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "SMM   PointerToLinenumbers - 0x%08x\n",
+        Section[Index].PointerToLinenumbers
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "SMM   NumberOfRelocations  - 0x%08x\n",
+        Section[Index].NumberOfRelocations
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "SMM   NumberOfLinenumbers  - 0x%08x\n",
+        Section[Index].NumberOfLinenumbers
+        ));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "SMM   Characteristics      - 0x%08x\n",
+        Section[Index].Characteristics
+        ));
 
       //
       // Step 2: record code section
@@ -1151,21 +1361,34 @@ SmmInsertImageRecord (
         return;
       }
 
-      ImageRecordCodeSection->Signature = IMAGE_PROPERTIES_RECORD_CODE_SECTION_SIGNATURE;
+      ImageRecordCodeSection->Signature =
+        IMAGE_PROPERTIES_RECORD_CODE_SECTION_SIGNATURE;
 
-      ImageRecordCodeSection->CodeSegmentBase = (UINTN)ImageAddress + Section[Index].VirtualAddress;
+      ImageRecordCodeSection->CodeSegmentBase = (UINTN)ImageAddress +
+                                                Section[Index].VirtualAddress;
       ImageRecordCodeSection->CodeSegmentSize = Section[Index].SizeOfRawData;
 
-      DEBUG ((DEBUG_VERBOSE, "SMM ImageCode: 0x%016lx - 0x%016lx\n", ImageRecordCodeSection->CodeSegmentBase, ImageRecordCodeSection->CodeSegmentSize));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "SMM ImageCode: 0x%016lx - 0x%016lx\n",
+        ImageRecordCodeSection->CodeSegmentBase,
+        ImageRecordCodeSection->CodeSegmentSize
+        ));
 
-      InsertTailList (&ImageRecord->CodeSegmentList, &ImageRecordCodeSection->Link);
+      InsertTailList (
+        &ImageRecord->CodeSegmentList,
+        &ImageRecordCodeSection->Link
+        );
       ImageRecord->CodeSegmentCount++;
     }
   }
 
   if (ImageRecord->CodeSegmentCount == 0) {
     SetMemoryAttributesTableSectionAlignment (1);
-    DEBUG ((DEBUG_ERROR, "SMM !!!!!!!!  InsertImageRecord - CodeSegmentCount is 0  !!!!!!!!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SMM !!!!!!!!  InsertImageRecord - CodeSegmentCount is 0  !!!!!!!!\n"
+      ));
     PdbPointer = PeCoffLoaderGetPdbPointer ((VOID *)(UINTN)ImageAddress);
     if (PdbPointer != NULL) {
       DEBUG ((DEBUG_ERROR, "SMM !!!!!!!!  Image - %a  !!!!!!!!\n", PdbPointer));
@@ -1186,11 +1409,17 @@ SmmInsertImageRecord (
     goto Finish;
   }
 
-  InsertTailList (&mImagePropertiesPrivateData.ImageRecordList, &ImageRecord->Link);
+  InsertTailList (
+    &mImagePropertiesPrivateData.ImageRecordList,
+    &ImageRecord->Link
+    );
   mImagePropertiesPrivateData.ImageRecordCount++;
 
-  if (mImagePropertiesPrivateData.CodeSegmentCountMax < ImageRecord->CodeSegmentCount) {
-    mImagePropertiesPrivateData.CodeSegmentCountMax = ImageRecord->CodeSegmentCount;
+  if (mImagePropertiesPrivateData.CodeSegmentCountMax <
+      ImageRecord->CodeSegmentCount)
+  {
+    mImagePropertiesPrivateData.CodeSegmentCountMax =
+      ImageRecord->CodeSegmentCount;
   }
 
   SortImageRecord ();
@@ -1252,32 +1481,78 @@ PublishMemoryAttributesTable (
   // Allocate MemoryAttributesTable
   //
   RuntimeEntryCount         = MemoryMapSize/DescriptorSize;
-  MemoryAttributesTableSize = sizeof (EDKII_PI_SMM_MEMORY_ATTRIBUTES_TABLE) + DescriptorSize * RuntimeEntryCount;
-  MemoryAttributesTable     = AllocatePool (sizeof (EDKII_PI_SMM_MEMORY_ATTRIBUTES_TABLE) + DescriptorSize * RuntimeEntryCount);
+  MemoryAttributesTableSize = sizeof (EDKII_PI_SMM_MEMORY_ATTRIBUTES_TABLE) +
+                              DescriptorSize * RuntimeEntryCount;
+  MemoryAttributesTable = AllocatePool (
+                            sizeof (EDKII_PI_SMM_MEMORY_ATTRIBUTES_TABLE) +
+                            DescriptorSize *
+                            RuntimeEntryCount
+                            );
   ASSERT (MemoryAttributesTable != NULL);
-  MemoryAttributesTable->Version         = EDKII_PI_SMM_MEMORY_ATTRIBUTES_TABLE_VERSION;
+  MemoryAttributesTable->Version =
+    EDKII_PI_SMM_MEMORY_ATTRIBUTES_TABLE_VERSION;
   MemoryAttributesTable->NumberOfEntries = (UINT32)RuntimeEntryCount;
   MemoryAttributesTable->DescriptorSize  = (UINT32)DescriptorSize;
   MemoryAttributesTable->Reserved        = 0;
   DEBUG ((DEBUG_VERBOSE, "MemoryAttributesTable:\n"));
-  DEBUG ((DEBUG_VERBOSE, "  Version              - 0x%08x\n", MemoryAttributesTable->Version));
-  DEBUG ((DEBUG_VERBOSE, "  NumberOfEntries      - 0x%08x\n", MemoryAttributesTable->NumberOfEntries));
-  DEBUG ((DEBUG_VERBOSE, "  DescriptorSize       - 0x%08x\n", MemoryAttributesTable->DescriptorSize));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "  Version              - 0x%08x\n",
+    MemoryAttributesTable->Version
+    ));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "  NumberOfEntries      - 0x%08x\n",
+    MemoryAttributesTable->NumberOfEntries
+    ));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "  DescriptorSize       - 0x%08x\n",
+    MemoryAttributesTable->DescriptorSize
+    ));
   MemoryAttributesEntry = (EFI_MEMORY_DESCRIPTOR *)(MemoryAttributesTable + 1);
   for (Index = 0; Index < MemoryMapSize/DescriptorSize; Index++) {
     CopyMem (MemoryAttributesEntry, MemoryMap, DescriptorSize);
     DEBUG ((DEBUG_VERBOSE, "Entry (0x%x)\n", MemoryAttributesEntry));
-    DEBUG ((DEBUG_VERBOSE, "  Type              - 0x%x\n", MemoryAttributesEntry->Type));
-    DEBUG ((DEBUG_VERBOSE, "  PhysicalStart     - 0x%016lx\n", MemoryAttributesEntry->PhysicalStart));
-    DEBUG ((DEBUG_VERBOSE, "  VirtualStart      - 0x%016lx\n", MemoryAttributesEntry->VirtualStart));
-    DEBUG ((DEBUG_VERBOSE, "  NumberOfPages     - 0x%016lx\n", MemoryAttributesEntry->NumberOfPages));
-    DEBUG ((DEBUG_VERBOSE, "  Attribute         - 0x%016lx\n", MemoryAttributesEntry->Attribute));
-    MemoryAttributesEntry = NEXT_MEMORY_DESCRIPTOR (MemoryAttributesEntry, DescriptorSize);
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "  Type              - 0x%x\n",
+      MemoryAttributesEntry->Type
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "  PhysicalStart     - 0x%016lx\n",
+      MemoryAttributesEntry->PhysicalStart
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "  VirtualStart      - 0x%016lx\n",
+      MemoryAttributesEntry->VirtualStart
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "  NumberOfPages     - 0x%016lx\n",
+      MemoryAttributesEntry->NumberOfPages
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "  Attribute         - 0x%016lx\n",
+      MemoryAttributesEntry->Attribute
+      ));
+    MemoryAttributesEntry = NEXT_MEMORY_DESCRIPTOR (
+                              MemoryAttributesEntry,
+                              DescriptorSize
+                              );
 
     MemoryMap = NEXT_MEMORY_DESCRIPTOR (MemoryMap, DescriptorSize);
   }
 
-  Status = gSmst->SmmInstallConfigurationTable (gSmst, &gEdkiiPiSmmMemoryAttributesTableGuid, MemoryAttributesTable, MemoryAttributesTableSize);
+  Status = gSmst->SmmInstallConfigurationTable (
+                    gSmst,
+                    &gEdkiiPiSmmMemoryAttributesTableGuid,
+                    MemoryAttributesTable,
+                    MemoryAttributesTableSize
+                    );
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -1317,7 +1592,12 @@ SmmInstallImageRecord (
       continue;
     }
 
-    DEBUG ((DEBUG_VERBOSE, "LoadedImage - 0x%x 0x%x ", LoadedImage->ImageBase, LoadedImage->ImageSize));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "LoadedImage - 0x%x 0x%x ",
+      LoadedImage->ImageBase,
+      LoadedImage->ImageSize
+      ));
     {
       VOID  *PdbPointer;
       PdbPointer = PeCoffLoaderGetPdbPointer (LoadedImage->ImageBase);
@@ -1328,7 +1608,9 @@ SmmInstallImageRecord (
     DEBUG ((DEBUG_VERBOSE, "\n"));
     ZeroMem (&DriverEntry, sizeof (DriverEntry));
     DriverEntry.ImageBuffer  = (UINTN)LoadedImage->ImageBase;
-    DriverEntry.NumberOfPage = EFI_SIZE_TO_PAGES ((UINTN)LoadedImage->ImageSize);
+    DriverEntry.NumberOfPage = EFI_SIZE_TO_PAGES (
+                                 (UINTN)LoadedImage->ImageSize
+                                 );
     SmmInsertImageRecord (&DriverEntry);
   }
 
@@ -1354,12 +1636,24 @@ SmmInstallMemoryAttributesTable (
 {
   SmmInstallImageRecord ();
 
-  DEBUG ((DEBUG_VERBOSE, "SMM MemoryProtectionAttribute - 0x%016lx\n", mMemoryProtectionAttribute));
-  if ((mMemoryProtectionAttribute & EFI_MEMORY_ATTRIBUTES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA) == 0) {
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "SMM MemoryProtectionAttribute - 0x%016lx\n",
+    mMemoryProtectionAttribute
+    ));
+  if ((mMemoryProtectionAttribute &
+       EFI_MEMORY_ATTRIBUTES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA)
+      ==
+      0)
+  {
     return EFI_SUCCESS;
   }
 
-  DEBUG ((DEBUG_VERBOSE, "SMM Total Image Count - 0x%x\n", mImagePropertiesPrivateData.ImageRecordCount));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "SMM Total Image Count - 0x%x\n",
+    mImagePropertiesPrivateData.ImageRecordCount
+    ));
   DEBUG ((DEBUG_VERBOSE, "SMM Dump ImageRecord:\n"));
   DumpImageRecord ();
 

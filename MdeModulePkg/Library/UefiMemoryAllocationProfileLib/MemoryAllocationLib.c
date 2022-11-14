@@ -241,7 +241,12 @@ InternalAllocateAlignedPages (
     //
     ASSERT (RealPages > Pages);
 
-    Status = gBS->AllocatePages (AllocateAnyPages, MemoryType, RealPages, &Memory);
+    Status = gBS->AllocatePages (
+                    AllocateAnyPages,
+                    MemoryType,
+                    RealPages,
+                    &Memory
+                    );
     if (EFI_ERROR (Status)) {
       return NULL;
     }
@@ -349,7 +354,11 @@ AllocateAlignedRuntimePages (
 {
   VOID  *Buffer;
 
-  Buffer = InternalAllocateAlignedPages (EfiRuntimeServicesData, Pages, Alignment);
+  Buffer = InternalAllocateAlignedPages (
+             EfiRuntimeServicesData,
+             Pages,
+             Alignment
+             );
   if (Buffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -391,7 +400,11 @@ AllocateAlignedReservedPages (
 {
   VOID  *Buffer;
 
-  Buffer = InternalAllocateAlignedPages (EfiReservedMemoryType, Pages, Alignment);
+  Buffer = InternalAllocateAlignedPages (
+             EfiReservedMemoryType,
+             Pages,
+             Alignment
+             );
   if (Buffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -773,7 +786,11 @@ AllocateCopyPool (
 {
   VOID  *NewBuffer;
 
-  NewBuffer = InternalAllocateCopyPool (EfiBootServicesData, AllocationSize, Buffer);
+  NewBuffer = InternalAllocateCopyPool (
+                EfiBootServicesData,
+                AllocationSize,
+                Buffer
+                );
   if (NewBuffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -814,7 +831,11 @@ AllocateRuntimeCopyPool (
 {
   VOID  *NewBuffer;
 
-  NewBuffer = InternalAllocateCopyPool (EfiRuntimeServicesData, AllocationSize, Buffer);
+  NewBuffer = InternalAllocateCopyPool (
+                EfiRuntimeServicesData,
+                AllocationSize,
+                Buffer
+                );
   if (NewBuffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -855,7 +876,11 @@ AllocateReservedCopyPool (
 {
   VOID  *NewBuffer;
 
-  NewBuffer = InternalAllocateCopyPool (EfiReservedMemoryType, AllocationSize, Buffer);
+  NewBuffer = InternalAllocateCopyPool (
+                EfiReservedMemoryType,
+                AllocationSize,
+                Buffer
+                );
   if (NewBuffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -942,7 +967,12 @@ ReallocatePool (
 {
   VOID  *Buffer;
 
-  Buffer = InternalReallocatePool (EfiBootServicesData, OldSize, NewSize, OldBuffer);
+  Buffer = InternalReallocatePool (
+             EfiBootServicesData,
+             OldSize,
+             NewSize,
+             OldBuffer
+             );
   if (Buffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -988,7 +1018,12 @@ ReallocateRuntimePool (
 {
   VOID  *Buffer;
 
-  Buffer = InternalReallocatePool (EfiRuntimeServicesData, OldSize, NewSize, OldBuffer);
+  Buffer = InternalReallocatePool (
+             EfiRuntimeServicesData,
+             OldSize,
+             NewSize,
+             OldBuffer
+             );
   if (Buffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -1034,7 +1069,12 @@ ReallocateReservedPool (
 {
   VOID  *Buffer;
 
-  Buffer = InternalReallocatePool (EfiReservedMemoryType, OldSize, NewSize, OldBuffer);
+  Buffer = InternalReallocatePool (
+             EfiReservedMemoryType,
+             OldSize,
+             NewSize,
+             OldBuffer
+             );
   if (Buffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),

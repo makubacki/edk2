@@ -123,7 +123,8 @@ BufferInSmram (
 
   for (Index = 0; Index < mSmramRangeCount; Index++) {
     if (((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer >= mSmramRanges[Index].CpuStart) &&
-        ((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer < (mSmramRanges[Index].CpuStart + mSmramRanges[Index].PhysicalSize)))
+        ((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer < (mSmramRanges[Index].CpuStart +
+                                                mSmramRanges[Index].PhysicalSize)))
     {
       return TRUE;
     }
@@ -159,7 +160,12 @@ InternalAllocatePages (
     return NULL;
   }
 
-  Status = gSmst->SmmAllocatePages (AllocateAnyPages, MemoryType, Pages, &Memory);
+  Status = gSmst->SmmAllocatePages (
+                    AllocateAnyPages,
+                    MemoryType,
+                    Pages,
+                    &Memory
+                    );
   if (EFI_ERROR (Status)) {
     return NULL;
   }
@@ -358,7 +364,12 @@ InternalAllocateAlignedPages (
     //
     ASSERT (RealPages > Pages);
 
-    Status = gSmst->SmmAllocatePages (AllocateAnyPages, MemoryType, RealPages, &Memory);
+    Status = gSmst->SmmAllocatePages (
+                      AllocateAnyPages,
+                      MemoryType,
+                      RealPages,
+                      &Memory
+                      );
     if (EFI_ERROR (Status)) {
       return NULL;
     }
@@ -386,7 +397,12 @@ InternalAllocateAlignedPages (
     //
     // Do not over-allocate pages in this case.
     //
-    Status = gSmst->SmmAllocatePages (AllocateAnyPages, MemoryType, Pages, &Memory);
+    Status = gSmst->SmmAllocatePages (
+                      AllocateAnyPages,
+                      MemoryType,
+                      Pages,
+                      &Memory
+                      );
     if (EFI_ERROR (Status)) {
       return NULL;
     }
@@ -425,7 +441,11 @@ AllocateAlignedPages (
 {
   VOID  *Buffer;
 
-  Buffer = InternalAllocateAlignedPages (EfiRuntimeServicesData, Pages, Alignment);
+  Buffer = InternalAllocateAlignedPages (
+             EfiRuntimeServicesData,
+             Pages,
+             Alignment
+             );
   if (Buffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -468,7 +488,11 @@ AllocateAlignedRuntimePages (
 {
   VOID  *Buffer;
 
-  Buffer = InternalAllocateAlignedPages (EfiRuntimeServicesData, Pages, Alignment);
+  Buffer = InternalAllocateAlignedPages (
+             EfiRuntimeServicesData,
+             Pages,
+             Alignment
+             );
   if (Buffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -869,7 +893,11 @@ AllocateCopyPool (
 {
   VOID  *NewBuffer;
 
-  NewBuffer = InternalAllocateCopyPool (EfiRuntimeServicesData, AllocationSize, Buffer);
+  NewBuffer = InternalAllocateCopyPool (
+                EfiRuntimeServicesData,
+                AllocationSize,
+                Buffer
+                );
   if (NewBuffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -911,7 +939,11 @@ AllocateRuntimeCopyPool (
 {
   VOID  *NewBuffer;
 
-  NewBuffer = InternalAllocateCopyPool (EfiRuntimeServicesData, AllocationSize, Buffer);
+  NewBuffer = InternalAllocateCopyPool (
+                EfiRuntimeServicesData,
+                AllocationSize,
+                Buffer
+                );
   if (NewBuffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -1026,7 +1058,12 @@ ReallocatePool (
 {
   VOID  *Buffer;
 
-  Buffer = InternalReallocatePool (EfiRuntimeServicesData, OldSize, NewSize, OldBuffer);
+  Buffer = InternalReallocatePool (
+             EfiRuntimeServicesData,
+             OldSize,
+             NewSize,
+             OldBuffer
+             );
   if (Buffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),
@@ -1072,7 +1109,12 @@ ReallocateRuntimePool (
 {
   VOID  *Buffer;
 
-  Buffer = InternalReallocatePool (EfiRuntimeServicesData, OldSize, NewSize, OldBuffer);
+  Buffer = InternalReallocatePool (
+             EfiRuntimeServicesData,
+             OldSize,
+             NewSize,
+             OldBuffer
+             );
   if (Buffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS)(UINTN)RETURN_ADDRESS (0),

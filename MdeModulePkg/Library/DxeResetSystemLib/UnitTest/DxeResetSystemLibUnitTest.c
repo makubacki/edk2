@@ -261,16 +261,32 @@ UnitTestingEntry (
   //
   // Start setting up the test framework for running the tests.
   //
-  Status = InitUnitTestFramework (&Framework, UNIT_TEST_APP_NAME, gEfiCallerBaseName, UNIT_TEST_APP_VERSION);
+  Status = InitUnitTestFramework (
+             &Framework,
+             UNIT_TEST_APP_NAME,
+             gEfiCallerBaseName,
+             UNIT_TEST_APP_VERSION
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in InitUnitTestFramework. Status = %r\n",
+      Status
+      ));
     goto EXIT;
   }
 
   //
   // Populate the ResetSytemLib Unit Test Suite.
   //
-  Status = CreateUnitTestSuite (&ResetTests, Framework, "DxeResetSystemLib Reset Tests", "ResetSystemLib.Reset", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &ResetTests,
+             Framework,
+             "DxeResetSystemLib Reset Tests",
+             "ResetSystemLib.Reset",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for ResetTests\n"));
     Status = EFI_OUT_OF_RESOURCES;
@@ -280,11 +296,51 @@ UnitTestingEntry (
   //
   // --------------Suite-----------Description--------------Name----------Function--------Pre---Post-------------------Context-----------
   //
-  AddTestCase (ResetTests, "ResetCold should issue a cold reset", "Cold", ResetColdShouldIssueAColdReset, NULL, NULL, NULL);
-  AddTestCase (ResetTests, "ResetWarm should issue a warm reset", "Warm", ResetWarmShouldIssueAWarmReset, NULL, NULL, NULL);
-  AddTestCase (ResetTests, "ResetShutdown should issue a shutdown", "Shutdown", ResetShutdownShouldIssueAShutdown, NULL, NULL, NULL);
-  AddTestCase (ResetTests, "ResetPlatformSpecific should issue a platform-specific reset", "Platform", ResetPlatformSpecificShouldIssueAPlatformSpecificReset, NULL, NULL, NULL);
-  AddTestCase (ResetTests, "ResetSystem should pass all parameters through", "Parameters", ResetSystemShouldPassTheParametersThrough, NULL, NULL, NULL);
+  AddTestCase (
+    ResetTests,
+    "ResetCold should issue a cold reset",
+    "Cold",
+    ResetColdShouldIssueAColdReset,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    ResetTests,
+    "ResetWarm should issue a warm reset",
+    "Warm",
+    ResetWarmShouldIssueAWarmReset,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    ResetTests,
+    "ResetShutdown should issue a shutdown",
+    "Shutdown",
+    ResetShutdownShouldIssueAShutdown,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    ResetTests,
+    "ResetPlatformSpecific should issue a platform-specific reset",
+    "Platform",
+    ResetPlatformSpecificShouldIssueAPlatformSpecificReset,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    ResetTests,
+    "ResetSystem should pass all parameters through",
+    "Parameters",
+    ResetSystemShouldPassTheParametersThrough,
+    NULL,
+    NULL,
+    NULL
+    );
 
   //
   // Execute the tests.

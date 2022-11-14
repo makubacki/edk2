@@ -21,7 +21,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Forward reference for pure ANSI compatability
 //
-typedef struct _EDKII_UFS_HOST_CONTROLLER_PROTOCOL EDKII_UFS_HOST_CONTROLLER_PROTOCOL;
+typedef struct _EDKII_UFS_HOST_CONTROLLER_PROTOCOL
+EDKII_UFS_HOST_CONTROLLER_PROTOCOL;
 
 /**
   Get the MMIO base address of UFS host controller.

@@ -162,7 +162,8 @@ BrotliDecompress (
   BrFree (BuffInfo, Input);
   BrFree (BuffInfo, Output);
   BrotliDecoderDestroyInstance (BroState);
-  return (Result == BROTLI_DECODER_RESULT_SUCCESS) ? EFI_SUCCESS : EFI_INVALID_PARAMETER;
+  return (Result == BROTLI_DECODER_RESULT_SUCCESS) ? EFI_SUCCESS :
+         EFI_INVALID_PARAMETER;
 }
 
 /**
@@ -236,12 +237,22 @@ BrotliUefiDecompressGetInfo (
 
   ASSERT (SourceSize >= BROTLI_SCRATCH_MAX);
 
-  MaxOffset        = BROTLI_DECODE_MAX;
-  GetSize          = BrGetDecodedSizeOfBuf ((UINT8 *)Source, MaxOffset - BROTLI_INFO_SIZE, MaxOffset);
+  MaxOffset = BROTLI_DECODE_MAX;
+  GetSize   = BrGetDecodedSizeOfBuf (
+                (UINT8 *)Source,
+                MaxOffset -
+                BROTLI_INFO_SIZE,
+                MaxOffset
+                );
   *DestinationSize = (UINT32)GetSize;
   MaxOffset        = BROTLI_SCRATCH_MAX;
-  GetSize          = BrGetDecodedSizeOfBuf ((UINT8 *)Source, MaxOffset - BROTLI_INFO_SIZE, MaxOffset);
-  *ScratchSize     = (UINT32)GetSize;
+  GetSize          = BrGetDecodedSizeOfBuf (
+                       (UINT8 *)Source,
+                       MaxOffset -
+                       BROTLI_INFO_SIZE,
+                       MaxOffset
+                       );
+  *ScratchSize = (UINT32)GetSize;
   return EFI_SUCCESS;
 }
 
@@ -283,7 +294,12 @@ BrotliUefiDecompress (
   UINT8        MaxOffset;
 
   MaxOffset = BROTLI_SCRATCH_MAX;
-  GetSize   = BrGetDecodedSizeOfBuf ((UINT8 *)Source, MaxOffset - BROTLI_INFO_SIZE, MaxOffset);
+  GetSize   = BrGetDecodedSizeOfBuf (
+                (UINT8 *)Source,
+                MaxOffset -
+                BROTLI_INFO_SIZE,
+                MaxOffset
+                );
 
   BroBuff.Buff     = Scratch;
   BroBuff.BuffSize = (UINTN)GetSize;

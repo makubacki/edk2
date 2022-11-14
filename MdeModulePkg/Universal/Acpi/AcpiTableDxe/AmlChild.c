@@ -33,7 +33,9 @@ AmlGetChildFromObjectBuffer (
   // Root is considered as SCOPE, which has TermList.
   // We need return only Object in TermList.
   //
-  while ((UINTN)CurrentBuffer < (UINTN)(AmlParentHandle->Buffer + AmlParentHandle->Size)) {
+  while ((UINTN)CurrentBuffer < (UINTN)(AmlParentHandle->Buffer +
+                                        AmlParentHandle->Size))
+  {
     AmlByteEncoding = AmlSearchByOpByte (CurrentBuffer);
     if (AmlByteEncoding == NULL) {
       return EFI_INVALID_PARAMETER;
@@ -50,7 +52,8 @@ AmlGetChildFromObjectBuffer (
     DataSize = AmlGetObjectSize (
                  AmlByteEncoding,
                  CurrentBuffer,
-                 (UINTN)AmlParentHandle->Buffer + AmlParentHandle->Size - (UINTN)CurrentBuffer
+                 (UINTN)AmlParentHandle->Buffer + AmlParentHandle->Size -
+                 (UINTN)CurrentBuffer
                  );
     if (DataSize == 0) {
       return EFI_INVALID_PARAMETER;
@@ -218,7 +221,9 @@ AmlGetChildFromObjectChildList (
     //
     // Buffer < Data means next node is first object
     //
-  } else if ((UINTN)AmlHandle->Buffer + AmlHandle->Size < (UINTN)AmlParentHandle->Buffer + AmlParentHandle->Size) {
+  } else if ((UINTN)AmlHandle->Buffer + AmlHandle->Size <
+             (UINTN)AmlParentHandle->Buffer + AmlParentHandle->Size)
+  {
     //
     // There is still more node
     //

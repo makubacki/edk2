@@ -159,7 +159,10 @@ DiskIoDriverBindingStart (
   //
   // Initialize the Disk IO device instance.
   //
-  Instance = AllocateCopyPool (sizeof (DISK_IO_PRIVATE_DATA), &gDiskIoPrivateDataTemplate);
+  Instance = AllocateCopyPool (
+               sizeof (DISK_IO_PRIVATE_DATA),
+               &gDiskIoPrivateDataTemplate
+               );
   if (Instance == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
@@ -170,15 +173,21 @@ DiskIoDriverBindingStart (
   //
   ASSERT (
     (Instance->BlockIo2 == NULL) ||
-    ((Instance->BlockIo->Media->IoAlign == Instance->BlockIo2->Media->IoAlign) &&
-     (Instance->BlockIo->Media->BlockSize == Instance->BlockIo2->Media->BlockSize)
+    ((Instance->BlockIo->Media->IoAlign ==
+      Instance->BlockIo2->Media->IoAlign) &&
+     (Instance->BlockIo->Media->BlockSize ==
+      Instance->BlockIo2->Media->BlockSize)
     )
     );
 
   InitializeListHead (&Instance->TaskQueue);
   EfiInitializeLock (&Instance->TaskQueueLock, TPL_NOTIFY);
   Instance->SharedWorkingBuffer = AllocateAlignedPages (
-                                    EFI_SIZE_TO_PAGES (PcdGet32 (PcdDiskIoDataBufferBlockNum) * Instance->BlockIo->Media->BlockSize),
+                                    EFI_SIZE_TO_PAGES (
+                                      PcdGet32 (
+                                        PcdDiskIoDataBufferBlockNum
+                                        ) * Instance->BlockIo->Media->BlockSize
+                                      ),
                                     Instance->BlockIo->Media->IoAlign
                                     );
   if (Instance->SharedWorkingBuffer == NULL) {
@@ -212,7 +221,10 @@ ErrorExit:
     if ((Instance != NULL) && (Instance->SharedWorkingBuffer != NULL)) {
       FreeAlignedPages (
         Instance->SharedWorkingBuffer,
-        EFI_SIZE_TO_PAGES (PcdGet32 (PcdDiskIoDataBufferBlockNum) * Instance->BlockIo->Media->BlockSize)
+        EFI_SIZE_TO_PAGES (
+          PcdGet32 (PcdDiskIoDataBufferBlockNum) *
+          Instance->BlockIo->Media->BlockSize
+          )
         );
     }
 
@@ -327,7 +339,10 @@ DiskIoDriverBindingStop (
 
     FreeAlignedPages (
       Instance->SharedWorkingBuffer,
-      EFI_SIZE_TO_PAGES (PcdGet32 (PcdDiskIoDataBufferBlockNum) * Instance->BlockIo->Media->BlockSize)
+      EFI_SIZE_TO_PAGES (
+        PcdGet32 (PcdDiskIoDataBufferBlockNum) *
+        Instance->BlockIo->Media->BlockSize
+        )
       );
 
     Status = gBS->CloseProtocol (
@@ -429,7 +444,11 @@ DiskIo2OnReadWriteComplete (
       (Task->Token != NULL) && !Subtask->Write
       )
   {
-    CopyMem (Subtask->Buffer, Subtask->WorkingBuffer + Subtask->Offset, Subtask->Length);
+    CopyMem (
+      Subtask->Buffer,
+      Subtask->WorkingBuffer + Subtask->Offset,
+      Subtask->Length
+      );
   }
 
   DiskIoDestroySubtask (Instance, Subtask);
@@ -559,7 +578,13 @@ DiskIoCreateSubtaskList (
   VOID             *WorkingBuffer;
   LIST_ENTRY       *Link;
 
-  DEBUG ((DEBUG_BLKIO, "DiskIo: Create subtasks for task: Offset/BufferSize/Buffer = %016lx/%08x/%08x\n", Offset, BufferSize, Buffer));
+  DEBUG ((
+    DEBUG_BLKIO,
+    "DiskIo: Create subtasks for task: Offset/BufferSize/Buffer = %016lx/%08x/%08x\n",
+    Offset,
+    BufferSize,
+    Buffer
+    ));
 
   BlockSize = Instance->BlockIo->Media->BlockSize;
   IoAlign   = Instance->BlockIo->Media->IoAlign;
@@ -574,7 +599,15 @@ DiskIoCreateSubtaskList (
   // Special handling for zero BufferSize
   //
   if (BufferSize == 0) {
-    Subtask = DiskIoCreateSubtask (Write, Lba, UnderRun, 0, NULL, BufferPtr, Blocking);
+    Subtask = DiskIoCreateSubtask (
+                Write,
+                Lba,
+                UnderRun,
+                0,
+                NULL,
+                BufferPtr,
+                Blocking
+                );
     if (Subtask == NULL) {
       goto Done;
     }
@@ -588,7 +621,10 @@ DiskIoCreateSubtaskList (
     if (Blocking) {
       WorkingBuffer = SharedWorkingBuffer;
     } else {
-      WorkingBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (BlockSize), IoAlign);
+      WorkingBuffer = AllocateAlignedPages (
+                        EFI_SIZE_TO_PAGES (BlockSize),
+                        IoAlign
+                        );
       if (WorkingBuffer == NULL) {
         goto Done;
       }
@@ -599,7 +635,15 @@ DiskIoCreateSubtaskList (
       // A half write operation can be splitted to a blocking block-read and half write operation
       // This can simplify the sub task processing logic
       //
-      Subtask = DiskIoCreateSubtask (FALSE, Lba, 0, BlockSize, NULL, WorkingBuffer, TRUE);
+      Subtask = DiskIoCreateSubtask (
+                  FALSE,
+                  Lba,
+                  0,
+                  BlockSize,
+                  NULL,
+                  WorkingBuffer,
+                  TRUE
+                  );
       if (Subtask == NULL) {
         goto Done;
       }
@@ -607,7 +651,15 @@ DiskIoCreateSubtaskList (
       InsertTailList (Subtasks, &Subtask->Link);
     }
 
-    Subtask = DiskIoCreateSubtask (Write, Lba, UnderRun, Length, WorkingBuffer, BufferPtr, Blocking);
+    Subtask = DiskIoCreateSubtask (
+                Write,
+                Lba,
+                UnderRun,
+                Length,
+                WorkingBuffer,
+                BufferPtr,
+                Blocking
+                );
     if (Subtask == NULL) {
       goto Done;
     }
@@ -627,7 +679,10 @@ DiskIoCreateSubtaskList (
     if (Blocking) {
       WorkingBuffer = SharedWorkingBuffer;
     } else {
-      WorkingBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (BlockSize), IoAlign);
+      WorkingBuffer = AllocateAlignedPages (
+                        EFI_SIZE_TO_PAGES (BlockSize),
+                        IoAlign
+                        );
       if (WorkingBuffer == NULL) {
         goto Done;
       }
@@ -638,7 +693,15 @@ DiskIoCreateSubtaskList (
       // A half write operation can be splitted to a blocking block-read and half write operation
       // This can simplify the sub task processing logic
       //
-      Subtask = DiskIoCreateSubtask (FALSE, OverRunLba, 0, BlockSize, NULL, WorkingBuffer, TRUE);
+      Subtask = DiskIoCreateSubtask (
+                  FALSE,
+                  OverRunLba,
+                  0,
+                  BlockSize,
+                  NULL,
+                  WorkingBuffer,
+                  TRUE
+                  );
       if (Subtask == NULL) {
         goto Done;
       }
@@ -646,7 +709,15 @@ DiskIoCreateSubtaskList (
       InsertTailList (Subtasks, &Subtask->Link);
     }
 
-    Subtask = DiskIoCreateSubtask (Write, OverRunLba, 0, OverRun, WorkingBuffer, BufferPtr + BufferSize, Blocking);
+    Subtask = DiskIoCreateSubtask (
+                Write,
+                OverRunLba,
+                0,
+                OverRun,
+                WorkingBuffer,
+                BufferPtr + BufferSize,
+                Blocking
+                );
     if (Subtask == NULL) {
       goto Done;
     }
@@ -659,7 +730,15 @@ DiskIoCreateSubtaskList (
     // If the DiskIo maps directly to a BlockIo device do the read.
     //
     if (ALIGN_POINTER (BufferPtr, IoAlign) == BufferPtr) {
-      Subtask = DiskIoCreateSubtask (Write, Lba, 0, BufferSize, NULL, BufferPtr, Blocking);
+      Subtask = DiskIoCreateSubtask (
+                  Write,
+                  Lba,
+                  0,
+                  BufferSize,
+                  NULL,
+                  BufferPtr,
+                  Blocking
+                  );
       if (Subtask == NULL) {
         goto Done;
       }
@@ -675,10 +754,26 @@ DiskIoCreateSubtaskList (
         // Use the allocated buffer instead of the original buffer
         // to avoid alignment issue.
         //
-        for ( ; Lba < OverRunLba; Lba += PcdGet32 (PcdDiskIoDataBufferBlockNum)) {
-          DataBufferSize = MIN (BufferSize, PcdGet32 (PcdDiskIoDataBufferBlockNum) * BlockSize);
+        for ( ; Lba < OverRunLba; Lba += PcdGet32 (
+                                           PcdDiskIoDataBufferBlockNum
+                                           ))
+        {
+          DataBufferSize = MIN (
+                             BufferSize,
+                             PcdGet32 (
+                               PcdDiskIoDataBufferBlockNum
+                               ) * BlockSize
+                             );
 
-          Subtask = DiskIoCreateSubtask (Write, Lba, 0, DataBufferSize, SharedWorkingBuffer, BufferPtr, Blocking);
+          Subtask = DiskIoCreateSubtask (
+                      Write,
+                      Lba,
+                      0,
+                      DataBufferSize,
+                      SharedWorkingBuffer,
+                      BufferPtr,
+                      Blocking
+                      );
           if (Subtask == NULL) {
             goto Done;
           }
@@ -690,17 +785,41 @@ DiskIoCreateSubtaskList (
           BufferSize -= DataBufferSize;
         }
       } else {
-        WorkingBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (BufferSize), IoAlign);
+        WorkingBuffer = AllocateAlignedPages (
+                          EFI_SIZE_TO_PAGES (BufferSize),
+                          IoAlign
+                          );
         if (WorkingBuffer == NULL) {
           //
           // If there is not enough memory, downgrade to blocking access
           //
-          DEBUG ((DEBUG_VERBOSE, "DiskIo: No enough memory so downgrade to blocking access\n"));
-          if (!DiskIoCreateSubtaskList (Instance, Write, Offset, BufferSize, BufferPtr, TRUE, SharedWorkingBuffer, Subtasks)) {
+          DEBUG ((
+            DEBUG_VERBOSE,
+            "DiskIo: No enough memory so downgrade to blocking access\n"
+            ));
+          if (!DiskIoCreateSubtaskList (
+                 Instance,
+                 Write,
+                 Offset,
+                 BufferSize,
+                 BufferPtr,
+                 TRUE,
+                 SharedWorkingBuffer,
+                 Subtasks
+                 ))
+          {
             goto Done;
           }
         } else {
-          Subtask = DiskIoCreateSubtask (Write, Lba, 0, BufferSize, WorkingBuffer, BufferPtr, Blocking);
+          Subtask = DiskIoCreateSubtask (
+                      Write,
+                      Lba,
+                      0,
+                      BufferSize,
+                      WorkingBuffer,
+                      BufferPtr,
+                      Blocking
+                      );
           if (Subtask == NULL) {
             goto Done;
           }
@@ -796,7 +915,11 @@ DiskIo2RemoveCompletedTask (
   QueueEmpty = TRUE;
 
   EfiAcquireLock (&Instance->TaskQueueLock);
-  for (Link = GetFirstNode (&Instance->TaskQueue); !IsNull (&Instance->TaskQueue, Link); ) {
+  for (Link = GetFirstNode (&Instance->TaskQueue); !IsNull (
+                                                      &Instance->TaskQueue,
+                                                      Link
+                                                      ); )
+  {
     Task = CR (Link, DISK_IO2_TASK, Link, DISK_IO2_TASK_SIGNATURE);
     if (IsListEmpty (&Task->Subtasks)) {
       Link = RemoveEntryList (&Task->Link);
@@ -886,7 +1009,17 @@ DiskIo2ReadWriteDisk (
   }
 
   InitializeListHead (SubtasksPtr);
-  if (!DiskIoCreateSubtaskList (Instance, Write, Offset, BufferSize, Buffer, Blocking, Instance->SharedWorkingBuffer, SubtasksPtr)) {
+  if (!DiskIoCreateSubtaskList (
+         Instance,
+         Write,
+         Offset,
+         BufferSize,
+         Buffer,
+         Blocking,
+         Instance->SharedWorkingBuffer,
+         SubtasksPtr
+         ))
+  {
     if (Task != NULL) {
       FreePool (Task);
     }
@@ -897,16 +1030,27 @@ DiskIo2ReadWriteDisk (
   ASSERT (!IsListEmpty (SubtasksPtr));
 
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
-  for ( Link = GetFirstNode (SubtasksPtr), NextLink = GetNextNode (SubtasksPtr, Link)
+  for ( Link = GetFirstNode (SubtasksPtr), NextLink = GetNextNode (
+                                                        SubtasksPtr,
+                                                        Link
+                                                        )
         ; !IsNull (SubtasksPtr, Link)
         ; Link = NextLink, NextLink = GetNextNode (SubtasksPtr, NextLink)
         )
   {
-    Subtask         = CR (Link, DISK_IO_SUBTASK, Link, DISK_IO_SUBTASK_SIGNATURE);
+    Subtask = CR (
+                Link,
+                DISK_IO_SUBTASK,
+                Link,
+                DISK_IO_SUBTASK_SIGNATURE
+                );
     Subtask->Task   = Task;
     SubtaskBlocking = Subtask->Blocking;
 
-    ASSERT ((Subtask->Length % Media->BlockSize == 0) || (Subtask->Length < Media->BlockSize));
+    ASSERT (
+      (Subtask->Length % Media->BlockSize == 0) || (Subtask->Length <
+                                                    Media->BlockSize)
+      );
 
     if (Subtask->Write) {
       //
@@ -916,7 +1060,11 @@ DiskIo2ReadWriteDisk (
         //
         // A sub task before this one should be a block read operation, causing the WorkingBuffer filled with the entire one block data.
         //
-        CopyMem (Subtask->WorkingBuffer + Subtask->Offset, Subtask->Buffer, Subtask->Length);
+        CopyMem (
+          Subtask->WorkingBuffer + Subtask->Offset,
+          Subtask->Buffer,
+          Subtask->Length
+          );
       }
 
       if (SubtaskBlocking) {
@@ -924,8 +1072,10 @@ DiskIo2ReadWriteDisk (
                             BlockIo,
                             MediaId,
                             Subtask->Lba,
-                            (Subtask->Length % Media->BlockSize == 0) ? Subtask->Length : Media->BlockSize,
-                            (Subtask->WorkingBuffer != NULL) ? Subtask->WorkingBuffer : Subtask->Buffer
+                            (Subtask->Length % Media->BlockSize == 0) ?
+                            Subtask->Length : Media->BlockSize,
+                            (Subtask->WorkingBuffer != NULL) ?
+                            Subtask->WorkingBuffer : Subtask->Buffer
                             );
       } else {
         Status = BlockIo2->WriteBlocksEx (
@@ -933,8 +1083,10 @@ DiskIo2ReadWriteDisk (
                              MediaId,
                              Subtask->Lba,
                              &Subtask->BlockIo2Token,
-                             (Subtask->Length % Media->BlockSize == 0) ? Subtask->Length : Media->BlockSize,
-                             (Subtask->WorkingBuffer != NULL) ? Subtask->WorkingBuffer : Subtask->Buffer
+                             (Subtask->Length % Media->BlockSize == 0) ?
+                             Subtask->Length : Media->BlockSize,
+                             (Subtask->WorkingBuffer != NULL) ?
+                             Subtask->WorkingBuffer : Subtask->Buffer
                              );
       }
     } else {
@@ -946,11 +1098,17 @@ DiskIo2ReadWriteDisk (
                             BlockIo,
                             MediaId,
                             Subtask->Lba,
-                            (Subtask->Length % Media->BlockSize == 0) ? Subtask->Length : Media->BlockSize,
-                            (Subtask->WorkingBuffer != NULL) ? Subtask->WorkingBuffer : Subtask->Buffer
+                            (Subtask->Length % Media->BlockSize == 0) ?
+                            Subtask->Length : Media->BlockSize,
+                            (Subtask->WorkingBuffer != NULL) ?
+                            Subtask->WorkingBuffer : Subtask->Buffer
                             );
         if (!EFI_ERROR (Status) && (Subtask->WorkingBuffer != NULL)) {
-          CopyMem (Subtask->Buffer, Subtask->WorkingBuffer + Subtask->Offset, Subtask->Length);
+          CopyMem (
+            Subtask->Buffer,
+            Subtask->WorkingBuffer + Subtask->Offset,
+            Subtask->Length
+            );
         }
       } else {
         Status = BlockIo2->ReadBlocksEx (
@@ -958,8 +1116,10 @@ DiskIo2ReadWriteDisk (
                              MediaId,
                              Subtask->Lba,
                              &Subtask->BlockIo2Token,
-                             (Subtask->Length % Media->BlockSize == 0) ? Subtask->Length : Media->BlockSize,
-                             (Subtask->WorkingBuffer != NULL) ? Subtask->WorkingBuffer : Subtask->Buffer
+                             (Subtask->Length % Media->BlockSize == 0) ?
+                             Subtask->Length : Media->BlockSize,
+                             (Subtask->WorkingBuffer != NULL) ?
+                             Subtask->WorkingBuffer : Subtask->Buffer
                              );
       }
     }
@@ -985,7 +1145,12 @@ DiskIo2ReadWriteDisk (
   //
   if (EFI_ERROR (Status)) {
     while (!IsNull (SubtasksPtr, NextLink)) {
-      Subtask  = CR (NextLink, DISK_IO_SUBTASK, Link, DISK_IO_SUBTASK_SIGNATURE);
+      Subtask = CR (
+                  NextLink,
+                  DISK_IO_SUBTASK,
+                  Link,
+                  DISK_IO_SUBTASK_SIGNATURE
+                  );
       NextLink = DiskIoDestroySubtask (Instance, Subtask);
     }
   }
@@ -1004,7 +1169,10 @@ DiskIo2ReadWriteDisk (
       // Task->Token should be set to NULL by the DiskIo2OnReadWriteComplete
       // It it's not, that means the non-blocking request was downgraded to blocking request.
       //
-      DEBUG ((DEBUG_VERBOSE, "DiskIo: Non-blocking request was downgraded to blocking request, signal event directly.\n"));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "DiskIo: Non-blocking request was downgraded to blocking request, signal event directly.\n"
+        ));
       Task->Token->TransactionStatus = Status;
       gBS->SignalEvent (Task->Token->Event);
     }
@@ -1178,7 +1346,10 @@ DiskIo2FlushDiskEx (
 
     Task->Signature = DISK_IO2_FLUSH_TASK_SIGNATURE;
     Task->Token     = Token;
-    Status          = Private->BlockIo2->FlushBlocksEx (Private->BlockIo2, &Task->BlockIo2Token);
+    Status          = Private->BlockIo2->FlushBlocksEx (
+                                           Private->BlockIo2,
+                                           &Task->BlockIo2Token
+                                           );
     if (EFI_ERROR (Status)) {
       gBS->CloseEvent (Task->BlockIo2Token.Event);
       FreePool (Task);

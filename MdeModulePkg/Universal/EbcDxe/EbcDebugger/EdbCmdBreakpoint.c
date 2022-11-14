@@ -57,7 +57,9 @@ DebuggerBreakpointIsDuplicated (
   // Go through each breakpoint context
   //
   for (Index = 0; Index < DebuggerPrivate->DebuggerBreakpointCount; Index++) {
-    if (DebuggerPrivate->DebuggerBreakpointContext[Index].BreakpointAddress == Address) {
+    if (DebuggerPrivate->DebuggerBreakpointContext[Index].BreakpointAddress ==
+        Address)
+    {
       //
       // Found it
       //
@@ -113,11 +115,19 @@ DebuggerBreakpointAdd (
   //
   // Set the breakpoint
   //
-  DebuggerPrivate->DebuggerBreakpointContext[DebuggerPrivate->DebuggerBreakpointCount].BreakpointAddress = Address;
-  DebuggerPrivate->DebuggerBreakpointContext[DebuggerPrivate->DebuggerBreakpointCount].State             = TRUE;
-  DebuggerPrivate->DebuggerBreakpointContext[DebuggerPrivate->DebuggerBreakpointCount].OldInstruction    = 0;
+  DebuggerPrivate->DebuggerBreakpointContext[DebuggerPrivate->
+                                               DebuggerBreakpointCount].
+    BreakpointAddress = Address;
+  DebuggerPrivate->DebuggerBreakpointContext[DebuggerPrivate->
+                                               DebuggerBreakpointCount].State
+    = TRUE;
+  DebuggerPrivate->DebuggerBreakpointContext[DebuggerPrivate->
+                                               DebuggerBreakpointCount].
+    OldInstruction = 0;
   CopyMem (
-    &DebuggerPrivate->DebuggerBreakpointContext[DebuggerPrivate->DebuggerBreakpointCount].OldInstruction,
+    &DebuggerPrivate->DebuggerBreakpointContext[DebuggerPrivate->
+                                                  DebuggerBreakpointCount].
+      OldInstruction,
     (VOID *)Address,
     sizeof (UINT16)
     );
@@ -158,7 +168,9 @@ DebuggerBreakpointDel (
   //
   // Delete this breakpoint
   //
-  for (BpIndex = Index; BpIndex < DebuggerPrivate->DebuggerBreakpointCount - 1; BpIndex++) {
+  for (BpIndex = Index; BpIndex < DebuggerPrivate->DebuggerBreakpointCount - 1;
+       BpIndex++)
+  {
     CopyMem (
       &DebuggerPrivate->DebuggerBreakpointContext[BpIndex],
       &DebuggerPrivate->DebuggerBreakpointContext[BpIndex + 1],
@@ -269,7 +281,9 @@ DebuggerBreakpointList (
   if (DebuggerPrivate->DebuggerBreakpointCount == 0) {
     EDBPrint (L"No Breakpoint\n");
     return EFI_DEBUG_CONTINUE;
-  } else if (DebuggerPrivate->DebuggerBreakpointCount > EFI_DEBUGGER_BREAKPOINT_MAX) {
+  } else if (DebuggerPrivate->DebuggerBreakpointCount >
+             EFI_DEBUGGER_BREAKPOINT_MAX)
+  {
     EDBPrint (L"Breakpoint too many!\n");
     DebuggerPrivate->DebuggerBreakpointCount = 0;
     return EFI_DEBUG_CONTINUE;
@@ -287,7 +301,11 @@ DebuggerBreakpointList (
     //
     // Print the breakpoint
     //
-    EDBPrint (L"  %2d    0x%016lx", Index, DebuggerPrivate->DebuggerBreakpointContext[Index].BreakpointAddress);
+    EDBPrint (
+      L"  %2d    0x%016lx",
+      Index,
+      DebuggerPrivate->DebuggerBreakpointContext[Index].BreakpointAddress
+      );
     if (DebuggerPrivate->DebuggerBreakpointContext[Index].State) {
       EDBPrint (L"    *\n");
     } else {
@@ -392,7 +410,10 @@ DebuggerBreakpointClear (
     // delete all breakpoint
     //
     DebuggerPrivate->DebuggerBreakpointCount = 0;
-    ZeroMem (DebuggerPrivate->DebuggerBreakpointContext, sizeof (DebuggerPrivate->DebuggerBreakpointContext));
+    ZeroMem (
+      DebuggerPrivate->DebuggerBreakpointContext,
+      sizeof (DebuggerPrivate->DebuggerBreakpointContext)
+      );
     EDBPrint (L"All the Breakpoint is cleared\n");
     return EFI_DEBUG_CONTINUE;
   }

@@ -98,12 +98,22 @@ typedef struct {
   LIST_ENTRY                               AsyncTaskQueue;
 } SCSI_DISK_DEV;
 
-#define SCSI_DISK_DEV_FROM_BLKIO(a)     CR (a, SCSI_DISK_DEV, BlkIo, SCSI_DISK_DEV_SIGNATURE)
-#define SCSI_DISK_DEV_FROM_BLKIO2(a)    CR (a, SCSI_DISK_DEV, BlkIo2, SCSI_DISK_DEV_SIGNATURE)
-#define SCSI_DISK_DEV_FROM_ERASEBLK(a)  CR (a, SCSI_DISK_DEV, EraseBlock, SCSI_DISK_DEV_SIGNATURE)
-#define SCSI_DISK_DEV_FROM_STORSEC(a)   CR (a, SCSI_DISK_DEV, StorageSecurity, SCSI_DISK_DEV_SIGNATURE)
+#define SCSI_DISK_DEV_FROM_BLKIO( \
+                                a)     \
+      CR (a, SCSI_DISK_DEV, BlkIo, SCSI_DISK_DEV_SIGNATURE)
+#define SCSI_DISK_DEV_FROM_BLKIO2( \
+                                 a)    \
+      CR (a, SCSI_DISK_DEV, BlkIo2, SCSI_DISK_DEV_SIGNATURE)
+#define SCSI_DISK_DEV_FROM_ERASEBLK( \
+                                   a)  \
+      CR (a, SCSI_DISK_DEV, EraseBlock, SCSI_DISK_DEV_SIGNATURE)
+#define SCSI_DISK_DEV_FROM_STORSEC( \
+                                  a)   \
+      CR (a, SCSI_DISK_DEV, StorageSecurity, SCSI_DISK_DEV_SIGNATURE)
 
-#define SCSI_DISK_DEV_FROM_DISKINFO(a)  CR (a, SCSI_DISK_DEV, DiskInfo, SCSI_DISK_DEV_SIGNATURE)
+#define SCSI_DISK_DEV_FROM_DISKINFO( \
+                                   a)  \
+  CR (a, SCSI_DISK_DEV, DiskInfo, SCSI_DISK_DEV_SIGNATURE)
 
 //
 // Asynchronous I/O request

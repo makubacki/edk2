@@ -10,9 +10,11 @@
 
 #include "ReportStatusCodeRouterRuntimeDxe.h"
 
-EFI_HANDLE  mHandle                    = NULL;
-LIST_ENTRY  mCallbackListHead          = INITIALIZE_LIST_HEAD_VARIABLE (mCallbackListHead);
-EFI_EVENT   mVirtualAddressChangeEvent = NULL;
+EFI_HANDLE  mHandle           = NULL;
+LIST_ENTRY  mCallbackListHead = INITIALIZE_LIST_HEAD_VARIABLE (
+                                  mCallbackListHead
+                                  );
+EFI_EVENT  mVirtualAddressChangeEvent = NULL;
 
 //
 // Report operation nest status.
@@ -65,7 +67,8 @@ RscHandlerNotification (
                      &RscData->Data
                      );
 
-    Address += (OFFSET_OF (RSC_DATA_ENTRY, Data) + RscData->Data.HeaderSize + RscData->Data.Size);
+    Address += (OFFSET_OF (RSC_DATA_ENTRY, Data) + RscData->Data.HeaderSize +
+                RscData->Data.Size);
     Address  = ALIGN_VARIABLE (Address);
   }
 
@@ -115,8 +118,20 @@ Register (
     return EFI_INVALID_PARAMETER;
   }
 
-  for (Link = GetFirstNode (&mCallbackListHead); !IsNull (&mCallbackListHead, Link); Link = GetNextNode (&mCallbackListHead, Link)) {
-    CallbackEntry = CR (Link, RSC_HANDLER_CALLBACK_ENTRY, Node, RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE);
+  for (Link = GetFirstNode (&mCallbackListHead); !IsNull (
+                                                    &mCallbackListHead,
+                                                    Link
+                                                    ); Link = GetNextNode (
+                                                                &
+                                                                mCallbackListHead,
+                                                                Link))
+  {
+    CallbackEntry = CR (
+                      Link,
+                      RSC_HANDLER_CALLBACK_ENTRY,
+                      Node,
+                      RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE
+                      );
     if (CallbackEntry->RscHandlerCallback == Callback) {
       //
       // If the function was already registered. It can't be registered again.
@@ -141,16 +156,17 @@ Register (
   // buffer and event trigger.
   //
   if (Tpl != TPL_HIGH_LEVEL) {
-    CallbackEntry->StatusCodeDataBuffer = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (EFI_PAGE_SIZE);
-    CallbackEntry->BufferSize           = EFI_PAGE_SIZE;
-    CallbackEntry->EndPointer           = CallbackEntry->StatusCodeDataBuffer;
-    Status                              = gBS->CreateEvent (
-                                                 EVT_NOTIFY_SIGNAL,
-                                                 Tpl,
-                                                 RscHandlerNotification,
-                                                 CallbackEntry,
-                                                 &CallbackEntry->Event
-                                                 );
+    CallbackEntry->StatusCodeDataBuffer =
+      (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (EFI_PAGE_SIZE);
+    CallbackEntry->BufferSize = EFI_PAGE_SIZE;
+    CallbackEntry->EndPointer = CallbackEntry->StatusCodeDataBuffer;
+    Status                    = gBS->CreateEvent (
+                                       EVT_NOTIFY_SIGNAL,
+                                       Tpl,
+                                       RscHandlerNotification,
+                                       CallbackEntry,
+                                       &CallbackEntry->Event
+                                       );
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -186,8 +202,20 @@ Unregister (
     return EFI_INVALID_PARAMETER;
   }
 
-  for (Link = GetFirstNode (&mCallbackListHead); !IsNull (&mCallbackListHead, Link); Link = GetNextNode (&mCallbackListHead, Link)) {
-    CallbackEntry = CR (Link, RSC_HANDLER_CALLBACK_ENTRY, Node, RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE);
+  for (Link = GetFirstNode (&mCallbackListHead); !IsNull (
+                                                    &mCallbackListHead,
+                                                    Link
+                                                    ); Link = GetNextNode (
+                                                                &
+                                                                mCallbackListHead,
+                                                                Link))
+  {
+    CallbackEntry = CR (
+                      Link,
+                      RSC_HANDLER_CALLBACK_ENTRY,
+                      Node,
+                      RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE
+                      );
     if (CallbackEntry->RscHandlerCallback == Callback) {
       //
       // If the function is found in list, delete it and return.
@@ -249,8 +277,17 @@ ReportDispatcher (
     return EFI_DEVICE_ERROR;
   }
 
-  for (Link = GetFirstNode (&mCallbackListHead); !IsNull (&mCallbackListHead, Link);) {
-    CallbackEntry = CR (Link, RSC_HANDLER_CALLBACK_ENTRY, Node, RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE);
+  for (Link = GetFirstNode (&mCallbackListHead); !IsNull (
+                                                    &mCallbackListHead,
+                                                    Link
+                                                    );)
+  {
+    CallbackEntry = CR (
+                      Link,
+                      RSC_HANDLER_CALLBACK_ENTRY,
+                      Node,
+                      RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE
+                      );
     //
     // The handler may remove itself, so get the next handler in advance.
     //
@@ -270,18 +307,22 @@ ReportDispatcher (
     // If callback is registered with TPL lower than TPL_HIGH_LEVEL, event must be signaled at boot time to possibly wait for
     // allowed TPL to report status code. Related data should also be stored in data buffer.
     //
-    FailSafeEndPointer         = CallbackEntry->EndPointer;
-    CallbackEntry->EndPointer  = ALIGN_VARIABLE (CallbackEntry->EndPointer);
-    RscData                    = (RSC_DATA_ENTRY *)(UINTN)CallbackEntry->EndPointer;
+    FailSafeEndPointer        = CallbackEntry->EndPointer;
+    CallbackEntry->EndPointer = ALIGN_VARIABLE (CallbackEntry->EndPointer);
+    RscData                   =
+      (RSC_DATA_ENTRY *)(UINTN)CallbackEntry->EndPointer;
     CallbackEntry->EndPointer += sizeof (RSC_DATA_ENTRY);
     if (Data != NULL) {
-      CallbackEntry->EndPointer += (Data->Size + Data->HeaderSize - sizeof (EFI_STATUS_CODE_DATA));
+      CallbackEntry->EndPointer += (Data->Size + Data->HeaderSize -
+                                    sizeof (EFI_STATUS_CODE_DATA));
     }
 
     //
     // If data buffer is about to be used up (7/8 here), try to reallocate a buffer with double size, if not at TPL_HIGH_LEVEL.
     //
-    if (CallbackEntry->EndPointer > (CallbackEntry->StatusCodeDataBuffer + (CallbackEntry->BufferSize / 8) * 7)) {
+    if (CallbackEntry->EndPointer > (CallbackEntry->StatusCodeDataBuffer +
+                                     (CallbackEntry->BufferSize / 8) * 7))
+    {
       if (EfiGetCurrentTpl () < TPL_HIGH_LEVEL) {
         NewBuffer = ReallocatePool (
                       CallbackEntry->BufferSize,
@@ -289,11 +330,22 @@ ReportDispatcher (
                       (VOID *)(UINTN)CallbackEntry->StatusCodeDataBuffer
                       );
         if (NewBuffer != NULL) {
-          FailSafeEndPointer                  = (EFI_PHYSICAL_ADDRESS)(UINTN)NewBuffer + (FailSafeEndPointer - CallbackEntry->StatusCodeDataBuffer);
-          CallbackEntry->EndPointer           = (EFI_PHYSICAL_ADDRESS)(UINTN)NewBuffer + (CallbackEntry->EndPointer - CallbackEntry->StatusCodeDataBuffer);
-          RscData                             = (RSC_DATA_ENTRY *)(UINTN)((UINTN)NewBuffer + ((UINTN)RscData - CallbackEntry->StatusCodeDataBuffer));
-          CallbackEntry->StatusCodeDataBuffer = (EFI_PHYSICAL_ADDRESS)(UINTN)NewBuffer;
-          CallbackEntry->BufferSize          *= 2;
+          FailSafeEndPointer =
+            (EFI_PHYSICAL_ADDRESS)(UINTN)NewBuffer + (FailSafeEndPointer -
+                                                      CallbackEntry->
+                                                        StatusCodeDataBuffer);
+          CallbackEntry->EndPointer =
+            (EFI_PHYSICAL_ADDRESS)(UINTN)NewBuffer +
+            (CallbackEntry->EndPointer -
+             CallbackEntry->
+               StatusCodeDataBuffer);
+          RscData =
+            (RSC_DATA_ENTRY *)(UINTN)((UINTN)NewBuffer + ((UINTN)RscData -
+                                                          CallbackEntry->
+                                                            StatusCodeDataBuffer));
+          CallbackEntry->StatusCodeDataBuffer =
+            (EFI_PHYSICAL_ADDRESS)(UINTN)NewBuffer;
+          CallbackEntry->BufferSize *= 2;
         }
       }
     }
@@ -301,7 +353,9 @@ ReportDispatcher (
     //
     // If data buffer is used up, do not report for this time.
     //
-    if (CallbackEntry->EndPointer > (CallbackEntry->StatusCodeDataBuffer + CallbackEntry->BufferSize)) {
+    if (CallbackEntry->EndPointer > (CallbackEntry->StatusCodeDataBuffer +
+                                     CallbackEntry->BufferSize))
+    {
       CallbackEntry->EndPointer = FailSafeEndPointer;
       continue;
     }
@@ -352,9 +406,24 @@ VirtualAddressChangeCallBack (
   LIST_ENTRY                  *Link;
   RSC_HANDLER_CALLBACK_ENTRY  *CallbackEntry;
 
-  for (Link = GetFirstNode (&mCallbackListHead); !IsNull (&mCallbackListHead, Link); Link = GetNextNode (&mCallbackListHead, Link)) {
-    CallbackEntry = CR (Link, RSC_HANDLER_CALLBACK_ENTRY, Node, RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE);
-    Status        = EfiConvertFunctionPointer (0, (VOID **)&CallbackEntry->RscHandlerCallback);
+  for (Link = GetFirstNode (&mCallbackListHead); !IsNull (
+                                                    &mCallbackListHead,
+                                                    Link
+                                                    ); Link = GetNextNode (
+                                                                &
+                                                                mCallbackListHead,
+                                                                Link))
+  {
+    CallbackEntry = CR (
+                      Link,
+                      RSC_HANDLER_CALLBACK_ENTRY,
+                      Node,
+                      RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE
+                      );
+    Status = EfiConvertFunctionPointer (
+               0,
+               (VOID **)&CallbackEntry->RscHandlerCallback
+               );
     ASSERT_EFI_ERROR (Status);
   }
 

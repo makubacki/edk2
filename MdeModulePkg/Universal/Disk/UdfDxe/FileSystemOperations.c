@@ -156,14 +156,22 @@ StartMainVolumeDescriptorSequence (
         //
         // Save Partition Descriptor
         //
-        CopyMem (&Volume->PartitionDesc, Buffer, sizeof (Volume->PartitionDesc));
+        CopyMem (
+          &Volume->PartitionDesc,
+          Buffer,
+          sizeof (Volume->PartitionDesc)
+          );
         break;
 
       case UdfLogicalVolumeDescriptor:
         //
         // Save Logical Volume Descriptor
         //
-        CopyMem (&Volume->LogicalVolDesc, Buffer, sizeof (Volume->LogicalVolDesc));
+        CopyMem (
+          &Volume->LogicalVolDesc,
+          Buffer,
+          sizeof (Volume->LogicalVolDesc)
+          );
         break;
 
       case UdfTerminatingDescriptor:
@@ -359,7 +367,11 @@ FindFileSetDescriptor (
   UDF_DESCRIPTOR_TAG             *DescriptorTag;
 
   LogicalVolDesc = &Volume->LogicalVolDesc;
-  Status         = GetLongAdLsn (Volume, &LogicalVolDesc->LogicalVolumeContentsUse, &Lsn);
+  Status         = GetLongAdLsn (
+                     Volume,
+                     &LogicalVolDesc->LogicalVolumeContentsUse,
+                     &Lsn
+                     );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -466,9 +478,11 @@ GetFidDescriptorLength (
   )
 {
   return (UINT64)(
-                  (INTN)((OFFSET_OF (UDF_FILE_IDENTIFIER_DESCRIPTOR, Data[0]) + 3 +
+                  (INTN)((OFFSET_OF (UDF_FILE_IDENTIFIER_DESCRIPTOR, Data[0]) +
+                          3 +
                           FileIdentifierDesc->LengthOfFileIdentifier +
-                          FileIdentifierDesc->LengthOfImplementationUse) >> 2) << 2
+                          FileIdentifierDesc->LengthOfImplementationUse) >>
+                         2) << 2
                   );
 }
 
@@ -487,7 +501,9 @@ DuplicateFid (
 {
   *NewFileIdentifierDesc =
     (UDF_FILE_IDENTIFIER_DESCRIPTOR *)AllocateCopyPool (
-                                        (UINTN)GetFidDescriptorLength (FileIdentifierDesc),
+                                        (UINTN)GetFidDescriptorLength (
+                                                 FileIdentifierDesc
+                                                 ),
                                         FileIdentifierDesc
                                         );
 }
@@ -1044,7 +1060,11 @@ GrowUpBufferToNextAd (
       return EFI_OUT_OF_RESOURCES;
     }
   } else {
-    *Buffer = ReallocatePool ((UINTN)Length, (UINTN)(Length + ExtentLength), *Buffer);
+    *Buffer = ReallocatePool (
+                (UINTN)Length,
+                (UINTN)(Length + ExtentLength),
+                *Buffer
+                );
     if (*Buffer == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1152,7 +1172,12 @@ ReadFile (
       //
       // There are no extents for this FE/EFE. All data is inline.
       //
-      Status = GetFileEntryData (FileEntryData, Volume->FileEntrySize, &Data, &Length);
+      Status = GetFileEntryData (
+                 FileEntryData,
+                 Volume->FileEntrySize,
+                 &Data,
+                 &Length
+                 );
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -1199,7 +1224,12 @@ ReadFile (
       // This FE/EFE contains a run of Allocation Descriptors. Get data + size
       // for start reading them out.
       //
-      Status = GetAdsInformation (FileEntryData, Volume->FileEntrySize, &Data, &Length);
+      Status = GetAdsInformation (
+                 FileEntryData,
+                 Volume->FileEntrySize,
+                 &Data,
+                 &Length
+                 );
       if (EFI_ERROR (Status)) {
         return Status;
       }
@@ -1533,7 +1563,13 @@ InternalFindFile (
         break;
       }
     } else {
-      Status = GetFileNameFromFid (FileIdentifierDesc, ARRAY_SIZE (FoundFileName), FoundFileName);
+      Status = GetFileNameFromFid (
+                 FileIdentifierDesc,
+                 ARRAY_SIZE (
+                   FoundFileName
+                   ),
+                 FoundFileName
+                 );
       if (EFI_ERROR (Status)) {
         break;
       }
@@ -2265,7 +2301,9 @@ ResolveSymlink (
           return EFI_VOLUME_CORRUPTED;
         }
 
-        if ((UINTN)PathComp->ComponentIdentifier + PathCompLength > (UINTN)EndData) {
+        if ((UINTN)PathComp->ComponentIdentifier + PathCompLength >
+            (UINTN)EndData)
+        {
           return EFI_VOLUME_CORRUPTED;
         }
 
@@ -2284,7 +2322,9 @@ ResolveSymlink (
           }
 
           if (Index < Length) {
-            *Char |= (CHAR16)(*(UINT8 *)((UINT8 *)PathComp->ComponentIdentifier + Index));
+            *Char |=
+              (CHAR16)(*(UINT8 *)((UINT8 *)PathComp->ComponentIdentifier +
+                                  Index));
           }
 
           Char++;

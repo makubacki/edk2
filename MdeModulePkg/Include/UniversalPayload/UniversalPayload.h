@@ -18,10 +18,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 typedef  VOID (EFIAPI *UNIVERSAL_PAYLOAD_ENTRY)(VOID *HobList);
 
-#define UNIVERSAL_PAYLOAD_IDENTIFIER                    SIGNATURE_32('P', 'L', 'D', 'H')
-#define UNIVERSAL_PAYLOAD_INFO_SEC_NAME                 ".upld_info"
-#define UNIVERSAL_PAYLOAD_EXTRA_SEC_NAME_PREFIX         ".upld."
-#define UNIVERSAL_PAYLOAD_EXTRA_SEC_NAME_PREFIX_LENGTH  (sizeof (UNIVERSAL_PAYLOAD_EXTRA_SEC_NAME_PREFIX) - 1)
+#define UNIVERSAL_PAYLOAD_IDENTIFIER                    \
+                                                       SIGNATURE_32('P', 'L', 'D', 'H')
+#define UNIVERSAL_PAYLOAD_INFO_SEC_NAME                ".upld_info"
+#define UNIVERSAL_PAYLOAD_EXTRA_SEC_NAME_PREFIX        ".upld."
+#define UNIVERSAL_PAYLOAD_EXTRA_SEC_NAME_PREFIX_LENGTH  \
+                                                       (sizeof (UNIVERSAL_PAYLOAD_EXTRA_SEC_NAME_PREFIX) - 1)
 
 #pragma pack(1)
 
@@ -54,6 +56,8 @@ typedef struct {
   @return  size, in bytes.
 
 **/
-#define UNIVERSAL_PAYLOAD_SIZEOF_THROUGH_FIELD(TYPE, Field)  (OFFSET_OF(TYPE, Field) + sizeof (((TYPE *) 0)->Field))
+#define UNIVERSAL_PAYLOAD_SIZEOF_THROUGH_FIELD(TYPE, \
+                                               Field)  \
+  (OFFSET_OF(TYPE, Field) + sizeof (((TYPE *) 0)->Field))
 
 #endif // UNIVERSAL_PAYLOAD_H_

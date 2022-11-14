@@ -37,9 +37,10 @@ extern EFI_DRIVER_BINDING_PROTOCOL   gSerialControllerDriver;
 extern EFI_COMPONENT_NAME_PROTOCOL   gPciSioSerialComponentName;
 extern EFI_COMPONENT_NAME2_PROTOCOL  gPciSioSerialComponentName2;
 
-#define SIO_SERIAL_PORT_NAME  L"SIO Serial Port #%d"
-#define PCI_SERIAL_PORT_NAME  L"PCI Serial Port #%d"
-#define SERIAL_PORT_NAME_LEN  (sizeof (SIO_SERIAL_PORT_NAME) / sizeof (CHAR16) + MAXIMUM_VALUE_CHARACTERS)
+#define SIO_SERIAL_PORT_NAME        L"SIO Serial Port #%d"
+#define PCI_SERIAL_PORT_NAME        L"PCI Serial Port #%d"
+#define SERIAL_PORT_NAME_LEN  \
+                                    (sizeof (SIO_SERIAL_PORT_NAME) / sizeof (CHAR16) + MAXIMUM_VALUE_CHARACTERS)
 
 //
 // Internal Data Structures
@@ -120,13 +121,16 @@ typedef struct {
 } SERIAL_DEV;
 
 #define SERIAL_DEV_SIGNATURE  SIGNATURE_32 ('s', 'e', 'r', 'd')
-#define SERIAL_DEV_FROM_THIS(a)  CR (a, SERIAL_DEV, SerialIo, SERIAL_DEV_SIGNATURE)
+#define SERIAL_DEV_FROM_THIS( \
+                            a)  \
+  CR (a, SERIAL_DEV, SerialIo, SERIAL_DEV_SIGNATURE)
 
 //
 // Serial Driver Defaults
 //
-#define SERIAL_PORT_DEFAULT_TIMEOUT       1000000
-#define SERIAL_PORT_SUPPORT_CONTROL_MASK  (EFI_SERIAL_CLEAR_TO_SEND                |       \
+#define SERIAL_PORT_DEFAULT_TIMEOUT        1000000
+#define SERIAL_PORT_SUPPORT_CONTROL_MASK  \
+                                           (EFI_SERIAL_CLEAR_TO_SEND                |      \
                                                  EFI_SERIAL_DATA_SET_READY               | \
                                                  EFI_SERIAL_RING_INDICATE                | \
                                                  EFI_SERIAL_CARRIER_DETECT               | \

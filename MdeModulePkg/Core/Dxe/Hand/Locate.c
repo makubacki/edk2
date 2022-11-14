@@ -280,7 +280,13 @@ CoreLocateHandle (
   // Lock the protocol database
   //
   CoreAcquireProtocolLock ();
-  Status = InternalCoreLocateHandle (SearchType, Protocol, SearchKey, BufferSize, Buffer);
+  Status = InternalCoreLocateHandle (
+             SearchType,
+             Protocol,
+             SearchKey,
+             BufferSize,
+             Buffer
+             );
   CoreReleaseProtocolLock ();
   return Status;
 }
@@ -360,7 +366,12 @@ CoreGetNextLocateByRegisterNotify (
     //
     Link = ProtNotify->Position->ForwardLink;
     if (Link != &ProtNotify->Protocol->Protocols) {
-      Prot       = CR (Link, PROTOCOL_INTERFACE, ByProtocol, PROTOCOL_INTERFACE_SIGNATURE);
+      Prot = CR (
+               Link,
+               PROTOCOL_INTERFACE,
+               ByProtocol,
+               PROTOCOL_INTERFACE_SIGNATURE
+               );
       Handle     = Prot->Handle;
       *Interface = Prot->Interface;
     }
@@ -410,7 +421,12 @@ CoreGetNextLocateByProtocol (
     //
     // Get the handle
     //
-    Prot       = CR (Link, PROTOCOL_INTERFACE, ByProtocol, PROTOCOL_INTERFACE_SIGNATURE);
+    Prot = CR (
+             Link,
+             PROTOCOL_INTERFACE,
+             ByProtocol,
+             PROTOCOL_INTERFACE_SIGNATURE
+             );
     Handle     = Prot->Handle;
     *Interface = Prot->Interface;
 
@@ -492,7 +508,13 @@ CoreLocateDevicePath (
   //
   // Get a list of all handles that support the requested protocol
   //
-  Status = CoreLocateHandleBuffer (ByProtocol, Protocol, NULL, &HandleCount, &Handles);
+  Status = CoreLocateHandleBuffer (
+             ByProtocol,
+             Protocol,
+             NULL,
+             &HandleCount,
+             &Handles
+             );
   if (EFI_ERROR (Status) || (HandleCount == 0)) {
     return EFI_NOT_FOUND;
   }
@@ -500,7 +522,11 @@ CoreLocateDevicePath (
   BestMatch = -1;
   for (Index = 0; Index < HandleCount; Index += 1) {
     Handle = Handles[Index];
-    Status = CoreHandleProtocol (Handle, &gEfiDevicePathProtocolGuid, (VOID **)&TmpDevicePath);
+    Status = CoreHandleProtocol (
+               Handle,
+               &gEfiDevicePathProtocolGuid,
+               (VOID **)&TmpDevicePath
+               );
     if (EFI_ERROR (Status)) {
       //
       // If this handle doesn't support device path, then skip it
@@ -511,9 +537,15 @@ CoreLocateDevicePath (
     //
     // Check if DevicePath is first part of SourcePath
     //
-    Size = GetDevicePathSize (TmpDevicePath) - sizeof (EFI_DEVICE_PATH_PROTOCOL);
+    Size = GetDevicePathSize (TmpDevicePath) -
+           sizeof (EFI_DEVICE_PATH_PROTOCOL);
     ASSERT (Size >= 0);
-    if ((Size <= SourceSize) && (CompareMem (SourcePath, TmpDevicePath, (UINTN)Size) == 0)) {
+    if ((Size <= SourceSize) && (CompareMem (
+                                   SourcePath,
+                                   TmpDevicePath,
+                                   (UINTN)Size
+                                   ) == 0))
+    {
       //
       // If the size is equal to the best match, then we
       // have a duplicate device path for 2 different device

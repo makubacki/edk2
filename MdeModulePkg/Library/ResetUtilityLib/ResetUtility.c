@@ -53,7 +53,10 @@ ResetSystemWithSubtype (
 
   ResetData.NullTerminator = CHAR_NULL;
   CopyGuid (
-    (GUID *)((UINT8 *)&ResetData + OFFSET_OF (RESET_UTILITY_GUID_SPECIFIC_RESET_DATA, ResetSubtype)),
+    (GUID *)((UINT8 *)&ResetData + OFFSET_OF (
+                                     RESET_UTILITY_GUID_SPECIFIC_RESET_DATA,
+                                     ResetSubtype
+                                     )),
     ResetSubtype
     );
 
@@ -130,9 +133,16 @@ GetResetPlatformSpecificGuid (
   // Now, assuming that we have enough data for a GUID after the string, the
   // GUID should be immediately after the string itself.
   //
-  if ((ResetDataStringSize < DataSize) && ((DataSize - ResetDataStringSize) >= sizeof (GUID))) {
+  if ((ResetDataStringSize < DataSize) && ((DataSize - ResetDataStringSize) >=
+                                           sizeof (GUID)))
+  {
     ResetSubtypeGuid = (GUID *)((UINT8 *)ResetData + ResetDataStringSize);
-    DEBUG ((DEBUG_VERBOSE, "%a - Detected reset subtype %g...\n", __FUNCTION__, ResetSubtypeGuid));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "%a - Detected reset subtype %g...\n",
+      __FUNCTION__,
+      ResetSubtypeGuid
+      ));
     return ResetSubtypeGuid;
   }
 

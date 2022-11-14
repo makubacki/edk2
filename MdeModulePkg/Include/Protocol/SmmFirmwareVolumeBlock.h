@@ -23,7 +23,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // protocol. The SMM one is intend to run in SMM environment, which means it can be
 // used by SMM drivers after ExitPmAuth.
 //
-typedef EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL EFI_SMM_FIRMWARE_VOLUME_BLOCK_PROTOCOL;
+typedef EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL
+EFI_SMM_FIRMWARE_VOLUME_BLOCK_PROTOCOL;
 
 extern EFI_GUID  gEfiSmmFirmwareVolumeBlockProtocolGuid;
 

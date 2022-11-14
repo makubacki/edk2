@@ -59,7 +59,9 @@ typedef struct {
   EFI_STOP_BITS_TYPE          StopBits;
 } DEBUGPORT_DEVICE;
 
-#define DEBUGPORT_DEVICE_FROM_THIS(a)  CR (a, DEBUGPORT_DEVICE, DebugPortInterface, DEBUGPORT_DEVICE_SIGNATURE)
+#define DEBUGPORT_DEVICE_FROM_THIS( \
+                                  a)  \
+  CR (a, DEBUGPORT_DEVICE, DebugPortInterface, DEBUGPORT_DEVICE_SIGNATURE)
 
 #define EFI_ACPI_PC_COMPORT_HID  EISA_PNP_ID (0x0500)
 #define EFI_ACPI_16550UART_HID   EISA_PNP_ID (0x0501)
@@ -73,7 +75,9 @@ typedef struct {
 
 #define DEBUGPORT_DRIVER_VERSION  1
 
-#define IS_UART_DEVICEPATH(dp)  (DevicePathType (dp) == MESSAGING_DEVICE_PATH && DevicePathSubType (dp) == MSG_UART_DP)
+#define IS_UART_DEVICEPATH( \
+                          dp)  \
+  (DevicePathType (dp) == MESSAGING_DEVICE_PATH && DevicePathSubType (dp) == MSG_UART_DP)
 
 /**
   Debug Port Driver entry point.

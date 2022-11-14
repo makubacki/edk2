@@ -89,7 +89,9 @@ typedef struct {
   EFI_KEY_DESCRIPTOR    *NsKey;
 } USB_NS_KEY;
 
-#define USB_NS_KEY_FORM_FROM_LINK(a)  CR (a, USB_NS_KEY, Link, USB_NS_KEY_SIGNATURE)
+#define USB_NS_KEY_FORM_FROM_LINK( \
+                                 a)  \
+  CR (a, USB_NS_KEY, Link, USB_NS_KEY_SIGNATURE)
 
 ///
 /// Structure to describe USB keyboard device

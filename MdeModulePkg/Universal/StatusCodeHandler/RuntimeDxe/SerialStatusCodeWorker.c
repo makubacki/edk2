@@ -49,7 +49,14 @@ SerialStatusCodeReportWorker (
   Buffer[0] = '\0';
 
   if ((Data != NULL) &&
-      ReportStatusCodeExtractAssertInfo (CodeType, Value, Data, &Filename, &Description, &LineNumber))
+      ReportStatusCodeExtractAssertInfo (
+        CodeType,
+        Value,
+        Data,
+        &Filename,
+        &Description,
+        &LineNumber
+        ))
   {
     //
     // Print ASSERT() information into output buffer.
@@ -63,7 +70,12 @@ SerialStatusCodeReportWorker (
                   Description
                   );
   } else if ((Data != NULL) &&
-             ReportStatusCodeExtractDebugInfo (Data, &ErrorLevel, &Marker, &Format))
+             ReportStatusCodeExtractDebugInfo (
+               Data,
+               &ErrorLevel,
+               &Marker,
+               &Format
+               ))
   {
     //
     // Print DEBUG() information into output buffer.
@@ -124,7 +136,8 @@ SerialStatusCodeReportWorker (
                   );
   } else if ((Data != NULL) &&
              CompareGuid (&Data->Type, &gEfiStatusCodeDataTypeStringGuid) &&
-             (((EFI_STATUS_CODE_STRING_DATA *)Data)->StringType == EfiStringAscii))
+             (((EFI_STATUS_CODE_STRING_DATA *)Data)->StringType ==
+              EfiStringAscii))
   {
     //
     // EFI_STATUS_CODE_STRING_DATA
@@ -160,7 +173,8 @@ SerialStatusCodeReportWorker (
   // so unregister the handler after receive the value of exit boot service.
   //
   if (((CodeType & EFI_STATUS_CODE_TYPE_MASK) == EFI_PROGRESS_CODE) &&
-      (Value == (EFI_SOFTWARE_EFI_BOOT_SERVICE | EFI_SW_BS_PC_EXIT_BOOT_SERVICES)))
+      (Value == (EFI_SOFTWARE_EFI_BOOT_SERVICE |
+                 EFI_SW_BS_PC_EXIT_BOOT_SERVICES)))
   {
     UnregisterSerialBootTimeHandlers ();
   }

@@ -178,7 +178,11 @@ AcpiPlatformEntryPoint (
   //
   // Find the AcpiTable protocol
   //
-  Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID **)&AcpiTable);
+  Status = gBS->LocateProtocol (
+                  &gEfiAcpiTableProtocolGuid,
+                  NULL,
+                  (VOID **)&AcpiTable
+                  );
   if (EFI_ERROR (Status)) {
     return EFI_ABORTED;
   }

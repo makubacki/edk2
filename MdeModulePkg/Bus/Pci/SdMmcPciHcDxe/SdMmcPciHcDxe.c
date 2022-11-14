@@ -210,7 +210,11 @@ Done:
       Trb->Packet->TransactionStatus = EFI_TIMEOUT;
       TrbEvent                       = Trb->Event;
       SdMmcFreeTrb (Trb);
-      DEBUG ((DEBUG_VERBOSE, "ProcessAsyncTaskList(): Signal Event %p EFI_TIMEOUT\n", TrbEvent));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "ProcessAsyncTaskList(): Signal Event %p EFI_TIMEOUT\n",
+        TrbEvent
+        ));
       gBS->SignalEvent (TrbEvent);
       return;
     }
@@ -222,7 +226,12 @@ Done:
     Trb->Packet->TransactionStatus = Status;
     TrbEvent                       = Trb->Event;
     SdMmcFreeTrb (Trb);
-    DEBUG ((DEBUG_VERBOSE, "ProcessAsyncTaskList(): Signal Event %p with %r\n", TrbEvent, Status));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "ProcessAsyncTaskList(): Signal Event %p with %r\n",
+      TrbEvent,
+      Status
+      ));
     gBS->SignalEvent (TrbEvent);
   }
 
@@ -259,10 +268,17 @@ SdMmcPciHcEnumerateDevice (
   Private = (SD_MMC_HC_PRIVATE_DATA *)Context;
 
   for (Slot = 0; Slot < SD_MMC_HC_MAX_SLOT; Slot++) {
-    if ((Private->Slot[Slot].Enable) && (Private->Slot[Slot].SlotType == RemovableSlot)) {
+    if ((Private->Slot[Slot].Enable) && (Private->Slot[Slot].SlotType ==
+                                         RemovableSlot))
+    {
       Status = SdMmcHcCardDetect (Private->PciIo, Slot, &MediaPresent);
       if ((Status == EFI_MEDIA_CHANGED) && !MediaPresent) {
-        DEBUG ((DEBUG_INFO, "SdMmcPciHcEnumerateDevice: device disconnected at slot %d of pci %p\n", Slot, Private->PciIo));
+        DEBUG ((
+          DEBUG_INFO,
+          "SdMmcPciHcEnumerateDevice: device disconnected at slot %d of pci %p\n",
+          Slot,
+          Private->PciIo
+          ));
         Private->Slot[Slot].MediaPresent = FALSE;
         Private->Slot[Slot].Initialized  = FALSE;
         //
@@ -296,7 +312,12 @@ SdMmcPciHcEnumerateDevice (
       }
 
       if ((Status == EFI_MEDIA_CHANGED) && MediaPresent) {
-        DEBUG ((DEBUG_INFO, "SdMmcPciHcEnumerateDevice: device connected at slot %d of pci %p\n", Slot, Private->PciIo));
+        DEBUG ((
+          DEBUG_INFO,
+          "SdMmcPciHcEnumerateDevice: device connected at slot %d of pci %p\n",
+          Slot,
+          Private->PciIo
+          ));
         //
         // Reset the specified slot of the SD/MMC Pci Host Controller
         //
@@ -315,7 +336,9 @@ SdMmcPciHcEnumerateDevice (
 
         Private->Slot[Slot].MediaPresent = TRUE;
         Private->Slot[Slot].Initialized  = TRUE;
-        RoutineNum                       = sizeof (mCardTypeDetectRoutineTable) / sizeof (CARD_TYPE_DETECT_ROUTINE);
+        RoutineNum                       =
+          sizeof (mCardTypeDetectRoutineTable) /
+          sizeof (CARD_TYPE_DETECT_ROUTINE);
         for (Index = 0; Index < RoutineNum; Index++) {
           Routine = &mCardTypeDetectRoutineTable[Index];
           if (*Routine != NULL) {
@@ -489,7 +512,8 @@ SdMmcPciHcDriverBindingSupported (
   //
   if ((PciData.Hdr.ClassCode[2] == PCI_CLASS_SYSTEM_PERIPHERAL) &&
       (PciData.Hdr.ClassCode[1] == PCI_SUBCLASS_SD_HOST_CONTROLLER) &&
-      ((PciData.Hdr.ClassCode[0] == 0x00) || (PciData.Hdr.ClassCode[0] == 0x01)))
+      ((PciData.Hdr.ClassCode[0] == 0x00) || (PciData.Hdr.ClassCode[0] ==
+                                              0x01)))
   {
     return EFI_SUCCESS;
   }
@@ -607,7 +631,10 @@ SdMmcPciHcDriverBindingStart (
     goto Done;
   }
 
-  Private = AllocateCopyPool (sizeof (SD_MMC_HC_PRIVATE_DATA), &gSdMmcPciHcTemplate);
+  Private = AllocateCopyPool (
+              sizeof (SD_MMC_HC_PRIVATE_DATA),
+              &gSdMmcPciHcTemplate
+              );
   if (Private == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -652,7 +679,11 @@ SdMmcPciHcDriverBindingStart (
     //
     // Get SD/MMC Pci Host Controller Version
     //
-    Status = SdMmcHcGetControllerVersion (PciIo, Slot, &Private->ControllerVersion[Slot]);
+    Status = SdMmcHcGetControllerVersion (
+               PciIo,
+               Slot,
+               &Private->ControllerVersion[Slot]
+               );
     if (EFI_ERROR (Status)) {
       continue;
     }
@@ -691,7 +722,11 @@ SdMmcPciHcDriverBindingStart (
                               (VOID *)&Private->Slot[Slot].OperatingParameters
                               );
         if (EFI_ERROR (Status)) {
-          DEBUG ((DEBUG_WARN, "%a: Failed to get operating parameters, using defaults\n", __FUNCTION__));
+          DEBUG ((
+            DEBUG_WARN,
+            "%a: Failed to get operating parameters, using defaults\n",
+            __FUNCTION__
+            ));
         }
       }
     }
@@ -724,8 +759,14 @@ SdMmcPciHcDriverBindingStart (
     }
 
     Private->Slot[Slot].SlotType = Private->Capability[Slot].SlotType;
-    if ((Private->Slot[Slot].SlotType != RemovableSlot) && (Private->Slot[Slot].SlotType != EmbeddedSlot)) {
-      DEBUG ((DEBUG_INFO, "SdMmcPciHcDxe doesn't support the slot type [%d]!!!\n", Private->Slot[Slot].SlotType));
+    if ((Private->Slot[Slot].SlotType != RemovableSlot) &&
+        (Private->Slot[Slot].SlotType != EmbeddedSlot))
+    {
+      DEBUG ((
+        DEBUG_INFO,
+        "SdMmcPciHcDxe doesn't support the slot type [%d]!!!\n",
+        Private->Slot[Slot].SlotType
+        ));
       continue;
     }
 
@@ -761,7 +802,8 @@ SdMmcPciHcDriverBindingStart (
 
     Private->Slot[Slot].MediaPresent = TRUE;
     Private->Slot[Slot].Initialized  = TRUE;
-    RoutineNum                       = sizeof (mCardTypeDetectRoutineTable) / sizeof (CARD_TYPE_DETECT_ROUTINE);
+    RoutineNum                       = sizeof (mCardTypeDetectRoutineTable) /
+                                       sizeof (CARD_TYPE_DETECT_ROUTINE);
     for (Index = 0; Index < RoutineNum; Index++) {
       Routine = &mCardTypeDetectRoutineTable[Index];
       if (*Routine != NULL) {
@@ -792,7 +834,11 @@ SdMmcPciHcDriverBindingStart (
                       NULL
                       );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_WARN, "SdMmcPciHcDriverBindingStart: failed to enable 64-bit DMA (%r)\n", Status));
+      DEBUG ((
+        DEBUG_WARN,
+        "SdMmcPciHcDriverBindingStart: failed to enable 64-bit DMA (%r)\n",
+        Status
+        ));
     }
   }
 
@@ -810,7 +856,11 @@ SdMmcPciHcDriverBindingStart (
     goto Done;
   }
 
-  Status = gBS->SetTimer (Private->TimerEvent, TimerPeriodic, SD_MMC_HC_ASYNC_TIMER);
+  Status = gBS->SetTimer (
+                  Private->TimerEvent,
+                  TimerPeriodic,
+                  SD_MMC_HC_ASYNC_TIMER
+                  );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -829,7 +879,11 @@ SdMmcPciHcDriverBindingStart (
     goto Done;
   }
 
-  Status = gBS->SetTimer (Private->ConnectEvent, TimerPeriodic, SD_MMC_HC_ENUM_TIMER);
+  Status = gBS->SetTimer (
+                  Private->ConnectEvent,
+                  TimerPeriodic,
+                  SD_MMC_HC_ENUM_TIMER
+                  );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -841,7 +895,12 @@ SdMmcPciHcDriverBindingStart (
                   NULL
                   );
 
-  DEBUG ((DEBUG_INFO, "SdMmcPciHcDriverBindingStart: %r End on %x\n", Status, Controller));
+  DEBUG ((
+    DEBUG_INFO,
+    "SdMmcPciHcDriverBindingStart: %r End on %x\n",
+    Status,
+    Controller
+    ));
 
 Done:
   if (EFI_ERROR (Status)) {

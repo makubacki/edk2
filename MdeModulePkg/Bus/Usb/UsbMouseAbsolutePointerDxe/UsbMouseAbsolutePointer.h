@@ -33,7 +33,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define BOOT_PROTOCOL    0
 #define REPORT_PROTOCOL  1
 
-#define USB_MOUSE_ABSOLUTE_POINTER_DEV_SIGNATURE  SIGNATURE_32 ('u', 'm', 's', 't')
+#define USB_MOUSE_ABSOLUTE_POINTER_DEV_SIGNATURE  \
+  SIGNATURE_32 ('u', 'm', 's', 't')
 
 //
 // A common header for usb standard descriptor.

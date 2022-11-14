@@ -24,15 +24,17 @@ EFI_DRIVER_BINDING_PROTOCOL  gNvmExpressDriverBinding = {
 //
 // NVM Express EFI Driver Supported EFI Version Protocol Instance
 //
-EFI_DRIVER_SUPPORTED_EFI_VERSION_PROTOCOL  gNvmExpressDriverSupportedEfiVersion = {
+EFI_DRIVER_SUPPORTED_EFI_VERSION_PROTOCOL  gNvmExpressDriverSupportedEfiVersion
+  = {
   sizeof (EFI_DRIVER_SUPPORTED_EFI_VERSION_PROTOCOL), // Size of Protocol structure.
   0                                                   // Version number to be filled at start up.
-};
+  };
 
 //
 // Template for NVM Express Pass Thru Mode data structure.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_NVM_EXPRESS_PASS_THRU_MODE  gEfiNvmExpressPassThruMode = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_NVM_EXPRESS_PASS_THRU_MODE
+  gEfiNvmExpressPassThruMode = {
   EFI_NVM_EXPRESS_PASS_THRU_ATTRIBUTES_PHYSICAL   |
   EFI_NVM_EXPRESS_PASS_THRU_ATTRIBUTES_LOGICAL    |
   EFI_NVM_EXPRESS_PASS_THRU_ATTRIBUTES_NONBLOCKIO |
@@ -190,7 +192,11 @@ EnumerateNvmeDevNamespace (
     //
     // Create DiskInfo Protocol instance
     //
-    CopyMem (&Device->NamespaceData, NamespaceData, sizeof (NVME_ADMIN_NAMESPACE_DATA));
+    CopyMem (
+      &Device->NamespaceData,
+      NamespaceData,
+      sizeof (NVME_ADMIN_NAMESPACE_DATA)
+      );
     InitializeDiskInfo (Device);
 
     //
@@ -217,8 +223,15 @@ EnumerateNvmeDevNamespace (
 
     DeviceHandle        = NULL;
     RemainingDevicePath = DevicePath;
-    Status              = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &DeviceHandle);
-    if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd (RemainingDevicePath)) {
+    Status              = gBS->LocateDevicePath (
+                                 &gEfiDevicePathProtocolGuid,
+                                 &RemainingDevicePath,
+                                 &DeviceHandle
+                                 );
+    if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd (
+                                                           RemainingDevicePath
+                                                           ))
+    {
       Status = EFI_ALREADY_STARTED;
       FreePool (DevicePath);
       goto Exit;
@@ -251,7 +264,9 @@ EnumerateNvmeDevNamespace (
     //
     // Check if the NVMe controller supports the Security Send and Security Receive commands
     //
-    if ((Private->ControllerData->Oacs & SECURITY_SEND_RECEIVE_SUPPORTED) != 0) {
+    if ((Private->ControllerData->Oacs & SECURITY_SEND_RECEIVE_SUPPORTED) !=
+        0)
+    {
       Status = gBS->InstallProtocolInterface (
                       &Device->DeviceHandle,
                       &gEfiStorageSecurityCommandProtocolGuid,
@@ -287,20 +302,43 @@ EnumerateNvmeDevNamespace (
     //
     // Dump NvmExpress Identify Namespace Data
     //
-    DEBUG ((DEBUG_INFO, " == NVME IDENTIFY NAMESPACE [%d] DATA ==\n", NamespaceId));
+    DEBUG ((
+      DEBUG_INFO,
+      " == NVME IDENTIFY NAMESPACE [%d] DATA ==\n",
+      NamespaceId
+      ));
     DEBUG ((DEBUG_INFO, "    NSZE        : 0x%x\n", NamespaceData->Nsze));
     DEBUG ((DEBUG_INFO, "    NCAP        : 0x%x\n", NamespaceData->Ncap));
     DEBUG ((DEBUG_INFO, "    NUSE        : 0x%x\n", NamespaceData->Nuse));
-    DEBUG ((DEBUG_INFO, "    LBAF0.LBADS : 0x%x\n", (NamespaceData->LbaFormat[0].Lbads)));
+    DEBUG ((
+      DEBUG_INFO,
+      "    LBAF0.LBADS : 0x%x\n",
+      (NamespaceData->LbaFormat[0].Lbads)
+      ));
 
     //
     // Build controller name for Component Name (2) protocol.
     //
-    CopyMem (Sn, Private->ControllerData->Sn, sizeof (Private->ControllerData->Sn));
+    CopyMem (
+      Sn,
+      Private->ControllerData->Sn,
+      sizeof (Private->ControllerData->Sn)
+      );
     Sn[20] = 0;
-    CopyMem (Mn, Private->ControllerData->Mn, sizeof (Private->ControllerData->Mn));
+    CopyMem (
+      Mn,
+      Private->ControllerData->Mn,
+      sizeof (Private->ControllerData->Mn)
+      );
     Mn[40] = 0;
-    UnicodeSPrintAsciiFormat (Device->ModelName, sizeof (Device->ModelName), "%a-%a-%x", Sn, Mn, NamespaceData->Eui64);
+    UnicodeSPrintAsciiFormat (
+      Device->ModelName,
+      sizeof (Device->ModelName),
+      "%a-%a-%x",
+      Sn,
+      Mn,
+      NamespaceData->Eui64
+      );
 
     AddUnicodeString2 (
       "eng",
@@ -697,7 +735,11 @@ ProcessAsyncTaskList (
     }
 
     Private->CqHdbl[QueueId].Cqh++;
-    if (Private->CqHdbl[QueueId].Cqh > MIN (NVME_ASYNC_CCQ_SIZE, Private->Cap.Mqes)) {
+    if (Private->CqHdbl[QueueId].Cqh > MIN (
+                                         NVME_ASYNC_CCQ_SIZE,
+                                         Private->Cap.Mqes
+                                         ))
+    {
       Private->CqHdbl[QueueId].Cqh = 0;
       Private->Pt[QueueId]        ^= 1;
     }
@@ -791,7 +833,8 @@ NvmExpressDriverBindingSupported (
 
       if ((DevicePathNode.DevPath->Type    != MESSAGING_DEVICE_PATH) ||
           (DevicePathNode.DevPath->SubType != MSG_NVME_NAMESPACE_DP) ||
-          (DevicePathNodeLength (DevicePathNode.DevPath) != sizeof (NVME_NAMESPACE_DEVICE_PATH)))
+          (DevicePathNodeLength (DevicePathNode.DevPath) !=
+           sizeof (NVME_NAMESPACE_DEVICE_PATH)))
       {
         return EFI_UNSUPPORTED;
       }
@@ -864,7 +907,10 @@ NvmExpressDriverBindingSupported (
   //
   // Examine Nvm Express controller PCI Configuration table fields
   //
-  if ((ClassCode[0] != PCI_IF_NVMHCI) || (ClassCode[1] != PCI_CLASS_MASS_STORAGE_NVM) || (ClassCode[2] != PCI_CLASS_MASS_STORAGE)) {
+  if ((ClassCode[0] != PCI_IF_NVMHCI) || (ClassCode[1] !=
+                                          PCI_CLASS_MASS_STORAGE_NVM) ||
+      (ClassCode[2] != PCI_CLASS_MASS_STORAGE))
+  {
     Status = EFI_UNSUPPORTED;
   }
 
@@ -969,7 +1015,10 @@ NvmExpressDriverBindingStart (
     Private = AllocateZeroPool (sizeof (NVME_CONTROLLER_PRIVATE_DATA));
 
     if (Private == NULL) {
-      DEBUG ((DEBUG_ERROR, "NvmExpressDriverBindingStart: allocating pool for Nvme Private Data failed!\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "NvmExpressDriverBindingStart: allocating pool for Nvme Private Data failed!\n"
+        ));
       Status = EFI_OUT_OF_RESOURCES;
       goto Exit;
     }
@@ -998,7 +1047,11 @@ NvmExpressDriverBindingStart (
                       NULL
                       );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_WARN, "NvmExpressDriverBindingStart: failed to enable 64-bit DMA (%r)\n", Status));
+      DEBUG ((
+        DEBUG_WARN,
+        "NvmExpressDriverBindingStart: failed to enable 64-bit DMA (%r)\n",
+        Status
+        ));
     }
 
     //
@@ -1051,7 +1104,11 @@ NvmExpressDriverBindingStart (
     Private->Passthru.GetNextNamespace = NvmExpressGetNextNamespace;
     Private->Passthru.BuildDevicePath  = NvmExpressBuildDevicePath;
     Private->Passthru.GetNamespace     = NvmExpressGetNamespace;
-    CopyMem (&Private->PassThruMode, &gEfiNvmExpressPassThruMode, sizeof (EFI_NVM_EXPRESS_PASS_THRU_MODE));
+    CopyMem (
+      &Private->PassThruMode,
+      &gEfiNvmExpressPassThruMode,
+      sizeof (EFI_NVM_EXPRESS_PASS_THRU_MODE)
+      );
     InitializeListHead (&Private->AsyncPassThruQueue);
     InitializeListHead (&Private->UnsubmittedSubtasks);
 
@@ -1294,7 +1351,11 @@ NvmExpressDriverBindingStop (
   AllChildrenStopped = TRUE;
 
   for (Index = 0; Index < NumberOfChildren; Index++) {
-    Status = UnregisterNvmeNamespace (This, Controller, ChildHandleBuffer[Index]);
+    Status = UnregisterNvmeNamespace (
+               This,
+               Controller,
+               ChildHandleBuffer[Index]
+               );
     if (EFI_ERROR (Status)) {
       AllChildrenStopped = FALSE;
     }
@@ -1462,12 +1523,15 @@ NvmExpressDriverEntry (
   // EFI drivers that are on PCI and other plug in cards.
   //
   gNvmExpressDriverSupportedEfiVersion.FirmwareVersion = 0x00020028;
-  Status                                               = gBS->InstallMultipleProtocolInterfaces (
-                                                                &ImageHandle,
-                                                                &gEfiDriverSupportedEfiVersionProtocolGuid,
-                                                                &gNvmExpressDriverSupportedEfiVersion,
-                                                                NULL
-                                                                );
+  Status                                               =
+    gBS->InstallMultipleProtocolInterfaces (
+           &ImageHandle,
+           &
+           gEfiDriverSupportedEfiVersionProtocolGuid,
+           &
+           gNvmExpressDriverSupportedEfiVersion,
+           NULL
+           );
   ASSERT_EFI_ERROR (Status);
   return Status;
 }

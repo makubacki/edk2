@@ -57,12 +57,16 @@ typedef unsigned WRes;
 typedef int WRes;
 #define MY__FACILITY_WIN32  7
 #define MY__FACILITY__WRes  MY__FACILITY_WIN32
-#define MY_SRes_HRESULT_FROM_WRes(x)  ((HRESULT)(x) <= 0 ? ((HRESULT)(x)) : ((HRESULT) (((x) & 0x0000FFFF) | (MY__FACILITY__WRes << 16) | 0x80000000)))
+#define MY_SRes_HRESULT_FROM_WRes( \
+                                 x)  \
+  ((HRESULT)(x) <= 0 ? ((HRESULT)(x)) : ((HRESULT) (((x) & 0x0000FFFF) | (MY__FACILITY__WRes << 16) | 0x80000000)))
 
 #endif
 
 #ifndef RINOK
-#define RINOK(x)  { int __result__ = (x); if (__result__ != 0) return __result__; }
+#define RINOK( \
+             x)  \
+  { int __result__ = (x); if (__result__ != 0) return __result__; }
 #endif
 
 typedef unsigned char  Byte;
@@ -360,7 +364,8 @@ struct ICompressProgress {
      Value (UInt64)(Int64)-1 for size means unknown value. */
 };
 
-#define ICompressProgress_Progress(p, inSize, outSize)  (p)->Progress(p, inSize, outSize)
+#define ICompressProgress_Progress(p, inSize, \
+                                   outSize)  (p)->Progress(p, inSize, outSize)
 
 typedef struct ISzAlloc ISzAlloc;
 typedef const ISzAlloc  *ISzAllocPtr;
@@ -410,7 +415,9 @@ struct ISzAlloc {
     GCC 4.8.1 : classes with non-public variable members"
 */
 
-#define MY_container_of(ptr, type, m)  ((type *)((char *)(1 ? (ptr) : &((type *)0)->m) - MY_offsetof(type, m)))
+#define MY_container_of(ptr, type, \
+                        m)  \
+  ((type *)((char *)(1 ? (ptr) : &((type *)0)->m) - MY_offsetof(type, m)))
 
 #endif
 
@@ -421,7 +428,8 @@ struct ISzAlloc {
 */
 #define CONTAINER_FROM_VTBL(ptr, type, m)  MY_container_of(ptr, type, m)
 
-#define CONTAINER_FROM_VTBL_CLS(ptr, type, m)  CONTAINER_FROM_VTBL_SIMPLE(ptr, type, m)
+#define CONTAINER_FROM_VTBL_CLS(ptr, type, \
+                                m)  CONTAINER_FROM_VTBL_SIMPLE(ptr, type, m)
 
 /*
 #define CONTAINER_FROM_VTBL_CLS(ptr, type, m) CONTAINER_FROM_VTBL(ptr, type, m)

@@ -11,7 +11,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gPs2MouseComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gPs2MouseComponentName = {
   Ps2MouseComponentNameGetDriverName,
   Ps2MouseComponentNameGetControllerName,
   "eng"
@@ -20,13 +21,16 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gPs2MouseComponentNam
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gPs2MouseComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gPs2MouseComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)Ps2MouseComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)Ps2MouseComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  Ps2MouseComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mPs2MouseDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mPs2MouseDriverNameTable[] = {
   {
     "eng;en",
     L"PS/2 Mouse Driver"
@@ -185,7 +189,11 @@ Ps2MouseComponentNameGetControllerName (
   //
   // Check Controller's handle
   //
-  Status = EfiTestManagedDevice (ControllerHandle, gPS2MouseDriver.DriverBindingHandle, &gEfiSioProtocolGuid);
+  Status = EfiTestManagedDevice (
+             ControllerHandle,
+             gPS2MouseDriver.DriverBindingHandle,
+             &gEfiSioProtocolGuid
+             );
 
   if (EFI_ERROR (Status)) {
     return Status;

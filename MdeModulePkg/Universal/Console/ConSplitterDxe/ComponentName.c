@@ -11,7 +11,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gConSplitterConInComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gConSplitterConInComponentName = {
   ConSplitterComponentNameGetDriverName,
   ConSplitterConInComponentNameGetControllerName,
   "eng"
@@ -20,16 +21,19 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gConSplitterConInComp
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gConSplitterConInComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gConSplitterConInComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)ConSplitterComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)ConSplitterConInComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  ConSplitterConInComponentNameGetControllerName,
   "en"
 };
 
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gConSplitterSimplePointerComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gConSplitterSimplePointerComponentName = {
   ConSplitterComponentNameGetDriverName,
   ConSplitterSimplePointerComponentNameGetControllerName,
   "eng"
@@ -38,16 +42,19 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gConSplitterSimplePoi
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gConSplitterSimplePointerComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gConSplitterSimplePointerComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)ConSplitterComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)ConSplitterSimplePointerComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  ConSplitterSimplePointerComponentNameGetControllerName,
   "en"
 };
 
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gConSplitterAbsolutePointerComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gConSplitterAbsolutePointerComponentName = {
   ConSplitterComponentNameGetDriverName,
   ConSplitterAbsolutePointerComponentNameGetControllerName,
   "eng"
@@ -56,16 +63,19 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gConSplitterAbsoluteP
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gConSplitterAbsolutePointerComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gConSplitterAbsolutePointerComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)ConSplitterComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)ConSplitterAbsolutePointerComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  ConSplitterAbsolutePointerComponentNameGetControllerName,
   "en"
 };
 
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gConSplitterConOutComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gConSplitterConOutComponentName = {
   ConSplitterComponentNameGetDriverName,
   ConSplitterConOutComponentNameGetControllerName,
   "eng"
@@ -74,16 +84,19 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gConSplitterConOutCom
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gConSplitterConOutComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gConSplitterConOutComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)ConSplitterComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)ConSplitterConOutComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  ConSplitterConOutComponentNameGetControllerName,
   "en"
 };
 
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gConSplitterStdErrComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gConSplitterStdErrComponentName = {
   ConSplitterComponentNameGetDriverName,
   ConSplitterStdErrComponentNameGetControllerName,
   "eng"
@@ -92,13 +105,16 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gConSplitterStdErrCom
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gConSplitterStdErrComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gConSplitterStdErrComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)ConSplitterComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)ConSplitterStdErrComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  ConSplitterStdErrComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mConSplitterDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mConSplitterDriverNameTable[] = {
   {
     "eng;en",
     (CHAR16 *)L"Console Splitter Driver"
@@ -109,7 +125,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mConSplitterDriverNameTa
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mConSplitterConInControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mConSplitterConInControllerNameTable[] = {
   {
     "eng;en",
     (CHAR16 *)L"Primary Console Input Device"
@@ -120,7 +137,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mConSplitterConInControl
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mConSplitterSimplePointerControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mConSplitterSimplePointerControllerNameTable[] = {
   {
     "eng;en",
     (CHAR16 *)L"Primary Simple Pointer Device"
@@ -131,7 +149,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mConSplitterSimplePointe
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mConSplitterAbsolutePointerControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mConSplitterAbsolutePointerControllerNameTable[] = {
   {
     "eng;en",
     (CHAR16 *)L"Primary Absolute Pointer Device"
@@ -142,7 +161,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mConSplitterAbsolutePoin
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mConSplitterConOutControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mConSplitterConOutControllerNameTable[] = {
   {
     "eng;en",
     (CHAR16 *)L"Primary Console Output Device"
@@ -153,7 +173,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mConSplitterConOutContro
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mConSplitterStdErrControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mConSplitterStdErrControllerNameTable[] = {
   {
     "eng;en",
     (CHAR16 *)L"Primary Standard Error Device"

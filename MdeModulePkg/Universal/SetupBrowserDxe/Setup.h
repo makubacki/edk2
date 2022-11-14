@@ -69,7 +69,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 #define EXPRESSION_STACK_SIZE_INCREMENT  0x100
 
-#define EFI_IFR_SPECIFICATION_VERSION  (UINT16) (((EFI_SYSTEM_TABLE_REVISION >> 16) << 8) | (((EFI_SYSTEM_TABLE_REVISION & 0xFFFF) / 10) << 4) | ((EFI_SYSTEM_TABLE_REVISION & 0xFFFF) % 10))
+#define EFI_IFR_SPECIFICATION_VERSION  \
+  (UINT16) (((EFI_SYSTEM_TABLE_REVISION >> 16) << 8) | (((EFI_SYSTEM_TABLE_REVISION & 0xFFFF) / 10) << 4) | ((EFI_SYSTEM_TABLE_REVISION & 0xFFFF) % 10))
 
 #define SETUP_DRIVER_SIGNATURE  SIGNATURE_32 ('F', 'B', 'D', 'V')
 typedef struct {
@@ -118,7 +119,9 @@ typedef struct {
   CHAR16        *EditValue;
 } NAME_VALUE_NODE;
 
-#define NAME_VALUE_NODE_FROM_LINK(a)  CR (a, NAME_VALUE_NODE, Link, NAME_VALUE_NODE_SIGNATURE)
+#define NAME_VALUE_NODE_FROM_LINK( \
+                                 a)  \
+  CR (a, NAME_VALUE_NODE, Link, NAME_VALUE_NODE_SIGNATURE)
 
 #define BROWSER_STORAGE_SIGNATURE  SIGNATURE_32 ('B', 'S', 'T', 'G')
 
@@ -147,7 +150,9 @@ typedef struct {
   UINTN             SpareStrLen;    // Spare length of ConfigRequest string buffer
 } BROWSER_STORAGE;
 
-#define BROWSER_STORAGE_FROM_LINK(a)  CR (a, BROWSER_STORAGE, Link, BROWSER_STORAGE_SIGNATURE)
+#define BROWSER_STORAGE_FROM_LINK( \
+                                 a)  \
+  CR (a, BROWSER_STORAGE, Link, BROWSER_STORAGE_SIGNATURE)
 
 #define FORMSET_STORAGE_SIGNATURE  SIGNATURE_32 ('F', 'S', 'T', 'G')
 
@@ -172,8 +177,12 @@ typedef struct {
   CHAR16             *SyncConfigRequest;    // When submit formset fail, the element need to be synced
 } FORMSET_STORAGE;
 
-#define FORMSET_STORAGE_FROM_LINK(a)            CR (a, FORMSET_STORAGE, Link, FORMSET_STORAGE_SIGNATURE)
-#define FORMSET_STORAGE_FROM_SAVE_FAIL_LINK(a)  CR (a, FORMSET_STORAGE, SaveFailLink, FORMSET_STORAGE_SIGNATURE)
+#define FORMSET_STORAGE_FROM_LINK( \
+                                 a)            \
+      CR (a, FORMSET_STORAGE, Link, FORMSET_STORAGE_SIGNATURE)
+#define FORMSET_STORAGE_FROM_SAVE_FAIL_LINK( \
+                                           a)  \
+      CR (a, FORMSET_STORAGE, SaveFailLink, FORMSET_STORAGE_SIGNATURE)
 
 typedef union {
   EFI_STRING_ID    VarName;
@@ -211,7 +220,9 @@ typedef struct {
   LIST_ENTRY         MapExpressionList; // nested expressions inside of Map opcode.
 } EXPRESSION_OPCODE;
 
-#define EXPRESSION_OPCODE_FROM_LINK(a)  CR (a, EXPRESSION_OPCODE, Link, EXPRESSION_OPCODE_SIGNATURE)
+#define EXPRESSION_OPCODE_FROM_LINK( \
+                                   a)  \
+  CR (a, EXPRESSION_OPCODE, Link, EXPRESSION_OPCODE_SIGNATURE)
 
 #define FORM_EXPRESSION_SIGNATURE  SIGNATURE_32 ('F', 'E', 'X', 'P')
 
@@ -232,7 +243,9 @@ typedef struct {
   LIST_ENTRY           OpCodeListHead; // OpCodes consist of this expression (EXPRESSION_OPCODE)
 } FORM_EXPRESSION;
 
-#define FORM_EXPRESSION_FROM_LINK(a)  CR (a, FORM_EXPRESSION, Link, FORM_EXPRESSION_SIGNATURE)
+#define FORM_EXPRESSION_FROM_LINK( \
+                                 a)  \
+  CR (a, FORM_EXPRESSION, Link, FORM_EXPRESSION_SIGNATURE)
 
 #define FORM_EXPRESSION_LIST_SIGNATURE  SIGNATURE_32 ('F', 'E', 'X', 'R')
 
@@ -254,7 +267,9 @@ typedef struct {
   FORM_EXPRESSION    *ValueExpression;    // Not-NULL indicates default value is provided by EFI_IFR_VALUE
 } QUESTION_DEFAULT;
 
-#define QUESTION_DEFAULT_FROM_LINK(a)  CR (a, QUESTION_DEFAULT, Link, QUESTION_DEFAULT_SIGNATURE)
+#define QUESTION_DEFAULT_FROM_LINK( \
+                                  a)  \
+  CR (a, QUESTION_DEFAULT, Link, QUESTION_DEFAULT_SIGNATURE)
 
 #define QUESTION_OPTION_SIGNATURE  SIGNATURE_32 ('Q', 'O', 'P', 'T')
 
@@ -272,7 +287,9 @@ typedef struct {
   FORM_EXPRESSION_LIST     *SuppressExpression; // Non-NULL indicates nested inside of SuppressIf
 } QUESTION_OPTION;
 
-#define QUESTION_OPTION_FROM_LINK(a)  CR (a, QUESTION_OPTION, Link, QUESTION_OPTION_SIGNATURE)
+#define QUESTION_OPTION_FROM_LINK( \
+                                 a)  \
+  CR (a, QUESTION_OPTION, Link, QUESTION_OPTION_SIGNATURE)
 
 typedef enum {
   ExpressFalse = 0,
@@ -369,7 +386,9 @@ struct _FORM_BROWSER_STATEMENT {
   FORM_EXPRESSION           *WriteExpression; // nested EFI_IFR_WRITE, evaluate write expression after this question value is set.
 };
 
-#define FORM_BROWSER_STATEMENT_FROM_LINK(a)  CR (a, FORM_BROWSER_STATEMENT, Link, FORM_BROWSER_STATEMENT_SIGNATURE)
+#define FORM_BROWSER_STATEMENT_FROM_LINK( \
+                                        a)  \
+  CR (a, FORM_BROWSER_STATEMENT, Link, FORM_BROWSER_STATEMENT_SIGNATURE)
 
 #define FORM_BROWSER_CONFIG_REQUEST_SIGNATURE  SIGNATURE_32 ('F', 'C', 'R', 'S')
 typedef struct {
@@ -387,8 +406,12 @@ typedef struct {
 
   BROWSER_STORAGE    *Storage;
 } FORM_BROWSER_CONFIG_REQUEST;
-#define FORM_BROWSER_CONFIG_REQUEST_FROM_LINK(a)            CR (a, FORM_BROWSER_CONFIG_REQUEST, Link, FORM_BROWSER_CONFIG_REQUEST_SIGNATURE)
-#define FORM_BROWSER_CONFIG_REQUEST_FROM_SAVE_FAIL_LINK(a)  CR (a, FORM_BROWSER_CONFIG_REQUEST, SaveFailLink, FORM_BROWSER_CONFIG_REQUEST_SIGNATURE)
+#define FORM_BROWSER_CONFIG_REQUEST_FROM_LINK( \
+                                             a)            \
+      CR (a, FORM_BROWSER_CONFIG_REQUEST, Link, FORM_BROWSER_CONFIG_REQUEST_SIGNATURE)
+#define FORM_BROWSER_CONFIG_REQUEST_FROM_SAVE_FAIL_LINK( \
+                                                       a)  \
+      CR (a, FORM_BROWSER_CONFIG_REQUEST, SaveFailLink, FORM_BROWSER_CONFIG_REQUEST_SIGNATURE)
 
 #define FORM_BROWSER_FORM_SIGNATURE  SIGNATURE_32 ('F', 'F', 'R', 'M')
 #define STANDARD_MAP_FORM_TYPE       0x01
@@ -414,7 +437,9 @@ typedef struct {
   FORM_EXPRESSION_LIST    *SuppressExpression; // nesting inside of SuppressIf
 } FORM_BROWSER_FORM;
 
-#define FORM_BROWSER_FORM_FROM_LINK(a)  CR (a, FORM_BROWSER_FORM, Link, FORM_BROWSER_FORM_SIGNATURE)
+#define FORM_BROWSER_FORM_FROM_LINK( \
+                                   a)  \
+  CR (a, FORM_BROWSER_FORM, Link, FORM_BROWSER_FORM_SIGNATURE)
 
 #define FORMSET_DEFAULTSTORE_SIGNATURE  SIGNATURE_32 ('F', 'D', 'F', 'S')
 
@@ -426,7 +451,9 @@ typedef struct {
   EFI_STRING_ID    DefaultName;
 } FORMSET_DEFAULTSTORE;
 
-#define FORMSET_DEFAULTSTORE_FROM_LINK(a)  CR (a, FORMSET_DEFAULTSTORE, Link, FORMSET_DEFAULTSTORE_SIGNATURE)
+#define FORMSET_DEFAULTSTORE_FROM_LINK( \
+                                      a)  \
+  CR (a, FORMSET_DEFAULTSTORE, Link, FORMSET_DEFAULTSTORE_SIGNATURE)
 
 #define FORM_BROWSER_FORMSET_SIGNATURE  SIGNATURE_32 ('F', 'B', 'F', 'S')
 
@@ -466,16 +493,22 @@ typedef struct {
   LIST_ENTRY                        FormListHead;            // Form list (FORM_BROWSER_FORM)
   LIST_ENTRY                        ExpressionListHead;      // List of Expressions (FORM_EXPRESSION)
 } FORM_BROWSER_FORMSET;
-#define FORM_BROWSER_FORMSET_FROM_LINK(a)  CR (a, FORM_BROWSER_FORMSET, Link, FORM_BROWSER_FORMSET_SIGNATURE)
+#define FORM_BROWSER_FORMSET_FROM_LINK( \
+                                      a)  \
+  CR (a, FORM_BROWSER_FORMSET, Link, FORM_BROWSER_FORMSET_SIGNATURE)
 
-#define FORM_BROWSER_FORMSET_FROM_SAVE_FAIL_LINK(a)  CR (a, FORM_BROWSER_FORMSET, SaveFailLink, FORM_BROWSER_FORMSET_SIGNATURE)
+#define FORM_BROWSER_FORMSET_FROM_SAVE_FAIL_LINK( \
+                                                a)  \
+  CR (a, FORM_BROWSER_FORMSET, SaveFailLink, FORM_BROWSER_FORMSET_SIGNATURE)
 
 typedef struct {
   LIST_ENTRY    Link;
   EFI_EVENT     RefreshEvent;
 } FORM_BROWSER_REFRESH_EVENT_NODE;
 
-#define FORM_BROWSER_REFRESH_EVENT_FROM_LINK(a)  BASE_CR (a, FORM_BROWSER_REFRESH_EVENT_NODE, Link)
+#define FORM_BROWSER_REFRESH_EVENT_FROM_LINK( \
+                                            a)  \
+  BASE_CR (a, FORM_BROWSER_REFRESH_EVENT_NODE, Link)
 
 typedef struct {
   EFI_HII_HANDLE            Handle;
@@ -542,7 +575,9 @@ typedef struct {
   LIST_ENTRY              FormSetList;
 } BROWSER_CONTEXT;
 
-#define BROWSER_CONTEXT_FROM_LINK(a)  CR (a, BROWSER_CONTEXT, Link, BROWSER_CONTEXT_SIGNATURE)
+#define BROWSER_CONTEXT_FROM_LINK( \
+                                 a)  \
+  CR (a, BROWSER_CONTEXT, Link, BROWSER_CONTEXT_SIGNATURE)
 
 //
 // Scope for get defaut value. It may be GetDefaultForNoStorage, GetDefaultForStorage or GetDefaultForAll.

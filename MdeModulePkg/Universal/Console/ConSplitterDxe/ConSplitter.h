@@ -79,7 +79,8 @@ typedef struct {
   UINTN    Rows;
 } TEXT_OUT_SPLITTER_QUERY_DATA;
 
-#define KEY_STATE_VALID_EXPOSED  (EFI_TOGGLE_STATE_VALID | EFI_KEY_STATE_EXPOSED)
+#define KEY_STATE_VALID_EXPOSED  \
+  (EFI_TOGGLE_STATE_VALID | EFI_KEY_STATE_EXPOSED)
 
 #define TEXT_IN_EX_SPLITTER_NOTIFY_SIGNATURE  SIGNATURE_32 ('T', 'i', 'S', 'n')
 
@@ -101,7 +102,8 @@ typedef struct _TEXT_IN_EX_SPLITTER_NOTIFY {
       TEXT_IN_EX_SPLITTER_NOTIFY_SIGNATURE       \
       )
 
-#define TEXT_IN_SPLITTER_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('T', 'i', 'S', 'p')
+#define TEXT_IN_SPLITTER_PRIVATE_DATA_SIGNATURE  \
+  SIGNATURE_32 ('T', 'i', 'S', 'p')
 
 //
 // Private data for the Console In splitter
@@ -178,7 +180,8 @@ typedef struct {
       TEXT_IN_SPLITTER_PRIVATE_DATA_SIGNATURE                       \
       )
 
-#define TEXT_OUT_SPLITTER_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('T', 'o', 'S', 'p')
+#define TEXT_OUT_SPLITTER_PRIVATE_DATA_SIGNATURE  \
+  SIGNATURE_32 ('T', 'o', 'S', 'p')
 
 typedef struct {
   EFI_GRAPHICS_OUTPUT_PROTOCOL       *GraphicsOutput;

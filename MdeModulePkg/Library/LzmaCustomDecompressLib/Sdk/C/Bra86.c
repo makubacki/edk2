@@ -47,7 +47,11 @@ x86_Convert (
         mask = 0;
       } else {
         mask >>= (unsigned)d;
-        if ((mask != 0) && ((mask > 4) || (mask == 3) || Test86MSByte (p[(size_t)(mask >> 1) + 1]))) {
+        if ((mask != 0) && ((mask > 4) || (mask == 3) || Test86MSByte (
+                                                           p[(size_t)(mask >>
+                                                                      1) + 1]
+                                                           )))
+        {
           mask = (mask >> 1) | 4;
           pos++;
           continue;
@@ -56,7 +60,8 @@ x86_Convert (
     }
 
     if (Test86MSByte (p[4])) {
-      UInt32  v   = ((UInt32)p[4] << 24) | ((UInt32)p[3] << 16) | ((UInt32)p[2] << 8) | ((UInt32)p[1]);
+      UInt32  v = ((UInt32)p[4] << 24) | ((UInt32)p[3] << 16) |
+                  ((UInt32)p[2] << 8) | ((UInt32)p[1]);
       UInt32  cur = ip + (UInt32)pos;
       pos += 5;
       if (encoding) {

@@ -90,7 +90,11 @@ SdSetRca (
 
   Status = PassThru->PassThru (PassThru, Device->Slot, &Packet, NULL);
   if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Set RCA succeeds with Resp0 = 0x%x\n", SdMmcStatusBlk.Resp0));
+    DEBUG ((
+      DEBUG_INFO,
+      "Set RCA succeeds with Resp0 = 0x%x\n",
+      SdMmcStatusBlk.Resp0
+      ));
     *Rca = (UINT16)(SdMmcStatusBlk.Resp0 >> 16);
   }
 
@@ -352,7 +356,8 @@ SdRwSingleBlock (
   // above class 2.
   // Refer to SD Physical Layer Simplified spec section 3.4 for details.
   //
-  RwSingleBlkReq->Packet.Timeout = (BufferSize / (2 * 1024 * 1024) + 1) * 1000 * 1000;
+  RwSingleBlkReq->Packet.Timeout = (BufferSize / (2 * 1024 * 1024) + 1) * 1000 *
+                                   1000;
 
   if (IsRead) {
     RwSingleBlkReq->Packet.InDataBuffer     = Buffer;
@@ -373,7 +378,11 @@ SdRwSingleBlock (
   if (Device->SectorAddressing) {
     RwSingleBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32)Lba;
   } else {
-    RwSingleBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (Lba, Device->BlockMedia.BlockSize);
+    RwSingleBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (
+                                                            Lba,
+                                                            Device->BlockMedia.
+                                                              BlockSize
+                                                            );
   }
 
   RwSingleBlkReq->IsEnd = IsEnd;
@@ -394,7 +403,12 @@ SdRwSingleBlock (
     RwSingleBlkReq->Event = NULL;
   }
 
-  Status = PassThru->PassThru (PassThru, Device->Slot, &RwSingleBlkReq->Packet, RwSingleBlkReq->Event);
+  Status = PassThru->PassThru (
+                       PassThru,
+                       Device->Slot,
+                       &RwSingleBlkReq->Packet,
+                       RwSingleBlkReq->Event
+                       );
 
 Error:
   if ((Token != NULL) && (Token->Event != NULL)) {
@@ -485,7 +499,8 @@ SdRwMultiBlocks (
   // above class 2.
   // Refer to SD Physical Layer Simplified spec section 3.4 for details.
   //
-  RwMultiBlkReq->Packet.Timeout = (BufferSize / (2 * 1024 * 1024) + 1) * 1000 * 1000;
+  RwMultiBlkReq->Packet.Timeout = (BufferSize / (2 * 1024 * 1024) + 1) * 1000 *
+                                  1000;
 
   if (IsRead) {
     RwMultiBlkReq->Packet.InDataBuffer     = Buffer;
@@ -506,7 +521,11 @@ SdRwMultiBlocks (
   if (Device->SectorAddressing) {
     RwMultiBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32)Lba;
   } else {
-    RwMultiBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (Lba, Device->BlockMedia.BlockSize);
+    RwMultiBlkReq->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (
+                                                           Lba,
+                                                           Device->BlockMedia.
+                                                             BlockSize
+                                                           );
   }
 
   RwMultiBlkReq->IsEnd = IsEnd;
@@ -527,7 +546,12 @@ SdRwMultiBlocks (
     RwMultiBlkReq->Event = NULL;
   }
 
-  Status = PassThru->PassThru (PassThru, Device->Slot, &RwMultiBlkReq->Packet, RwMultiBlkReq->Event);
+  Status = PassThru->PassThru (
+                       PassThru,
+                       Device->Slot,
+                       &RwMultiBlkReq->Packet,
+                       RwMultiBlkReq->Event
+                       );
 
 Error:
   if ((Token != NULL) && (Token->Event != NULL)) {
@@ -666,9 +690,25 @@ SdReadWrite (
 
     BufferSize = BlockNum * BlockSize;
     if (BlockNum == 1) {
-      Status = SdRwSingleBlock (Device, Lba, Buffer, BufferSize, IsRead, Token, LastRw);
+      Status = SdRwSingleBlock (
+                 Device,
+                 Lba,
+                 Buffer,
+                 BufferSize,
+                 IsRead,
+                 Token,
+                 LastRw
+                 );
     } else {
-      Status = SdRwMultiBlocks (Device, Lba, Buffer, BufferSize, IsRead, Token, LastRw);
+      Status = SdRwMultiBlocks (
+                 Device,
+                 Lba,
+                 Buffer,
+                 BufferSize,
+                 IsRead,
+                 Token,
+                 LastRw
+                 );
     }
 
     if (EFI_ERROR (Status)) {
@@ -1043,7 +1083,11 @@ SdEraseBlockStart (
   if (Device->SectorAddressing) {
     EraseBlockStart->SdMmcCmdBlk.CommandArgument = (UINT32)StartLba;
   } else {
-    EraseBlockStart->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (StartLba, Device->BlockMedia.BlockSize);
+    EraseBlockStart->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (
+                                                             StartLba,
+                                                             Device->BlockMedia.
+                                                               BlockSize
+                                                             );
   }
 
   EraseBlockStart->IsEnd = IsEnd;
@@ -1064,7 +1108,12 @@ SdEraseBlockStart (
     EraseBlockStart->Event = NULL;
   }
 
-  Status = PassThru->PassThru (PassThru, Device->Slot, &EraseBlockStart->Packet, EraseBlockStart->Event);
+  Status = PassThru->PassThru (
+                       PassThru,
+                       Device->Slot,
+                       &EraseBlockStart->Packet,
+                       EraseBlockStart->Event
+                       );
 
 Error:
   if ((Token != NULL) && (Token->Event != NULL)) {
@@ -1148,7 +1197,11 @@ SdEraseBlockEnd (
   if (Device->SectorAddressing) {
     EraseBlockEnd->SdMmcCmdBlk.CommandArgument = (UINT32)EndLba;
   } else {
-    EraseBlockEnd->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (EndLba, Device->BlockMedia.BlockSize);
+    EraseBlockEnd->SdMmcCmdBlk.CommandArgument = (UINT32)MultU64x32 (
+                                                           EndLba,
+                                                           Device->BlockMedia.
+                                                             BlockSize
+                                                           );
   }
 
   EraseBlockEnd->IsEnd = IsEnd;
@@ -1169,7 +1222,12 @@ SdEraseBlockEnd (
     EraseBlockEnd->Event = NULL;
   }
 
-  Status = PassThru->PassThru (PassThru, Device->Slot, &EraseBlockEnd->Packet, EraseBlockEnd->Event);
+  Status = PassThru->PassThru (
+                       PassThru,
+                       Device->Slot,
+                       &EraseBlockEnd->Packet,
+                       EraseBlockEnd->Event
+                       );
 
 Error:
   if ((Token != NULL) && (Token->Event != NULL)) {
@@ -1266,7 +1324,12 @@ SdEraseBlock (
     EraseBlock->Event = NULL;
   }
 
-  Status = PassThru->PassThru (PassThru, Device->Slot, &EraseBlock->Packet, EraseBlock->Event);
+  Status = PassThru->PassThru (
+                       PassThru,
+                       Device->Slot,
+                       &EraseBlock->Packet,
+                       EraseBlock->Event
+                       );
 
 Error:
   if ((Token != NULL) && (Token->Event != NULL)) {
@@ -1379,7 +1442,12 @@ SdEraseBlocks (
     return Status;
   }
 
-  Status = SdEraseBlockEnd (Device, LastLba, (EFI_BLOCK_IO2_TOKEN *)Token, FALSE);
+  Status = SdEraseBlockEnd (
+             Device,
+             LastLba,
+             (EFI_BLOCK_IO2_TOKEN *)Token,
+             FALSE
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }

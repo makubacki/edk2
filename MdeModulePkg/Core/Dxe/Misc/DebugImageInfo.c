@@ -66,8 +66,11 @@ CoreInitializeDebugImageInfoTable (
              );
   if (EFI_ERROR (Status)) {
     if (PcdGet64 (PcdMaxEfiSystemTablePointerAddress) != 0) {
-      DEBUG ((DEBUG_INFO, "Allocate memory for EFI_SYSTEM_TABLE_POINTER below PcdMaxEfiSystemTablePointerAddress failed. \
-                          Retry to allocate memroy as close to the top of memory as feasible.\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "Allocate memory for EFI_SYSTEM_TABLE_POINTER below PcdMaxEfiSystemTablePointerAddress failed. \
+                          Retry to allocate memroy as close to the top of memory as feasible.\n"
+        ));
     }
 
     //
@@ -126,7 +129,10 @@ CoreInitializeDebugImageInfoTable (
   // Install the EFI_SYSTEM_TABLE_POINTER structure in the EFI System
   // Configuration Table
   //
-  Status = CoreInstallConfigurationTable (&gEfiDebugImageInfoTableGuid, &mDebugInfoTableHeader);
+  Status = CoreInstallConfigurationTable (
+             &gEfiDebugImageInfoTableGuid,
+             &mDebugInfoTableHeader
+             );
   ASSERT_EFI_ERROR (Status);
 }
 
@@ -145,7 +151,11 @@ CoreUpdateDebugTableCrc32 (
 {
   ASSERT (mDebugTable != NULL);
   mDebugTable->Crc32 = 0;
-  gBS->CalculateCrc32 ((VOID *)mDebugTable, sizeof (EFI_SYSTEM_TABLE_POINTER), &mDebugTable->Crc32);
+  gBS->CalculateCrc32 (
+         (VOID *)mDebugTable,
+         sizeof (EFI_SYSTEM_TABLE_POINTER),
+         &mDebugTable->Crc32
+         );
 }
 
 /**
@@ -197,7 +207,8 @@ CoreNewDebugImageInfoEntry (
     TableSize = mMaxTableEntries * EFI_DEBUG_TABLE_ENTRY_SIZE;
     NewTable  = AllocateZeroPool (TableSize + EFI_PAGE_SIZE);
     if (NewTable == NULL) {
-      mDebugInfoTableHeader.UpdateStatus &= ~EFI_DEBUG_IMAGE_INFO_UPDATE_IN_PROGRESS;
+      mDebugInfoTableHeader.UpdateStatus &=
+        ~EFI_DEBUG_IMAGE_INFO_UPDATE_IN_PROGRESS;
       return;
     }
 
@@ -225,12 +236,15 @@ CoreNewDebugImageInfoEntry (
   //
   // Allocate data for new entry
   //
-  Table[Index].NormalImage = AllocateZeroPool (sizeof (EFI_DEBUG_IMAGE_INFO_NORMAL));
+  Table[Index].NormalImage = AllocateZeroPool (
+                               sizeof (EFI_DEBUG_IMAGE_INFO_NORMAL)
+                               );
   if (Table[Index].NormalImage != NULL) {
     //
     // Update the entry
     //
-    Table[Index].NormalImage->ImageInfoType               = (UINT32)ImageInfoType;
+    Table[Index].NormalImage->ImageInfoType =
+      (UINT32)ImageInfoType;
     Table[Index].NormalImage->LoadedImageProtocolInstance = LoadedImage;
     Table[Index].NormalImage->ImageHandle                 = ImageHandle;
     //
@@ -240,7 +254,8 @@ CoreNewDebugImageInfoEntry (
     mDebugInfoTableHeader.UpdateStatus |= EFI_DEBUG_IMAGE_INFO_TABLE_MODIFIED;
   }
 
-  mDebugInfoTableHeader.UpdateStatus &= ~EFI_DEBUG_IMAGE_INFO_UPDATE_IN_PROGRESS;
+  mDebugInfoTableHeader.UpdateStatus &=
+    ~EFI_DEBUG_IMAGE_INFO_UPDATE_IN_PROGRESS;
 }
 
 /**
@@ -262,7 +277,9 @@ CoreRemoveDebugImageInfoEntry (
   Table = mDebugInfoTableHeader.EfiDebugImageInfoTable;
 
   for (Index = 0; Index < mMaxTableEntries; Index++) {
-    if ((Table[Index].NormalImage != NULL) && (Table[Index].NormalImage->ImageHandle == ImageHandle)) {
+    if ((Table[Index].NormalImage != NULL) &&
+        (Table[Index].NormalImage->ImageHandle == ImageHandle))
+    {
       //
       // Found a match. Free up the record, then NULL the pointer to indicate the slot
       // is free.
@@ -278,5 +295,6 @@ CoreRemoveDebugImageInfoEntry (
     }
   }
 
-  mDebugInfoTableHeader.UpdateStatus &= ~EFI_DEBUG_IMAGE_INFO_UPDATE_IN_PROGRESS;
+  mDebugInfoTableHeader.UpdateStatus &=
+    ~EFI_DEBUG_IMAGE_INFO_UPDATE_IN_PROGRESS;
 }

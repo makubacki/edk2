@@ -81,14 +81,20 @@ CalculateBestPioMode (
 
   Temp = 0xff;
 
-  PioMode = (UINT8)(((ATA5_IDENTIFY_DATA *)(&(IdentifyData->AtaData)))->pio_cycle_timing >> 8);
+  PioMode =
+    (UINT8)(((ATA5_IDENTIFY_DATA *)(&(IdentifyData->AtaData)))->pio_cycle_timing
+            >> 8);
 
   //
   // See whether Identify Data word 64 - 70 are valid
   //
   if ((IdentifyData->AtaData.field_validity & 0x02) == 0x02) {
     AdvancedPioMode = IdentifyData->AtaData.advanced_pio_modes;
-    DEBUG ((DEBUG_INFO, "CalculateBestPioMode: AdvancedPioMode = %x\n", AdvancedPioMode));
+    DEBUG ((
+      DEBUG_INFO,
+      "CalculateBestPioMode: AdvancedPioMode = %x\n",
+      AdvancedPioMode
+      ));
 
     for (Index = 0; Index < 8; Index++) {
       if ((AdvancedPioMode & 0x01) != 0) {
@@ -114,7 +120,8 @@ CalculateBestPioMode (
     //
     PioMode = (UINT16)MIN (AdvancedPioMode, 4);
 
-    MinimumPioCycleTime = IdentifyData->AtaData.min_pio_cycle_time_with_flow_control;
+    MinimumPioCycleTime =
+      IdentifyData->AtaData.min_pio_cycle_time_with_flow_control;
 
     if (MinimumPioCycleTime <= 120) {
       PioMode = (UINT16)MIN (4, PioMode);
@@ -200,7 +207,11 @@ CalculateBestUdmaMode (
   }
 
   DeviceUDmaMode = IdentifyData->AtaData.ultra_dma_mode;
-  DEBUG ((DEBUG_INFO, "CalculateBestUdmaMode: DeviceUDmaMode = %x\n", DeviceUDmaMode));
+  DEBUG ((
+    DEBUG_INFO,
+    "CalculateBestUdmaMode: DeviceUDmaMode = %x\n",
+    DeviceUDmaMode
+    ));
   DeviceUDmaMode &= 0x3f;
   TempMode        = 0;          // initialize it to UDMA-0
 
@@ -375,7 +386,11 @@ SataControllerStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "SataControllerStart error. return status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SataControllerStart error. return status = %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -498,14 +513,20 @@ SataControllerStart (
     }
   }
 
-  TotalCount                 = (UINTN)(Private->IdeInit.ChannelCount) * (UINTN)(Private->DeviceCount);
-  Private->DisqualifiedModes = AllocateZeroPool ((sizeof (EFI_ATA_COLLECTIVE_MODE)) * TotalCount);
+  TotalCount = (UINTN)(Private->IdeInit.ChannelCount) *
+               (UINTN)(Private->DeviceCount);
+  Private->DisqualifiedModes = AllocateZeroPool (
+                                 (sizeof (EFI_ATA_COLLECTIVE_MODE)) * TotalCount
+                                 );
   if (Private->DisqualifiedModes == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
 
-  Private->IdentifyData = AllocateZeroPool ((sizeof (EFI_IDENTIFY_DATA)) * TotalCount);
+  Private->IdentifyData = AllocateZeroPool (
+                            (sizeof (EFI_IDENTIFY_DATA)) *
+                            TotalCount
+                            );
   if (Private->IdentifyData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -928,7 +949,10 @@ IdeInitDisqualifyMode (
   Private = SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS (This);
   ASSERT (Private != NULL);
 
-  if ((Channel >= This->ChannelCount) || (BadModes == NULL) || (Device >= Private->DeviceCount)) {
+  if ((Channel >= This->ChannelCount) || (BadModes == NULL) || (Device >=
+                                                                Private->
+                                                                  DeviceCount))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1021,7 +1045,10 @@ IdeInitCalculateMode (
   Private = SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS (This);
   ASSERT (Private != NULL);
 
-  if ((Channel >= This->ChannelCount) || (SupportedModes == NULL) || (Device >= Private->DeviceCount)) {
+  if ((Channel >= This->ChannelCount) || (SupportedModes == NULL) || (Device >=
+                                                                      Private->
+                                                                        DeviceCount))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1047,7 +1074,8 @@ IdeInitCalculateMode (
 
   Status = CalculateBestPioMode (
              IdentifyData,
-             (DisqualifiedModes->PioMode.Valid ? ((UINT16 *)&(DisqualifiedModes->PioMode.Mode)) : NULL),
+             (DisqualifiedModes->PioMode.Valid ?
+              ((UINT16 *)&(DisqualifiedModes->PioMode.Mode)) : NULL),
              &SelectedMode
              );
   if (!EFI_ERROR (Status)) {
@@ -1057,11 +1085,16 @@ IdeInitCalculateMode (
     (*SupportedModes)->PioMode.Valid = FALSE;
   }
 
-  DEBUG ((DEBUG_INFO, "IdeInitCalculateMode: PioMode = %x\n", (*SupportedModes)->PioMode.Mode));
+  DEBUG ((
+    DEBUG_INFO,
+    "IdeInitCalculateMode: PioMode = %x\n",
+    (*SupportedModes)->PioMode.Mode
+    ));
 
   Status = CalculateBestUdmaMode (
              IdentifyData,
-             (DisqualifiedModes->UdmaMode.Valid ? ((UINT16 *)&(DisqualifiedModes->UdmaMode.Mode)) : NULL),
+             (DisqualifiedModes->UdmaMode.Valid ?
+              ((UINT16 *)&(DisqualifiedModes->UdmaMode.Mode)) : NULL),
              &SelectedMode
              );
 
@@ -1072,7 +1105,11 @@ IdeInitCalculateMode (
     (*SupportedModes)->UdmaMode.Valid = FALSE;
   }
 
-  DEBUG ((DEBUG_INFO, "IdeInitCalculateMode: UdmaMode = %x\n", (*SupportedModes)->UdmaMode.Mode));
+  DEBUG ((
+    DEBUG_INFO,
+    "IdeInitCalculateMode: UdmaMode = %x\n",
+    (*SupportedModes)->UdmaMode.Mode
+    ));
 
   //
   // The modes other than PIO and UDMA are not supported

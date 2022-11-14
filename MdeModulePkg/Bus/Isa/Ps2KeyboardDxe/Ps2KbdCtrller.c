@@ -608,7 +608,9 @@ GetScancodeBufHead (
   //
   // retrieve the values
   //
-  for (Index = 0, Pos = Queue->Head; Index < Count; Index++, Pos = (Pos + 1) % KEYBOARD_SCAN_CODE_MAX_COUNT) {
+  for (Index = 0, Pos = Queue->Head; Index < Count; Index++, Pos = (Pos + 1) %
+                                                                   KEYBOARD_SCAN_CODE_MAX_COUNT)
+  {
     Buf[Index] = Queue->Buffer[Pos];
   }
 
@@ -646,7 +648,9 @@ PopScancodeBufHead (
   //
   // Retrieve and remove the values
   //
-  for (Index = 0; Index < Count; Index++, Queue->Head = (Queue->Head + 1) % KEYBOARD_SCAN_CODE_MAX_COUNT) {
+  for (Index = 0; Index < Count; Index++, Queue->Head = (Queue->Head + 1) %
+                                                        KEYBOARD_SCAN_CODE_MAX_COUNT)
+  {
     if (Buf != NULL) {
       Buf[Index] = Queue->Buffer[Queue->Head];
     }
@@ -802,7 +806,9 @@ KeyboardTimerHandler (
   // Just skip the 'resend' process simply.
   //
 
-  while ((KeyReadStatusRegister (ConsoleIn) & (KEYBOARD_STATUS_REGISTER_TRANSMIT_TIMEOUT|KEYBOARD_STATUS_REGISTER_HAS_OUTPUT_DATA)) ==
+  while ((KeyReadStatusRegister (ConsoleIn) &
+          (KEYBOARD_STATUS_REGISTER_TRANSMIT_TIMEOUT|
+           KEYBOARD_STATUS_REGISTER_HAS_OUTPUT_DATA)) ==
          KEYBOARD_STATUS_REGISTER_HAS_OUTPUT_DATA
          )
   {
@@ -848,7 +854,9 @@ KeyboardRead (
   // wait till output buffer full then perform the read
   //
   for (TimeOut = 0; TimeOut < KEYBOARD_TIMEOUT; TimeOut += 30) {
-    if (KeyReadStatusRegister (ConsoleIn) & KEYBOARD_STATUS_REGISTER_HAS_OUTPUT_DATA) {
+    if (KeyReadStatusRegister (ConsoleIn) &
+        KEYBOARD_STATUS_REGISTER_HAS_OUTPUT_DATA)
+    {
       RegFilled = 1;
       *Data     = KeyReadDataRegister (ConsoleIn);
       break;
@@ -1114,22 +1122,36 @@ InitializeKeyState (
   )
 {
   KeyState->KeyShiftState = EFI_SHIFT_STATE_VALID
-                            | (ConsoleIn->LeftCtrl   ? EFI_LEFT_CONTROL_PRESSED  : 0)
-                            | (ConsoleIn->RightCtrl  ? EFI_RIGHT_CONTROL_PRESSED : 0)
-                            | (ConsoleIn->LeftAlt    ? EFI_LEFT_ALT_PRESSED      : 0)
-                            | (ConsoleIn->RightAlt   ? EFI_RIGHT_ALT_PRESSED     : 0)
-                            | (ConsoleIn->LeftShift  ? EFI_LEFT_SHIFT_PRESSED    : 0)
-                            | (ConsoleIn->RightShift ? EFI_RIGHT_SHIFT_PRESSED   : 0)
-                            | (ConsoleIn->LeftLogo   ? EFI_LEFT_LOGO_PRESSED     : 0)
-                            | (ConsoleIn->RightLogo  ? EFI_RIGHT_LOGO_PRESSED    : 0)
-                            | (ConsoleIn->Menu       ? EFI_MENU_KEY_PRESSED      : 0)
-                            | (ConsoleIn->SysReq     ? EFI_SYS_REQ_PRESSED       : 0)
+                            | (ConsoleIn->LeftCtrl   ?
+                               EFI_LEFT_CONTROL_PRESSED  : 0)
+                            | (ConsoleIn->RightCtrl  ?
+                               EFI_RIGHT_CONTROL_PRESSED : 0)
+                            | (ConsoleIn->LeftAlt    ?
+                               EFI_LEFT_ALT_PRESSED      : 0)
+                            | (ConsoleIn->RightAlt   ?
+                               EFI_RIGHT_ALT_PRESSED     : 0)
+                            | (ConsoleIn->LeftShift  ?
+                               EFI_LEFT_SHIFT_PRESSED    : 0)
+                            | (ConsoleIn->RightShift ?
+                               EFI_RIGHT_SHIFT_PRESSED   : 0)
+                            | (ConsoleIn->LeftLogo   ?
+                               EFI_LEFT_LOGO_PRESSED     : 0)
+                            | (ConsoleIn->RightLogo  ?
+                               EFI_RIGHT_LOGO_PRESSED    : 0)
+                            | (ConsoleIn->Menu       ?
+                               EFI_MENU_KEY_PRESSED      : 0)
+                            | (ConsoleIn->SysReq     ?
+                               EFI_SYS_REQ_PRESSED       : 0)
   ;
   KeyState->KeyToggleState = EFI_TOGGLE_STATE_VALID
-                             | (ConsoleIn->CapsLock   ? EFI_CAPS_LOCK_ACTIVE :   0)
-                             | (ConsoleIn->NumLock    ? EFI_NUM_LOCK_ACTIVE :    0)
-                             | (ConsoleIn->ScrollLock ? EFI_SCROLL_LOCK_ACTIVE : 0)
-                             | (ConsoleIn->IsSupportPartialKey ? EFI_KEY_STATE_EXPOSED : 0)
+                             | (ConsoleIn->CapsLock   ? EFI_CAPS_LOCK_ACTIVE :
+                                0)
+                             | (ConsoleIn->NumLock    ? EFI_NUM_LOCK_ACTIVE :
+                                0)
+                             | (ConsoleIn->ScrollLock ? EFI_SCROLL_LOCK_ACTIVE :
+                                0)
+                             | (ConsoleIn->IsSupportPartialKey ?
+                                EFI_KEY_STATE_EXPOSED : 0)
   ;
 }
 
@@ -1168,7 +1190,11 @@ KeyGetchar (
     Extend0        = FALSE;
     Extend1        = FALSE;
     ScancodeArrPos = 0;
-    Status         = GetScancodeBufHead (&ConsoleIn->ScancodeQueue, ScancodeArrPos + 1, ScancodeArr);
+    Status         = GetScancodeBufHead (
+                       &ConsoleIn->ScancodeQueue,
+                       ScancodeArrPos + 1,
+                       ScancodeArr
+                       );
     if (EFI_ERROR (Status)) {
       return;
     }
@@ -1179,7 +1205,11 @@ KeyGetchar (
       //
       Extend0        = TRUE;
       ScancodeArrPos = 1;
-      Status         = GetScancodeBufHead (&ConsoleIn->ScancodeQueue, ScancodeArrPos + 1, ScancodeArr);
+      Status         = GetScancodeBufHead (
+                         &ConsoleIn->ScancodeQueue,
+                         ScancodeArrPos + 1,
+                         ScancodeArr
+                         );
       if (EFI_ERROR (Status)) {
         return;
       }
@@ -1189,7 +1219,11 @@ KeyGetchar (
       //
       Extend1        = TRUE;
       ScancodeArrPos = 2;
-      Status         = GetScancodeBufHead (&ConsoleIn->ScancodeQueue, ScancodeArrPos + 1, ScancodeArr);
+      Status         = GetScancodeBufHead (
+                         &ConsoleIn->ScancodeQueue,
+                         ScancodeArrPos + 1,
+                         ScancodeArr
+                         );
       if (EFI_ERROR (Status)) {
         return;
       }
@@ -1198,7 +1232,11 @@ KeyGetchar (
     //
     // if we reach this position, scancodes for a key is in buffer now,pop them
     //
-    Status = PopScancodeBufHead (&ConsoleIn->ScancodeQueue, ScancodeArrPos + 1, ScancodeArr);
+    Status = PopScancodeBufHead (
+               &ConsoleIn->ScancodeQueue,
+               ScancodeArrPos + 1,
+               ScancodeArr
+               );
     ASSERT_EFI_ERROR (Status);
 
     //
@@ -1391,30 +1429,43 @@ KeyGetchar (
     // Except the above special case, all others can be handled by convert table
     //
   } else {
-    for (Index = 0; ConvertKeyboardScanCodeToEfiKey[Index].ScanCode != TABLE_END; Index++) {
+    for (Index = 0; ConvertKeyboardScanCodeToEfiKey[Index].ScanCode !=
+         TABLE_END; Index++)
+    {
       if (ScanCode == ConvertKeyboardScanCodeToEfiKey[Index].ScanCode) {
-        KeyData.Key.ScanCode    = ConvertKeyboardScanCodeToEfiKey[Index].EfiScanCode;
-        KeyData.Key.UnicodeChar = ConvertKeyboardScanCodeToEfiKey[Index].UnicodeChar;
+        KeyData.Key.ScanCode =
+          ConvertKeyboardScanCodeToEfiKey[Index].EfiScanCode;
+        KeyData.Key.UnicodeChar =
+          ConvertKeyboardScanCodeToEfiKey[Index].UnicodeChar;
 
         if ((ConsoleIn->LeftShift || ConsoleIn->RightShift) &&
-            (ConvertKeyboardScanCodeToEfiKey[Index].UnicodeChar != ConvertKeyboardScanCodeToEfiKey[Index].ShiftUnicodeChar))
+            (ConvertKeyboardScanCodeToEfiKey[Index].UnicodeChar !=
+             ConvertKeyboardScanCodeToEfiKey[Index].ShiftUnicodeChar))
         {
-          KeyData.Key.UnicodeChar = ConvertKeyboardScanCodeToEfiKey[Index].ShiftUnicodeChar;
+          KeyData.Key.UnicodeChar =
+            ConvertKeyboardScanCodeToEfiKey[Index].ShiftUnicodeChar;
           //
           // Need not return associated shift state if a class of printable characters that
           // are normally adjusted by shift modifiers. e.g. Shift Key + 'f' key = 'F'
           //
-          KeyData.KeyState.KeyShiftState &= ~(EFI_LEFT_SHIFT_PRESSED | EFI_RIGHT_SHIFT_PRESSED);
+          KeyData.KeyState.KeyShiftState &= ~(EFI_LEFT_SHIFT_PRESSED |
+                                              EFI_RIGHT_SHIFT_PRESSED);
         }
 
         //
         // alphabetic key is affected by CapsLock State
         //
         if (ConsoleIn->CapsLock) {
-          if ((KeyData.Key.UnicodeChar >= L'a') && (KeyData.Key.UnicodeChar <= L'z')) {
-            KeyData.Key.UnicodeChar = (UINT16)(KeyData.Key.UnicodeChar - L'a' + L'A');
-          } else if ((KeyData.Key.UnicodeChar >= L'A') && (KeyData.Key.UnicodeChar <= L'Z')) {
-            KeyData.Key.UnicodeChar = (UINT16)(KeyData.Key.UnicodeChar - L'A' + L'a');
+          if ((KeyData.Key.UnicodeChar >= L'a') && (KeyData.Key.UnicodeChar <=
+                                                    L'z'))
+          {
+            KeyData.Key.UnicodeChar = (UINT16)(KeyData.Key.UnicodeChar - L'a' +
+                                               L'A');
+          } else if ((KeyData.Key.UnicodeChar >= L'A') &&
+                     (KeyData.Key.UnicodeChar <= L'Z'))
+          {
+            KeyData.Key.UnicodeChar = (UINT16)(KeyData.Key.UnicodeChar - L'A' +
+                                               L'a');
           }
         }
 
@@ -1427,7 +1478,9 @@ KeyGetchar (
   // distinguish numeric key pad keys' 'up symbol' and 'down symbol'
   //
   if ((ScanCode >= 0x47) && (ScanCode <= 0x53)) {
-    if (ConsoleIn->NumLock && !(ConsoleIn->LeftShift || ConsoleIn->RightShift) && !Extend0) {
+    if (ConsoleIn->NumLock && !(ConsoleIn->LeftShift ||
+                                ConsoleIn->RightShift) && !Extend0)
+    {
       KeyData.Key.ScanCode = SCAN_NULL;
     } else if ((ScanCode != 0x4a) && (ScanCode != 0x4e)) {
       KeyData.Key.UnicodeChar = CHAR_NULL;
@@ -1437,7 +1490,9 @@ KeyGetchar (
   //
   // If the key can not be converted then just return.
   //
-  if ((KeyData.Key.ScanCode == SCAN_NULL) && (KeyData.Key.UnicodeChar == CHAR_NULL)) {
+  if ((KeyData.Key.ScanCode == SCAN_NULL) && (KeyData.Key.UnicodeChar ==
+                                              CHAR_NULL))
+  {
     if (!ConsoleIn->IsSupportPartialKey) {
       return;
     }
@@ -1446,7 +1501,15 @@ KeyGetchar (
   //
   // Signal KeyNotify process event if this key pressed matches any key registered.
   //
-  for (Link = GetFirstNode (&ConsoleIn->NotifyList); !IsNull (&ConsoleIn->NotifyList, Link); Link = GetNextNode (&ConsoleIn->NotifyList, Link)) {
+  for (Link = GetFirstNode (&ConsoleIn->NotifyList); !IsNull (
+                                                        &ConsoleIn->NotifyList,
+                                                        Link
+                                                        ); Link = GetNextNode (
+                                                                    &ConsoleIn->
+                                                                      NotifyList,
+                                                                    Link
+                                                                    ))
+  {
     CurrentNotify = CR (
                       Link,
                       KEYBOARD_CONSOLE_IN_EX_NOTIFY,
@@ -1514,7 +1577,9 @@ InitKeyboard (
   // Perform a read to cleanup the Status Register's
   // output buffer full bits within MAX TRY times
   //
-  if ((KeyReadStatusRegister (ConsoleIn) & KEYBOARD_STATUS_REGISTER_HAS_OUTPUT_DATA) != 0) {
+  if ((KeyReadStatusRegister (ConsoleIn) &
+       KEYBOARD_STATUS_REGISTER_HAS_OUTPUT_DATA) != 0)
+  {
     while (!EFI_ERROR (Status) && TryTime < KEYBOARD_MAX_TRY) {
       Status = KeyboardRead (ConsoleIn, &CommandByte);
       TryTime++;
@@ -1541,7 +1606,9 @@ InitKeyboard (
   // Test the system flag in to determine whether this is the first
   // time initialization
   //
-  if ((KeyReadStatusRegister (ConsoleIn) & KEYBOARD_STATUS_REGISTER_SYSTEM_FLAG) != 0) {
+  if ((KeyReadStatusRegister (ConsoleIn) &
+       KEYBOARD_STATUS_REGISTER_SYSTEM_FLAG) != 0)
+  {
     if (!PcdGetBool (PcdFastPS2Detection)) {
       //
       // 8042 controller is already setup (by myself or by mouse driver):
@@ -1584,13 +1651,19 @@ InitKeyboard (
     // Disable keyboard and mouse interfaces
     //
     if (!PcdGetBool (PcdFastPS2Detection)) {
-      Status = KeyboardCommand (ConsoleIn, KEYBOARD_8042_COMMAND_DISABLE_KEYBOARD_INTERFACE);
+      Status = KeyboardCommand (
+                 ConsoleIn,
+                 KEYBOARD_8042_COMMAND_DISABLE_KEYBOARD_INTERFACE
+                 );
       if (EFI_ERROR (Status)) {
         KeyboardError (ConsoleIn, L"\n\r");
         goto Done;
       }
 
-      Status = KeyboardCommand (ConsoleIn, KEYBOARD_8042_COMMAND_DISABLE_MOUSE_INTERFACE);
+      Status = KeyboardCommand (
+                 ConsoleIn,
+                 KEYBOARD_8042_COMMAND_DISABLE_MOUSE_INTERFACE
+                 );
       if (EFI_ERROR (Status)) {
         KeyboardError (ConsoleIn, L"\n\r");
         goto Done;
@@ -1604,7 +1677,10 @@ InitKeyboard (
       //
       // 8042 Controller Self Test
       //
-      Status = KeyboardCommand (ConsoleIn, KEYBOARD_8042_COMMAND_CONTROLLER_SELF_TEST);
+      Status = KeyboardCommand (
+                 ConsoleIn,
+                 KEYBOARD_8042_COMMAND_CONTROLLER_SELF_TEST
+                 );
       if (EFI_ERROR (Status)) {
         KeyboardError (ConsoleIn, L"8042 controller command write error!\n\r");
         goto Done;
@@ -1698,7 +1774,10 @@ InitKeyboard (
     //
     // Keyboard Interface Test
     //
-    Status = KeyboardCommand (ConsoleIn, KEYBOARD_8042_COMMAND_KEYBOARD_INTERFACE_SELF_TEST);
+    Status = KeyboardCommand (
+               ConsoleIn,
+               KEYBOARD_8042_COMMAND_KEYBOARD_INTERFACE_SELF_TEST
+               );
     if (EFI_ERROR (Status)) {
       KeyboardError (ConsoleIn, L"8042 controller command write error!\n\r");
       goto Done;
@@ -1724,7 +1803,10 @@ InitKeyboard (
 
     Status = KeyboardWaitForValue (ConsoleIn, KEYBOARD_8048_RETURN_8042_ACK);
     if (EFI_ERROR (Status)) {
-      KeyboardError (ConsoleIn, L"Some specific value not acquired from 8042 controller!\n\r");
+      KeyboardError (
+        ConsoleIn,
+        L"Some specific value not acquired from 8042 controller!\n\r"
+        );
       goto Done;
     }
 
@@ -1738,7 +1820,10 @@ InitKeyboard (
     //
     // Set Keyboard to use Scan Code Set 2
     //
-    Status = KeyboardWrite (ConsoleIn, KEYBOARD_8048_COMMAND_SELECT_SCAN_CODE_SET);
+    Status = KeyboardWrite (
+               ConsoleIn,
+               KEYBOARD_8048_COMMAND_SELECT_SCAN_CODE_SET
+               );
     if (EFI_ERROR (Status)) {
       KeyboardError (ConsoleIn, L"8042 controller data write error!\n\r");
       goto Done;
@@ -1746,7 +1831,10 @@ InitKeyboard (
 
     Status = KeyboardWaitForValue (ConsoleIn, KEYBOARD_8048_RETURN_8042_ACK);
     if (EFI_ERROR (Status)) {
-      KeyboardError (ConsoleIn, L"Some specific value not acquired from 8042 controller!\n\r");
+      KeyboardError (
+        ConsoleIn,
+        L"Some specific value not acquired from 8042 controller!\n\r"
+        );
       goto Done;
     }
 
@@ -1758,7 +1846,10 @@ InitKeyboard (
 
     Status = KeyboardWaitForValue (ConsoleIn, KEYBOARD_8048_RETURN_8042_ACK);
     if (EFI_ERROR (Status)) {
-      KeyboardError (ConsoleIn, L"Some specific value not acquired from 8042 controller!\n\r");
+      KeyboardError (
+        ConsoleIn,
+        L"Some specific value not acquired from 8042 controller!\n\r"
+        );
       goto Done;
     }
 
@@ -1773,21 +1864,30 @@ InitKeyboard (
 
     Status = KeyboardWaitForValue (ConsoleIn, KEYBOARD_8048_RETURN_8042_ACK);
     if (EFI_ERROR (Status)) {
-      KeyboardError (ConsoleIn, L"Some specific value not acquired from 8042 controller!\n\r");
+      KeyboardError (
+        ConsoleIn,
+        L"Some specific value not acquired from 8042 controller!\n\r"
+        );
       goto Done;
     }
 
     //
     if (Ps2Policy != NULL) {
-      if ((Ps2Policy->KeyboardLight & EFI_KEYBOARD_CAPSLOCK) == EFI_KEYBOARD_CAPSLOCK) {
+      if ((Ps2Policy->KeyboardLight & EFI_KEYBOARD_CAPSLOCK) ==
+          EFI_KEYBOARD_CAPSLOCK)
+      {
         ConsoleIn->CapsLock = TRUE;
       }
 
-      if ((Ps2Policy->KeyboardLight & EFI_KEYBOARD_NUMLOCK) == EFI_KEYBOARD_NUMLOCK) {
+      if ((Ps2Policy->KeyboardLight & EFI_KEYBOARD_NUMLOCK) ==
+          EFI_KEYBOARD_NUMLOCK)
+      {
         ConsoleIn->NumLock = TRUE;
       }
 
-      if ((Ps2Policy->KeyboardLight & EFI_KEYBOARD_SCROLLLOCK) == EFI_KEYBOARD_SCROLLLOCK) {
+      if ((Ps2Policy->KeyboardLight & EFI_KEYBOARD_SCROLLLOCK) ==
+          EFI_KEYBOARD_SCROLLLOCK)
+      {
         ConsoleIn->ScrollLock = TRUE;
       }
     }
@@ -1811,7 +1911,10 @@ Done:
     //
     // Enable mouse interface
     //
-    Status1 = KeyboardCommand (ConsoleIn, KEYBOARD_8042_COMMAND_ENABLE_MOUSE_INTERFACE);
+    Status1 = KeyboardCommand (
+                ConsoleIn,
+                KEYBOARD_8042_COMMAND_ENABLE_MOUSE_INTERFACE
+                );
     if (EFI_ERROR (Status1)) {
       KeyboardError (ConsoleIn, L"8042 controller command write error!\n\r");
       return EFI_DEVICE_ERROR;

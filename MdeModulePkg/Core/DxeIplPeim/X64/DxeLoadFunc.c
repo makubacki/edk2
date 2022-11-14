@@ -54,7 +54,10 @@ HandOffToDxeCore (
              (VOID **)&VectorHandoffInfoPpi
              );
   if (Status == EFI_SUCCESS) {
-    DEBUG ((DEBUG_INFO, "Vector Hand-off Info PPI is gotten, GUIDed HOB is created!\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "Vector Hand-off Info PPI is gotten, GUIDed HOB is created!\n"
+      ));
     VectorInfo = VectorHandoffInfoPpi->Info;
     Index      = 1;
     while (VectorInfo->Attribute != EFI_VECTOR_HANDOFF_LAST_ENTRY) {
@@ -79,7 +82,8 @@ HandOffToDxeCore (
   // Compute the top of the stack we were allocated. Pre-allocate a UINTN
   // for safety.
   //
-  TopOfStack = (VOID *)((UINTN)BaseOfStack + EFI_SIZE_TO_PAGES (STACK_SIZE) * EFI_PAGE_SIZE - CPU_STACK_ALIGNMENT);
+  TopOfStack = (VOID *)((UINTN)BaseOfStack + EFI_SIZE_TO_PAGES (STACK_SIZE) *
+                        EFI_PAGE_SIZE - CPU_STACK_ALIGNMENT);
   TopOfStack = ALIGN_POINTER (TopOfStack, CPU_STACK_ALIGNMENT);
 
   //

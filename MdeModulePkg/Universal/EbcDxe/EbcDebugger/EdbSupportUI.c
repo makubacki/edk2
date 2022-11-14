@@ -281,7 +281,12 @@ Input (
           StrPos -= 1;
           Update  = StrPos;
           Delete  = 1;
-          CopyMem (InStr + StrPos, InStr + StrPos + 1, sizeof (CHAR16) * (Len - StrPos));
+          CopyMem (
+            InStr + StrPos,
+            InStr + StrPos + 1,
+            sizeof (CHAR16) * (Len -
+                               StrPos)
+            );
 
           //
           // Adjust the current column and row
@@ -331,7 +336,12 @@ Input (
             if (Len != 0) {
               Update = StrPos;
               Delete = 1;
-              CopyMem (InStr + StrPos, InStr + StrPos + 1, sizeof (CHAR16) * (Len - StrPos));
+              CopyMem (
+                InStr + StrPos,
+                InStr + StrPos + 1,
+                sizeof (CHAR16) *
+                (Len - StrPos)
+                );
 
               NeedAdjust = TRUE;
             }
@@ -419,12 +429,20 @@ Input (
             NeedAdjust = FALSE;
 
             ConOut->SetCursorPosition (ConOut, StartColumn, Row);
-            for (SubIndex = 0; SubIndex < EFI_DEBUG_INPUS_BUFFER_SIZE - (StartColumn - EFI_DEBUG_PROMPT_COLUMN); SubIndex++) {
+            for (SubIndex = 0; SubIndex < EFI_DEBUG_INPUS_BUFFER_SIZE -
+                 (StartColumn - EFI_DEBUG_PROMPT_COLUMN); SubIndex++)
+            {
               mBackupSpace[SubIndex] = L' ';
             }
 
             EDBPrint (mBackupSpace);
-            SetMem (mBackupSpace, (EFI_DEBUG_INPUS_BUFFER_SIZE - (StartColumn - EFI_DEBUG_PROMPT_COLUMN)) * sizeof (CHAR16), 0);
+            SetMem (
+              mBackupSpace,
+              (EFI_DEBUG_INPUS_BUFFER_SIZE - (StartColumn -
+                                              EFI_DEBUG_PROMPT_COLUMN)) *
+              sizeof (CHAR16),
+              0
+              );
 
             ConOut->SetCursorPosition (ConOut, StartColumn, Row);
             Len = StrPos;
@@ -463,12 +481,21 @@ Input (
     if (Update != -1) {
       if (NeedAdjust) {
         ConOut->SetCursorPosition (ConOut, Column, Row);
-        for (SubIndex = 0; SubIndex < EFI_DEBUG_INPUS_BUFFER_SIZE - (Column - EFI_DEBUG_PROMPT_COLUMN); SubIndex++) {
+        for (SubIndex = 0; SubIndex < EFI_DEBUG_INPUS_BUFFER_SIZE - (Column -
+                                                                     EFI_DEBUG_PROMPT_COLUMN);
+             SubIndex++)
+        {
           mBackupSpace[SubIndex] = L' ';
         }
 
         EDBPrint (mBackupSpace);
-        SetMem (mBackupSpace, (EFI_DEBUG_INPUS_BUFFER_SIZE - (Column - EFI_DEBUG_PROMPT_COLUMN)) * sizeof (CHAR16), 0);
+        SetMem (
+          mBackupSpace,
+          (EFI_DEBUG_INPUS_BUFFER_SIZE - (Column -
+                                          EFI_DEBUG_PROMPT_COLUMN)) *
+          sizeof (CHAR16),
+          0
+          );
         ConOut->SetCursorPosition (ConOut, Column, Row);
         NeedAdjust = FALSE;
       }
@@ -491,7 +518,10 @@ Input (
       // BACKSPACE and DELETE, we need to move the cursor position forward,
       // so adjust row and column here.
       //
-      if ((Key.UnicodeChar != CHAR_BACKSPACE) && !((Key.UnicodeChar == 0) && (Key.ScanCode == SCAN_DELETE))) {
+      if ((Key.UnicodeChar != CHAR_BACKSPACE) && !((Key.UnicodeChar == 0) &&
+                                                   (Key.ScanCode ==
+                                                    SCAN_DELETE)))
+      {
         //
         // Calulate row and column of the tail of current string
         //
@@ -505,7 +535,9 @@ Input (
         // (if we are recalling commands using UPPER and DOWN key, and if the
         // old command is too long to fit the screen, TailColumn must be 79.
         //
-        if ((TailColumn == 0) && (TailRow >= TotalRow) && ((UINTN)Row != TailRow)) {
+        if ((TailColumn == 0) && (TailRow >= TotalRow) && ((UINTN)Row !=
+                                                           TailRow))
+        {
           Row--;
         }
 
@@ -534,7 +566,16 @@ Input (
     //
     // Set the cursor position for this key
     //
-    SetCursorPosition (ConOut, Column, Row, LineLength, TotalRow, InStr, StrPos, Len);
+    SetCursorPosition (
+      ConOut,
+      Column,
+      Row,
+      LineLength,
+      TotalRow,
+      InStr,
+      StrPos,
+      Len
+      );
   } while (!Done);
 
   CopyMem (mInputBufferHistory, InStr, StrLength * sizeof (CHAR16));
@@ -617,7 +658,10 @@ SetPageBreak (
     return FALSE;
   }
 
-  gST->ConOut->OutputString (gST->ConOut, L"Press ENTER to continue, 'q' to exit:");
+  gST->ConOut->OutputString (
+                 gST->ConOut,
+                 L"Press ENTER to continue, 'q' to exit:"
+                 );
 
   OmitPrint = FALSE;
   //
@@ -763,7 +807,13 @@ EDBSPrintWithOffset (
   ASSERT (BufferSize - (Offset * sizeof (CHAR16)) > 0);
 
   VA_START (Marker, Format);
-  Return = UnicodeVSPrint (Buffer + Offset, (UINTN)(BufferSize - (Offset * sizeof (CHAR16))), Format, Marker);
+  Return = UnicodeVSPrint (
+             Buffer + Offset,
+             (UINTN)(BufferSize - (Offset *
+                                   sizeof (CHAR16))),
+             Format,
+             Marker
+             );
   VA_END (Marker);
 
   return Return;

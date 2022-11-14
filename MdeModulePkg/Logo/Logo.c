@@ -73,7 +73,12 @@ GetImage (
   *Attribute = mLogos[Current].Attribute;
   *OffsetX   = mLogos[Current].OffsetX;
   *OffsetY   = mLogos[Current].OffsetY;
-  return mHiiImageEx->GetImageEx (mHiiImageEx, mHiiHandle, mLogos[Current].ImageId, Image);
+  return mHiiImageEx->GetImageEx (
+                        mHiiImageEx,
+                        mHiiHandle,
+                        mLogos[Current].ImageId,
+                        Image
+                        );
 }
 
 EDKII_PLATFORM_LOGO_PROTOCOL  mPlatformLogo = {
@@ -130,7 +135,10 @@ InitializeLogo (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "HII Image Package with logo not found in PE/COFF resource section\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "HII Image Package with logo not found in PE/COFF resource section\n"
+      ));
     return Status;
   }
 

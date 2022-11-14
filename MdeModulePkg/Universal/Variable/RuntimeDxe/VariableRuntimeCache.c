@@ -32,10 +32,12 @@ FlushPendingRuntimeVariableCacheUpdates (
 {
   VARIABLE_RUNTIME_CACHE_CONTEXT  *VariableRuntimeCacheContext;
 
-  VariableRuntimeCacheContext = &mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext;
+  VariableRuntimeCacheContext =
+    &mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext;
 
   if ((VariableRuntimeCacheContext->VariableRuntimeNvCache.Store == NULL) ||
-      (VariableRuntimeCacheContext->VariableRuntimeVolatileCache.Store == NULL) ||
+      (VariableRuntimeCacheContext->VariableRuntimeVolatileCache.Store ==
+       NULL) ||
       (VariableRuntimeCacheContext->PendingUpdate == NULL))
   {
     return EFI_UNSUPPORTED;
@@ -47,27 +49,36 @@ FlushPendingRuntimeVariableCacheUpdates (
     {
       CopyMem (
         (VOID *)(
-                 ((UINT8 *)(UINTN)VariableRuntimeCacheContext->VariableRuntimeHobCache.Store) +
-                 VariableRuntimeCacheContext->VariableRuntimeHobCache.PendingUpdateOffset
+                 ((UINT8 *)(UINTN)VariableRuntimeCacheContext->
+                    VariableRuntimeHobCache.Store) +
+                 VariableRuntimeCacheContext->VariableRuntimeHobCache.
+                   PendingUpdateOffset
                  ),
         (VOID *)(
-                 ((UINT8 *)(UINTN)mVariableModuleGlobal->VariableGlobal.HobVariableBase) +
-                 VariableRuntimeCacheContext->VariableRuntimeHobCache.PendingUpdateOffset
+                 ((UINT8 *)(UINTN)mVariableModuleGlobal->VariableGlobal.
+                    HobVariableBase) +
+                 VariableRuntimeCacheContext->VariableRuntimeHobCache.
+                   PendingUpdateOffset
                  ),
         VariableRuntimeCacheContext->VariableRuntimeHobCache.PendingUpdateLength
         );
-      VariableRuntimeCacheContext->VariableRuntimeHobCache.PendingUpdateLength = 0;
-      VariableRuntimeCacheContext->VariableRuntimeHobCache.PendingUpdateOffset = 0;
+      VariableRuntimeCacheContext->VariableRuntimeHobCache.PendingUpdateLength =
+        0;
+      VariableRuntimeCacheContext->VariableRuntimeHobCache.PendingUpdateOffset =
+        0;
     }
 
     CopyMem (
       (VOID *)(
-               ((UINT8 *)(UINTN)VariableRuntimeCacheContext->VariableRuntimeNvCache.Store) +
-               VariableRuntimeCacheContext->VariableRuntimeNvCache.PendingUpdateOffset
+               ((UINT8 *)(UINTN)VariableRuntimeCacheContext->
+                  VariableRuntimeNvCache.Store) +
+               VariableRuntimeCacheContext->VariableRuntimeNvCache.
+                 PendingUpdateOffset
                ),
       (VOID *)(
                ((UINT8 *)(UINTN)mNvVariableCache) +
-               VariableRuntimeCacheContext->VariableRuntimeNvCache.PendingUpdateOffset
+               VariableRuntimeCacheContext->VariableRuntimeNvCache.
+                 PendingUpdateOffset
                ),
       VariableRuntimeCacheContext->VariableRuntimeNvCache.PendingUpdateLength
       );
@@ -76,18 +87,26 @@ FlushPendingRuntimeVariableCacheUpdates (
 
     CopyMem (
       (VOID *)(
-               ((UINT8 *)(UINTN)VariableRuntimeCacheContext->VariableRuntimeVolatileCache.Store) +
-               VariableRuntimeCacheContext->VariableRuntimeVolatileCache.PendingUpdateOffset
+               ((UINT8 *)(UINTN)VariableRuntimeCacheContext->
+                  VariableRuntimeVolatileCache.Store) +
+               VariableRuntimeCacheContext->VariableRuntimeVolatileCache.
+                 PendingUpdateOffset
                ),
       (VOID *)(
-               ((UINT8 *)(UINTN)mVariableModuleGlobal->VariableGlobal.VolatileVariableBase) +
-               VariableRuntimeCacheContext->VariableRuntimeVolatileCache.PendingUpdateOffset
+               ((UINT8 *)(UINTN)mVariableModuleGlobal->VariableGlobal.
+                  VolatileVariableBase) +
+               VariableRuntimeCacheContext->VariableRuntimeVolatileCache.
+                 PendingUpdateOffset
                ),
-      VariableRuntimeCacheContext->VariableRuntimeVolatileCache.PendingUpdateLength
+      VariableRuntimeCacheContext->VariableRuntimeVolatileCache.
+        PendingUpdateLength
       );
-    VariableRuntimeCacheContext->VariableRuntimeVolatileCache.PendingUpdateLength = 0;
-    VariableRuntimeCacheContext->VariableRuntimeVolatileCache.PendingUpdateOffset = 0;
-    *(VariableRuntimeCacheContext->PendingUpdate)                                 = FALSE;
+    VariableRuntimeCacheContext->VariableRuntimeVolatileCache.
+      PendingUpdateLength = 0;
+    VariableRuntimeCacheContext->VariableRuntimeVolatileCache.
+      PendingUpdateOffset = 0;
+    *(VariableRuntimeCacheContext->PendingUpdate)
+      = FALSE;
   }
 
   return EFI_SUCCESS;
@@ -125,21 +144,28 @@ SynchronizeRuntimeVariableCache (
     return EFI_SUCCESS;
   }
 
-  if ((mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.PendingUpdate == NULL) ||
-      (mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.ReadLock == NULL))
+  if ((mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.
+         PendingUpdate == NULL) ||
+      (mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.
+         ReadLock == NULL))
   {
     return EFI_UNSUPPORTED;
   }
 
-  if (*(mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.PendingUpdate) &&
+  if (*(mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.
+          PendingUpdate) &&
       (VariableRuntimeCache->PendingUpdateLength > 0))
   {
     VariableRuntimeCache->PendingUpdateLength =
       (UINT32)(
                MAX (
-                 (UINTN)(VariableRuntimeCache->PendingUpdateOffset + VariableRuntimeCache->PendingUpdateLength),
+                 (UINTN)(VariableRuntimeCache->PendingUpdateOffset +
+                         VariableRuntimeCache->PendingUpdateLength),
                  Offset + Length
-                 ) - MIN ((UINTN)VariableRuntimeCache->PendingUpdateOffset, Offset)
+                 ) - MIN (
+                       (UINTN)VariableRuntimeCache->PendingUpdateOffset,
+                       Offset
+                       )
                );
     VariableRuntimeCache->PendingUpdateOffset =
       (UINT32)MIN ((UINTN)VariableRuntimeCache->PendingUpdateOffset, Offset);
@@ -148,9 +174,12 @@ SynchronizeRuntimeVariableCache (
     VariableRuntimeCache->PendingUpdateOffset = (UINT32)Offset;
   }
 
-  *(mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.PendingUpdate) = TRUE;
+  *(mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.
+      PendingUpdate) = TRUE;
 
-  if (*(mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.ReadLock) == FALSE) {
+  if (*(mVariableModuleGlobal->VariableGlobal.VariableRuntimeCacheContext.
+          ReadLock) == FALSE)
+  {
     return FlushPendingRuntimeVariableCacheUpdates ();
   }
 

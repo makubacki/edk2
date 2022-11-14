@@ -102,7 +102,8 @@ UFS_PEIM_HC_PRIVATE_DATA  gUfsHcPeimTemplate = {
     }
   },
   {                               // EndOfPeiNotifyList
-    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+     EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
     &gEfiEndOfPeiSignalPpiGuid,
     UfsEndOfPei
   },
@@ -483,7 +484,12 @@ UfsPeimParsingSenseKeys (
   }
 
   *NeedRetry = FALSE;
-  DEBUG ((DEBUG_VERBOSE, "UfsBlockIoPei: Sense Key = 0x%x ASC = 0x%x!\n", SenseData->Sense_Key, SenseData->Addnl_Sense_Code));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "UfsBlockIoPei: Sense Key = 0x%x ASC = 0x%x!\n",
+    SenseData->Sense_Key,
+    SenseData->Addnl_Sense_Code
+    ));
   return EFI_DEVICE_ERROR;
 }
 
@@ -617,7 +623,11 @@ UfsBlockIoPeimGetMediaInfo (
       continue;
     }
 
-    Status = UfsPeimParsingSenseKeys (&(Private->Media[Lun]), &SenseData, &NeedRetry);
+    Status = UfsPeimParsingSenseKeys (
+               &(Private->Media[Lun]),
+               &SenseData,
+               &NeedRetry
+               );
     if (EFI_ERROR (Status)) {
       return EFI_DEVICE_ERROR;
     }
@@ -625,7 +635,14 @@ UfsBlockIoPeimGetMediaInfo (
 
   DataLength      = sizeof (EFI_SCSI_DISK_CAPACITY_DATA);
   SenseDataLength = 0;
-  Status          = UfsPeimReadCapacity (Private, Lun, &Capacity, (UINT32 *)&DataLength, NULL, &SenseDataLength);
+  Status          = UfsPeimReadCapacity (
+                      Private,
+                      Lun,
+                      &Capacity,
+                      (UINT32 *)&DataLength,
+                      NULL,
+                      &SenseDataLength
+                      );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -635,17 +652,52 @@ UfsBlockIoPeimGetMediaInfo (
   {
     DataLength      = sizeof (EFI_SCSI_DISK_CAPACITY_DATA16);
     SenseDataLength = 0;
-    Status          = UfsPeimReadCapacity16 (Private, Lun, &Capacity16, (UINT32 *)&DataLength, NULL, &SenseDataLength);
+    Status          = UfsPeimReadCapacity16 (
+                        Private,
+                        Lun,
+                        &Capacity16,
+                        (UINT32 *)&DataLength,
+                        NULL,
+                        &SenseDataLength
+                        );
     if (EFI_ERROR (Status)) {
       return EFI_DEVICE_ERROR;
     }
 
-    Private->Media[Lun].LastBlock  = ((UINT32)Capacity16.LastLba3 << 24) | (Capacity16.LastLba2 << 16) | (Capacity16.LastLba1 << 8) | Capacity16.LastLba0;
-    Private->Media[Lun].LastBlock |= LShiftU64 ((UINT64)Capacity16.LastLba7, 56) | LShiftU64 ((UINT64)Capacity16.LastLba6, 48) | LShiftU64 ((UINT64)Capacity16.LastLba5, 40) | LShiftU64 ((UINT64)Capacity16.LastLba4, 32);
-    Private->Media[Lun].BlockSize  = (Capacity16.BlockSize3 << 24) | (Capacity16.BlockSize2 << 16) | (Capacity16.BlockSize1 << 8) | Capacity16.BlockSize0;
+    Private->Media[Lun].LastBlock = ((UINT32)Capacity16.LastLba3 << 24) |
+                                    (Capacity16.LastLba2 << 16) |
+                                    (Capacity16.LastLba1 << 8) |
+                                    Capacity16.LastLba0;
+    Private->Media[Lun].LastBlock |= LShiftU64 (
+                                       (UINT64)Capacity16.LastLba7,
+                                       56
+                                       ) | LShiftU64 (
+                                             (UINT64)Capacity16.LastLba6, 48) |
+                                     LShiftU64 (
+                                       (
+                                                                                        UINT64)
+                                       Capacity16.LastLba5,
+                                       40
+                                       )
+                                     | LShiftU64 (
+                                         (
+                                                                                                                                  UINT64)
+                                         Capacity16.LastLba4,
+                                         32
+                                         );
+    Private->Media[Lun].BlockSize = (Capacity16.BlockSize3 << 24) |
+                                    (Capacity16.BlockSize2 << 16) |
+                                    (Capacity16.BlockSize1 << 8) |
+                                    Capacity16.BlockSize0;
   } else {
-    Private->Media[Lun].LastBlock = ((UINT32)Capacity.LastLba3 << 24) | (Capacity.LastLba2 << 16) | (Capacity.LastLba1 << 8) | Capacity.LastLba0;
-    Private->Media[Lun].BlockSize = (Capacity.BlockSize3 << 24) | (Capacity.BlockSize2 << 16) | (Capacity.BlockSize1 << 8) | Capacity.BlockSize0;
+    Private->Media[Lun].LastBlock = ((UINT32)Capacity.LastLba3 << 24) |
+                                    (Capacity.LastLba2 << 16) |
+                                    (Capacity.LastLba1 << 8) |
+                                    Capacity.LastLba0;
+    Private->Media[Lun].BlockSize = (Capacity.BlockSize3 << 24) |
+                                    (Capacity.BlockSize2 << 16) |
+                                    (Capacity.BlockSize1 << 8) |
+                                    Capacity.BlockSize0;
   }
 
   MediaInfo->DeviceType   = UfsDevice;
@@ -764,7 +816,11 @@ UfsBlockIoPeimReadBlocks (
       continue;
     }
 
-    Status = UfsPeimParsingSenseKeys (&(Private->Media[Lun]), &SenseData, &NeedRetry);
+    Status = UfsPeimParsingSenseKeys (
+               &(Private->Media[Lun]),
+               &SenseData,
+               &NeedRetry
+               );
     if (EFI_ERROR (Status)) {
       return EFI_DEVICE_ERROR;
     }
@@ -1074,7 +1130,10 @@ InitializeUfsBlockIoPeim (
       break;
     }
 
-    Private = AllocateCopyPool (sizeof (UFS_PEIM_HC_PRIVATE_DATA), &gUfsHcPeimTemplate);
+    Private = AllocateCopyPool (
+                sizeof (UFS_PEIM_HC_PRIVATE_DATA),
+                &gUfsHcPeimTemplate
+                );
     if (Private == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       break;
@@ -1098,7 +1157,11 @@ InitializeUfsBlockIoPeim (
     //
     Status = UfsControllerInit (Private);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "UfsDevicePei: Host Controller Initialization Error, Status = %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "UfsDevicePei: Host Controller Initialization Error, Status = %r\n",
+        Status
+        ));
       Controller++;
       continue;
     }
@@ -1110,7 +1173,11 @@ InitializeUfsBlockIoPeim (
     //
     Status = UfsExecNopCmds (Private);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Ufs Sending NOP IN command Error, Status = %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Ufs Sending NOP IN command Error, Status = %r\n",
+        Status
+        ));
       Controller++;
       continue;
     }
@@ -1120,7 +1187,11 @@ InitializeUfsBlockIoPeim (
     //
     Status = UfsSetFlag (Private, UfsFlagDevInit);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Ufs Set fDeviceInit Flag Error, Status = %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Ufs Set fDeviceInit Flag Error, Status = %r\n",
+        Status
+        ));
       Controller++;
       continue;
     }
@@ -1129,9 +1200,22 @@ InitializeUfsBlockIoPeim (
     // Check if 8 common luns are active and set corresponding bit mask.
     //
     for (Index = 0; Index < UFS_PEIM_MAX_LUNS; Index++) {
-      Status = UfsRwDeviceDesc (Private, TRUE, UfsUnitDesc, (UINT8)Index, 0, &UnitDescriptor, sizeof (UFS_UNIT_DESC));
+      Status = UfsRwDeviceDesc (
+                 Private,
+                 TRUE,
+                 UfsUnitDesc,
+                 (UINT8)Index,
+                 0,
+                 &UnitDescriptor,
+                 sizeof (UFS_UNIT_DESC)
+                 );
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "Fail to read UFS Unit Descriptor, Index = %X, Status = %r\n", Index, Status));
+        DEBUG ((
+          DEBUG_ERROR,
+          "Fail to read UFS Unit Descriptor, Index = %X, Status = %r\n",
+          Index,
+          Status
+          ));
         continue;
       }
 

@@ -11,7 +11,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gPciSioSerialComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gPciSioSerialComponentName = {
   SerialComponentNameGetDriverName,
   SerialComponentNameGetControllerName,
   "eng"
@@ -20,13 +21,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gPciSioSerialComponen
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gPciSioSerialComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gPciSioSerialComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)SerialComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)SerialComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mSerialDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mSerialDriverNameTable[] = {
   {
     "eng;en",
     L"PCI SIO Serial Driver"
@@ -258,7 +261,8 @@ AddName (
   UnicodeSPrint (
     SerialPortName,
     sizeof (SerialPortName),
-    (SerialDevice->PciDeviceInfo != NULL) ? PCI_SERIAL_PORT_NAME : SIO_SERIAL_PORT_NAME,
+    (SerialDevice->PciDeviceInfo != NULL) ? PCI_SERIAL_PORT_NAME :
+    SIO_SERIAL_PORT_NAME,
     Instance
     );
   AddUnicodeString2 (

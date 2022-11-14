@@ -70,7 +70,8 @@ typedef struct {
 //
 // This is the memory test driver's structure definition
 //
-#define EFI_GENERIC_MEMORY_TEST_PRIVATE_SIGNATURE  SIGNATURE_32 ('G', 'E', 'M', 'T')
+#define EFI_GENERIC_MEMORY_TEST_PRIVATE_SIGNATURE  \
+  SIGNATURE_32 ('G', 'E', 'M', 'T')
 
 typedef struct {
   UINTN                               Signature;

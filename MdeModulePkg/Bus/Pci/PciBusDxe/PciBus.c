@@ -27,19 +27,26 @@ EFI_DRIVER_BINDING_PROTOCOL  gPciBusDriverBinding = {
   NULL
 };
 
-EFI_HANDLE                                    gPciHostBrigeHandles[PCI_MAX_HOST_BRIDGE_NUM];
-EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_PROTOCOL  *gIncompatiblePciDeviceSupport = NULL;
-UINTN                                         gPciHostBridgeNumber           = 0;
-BOOLEAN                                       gFullEnumeration               = TRUE;
-UINT64                                        gAllOne                        = 0xFFFFFFFFFFFFFFFFULL;
-UINT64                                        gAllZero                       = 0;
+EFI_HANDLE  gPciHostBrigeHandles[
+                                 PCI_MAX_HOST_BRIDGE_NUM];
+EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_PROTOCOL  *gIncompatiblePciDeviceSupport =
+  NULL;
+UINTN  gPciHostBridgeNumber =
+  0;
+BOOLEAN  gFullEnumeration =
+  TRUE;
+UINT64  gAllOne =
+  0xFFFFFFFFFFFFFFFFULL;
+UINT64  gAllZero =
+  0;
 
 EFI_PCI_PLATFORM_PROTOCOL       *gPciPlatformProtocol;
 EFI_PCI_OVERRIDE_PROTOCOL       *gPciOverrideProtocol;
 EDKII_IOMMU_PROTOCOL            *mIoMmuProtocol;
 EDKII_DEVICE_SECURITY_PROTOCOL  *mDeviceSecurityProtocol;
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PCI_HOTPLUG_REQUEST_PROTOCOL  mPciHotPlugRequest = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PCI_HOTPLUG_REQUEST_PROTOCOL
+  mPciHotPlugRequest = {
   PciHotPlugRequestNotify
 };
 
@@ -305,7 +312,8 @@ PciBusDriverBindingStart (
   if (PcdGetBool (PcdPciDisableBusEnumeration)) {
     gFullEnumeration = FALSE;
   } else {
-    gFullEnumeration = (BOOLEAN)((SearchHostBridgeHandle (Controller) ? FALSE : TRUE));
+    gFullEnumeration = (BOOLEAN)((SearchHostBridgeHandle (Controller) ? FALSE :
+                                  TRUE));
   }
 
   //

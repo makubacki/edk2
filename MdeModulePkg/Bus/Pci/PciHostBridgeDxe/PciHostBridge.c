@@ -415,7 +415,11 @@ IoMmuProtocolCallback (
 {
   EFI_STATUS  Status;
 
-  Status = gBS->LocateProtocol (&gEdkiiIoMmuProtocolGuid, NULL, (VOID **)&mIoMmu);
+  Status = gBS->LocateProtocol (
+                  &gEdkiiIoMmuProtocolGuid,
+                  NULL,
+                  (VOID **)&mIoMmu
+                  );
   if (!EFI_ERROR (Status)) {
     gBS->CloseEvent (mIoMmuEvent);
   }
@@ -456,7 +460,11 @@ InitializePciHostBridge (
     return EFI_UNSUPPORTED;
   }
 
-  Status = gBS->LocateProtocol (&gEfiCpuIo2ProtocolGuid, NULL, (VOID **)&mCpuIo);
+  Status = gBS->LocateProtocol (
+                  &gEfiCpuIo2ProtocolGuid,
+                  NULL,
+                  (VOID **)&mCpuIo
+                  );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -512,7 +520,8 @@ InitializePciHostBridge (
                         EfiGcdAllocateAddress,
                         EfiGcdIoTypeIo,
                         0,
-                        RootBridges[Index].Io.Limit - RootBridges[Index].Io.Base + 1,
+                        RootBridges[Index].Io.Limit -
+                        RootBridges[Index].Io.Base + 1,
                         &HostAddress,
                         gImageHandle,
                         NULL
@@ -532,8 +541,12 @@ InitializePciHostBridge (
     MemApertures[2] = &RootBridges[Index].PMem;
     MemApertures[3] = &RootBridges[Index].PMemAbove4G;
 
-    for (MemApertureIndex = 0; MemApertureIndex < ARRAY_SIZE (MemApertures); MemApertureIndex++) {
-      if (MemApertures[MemApertureIndex]->Base <= MemApertures[MemApertureIndex]->Limit) {
+    for (MemApertureIndex = 0; MemApertureIndex < ARRAY_SIZE (MemApertures);
+         MemApertureIndex++)
+    {
+      if (MemApertures[MemApertureIndex]->Base <=
+          MemApertures[MemApertureIndex]->Limit)
+      {
         //
         // Base and Limit in PCI_ROOT_BRIDGE_APERTURE are device address.
         // For GCD resource manipulation, we need to use host address.
@@ -544,17 +557,23 @@ InitializePciHostBridge (
                         );
         Status = AddMemoryMappedIoSpace (
                    HostAddress,
-                   MemApertures[MemApertureIndex]->Limit - MemApertures[MemApertureIndex]->Base + 1,
+                   MemApertures[MemApertureIndex]->Limit -
+                   MemApertures[MemApertureIndex]->Base + 1,
                    EFI_MEMORY_UC
                    );
         ASSERT_EFI_ERROR (Status);
         Status = gDS->SetMemorySpaceAttributes (
                         HostAddress,
-                        MemApertures[MemApertureIndex]->Limit - MemApertures[MemApertureIndex]->Base + 1,
+                        MemApertures[MemApertureIndex]->Limit -
+                        MemApertures[MemApertureIndex]->Base + 1,
                         EFI_MEMORY_UC
                         );
         if (EFI_ERROR (Status)) {
-          DEBUG ((DEBUG_WARN, "PciHostBridge driver failed to set EFI_MEMORY_UC to MMIO aperture - %r.\n", Status));
+          DEBUG ((
+            DEBUG_WARN,
+            "PciHostBridge driver failed to set EFI_MEMORY_UC to MMIO aperture - %r.\n",
+            Status
+            ));
         }
 
         if (ResourceAssigned) {
@@ -562,7 +581,8 @@ InitializePciHostBridge (
                           EfiGcdAllocateAddress,
                           EfiGcdMemoryTypeMemoryMappedIo,
                           0,
-                          MemApertures[MemApertureIndex]->Limit - MemApertures[MemApertureIndex]->Base + 1,
+                          MemApertures[MemApertureIndex]->Limit -
+                          MemApertures[MemApertureIndex]->Base + 1,
                           &HostAddress,
                           gImageHandle,
                           NULL
@@ -664,7 +684,9 @@ ResourceConflict (
   }
 
   Resources = AllocatePool (
-                RootBridgeCount * (TypeMax * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)) +
+                RootBridgeCount * (TypeMax *
+                                   sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) +
+                                   sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)) +
                 sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)
                 );
   ASSERT (Resources != NULL);
@@ -690,14 +712,16 @@ ResourceConflict (
           break;
 
         case TypePMem32:
-          Descriptor->SpecificFlag = EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
+          Descriptor->SpecificFlag =
+            EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
         case TypeMem32:
           Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
           Descriptor->AddrSpaceGranularity = 32;
           break;
 
         case TypePMem64:
-          Descriptor->SpecificFlag = EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
+          Descriptor->SpecificFlag =
+            EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
         case TypeMem64:
           Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
           Descriptor->AddrSpaceGranularity = 64;
@@ -983,7 +1007,11 @@ NotifyPhase (
                                 RootBridge->ResAllocNode[Index].Length,
                                 MIN (15, BitsOfAlignment),
                                 TO_HOST_ADDRESS (
-                                  ALIGN_VALUE (RootBridge->Io.Base, Alignment + 1),
+                                  ALIGN_VALUE (
+                                    RootBridge->Io.Base,
+                                    Alignment +
+                                    1
+                                    ),
                                   RootBridge->Io.Translation
                                   ),
                                 TO_HOST_ADDRESS (
@@ -999,7 +1027,10 @@ NotifyPhase (
                                 RootBridge->ResAllocNode[Index].Length,
                                 MIN (63, BitsOfAlignment),
                                 TO_HOST_ADDRESS (
-                                  ALIGN_VALUE (RootBridge->MemAbove4G.Base, Alignment + 1),
+                                  ALIGN_VALUE (
+                                    RootBridge->MemAbove4G.Base,
+                                    Alignment + 1
+                                    ),
                                   RootBridge->MemAbove4G.Translation
                                   ),
                                 TO_HOST_ADDRESS (
@@ -1021,7 +1052,11 @@ NotifyPhase (
                                 RootBridge->ResAllocNode[Index].Length,
                                 MIN (31, BitsOfAlignment),
                                 TO_HOST_ADDRESS (
-                                  ALIGN_VALUE (RootBridge->Mem.Base, Alignment + 1),
+                                  ALIGN_VALUE (
+                                    RootBridge->Mem.Base,
+                                    Alignment +
+                                    1
+                                    ),
                                   RootBridge->Mem.Translation
                                   ),
                                 TO_HOST_ADDRESS (
@@ -1037,7 +1072,10 @@ NotifyPhase (
                                 RootBridge->ResAllocNode[Index].Length,
                                 MIN (63, BitsOfAlignment),
                                 TO_HOST_ADDRESS (
-                                  ALIGN_VALUE (RootBridge->PMemAbove4G.Base, Alignment + 1),
+                                  ALIGN_VALUE (
+                                    RootBridge->PMemAbove4G.Base,
+                                    Alignment + 1
+                                    ),
                                   RootBridge->PMemAbove4G.Translation
                                   ),
                                 TO_HOST_ADDRESS (
@@ -1058,7 +1096,10 @@ NotifyPhase (
                                 RootBridge->ResAllocNode[Index].Length,
                                 MIN (31, BitsOfAlignment),
                                 TO_HOST_ADDRESS (
-                                  ALIGN_VALUE (RootBridge->PMem.Base, Alignment + 1),
+                                  ALIGN_VALUE (
+                                    RootBridge->PMem.Base,
+                                    Alignment + 1
+                                    ),
                                   RootBridge->PMem.Translation
                                   ),
                                 TO_HOST_ADDRESS (
@@ -1136,7 +1177,10 @@ NotifyPhase (
           if (RootBridge->ResAllocNode[Index].Status == ResAllocated) {
             switch (Index) {
               case TypeIo:
-                Status = gDS->FreeIoSpace (RootBridge->ResAllocNode[Index].Base, RootBridge->ResAllocNode[Index].Length);
+                Status = gDS->FreeIoSpace (
+                                RootBridge->ResAllocNode[Index].Base,
+                                RootBridge->ResAllocNode[Index].Length
+                                );
                 if (EFI_ERROR (Status)) {
                   ReturnStatus = Status;
                 }
@@ -1147,7 +1191,10 @@ NotifyPhase (
               case TypePMem32:
               case TypeMem64:
               case TypePMem64:
-                Status = gDS->FreeMemorySpace (RootBridge->ResAllocNode[Index].Base, RootBridge->ResAllocNode[Index].Length);
+                Status = gDS->FreeMemorySpace (
+                                RootBridge->ResAllocNode[Index].Base,
+                                RootBridge->ResAllocNode[Index].Length
+                                );
                 if (EFI_ERROR (Status)) {
                   ReturnStatus = Status;
                 }
@@ -1338,14 +1385,19 @@ StartBusEnumeration (
   {
     RootBridge = ROOT_BRIDGE_FROM_LINK (Link);
     if (RootBridgeHandle == RootBridge->Handle) {
-      *Configuration = AllocatePool (sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR));
+      *Configuration = AllocatePool (
+                         sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) +
+                         sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)
+                         );
       if (*Configuration == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
 
-      Descriptor                        = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)*Configuration;
-      Descriptor->Desc                  = ACPI_ADDRESS_SPACE_DESCRIPTOR;
-      Descriptor->Len                   = sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3;
+      Descriptor =
+        (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)*Configuration;
+      Descriptor->Desc = ACPI_ADDRESS_SPACE_DESCRIPTOR;
+      Descriptor->Len  =
+        sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3;
       Descriptor->ResType               = ACPI_ADDRESS_SPACE_TYPE_BUS;
       Descriptor->GenFlag               = 0;
       Descriptor->SpecificFlag          = 0;
@@ -1353,7 +1405,8 @@ StartBusEnumeration (
       Descriptor->AddrRangeMin          = RootBridge->Bus.Base;
       Descriptor->AddrRangeMax          = 0;
       Descriptor->AddrTranslationOffset = 0;
-      Descriptor->AddrLen               = RootBridge->Bus.Limit - RootBridge->Bus.Base + 1;
+      Descriptor->AddrLen               = RootBridge->Bus.Limit -
+                                          RootBridge->Bus.Base + 1;
 
       End           = (EFI_ACPI_END_TAG_DESCRIPTOR *)(Descriptor + 1);
       End->Desc     = ACPI_END_TAG_DESCRIPTOR;
@@ -1424,7 +1477,8 @@ SetBusNumbers (
       }
 
       if ((Descriptor->AddrRangeMin < RootBridge->Bus.Base) ||
-          (Descriptor->AddrRangeMin + Descriptor->AddrLen - 1 > RootBridge->Bus.Limit)
+          (Descriptor->AddrRangeMin + Descriptor->AddrLen - 1 >
+           RootBridge->Bus.Limit)
           )
       {
         return EFI_INVALID_PARAMETER;
@@ -1484,13 +1538,19 @@ SubmitResources (
   {
     RootBridge = ROOT_BRIDGE_FROM_LINK (Link);
     if (RootBridgeHandle == RootBridge->Handle) {
-      DEBUG ((DEBUG_INFO, "PciHostBridge: SubmitResources for %s\n", RootBridge->DevicePathStr));
+      DEBUG ((
+        DEBUG_INFO,
+        "PciHostBridge: SubmitResources for %s\n",
+        RootBridge->DevicePathStr
+        ));
       //
       // Check the resource descriptors.
       // If the Configuration includes one or more invalid resource descriptors, all the resource
       // descriptors are ignored and the function returns EFI_INVALID_PARAMETER.
       //
-      for (Descriptor = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Configuration; Descriptor->Desc == ACPI_ADDRESS_SPACE_DESCRIPTOR; Descriptor++) {
+      for (Descriptor = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Configuration;
+           Descriptor->Desc == ACPI_ADDRESS_SPACE_DESCRIPTOR; Descriptor++)
+      {
         if (Descriptor->ResType > ACPI_ADDRESS_SPACE_TYPE_BUS) {
           return EFI_INVALID_PARAMETER;
         }
@@ -1501,16 +1561,27 @@ SubmitResources (
           mAcpiAddressSpaceTypeStr[Descriptor->ResType],
           Descriptor->AddrSpaceGranularity,
           Descriptor->SpecificFlag,
-          (Descriptor->SpecificFlag & EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE) != 0 ? L" (Prefetchable)" : L""
+          (Descriptor->SpecificFlag &
+           EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE) != 0 ?
+          L" (Prefetchable)" : L""
           ));
-        DEBUG ((DEBUG_INFO, "      Length/Alignment = 0x%lx / 0x%lx\n", Descriptor->AddrLen, Descriptor->AddrRangeMax));
+        DEBUG ((
+          DEBUG_INFO,
+          "      Length/Alignment = 0x%lx / 0x%lx\n",
+          Descriptor->AddrLen,
+          Descriptor->AddrRangeMax
+          ));
         switch (Descriptor->ResType) {
           case ACPI_ADDRESS_SPACE_TYPE_MEM:
-            if ((Descriptor->AddrSpaceGranularity != 32) && (Descriptor->AddrSpaceGranularity != 64)) {
+            if ((Descriptor->AddrSpaceGranularity != 32) &&
+                (Descriptor->AddrSpaceGranularity != 64))
+            {
               return EFI_INVALID_PARAMETER;
             }
 
-            if ((Descriptor->AddrSpaceGranularity == 32) && (Descriptor->AddrLen >= SIZE_4GB)) {
+            if ((Descriptor->AddrSpaceGranularity == 32) &&
+                (Descriptor->AddrLen >= SIZE_4GB))
+            {
               return EFI_INVALID_PARAMETER;
             }
 
@@ -1519,8 +1590,11 @@ SubmitResources (
             // prefetchable memory, then the PCI bus driver needs to include requests for
             // prefetchable memory in the nonprefetchable memory pool.
             //
-            if (((RootBridge->AllocationAttributes & EFI_PCI_HOST_BRIDGE_COMBINE_MEM_PMEM) != 0) &&
-                ((Descriptor->SpecificFlag & EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE) != 0)
+            if (((RootBridge->AllocationAttributes &
+                  EFI_PCI_HOST_BRIDGE_COMBINE_MEM_PMEM) != 0) &&
+                ((Descriptor->SpecificFlag &
+                  EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE)
+                 != 0)
                 )
             {
               return EFI_INVALID_PARAMETER;
@@ -1530,7 +1604,9 @@ SubmitResources (
             //
             // Check aligment, it should be of the form 2^n-1
             //
-            if (GetPowerOfTwo64 (Descriptor->AddrRangeMax + 1) != (Descriptor->AddrRangeMax + 1)) {
+            if (GetPowerOfTwo64 (Descriptor->AddrRangeMax + 1) !=
+                (Descriptor->AddrRangeMax + 1))
+            {
               return EFI_INVALID_PARAMETER;
             }
 
@@ -1545,17 +1621,27 @@ SubmitResources (
         return EFI_INVALID_PARAMETER;
       }
 
-      for (Descriptor = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Configuration; Descriptor->Desc == ACPI_ADDRESS_SPACE_DESCRIPTOR; Descriptor++) {
+      for (Descriptor = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)Configuration;
+           Descriptor->Desc == ACPI_ADDRESS_SPACE_DESCRIPTOR; Descriptor++)
+      {
         if (Descriptor->ResType == ACPI_ADDRESS_SPACE_TYPE_MEM) {
           if (Descriptor->AddrSpaceGranularity == 32) {
-            if ((Descriptor->SpecificFlag & EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE) != 0) {
+            if ((Descriptor->SpecificFlag &
+                 EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE)
+                !=
+                0)
+            {
               Type = TypePMem32;
             } else {
               Type = TypeMem32;
             }
           } else {
             ASSERT (Descriptor->AddrSpaceGranularity == 64);
-            if ((Descriptor->SpecificFlag & EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE) != 0) {
+            if ((Descriptor->SpecificFlag &
+                 EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE)
+                !=
+                0)
+            {
               Type = TypePMem64;
             } else {
               Type = TypeMem64;
@@ -1626,7 +1712,11 @@ GetProposedResources (
         }
       }
 
-      Buffer = AllocateZeroPool (Number * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR));
+      Buffer = AllocateZeroPool (
+                 Number *
+                 sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) +
+                 sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)
+                 );
       if (Buffer == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -1646,11 +1736,17 @@ GetProposedResources (
           //
           Descriptor->AddrRangeMin = TO_DEVICE_ADDRESS (
                                        RootBridge->ResAllocNode[Index].Base,
-                                       GetTranslationByResourceType (RootBridge, Index)
+                                       GetTranslationByResourceType (
+                                         RootBridge,
+                                         Index
+                                         )
                                        );
           Descriptor->AddrRangeMax          = 0;
-          Descriptor->AddrTranslationOffset = (ResStatus == ResAllocated) ? EFI_RESOURCE_SATISFIED : PCI_RESOURCE_LESS;
-          Descriptor->AddrLen               = RootBridge->ResAllocNode[Index].Length;
+          Descriptor->AddrTranslationOffset = (ResStatus == ResAllocated) ?
+                                              EFI_RESOURCE_SATISFIED :
+                                              PCI_RESOURCE_LESS;
+          Descriptor->AddrLen =
+            RootBridge->ResAllocNode[Index].Length;
 
           switch (Index) {
             case TypeIo:
@@ -1658,14 +1754,16 @@ GetProposedResources (
               break;
 
             case TypePMem32:
-              Descriptor->SpecificFlag = EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
+              Descriptor->SpecificFlag =
+                EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
             case TypeMem32:
               Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
               Descriptor->AddrSpaceGranularity = 32;
               break;
 
             case TypePMem64:
-              Descriptor->SpecificFlag = EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
+              Descriptor->SpecificFlag =
+                EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
             case TypeMem64:
               Descriptor->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
               Descriptor->AddrSpaceGranularity = 64;

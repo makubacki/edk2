@@ -27,7 +27,9 @@ typedef struct {
   EFI_HANDLE                      IsaHcHandle;  ///< ISA HC handle created by the ISA Host Controller driver
 } ISA_BUS_PRIVATE_DATA;
 #define ISA_BUS_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('_', 'i', 's', 'b')
-#define ISA_BUS_PRIVATE_DATA_FROM_THIS(a)  CR (a, ISA_BUS_PRIVATE_DATA, ServiceBinding, ISA_BUS_PRIVATE_DATA_SIGNATURE)
+#define ISA_BUS_PRIVATE_DATA_FROM_THIS( \
+                                      a)  \
+  CR (a, ISA_BUS_PRIVATE_DATA, ServiceBinding, ISA_BUS_PRIVATE_DATA_SIGNATURE)
 
 typedef struct {
   UINT32     Signature;

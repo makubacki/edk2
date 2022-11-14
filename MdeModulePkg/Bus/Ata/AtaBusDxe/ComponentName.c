@@ -11,23 +11,26 @@
 //
 // Driver name table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mAtaBusDriverNameTable[] = {
-  { "eng;en", L"ATA Bus Driver" },
-  { NULL,     NULL              }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mAtaBusDriverNameTable[] = {
+  { "eng;en", L"ATA Bus Driver"     },
+  { NULL,     NULL                  }
 };
 
 //
 // Controller name table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mAtaBusControllerNameTable[] = {
-  { "eng;en", L"ATA Controller" },
-  { NULL,     NULL              }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mAtaBusControllerNameTable[] = {
+  { "eng;en", L"ATA Controller"     },
+  { NULL,     NULL                  }
 };
 
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gAtaBusComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gAtaBusComponentName = {
   AtaBusComponentNameGetDriverName,
   AtaBusComponentNameGetControllerName,
   "eng"
@@ -36,7 +39,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gAtaBusComponentName 
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gAtaBusComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gAtaBusComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)AtaBusComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)AtaBusComponentNameGetControllerName,
   "en"

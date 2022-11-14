@@ -100,8 +100,12 @@ typedef struct {
   IDE_BASE_REGISTERS                IdeIoPortReg[MAX_IDE_CHANNELS]; // for max 4 channel.
 } ATAPI_BLK_IO_DEV;
 
-#define PEI_RECOVERY_ATAPI_FROM_BLKIO_THIS(a)   CR (a, ATAPI_BLK_IO_DEV, AtapiBlkIo, ATAPI_BLK_IO_DEV_SIGNATURE)
-#define PEI_RECOVERY_ATAPI_FROM_BLKIO2_THIS(a)  CR (a, ATAPI_BLK_IO_DEV, AtapiBlkIo2, ATAPI_BLK_IO_DEV_SIGNATURE)
+#define PEI_RECOVERY_ATAPI_FROM_BLKIO_THIS( \
+                                          a)   \
+      CR (a, ATAPI_BLK_IO_DEV, AtapiBlkIo, ATAPI_BLK_IO_DEV_SIGNATURE)
+#define PEI_RECOVERY_ATAPI_FROM_BLKIO2_THIS( \
+                                           a)  \
+      CR (a, ATAPI_BLK_IO_DEV, AtapiBlkIo2, ATAPI_BLK_IO_DEV_SIGNATURE)
 
 #define STALL_1_MILLI_SECOND  1000  // stall 1 ms
 #define STALL_1_SECONDS       1000 * STALL_1_MILLI_SECOND

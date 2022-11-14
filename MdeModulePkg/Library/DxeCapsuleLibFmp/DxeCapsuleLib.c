@@ -124,7 +124,10 @@ IsCapsuleNameCapsule (
   IN EFI_CAPSULE_HEADER  *CapsuleHeader
   )
 {
-  return CompareGuid (&CapsuleHeader->CapsuleGuid, &gEdkiiCapsuleOnDiskNameGuid);
+  return CompareGuid (
+           &CapsuleHeader->CapsuleGuid,
+           &gEdkiiCapsuleOnDiskNameGuid
+           );
 }
 
 /**
@@ -217,50 +220,87 @@ ValidateFmpCapsule (
   UINTN                                         FmpImageHeaderSize;
 
   if (!IsFmpCapsuleGuid (&CapsuleHeader->CapsuleGuid)) {
-    return ValidateFmpCapsule ((EFI_CAPSULE_HEADER *)((UINTN)CapsuleHeader + CapsuleHeader->HeaderSize), EmbeddedDriverCount);
+    return ValidateFmpCapsule (
+             (EFI_CAPSULE_HEADER *)((UINTN)CapsuleHeader +
+                                    CapsuleHeader->HeaderSize),
+             EmbeddedDriverCount
+             );
   }
 
   if (CapsuleHeader->HeaderSize >= CapsuleHeader->CapsuleImageSize) {
-    DEBUG ((DEBUG_ERROR, "HeaderSize(0x%x) >= CapsuleImageSize(0x%x)\n", CapsuleHeader->HeaderSize, CapsuleHeader->CapsuleImageSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "HeaderSize(0x%x) >= CapsuleImageSize(0x%x)\n",
+      CapsuleHeader->HeaderSize,
+      CapsuleHeader->CapsuleImageSize
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
-  FmpCapsuleHeader = (EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER *)((UINT8 *)CapsuleHeader + CapsuleHeader->HeaderSize);
-  EndOfCapsule     = (UINT8 *)CapsuleHeader + CapsuleHeader->CapsuleImageSize;
-  FmpCapsuleSize   = (UINTN)EndOfCapsule - (UINTN)FmpCapsuleHeader;
+  FmpCapsuleHeader =
+    (EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER *)((UINT8 *)CapsuleHeader +
+                                               CapsuleHeader->HeaderSize);
+  EndOfCapsule   = (UINT8 *)CapsuleHeader + CapsuleHeader->CapsuleImageSize;
+  FmpCapsuleSize = (UINTN)EndOfCapsule - (UINTN)FmpCapsuleHeader;
 
   if (FmpCapsuleSize < sizeof (EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER)) {
-    DEBUG ((DEBUG_ERROR, "FmpCapsuleSize(0x%x) < EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER\n", FmpCapsuleSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpCapsuleSize(0x%x) < EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER\n",
+      FmpCapsuleSize
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
   // Check EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER
-  if (FmpCapsuleHeader->Version != EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER_INIT_VERSION) {
-    DEBUG ((DEBUG_ERROR, "FmpCapsuleHeader->Version(0x%x) != EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER_INIT_VERSION\n", FmpCapsuleHeader->Version));
+  if (FmpCapsuleHeader->Version !=
+      EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER_INIT_VERSION)
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "FmpCapsuleHeader->Version(0x%x) != EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER_INIT_VERSION\n",
+      FmpCapsuleHeader->Version
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
   ItemOffsetList = (UINT64 *)(FmpCapsuleHeader + 1);
 
   // No overflow
-  ItemNum = FmpCapsuleHeader->EmbeddedDriverCount + FmpCapsuleHeader->PayloadItemCount;
+  ItemNum = FmpCapsuleHeader->EmbeddedDriverCount +
+            FmpCapsuleHeader->PayloadItemCount;
 
-  if ((FmpCapsuleSize - sizeof (EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER))/sizeof (UINT64) < ItemNum) {
+  if ((FmpCapsuleSize - sizeof (EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER))/
+      sizeof (UINT64) < ItemNum)
+  {
     DEBUG ((DEBUG_ERROR, "ItemNum(0x%x) too big\n", ItemNum));
     return EFI_INVALID_PARAMETER;
   }
 
-  FmpCapsuleHeaderSize = sizeof (EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER) + sizeof (UINT64)*ItemNum;
+  FmpCapsuleHeaderSize = sizeof (EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER) +
+                         sizeof (UINT64)*ItemNum;
 
   // Check ItemOffsetList
   for (Index = 0; Index < ItemNum; Index++) {
     if (ItemOffsetList[Index] >= FmpCapsuleSize) {
-      DEBUG ((DEBUG_ERROR, "ItemOffsetList[%d](0x%lx) >= FmpCapsuleSize(0x%x)\n", Index, ItemOffsetList[Index], FmpCapsuleSize));
+      DEBUG ((
+        DEBUG_ERROR,
+        "ItemOffsetList[%d](0x%lx) >= FmpCapsuleSize(0x%x)\n",
+        Index,
+        ItemOffsetList[Index],
+        FmpCapsuleSize
+        ));
       return EFI_INVALID_PARAMETER;
     }
 
     if (ItemOffsetList[Index] < FmpCapsuleHeaderSize) {
-      DEBUG ((DEBUG_ERROR, "ItemOffsetList[%d](0x%lx) < FmpCapsuleHeaderSize(0x%x)\n", Index, ItemOffsetList[Index], FmpCapsuleHeaderSize));
+      DEBUG ((
+        DEBUG_ERROR,
+        "ItemOffsetList[%d](0x%lx) < FmpCapsuleHeaderSize(0x%x)\n",
+        Index,
+        ItemOffsetList[Index],
+        FmpCapsuleHeaderSize
+        ));
       return EFI_INVALID_PARAMETER;
     }
 
@@ -269,15 +309,27 @@ ValidateFmpCapsule (
     //
     if (Index > 0) {
       if (ItemOffsetList[Index] <= ItemOffsetList[Index - 1]) {
-        DEBUG ((DEBUG_ERROR, "ItemOffsetList[%d](0x%lx) < ItemOffsetList[%d](0x%x)\n", Index, ItemOffsetList[Index], Index - 1, ItemOffsetList[Index - 1]));
+        DEBUG ((
+          DEBUG_ERROR,
+          "ItemOffsetList[%d](0x%lx) < ItemOffsetList[%d](0x%x)\n",
+          Index,
+          ItemOffsetList[Index],
+          Index - 1,
+          ItemOffsetList[Index - 1]
+          ));
         return EFI_INVALID_PARAMETER;
       }
     }
   }
 
   // Check EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER
-  for (Index = FmpCapsuleHeader->EmbeddedDriverCount; Index < ItemNum; Index++) {
-    ImageHeader = (EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER *)((UINT8 *)FmpCapsuleHeader + ItemOffsetList[Index]);
+  for (Index = FmpCapsuleHeader->EmbeddedDriverCount; Index < ItemNum;
+       Index++)
+  {
+    ImageHeader =
+      (EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER *)((UINT8 *)FmpCapsuleHeader
+                                                       +
+                                                       ItemOffsetList[Index]);
     if (Index == ItemNum - 1) {
       EndOfPayload = (UINT8 *)((UINTN)EndOfCapsule - (UINTN)FmpCapsuleHeader);
     } else {
@@ -287,27 +339,52 @@ ValidateFmpCapsule (
     FmpImageSize = (UINTN)EndOfPayload - ItemOffsetList[Index];
 
     FmpImageHeaderSize = sizeof (EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER);
-    if ((ImageHeader->Version > EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER_INIT_VERSION) ||
+    if ((ImageHeader->Version >
+         EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER_INIT_VERSION) ||
         (ImageHeader->Version < 1))
     {
-      DEBUG ((DEBUG_ERROR, "ImageHeader->Version(0x%x) Unknown\n", ImageHeader->Version));
+      DEBUG ((
+        DEBUG_ERROR,
+        "ImageHeader->Version(0x%x) Unknown\n",
+        ImageHeader->Version
+        ));
       return EFI_INVALID_PARAMETER;
     }
 
     if (ImageHeader->Version == 1) {
-      FmpImageHeaderSize = OFFSET_OF (EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER, UpdateHardwareInstance);
+      FmpImageHeaderSize = OFFSET_OF (
+                             EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER,
+                             UpdateHardwareInstance
+                             );
     } else if (ImageHeader->Version == 2) {
-      FmpImageHeaderSize = OFFSET_OF (EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER, ImageCapsuleSupport);
+      FmpImageHeaderSize = OFFSET_OF (
+                             EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER,
+                             ImageCapsuleSupport
+                             );
     }
 
     if (FmpImageSize < FmpImageHeaderSize) {
-      DEBUG ((DEBUG_ERROR, "FmpImageSize(0x%lx) < FmpImageHeaderSize(0x%x)\n", FmpImageSize, FmpImageHeaderSize));
+      DEBUG ((
+        DEBUG_ERROR,
+        "FmpImageSize(0x%lx) < FmpImageHeaderSize(0x%x)\n",
+        FmpImageSize,
+        FmpImageHeaderSize
+        ));
       return EFI_INVALID_PARAMETER;
     }
 
     // No overflow
-    if (FmpImageSize != (UINT64)FmpImageHeaderSize + (UINT64)ImageHeader->UpdateImageSize + (UINT64)ImageHeader->UpdateVendorCodeSize) {
-      DEBUG ((DEBUG_ERROR, "FmpImageSize(0x%lx) mismatch, UpdateImageSize(0x%x) UpdateVendorCodeSize(0x%x)\n", FmpImageSize, ImageHeader->UpdateImageSize, ImageHeader->UpdateVendorCodeSize));
+    if (FmpImageSize != (UINT64)FmpImageHeaderSize +
+        (UINT64)ImageHeader->UpdateImageSize +
+        (UINT64)ImageHeader->UpdateVendorCodeSize)
+    {
+      DEBUG ((
+        DEBUG_ERROR,
+        "FmpImageSize(0x%lx) mismatch, UpdateImageSize(0x%x) UpdateVendorCodeSize(0x%x)\n",
+        FmpImageSize,
+        ImageHeader->UpdateImageSize,
+        ImageHeader->UpdateVendorCodeSize
+        ));
       return EFI_INVALID_PARAMETER;
     }
   }
@@ -318,7 +395,12 @@ ValidateFmpCapsule (
     //
     EndOfPayload = (UINT8 *)(FmpCapsuleHeader + 1);
     if (EndOfPayload != EndOfCapsule) {
-      DEBUG ((DEBUG_ERROR, "EndOfPayload(0x%x) mismatch, EndOfCapsule(0x%x)\n", EndOfPayload, EndOfCapsule));
+      DEBUG ((
+        DEBUG_ERROR,
+        "EndOfPayload(0x%x) mismatch, EndOfCapsule(0x%x)\n",
+        EndOfPayload,
+        EndOfCapsule
+        ));
       return EFI_INVALID_PARAMETER;
     }
 
@@ -363,7 +445,8 @@ DisplayCapsuleImage (
     return EFI_UNSUPPORTED;
   }
 
-  ImagePayload = (DISPLAY_DISPLAY_PAYLOAD *)((UINTN)CapsuleHeader + CapsuleHeader->HeaderSize);
+  ImagePayload = (DISPLAY_DISPLAY_PAYLOAD *)((UINTN)CapsuleHeader +
+                                             CapsuleHeader->HeaderSize);
   //
   // (CapsuleImageSize > HeaderSize) is guaranteed by IsValidCapsuleHeader().
   //
@@ -381,7 +464,11 @@ DisplayCapsuleImage (
     return EFI_UNSUPPORTED;
   }
 
-  if (CalculateCheckSum8 ((UINT8 *)CapsuleHeader, CapsuleHeader->CapsuleImageSize) != 0) {
+  if (CalculateCheckSum8 (
+        (UINT8 *)CapsuleHeader,
+        CapsuleHeader->CapsuleImageSize
+        ) != 0)
+  {
     return EFI_UNSUPPORTED;
   }
 
@@ -395,9 +482,17 @@ DisplayCapsuleImage (
   //
   // Try to open GOP
   //
-  Status = gBS->HandleProtocol (gST->ConsoleOutHandle, &gEfiGraphicsOutputProtocolGuid, (VOID **)&GraphicsOutput);
+  Status = gBS->HandleProtocol (
+                  gST->ConsoleOutHandle,
+                  &gEfiGraphicsOutputProtocolGuid,
+                  (VOID **)&GraphicsOutput
+                  );
   if (EFI_ERROR (Status)) {
-    Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **)&GraphicsOutput);
+    Status = gBS->LocateProtocol (
+                    &gEfiGraphicsOutputProtocolGuid,
+                    NULL,
+                    (VOID **)&GraphicsOutput
+                    );
     if (EFI_ERROR (Status)) {
       return EFI_UNSUPPORTED;
     }
@@ -474,29 +569,87 @@ DumpFmpImageInfo (
   CurrentImageInfo = ImageInfo;
   for (Index = 0; Index < DescriptorCount; Index++) {
     DEBUG ((DEBUG_VERBOSE, "  ImageDescriptor (%d)\n", Index));
-    DEBUG ((DEBUG_VERBOSE, "    ImageIndex                  - 0x%x\n", CurrentImageInfo->ImageIndex));
-    DEBUG ((DEBUG_VERBOSE, "    ImageTypeId                 - %g\n", &CurrentImageInfo->ImageTypeId));
-    DEBUG ((DEBUG_VERBOSE, "    ImageId                     - 0x%lx\n", CurrentImageInfo->ImageId));
-    DEBUG ((DEBUG_VERBOSE, "    ImageIdName                 - %s\n", CurrentImageInfo->ImageIdName));
-    DEBUG ((DEBUG_VERBOSE, "    Version                     - 0x%x\n", CurrentImageInfo->Version));
-    DEBUG ((DEBUG_VERBOSE, "    VersionName                 - %s\n", CurrentImageInfo->VersionName));
-    DEBUG ((DEBUG_VERBOSE, "    Size                        - 0x%x\n", CurrentImageInfo->Size));
-    DEBUG ((DEBUG_VERBOSE, "    AttributesSupported         - 0x%lx\n", CurrentImageInfo->AttributesSupported));
-    DEBUG ((DEBUG_VERBOSE, "    AttributesSetting           - 0x%lx\n", CurrentImageInfo->AttributesSetting));
-    DEBUG ((DEBUG_VERBOSE, "    Compatibilities             - 0x%lx\n", CurrentImageInfo->Compatibilities));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    ImageIndex                  - 0x%x\n",
+      CurrentImageInfo->ImageIndex
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    ImageTypeId                 - %g\n",
+      &CurrentImageInfo->ImageTypeId
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    ImageId                     - 0x%lx\n",
+      CurrentImageInfo->ImageId
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    ImageIdName                 - %s\n",
+      CurrentImageInfo->ImageIdName
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    Version                     - 0x%x\n",
+      CurrentImageInfo->Version
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    VersionName                 - %s\n",
+      CurrentImageInfo->VersionName
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    Size                        - 0x%x\n",
+      CurrentImageInfo->Size
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    AttributesSupported         - 0x%lx\n",
+      CurrentImageInfo->AttributesSupported
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    AttributesSetting           - 0x%lx\n",
+      CurrentImageInfo->AttributesSetting
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    Compatibilities             - 0x%lx\n",
+      CurrentImageInfo->Compatibilities
+      ));
     if (DescriptorVersion > 1) {
-      DEBUG ((DEBUG_VERBOSE, "    LowestSupportedImageVersion - 0x%x\n", CurrentImageInfo->LowestSupportedImageVersion));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "    LowestSupportedImageVersion - 0x%x\n",
+        CurrentImageInfo->LowestSupportedImageVersion
+        ));
       if (DescriptorVersion > 2) {
-        DEBUG ((DEBUG_VERBOSE, "    LastAttemptVersion          - 0x%x\n", CurrentImageInfo->LastAttemptVersion));
-        DEBUG ((DEBUG_VERBOSE, "    LastAttemptStatus           - 0x%x\n", CurrentImageInfo->LastAttemptStatus));
-        DEBUG ((DEBUG_VERBOSE, "    HardwareInstance            - 0x%lx\n", CurrentImageInfo->HardwareInstance));
+        DEBUG ((
+          DEBUG_VERBOSE,
+          "    LastAttemptVersion          - 0x%x\n",
+          CurrentImageInfo->LastAttemptVersion
+          ));
+        DEBUG ((
+          DEBUG_VERBOSE,
+          "    LastAttemptStatus           - 0x%x\n",
+          CurrentImageInfo->LastAttemptStatus
+          ));
+        DEBUG ((
+          DEBUG_VERBOSE,
+          "    HardwareInstance            - 0x%lx\n",
+          CurrentImageInfo->HardwareInstance
+          ));
       }
     }
 
     //
     // Use DescriptorSize to move ImageInfo Pointer to stay compatible with different ImageInfo version
     //
-    CurrentImageInfo = (EFI_FIRMWARE_IMAGE_DESCRIPTOR *)((UINT8 *)CurrentImageInfo + DescriptorSize);
+    CurrentImageInfo =
+      (EFI_FIRMWARE_IMAGE_DESCRIPTOR *)((UINT8 *)CurrentImageInfo +
+                                        DescriptorSize);
   }
 }
 
@@ -515,32 +668,91 @@ DumpFmpCapsule (
   UINTN                                         Index;
   UINT64                                        *ItemOffsetList;
 
-  FmpCapsuleHeader = (EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER *)((UINT8 *)CapsuleHeader + CapsuleHeader->HeaderSize);
+  FmpCapsuleHeader =
+    (EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER *)((UINT8 *)CapsuleHeader +
+                                               CapsuleHeader->HeaderSize);
 
   DEBUG ((DEBUG_VERBOSE, "FmpCapsule:\n"));
-  DEBUG ((DEBUG_VERBOSE, "  Version                - 0x%x\n", FmpCapsuleHeader->Version));
-  DEBUG ((DEBUG_VERBOSE, "  EmbeddedDriverCount    - 0x%x\n", FmpCapsuleHeader->EmbeddedDriverCount));
-  DEBUG ((DEBUG_VERBOSE, "  PayloadItemCount       - 0x%x\n", FmpCapsuleHeader->PayloadItemCount));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "  Version                - 0x%x\n",
+    FmpCapsuleHeader->Version
+    ));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "  EmbeddedDriverCount    - 0x%x\n",
+    FmpCapsuleHeader->EmbeddedDriverCount
+    ));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "  PayloadItemCount       - 0x%x\n",
+    FmpCapsuleHeader->PayloadItemCount
+    ));
 
   ItemOffsetList = (UINT64 *)(FmpCapsuleHeader + 1);
   for (Index = 0; Index < FmpCapsuleHeader->EmbeddedDriverCount; Index++) {
-    DEBUG ((DEBUG_VERBOSE, "  ItemOffsetList[%d]      - 0x%lx\n", Index, ItemOffsetList[Index]));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "  ItemOffsetList[%d]      - 0x%lx\n",
+      Index,
+      ItemOffsetList[Index]
+      ));
   }
 
-  for ( ; Index < (UINT32)FmpCapsuleHeader->EmbeddedDriverCount + FmpCapsuleHeader->PayloadItemCount; Index++) {
-    DEBUG ((DEBUG_VERBOSE, "  ItemOffsetList[%d]      - 0x%lx\n", Index, ItemOffsetList[Index]));
-    ImageHeader = (EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER *)((UINT8 *)FmpCapsuleHeader + ItemOffsetList[Index]);
+  for ( ; Index < (UINT32)FmpCapsuleHeader->EmbeddedDriverCount +
+        FmpCapsuleHeader->PayloadItemCount; Index++)
+  {
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "  ItemOffsetList[%d]      - 0x%lx\n",
+      Index,
+      ItemOffsetList[Index]
+      ));
+    ImageHeader =
+      (EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER *)((UINT8 *)FmpCapsuleHeader
+                                                       +
+                                                       ItemOffsetList[Index]);
 
     DEBUG ((DEBUG_VERBOSE, "  ImageHeader:\n"));
-    DEBUG ((DEBUG_VERBOSE, "    Version                - 0x%x\n", ImageHeader->Version));
-    DEBUG ((DEBUG_VERBOSE, "    UpdateImageTypeId      - %g\n", &ImageHeader->UpdateImageTypeId));
-    DEBUG ((DEBUG_VERBOSE, "    UpdateImageIndex       - 0x%x\n", ImageHeader->UpdateImageIndex));
-    DEBUG ((DEBUG_VERBOSE, "    UpdateImageSize        - 0x%x\n", ImageHeader->UpdateImageSize));
-    DEBUG ((DEBUG_VERBOSE, "    UpdateVendorCodeSize   - 0x%x\n", ImageHeader->UpdateVendorCodeSize));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    Version                - 0x%x\n",
+      ImageHeader->Version
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    UpdateImageTypeId      - %g\n",
+      &ImageHeader->UpdateImageTypeId
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    UpdateImageIndex       - 0x%x\n",
+      ImageHeader->UpdateImageIndex
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    UpdateImageSize        - 0x%x\n",
+      ImageHeader->UpdateImageSize
+      ));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "    UpdateVendorCodeSize   - 0x%x\n",
+      ImageHeader->UpdateVendorCodeSize
+      ));
     if (ImageHeader->Version >= 2) {
-      DEBUG ((DEBUG_VERBOSE, "    UpdateHardwareInstance - 0x%lx\n", ImageHeader->UpdateHardwareInstance));
-      if (ImageHeader->Version >= EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER_INIT_VERSION) {
-        DEBUG ((DEBUG_VERBOSE, "    ImageCapsuleSupport    - 0x%lx\n", ImageHeader->ImageCapsuleSupport));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "    UpdateHardwareInstance - 0x%lx\n",
+        ImageHeader->UpdateHardwareInstance
+        ));
+      if (ImageHeader->Version >=
+          EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER_INIT_VERSION)
+      {
+        DEBUG ((
+          DEBUG_VERBOSE,
+          "    ImageCapsuleSupport    - 0x%lx\n",
+          ImageHeader->ImageCapsuleSupport
+          ));
       }
     }
   }
@@ -717,7 +929,10 @@ GetFmpHandleBufferByType (
 
   MatchedHandleBuffer = NULL;
   if (HandleBuf != NULL) {
-    MatchedHandleBuffer = AllocateZeroPool (sizeof (EFI_HANDLE) * NumberOfHandles);
+    MatchedHandleBuffer = AllocateZeroPool (
+                            sizeof (EFI_HANDLE) *
+                            NumberOfHandles
+                            );
     if (MatchedHandleBuffer == NULL) {
       FreePool (HandleBuffer);
       return EFI_OUT_OF_RESOURCES;
@@ -726,7 +941,10 @@ GetFmpHandleBufferByType (
 
   MatchedResetRequiredBuffer = NULL;
   if (ResetRequiredBuf != NULL) {
-    MatchedResetRequiredBuffer = AllocateZeroPool (sizeof (BOOLEAN) * NumberOfHandles);
+    MatchedResetRequiredBuffer = AllocateZeroPool (
+                                   sizeof (BOOLEAN) *
+                                   NumberOfHandles
+                                   );
     if (MatchedResetRequiredBuffer == NULL) {
       if (MatchedHandleBuffer != NULL) {
         FreePool (MatchedHandleBuffer);
@@ -794,7 +1012,8 @@ GetFmpHandleBufferByType (
       //
       if (CompareGuid (UpdateImageTypeId, &TempFmpImageInfo->ImageTypeId)) {
         if ((UpdateHardwareInstance == 0) ||
-            ((FmpImageInfoDescriptorVer >= EFI_FIRMWARE_IMAGE_DESCRIPTOR_VERSION) &&
+            ((FmpImageInfoDescriptorVer >=
+              EFI_FIRMWARE_IMAGE_DESCRIPTOR_VERSION) &&
              (UpdateHardwareInstance == TempFmpImageInfo->HardwareInstance)))
         {
           if (MatchedHandleBuffer != NULL) {
@@ -802,10 +1021,14 @@ GetFmpHandleBufferByType (
           }
 
           if (MatchedResetRequiredBuffer != NULL) {
-            MatchedResetRequiredBuffer[MatchedNumberOfHandles] = (((TempFmpImageInfo->AttributesSupported &
-                                                                    IMAGE_ATTRIBUTE_RESET_REQUIRED) != 0) &&
-                                                                  ((TempFmpImageInfo->AttributesSetting &
-                                                                    IMAGE_ATTRIBUTE_RESET_REQUIRED) != 0));
+            MatchedResetRequiredBuffer[MatchedNumberOfHandles] =
+              (((TempFmpImageInfo->AttributesSupported &
+                 IMAGE_ATTRIBUTE_RESET_REQUIRED)
+                != 0) &&
+               ((
+                 TempFmpImageInfo->AttributesSetting &
+                 IMAGE_ATTRIBUTE_RESET_REQUIRED)
+                != 0));
           }
 
           MatchedNumberOfHandles++;
@@ -813,7 +1036,9 @@ GetFmpHandleBufferByType (
         }
       }
 
-      TempFmpImageInfo = (EFI_FIRMWARE_IMAGE_DESCRIPTOR *)((UINT8 *)TempFmpImageInfo + DescriptorSize);
+      TempFmpImageInfo =
+        (EFI_FIRMWARE_IMAGE_DESCRIPTOR *)((UINT8 *)TempFmpImageInfo +
+                                          DescriptorSize);
     }
 
     FreePool (FmpImageInfoBuf);
@@ -955,7 +1180,9 @@ SetFmpImageData (
     mFmpProgress = NULL;
   }
 
-  if (ImageHeader->Version >= EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER_INIT_VERSION) {
+  if (ImageHeader->Version >=
+      EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER_INIT_VERSION)
+  {
     Image = (UINT8 *)(ImageHeader + 1);
   } else {
     //
@@ -964,9 +1191,15 @@ SetFmpImageData (
     // ImageCapsuleSupport field if version is 2.
     //
     if (ImageHeader->Version == 1) {
-      Image = (UINT8 *)ImageHeader + OFFSET_OF (EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER, UpdateHardwareInstance);
+      Image = (UINT8 *)ImageHeader + OFFSET_OF (
+                                       EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER,
+                                       UpdateHardwareInstance
+                                       );
     } else {
-      Image = (UINT8 *)ImageHeader + OFFSET_OF (EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER, ImageCapsuleSupport);
+      Image = (UINT8 *)ImageHeader + OFFSET_OF (
+                                       EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER,
+                                       ImageCapsuleSupport
+                                       );
     }
   }
 
@@ -982,9 +1215,19 @@ SetFmpImageData (
   DEBUG ((DEBUG_INFO, "PayloadIndex - 0x%x, ", PayloadIndex));
   DEBUG ((DEBUG_INFO, "ImageIndex - 0x%x ", ImageHeader->UpdateImageIndex));
   if (ImageHeader->Version >= 2) {
-    DEBUG ((DEBUG_INFO, "(UpdateHardwareInstance - 0x%x)", ImageHeader->UpdateHardwareInstance));
-    if (ImageHeader->Version >= EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER_INIT_VERSION) {
-      DEBUG ((DEBUG_INFO, "(ImageCapsuleSupport - 0x%x)", ImageHeader->ImageCapsuleSupport));
+    DEBUG ((
+      DEBUG_INFO,
+      "(UpdateHardwareInstance - 0x%x)",
+      ImageHeader->UpdateHardwareInstance
+      ));
+    if (ImageHeader->Version >=
+        EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER_INIT_VERSION)
+    {
+      DEBUG ((
+        DEBUG_INFO,
+        "(ImageCapsuleSupport - 0x%x)",
+        ImageHeader->ImageCapsuleSupport
+        ));
     }
   }
 
@@ -1054,7 +1297,8 @@ StartFmpImage (
   MemMapNode.Header.SubType  = HW_MEMMAP_DP;
   MemMapNode.MemoryType      = EfiBootServicesCode;
   MemMapNode.StartingAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)ImageBuffer;
-  MemMapNode.EndingAddress   = (EFI_PHYSICAL_ADDRESS)(UINTN)((UINT8 *)ImageBuffer + ImageSize - 1);
+  MemMapNode.EndingAddress   =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)((UINT8 *)ImageBuffer + ImageSize - 1);
 
   DriverDevicePath = AppendDevicePathNode (NULL, &MemMapNode.Header);
   if (DriverDevicePath == NULL) {
@@ -1149,7 +1393,11 @@ RecordFmpCapsuleStatus (
   //
   // Update corresponding ESRT entry LastAttemp Status
   //
-  Status = gBS->LocateProtocol (&gEsrtManagementProtocolGuid, NULL, (VOID **)&EsrtProtocol);
+  Status = gBS->LocateProtocol (
+                  &gEsrtManagementProtocolGuid,
+                  NULL,
+                  (VOID **)&EsrtProtocol
+                  );
   if (EFI_ERROR (Status)) {
     return;
   }
@@ -1164,7 +1412,10 @@ RecordFmpCapsuleStatus (
   //
   FmpImageInfoDescriptorVer = GetFmpImageInfoDescriptorVer (Handle);
   if (FmpImageInfoDescriptorVer < EFI_FIRMWARE_IMAGE_DESCRIPTOR_VERSION) {
-    StatusEsrt = EsrtProtocol->GetEsrtEntry (&ImageHeader->UpdateImageTypeId, &EsrtEntry);
+    StatusEsrt = EsrtProtocol->GetEsrtEntry (
+                                 &ImageHeader->UpdateImageTypeId,
+                                 &EsrtEntry
+                                 );
     if (!EFI_ERROR (StatusEsrt)) {
       if (!EFI_ERROR (CapsuleStatus)) {
         EsrtEntry.LastAttemptStatus = LAST_ATTEMPT_STATUS_SUCCESS;
@@ -1221,7 +1472,12 @@ ProcessFmpCapsuleImage (
   BOOLEAN                                       Abort;
 
   if (!IsFmpCapsuleGuid (&CapsuleHeader->CapsuleGuid)) {
-    return ProcessFmpCapsuleImage ((EFI_CAPSULE_HEADER *)((UINTN)CapsuleHeader + CapsuleHeader->HeaderSize), CapFileName, ResetRequired);
+    return ProcessFmpCapsuleImage (
+             (EFI_CAPSULE_HEADER *)((UINTN)CapsuleHeader +
+                                    CapsuleHeader->HeaderSize),
+             CapFileName,
+             ResetRequired
+             );
   }
 
   NotReady = FALSE;
@@ -1229,15 +1485,20 @@ ProcessFmpCapsuleImage (
 
   DumpFmpCapsule (CapsuleHeader);
 
-  FmpCapsuleHeader = (EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER *)((UINT8 *)CapsuleHeader + CapsuleHeader->HeaderSize);
+  FmpCapsuleHeader =
+    (EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER *)((UINT8 *)CapsuleHeader +
+                                               CapsuleHeader->HeaderSize);
 
-  if (FmpCapsuleHeader->Version > EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER_INIT_VERSION) {
+  if (FmpCapsuleHeader->Version >
+      EFI_FIRMWARE_MANAGEMENT_CAPSULE_HEADER_INIT_VERSION)
+  {
     return EFI_INVALID_PARAMETER;
   }
 
   ItemOffsetList = (UINT64 *)(FmpCapsuleHeader + 1);
 
-  ItemNum = FmpCapsuleHeader->EmbeddedDriverCount + FmpCapsuleHeader->PayloadItemCount;
+  ItemNum = FmpCapsuleHeader->EmbeddedDriverCount +
+            FmpCapsuleHeader->PayloadItemCount;
 
   //
   // capsule in which driver count and payload count are both zero is not processed.
@@ -1256,9 +1517,11 @@ ProcessFmpCapsuleImage (
       //
       // When driver is last element in the ItemOffsetList array, the driver size is calculated by reference CapsuleImageSize in EFI_CAPSULE_HEADER
       //
-      DriverLen = CapsuleHeader->CapsuleImageSize - CapsuleHeader->HeaderSize - (UINTN)ItemOffsetList[Index];
+      DriverLen = CapsuleHeader->CapsuleImageSize - CapsuleHeader->HeaderSize -
+                  (UINTN)ItemOffsetList[Index];
     } else {
-      DriverLen = (UINTN)ItemOffsetList[Index + 1] - (UINTN)ItemOffsetList[Index];
+      DriverLen = (UINTN)ItemOffsetList[Index + 1] -
+                  (UINTN)ItemOffsetList[Index];
     }
 
     Status = StartFmpImage (
@@ -1281,8 +1544,13 @@ ProcessFmpCapsuleImage (
   //
   // Check all the payload entry in capsule payload list
   //
-  for (Index = FmpCapsuleHeader->EmbeddedDriverCount; Index < ItemNum; Index++) {
-    ImageHeader = (EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER *)((UINT8 *)FmpCapsuleHeader + ItemOffsetList[Index]);
+  for (Index = FmpCapsuleHeader->EmbeddedDriverCount; Index < ItemNum;
+       Index++)
+  {
+    ImageHeader =
+      (EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER *)((UINT8 *)FmpCapsuleHeader
+                                                       +
+                                                       ItemOffsetList[Index]);
 
     UpdateHardwareInstance = 0;
     ///
@@ -1397,7 +1665,9 @@ IsNestedFmpCapsule (
   if (mIsVirtualAddrConverted) {
     if (mEsrtTable != NULL) {
       EsrtEntry = (EFI_SYSTEM_RESOURCE_ENTRY *)(mEsrtTable + 1);
-      for (Index = 0; Index < mEsrtTable->FwResourceCount; Index++, EsrtEntry++) {
+      for (Index = 0; Index < mEsrtTable->FwResourceCount; Index++,
+           EsrtEntry++)
+      {
         if (CompareGuid (&EsrtEntry->FwClass, &CapsuleHeader->CapsuleGuid)) {
           EsrtGuidFound = TRUE;
           break;
@@ -1408,7 +1678,11 @@ IsNestedFmpCapsule (
     //
     // Check ESRT protocol
     //
-    Status = gBS->LocateProtocol (&gEsrtManagementProtocolGuid, NULL, (VOID **)&EsrtProtocol);
+    Status = gBS->LocateProtocol (
+                    &gEsrtManagementProtocolGuid,
+                    NULL,
+                    (VOID **)&EsrtProtocol
+                    );
     if (!EFI_ERROR (Status)) {
       Status = EsrtProtocol->GetEsrtEntry (&CapsuleHeader->CapsuleGuid, &Entry);
       if (!EFI_ERROR (Status)) {
@@ -1441,8 +1715,10 @@ IsNestedFmpCapsule (
   // Check nested capsule header
   // FMP GUID after ESRT one
   //
-  NestedCapsuleHeader = (EFI_CAPSULE_HEADER *)((UINT8 *)CapsuleHeader + CapsuleHeader->HeaderSize);
-  NestedCapsuleSize   = (UINTN)CapsuleHeader + CapsuleHeader->CapsuleImageSize - (UINTN)NestedCapsuleHeader;
+  NestedCapsuleHeader = (EFI_CAPSULE_HEADER *)((UINT8 *)CapsuleHeader +
+                                               CapsuleHeader->HeaderSize);
+  NestedCapsuleSize   = (UINTN)CapsuleHeader + CapsuleHeader->CapsuleImageSize -
+                        (UINTN)NestedCapsuleHeader;
   if (NestedCapsuleSize < sizeof (EFI_CAPSULE_HEADER)) {
     return FALSE;
   }
@@ -1528,7 +1804,11 @@ SupportCapsuleImage (
     return ValidateFmpCapsule (CapsuleHeader, NULL);
   }
 
-  DEBUG ((DEBUG_ERROR, "Unknown Capsule Guid - %g\n", &CapsuleHeader->CapsuleGuid));
+  DEBUG ((
+    DEBUG_ERROR,
+    "Unknown Capsule Guid - %g\n",
+    &CapsuleHeader->CapsuleGuid
+    ));
   return EFI_UNSUPPORTED;
 }
 

@@ -66,15 +66,25 @@ InstallEfiSystemResourceTableInUefiConfigurationTable (
 
   Status = EFI_SUCCESS;
   if (Table->FwResourceCount == 0) {
-    DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Can't install ESRT table because it has zero Entries. \n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EsrtFmpDxe: Can't install ESRT table because it has zero Entries. \n"
+      ));
     Status = EFI_UNSUPPORTED;
   } else {
     //
     // Install the pointer into config table
     //
-    Status = gBS->InstallConfigurationTable (&gEfiSystemResourceTableGuid, Table);
+    Status = gBS->InstallConfigurationTable (
+                    &gEfiSystemResourceTableGuid,
+                    Table
+                    );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Can't install ESRT table.  Status: %r. \n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "EsrtFmpDxe: Can't install ESRT table.  Status: %r. \n",
+        Status
+        ));
     } else {
       DEBUG ((DEBUG_INFO, "EsrtFmpDxe: Installed ESRT table. \n"));
     }
@@ -155,11 +165,23 @@ CreateEsrtEntry (
   // Check to see of FmpImageInfoBuf GUID/HardwareInstance is unique
   //
   for (Index = 0; Index < *NumberOfDescriptors; Index++) {
-    if (CompareGuid (&HardwareInstances[Index].ImageTypeGuid, &FmpImageInfoBuf->ImageTypeId)) {
+    if (CompareGuid (
+          &HardwareInstances[Index].ImageTypeGuid,
+          &FmpImageInfoBuf->ImageTypeId
+          ))
+    {
       if (HardwareInstances[Index].HardwareInstance == FmpHardwareInstance) {
-        DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Duplicate firmware image descriptor with GUID %g HardwareInstance:0x%x\n", &FmpImageInfoBuf->ImageTypeId, FmpHardwareInstance));
+        DEBUG ((
+          DEBUG_ERROR,
+          "EsrtFmpDxe: Duplicate firmware image descriptor with GUID %g HardwareInstance:0x%x\n",
+          &FmpImageInfoBuf->ImageTypeId,
+          FmpHardwareInstance
+          ));
         ASSERT (
-          !CompareGuid (&HardwareInstances[Index].ImageTypeGuid, &FmpImageInfoBuf->ImageTypeId) ||
+          !CompareGuid (
+             &HardwareInstances[Index].ImageTypeGuid,
+             &FmpImageInfoBuf->ImageTypeId
+             ) ||
           HardwareInstances[Index].HardwareInstance != FmpHardwareInstance
           );
         return EFI_UNSUPPORTED;
@@ -170,11 +192,21 @@ CreateEsrtEntry (
   //
   // Record new GUID/HardwareInstance pair
   //
-  CopyGuid (&HardwareInstances[*NumberOfDescriptors].ImageTypeGuid, &FmpImageInfoBuf->ImageTypeId);
-  HardwareInstances[*NumberOfDescriptors].HardwareInstance = FmpHardwareInstance;
-  *NumberOfDescriptors                                     = *NumberOfDescriptors + 1;
+  CopyGuid (
+    &HardwareInstances[*NumberOfDescriptors].ImageTypeGuid,
+    &FmpImageInfoBuf->ImageTypeId
+    );
+  HardwareInstances[*NumberOfDescriptors].HardwareInstance =
+    FmpHardwareInstance;
+  *NumberOfDescriptors =
+    *NumberOfDescriptors + 1;
 
-  DEBUG ((DEBUG_INFO, "EsrtFmpDxe: Add new image descriptor with GUID %g HardwareInstance:0x%x\n", &FmpImageInfoBuf->ImageTypeId, FmpHardwareInstance));
+  DEBUG ((
+    DEBUG_INFO,
+    "EsrtFmpDxe: Add new image descriptor with GUID %g HardwareInstance:0x%x\n",
+    &FmpImageInfoBuf->ImageTypeId,
+    FmpHardwareInstance
+    ));
 
   //
   // Check to see if GUID is already in the ESRT table
@@ -185,7 +217,11 @@ CreateEsrtEntry (
       continue;
     }
 
-    DEBUG ((DEBUG_INFO, "EsrtFmpDxe: ESRT Entry already exists for FMP Instance with GUID %g\n", &Entry->FwClass));
+    DEBUG ((
+      DEBUG_INFO,
+      "EsrtFmpDxe: ESRT Entry already exists for FMP Instance with GUID %g\n",
+      &Entry->FwClass
+      ));
 
     //
     // Set ESRT FwVersion to the smaller of the two values
@@ -241,7 +277,10 @@ CreateEsrtEntry (
   CopyGuid (&Entry->FwClass, &FmpImageInfoBuf->ImageTypeId);
 
   if (IsSystemFmp (FmpImageInfoBuf)) {
-    DEBUG ((DEBUG_INFO, "EsrtFmpDxe: Found an ESRT entry for a System Device.\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "EsrtFmpDxe: Found an ESRT entry for a System Device.\n"
+      ));
     Entry->FwType = (UINT32)(ESRT_FW_TYPE_SYSTEMFIRMWARE);
   } else {
     Entry->FwType = (UINT32)(ESRT_FW_TYPE_DEVICEFIRMWARE);
@@ -257,7 +296,8 @@ CreateEsrtEntry (
   // VERSION 2 has Lowest Supported
   //
   if (FmpVersion >= 2) {
-    Entry->LowestSupportedFwVersion = FmpImageInfoBuf->LowestSupportedImageVersion;
+    Entry->LowestSupportedFwVersion =
+      FmpImageInfoBuf->LowestSupportedImageVersion;
   }
 
   //
@@ -319,13 +359,20 @@ FmpGetFirmwareImageDescriptor (
                          &PackageVersionName        // PackageVersionName
                          );
   if (Status != EFI_BUFFER_TOO_SMALL) {
-    DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Unexpected Failure in GetImageInfo.  Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EsrtFmpDxe: Unexpected Failure in GetImageInfo.  Status = %r\n",
+      Status
+      ));
     return NULL;
   }
 
   FmpImageInfoBuf = AllocateZeroPool (ImageInfoSize);
   if (FmpImageInfoBuf == NULL) {
-    DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Failed to get memory for FMP descriptor.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EsrtFmpDxe: Failed to get memory for FMP descriptor.\n"
+      ));
     return NULL;
   }
 
@@ -345,7 +392,11 @@ FmpGetFirmwareImageDescriptor (
   }
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Failure in GetImageInfo.  Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EsrtFmpDxe: Failure in GetImageInfo.  Status = %r\n",
+      Status
+      ));
     FreePool (FmpImageInfoBuf);
     return NULL;
   }
@@ -416,7 +467,8 @@ CreateFmpBasedEsrt (
   // Allocate ESRT Table and GUID/HardwareInstance table
   //
   Table = AllocateZeroPool (
-            (NumberOfDescriptors * sizeof (EFI_SYSTEM_RESOURCE_ENTRY)) + sizeof (EFI_SYSTEM_RESOURCE_TABLE)
+            (NumberOfDescriptors * sizeof (EFI_SYSTEM_RESOURCE_ENTRY)) +
+            sizeof (EFI_SYSTEM_RESOURCE_TABLE)
             );
   if (Table == NULL) {
     DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Failed to allocate memory for ESRT.\n"));
@@ -424,9 +476,15 @@ CreateFmpBasedEsrt (
     return NULL;
   }
 
-  HardwareInstances = AllocateZeroPool (NumberOfDescriptors * sizeof (GUID_HARDWAREINSTANCE_PAIR));
+  HardwareInstances = AllocateZeroPool (
+                        NumberOfDescriptors *
+                        sizeof (GUID_HARDWAREINSTANCE_PAIR)
+                        );
   if (HardwareInstances == NULL) {
-    DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Failed to allocate memory for HW Instance Table.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EsrtFmpDxe: Failed to allocate memory for HW Instance Table.\n"
+      ));
     FreePool (Table);
     FreePool (Buffer);
     return NULL;
@@ -437,7 +495,8 @@ CreateFmpBasedEsrt (
   //
   Table->FwResourceCount    = 0;
   Table->FwResourceCountMax = NumberOfDescriptors;
-  Table->FwResourceVersion  = EFI_SYSTEM_RESOURCE_TABLE_FIRMWARE_RESOURCE_VERSION;
+  Table->FwResourceVersion  =
+    EFI_SYSTEM_RESOURCE_TABLE_FIRMWARE_RESOURCE_VERSION;
 
   NumberOfDescriptors = 0;
   for (Index = 0; Index < NoProtocols; Index++) {
@@ -459,18 +518,29 @@ CreateFmpBasedEsrt (
       //
       // If the descriptor has the IN USE bit set, create ESRT entry otherwise ignore.
       //
-      if ((FmpImageInfoBuf->AttributesSetting & FmpImageInfoBuf->AttributesSupported & IMAGE_ATTRIBUTE_IN_USE) == IMAGE_ATTRIBUTE_IN_USE) {
+      if ((FmpImageInfoBuf->AttributesSetting &
+           FmpImageInfoBuf->AttributesSupported & IMAGE_ATTRIBUTE_IN_USE) ==
+          IMAGE_ATTRIBUTE_IN_USE)
+      {
         //
         // Create ESRT entry
         //
-        CreateEsrtEntry (Table, HardwareInstances, &NumberOfDescriptors, FmpImageInfoBuf, FmpImageInfoDescriptorVer);
+        CreateEsrtEntry (
+          Table,
+          HardwareInstances,
+          &NumberOfDescriptors,
+          FmpImageInfoBuf,
+          FmpImageInfoDescriptorVer
+          );
       }
 
       FmpImageInfoCount--;
       //
       // Increment the buffer pointer ahead by the size of the descriptor
       //
-      FmpImageInfoBuf = (EFI_FIRMWARE_IMAGE_DESCRIPTOR *)(((UINT8 *)FmpImageInfoBuf) + DescriptorSize);
+      FmpImageInfoBuf =
+        (EFI_FIRMWARE_IMAGE_DESCRIPTOR *)(((UINT8 *)FmpImageInfoBuf) +
+                                          DescriptorSize);
     }
 
     FreePool (OrgFmpImageInfoBuf);
@@ -514,7 +584,10 @@ EsrtReadyToBootEventNotify (
       FreePool (Table);
     }
   } else {
-    DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Can't install ESRT table because it is NULL. \n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EsrtFmpDxe: Can't install ESRT table because it is NULL. \n"
+      ));
   }
 
   //

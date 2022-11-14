@@ -43,57 +43,93 @@ UINTN       mFreeMapStack = 0;
 ///
 /// This list maintain the free memory map list
 ///
-LIST_ENTRY  mFreeMemoryMapEntryList           = INITIALIZE_LIST_HEAD_VARIABLE (mFreeMemoryMapEntryList);
-BOOLEAN     mMemoryTypeInformationInitialized = FALSE;
+LIST_ENTRY  mFreeMemoryMapEntryList = INITIALIZE_LIST_HEAD_VARIABLE (
+                                        mFreeMemoryMapEntryList
+                                        );
+BOOLEAN  mMemoryTypeInformationInitialized = FALSE;
 
 EFI_MEMORY_TYPE_STATISTICS  mMemoryTypeStatistics[EfiMaxMemoryType + 1] = {
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,  FALSE },  // EfiReservedMemoryType
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE, FALSE },  // EfiLoaderCode
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE, FALSE },  // EfiLoaderData
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE, FALSE },  // EfiBootServicesCode
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE, FALSE },  // EfiBootServicesData
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,  TRUE  },  // EfiRuntimeServicesCode
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,  TRUE  },  // EfiRuntimeServicesData
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE, FALSE },  // EfiConventionalMemory
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE, FALSE },  // EfiUnusableMemory
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,  FALSE },  // EfiACPIReclaimMemory
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,  FALSE },  // EfiACPIMemoryNVS
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE, FALSE },  // EfiMemoryMappedIO
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE, FALSE },  // EfiMemoryMappedIOPortSpace
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,  TRUE  },  // EfiPalCode
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE, FALSE },  // EfiPersistentMemory
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,  FALSE },  // EfiUnacceptedMemoryType
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE, FALSE }   // EfiMaxMemoryType
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,
+    FALSE                 },                                       // EfiReservedMemoryType
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
+    FALSE                 },                                       // EfiLoaderCode
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
+    FALSE                 },                                       // EfiLoaderData
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
+    FALSE                 },                                       // EfiBootServicesCode
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
+    FALSE                 },                                       // EfiBootServicesData
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,
+    TRUE                  },                                       // EfiRuntimeServicesCode
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,
+    TRUE                  },                                       // EfiRuntimeServicesData
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
+    FALSE                 },                                       // EfiConventionalMemory
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
+    FALSE                 },                                       // EfiUnusableMemory
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,
+    FALSE                 },                                       // EfiACPIReclaimMemory
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,
+    FALSE                 },                                       // EfiACPIMemoryNVS
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
+    FALSE                 },                                       // EfiMemoryMappedIO
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
+    FALSE                 },                                       // EfiMemoryMappedIOPortSpace
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,
+    TRUE                  },                                       // EfiPalCode
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
+    FALSE                 },                                       // EfiPersistentMemory
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,
+    FALSE                 },                                       // EfiUnacceptedMemoryType
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE, FALSE                 } // EfiMaxMemoryType
 };
 
 EFI_PHYSICAL_ADDRESS  mDefaultMaximumAddress = MAX_ALLOC_ADDRESS;
 EFI_PHYSICAL_ADDRESS  mDefaultBaseAddress    = MAX_ALLOC_ADDRESS;
 
 EFI_MEMORY_TYPE_INFORMATION  gMemoryTypeInformation[EfiMaxMemoryType + 1] = {
-  { EfiReservedMemoryType,          0 },
-  { EfiLoaderCode,                  0 },
-  { EfiLoaderData,                  0 },
-  { EfiBootServicesCode,            0 },
-  { EfiBootServicesData,            0 },
-  { EfiRuntimeServicesCode,         0 },
-  { EfiRuntimeServicesData,         0 },
-  { EfiConventionalMemory,          0 },
-  { EfiUnusableMemory,              0 },
-  { EfiACPIReclaimMemory,           0 },
-  { EfiACPIMemoryNVS,               0 },
-  { EfiMemoryMappedIO,              0 },
-  { EfiMemoryMappedIOPortSpace,     0 },
-  { EfiPalCode,                     0 },
-  { EfiPersistentMemory,            0 },
-  { EFI_GCD_MEMORY_TYPE_UNACCEPTED, 0 },
-  { EfiMaxMemoryType,               0 }
+  { EfiReservedMemoryType,
+    0                                                                                 },
+  { EfiLoaderCode,
+    0                                                                                                      },
+  { EfiLoaderData,
+    0                                                                                                                          },
+  { EfiBootServicesCode,
+    0                                                                                                                                              },
+  { EfiBootServicesData,
+    0                                                                                                                                                                  },
+  { EfiRuntimeServicesCode,
+    0                                                                                                                                                                                      },
+  { EfiRuntimeServicesData,
+    0                                                                                                                                                                                                          },
+  { EfiConventionalMemory,
+    0                                                                                                                                                                                                                              },
+  { EfiUnusableMemory,
+    0                                                                                                                                                                                                                                                  },
+  { EfiACPIReclaimMemory,
+    0                                                                                                                                                                                                                                                                      },
+  { EfiACPIMemoryNVS,
+    0                                                                                                                                                                                                                                                                                          },
+  { EfiMemoryMappedIO,
+    0                                                                                                                                                                                                                                                                                                              },
+  { EfiMemoryMappedIOPortSpace,
+    0                                                                                                                                                                                                                                                                                                                                  },
+  { EfiPalCode,
+    0                                                                                                                                                                                                                                                                                                                                                },
+  { EfiPersistentMemory,
+    0                                                                                                                                                                                                                                                                                                                                                              },
+  { EFI_GCD_MEMORY_TYPE_UNACCEPTED,
+    0                                                                                                                                                                                                                                                                                                                                                                            },
+  { EfiMaxMemoryType,
+    0                                                                                                                                                                                                                                                                                                                                                                            }
 };
 //
 // Only used when load module at fixed address feature is enabled. True means the memory is alreay successfully allocated
 // and ready to load the module in to specified address.or else, the memory is not ready and module will be loaded at a
 //  address assigned by DXE core.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED   BOOLEAN  gLoadFixedAddressCodeMemoryReady = FALSE;
+GLOBAL_REMOVE_IF_UNREFERENCED   BOOLEAN  gLoadFixedAddressCodeMemoryReady =
+  FALSE;
 
 /**
   Enter critical section by gaining lock on gMemoryLock.
@@ -180,7 +216,9 @@ CoreAddRange (
   // at address 0, then do not zero the page at address 0 because the page is being
   // used for other purposes.
   //
-  if ((Type == EfiConventionalMemory) && (Start == 0) && (End >= EFI_PAGE_SIZE - 1)) {
+  if ((Type == EfiConventionalMemory) && (Start == 0) && (End >= EFI_PAGE_SIZE -
+                                                          1))
+  {
     if ((PcdGet8 (PcdNullPointerDetectionPropertyMask) & BIT0) == 0) {
       SetMem ((VOID *)(UINTN)Start, EFI_PAGE_SIZE, 0);
     }
@@ -279,7 +317,9 @@ AllocateMemoryMapEntry (
     //
     FreeDescriptorEntries = CoreAllocatePoolPages (
                               EfiBootServicesData,
-                              EFI_SIZE_TO_PAGES (DEFAULT_PAGE_ALLOCATION_GRANULARITY),
+                              EFI_SIZE_TO_PAGES (
+                                DEFAULT_PAGE_ALLOCATION_GRANULARITY
+                                ),
                               DEFAULT_PAGE_ALLOCATION_GRANULARITY,
                               FALSE
                               );
@@ -287,9 +327,14 @@ AllocateMemoryMapEntry (
       //
       // Enque the free memmory map entries into the list
       //
-      for (Index = 0; Index < DEFAULT_PAGE_ALLOCATION_GRANULARITY / sizeof (MEMORY_MAP); Index++) {
+      for (Index = 0; Index < DEFAULT_PAGE_ALLOCATION_GRANULARITY /
+           sizeof (MEMORY_MAP); Index++)
+      {
         FreeDescriptorEntries[Index].Signature = MEMORY_MAP_SIGNATURE;
-        InsertTailList (&mFreeMemoryMapEntryList, &FreeDescriptorEntries[Index].Link);
+        InsertTailList (
+          &mFreeMemoryMapEntryList,
+          &FreeDescriptorEntries[Index].Link
+          );
       }
     } else {
       return NULL;
@@ -299,7 +344,12 @@ AllocateMemoryMapEntry (
   //
   // dequeue the first descriptor from the list
   //
-  Entry = CR (mFreeMemoryMapEntryList.ForwardLink, MEMORY_MAP, Link, MEMORY_MAP_SIGNATURE);
+  Entry = CR (
+            mFreeMemoryMapEntryList.ForwardLink,
+            MEMORY_MAP,
+            Link,
+            MEMORY_MAP_SIGNATURE
+            );
   RemoveEntryList (&Entry->Link);
 
   return Entry;
@@ -359,7 +409,9 @@ CoreFreeMemoryMapStack (
       //
       // Find insertion location
       //
-      for (Link2 = gMemoryMap.ForwardLink; Link2 != &gMemoryMap; Link2 = Link2->ForwardLink) {
+      for (Link2 = gMemoryMap.ForwardLink; Link2 != &gMemoryMap; Link2 =
+             Link2->ForwardLink)
+      {
         Entry2 = CR (Link2, MEMORY_MAP, Link, MEMORY_MAP_SIGNATURE);
         if (Entry2->FromPages && (Entry2->Start > Entry->Start)) {
           break;
@@ -406,13 +458,16 @@ PromoteMemoryResource (
 
     if ((Entry->GcdMemoryType == EfiGcdMemoryTypeReserved) &&
         (Entry->EndAddress < MAX_ALLOC_ADDRESS) &&
-        ((Entry->Capabilities & (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED | EFI_MEMORY_TESTED)) ==
+        ((Entry->Capabilities & (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED |
+                                 EFI_MEMORY_TESTED)) ==
          (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED)))
     {
       //
       // Update the GCD map
       //
-      if ((Entry->Capabilities & EFI_MEMORY_MORE_RELIABLE) == EFI_MEMORY_MORE_RELIABLE) {
+      if ((Entry->Capabilities & EFI_MEMORY_MORE_RELIABLE) ==
+          EFI_MEMORY_MORE_RELIABLE)
+      {
         Entry->GcdMemoryType = EfiGcdMemoryTypeMoreReliable;
       } else {
         Entry->GcdMemoryType = EfiGcdMemoryTypeSystemMemory;
@@ -430,7 +485,8 @@ PromoteMemoryResource (
         EfiConventionalMemory,
         Entry->BaseAddress,
         Entry->EndAddress,
-        Entry->Capabilities & ~(EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED | EFI_MEMORY_TESTED | EFI_MEMORY_RUNTIME)
+        Entry->Capabilities & ~(EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED |
+                                EFI_MEMORY_TESTED | EFI_MEMORY_RUNTIME)
         );
       CoreFreeMemoryMapStack ();
 
@@ -454,7 +510,8 @@ PromoteMemoryResource (
         EfiConventionalMemory,
         StartAddress,
         EndAddress,
-        Descriptor.Capabilities & ~(EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED |
+        Descriptor.Capabilities & ~(EFI_MEMORY_PRESENT |
+                                    EFI_MEMORY_INITIALIZED |
                                     EFI_MEMORY_TESTED | EFI_MEMORY_RUNTIME)
         );
     }
@@ -486,8 +543,15 @@ CoreLoadingFixedAddressHook (
   if (!gLoadFixedAddressCodeMemoryReady) {
     RuntimeCodePageNumber  = PcdGet32 (PcdLoadFixAddressRuntimeCodePageNumber);
     BootTimeCodePageNumber = PcdGet32 (PcdLoadFixAddressBootTimeCodePageNumber);
-    RuntimeCodeBase        = (EFI_PHYSICAL_ADDRESS)(gLoadModuleAtFixAddressConfigurationTable.DxeCodeTopAddress - EFI_PAGES_TO_SIZE (RuntimeCodePageNumber));
-    BootTimeCodeBase       = (EFI_PHYSICAL_ADDRESS)(RuntimeCodeBase - EFI_PAGES_TO_SIZE (BootTimeCodePageNumber));
+    RuntimeCodeBase        =
+      (EFI_PHYSICAL_ADDRESS)(gLoadModuleAtFixAddressConfigurationTable.
+                               DxeCodeTopAddress - EFI_PAGES_TO_SIZE (
+                                                     RuntimeCodePageNumber
+                                                     ));
+    BootTimeCodeBase = (EFI_PHYSICAL_ADDRESS)(RuntimeCodeBase -
+                                              EFI_PAGES_TO_SIZE (
+                                                BootTimeCodePageNumber
+                                                ));
     //
     // Try to allocate runtime memory.
     //
@@ -597,7 +661,9 @@ CoreAddMemoryDescriptor (
   //
   // Loop through each memory type in the order specified by the gMemoryTypeInformation[] array
   //
-  for (Index = 0; gMemoryTypeInformation[Index].Type != EfiMaxMemoryType; Index++) {
+  for (Index = 0; gMemoryTypeInformation[Index].Type != EfiMaxMemoryType;
+       Index++)
+  {
     //
     // Make sure the memory type in the gMemoryTypeInformation[] array is valid
     //
@@ -649,7 +715,10 @@ CoreAddMemoryDescriptor (
       //
       mMemoryTypeStatistics[Type].MaximumAddress =
         mMemoryTypeStatistics[Type].BaseAddress +
-        LShiftU64 (gMemoryTypeInformation[Index].NumberOfPages, EFI_PAGE_SHIFT) - 1;
+        LShiftU64 (
+          gMemoryTypeInformation[Index].NumberOfPages,
+          EFI_PAGE_SHIFT
+          ) - 1;
 
       //
       // If the current base address is the lowest address so far, then update the default
@@ -666,7 +735,9 @@ CoreAddMemoryDescriptor (
   // those memory areas can be freed for future allocations, and all future memory
   // allocations can occur within their respective bins
   //
-  for (Index = 0; gMemoryTypeInformation[Index].Type != EfiMaxMemoryType; Index++) {
+  for (Index = 0; gMemoryTypeInformation[Index].Type != EfiMaxMemoryType;
+       Index++)
+  {
     //
     // Make sure the memory type in the gMemoryTypeInformation[] array is valid
     //
@@ -680,7 +751,8 @@ CoreAddMemoryDescriptor (
         mMemoryTypeStatistics[Type].BaseAddress,
         gMemoryTypeInformation[Index].NumberOfPages
         );
-      mMemoryTypeStatistics[Type].NumberOfPages   = gMemoryTypeInformation[Index].NumberOfPages;
+      mMemoryTypeStatistics[Type].NumberOfPages =
+        gMemoryTypeInformation[Index].NumberOfPages;
       gMemoryTypeInformation[Index].NumberOfPages = 0;
     }
   }
@@ -690,7 +762,9 @@ CoreAddMemoryDescriptor (
   // should be in the default range.
   //
   for (Type = (EFI_MEMORY_TYPE)0; Type < EfiMaxMemoryType; Type++) {
-    for (Index = 0; gMemoryTypeInformation[Index].Type != EfiMaxMemoryType; Index++) {
+    for (Index = 0; gMemoryTypeInformation[Index].Type != EfiMaxMemoryType;
+         Index++)
+    {
       if (Type == (EFI_MEMORY_TYPE)gMemoryTypeInformation[Index].Type) {
         mMemoryTypeStatistics[Type].InformationIndex = Index;
       }
@@ -753,7 +827,9 @@ CoreConvertPagesEx (
   ASSERT_LOCKED (&gMemoryLock);
   ASSERT ((ChangingType == FALSE) || (ChangingAttributes == FALSE));
 
-  if ((NumberOfPages == 0) || ((Start & EFI_PAGE_MASK) != 0) || (Start >= End)) {
+  if ((NumberOfPages == 0) || ((Start & EFI_PAGE_MASK) != 0) || (Start >=
+                                                                 End))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -765,7 +841,9 @@ CoreConvertPagesEx (
     //
     // Find the entry that the covers the range
     //
-    for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link = Link->ForwardLink) {
+    for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link =
+           Link->ForwardLink)
+    {
       Entry = CR (Link, MEMORY_MAP, Link, MEMORY_MAP_SIGNATURE);
 
       if ((Entry->Start <= Start) && (Entry->End > Start)) {
@@ -774,7 +852,12 @@ CoreConvertPagesEx (
     }
 
     if (Link == &gMemoryMap) {
-      DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "ConvertPages: failed to find range %lx - %lx\n", Start, End));
+      DEBUG ((
+        DEBUG_ERROR | DEBUG_PAGE,
+        "ConvertPages: failed to find range %lx - %lx\n",
+        Start,
+        End
+        ));
       return EFI_NOT_FOUND;
     }
 
@@ -785,7 +868,12 @@ CoreConvertPagesEx (
     //
     if (ChangingType && (NewType != EfiConventionalMemory)) {
       if (Entry->End < End) {
-        DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "ConvertPages: range %lx - %lx covers multiple entries\n", Start, End));
+        DEBUG ((
+          DEBUG_ERROR | DEBUG_PAGE,
+          "ConvertPages: range %lx - %lx covers multiple entries\n",
+          Start,
+          End
+          ));
         return EFI_NOT_FOUND;
       }
     }
@@ -802,23 +890,47 @@ CoreConvertPagesEx (
     }
 
     if (ChangingType) {
-      DEBUG ((DEBUG_PAGE, "ConvertRange: %lx-%lx to type %d\n", Start, RangeEnd, NewType));
+      DEBUG ((
+        DEBUG_PAGE,
+        "ConvertRange: %lx-%lx to type %d\n",
+        Start,
+        RangeEnd,
+        NewType
+        ));
     }
 
     if (ChangingAttributes) {
-      DEBUG ((DEBUG_PAGE, "ConvertRange: %lx-%lx to attr %lx\n", Start, RangeEnd, NewAttributes));
+      DEBUG ((
+        DEBUG_PAGE,
+        "ConvertRange: %lx-%lx to attr %lx\n",
+        Start,
+        RangeEnd,
+        NewAttributes
+        ));
     }
 
     if (ChangingType) {
       //
       // Debug code - verify conversion is allowed
       //
-      if (!((NewType == EfiConventionalMemory) ? 1 : 0) ^ ((Entry->Type == EfiConventionalMemory) ? 1 : 0)) {
-        DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "ConvertPages: Incompatible memory types, "));
+      if (!((NewType == EfiConventionalMemory) ? 1 : 0) ^ ((Entry->Type ==
+                                                            EfiConventionalMemory)
+      ? 1 : 0))
+      {
+        DEBUG ((
+          DEBUG_ERROR | DEBUG_PAGE,
+          "ConvertPages: Incompatible memory types, "
+          ));
         if (Entry->Type == EfiConventionalMemory) {
-          DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "the pages to free have been freed\n"));
+          DEBUG ((
+            DEBUG_ERROR | DEBUG_PAGE,
+            "the pages to free have been freed\n"
+            ));
         } else {
-          DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "the pages to allocate have been allocated\n"));
+          DEBUG ((
+            DEBUG_ERROR | DEBUG_PAGE,
+            "the pages to allocate have been allocated\n"
+            ));
         }
 
         return EFI_NOT_FOUND;
@@ -828,24 +940,42 @@ CoreConvertPagesEx (
       // Update counters for the number of pages allocated to each memory type
       //
       if ((UINT32)Entry->Type < EfiMaxMemoryType) {
-        if (((Start >= mMemoryTypeStatistics[Entry->Type].BaseAddress) && (Start <= mMemoryTypeStatistics[Entry->Type].MaximumAddress)) ||
-            ((Start >= mDefaultBaseAddress) && (Start <= mDefaultMaximumAddress)))
+        if (((Start >= mMemoryTypeStatistics[Entry->Type].BaseAddress) &&
+             (Start <= mMemoryTypeStatistics[Entry->Type].MaximumAddress)) ||
+            ((Start >= mDefaultBaseAddress) && (Start <=
+                                                mDefaultMaximumAddress)))
         {
-          if (NumberOfPages > mMemoryTypeStatistics[Entry->Type].CurrentNumberOfPages) {
+          if (NumberOfPages >
+              mMemoryTypeStatistics[Entry->Type].CurrentNumberOfPages)
+          {
             mMemoryTypeStatistics[Entry->Type].CurrentNumberOfPages = 0;
           } else {
-            mMemoryTypeStatistics[Entry->Type].CurrentNumberOfPages -= NumberOfPages;
+            mMemoryTypeStatistics[Entry->Type].CurrentNumberOfPages -=
+              NumberOfPages;
           }
         }
       }
 
       if ((UINT32)NewType < EfiMaxMemoryType) {
-        if (((Start >= mMemoryTypeStatistics[NewType].BaseAddress) && (Start <= mMemoryTypeStatistics[NewType].MaximumAddress)) ||
-            ((Start >= mDefaultBaseAddress) && (Start <= mDefaultMaximumAddress)))
+        if (  ((Start >= mMemoryTypeStatistics[NewType].BaseAddress) &&
+               (Start <=
+                mMemoryTypeStatistics
+                [NewType]
+                  .
+                  MaximumAddress))
+           ||
+              ((Start >= mDefaultBaseAddress) && (Start <=
+                                                  mDefaultMaximumAddress)))
         {
           mMemoryTypeStatistics[NewType].CurrentNumberOfPages += NumberOfPages;
-          if (mMemoryTypeStatistics[NewType].CurrentNumberOfPages > gMemoryTypeInformation[mMemoryTypeStatistics[NewType].InformationIndex].NumberOfPages) {
-            gMemoryTypeInformation[mMemoryTypeStatistics[NewType].InformationIndex].NumberOfPages = (UINT32)mMemoryTypeStatistics[NewType].CurrentNumberOfPages;
+          if (mMemoryTypeStatistics[NewType].CurrentNumberOfPages >
+              gMemoryTypeInformation[mMemoryTypeStatistics[NewType].
+                                       InformationIndex
+              ].NumberOfPages)
+          {
+            gMemoryTypeInformation[mMemoryTypeStatistics[NewType].
+                                     InformationIndex].NumberOfPages =
+              (UINT32)mMemoryTypeStatistics[NewType].CurrentNumberOfPages;
           }
         }
       }
@@ -932,10 +1062,18 @@ CoreConvertPagesEx (
       //
       if (Start == 0) {
         if (RangeEnd > EFI_PAGE_SIZE) {
-          DEBUG_CLEAR_MEMORY ((VOID *)(UINTN)EFI_PAGE_SIZE, (UINTN)(RangeEnd - EFI_PAGE_SIZE + 1));
+          DEBUG_CLEAR_MEMORY (
+            (VOID *)(UINTN)EFI_PAGE_SIZE,
+            (UINTN)(RangeEnd -
+                    EFI_PAGE_SIZE + 1)
+            );
         }
       } else {
-        DEBUG_CLEAR_MEMORY ((VOID *)(UINTN)Start, (UINTN)(RangeEnd - Start + 1));
+        DEBUG_CLEAR_MEMORY (
+          (VOID *)(UINTN)Start,
+          (UINTN)(RangeEnd - Start +
+                  1)
+          );
       }
     }
 
@@ -1004,7 +1142,14 @@ CoreUpdateMemoryAttributes (
   //
   // Update the attributes to the new value
   //
-  CoreConvertPagesEx (Start, NumberOfPages, FALSE, (EFI_MEMORY_TYPE)0, TRUE, NewAttributes);
+  CoreConvertPagesEx (
+    Start,
+    NumberOfPages,
+    FALSE,
+    (EFI_MEMORY_TYPE)0,
+    TRUE,
+    NewAttributes
+    );
 
   CoreReleaseMemoryLock ();
 }
@@ -1070,7 +1215,9 @@ CoreFindFreePagesI (
   NumberOfBytes = LShiftU64 (NumberOfPages, EFI_PAGE_SHIFT);
   Target        = 0;
 
-  for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link = Link->ForwardLink) {
+  for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link =
+         Link->ForwardLink)
+  {
     Entry = CR (Link, MEMORY_MAP, Link, MEMORY_MAP_SIGNATURE);
 
     //
@@ -1181,7 +1328,10 @@ FindFreePages (
   //
   // Attempt to find free pages in the preferred bin based on the requested memory type
   //
-  if (((UINT32)NewType < EfiMaxMemoryType) && (MaxAddress >= mMemoryTypeStatistics[NewType].MaximumAddress)) {
+  if (((UINT32)NewType < EfiMaxMemoryType) && (MaxAddress >=
+                                               mMemoryTypeStatistics[NewType].
+                                                 MaximumAddress))
+  {
     Start = CoreFindFreePagesI (
               mMemoryTypeStatistics[NewType].MaximumAddress,
               mMemoryTypeStatistics[NewType].BaseAddress,
@@ -1288,8 +1438,11 @@ CoreInternalAllocatePages (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (((MemoryType >= EfiMaxMemoryType) && (MemoryType < MEMORY_TYPE_OEM_RESERVED_MIN)) ||
-      (MemoryType == EfiConventionalMemory) || (MemoryType == EfiPersistentMemory) || (MemoryType == EfiUnacceptedMemoryType))
+  if (((MemoryType >= EfiMaxMemoryType) && (MemoryType <
+                                            MEMORY_TYPE_OEM_RESERVED_MIN)) ||
+      (MemoryType == EfiConventionalMemory) || (MemoryType ==
+                                                EfiPersistentMemory) ||
+      (MemoryType == EfiUnacceptedMemoryType))
   {
     return EFI_INVALID_PARAMETER;
   }
@@ -1362,7 +1515,9 @@ CoreInternalAllocatePages (
     // fragmented.
     //
 
-    for (CheckType = (EFI_MEMORY_TYPE)0; CheckType < EfiMaxMemoryType; CheckType++) {
+    for (CheckType = (EFI_MEMORY_TYPE)0; CheckType < EfiMaxMemoryType;
+         CheckType++)
+    {
       if ((MemoryType != CheckType) &&
           mMemoryTypeStatistics[CheckType].Special &&
           (mMemoryTypeStatistics[CheckType].NumberOfPages > 0))
@@ -1543,7 +1698,9 @@ CoreInternalFreePages (
   //
   IsGuarded = FALSE;
   Entry     = NULL;
-  for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link = Link->ForwardLink) {
+  for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link =
+         Link->ForwardLink)
+  {
     Entry = CR (Link, MEMORY_MAP, Link, MEMORY_MAP_SIGNATURE);
     if ((Entry->Start <= Memory) && (Entry->End > Memory)) {
       break;
@@ -1663,7 +1820,11 @@ MergeMemoryMapDescriptor (
   //
   // Traverse the array of descriptors in MemoryMap
   //
-  for ( ; MemoryMap != MemoryMapDescriptor; MemoryMap = NEXT_MEMORY_DESCRIPTOR (MemoryMap, DescriptorSize)) {
+  for ( ; MemoryMap != MemoryMapDescriptor; MemoryMap = NEXT_MEMORY_DESCRIPTOR (
+                                                          MemoryMap,
+                                                          DescriptorSize
+                                                          ))
+  {
     //
     // Check to see if the Type fields are identical.
     //
@@ -1681,7 +1842,10 @@ MergeMemoryMapDescriptor (
     //
     // Check to see if MemoryMapDescriptor is immediately above MemoryMap
     //
-    if (MemoryMap->PhysicalStart + EFI_PAGES_TO_SIZE ((UINTN)MemoryMap->NumberOfPages) == MemoryMapDescriptor->PhysicalStart) {
+    if (MemoryMap->PhysicalStart + EFI_PAGES_TO_SIZE (
+                                     (UINTN)MemoryMap->NumberOfPages
+                                     ) == MemoryMapDescriptor->PhysicalStart)
+    {
       //
       // Merge MemoryMapDescriptor into MemoryMap
       //
@@ -1696,7 +1860,11 @@ MergeMemoryMapDescriptor (
     //
     // Check to see if MemoryMapDescriptor is immediately below MemoryMap
     //
-    if (MemoryMap->PhysicalStart - EFI_PAGES_TO_SIZE ((UINTN)MemoryMapDescriptor->NumberOfPages) == MemoryMapDescriptor->PhysicalStart) {
+    if (MemoryMap->PhysicalStart - EFI_PAGES_TO_SIZE (
+                                     (UINTN)MemoryMapDescriptor->NumberOfPages
+                                     ) ==
+        MemoryMapDescriptor->PhysicalStart)
+    {
       //
       // Merge MemoryMapDescriptor into MemoryMap
       //
@@ -1786,12 +1954,15 @@ CoreGetMemoryMap (
   // And, count the number of Persistent entries.
   //
   NumberOfEntries = 0;
-  for (Link = mGcdMemorySpaceMap.ForwardLink; Link != &mGcdMemorySpaceMap; Link = Link->ForwardLink) {
+  for (Link = mGcdMemorySpaceMap.ForwardLink; Link != &mGcdMemorySpaceMap;
+       Link = Link->ForwardLink)
+  {
     GcdMapEntry = CR (Link, EFI_GCD_MAP_ENTRY, Link, EFI_GCD_MAP_SIGNATURE);
     if ((GcdMapEntry->GcdMemoryType == EfiGcdMemoryTypePersistent) ||
         (GcdMapEntry->GcdMemoryType == EfiGcdMemoryTypeReserved) ||
         ((GcdMapEntry->GcdMemoryType == EfiGcdMemoryTypeMemoryMappedIo) &&
-         ((GcdMapEntry->Attributes & EFI_MEMORY_RUNTIME) == EFI_MEMORY_RUNTIME)))
+         ((GcdMapEntry->Attributes & EFI_MEMORY_RUNTIME) ==
+          EFI_MEMORY_RUNTIME)))
     {
       NumberOfEntries++;
     }
@@ -1820,7 +1991,9 @@ CoreGetMemoryMap (
   // Compute the buffer size needed to fit the entire map
   //
   BufferSize = Size * NumberOfEntries;
-  for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link = Link->ForwardLink) {
+  for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link =
+         Link->ForwardLink)
+  {
     BufferSize += Size;
   }
 
@@ -1839,7 +2012,9 @@ CoreGetMemoryMap (
   //
   ZeroMem (MemoryMap, BufferSize);
   MemoryMapStart = MemoryMap;
-  for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link = Link->ForwardLink) {
+  for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link =
+         Link->ForwardLink)
+  {
     Entry = CR (Link, MEMORY_MAP, Link, MEMORY_MAP_SIGNATURE);
     ASSERT (Entry->VirtualStart == 0);
 
@@ -1849,7 +2024,10 @@ CoreGetMemoryMap (
     MemoryMap->Type          = Entry->Type;
     MemoryMap->PhysicalStart = Entry->Start;
     MemoryMap->VirtualStart  = Entry->VirtualStart;
-    MemoryMap->NumberOfPages = RShiftU64 (Entry->End - Entry->Start + 1, EFI_PAGE_SHIFT);
+    MemoryMap->NumberOfPages = RShiftU64 (
+                                 Entry->End - Entry->Start + 1,
+                                 EFI_PAGE_SHIFT
+                                 );
     //
     // If the memory type is EfiConventionalMemory, then determine if the range is part of a
     // memory type bin and needs to be converted to the same memory type as the rest of the
@@ -1904,28 +2082,43 @@ CoreGetMemoryMap (
 
     if ((MergeGcdMapEntry.GcdMemoryType == EfiGcdMemoryTypeReserved) ||
         ((MergeGcdMapEntry.GcdMemoryType == EfiGcdMemoryTypeMemoryMappedIo) &&
-         ((MergeGcdMapEntry.Attributes & EFI_MEMORY_RUNTIME) == EFI_MEMORY_RUNTIME)))
+         ((MergeGcdMapEntry.Attributes & EFI_MEMORY_RUNTIME) ==
+          EFI_MEMORY_RUNTIME)))
     {
       //
       // Page Align GCD range is required. When it is converted to EFI_MEMORY_DESCRIPTOR,
       // it will be recorded as page PhysicalStart and NumberOfPages.
       //
       ASSERT ((MergeGcdMapEntry.BaseAddress & EFI_PAGE_MASK) == 0);
-      ASSERT (((MergeGcdMapEntry.EndAddress - MergeGcdMapEntry.BaseAddress + 1) & EFI_PAGE_MASK) == 0);
+      ASSERT (
+        ((MergeGcdMapEntry.EndAddress - MergeGcdMapEntry.BaseAddress +
+          1) & EFI_PAGE_MASK) == 0
+        );
 
       //
       // Create EFI_MEMORY_DESCRIPTOR for every Reserved and runtime MMIO GCD entries
       //
       MemoryMap->PhysicalStart = MergeGcdMapEntry.BaseAddress;
       MemoryMap->VirtualStart  = 0;
-      MemoryMap->NumberOfPages = RShiftU64 ((MergeGcdMapEntry.EndAddress - MergeGcdMapEntry.BaseAddress + 1), EFI_PAGE_SHIFT);
-      MemoryMap->Attribute     = (MergeGcdMapEntry.Attributes & ~EFI_MEMORY_PORT_IO) |
-                                 (MergeGcdMapEntry.Capabilities & (EFI_CACHE_ATTRIBUTE_MASK | EFI_MEMORY_ATTRIBUTE_MASK));
+      MemoryMap->NumberOfPages = RShiftU64 (
+                                   (MergeGcdMapEntry.EndAddress -
+                                    MergeGcdMapEntry.BaseAddress + 1),
+                                   EFI_PAGE_SHIFT
+                                   );
+      MemoryMap->Attribute = (MergeGcdMapEntry.Attributes &
+                              ~EFI_MEMORY_PORT_IO) |
+                             (MergeGcdMapEntry.Capabilities &
+                              (EFI_CACHE_ATTRIBUTE_MASK |
+                               EFI_MEMORY_ATTRIBUTE_MASK));
 
       if (MergeGcdMapEntry.GcdMemoryType == EfiGcdMemoryTypeReserved) {
         MemoryMap->Type = EfiReservedMemoryType;
-      } else if (MergeGcdMapEntry.GcdMemoryType == EfiGcdMemoryTypeMemoryMappedIo) {
-        if ((MergeGcdMapEntry.Attributes & EFI_MEMORY_PORT_IO) == EFI_MEMORY_PORT_IO) {
+      } else if (MergeGcdMapEntry.GcdMemoryType ==
+                 EfiGcdMemoryTypeMemoryMappedIo)
+      {
+        if ((MergeGcdMapEntry.Attributes & EFI_MEMORY_PORT_IO) ==
+            EFI_MEMORY_PORT_IO)
+        {
           MemoryMap->Type = EfiMemoryMappedIOPortSpace;
         } else {
           MemoryMap->Type = EfiMemoryMappedIO;
@@ -1945,16 +2138,25 @@ CoreGetMemoryMap (
       // it will be recorded as page PhysicalStart and NumberOfPages.
       //
       ASSERT ((MergeGcdMapEntry.BaseAddress & EFI_PAGE_MASK) == 0);
-      ASSERT (((MergeGcdMapEntry.EndAddress - MergeGcdMapEntry.BaseAddress + 1) & EFI_PAGE_MASK) == 0);
+      ASSERT (
+        ((MergeGcdMapEntry.EndAddress - MergeGcdMapEntry.BaseAddress +
+          1) & EFI_PAGE_MASK) == 0
+        );
 
       //
       // Create EFI_MEMORY_DESCRIPTOR for every Persistent GCD entries
       //
       MemoryMap->PhysicalStart = MergeGcdMapEntry.BaseAddress;
       MemoryMap->VirtualStart  = 0;
-      MemoryMap->NumberOfPages = RShiftU64 ((MergeGcdMapEntry.EndAddress - MergeGcdMapEntry.BaseAddress + 1), EFI_PAGE_SHIFT);
-      MemoryMap->Attribute     = MergeGcdMapEntry.Attributes | EFI_MEMORY_NV |
-                                 (MergeGcdMapEntry.Capabilities & (EFI_CACHE_ATTRIBUTE_MASK | EFI_MEMORY_ATTRIBUTE_MASK));
+      MemoryMap->NumberOfPages = RShiftU64 (
+                                   (MergeGcdMapEntry.EndAddress -
+                                    MergeGcdMapEntry.BaseAddress + 1),
+                                   EFI_PAGE_SHIFT
+                                   );
+      MemoryMap->Attribute = MergeGcdMapEntry.Attributes | EFI_MEMORY_NV |
+                             (MergeGcdMapEntry.Capabilities &
+                              (EFI_CACHE_ATTRIBUTE_MASK |
+                               EFI_MEMORY_ATTRIBUTE_MASK));
       MemoryMap->Type = EfiPersistentMemory;
 
       //
@@ -1970,17 +2172,28 @@ CoreGetMemoryMap (
       // it will be recorded as page PhysicalStart and NumberOfPages.
       //
       ASSERT ((MergeGcdMapEntry.BaseAddress & EFI_PAGE_MASK) == 0);
-      ASSERT (((MergeGcdMapEntry.EndAddress - MergeGcdMapEntry.BaseAddress + 1) & EFI_PAGE_MASK) == 0);
+      ASSERT (
+        ((MergeGcdMapEntry.EndAddress - MergeGcdMapEntry.BaseAddress +
+          1) & EFI_PAGE_MASK) == 0
+        );
 
       //
       // Create EFI_MEMORY_DESCRIPTOR for every Unaccepted GCD entries
       //
       MemoryMap->PhysicalStart = MergeGcdMapEntry.BaseAddress;
       MemoryMap->VirtualStart  = 0;
-      MemoryMap->NumberOfPages = RShiftU64 ((MergeGcdMapEntry.EndAddress - MergeGcdMapEntry.BaseAddress + 1), EFI_PAGE_SHIFT);
-      MemoryMap->Attribute     = MergeGcdMapEntry.Attributes |
-                                 (MergeGcdMapEntry.Capabilities & (EFI_MEMORY_RP | EFI_MEMORY_WP | EFI_MEMORY_XP | EFI_MEMORY_RO |
-                                                                   EFI_MEMORY_UC | EFI_MEMORY_UCE | EFI_MEMORY_WC | EFI_MEMORY_WT | EFI_MEMORY_WB));
+      MemoryMap->NumberOfPages = RShiftU64 (
+                                   (MergeGcdMapEntry.EndAddress -
+                                    MergeGcdMapEntry.BaseAddress + 1),
+                                   EFI_PAGE_SHIFT
+                                   );
+      MemoryMap->Attribute = MergeGcdMapEntry.Attributes |
+                             (MergeGcdMapEntry.Capabilities &
+                              (EFI_MEMORY_RP | EFI_MEMORY_WP | EFI_MEMORY_XP |
+                               EFI_MEMORY_RO |
+                               EFI_MEMORY_UC
+                               | EFI_MEMORY_UCE | EFI_MEMORY_WC |
+                               EFI_MEMORY_WT | EFI_MEMORY_WB));
       MemoryMap->Type = EfiUnacceptedMemoryType;
 
       //
@@ -2029,7 +2242,8 @@ CoreGetMemoryMap (
   }
 
   MergeMemoryMap (MemoryMapStart, &BufferSize, Size);
-  MemoryMapEnd = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMapStart + BufferSize);
+  MemoryMapEnd = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMapStart +
+                                           BufferSize);
 
   Status = EFI_SUCCESS;
 
@@ -2091,7 +2305,11 @@ CoreAllocatePoolPages (
   // Convert it to boot services data
   //
   if (Start == 0) {
-    DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "AllocatePoolPages: failed to allocate %d pages\n", (UINT32)NumberOfPages));
+    DEBUG ((
+      DEBUG_ERROR | DEBUG_PAGE,
+      "AllocatePoolPages: failed to allocate %d pages\n",
+      (UINT32)NumberOfPages
+      ));
   } else {
     if (NeedGuard) {
       CoreConvertPagesWithGuard (Start, NumberOfPages, PoolType);
@@ -2150,20 +2368,30 @@ CoreTerminateMemoryMap (
     // the  console devices.
     //
 
-    for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link = Link->ForwardLink) {
+    for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link =
+           Link->ForwardLink)
+    {
       Entry = CR (Link, MEMORY_MAP, Link, MEMORY_MAP_SIGNATURE);
       if (Entry->Type < EfiMaxMemoryType) {
         if (mMemoryTypeStatistics[Entry->Type].Runtime) {
           ASSERT (Entry->Type != EfiACPIReclaimMemory);
           ASSERT (Entry->Type != EfiACPIMemoryNVS);
           if ((Entry->Start & (RUNTIME_PAGE_ALLOCATION_GRANULARITY - 1)) != 0) {
-            DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "ExitBootServices: A RUNTIME memory entry is not on a proper alignment.\n"));
+            DEBUG ((
+              DEBUG_ERROR | DEBUG_PAGE,
+              "ExitBootServices: A RUNTIME memory entry is not on a proper alignment.\n"
+              ));
             Status =  EFI_INVALID_PARAMETER;
             goto Done;
           }
 
-          if (((Entry->End + 1) & (RUNTIME_PAGE_ALLOCATION_GRANULARITY - 1)) != 0) {
-            DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "ExitBootServices: A RUNTIME memory entry is not on a proper alignment.\n"));
+          if (((Entry->End + 1) & (RUNTIME_PAGE_ALLOCATION_GRANULARITY - 1)) !=
+              0)
+          {
+            DEBUG ((
+              DEBUG_ERROR | DEBUG_PAGE,
+              "ExitBootServices: A RUNTIME memory entry is not on a proper alignment.\n"
+              ));
             Status =  EFI_INVALID_PARAMETER;
             goto Done;
           }

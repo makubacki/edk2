@@ -51,7 +51,10 @@ UsbBotInit (
   //
   // Allocate the BOT context for USB_BOT_PROTOCOL and two endpoint descriptors.
   //
-  UsbBot = AllocateZeroPool (sizeof (USB_BOT_PROTOCOL) + 2 * sizeof (EFI_USB_ENDPOINT_DESCRIPTOR));
+  UsbBot = AllocateZeroPool (
+             sizeof (USB_BOT_PROTOCOL) + 2 *
+             sizeof (EFI_USB_ENDPOINT_DESCRIPTOR)
+             );
   ASSERT (UsbBot != NULL);
 
   UsbBot->UsbIo = UsbIo;
@@ -190,7 +193,9 @@ UsbBotSendCommand (
                             &Result
                             );
   if (EFI_ERROR (Status)) {
-    if (USB_IS_ERROR (Result, EFI_USB_ERR_STALL) && (DataDir == EfiUsbDataOut)) {
+    if (USB_IS_ERROR (Result, EFI_USB_ERR_STALL) && (DataDir ==
+                                                     EfiUsbDataOut))
+    {
       //
       // Respond to Bulk-Out endpoint stall with a Reset Recovery,
       // according to section 5.3.1 of USB Mass Storage Class Bulk-Only Transport Spec, v1.0.
@@ -416,7 +421,11 @@ UsbBotExecCommand (
   //
   Status = UsbBotSendCommand (UsbBot, Cmd, CmdLen, DataDir, DataLen, Lun);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "UsbBotExecCommand: UsbBotSendCommand (%r)\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbBotExecCommand: UsbBotSendCommand (%r)\n",
+      Status
+      ));
     return Status;
   }
 
@@ -515,8 +524,14 @@ UsbBotResetDevice (
   //
   // Clear the Bulk-In and Bulk-Out stall condition.
   //
-  UsbClearEndpointStall (UsbBot->UsbIo, UsbBot->BulkInEndpoint->EndpointAddress);
-  UsbClearEndpointStall (UsbBot->UsbIo, UsbBot->BulkOutEndpoint->EndpointAddress);
+  UsbClearEndpointStall (
+    UsbBot->UsbIo,
+    UsbBot->BulkInEndpoint->EndpointAddress
+    );
+  UsbClearEndpointStall (
+    UsbBot->UsbIo,
+    UsbBot->BulkOutEndpoint->EndpointAddress
+    );
 
   return Status;
 }

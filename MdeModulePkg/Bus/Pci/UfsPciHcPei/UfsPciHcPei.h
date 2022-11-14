@@ -32,7 +32,9 @@ typedef struct {
   UINTN                            UfsHcPciAddr[MAX_UFS_HCS];
 } UFS_HC_PEI_PRIVATE_DATA;
 
-#define UFS_HC_PEI_PRIVATE_DATA_FROM_THIS(a)  CR (a, UFS_HC_PEI_PRIVATE_DATA, UfsHostControllerPpi, UFS_HC_PEI_SIGNATURE)
+#define UFS_HC_PEI_PRIVATE_DATA_FROM_THIS( \
+                                         a)  \
+  CR (a, UFS_HC_PEI_PRIVATE_DATA, UfsHostControllerPpi, UFS_HC_PEI_SIGNATURE)
 
 /**
   Get the MMIO base address of UFS host controller.

@@ -11,7 +11,8 @@
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gSdMmcPciHcComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gSdMmcPciHcComponentName = {
   SdMmcPciHcComponentNameGetDriverName,
   SdMmcPciHcComponentNameGetControllerName,
   "eng"
@@ -20,20 +21,24 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gSdMmcPciHcComponentN
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gSdMmcPciHcComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gSdMmcPciHcComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)SdMmcPciHcComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)SdMmcPciHcComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  SdMmcPciHcComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mSdMmcPciHcDriverNameTable[] = {
-  { "eng;en", L"Edkii Sd/Mmc Host Controller Driver" },
-  { NULL,     NULL                                   }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mSdMmcPciHcDriverNameTable[] = {
+  { "eng;en", L"Edkii Sd/Mmc Host Controller Driver"     },
+  { NULL,     NULL                                       }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mSdMmcPciHcControllerNameTable[] = {
-  { "eng;en", L"Edkii Sd/Mmc Host Controller" },
-  { NULL,     NULL                            }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mSdMmcPciHcControllerNameTable[] = {
+  { "eng;en", L"Edkii Sd/Mmc Host Controller"     },
+  { NULL,     NULL                                }
 };
 
 /**

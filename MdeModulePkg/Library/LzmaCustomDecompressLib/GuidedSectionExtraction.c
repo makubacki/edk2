@@ -69,8 +69,10 @@ LzmaGuidedSectionGetInfo (
     *SectionAttribute = ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->Attributes;
 
     return LzmaUefiDecompressGetInfo (
-             (UINT8 *)InputSection + ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
-             SECTION2_SIZE (InputSection) - ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
+             (UINT8 *)InputSection +
+             ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
+             SECTION2_SIZE (InputSection) -
+             ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
              OutputBufferSize,
              ScratchBufferSize
              );
@@ -86,8 +88,10 @@ LzmaGuidedSectionGetInfo (
     *SectionAttribute = ((EFI_GUID_DEFINED_SECTION *)InputSection)->Attributes;
 
     return LzmaUefiDecompressGetInfo (
-             (UINT8 *)InputSection + ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
-             SECTION_SIZE (InputSection) - ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
+             (UINT8 *)InputSection +
+             ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
+             SECTION_SIZE (InputSection) -
+             ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
              OutputBufferSize,
              ScratchBufferSize
              );
@@ -154,8 +158,10 @@ LzmaGuidedSectionExtraction (
     *AuthenticationStatus = 0;
 
     return LzmaUefiDecompress (
-             (UINT8 *)InputSection + ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
-             SECTION2_SIZE (InputSection) - ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
+             (UINT8 *)InputSection +
+             ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
+             SECTION2_SIZE (InputSection) -
+             ((EFI_GUID_DEFINED_SECTION2 *)InputSection)->DataOffset,
              *OutputBuffer,
              ScratchBuffer
              );
@@ -174,8 +180,10 @@ LzmaGuidedSectionExtraction (
     *AuthenticationStatus = 0;
 
     return LzmaUefiDecompress (
-             (UINT8 *)InputSection + ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
-             SECTION_SIZE (InputSection) - ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
+             (UINT8 *)InputSection +
+             ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
+             SECTION_SIZE (InputSection) -
+             ((EFI_GUID_DEFINED_SECTION *)InputSection)->DataOffset,
              *OutputBuffer,
              ScratchBuffer
              );

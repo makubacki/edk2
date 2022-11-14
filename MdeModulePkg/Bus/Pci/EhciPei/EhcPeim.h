@@ -63,9 +63,11 @@ typedef struct _PEI_USB2_HC_DEV PEI_USB2_HC_DEV;
 
 #define EFI_LIST_CONTAINER(Entry, Type, Field)  BASE_CR(Entry, Type, Field)
 
-#define EHC_LOW_32BIT(Addr64)      ((UINT32)(((UINTN)(Addr64)) & 0XFFFFFFFF))
-#define EHC_HIGH_32BIT(Addr64)     ((UINT32)(RShiftU64((UINTN)(Addr64), 32) & 0XFFFFFFFF))
-#define EHC_BIT_IS_SET(Data, Bit)  ((BOOLEAN)(((Data) & (Bit)) == (Bit)))
+#define EHC_LOW_32BIT(Addr64)        ((UINT32)(((UINTN)(Addr64)) & 0XFFFFFFFF))
+#define EHC_HIGH_32BIT( \
+                      Addr64)     \
+                                     ((UINT32)(RShiftU64((UINTN)(Addr64), 32) & 0XFFFFFFFF))
+#define EHC_BIT_IS_SET(Data, Bit)    ((BOOLEAN)(((Data) & (Bit)) == (Bit)))
 
 #define EHC_REG_BIT_IS_SET(Ehc, Offset, Bit) \
           (EHC_BIT_IS_SET(EhcReadOpReg ((Ehc), (Offset)), (Bit)))
@@ -123,8 +125,12 @@ struct _PEI_USB2_HC_DEV {
   UINT32            High32bitAddr;
 };
 
-#define PEI_RECOVERY_USB_EHC_DEV_FROM_EHCI_THIS(a)    CR (a, PEI_USB2_HC_DEV, Usb2HostControllerPpi, USB2_HC_DEV_SIGNATURE)
-#define PEI_RECOVERY_USB_EHC_DEV_FROM_THIS_NOTIFY(a)  CR (a, PEI_USB2_HC_DEV, EndOfPeiNotifyList, USB2_HC_DEV_SIGNATURE)
+#define PEI_RECOVERY_USB_EHC_DEV_FROM_EHCI_THIS( \
+                                               a)    \
+      CR (a, PEI_USB2_HC_DEV, Usb2HostControllerPpi, USB2_HC_DEV_SIGNATURE)
+#define PEI_RECOVERY_USB_EHC_DEV_FROM_THIS_NOTIFY( \
+                                                 a)  \
+      CR (a, PEI_USB2_HC_DEV, EndOfPeiNotifyList, USB2_HC_DEV_SIGNATURE)
 
 /**
   @param  EhcDev                 EHCI Device.

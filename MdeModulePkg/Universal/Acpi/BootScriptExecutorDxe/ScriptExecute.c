@@ -82,7 +82,9 @@ S3BootScriptExecutorEntryFunction (
   //
   // Get ACPI Table Address
   //
-  Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE *)((UINTN)(AcpiS3Context->AcpiFacsTable));
+  Facs =
+    (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE *)((UINTN)(AcpiS3Context->
+                                                               AcpiFacsTable));
 
   //
   // We need turn back to S3Resume - install boot script done ppi and report status code on S3resume.
@@ -97,11 +99,16 @@ S3BootScriptExecutorEntryFunction (
       //
       // X64 S3 Resume
       //
-      DEBUG ((DEBUG_INFO, "Call AsmDisablePaging64() to return to S3 Resume in PEI Phase\n"));
-      PeiS3ResumeState->AsmTransferControl = (EFI_PHYSICAL_ADDRESS)(UINTN)AsmTransferControl32;
+      DEBUG ((
+        DEBUG_INFO,
+        "Call AsmDisablePaging64() to return to S3 Resume in PEI Phase\n"
+        ));
+      PeiS3ResumeState->AsmTransferControl =
+        (EFI_PHYSICAL_ADDRESS)(UINTN)AsmTransferControl32;
 
       if ((Facs != NULL) &&
-          (Facs->Signature == EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE) &&
+          (Facs->Signature ==
+           EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE) &&
           (Facs->FirmwareWakingVector != 0))
       {
         //
@@ -109,7 +116,10 @@ S3BootScriptExecutorEntryFunction (
         //
         AsmTransferControl16Address = (UINTN)AsmTransferControl16;
         AsmFixAddress16             = (UINT32)AsmTransferControl16Address;
-        AsmJmpAddr32                = (UINT32)((Facs->FirmwareWakingVector & 0xF) | ((Facs->FirmwareWakingVector & 0xFFFF0) << 12));
+        AsmJmpAddr32                = (UINT32)((Facs->FirmwareWakingVector &
+                                                0xF) |
+                                               ((Facs->FirmwareWakingVector &
+                                                 0xFFFF0) << 12));
       }
 
       AsmDisablePaging64 (
@@ -123,8 +133,12 @@ S3BootScriptExecutorEntryFunction (
       //
       // IA32 S3 Resume
       //
-      DEBUG ((DEBUG_INFO, "Call SwitchStack() to return to S3 Resume in PEI Phase\n"));
-      PeiS3ResumeState->AsmTransferControl = (EFI_PHYSICAL_ADDRESS)(UINTN)AsmTransferControl;
+      DEBUG ((
+        DEBUG_INFO,
+        "Call SwitchStack() to return to S3 Resume in PEI Phase\n"
+        ));
+      PeiS3ResumeState->AsmTransferControl =
+        (EFI_PHYSICAL_ADDRESS)(UINTN)AsmTransferControl;
 
       SwitchStack (
         (SWITCH_STACK_ENTRY_POINT)(UINTN)PeiS3ResumeState->ReturnEntryPoint,
@@ -149,14 +163,19 @@ S3BootScriptExecutorEntryFunction (
     // Switch to native waking vector
     //
     TempStackTop = (UINTN)&TempStack + sizeof (TempStack);
-    if ((Facs->Version == EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION) &&
+    if ((Facs->Version ==
+         EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION) &&
         ((Facs->Flags & EFI_ACPI_4_0_64BIT_WAKE_SUPPORTED_F) != 0) &&
         ((Facs->OspmFlags & EFI_ACPI_4_0_OSPM_64BIT_WAKE__F) != 0))
     {
       //
       // X64 long mode waking vector
       //
-      DEBUG ((DEBUG_INFO, "Transfer to 64bit OS waking vector - %x\r\n", (UINTN)Facs->XFirmwareWakingVector));
+      DEBUG ((
+        DEBUG_INFO,
+        "Transfer to 64bit OS waking vector - %x\r\n",
+        (UINTN)Facs->XFirmwareWakingVector
+        ));
       if (FeaturePcdGet (PcdDxeIplSwitchToLongMode)) {
         SwitchStack (
           (SWITCH_STACK_ENTRY_POINT)(UINTN)Facs->XFirmwareWakingVector,
@@ -166,14 +185,21 @@ S3BootScriptExecutorEntryFunction (
           );
       } else {
         // Unsupported for 32bit DXE, 64bit OS vector
-        DEBUG ((DEBUG_ERROR, "Unsupported for 32bit DXE transfer to 64bit OS waking vector!\r\n"));
+        DEBUG ((
+          DEBUG_ERROR,
+          "Unsupported for 32bit DXE transfer to 64bit OS waking vector!\r\n"
+          ));
         ASSERT (FALSE);
       }
     } else {
       //
       // IA32 protected mode waking vector (Page disabled)
       //
-      DEBUG ((DEBUG_INFO, "Transfer to 32bit OS waking vector - %x\r\n", (UINTN)Facs->XFirmwareWakingVector));
+      DEBUG ((
+        DEBUG_INFO,
+        "Transfer to 32bit OS waking vector - %x\r\n",
+        (UINTN)Facs->XFirmwareWakingVector
+        ));
       if (FeaturePcdGet (PcdDxeIplSwitchToLongMode)) {
         AsmDisablePaging64 (
           0x10,
@@ -195,7 +221,11 @@ S3BootScriptExecutorEntryFunction (
     //
     // 16bit Realmode waking vector
     //
-    DEBUG ((DEBUG_INFO, "Transfer to 16bit OS waking vector - %x\r\n", (UINTN)Facs->FirmwareWakingVector));
+    DEBUG ((
+      DEBUG_INFO,
+      "Transfer to 16bit OS waking vector - %x\r\n",
+      (UINTN)Facs->FirmwareWakingVector
+      ));
     AsmTransferControl (Facs->FirmwareWakingVector, 0x0);
   }
 
@@ -226,11 +256,19 @@ RegisterMemoryProfileImage (
   EFI_STATUS                         Status;
   EDKII_MEMORY_PROFILE_PROTOCOL      *ProfileProtocol;
   MEDIA_FW_VOL_FILEPATH_DEVICE_PATH  *FilePath;
-  UINT8                              TempBuffer[sizeof (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH) + sizeof (EFI_DEVICE_PATH_PROTOCOL)];
+  UINT8                              TempBuffer[sizeof (
+                                                        MEDIA_FW_VOL_FILEPATH_DEVICE_PATH)
+                                                + sizeof (
+                                                                                                    EFI_DEVICE_PATH_PROTOCOL)
+  ];
 
   if ((PcdGet8 (PcdMemoryProfilePropertyMask) & BIT0) != 0) {
     FilePath = (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)TempBuffer;
-    Status   = gBS->LocateProtocol (&gEdkiiMemoryProfileGuid, NULL, (VOID **)&ProfileProtocol);
+    Status   = gBS->LocateProtocol (
+                      &gEdkiiMemoryProfileGuid,
+                      NULL,
+                      (VOID **)&ProfileProtocol
+                      );
     if (!EFI_ERROR (Status)) {
       EfiInitializeFwVolDevicepathNode (FilePath, FileName);
       SetDevicePathEndNode (FilePath + 1);
@@ -270,7 +308,11 @@ ReadyToLockEventNotify (
   PE_COFF_LOADER_IMAGE_CONTEXT     ImageContext;
   EFI_GCD_MEMORY_SPACE_DESCRIPTOR  MemDesc;
 
-  Status = gBS->LocateProtocol (&gEfiDxeSmmReadyToLockProtocolGuid, NULL, &Interface);
+  Status = gBS->LocateProtocol (
+                  &gEfiDxeSmmReadyToLockProtocolGuid,
+                  NULL,
+                  &Interface
+                  );
   if (EFI_ERROR (Status)) {
     return;
   }
@@ -306,7 +348,10 @@ ReadyToLockEventNotify (
   Status = PeCoffLoaderGetImageInfo (&ImageContext);
   ASSERT_EFI_ERROR (Status);
   if (ImageContext.SectionAlignment > EFI_PAGE_SIZE) {
-    Pages = EFI_SIZE_TO_PAGES ((UINTN)(ImageContext.ImageSize + ImageContext.SectionAlignment));
+    Pages = EFI_SIZE_TO_PAGES (
+              (UINTN)(ImageContext.ImageSize +
+                      ImageContext.SectionAlignment)
+              );
   } else {
     Pages = EFI_SIZE_TO_PAGES ((UINTN)ImageContext.ImageSize);
   }
@@ -337,7 +382,8 @@ ReadyToLockEventNotify (
   // Align buffer on section boundary
   //
   ImageContext.ImageAddress += ImageContext.SectionAlignment - 1;
-  ImageContext.ImageAddress &= ~((EFI_PHYSICAL_ADDRESS)ImageContext.SectionAlignment - 1);
+  ImageContext.ImageAddress &=
+    ~((EFI_PHYSICAL_ADDRESS)ImageContext.SectionAlignment - 1);
   //
   // Load the image to our new buffer
   //
@@ -358,7 +404,10 @@ ReadyToLockEventNotify (
   //
   // Flush the instruction cache so the image data is written before we execute it
   //
-  InvalidateInstructionCacheRange ((VOID *)(UINTN)ImageContext.ImageAddress, (UINTN)ImageContext.ImageSize);
+  InvalidateInstructionCacheRange (
+    (VOID *)(UINTN)ImageContext.ImageAddress,
+    (UINTN)ImageContext.ImageSize
+    );
 
   RegisterMemoryProfileImage (
     &gEfiCallerIdGuid,
@@ -367,7 +416,10 @@ ReadyToLockEventNotify (
     EFI_FV_FILETYPE_DRIVER
     );
 
-  Status = ((EFI_IMAGE_ENTRY_POINT)(UINTN)(ImageContext.EntryPoint))(NewImageHandle, gST);
+  Status = ((EFI_IMAGE_ENTRY_POINT)(UINTN)(ImageContext.EntryPoint))(
+  NewImageHandle,
+  gST
+  );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -381,7 +433,10 @@ ReadyToLockEventNotify (
              );
   ASSERT_EFI_ERROR (Status);
 
-  Status = SetLockBoxAttributes (&mBootScriptExecutorImageGuid, LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE);
+  Status = SetLockBoxAttributes (
+             &mBootScriptExecutorImageGuid,
+             LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE
+             );
   ASSERT_EFI_ERROR (Status);
 
   gBS->CloseEvent (Event);
@@ -422,7 +477,8 @@ BootScriptExecutorEntryPoint (
   //
   // Make sure AddressEncMask is contained to smallest supported address field.
   //
-  mAddressEncMask = PcdGet64 (PcdPteMemoryEncryptionAddressOrMask) & PAGING_1G_ADDRESS_MASK_64;
+  mAddressEncMask = PcdGet64 (PcdPteMemoryEncryptionAddressOrMask) &
+                    PAGING_1G_ADDRESS_MASK_64;
 
   //
   // Test if the gEfiCallerIdGuid of this image is already installed. if not, the entry
@@ -469,8 +525,10 @@ BootScriptExecutorEntryPoint (
                                       );
     ASSERT_EFI_ERROR (Status);
 
-    EfiBootScriptExecutorVariable                               = (BOOT_SCRIPT_EXECUTOR_VARIABLE *)(UINTN)BootScriptExecutorBuffer;
-    EfiBootScriptExecutorVariable->BootScriptExecutorEntrypoint = (UINTN)S3BootScriptExecutorEntryFunction;
+    EfiBootScriptExecutorVariable =
+      (BOOT_SCRIPT_EXECUTOR_VARIABLE *)(UINTN)BootScriptExecutorBuffer;
+    EfiBootScriptExecutorVariable->BootScriptExecutorEntrypoint =
+      (UINTN)S3BootScriptExecutorEntryFunction;
 
     Status = SaveLockBox (
                &gEfiBootScriptExecutorVariableGuid,
@@ -490,7 +548,10 @@ BootScriptExecutorEntryPoint (
                );
     ASSERT_EFI_ERROR (Status);
 
-    Status = SetLockBoxAttributes (&gEfiBootScriptExecutorContextGuid, LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE);
+    Status = SetLockBoxAttributes (
+               &gEfiBootScriptExecutorContextGuid,
+               LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE
+               );
     ASSERT_EFI_ERROR (Status);
   }
 

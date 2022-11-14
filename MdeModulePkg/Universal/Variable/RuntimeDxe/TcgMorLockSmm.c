@@ -28,8 +28,10 @@ typedef struct {
 } VARIABLE_TYPE;
 
 VARIABLE_TYPE  mMorVariableType[] = {
-  { MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,     &gEfiMemoryOverwriteControlDataGuid        },
-  { MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME, &gEfiMemoryOverwriteRequestControlLockGuid },
+  { MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
+    &gEfiMemoryOverwriteControlDataGuid            },
+  { MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME,
+    &gEfiMemoryOverwriteRequestControlLockGuid      },
 };
 
 BOOLEAN  mMorPassThru = FALSE;
@@ -69,7 +71,8 @@ IsAnyMorVariable (
 {
   UINTN  Index;
 
-  for (Index = 0; Index < sizeof (mMorVariableType)/sizeof (mMorVariableType[0]); Index++) {
+  for (Index = 0; Index < sizeof (mMorVariableType)/
+       sizeof (mMorVariableType[0]); Index++) {
     if ((StrCmp (VariableName, mMorVariableType[Index].VariableName) == 0) &&
         (CompareGuid (VendorGuid, mMorVariableType[Index].VendorGuid)))
     {
@@ -95,7 +98,8 @@ IsMorLockVariable (
   IN EFI_GUID  *VendorGuid
   )
 {
-  if ((StrCmp (VariableName, MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME) == 0) &&
+  if ((StrCmp (VariableName, MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME) ==
+       0) &&
       (CompareGuid (VendorGuid, &gEfiMemoryOverwriteRequestControlLockGuid)))
   {
     return TRUE;
@@ -134,7 +138,9 @@ SetMorLockVariable (
   Status           = VariableServiceSetVariable (
                        MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME,
                        &gEfiMemoryOverwriteRequestControlLockGuid,
-                       EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                       EFI_VARIABLE_NON_VOLATILE |
+                       EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                       EFI_VARIABLE_RUNTIME_ACCESS,
                        sizeof (Data),
                        &Data
                        );
@@ -181,7 +187,9 @@ SetVariableCheckHandlerMorLock (
     return mMorLockPassThru ? EFI_SUCCESS : EFI_WRITE_PROTECTED;
   }
 
-  if ((Attributes != (EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS)) ||
+  if ((Attributes != (EFI_VARIABLE_NON_VOLATILE |
+                      EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                      EFI_VARIABLE_RUNTIME_ACCESS)) ||
       ((DataSize != MOR_LOCK_V1_SIZE) && (DataSize != MOR_LOCK_V2_KEY_SIZE)))
   {
     return EFI_INVALID_PARAMETER;
@@ -384,7 +392,9 @@ SetVariableCheckHandlerMor (
   //
   // Basic Check
   //
-  if ((Attributes != (EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS)) ||
+  if ((Attributes != (EFI_VARIABLE_NON_VOLATILE |
+                      EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                      EFI_VARIABLE_RUNTIME_ACCESS)) ||
       (DataSize != sizeof (UINT8)) ||
       (Data == NULL))
   {
@@ -521,7 +531,8 @@ MorLockInitAtEndOfDxe (
   }
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - Failed to lock variable %s! %r\n", __FUNCTION__, MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME, Status));
+    DEBUG ((DEBUG_ERROR, "%a - Failed to lock variable %s! %r\n", __FUNCTION__,
+      MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME, Status));
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -559,7 +570,8 @@ MorLockInitAtEndOfDxe (
   }
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - Failed to lock variable %s! %r\n", __FUNCTION__, MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME, Status));
+    DEBUG ((DEBUG_ERROR, "%a - Failed to lock variable %s! %r\n", __FUNCTION__,
+      MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME, Status));
     ASSERT_EFI_ERROR (Status);
   }
 

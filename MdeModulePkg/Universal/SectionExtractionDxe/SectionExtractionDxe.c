@@ -115,7 +115,8 @@ EFI_HANDLE  mSectionExtractionHandle = NULL;
 //
 // Module global for the Section Extraction Protocol instance
 //
-EFI_GUIDED_SECTION_EXTRACTION_PROTOCOL  mCustomGuidedSectionExtractionProtocol = {
+EFI_GUIDED_SECTION_EXTRACTION_PROTOCOL  mCustomGuidedSectionExtractionProtocol =
+{
   CustomGuidedSectionExtract
 };
 
@@ -339,7 +340,9 @@ SectionExtractionDxeEntry (
   //
   // Get custom extract guided section method guid list
   //
-  ExtractHandlerNumber = ExtractGuidedSectionGetGuidList (&ExtractHandlerGuidTable);
+  ExtractHandlerNumber = ExtractGuidedSectionGetGuidList (
+                           &ExtractHandlerGuidTable
+                           );
 
   //
   // Install custom guided extraction protocol

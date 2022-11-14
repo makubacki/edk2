@@ -80,7 +80,12 @@ ResetPlatformSpecific (
   IN VOID   *ResetData
   )
 {
-  mInternalRT->ResetSystem (EfiResetPlatformSpecific, EFI_SUCCESS, DataSize, ResetData);
+  mInternalRT->ResetSystem (
+                 EfiResetPlatformSpecific,
+                 EFI_SUCCESS,
+                 DataSize,
+                 ResetData
+                 );
 }
 
 /**

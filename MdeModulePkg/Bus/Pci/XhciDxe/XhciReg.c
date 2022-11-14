@@ -38,7 +38,12 @@ XhcReadCapReg8 (
                              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "XhcReadCapReg: Pci Io read error - %r at %d\n", Status, Offset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "XhcReadCapReg: Pci Io read error - %r at %d\n",
+      Status,
+      Offset
+      ));
     Data = 0xFF;
   }
 
@@ -74,7 +79,12 @@ XhcReadCapReg (
                              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "XhcReadCapReg: Pci Io read error - %r at %d\n", Status, Offset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "XhcReadCapReg: Pci Io read error - %r at %d\n",
+      Status,
+      Offset
+      ));
     Data = 0xFFFFFFFF;
   }
 
@@ -112,7 +122,12 @@ XhcReadOpReg (
                              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "XhcReadOpReg: Pci Io Read error - %r at %d\n", Status, Offset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "XhcReadOpReg: Pci Io Read error - %r at %d\n",
+      Status,
+      Offset
+      ));
     Data = 0xFFFFFFFF;
   }
 
@@ -148,7 +163,12 @@ XhcWriteOpReg (
                              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "XhcWriteOpReg: Pci Io Write error: %r at %d\n", Status, Offset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "XhcWriteOpReg: Pci Io Write error: %r at %d\n",
+      Status,
+      Offset
+      ));
   }
 }
 
@@ -181,7 +201,12 @@ XhcWriteDoorBellReg (
                              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "XhcWriteOpReg: Pci Io Write error: %r at %d\n", Status, Offset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "XhcWriteOpReg: Pci Io Write error: %r at %d\n",
+      Status,
+      Offset
+      ));
   }
 }
 
@@ -215,7 +240,12 @@ XhcReadRuntimeReg (
                              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "XhcReadRuntimeReg: Pci Io Read error - %r at %d\n", Status, Offset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "XhcReadRuntimeReg: Pci Io Read error - %r at %d\n",
+      Status,
+      Offset
+      ));
     Data = 0xFFFFFFFF;
   }
 
@@ -251,7 +281,12 @@ XhcWriteRuntimeReg (
                              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "XhcWriteRuntimeReg: Pci Io Write error: %r at %d\n", Status, Offset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "XhcWriteRuntimeReg: Pci Io Write error: %r at %d\n",
+      Status,
+      Offset
+      ));
   }
 }
 
@@ -285,7 +320,12 @@ XhcReadExtCapReg (
                              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "XhcReadExtCapReg: Pci Io Read error - %r at %d\n", Status, Offset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "XhcReadExtCapReg: Pci Io Read error - %r at %d\n",
+      Status,
+      Offset
+      ));
     Data = 0xFFFFFFFF;
   }
 
@@ -321,7 +361,12 @@ XhcWriteExtCapReg (
                              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "XhcWriteExtCapReg: Pci Io Write error: %r at %d\n", Status, Offset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "XhcWriteExtCapReg: Pci Io Write error: %r at %d\n",
+      Status,
+      Offset
+      ));
   }
 }
 
@@ -528,7 +573,10 @@ XhcClearBiosOwnership (
     return;
   }
 
-  DEBUG ((DEBUG_INFO, "XhcClearBiosOwnership: called to clear BIOS ownership\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "XhcClearBiosOwnership: called to clear BIOS ownership\n"
+    ));
 
   Buffer = XhcReadExtCapReg (Xhc, Xhc->UsbLegSupOffset);
   Buffer = ((Buffer & (~USBLEGSP_BIOS_SEMAPHORE)) | USBLEGSP_OS_SEMAPHORE);
@@ -610,7 +658,11 @@ XhcGetSupportedProtocolCapabilityAddr (
     UsbSupportDw0.Dword = Data;
     if ((Data & 0xFF) == XHC_CAP_USB_SUPPORTED_PROTOCOL) {
       if (UsbSupportDw0.Data.RevMajor == MajorVersion) {
-        NameString = XhcReadExtCapReg (Xhc, ExtCapOffset + XHC_SUPPORTED_PROTOCOL_NAME_STRING_OFFSET);
+        NameString = XhcReadExtCapReg (
+                       Xhc,
+                       ExtCapOffset +
+                       XHC_SUPPORTED_PROTOCOL_NAME_STRING_OFFSET
+                       );
         if (NameString == XHC_SUPPORTED_PROTOCOL_NAME_STRING_VALUE) {
           //
           // Ensure Name String field is xHCI supported protocols in xHCI Supported Protocol Capability Offset 04h
@@ -661,10 +713,18 @@ XhciPsivGetPsid (
   // 1. Get the PSIC(Protocol Speed ID Count) value.
   // 2. The PSID register boundary should be Base address + PSIC * 0x04
   //
-  PortId.Dword = XhcReadExtCapReg (Xhc, ExtCapOffset + XHC_SUPPORTED_PROTOCOL_DW2_OFFSET);
+  PortId.Dword = XhcReadExtCapReg (
+                   Xhc,
+                   ExtCapOffset +
+                   XHC_SUPPORTED_PROTOCOL_DW2_OFFSET
+                   );
 
   for (Count = 0; Count < PortId.Data.Psic; Count++) {
-    Reg.Dword = XhcReadExtCapReg (Xhc, ExtCapOffset + XHC_SUPPORTED_PROTOCOL_PSI_OFFSET + (Count << 2));
+    Reg.Dword = XhcReadExtCapReg (
+                  Xhc,
+                  ExtCapOffset +
+                  XHC_SUPPORTED_PROTOCOL_PSI_OFFSET + (Count << 2)
+                  );
     if (Reg.Data.Psiv == PortSpeed) {
       return Reg.Dword;
     }
@@ -852,8 +912,13 @@ XhcResetHC (
     }
   }
 
-  if ((Xhc->DebugCapSupOffset == 0xFFFFFFFF) || ((XhcReadExtCapReg (Xhc, Xhc->DebugCapSupOffset) & 0xFF) != XHC_CAP_USB_DEBUG) ||
-      ((XhcReadExtCapReg (Xhc, Xhc->DebugCapSupOffset + XHC_DC_DCCTRL) & BIT0) == 0))
+  if ((Xhc->DebugCapSupOffset == 0xFFFFFFFF) || ((XhcReadExtCapReg (
+                                                    Xhc,
+                                                    Xhc->DebugCapSupOffset
+                                                    ) & 0xFF) !=
+                                                 XHC_CAP_USB_DEBUG) ||
+      ((XhcReadExtCapReg (Xhc, Xhc->DebugCapSupOffset + XHC_DC_DCCTRL) &
+        BIT0) == 0))
   {
     XhcSetOpRegBit (Xhc, XHC_USBCMD_OFFSET, XHC_USBCMD_RESET);
     //
@@ -862,7 +927,13 @@ XhcResetHC (
     // The below is a workaround to solve such problem.
     //
     gBS->Stall (XHC_1_MILLISECOND);
-    Status = XhcWaitOpRegBit (Xhc, XHC_USBCMD_OFFSET, XHC_USBCMD_RESET, FALSE, Timeout);
+    Status = XhcWaitOpRegBit (
+               Xhc,
+               XHC_USBCMD_OFFSET,
+               XHC_USBCMD_RESET,
+               FALSE,
+               Timeout
+               );
 
     if (!EFI_ERROR (Status)) {
       //
@@ -895,7 +966,13 @@ XhcHaltHC (
   EFI_STATUS  Status;
 
   XhcClearOpRegBit (Xhc, XHC_USBCMD_OFFSET, XHC_USBCMD_RUN);
-  Status = XhcWaitOpRegBit (Xhc, XHC_USBSTS_OFFSET, XHC_USBSTS_HALT, TRUE, Timeout);
+  Status = XhcWaitOpRegBit (
+             Xhc,
+             XHC_USBSTS_OFFSET,
+             XHC_USBSTS_HALT,
+             TRUE,
+             Timeout
+             );
   return Status;
 }
 
@@ -918,6 +995,12 @@ XhcRunHC (
   EFI_STATUS  Status;
 
   XhcSetOpRegBit (Xhc, XHC_USBCMD_OFFSET, XHC_USBCMD_RUN);
-  Status = XhcWaitOpRegBit (Xhc, XHC_USBSTS_OFFSET, XHC_USBSTS_HALT, FALSE, Timeout);
+  Status = XhcWaitOpRegBit (
+             Xhc,
+             XHC_USBSTS_OFFSET,
+             XHC_USBSTS_HALT,
+             FALSE,
+             Timeout
+             );
   return Status;
 }

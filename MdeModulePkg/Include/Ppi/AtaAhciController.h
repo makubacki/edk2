@@ -21,7 +21,8 @@
 //
 // Forward declaration for the EDKII_ATA_AHCI_HOST_CONTROLLER_PPI.
 //
-typedef struct _EDKII_ATA_AHCI_HOST_CONTROLLER_PPI EDKII_ATA_AHCI_HOST_CONTROLLER_PPI;
+typedef struct _EDKII_ATA_AHCI_HOST_CONTROLLER_PPI
+EDKII_ATA_AHCI_HOST_CONTROLLER_PPI;
 
 /**
   Get the MMIO base address of ATA AHCI host controller.

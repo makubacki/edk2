@@ -76,7 +76,10 @@ DebuggerCallStack (
       // Clear Call-Stack
       //
       DebuggerPrivate->CallStackEntryCount = 0;
-      ZeroMem (DebuggerPrivate->CallStackEntry, sizeof (DebuggerPrivate->CallStackEntry));
+      ZeroMem (
+        DebuggerPrivate->CallStackEntry,
+        sizeof (DebuggerPrivate->CallStackEntry)
+        );
       EDBPrint (L"Call-Stack is cleared\n");
       return EFI_DEBUG_CONTINUE;
     } else if (StriCmp (CommandArg, L"p") == 0) {
@@ -107,7 +110,9 @@ DebuggerCallStack (
   if (DebuggerPrivate->CallStackEntryCount == 0) {
     EDBPrint (L"No Call-Stack\n");
     return EFI_DEBUG_CONTINUE;
-  } else if (DebuggerPrivate->CallStackEntryCount > EFI_DEBUGGER_CALLSTACK_MAX) {
+  } else if (DebuggerPrivate->CallStackEntryCount >
+             EFI_DEBUGGER_CALLSTACK_MAX)
+  {
     EDBPrint (L"Call-Stack Crash, re-initialize!\n");
     DebuggerPrivate->CallStackEntryCount = 0;
     return EFI_DEBUG_CONTINUE;
@@ -120,7 +125,9 @@ DebuggerCallStack (
   EDBPrint (L"         Caller             Callee        Name\n");
   EDBPrint (L"  ================== ================== ========\n");
   // EDBPrint (L"  0x00000000FFFFFFFF 0xFFFFFFFF00000000 EfiMain\n");
-  for (Index = (INTN)(DebuggerPrivate->CallStackEntryCount - 1); Index >= 0; Index--) {
+  for (Index = (INTN)(DebuggerPrivate->CallStackEntryCount - 1); Index >= 0;
+       Index--)
+  {
     //
     // Get CallStack and print
     //
@@ -180,7 +187,9 @@ DebuggerCallStack (
         //
         // break only for parameter
         //
-        if ((((DebuggerPrivate->CallStackEntryCount - Index) % (16 / ParameterNumber)) == 0) &&
+        if ((((DebuggerPrivate->CallStackEntryCount - Index) % (16 /
+                                                                ParameterNumber))
+             == 0) &&
             (Index != 0))
         {
           if (SetPageBreak ()) {
@@ -226,7 +235,9 @@ DebuggerCallStack (
         //
         // break only for parameter
         //
-        if ((((DebuggerPrivate->CallStackEntryCount - Index) % (32 / ParameterNumber)) == 0) &&
+        if ((((DebuggerPrivate->CallStackEntryCount - Index) % (32 /
+                                                                ParameterNumber))
+             == 0) &&
             (Index != 0))
         {
           if (SetPageBreak ()) {
@@ -274,7 +285,10 @@ DebuggerInstructionBranch (
       // Clear Trace
       //
       DebuggerPrivate->TraceEntryCount = 0;
-      ZeroMem (DebuggerPrivate->TraceEntry, sizeof (DebuggerPrivate->TraceEntry));
+      ZeroMem (
+        DebuggerPrivate->TraceEntry,
+        sizeof (DebuggerPrivate->TraceEntry)
+        );
       EDBPrint (L"Instruction Trace is cleared\n");
     } else {
       EDBPrint (L"Trace argument Invalid\n");

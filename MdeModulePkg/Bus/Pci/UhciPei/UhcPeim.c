@@ -30,9 +30,17 @@ UhciStopHc (
   UINT16  UsbSts;
   UINTN   Index;
 
-  CommandContent  = USBReadPortW (Uhc, Uhc->UsbHostControllerBaseAddress + USBCMD);
+  CommandContent = USBReadPortW (
+                     Uhc,
+                     Uhc->UsbHostControllerBaseAddress +
+                     USBCMD
+                     );
   CommandContent &= USBCMD_RS;
-  USBWritePortW (Uhc, Uhc->UsbHostControllerBaseAddress + USBCMD, CommandContent);
+  USBWritePortW (
+    Uhc,
+    Uhc->UsbHostControllerBaseAddress + USBCMD,
+    CommandContent
+    );
 
   //
   // ensure the HC is in halt status after send the stop command
@@ -182,14 +190,19 @@ UhcPeimEntry (
       return Status;
     }
 
-    UhcDev->UsbHostControllerPpi.ControlTransfer         = UhcControlTransfer;
-    UhcDev->UsbHostControllerPpi.BulkTransfer            = UhcBulkTransfer;
-    UhcDev->UsbHostControllerPpi.GetRootHubPortNumber    = UhcGetRootHubPortNumber;
-    UhcDev->UsbHostControllerPpi.GetRootHubPortStatus    = UhcGetRootHubPortStatus;
-    UhcDev->UsbHostControllerPpi.SetRootHubPortFeature   = UhcSetRootHubPortFeature;
-    UhcDev->UsbHostControllerPpi.ClearRootHubPortFeature = UhcClearRootHubPortFeature;
+    UhcDev->UsbHostControllerPpi.ControlTransfer      = UhcControlTransfer;
+    UhcDev->UsbHostControllerPpi.BulkTransfer         = UhcBulkTransfer;
+    UhcDev->UsbHostControllerPpi.GetRootHubPortNumber =
+      UhcGetRootHubPortNumber;
+    UhcDev->UsbHostControllerPpi.GetRootHubPortStatus =
+      UhcGetRootHubPortStatus;
+    UhcDev->UsbHostControllerPpi.SetRootHubPortFeature =
+      UhcSetRootHubPortFeature;
+    UhcDev->UsbHostControllerPpi.ClearRootHubPortFeature =
+      UhcClearRootHubPortFeature;
 
-    UhcDev->PpiDescriptor.Flags = (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
+    UhcDev->PpiDescriptor.Flags = (EFI_PEI_PPI_DESCRIPTOR_PPI |
+                                   EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
     UhcDev->PpiDescriptor.Guid  = &gPeiUsbHostControllerPpiGuid;
     UhcDev->PpiDescriptor.Ppi   = &UhcDev->UsbHostControllerPpi;
 
@@ -199,7 +212,9 @@ UhcPeimEntry (
       continue;
     }
 
-    UhcDev->EndOfPeiNotifyList.Flags  = (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
+    UhcDev->EndOfPeiNotifyList.Flags =
+      (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+       EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
     UhcDev->EndOfPeiNotifyList.Guid   = &gEfiEndOfPeiSignalPpiGuid;
     UhcDev->EndOfPeiNotifyList.Notify = UhcEndOfPei;
 
@@ -302,7 +317,15 @@ UhcControlTransfer (
     return Status;
   }
 
-  Status = UhciMapUserData (UhcDev, TransferDirection, Data, DataLength, &PktID, &DataPhy, &DataMap);
+  Status = UhciMapUserData (
+             UhcDev,
+             TransferDirection,
+             Data,
+             DataLength,
+             &PktID,
+             &DataPhy,
+             &DataMap
+             );
 
   if (EFI_ERROR (Status)) {
     if (RequestMap != NULL) {
@@ -531,10 +554,18 @@ UhcBulkTransfer (
   // that can be used for full speed bandwidth reclamation
   // at the end of a frame.
   //
-  CommandContent = USBReadPortW (UhcDev, UhcDev->UsbHostControllerBaseAddress + USBCMD);
+  CommandContent = USBReadPortW (
+                     UhcDev,
+                     UhcDev->UsbHostControllerBaseAddress +
+                     USBCMD
+                     );
   if ((CommandContent & USBCMD_MAXP) != USBCMD_MAXP) {
     CommandContent |= USBCMD_MAXP;
-    USBWritePortW (UhcDev, UhcDev->UsbHostControllerBaseAddress + USBCMD, CommandContent);
+    USBWritePortW (
+      UhcDev,
+      UhcDev->UsbHostControllerBaseAddress + USBCMD,
+      CommandContent
+      );
   }
 
   StatusReg = UhcDev->UsbHostControllerBaseAddress + USBSTS;
@@ -585,7 +616,15 @@ UhcBulkTransfer (
     TransferDirection = EfiUsbDataOut;
   }
 
-  Status = UhciMapUserData (UhcDev, TransferDirection, Data, DataLength, &PktID, &DataPhy, &DataMap);
+  Status = UhciMapUserData (
+             UhcDev,
+             TransferDirection,
+             Data,
+             DataLength,
+             &PktID,
+             &DataPhy,
+             &DataMap
+             );
 
   if (EFI_ERROR (Status)) {
     return Status;
@@ -725,7 +764,8 @@ UhcGetRootHubPortNumber (
   *PortNumber = 0;
 
   for (Index = 0; Index < 2; Index++) {
-    PSAddr        = UhcDev->UsbHostControllerBaseAddress + USBPORTSC1 + Index * 2;
+    PSAddr = UhcDev->UsbHostControllerBaseAddress + USBPORTSC1 + Index *
+             2;
     RHPortControl = USBReadPortW (UhcDev, PSAddr);
     //
     // Port Register content is valid
@@ -870,8 +910,9 @@ UhcSetRootHubPortFeature (
     return EFI_INVALID_PARAMETER;
   }
 
-  UhcDev         = PEI_RECOVERY_USB_UHC_DEV_FROM_UHCI_THIS (This);
-  PSAddr         = UhcDev->UsbHostControllerBaseAddress + USBPORTSC1 + PortNumber * 2;
+  UhcDev = PEI_RECOVERY_USB_UHC_DEV_FROM_UHCI_THIS (This);
+  PSAddr = UhcDev->UsbHostControllerBaseAddress + USBPORTSC1 +
+           PortNumber * 2;
   CommandRegAddr = UhcDev->UsbHostControllerBaseAddress + USBCMD;
 
   RHPortControl = USBReadPortW (UhcDev, PSAddr);
@@ -1061,7 +1102,11 @@ InitializeUsbHC (
   //
   // Set Frame List Base Address to the specific register to inform the hardware.
   //
-  SetFrameListBaseAddress (UhcDev, FrameListBaseAddrReg, (UINT32)(UINTN)(UhcDev->FrameListEntry));
+  SetFrameListBaseAddress (
+    UhcDev,
+    FrameListBaseAddrReg,
+    (UINT32)(UINTN)(UhcDev->FrameListEntry)
+    );
 
   Command  = USBReadPortW (UhcDev, CommandReg);
   Command |= USBCMD_GRESET;
@@ -2821,11 +2866,13 @@ CreateMemoryBlock (
   //
   // set Memory block size
   //
-  (*MemoryHeader)->MemoryBlockSizeInBytes = MemoryBlockSizeInPages * EFI_PAGE_SIZE;
+  (*MemoryHeader)->MemoryBlockSizeInBytes = MemoryBlockSizeInPages *
+                                            EFI_PAGE_SIZE;
   //
   // each bit in Bit Array will manage 32byte memory in memory block
   //
-  (*MemoryHeader)->BitArraySizeInBytes = ((*MemoryHeader)->MemoryBlockSizeInBytes / 32) / 8;
+  (*MemoryHeader)->BitArraySizeInBytes =
+    ((*MemoryHeader)->MemoryBlockSizeInBytes / 32) / 8;
 
   return EFI_SUCCESS;
 }
@@ -2898,7 +2945,9 @@ UhcAllocatePool (
   }
 
   Status = EFI_NOT_FOUND;
-  for (TempHeaderPtr = MemoryHeader; TempHeaderPtr != NULL; TempHeaderPtr = TempHeaderPtr->Next) {
+  for (TempHeaderPtr = MemoryHeader; TempHeaderPtr != NULL; TempHeaderPtr =
+         TempHeaderPtr->Next)
+  {
     Status = AllocMemInMemoryBlock (
                TempHeaderPtr,
                (VOID **)Pool,
@@ -3065,8 +3114,11 @@ AllocMemInMemoryBlock (
   //
   // Set the memory as allocated
   //
-  for (TempBytePos = FoundBytePos, Index = FoundBitPos, Count = 0; Count < NumberOfMemoryUnit; Count++) {
-    MemoryHeader->BitArrayPtr[TempBytePos] = (UINT8)(MemoryHeader->BitArrayPtr[TempBytePos] | (1 << Index));
+  for (TempBytePos = FoundBytePos, Index = FoundBitPos, Count = 0; Count <
+       NumberOfMemoryUnit; Count++)
+  {
+    MemoryHeader->BitArrayPtr[TempBytePos] =
+      (UINT8)(MemoryHeader->BitArrayPtr[TempBytePos] | (1 << Index));
     Index++;
     if (Index == 8) {
       TempBytePos += 1;
@@ -3131,8 +3183,11 @@ UhcFreePool (
       //
       // reset associated bits in bit array
       //
-      for (Index = StartBytePos, Index2 = StartBitPos, Count = 0; Count < (RealAllocSize / 32); Count++) {
-        TempHeaderPtr->BitArrayPtr[Index] = (UINT8)(TempHeaderPtr->BitArrayPtr[Index] ^ (1 << Index2));
+      for (Index = StartBytePos, Index2 = StartBitPos, Count = 0; Count <
+           (RealAllocSize / 32); Count++)
+      {
+        TempHeaderPtr->BitArrayPtr[Index] =
+          (UINT8)(TempHeaderPtr->BitArrayPtr[Index] ^ (1 << Index2));
         Index2++;
         if (Index2 == 8) {
           Index += 1;
@@ -3163,7 +3218,9 @@ InsertMemoryHeaderToList (
 {
   MEMORY_MANAGE_HEADER  *TempHeaderPtr;
 
-  for (TempHeaderPtr = MemoryHeader; TempHeaderPtr != NULL; TempHeaderPtr = TempHeaderPtr->Next) {
+  for (TempHeaderPtr = MemoryHeader; TempHeaderPtr != NULL; TempHeaderPtr =
+         TempHeaderPtr->Next)
+  {
     if (TempHeaderPtr->Next == NULL) {
       TempHeaderPtr->Next = NewMemoryHeader;
       break;

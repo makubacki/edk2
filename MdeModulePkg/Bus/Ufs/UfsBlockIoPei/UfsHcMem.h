@@ -38,7 +38,9 @@ typedef struct _UFS_PEIM_MEM_POOL {
 #define UFS_PEIM_MEM_UNIT_MASK      (UFS_PEIM_MEM_UNIT - 1)
 #define UFS_PEIM_MEM_DEFAULT_PAGES  16
 
-#define UFS_PEIM_MEM_ROUND(Len)  (((Len) + UFS_PEIM_MEM_UNIT_MASK) & (~UFS_PEIM_MEM_UNIT_MASK))
+#define UFS_PEIM_MEM_ROUND( \
+                          Len)  \
+  (((Len) + UFS_PEIM_MEM_UNIT_MASK) & (~UFS_PEIM_MEM_UNIT_MASK))
 
 //
 // Advance the byte and bit to the next bit, adjust byte accordingly.

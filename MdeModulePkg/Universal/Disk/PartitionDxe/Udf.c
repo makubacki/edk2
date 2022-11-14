@@ -44,12 +44,12 @@ EFI_GUID  gUdfDevPathGuid = EFI_UDF_DEVICE_PATH_GUID;
 UDF_DEVICE_PATH  gUdfDevicePath = {
   {
     { MEDIA_DEVICE_PATH,                 MEDIA_VENDOR_DP,
-        { sizeof (VENDOR_DEVICE_PATH),       0 }
+          { sizeof (VENDOR_DEVICE_PATH),       0 }
     },
     EFI_UDF_DEVICE_PATH_GUID
   },
   { END_DEVICE_PATH_TYPE,              END_ENTIRE_DEVICE_PATH_SUBTYPE,
-        { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0 }
+          { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0 }
   }
 };
 
@@ -222,7 +222,10 @@ FindAnchorVolumeDescriptorPointer (
   Status = DiskIo->ReadDisk (
                      DiskIo,
                      BlockIo->Media->MediaId,
-                     MultU64x32 ((UINT64)EndLBA - MAX_CORRECTION_BLOCKS_NUM, BlockSize),
+                     MultU64x32 (
+                       (UINT64)EndLBA - MAX_CORRECTION_BLOCKS_NUM,
+                       BlockSize
+                       ),
                      Size,
                      AnchorPoints
                      );
@@ -782,7 +785,11 @@ PartitionInstallUdfChildHandles (
              DevicePath
              );
   if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "PartitionDxe: El Torito standard found on handle 0x%p.\n", Handle));
+    DEBUG ((
+      DEBUG_INFO,
+      "PartitionDxe: El Torito standard found on handle 0x%p.\n",
+      Handle
+      ));
     ChildCreated = TRUE;
   }
 

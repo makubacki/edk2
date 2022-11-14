@@ -47,7 +47,11 @@ NvmeS3SkipThisController (
   S3InitDevicesLength = sizeof (DummyData);
   EntireEnd           = FALSE;
   Skip                = TRUE;
-  Status              = RestoreLockBox (&gS3StorageDeviceInitListGuid, &DummyData, &S3InitDevicesLength);
+  Status              = RestoreLockBox (
+                          &gS3StorageDeviceInitListGuid,
+                          &DummyData,
+                          &S3InitDevicesLength
+                          );
   if (Status != EFI_BUFFER_TOO_SMALL) {
     return Skip;
   } else {
@@ -56,7 +60,11 @@ NvmeS3SkipThisController (
       return Skip;
     }
 
-    Status = RestoreLockBox (&gS3StorageDeviceInitListGuid, S3InitDevices, &S3InitDevicesLength);
+    Status = RestoreLockBox (
+               &gS3StorageDeviceInitListGuid,
+               S3InitDevices,
+               &S3InitDevicesLength
+               );
     if (EFI_ERROR (Status)) {
       return Skip;
     }
@@ -83,7 +91,8 @@ NvmeS3SkipThisController (
     }
 
     DevicePathInst = S3InitDevices;
-    S3InitDevices  = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)S3InitDevices + DevicePathInstLength);
+    S3InitDevices  = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)S3InitDevices +
+                                                  DevicePathInstLength);
 
     if (HcDevicePathLength >= DevicePathInstLength) {
       continue;

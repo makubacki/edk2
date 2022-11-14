@@ -121,12 +121,19 @@ VerifyHeaderChecksum (
   UINT8  HeaderChecksum;
 
   if (IS_FFS_FILE2 (FfsHeader)) {
-    HeaderChecksum = CalculateSum8 ((UINT8 *)FfsHeader, sizeof (EFI_FFS_FILE_HEADER2));
+    HeaderChecksum = CalculateSum8 (
+                       (UINT8 *)FfsHeader,
+                       sizeof (EFI_FFS_FILE_HEADER2)
+                       );
   } else {
-    HeaderChecksum = CalculateSum8 ((UINT8 *)FfsHeader, sizeof (EFI_FFS_FILE_HEADER));
+    HeaderChecksum = CalculateSum8 (
+                       (UINT8 *)FfsHeader,
+                       sizeof (EFI_FFS_FILE_HEADER)
+                       );
   }
 
-  HeaderChecksum = (UINT8)(HeaderChecksum - FfsHeader->State - FfsHeader->IntegrityCheck.Checksum.File);
+  HeaderChecksum = (UINT8)(HeaderChecksum - FfsHeader->State -
+                           FfsHeader->IntegrityCheck.Checksum.File);
 
   if (HeaderChecksum == 0) {
     return TRUE;
@@ -198,11 +205,23 @@ IsValidFfsFile (
     case EFI_FILE_DATA_VALID:
     case EFI_FILE_MARKED_FOR_UPDATE:
       DataCheckSum = FFS_FIXED_CHECKSUM;
-      if ((FfsHeader->Attributes & FFS_ATTRIB_CHECKSUM) == FFS_ATTRIB_CHECKSUM) {
+      if ((FfsHeader->Attributes & FFS_ATTRIB_CHECKSUM) ==
+          FFS_ATTRIB_CHECKSUM)
+      {
         if (IS_FFS_FILE2 (FfsHeader)) {
-          DataCheckSum = CalculateCheckSum8 ((CONST UINT8 *)FfsHeader + sizeof (EFI_FFS_FILE_HEADER2), FFS_FILE2_SIZE (FfsHeader) - sizeof (EFI_FFS_FILE_HEADER2));
+          DataCheckSum = CalculateCheckSum8 (
+                           (CONST UINT8 *)FfsHeader +
+                           sizeof (EFI_FFS_FILE_HEADER2),
+                           FFS_FILE2_SIZE (FfsHeader) -
+                           sizeof (EFI_FFS_FILE_HEADER2)
+                           );
         } else {
-          DataCheckSum = CalculateCheckSum8 ((CONST UINT8 *)FfsHeader + sizeof (EFI_FFS_FILE_HEADER), FFS_FILE_SIZE (FfsHeader) - sizeof (EFI_FFS_FILE_HEADER));
+          DataCheckSum = CalculateCheckSum8 (
+                           (CONST UINT8 *)FfsHeader +
+                           sizeof (EFI_FFS_FILE_HEADER),
+                           FFS_FILE_SIZE (FfsHeader) -
+                           sizeof (EFI_FFS_FILE_HEADER)
+                           );
         }
       }
 

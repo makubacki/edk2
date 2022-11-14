@@ -50,9 +50,12 @@ InternalReportStatusCode (
   CONST EFI_PEI_SERVICES  **PeiServices;
   EFI_STATUS              Status;
 
-  if ((ReportProgressCodeEnabled () && (((Type) & EFI_STATUS_CODE_TYPE_MASK) == EFI_PROGRESS_CODE)) ||
-      (ReportErrorCodeEnabled () && (((Type) & EFI_STATUS_CODE_TYPE_MASK) == EFI_ERROR_CODE)) ||
-      (ReportDebugCodeEnabled () && (((Type) & EFI_STATUS_CODE_TYPE_MASK) == EFI_DEBUG_CODE)))
+  if ((ReportProgressCodeEnabled () && (((Type) & EFI_STATUS_CODE_TYPE_MASK) ==
+                                        EFI_PROGRESS_CODE)) ||
+      (ReportErrorCodeEnabled () && (((Type) & EFI_STATUS_CODE_TYPE_MASK) ==
+                                     EFI_ERROR_CODE)) ||
+      (ReportDebugCodeEnabled () && (((Type) & EFI_STATUS_CODE_TYPE_MASK) ==
+                                     EFI_DEBUG_CODE)))
   {
     PeiServices = GetPeiServicesTablePointer ();
     Status      = (*PeiServices)->ReportStatusCode (
@@ -66,7 +69,13 @@ InternalReportStatusCode (
     if (Status == EFI_NOT_AVAILABLE_YET) {
       Status = OemHookStatusCodeInitialize ();
       if (!EFI_ERROR (Status)) {
-        return OemHookStatusCodeReport (Type, Value, Instance, (EFI_GUID *)CallerId, Data);
+        return OemHookStatusCodeReport (
+                 Type,
+                 Value,
+                 Instance,
+                 (EFI_GUID *)CallerId,
+                 Data
+                 );
       }
     }
 
@@ -117,7 +126,8 @@ CodeTypeToPostCode (
       ((CodeType & EFI_STATUS_CODE_TYPE_MASK) == EFI_ERROR_CODE))
   {
     *PostCode = (UINT8)((((Value & EFI_STATUS_CODE_CLASS_MASK) >> 24) << 5) |
-                        (((Value & EFI_STATUS_CODE_SUBCLASS_MASK) >> 16) & 0x1f));
+                        (((Value & EFI_STATUS_CODE_SUBCLASS_MASK) >> 16) &
+                         0x1f));
     return TRUE;
   }
 
@@ -177,7 +187,8 @@ ReportStatusCodeExtractAssertInfo (
 
   if (((CodeType & EFI_STATUS_CODE_TYPE_MASK)      == EFI_ERROR_CODE) &&
       ((CodeType & EFI_STATUS_CODE_SEVERITY_MASK)  == EFI_ERROR_UNRECOVERED) &&
-      ((Value    & EFI_STATUS_CODE_OPERATION_MASK) == EFI_SW_EC_ILLEGAL_SOFTWARE_STATE))
+      ((Value    & EFI_STATUS_CODE_OPERATION_MASK) ==
+       EFI_SW_EC_ILLEGAL_SOFTWARE_STATE))
   {
     AssertData   = (EFI_DEBUG_ASSERT_DATA *)(Data + 1);
     *Filename    = (CHAR8 *)(AssertData + 1);
@@ -457,12 +468,17 @@ ReportStatusCodeEx (
   //
   ASSERT (!((ExtendedData != NULL) && (ExtendedDataSize == 0)));
 
-  if (ExtendedDataSize > (MAX_EXTENDED_DATA_SIZE - sizeof (EFI_STATUS_CODE_DATA))) {
+  if (ExtendedDataSize > (MAX_EXTENDED_DATA_SIZE -
+                          sizeof (EFI_STATUS_CODE_DATA)))
+  {
     //
     // The local variable Buffer not large enough to hold the extended data associated
     // with the status code being reported.
     //
-    DEBUG ((DEBUG_ERROR, "Status code extended data is too large to be reported!\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Status code extended data is too large to be reported!\n"
+      ));
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -482,7 +498,13 @@ ReportStatusCodeEx (
     CallerId = &gEfiCallerIdGuid;
   }
 
-  return InternalReportStatusCode (Type, Value, Instance, CallerId, StatusCodeData);
+  return InternalReportStatusCode (
+           Type,
+           Value,
+           Instance,
+           CallerId,
+           StatusCodeData
+           );
 }
 
 /**
@@ -503,7 +525,8 @@ ReportProgressCodeEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdReportStatusCodePropertyMask) & REPORT_STATUS_CODE_PROPERTY_PROGRESS_CODE_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdReportStatusCodePropertyMask) &
+                    REPORT_STATUS_CODE_PROPERTY_PROGRESS_CODE_ENABLED) != 0);
 }
 
 /**
@@ -524,7 +547,8 @@ ReportErrorCodeEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdReportStatusCodePropertyMask) & REPORT_STATUS_CODE_PROPERTY_ERROR_CODE_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdReportStatusCodePropertyMask) &
+                    REPORT_STATUS_CODE_PROPERTY_ERROR_CODE_ENABLED) != 0);
 }
 
 /**
@@ -545,5 +569,6 @@ ReportDebugCodeEnabled (
   VOID
   )
 {
-  return (BOOLEAN)((PcdGet8 (PcdReportStatusCodePropertyMask) & REPORT_STATUS_CODE_PROPERTY_DEBUG_CODE_ENABLED) != 0);
+  return (BOOLEAN)((PcdGet8 (PcdReportStatusCodePropertyMask) &
+                    REPORT_STATUS_CODE_PROPERTY_DEBUG_CODE_ENABLED) != 0);
 }

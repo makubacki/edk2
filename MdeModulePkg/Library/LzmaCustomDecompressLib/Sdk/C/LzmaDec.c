@@ -19,12 +19,19 @@
 
 #define RC_INIT_SIZE  5
 
-#define NORMALIZE  if (range < kTopValue) { range <<= 8; code = (code << 8) | (*buf++); }
+#define NORMALIZE  \
+  if (range < kTopValue) { range <<= 8; code = (code << 8) | (*buf++); }
 
-#define IF_BIT_0(p)             ttt = *(p); NORMALIZE; bound = (range >> kNumBitModelTotalBits) * (UInt32)ttt; if (code < bound)
-#define UPDATE_0(p)             range = bound; *(p) = (CLzmaProb)(ttt + ((kBitModelTotal - ttt) >> kNumMoveBits));
-#define UPDATE_1(p)             range -= bound; code -= bound; *(p) = (CLzmaProb)(ttt - (ttt >> kNumMoveBits));
-#define GET_BIT2(p, i, A0, A1)  IF_BIT_0(p)\
+#define IF_BIT_0( \
+                p)             \
+                                  ttt = *(p); NORMALIZE; bound = (range >> kNumBitModelTotalBits) * (UInt32)ttt; if (code < bound)
+#define UPDATE_0( \
+                p)             \
+                                  range = bound; *(p) = (CLzmaProb)(ttt + ((kBitModelTotal - ttt) >> kNumMoveBits));
+#define UPDATE_1( \
+                p)             \
+                                  range -= bound; code -= bound; *(p) = (CLzmaProb)(ttt - (ttt >> kNumMoveBits));
+#define GET_BIT2(p, i, A0, A1)    IF_BIT_0(p)\
   { UPDATE_0(p); i = (i + i); A0; } else \
   { UPDATE_1(p); i = (i + i) + 1; A1; }
 
@@ -64,9 +71,12 @@
   probLit = prob + (offs + bit + symbol); \
   GET_BIT2(probLit, symbol, offs ^= bit; , ;)
 
-#define NORMALIZE_CHECK  if (range < kTopValue) { if (buf >= bufLimit) return DUMMY_ERROR; range <<= 8; code = (code << 8) | (*buf++); }
+#define NORMALIZE_CHECK  \
+  if (range < kTopValue) { if (buf >= bufLimit) return DUMMY_ERROR; range <<= 8; code = (code << 8) | (*buf++); }
 
-#define IF_BIT_0_CHECK(p)  ttt = *(p); NORMALIZE_CHECK; bound = (range >> kNumBitModelTotalBits) * (UInt32)ttt; if (code < bound)
+#define IF_BIT_0_CHECK( \
+                      p)  \
+  ttt = *(p); NORMALIZE_CHECK; bound = (range >> kNumBitModelTotalBits) * (UInt32)ttt; if (code < bound)
 #define UPDATE_0_CHECK  range = bound;
 #define UPDATE_1_CHECK  range -= bound; code -= bound;
 #define GET_BIT2_CHECK(p, i, A0, A1)  IF_BIT_0_CHECK(p)\
@@ -110,7 +120,8 @@
 #define kAlignTableSize  (1 << kNumAlignBits)
 
 #define kMatchMinLen        2
-#define kMatchSpecLenStart  (kMatchMinLen + kLenNumLowSymbols * 2 + kLenNumHighSymbols)
+#define kMatchSpecLenStart  \
+                            (kMatchMinLen + kLenNumLowSymbols * 2 + kLenNumHighSymbols)
 
 /* External ASM code needs same CLzmaProb array layout. So don't change it. */
 
@@ -154,7 +165,9 @@
 
 #define LZMA_LIT_SIZE  0x300
 
-#define LzmaProps_GetNumProbs(p)  (NUM_BASE_PROBS + ((UInt32)LZMA_LIT_SIZE << ((p)->lc + (p)->lp)))
+#define LzmaProps_GetNumProbs( \
+                             p)  \
+  (NUM_BASE_PROBS + ((UInt32)LZMA_LIT_SIZE << ((p)->lc + (p)->lp)))
 
 #define CALC_POS_STATE(processedPos, pbMask)  (((processedPos) & (pbMask)) << 4)
 #define COMBINED_PS_STATE  (posState + state)
@@ -227,10 +240,11 @@ LZMA_DECODE_REAL (
 {
   CLzmaProb  *probs = GET_PROBS;
   unsigned   state = (unsigned)p->state;
-  UInt32     rep0 = p->reps[0], rep1 = p->reps[1], rep2 = p->reps[2], rep3 = p->reps[3];
-  unsigned   pbMask = ((unsigned)1 << (p->prop.pb)) - 1;
-  unsigned   lc     = p->prop.lc;
-  unsigned   lpMask = ((unsigned)0x100 << p->prop.lp) - ((unsigned)0x100 >> lc);
+  UInt32     rep0 = p->reps[0], rep1 = p->reps[1], rep2 = p->reps[2], rep3 =
+    p->reps[3];
+  unsigned  pbMask = ((unsigned)1 << (p->prop.pb)) - 1;
+  unsigned  lc     = p->prop.lc;
+  unsigned  lpMask = ((unsigned)0x100 << p->prop.lp) - ((unsigned)0x100 >> lc);
 
   Byte   *dic       = p->dic;
   SizeT  dicBufSize = p->dicBufSize;
@@ -257,7 +271,9 @@ LZMA_DECODE_REAL (
       UPDATE_0 (prob);
       prob = probs + Literal;
       if ((processedPos != 0) || (checkDicSize != 0)) {
-        prob += (UInt32)3 * ((((processedPos << 8) + dic[(dicPos == 0 ? dicBufSize : dicPos) - 1]) & lpMask) << lc);
+        prob += (UInt32)3 * ((((processedPos << 8) + dic[(dicPos == 0 ?
+                                                          dicBufSize : dicPos) -
+                                                         1]) & lpMask) << lc);
       }
 
       processedPos++;
@@ -281,7 +297,8 @@ LZMA_DECODE_REAL (
           NORMAL_LITER_DEC
  #endif
       } else {
-        unsigned  matchByte = dic[dicPos - rep0 + (dicPos < rep0 ? dicBufSize : 0)];
+        unsigned  matchByte = dic[dicPos - rep0 + (dicPos < rep0 ? dicBufSize :
+                                                   0)];
         unsigned  offs      = 0x100;
         state -= (state < 10) ? 3 : 6;
         symbol = 1;
@@ -428,7 +445,8 @@ LZMA_DECODE_REAL (
       if (state >= kNumStates) {
         UInt32  distance;
         prob = probs + PosSlot +
-               ((len < kNumLenToPosStates ? len : kNumLenToPosStates - 1) << kNumPosSlotBits);
+               ((len < kNumLenToPosStates ? len : kNumLenToPosStates - 1) <<
+                kNumPosSlotBits);
         TREE_6_DECODE (prob, distance);
         if (distance >= kStartPosModelIndex) {
           unsigned  posSlot       = (unsigned)distance;
@@ -492,7 +510,8 @@ LZMA_DECODE_REAL (
         rep2  = rep1;
         rep1  = rep0;
         rep0  = distance + 1;
-        state = (state < kNumStates + kNumLitStates) ? kNumLitStates : kNumLitStates + 3;
+        state = (state < kNumStates + kNumLitStates) ? kNumLitStates :
+                kNumLitStates + 3;
         if (distance >= ((checkDicSize == 0) ? processedPos : checkDicSize)) {
           p->dicPos = dicPos;
           return SZ_ERROR_DATA;
@@ -589,9 +608,11 @@ LzmaDec_WriteRem (
   }
 }
 
-#define kRange0      0xFFFFFFFF
-#define kBound0      ((kRange0 >> kNumBitModelTotalBits) << (kNumBitModelTotalBits - 1))
-#define kBadRepCode  (kBound0 + (((kRange0 - kBound0) >> kNumBitModelTotalBits) << (kNumBitModelTotalBits - 1)))
+#define kRange0        0xFFFFFFFF
+#define kBound0      \
+                       ((kRange0 >> kNumBitModelTotalBits) << (kNumBitModelTotalBits - 1))
+#define kBadRepCode  \
+                       (kBound0 + (((kRange0 - kBound0) >> kNumBitModelTotalBits) << (kNumBitModelTotalBits - 1)))
 #if kBadRepCode != (0xC0000000 - 0x400)
   #error Stop_Compiling_Bad_LZMA_Check
 #endif
@@ -625,7 +646,8 @@ LzmaDec_DecodeReal2 (
     }
 
     LzmaDec_WriteRem (p, limit);
-  } while (p->dicPos < limit && p->buf < bufLimit && p->remainLen < kMatchSpecLenStart);
+  } while (p->dicPos < limit && p->buf < bufLimit && p->remainLen <
+           kMatchSpecLenStart);
 
   return 0;
 }
@@ -655,7 +677,11 @@ LzmaDec_TryDummy (
     const CLzmaProb  *prob;
     UInt32           bound;
     unsigned         ttt;
-    unsigned         posState = CALC_POS_STATE (p->processedPos, (1 << p->prop.pb) - 1);
+    unsigned         posState = CALC_POS_STATE (
+                                  p->processedPos,
+                                  (1 <<
+                                   p->prop.pb) - 1
+                                  );
 
     prob = probs + IsMatch + COMBINED_PS_STATE;
     IF_BIT_0_CHECK (prob) {
@@ -667,8 +693,10 @@ LzmaDec_TryDummy (
 
       if ((p->checkDicSize != 0) || (p->processedPos != 0)) {
         prob += ((UInt32)LZMA_LIT_SIZE *
-                 ((((p->processedPos) & ((1 << (p->prop.lp)) - 1)) << p->prop.lc) +
-                  (p->dic[(p->dicPos == 0 ? p->dicBufSize : p->dicPos) - 1] >> (8 - p->prop.lc))));
+                 ((((p->processedPos) & ((1 << (p->prop.lp)) - 1)) <<
+                   p->prop.lc) +
+                  (p->dic[(p->dicPos == 0 ? p->dicBufSize : p->dicPos) - 1] >>
+                   (8 - p->prop.lc))));
       }
 
       if (state < kNumLitStates) {
@@ -678,7 +706,8 @@ LzmaDec_TryDummy (
         } while (symbol < 0x100);
       } else {
         unsigned  matchByte = p->dic[p->dicPos - p->reps[0] +
-                                     (p->dicPos < p->reps[0] ? p->dicBufSize : 0)];
+                                     (p->dicPos < p->reps[0] ? p->dicBufSize :
+                                      0)];
         unsigned  offs   = 0x100;
         unsigned  symbol = 1;
         do {
@@ -857,7 +886,9 @@ LzmaDec_DecodeToDic (
   *status = LZMA_STATUS_NOT_SPECIFIED;
 
   if (p->remainLen > kMatchSpecLenStart) {
-    for ( ; inSize > 0 && p->tempBufSize < RC_INIT_SIZE; (*srcLen)++, inSize--) {
+    for ( ; inSize > 0 && p->tempBufSize < RC_INIT_SIZE; (*srcLen)++,
+          inSize--)
+    {
       p->tempBuf[p->tempBufSize++] = *src++;
     }
 
@@ -1035,7 +1066,14 @@ LzmaDec_DecodeToBuf (
       curFinishMode = finishMode;
     }
 
-    res        = LzmaDec_DecodeToDic (p, outSizeCur, src, &inSizeCur, curFinishMode, status);
+    res = LzmaDec_DecodeToDic (
+            p,
+            outSizeCur,
+            src,
+            &inSizeCur,
+            curFinishMode,
+            status
+            );
     src       += inSizeCur;
     inSize    -= inSizeCur;
     *srcLen   += inSizeCur;
@@ -1097,7 +1135,8 @@ LzmaProps_Decode (
   if (size < LZMA_PROPS_SIZE) {
     return SZ_ERROR_UNSUPPORTED;
   } else {
-    dicSize = data[1] | ((UInt32)data[2] << 8) | ((UInt32)data[3] << 16) | ((UInt32)data[4] << 24);
+    dicSize = data[1] | ((UInt32)data[2] << 8) | ((UInt32)data[3] << 16) |
+              ((UInt32)data[4] << 24);
   }
 
   if (dicSize < LZMA_DIC_MIN) {
@@ -1130,7 +1169,11 @@ LzmaDec_AllocateProbs2 (
 
   if (!p->probs || (numProbs != p->numProbs)) {
     LzmaDec_FreeProbs (p, alloc);
-    p->probs = (CLzmaProb *)ISzAlloc_Alloc (alloc, numProbs * sizeof (CLzmaProb));
+    p->probs = (CLzmaProb *)ISzAlloc_Alloc (
+                              alloc,
+                              numProbs *
+                              sizeof (CLzmaProb)
+                              );
     if (!p->probs) {
       return SZ_ERROR_MEM;
     }

@@ -59,7 +59,9 @@ GetDevicePathInstanceSize (
 {
   EFI_DEVICE_PATH_PROTOCOL  *Walker;
 
-  if ((DevicePath == NULL) || (InstanceSize == NULL) || (EntireDevicePathEnd == NULL)) {
+  if ((DevicePath == NULL) || (InstanceSize == NULL) || (EntireDevicePathEnd ==
+                                                         NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -85,7 +87,8 @@ GetDevicePathInstanceSize (
   //
   // Compute the size of the device path instance
   //
-  *InstanceSize = ((UINTN)Walker - (UINTN)(DevicePath)) + sizeof (EFI_DEVICE_PATH_PROTOCOL);
+  *InstanceSize = ((UINTN)Walker - (UINTN)(DevicePath)) +
+                  sizeof (EFI_DEVICE_PATH_PROTOCOL);
 
   return EFI_SUCCESS;
 }
@@ -189,8 +192,9 @@ NvmeBuildDevicePath (
     return EFI_INVALID_PARAMETER;
   }
 
-  *DevicePathLength = Private->DevicePathLength + sizeof (NVME_NAMESPACE_DEVICE_PATH);
-  *DevicePath       = AllocatePool (*DevicePathLength);
+  *DevicePathLength = Private->DevicePathLength +
+                      sizeof (NVME_NAMESPACE_DEVICE_PATH);
+  *DevicePath = AllocatePool (*DevicePathLength);
   if (*DevicePath == NULL) {
     *DevicePathLength = 0;
     return EFI_OUT_OF_RESOURCES;
@@ -210,13 +214,16 @@ NvmeBuildDevicePath (
   // Construct the Nvm Express device node
   //
   DevicePathWalker = (EFI_DEVICE_PATH_PROTOCOL *)((UINT8 *)DevicePathWalker +
-                                                  (Private->DevicePathLength - sizeof (EFI_DEVICE_PATH_PROTOCOL)));
+                                                  (Private->DevicePathLength -
+                                                   sizeof (
+                                                                                      EFI_DEVICE_PATH_PROTOCOL)));
   CopyMem (
     DevicePathWalker,
     &mNvmeDevicePathNodeTemplate,
     sizeof (mNvmeDevicePathNodeTemplate)
     );
-  NvmeDeviceNode                = (NVME_NAMESPACE_DEVICE_PATH *)DevicePathWalker;
+  NvmeDeviceNode =
+    (NVME_NAMESPACE_DEVICE_PATH *)DevicePathWalker;
   NvmeDeviceNode->NamespaceId   = NamespaceId;
   NvmeDeviceNode->NamespaceUuid = NamespaceUuid;
 
@@ -224,7 +231,8 @@ NvmeBuildDevicePath (
   // Construct the end device node
   //
   DevicePathWalker = (EFI_DEVICE_PATH_PROTOCOL *)((UINT8 *)DevicePathWalker +
-                                                  sizeof (NVME_NAMESPACE_DEVICE_PATH));
+                                                  sizeof (
+                                                         NVME_NAMESPACE_DEVICE_PATH));
   CopyMem (
     DevicePathWalker,
     &mNvmeEndDevicePathNodeTemplate,

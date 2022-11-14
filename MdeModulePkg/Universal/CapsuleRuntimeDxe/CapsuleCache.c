@@ -44,7 +44,8 @@ CapsuleCacheWriteBack (
           );
         Desc++;
       } else if (Desc->Union.ContinuationPointer > 0) {
-        Desc = (EFI_CAPSULE_BLOCK_DESCRIPTOR *)(UINTN)Desc->Union.ContinuationPointer;
+        Desc =
+          (EFI_CAPSULE_BLOCK_DESCRIPTOR *)(UINTN)Desc->Union.ContinuationPointer;
       }
     } while (Desc->Length > 0 || Desc->Union.ContinuationPointer > 0);
 

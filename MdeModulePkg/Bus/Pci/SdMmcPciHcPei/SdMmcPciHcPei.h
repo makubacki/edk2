@@ -52,7 +52,9 @@ typedef struct {
   SD_MMC_HC_PEI_BAR                   MmioBar[MAX_SD_MMC_HCS];
 } SD_MMC_HC_PEI_PRIVATE_DATA;
 
-#define SD_MMC_HC_PEI_PRIVATE_DATA_FROM_THIS(a)  CR (a, SD_MMC_HC_PEI_PRIVATE_DATA, SdMmcHostControllerPpi, SD_MMC_HC_PEI_SIGNATURE)
+#define SD_MMC_HC_PEI_PRIVATE_DATA_FROM_THIS( \
+                                            a)  \
+  CR (a, SD_MMC_HC_PEI_PRIVATE_DATA, SdMmcHostControllerPpi, SD_MMC_HC_PEI_SIGNATURE)
 
 /**
   Get the MMIO base address of SD/MMC host controller.

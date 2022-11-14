@@ -238,8 +238,10 @@ AhciAtaPassThruPassThru (
   // InTransferLength/OutTransferLength is too big to be transferred in a single
   // command, then no data is transferred and EFI_BAD_BUFFER_SIZE is returned.
   //
-  if (((Packet->InTransferLength != 0) && (Packet->InTransferLength > MaxSectorCount * BlockSize)) ||
-      ((Packet->OutTransferLength != 0) && (Packet->OutTransferLength > MaxSectorCount * BlockSize)))
+  if (((Packet->InTransferLength != 0) && (Packet->InTransferLength >
+                                           MaxSectorCount * BlockSize)) ||
+      ((Packet->OutTransferLength != 0) && (Packet->OutTransferLength >
+                                            MaxSectorCount * BlockSize)))
   {
     return EFI_BAD_BUFFER_SIZE;
   }
@@ -509,7 +511,10 @@ AhciAtaPassThruGetDevicePath (
   Private = GET_AHCI_PEIM_HC_PRIVATE_DATA_FROM_THIS_PASS_THRU (This);
 
   *DevicePathLength = Private->DevicePathLength;
-  *DevicePath       = AllocateCopyPool (Private->DevicePathLength, Private->DevicePath);
+  *DevicePath       = AllocateCopyPool (
+                        Private->DevicePathLength,
+                        Private->DevicePath
+                        );
   if (*DevicePath == NULL) {
     *DevicePathLength = 0;
     return EFI_OUT_OF_RESOURCES;

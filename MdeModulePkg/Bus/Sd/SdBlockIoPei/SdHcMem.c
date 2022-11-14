@@ -92,7 +92,11 @@ SdPeimFreeMemBlock (
 {
   ASSERT ((Pool != NULL) && (Block != NULL));
 
-  IoMmuFreeBuffer (EFI_SIZE_TO_PAGES (Block->BufLen), Block->BufHost, Block->Mapping);
+  IoMmuFreeBuffer (
+    EFI_SIZE_TO_PAGES (Block->BufLen),
+    Block->BufHost,
+    Block->Mapping
+    );
 }
 
 /**
@@ -160,7 +164,9 @@ SdPeimAllocMemFromBlock (
   for (Count = 0; Count < Units; Count++) {
     ASSERT (!SD_PEIM_MEM_BIT_IS_SET (Block->Bits[Byte], Bit));
 
-    Block->Bits[Byte] = (UINT8)(Block->Bits[Byte] | (UINT8)SD_PEIM_MEM_BIT (Bit));
+    Block->Bits[Byte] = (UINT8)(Block->Bits[Byte] | (UINT8)SD_PEIM_MEM_BIT (
+                                                             Bit
+                                                             ));
     SD_PEIM_NEXT_BIT (Byte, Bit);
   }
 
@@ -386,7 +392,9 @@ SdPeimFreeMem (
     // scan the memory block list for the memory block that
     // completely contains the memory to free.
     //
-    if ((Block->Buf <= ToFree) && ((ToFree + AllocSize) <= (Block->Buf + Block->BufLen))) {
+    if ((Block->Buf <= ToFree) && ((ToFree + AllocSize) <= (Block->Buf +
+                                                            Block->BufLen)))
+    {
       //
       // compute the start byte and bit in the bit array
       //

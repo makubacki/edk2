@@ -60,7 +60,9 @@ GetDevicePathInstanceSize (
 {
   EFI_DEVICE_PATH_PROTOCOL  *Walker;
 
-  if ((DevicePath == NULL) || (InstanceSize == NULL) || (EntireDevicePathEnd == NULL)) {
+  if ((DevicePath == NULL) || (InstanceSize == NULL) || (EntireDevicePathEnd ==
+                                                         NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -86,7 +88,8 @@ GetDevicePathInstanceSize (
   //
   // Compute the size of the device path instance
   //
-  *InstanceSize = ((UINTN)Walker - (UINTN)(DevicePath)) + sizeof (EFI_DEVICE_PATH_PROTOCOL);
+  *InstanceSize = ((UINTN)Walker - (UINTN)(DevicePath)) +
+                  sizeof (EFI_DEVICE_PATH_PROTOCOL);
 
   return EFI_SUCCESS;
 }
@@ -210,13 +213,16 @@ AhciBuildDevicePath (
   // Construct the SATA device node
   //
   DevicePathWalker = (EFI_DEVICE_PATH_PROTOCOL *)((UINT8 *)DevicePathWalker +
-                                                  (Private->DevicePathLength - sizeof (EFI_DEVICE_PATH_PROTOCOL)));
+                                                  (Private->DevicePathLength -
+                                                   sizeof (
+                                                                                      EFI_DEVICE_PATH_PROTOCOL)));
   CopyMem (
     DevicePathWalker,
     &mAhciSataDevicePathNodeTemplate,
     sizeof (mAhciSataDevicePathNodeTemplate)
     );
-  SataDeviceNode                           = (SATA_DEVICE_PATH *)DevicePathWalker;
+  SataDeviceNode =
+    (SATA_DEVICE_PATH *)DevicePathWalker;
   SataDeviceNode->HBAPortNumber            = Port;
   SataDeviceNode->PortMultiplierPortNumber = PortMultiplierPort;
 

@@ -33,7 +33,9 @@ UINTN  gEventPending = 0;
 ///
 /// gEventSignalQueue - A list of events to signal based on EventGroup type
 ///
-LIST_ENTRY  gEventSignalQueue = INITIALIZE_LIST_HEAD_VARIABLE (gEventSignalQueue);
+LIST_ENTRY  gEventSignalQueue = INITIALIZE_LIST_HEAD_VARIABLE (
+                                  gEventSignalQueue
+                                  );
 
 ///
 /// Enumerate the valid types
@@ -284,7 +286,14 @@ CoreCreateEvent (
   OUT EFI_EVENT        *Event
   )
 {
-  return CoreCreateEventEx (Type, NotifyTpl, NotifyFunction, NotifyContext, NULL, Event);
+  return CoreCreateEventEx (
+           Type,
+           NotifyTpl,
+           NotifyFunction,
+           NotifyContext,
+           NULL,
+           Event
+           );
 }
 
 /**
@@ -330,7 +339,14 @@ CoreCreateEventEx (
     }
   }
 
-  return CoreCreateEventInternal (Type, NotifyTpl, NotifyFunction, NotifyContext, EventGroup, Event);
+  return CoreCreateEventInternal (
+           Type,
+           NotifyTpl,
+           NotifyFunction,
+           NotifyContext,
+           EventGroup,
+           Event
+           );
 }
 
 /**
@@ -395,7 +411,9 @@ CoreCreateEventInternal (
     // For event group, type EVT_SIGNAL_EXIT_BOOT_SERVICES and EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE
     // are not valid
     //
-    if ((Type == EVT_SIGNAL_EXIT_BOOT_SERVICES) || (Type == EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE)) {
+    if ((Type == EVT_SIGNAL_EXIT_BOOT_SERVICES) || (Type ==
+                                                    EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE))
+    {
       return EFI_INVALID_PARAMETER;
     }
 

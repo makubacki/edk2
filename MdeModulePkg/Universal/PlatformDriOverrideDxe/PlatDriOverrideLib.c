@@ -87,7 +87,12 @@ PopDevPathStack (
   // Check if the stack is empty
   //
   if (ItemListIndex != &mDevicePathStack) {
-    DevicePathStackItem = CR (ItemListIndex, DEVICE_PATH_STACK_ITEM, Link, DEVICE_PATH_STACK_ITEM_SIGNATURE);
+    DevicePathStackItem = CR (
+                            ItemListIndex,
+                            DEVICE_PATH_STACK_ITEM,
+                            Link,
+                            DEVICE_PATH_STACK_ITEM_SIGNATURE
+                            );
     if (DevicePath != NULL) {
       *DevicePath = DuplicateDevicePath (DevicePathStackItem->DevicePath);
     }
@@ -122,10 +127,20 @@ CheckExistInStack (
 
   ItemListIndex = mDevicePathStack.BackLink;
   while (ItemListIndex != &mDevicePathStack) {
-    DevicePathStackItem = CR (ItemListIndex, DEVICE_PATH_STACK_ITEM, Link, DEVICE_PATH_STACK_ITEM_SIGNATURE);
-    DevicePathSize      = GetDevicePathSize (DevicePath);
+    DevicePathStackItem = CR (
+                            ItemListIndex,
+                            DEVICE_PATH_STACK_ITEM,
+                            Link,
+                            DEVICE_PATH_STACK_ITEM_SIGNATURE
+                            );
+    DevicePathSize = GetDevicePathSize (DevicePath);
     if (DevicePathSize == GetDevicePathSize (DevicePathStackItem->DevicePath)) {
-      if (CompareMem (DevicePath, DevicePathStackItem->DevicePath, DevicePathSize) == 0) {
+      if (CompareMem (
+            DevicePath,
+            DevicePathStackItem->DevicePath,
+            DevicePathSize
+            ) == 0)
+      {
         return TRUE;
       }
     }
@@ -204,7 +219,9 @@ UpdateFvFileDevicePath (
     TempDevicePath = NextDevicePathNode (TempDevicePath);
   }
 
-  GuidPoint = EfiGetNameGuidFromFwVolDevicePathNode ((MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)LastDeviceNode);
+  GuidPoint = EfiGetNameGuidFromFwVolDevicePathNode (
+                (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)LastDeviceNode
+                );
   if (GuidPoint == NULL) {
     //
     // If this option does not point to a FV file, just return EFI_UNSUPPORTED.
@@ -361,8 +378,11 @@ UpdateFvFileDevicePath (
     //
     NewDevicePath = DevicePathFromHandle (FoundFvHandle);
     EfiInitializeFwVolDevicepathNode (&FvFileNode, FileGuid);
-    NewDevicePath = AppendDevicePathNode (NewDevicePath, (EFI_DEVICE_PATH_PROTOCOL *)&FvFileNode);
-    *DevicePath   = NewDevicePath;
+    NewDevicePath = AppendDevicePathNode (
+                      NewDevicePath,
+                      (EFI_DEVICE_PATH_PROTOCOL *)&FvFileNode
+                      );
+    *DevicePath = NewDevicePath;
     return EFI_SUCCESS;
   }
 
@@ -498,7 +518,11 @@ ConnectDevicePath (
       // RemainingDevicePath.
       //
       RemainingDevicePath = Instance;
-      Status              = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &Handle);
+      Status              = gBS->LocateDevicePath (
+                                   &gEfiDevicePathProtocolGuid,
+                                   &RemainingDevicePath,
+                                   &Handle
+                                   );
 
       if (!EFI_ERROR (Status)) {
         if (Handle == PreviousHandle) {
@@ -575,7 +599,12 @@ FreeMappingDatabase (
 
   OverrideItemListIndex = GetFirstNode (MappingDataBase);
   while (!IsNull (MappingDataBase, OverrideItemListIndex)) {
-    OverrideItem = CR (OverrideItemListIndex, PLATFORM_OVERRIDE_ITEM, Link, PLATFORM_OVERRIDE_ITEM_SIGNATURE);
+    OverrideItem = CR (
+                     OverrideItemListIndex,
+                     PLATFORM_OVERRIDE_ITEM,
+                     Link,
+                     PLATFORM_OVERRIDE_ITEM_SIGNATURE
+                     );
     //
     // Free PLATFORM_OVERRIDE_ITEM.ControllerDevicePath[]
     //
@@ -588,7 +617,12 @@ FreeMappingDatabase (
       //
       // Free DRIVER_IMAGE_INFO.DriverImagePath[]
       //
-      DriverImageInfo = CR (ImageInfoListIndex, DRIVER_IMAGE_INFO, Link, DRIVER_IMAGE_INFO_SIGNATURE);
+      DriverImageInfo = CR (
+                          ImageInfoListIndex,
+                          DRIVER_IMAGE_INFO,
+                          Link,
+                          DRIVER_IMAGE_INFO_SIGNATURE
+                          );
       if (DriverImageInfo->DriverImagePath != NULL) {
         FreePool (DriverImageInfo->DriverImagePath);
       }
@@ -596,7 +630,10 @@ FreeMappingDatabase (
       //
       // Free DRIVER_IMAGE_INFO itself
       //
-      ImageInfoListIndex = GetNextNode (&OverrideItem->DriverInfoList, ImageInfoListIndex);
+      ImageInfoListIndex = GetNextNode (
+                             &OverrideItem->DriverInfoList,
+                             ImageInfoListIndex
+                             );
       RemoveEntryList (&DriverImageInfo->Link);
       FreePool (DriverImageInfo);
     }
@@ -604,7 +641,10 @@ FreeMappingDatabase (
     //
     // Free PLATFORM_OVERRIDE_ITEM itself
     //
-    OverrideItemListIndex = GetNextNode (MappingDataBase, OverrideItemListIndex);
+    OverrideItemListIndex = GetNextNode (
+                              MappingDataBase,
+                              OverrideItemListIndex
+                              );
     RemoveEntryList (&OverrideItem->Link);
     FreePool (OverrideItem);
   }
@@ -683,7 +723,11 @@ InitOverridesMapping (
   //
   // Check the environment variable(s) that contain the override mappings .
   //
-  VariableBuffer = GetVariableAndSize (L"PlatDriOver", &gEfiCallerIdGuid, &BufferSize);
+  VariableBuffer = GetVariableAndSize (
+                     L"PlatDriOver",
+                     &gEfiCallerIdGuid,
+                     &BufferSize
+                     );
   ASSERT ((UINTN)VariableBuffer % sizeof (UINTN) == 0);
   if (VariableBuffer == NULL) {
     return EFI_NOT_FOUND;
@@ -697,7 +741,9 @@ InitOverridesMapping (
   NotEnd      = 0;
   do {
     VariableIndex = VariableBuffer;
-    if (VariableIndex + sizeof (UINT32) > (UINT8 *)VariableBuffer + BufferSize) {
+    if (VariableIndex + sizeof (UINT32) > (UINT8 *)VariableBuffer +
+        BufferSize)
+    {
       Corrupted = TRUE;
     } else {
       //
@@ -715,7 +761,9 @@ InitOverridesMapping (
       //
       // Check signature of this entry
       //
-      if (VariableIndex + sizeof (UINT32) > (UINT8 *)VariableBuffer + BufferSize) {
+      if (VariableIndex + sizeof (UINT32) > (UINT8 *)VariableBuffer +
+          BufferSize)
+      {
         Corrupted = TRUE;
         break;
       }
@@ -737,7 +785,9 @@ InitOverridesMapping (
       //
       // Get DriverNum
       //
-      if (VariableIndex + sizeof (UINT32) >= (UINT8 *)VariableBuffer + BufferSize) {
+      if (VariableIndex + sizeof (UINT32) >= (UINT8 *)VariableBuffer +
+          BufferSize)
+      {
         Corrupted = TRUE;
         break;
       }
@@ -748,17 +798,26 @@ InitOverridesMapping (
       //
       // Get ControllerDevicePath[]
       //
-      ControllerDevicePath               = (EFI_DEVICE_PATH_PROTOCOL *)VariableIndex;
-      OverrideItem->ControllerDevicePath = DuplicateDevicePath (ControllerDevicePath);
-      VariableIndex                      = VariableIndex + GetDevicePathSize (ControllerDevicePath);
+      ControllerDevicePath =
+        (EFI_DEVICE_PATH_PROTOCOL *)VariableIndex;
+      OverrideItem->ControllerDevicePath = DuplicateDevicePath (
+                                             ControllerDevicePath
+                                             );
+      VariableIndex = VariableIndex + GetDevicePathSize (
+                                        ControllerDevicePath
+                                        );
       //
       // Align the VariableIndex since the controller device path may not be aligned, refer to the SaveOverridesMapping()
       //
-      VariableIndex += ((sizeof (UINT32) - ((UINTN)(VariableIndex))) & (sizeof (UINT32) - 1));
+      VariableIndex += ((sizeof (UINT32) - ((UINTN)(VariableIndex))) &
+                        (sizeof (UINT32) - 1));
       //
       // Check buffer overflow.
       //
-      if ((OverrideItem->ControllerDevicePath == NULL) || (VariableIndex < (UINT8 *)ControllerDevicePath) ||
+      if (  (OverrideItem->ControllerDevicePath == NULL) || (VariableIndex <
+                                                           (UINT8 *)
+                                                           ControllerDevicePath)
+         ||
           (VariableIndex > (UINT8 *)VariableBuffer + BufferSize))
       {
         Corrupted = TRUE;
@@ -776,20 +835,28 @@ InitOverridesMapping (
         ASSERT (DriverImageInfo != NULL);
         DriverImageInfo->Signature = DRIVER_IMAGE_INFO_SIGNATURE;
 
-        DriverDevicePath                 = (EFI_DEVICE_PATH_PROTOCOL *)VariableIndex;
-        DriverImageInfo->DriverImagePath = DuplicateDevicePath (DriverDevicePath);
-        VariableIndex                    = VariableIndex + GetDevicePathSize (DriverDevicePath);
+        DriverDevicePath =
+          (EFI_DEVICE_PATH_PROTOCOL *)VariableIndex;
+        DriverImageInfo->DriverImagePath = DuplicateDevicePath (
+                                             DriverDevicePath
+                                             );
+        VariableIndex = VariableIndex + GetDevicePathSize (
+                                          DriverDevicePath
+                                          );
         //
         // Align the VariableIndex since the driver image device path may not be aligned, refer to the SaveOverridesMapping()
         //
-        VariableIndex += ((sizeof (UINT32) - ((UINTN)(VariableIndex))) & (sizeof (UINT32) - 1));
+        VariableIndex += ((sizeof (UINT32) - ((UINTN)(VariableIndex))) &
+                          (sizeof (UINT32) - 1));
 
         InsertTailList (&OverrideItem->DriverInfoList, &DriverImageInfo->Link);
 
         //
         // Check buffer overflow
         //
-        if ((DriverImageInfo->DriverImagePath == NULL) || (VariableIndex < (UINT8 *)DriverDevicePath) ||
+        if ((DriverImageInfo->DriverImagePath == NULL) || (VariableIndex <
+                                                           (UINT8 *)
+                                                           DriverDevicePath) ||
             (VariableIndex > (UINT8 *)VariableBuffer + BufferSize))
         {
           Corrupted = TRUE;
@@ -814,8 +881,17 @@ InitOverridesMapping (
     // NotEnd indicates whether current variable is the end variable.
     //
     if (NotEnd != 0) {
-      UnicodeSPrint (OverrideVariableName, sizeof (OverrideVariableName), L"PlatDriOver%d", VariableNum++);
-      VariableBuffer = GetVariableAndSize (OverrideVariableName, &gEfiCallerIdGuid, &BufferSize);
+      UnicodeSPrint (
+        OverrideVariableName,
+        sizeof (OverrideVariableName),
+        L"PlatDriOver%d",
+        VariableNum++
+        );
+      VariableBuffer = GetVariableAndSize (
+                         OverrideVariableName,
+                         &gEfiCallerIdGuid,
+                         &BufferSize
+                         );
       ASSERT ((UINTN)VariableBuffer % sizeof (UINTN) == 0);
       if (VariableBuffer == NULL) {
         FreeMappingDatabase (MappingDataBase);
@@ -847,8 +923,13 @@ GetOneItemNeededSize (
   DRIVER_IMAGE_INFO       *DriverImageInfo;
   UINTN                   DevicePathSize;
 
-  NeededSize     = 0;
-  OverrideItem   = CR (OverrideItemListIndex, PLATFORM_OVERRIDE_ITEM, Link, PLATFORM_OVERRIDE_ITEM_SIGNATURE);
+  NeededSize   = 0;
+  OverrideItem = CR (
+                   OverrideItemListIndex,
+                   PLATFORM_OVERRIDE_ITEM,
+                   Link,
+                   PLATFORM_OVERRIDE_ITEM_SIGNATURE
+                   );
   NeededSize    += sizeof (UINT32); // UINT32  SIGNATURE;
   NeededSize    += sizeof (UINT32); // UINT32  DriverNum;
   DevicePathSize = GetDevicePathSize (OverrideItem->ControllerDevicePath);
@@ -862,14 +943,23 @@ GetOneItemNeededSize (
   //
   ImageInfoListIndex = GetFirstNode (&OverrideItem->DriverInfoList);
   while (!IsNull (&OverrideItem->DriverInfoList, ImageInfoListIndex)) {
-    DriverImageInfo = CR (ImageInfoListIndex, DRIVER_IMAGE_INFO, Link, DRIVER_IMAGE_INFO_SIGNATURE);
-    DevicePathSize  = GetDevicePathSize (DriverImageInfo->DriverImagePath);
-    NeededSize     += DevicePathSize; // DriverDevicePath
+    DriverImageInfo = CR (
+                        ImageInfoListIndex,
+                        DRIVER_IMAGE_INFO,
+                        Link,
+                        DRIVER_IMAGE_INFO_SIGNATURE
+                        );
+    DevicePathSize = GetDevicePathSize (DriverImageInfo->DriverImagePath);
+    NeededSize    += DevicePathSize;  // DriverDevicePath
     //
     // Align the driver image device path
     //
-    NeededSize        += ((sizeof (UINT32) - DevicePathSize) & (sizeof (UINT32) - 1));
-    ImageInfoListIndex = GetNextNode (&OverrideItem->DriverInfoList, ImageInfoListIndex);
+    NeededSize        += ((sizeof (UINT32) - DevicePathSize) &
+                          (sizeof (UINT32) - 1));
+    ImageInfoListIndex = GetNextNode (
+                           &OverrideItem->DriverInfoList,
+                           ImageInfoListIndex
+                           );
   }
 
   return NeededSize;
@@ -899,7 +989,11 @@ DeleteOverridesVariables (
   // Get environment variable(s) number
   //
   VariableNum    = 0;
-  VariableBuffer = GetVariableAndSize (L"PlatDriOver", &gEfiCallerIdGuid, &BufferSize);
+  VariableBuffer = GetVariableAndSize (
+                     L"PlatDriOver",
+                     &gEfiCallerIdGuid,
+                     &BufferSize
+                     );
   VariableNum++;
   if (VariableBuffer == NULL) {
     return EFI_NOT_FOUND;
@@ -910,8 +1004,17 @@ DeleteOverridesVariables (
   //
   while ((VariableBuffer != NULL) && ((*(UINT32 *)VariableBuffer) != 0)) {
     FreePool (VariableBuffer);
-    UnicodeSPrint (OverrideVariableName, sizeof (OverrideVariableName), L"PlatDriOver%d", VariableNum);
-    VariableBuffer = GetVariableAndSize (OverrideVariableName, &gEfiCallerIdGuid, &BufferSize);
+    UnicodeSPrint (
+      OverrideVariableName,
+      sizeof (OverrideVariableName),
+      L"PlatDriOver%d",
+      VariableNum
+      );
+    VariableBuffer = GetVariableAndSize (
+                       OverrideVariableName,
+                       &gEfiCallerIdGuid,
+                       &BufferSize
+                       );
     VariableNum++;
   }
 
@@ -927,7 +1030,12 @@ DeleteOverridesVariables (
                   );
   ASSERT (!EFI_ERROR (Status));
   for (Index = 1; Index < VariableNum; Index++) {
-    UnicodeSPrint (OverrideVariableName, sizeof (OverrideVariableName), L"PlatDriOver%d", Index);
+    UnicodeSPrint (
+      OverrideVariableName,
+      sizeof (OverrideVariableName),
+      L"PlatDriOver%d",
+      Index
+      );
     Status = gRT->SetVariable (
                     OverrideVariableName,
                     &gEfiCallerIdGuid,
@@ -1055,41 +1163,79 @@ SaveOverridesMapping (
       *(UINT32 *)VariableIndex = PLATFORM_OVERRIDE_ITEM_SIGNATURE;
       VariableIndex           += sizeof (UINT32); // pass SIGNATURE
 
-      OverrideItem             = CR (OverrideItemListIndex, PLATFORM_OVERRIDE_ITEM, Link, PLATFORM_OVERRIDE_ITEM_SIGNATURE);
+      OverrideItem = CR (
+                       OverrideItemListIndex,
+                       PLATFORM_OVERRIDE_ITEM,
+                       Link,
+                       PLATFORM_OVERRIDE_ITEM_SIGNATURE
+                       );
       *(UINT32 *)VariableIndex = OverrideItem->DriverInfoNum;
       VariableIndex           += sizeof (UINT32); // pass DriverNum
 
-      CopyMem (VariableIndex, OverrideItem->ControllerDevicePath, GetDevicePathSize (OverrideItem->ControllerDevicePath));
+      CopyMem (
+        VariableIndex,
+        OverrideItem->ControllerDevicePath,
+        GetDevicePathSize (OverrideItem->ControllerDevicePath)
+        );
       VariableIndex += GetDevicePathSize (OverrideItem->ControllerDevicePath); // pass ControllerDevicePath
 
       //
       // Align the VariableIndex since the controller device path may not be aligned
       //
-      VariableIndex += ((sizeof (UINT32) - ((UINTN)(VariableIndex))) & (sizeof (UINT32) - 1));
+      VariableIndex += ((sizeof (UINT32) - ((UINTN)(VariableIndex))) &
+                        (sizeof (UINT32) - 1));
       //
       // Save the Driver Info List of this PLATFORM_OVERRIDE_ITEM
       //
       ImageInfoListIndex = GetFirstNode (&OverrideItem->DriverInfoList);
       while (!IsNull (&OverrideItem->DriverInfoList, ImageInfoListIndex)) {
-        DriverImageInfo = CR (ImageInfoListIndex, DRIVER_IMAGE_INFO, Link, DRIVER_IMAGE_INFO_SIGNATURE);
-        CopyMem (VariableIndex, DriverImageInfo->DriverImagePath, GetDevicePathSize (DriverImageInfo->DriverImagePath));
+        DriverImageInfo = CR (
+                            ImageInfoListIndex,
+                            DRIVER_IMAGE_INFO,
+                            Link,
+                            DRIVER_IMAGE_INFO_SIGNATURE
+                            );
+        CopyMem (
+          VariableIndex,
+          DriverImageInfo->DriverImagePath,
+          GetDevicePathSize (DriverImageInfo->DriverImagePath)
+          );
         VariableIndex += GetDevicePathSize (DriverImageInfo->DriverImagePath); // pass DriverImageDevicePath
         //
         // Align the VariableIndex since the driver image device path may not be aligned
         //
-        VariableIndex     += ((sizeof (UINT32) - ((UINTN)(VariableIndex))) & (sizeof (UINT32) - 1));
-        ImageInfoListIndex = GetNextNode (&OverrideItem->DriverInfoList, ImageInfoListIndex);
+        VariableIndex     += ((sizeof (UINT32) - ((UINTN)(VariableIndex))) &
+                              (sizeof (UINT32) - 1));
+        ImageInfoListIndex = GetNextNode (
+                               &OverrideItem->DriverInfoList,
+                               ImageInfoListIndex
+                               );
       }
 
-      OverrideItemListIndex =  GetNextNode (MappingDataBase, OverrideItemListIndex);
+      OverrideItemListIndex =  GetNextNode (
+                                 MappingDataBase,
+                                 OverrideItemListIndex
+                                 );
     }
 
-    ASSERT (((UINTN)VariableIndex - (UINTN)VariableBuffer) == VariableNeededSize);
+    ASSERT (
+      ((UINTN)VariableIndex - (UINTN)VariableBuffer) ==
+      VariableNeededSize
+      );
 
     if (NumIndex == 0) {
-      UnicodeSPrint (OverrideVariableName, sizeof (OverrideVariableName), L"PlatDriOver");
+      UnicodeSPrint (
+        OverrideVariableName,
+        sizeof (OverrideVariableName),
+        L"PlatDriOver"
+        );
     } else {
-      UnicodeSPrint (OverrideVariableName, sizeof (OverrideVariableName), L"PlatDriOver%d", NumIndex);
+      UnicodeSPrint (
+        OverrideVariableName,
+        sizeof (OverrideVariableName),
+        L"PlatDriOver%d",
+        NumIndex
+        );
     }
 
     Status = gRT->SetVariable (
@@ -1292,8 +1438,16 @@ GetDriverFromMapping (
 
   OverrideItemListIndex = GetFirstNode (MappingDataBase);
   while (!IsNull (MappingDataBase, OverrideItemListIndex)) {
-    OverrideItem = CR (OverrideItemListIndex, PLATFORM_OVERRIDE_ITEM, Link, PLATFORM_OVERRIDE_ITEM_SIGNATURE);
-    if (DevicePathSize == GetDevicePathSize (OverrideItem->ControllerDevicePath)) {
+    OverrideItem = CR (
+                     OverrideItemListIndex,
+                     PLATFORM_OVERRIDE_ITEM,
+                     Link,
+                     PLATFORM_OVERRIDE_ITEM_SIGNATURE
+                     );
+    if (DevicePathSize == GetDevicePathSize (
+                            OverrideItem->ControllerDevicePath
+                            ))
+    {
       if (CompareMem (
             ControllerDevicePath,
             OverrideItem->ControllerDevicePath,
@@ -1306,7 +1460,10 @@ GetDriverFromMapping (
       }
     }
 
-    OverrideItemListIndex = GetNextNode (MappingDataBase, OverrideItemListIndex);
+    OverrideItemListIndex = GetNextNode (
+                              MappingDataBase,
+                              OverrideItemListIndex
+                              );
   }
 
   if (!ControllerFound) {
@@ -1343,7 +1500,12 @@ GetDriverFromMapping (
   //
   ImageInfoListIndex = GetFirstNode (&OverrideItem->DriverInfoList);
   while (!IsNull (&OverrideItem->DriverInfoList, ImageInfoListIndex)) {
-    DriverImageInfo = CR (ImageInfoListIndex, DRIVER_IMAGE_INFO, Link, DRIVER_IMAGE_INFO_SIGNATURE);
+    DriverImageInfo = CR (
+                        ImageInfoListIndex,
+                        DRIVER_IMAGE_INFO,
+                        Link,
+                        DRIVER_IMAGE_INFO_SIGNATURE
+                        );
     if (DriverImageInfo->ImageHandle == NULL) {
       //
       // Skip if the image is unloadable or unstartable
@@ -1356,7 +1518,11 @@ GetDriverFromMapping (
         // FV address maybe changes for memory layout adjust from time to time,
         // use this function could promise the FV file device path is right.
         //
-        Status = UpdateFvFileDevicePath (&TempDriverImagePath, NULL, CallerImageHandle);
+        Status = UpdateFvFileDevicePath (
+                   &TempDriverImagePath,
+                   NULL,
+                   CallerImageHandle
+                   );
         if (!EFI_ERROR (Status)) {
           FreePool (DriverImageInfo->DriverImagePath);
           DriverImageInfo->DriverImagePath = TempDriverImagePath;
@@ -1438,7 +1604,11 @@ GetDriverFromMapping (
           // and try to use bus override protocol to get its first option rom image driver
           //
           TempDriverImagePath = DriverImageInfo->DriverImagePath;
-          gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &TempDriverImagePath, &Handle);
+          gBS->LocateDevicePath (
+                 &gEfiDevicePathProtocolGuid,
+                 &TempDriverImagePath,
+                 &Handle
+                 );
           //
           // Get the Bus Specific Driver Override Protocol instance on the Controller Handle
           //
@@ -1473,10 +1643,17 @@ GetDriverFromMapping (
           // Only file path media or FwVol Device Path Node remain if all device is connected
           //
           TempDriverImagePath = DriverImageInfo->DriverImagePath;
-          gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &TempDriverImagePath, &Handle);
+          gBS->LocateDevicePath (
+                 &gEfiDevicePathProtocolGuid,
+                 &TempDriverImagePath,
+                 &Handle
+                 );
           if (((DevicePathType (TempDriverImagePath) == MEDIA_DEVICE_PATH) &&
-               (DevicePathSubType (TempDriverImagePath) == MEDIA_FILEPATH_DP)) ||
-              (EfiGetNameGuidFromFwVolDevicePathNode ((MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)TempDriverImagePath) != NULL)
+               (DevicePathSubType (TempDriverImagePath) ==
+                MEDIA_FILEPATH_DP)) ||
+              (EfiGetNameGuidFromFwVolDevicePathNode (
+                 (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)TempDriverImagePath
+                 ) != NULL)
               )
           {
             //
@@ -1533,7 +1710,10 @@ GetDriverFromMapping (
       }
     }
 
-    ImageInfoListIndex = GetNextNode (&OverrideItem->DriverInfoList, ImageInfoListIndex);
+    ImageInfoListIndex = GetNextNode (
+                           &OverrideItem->DriverInfoList,
+                           ImageInfoListIndex
+                           );
   }
 
   //
@@ -1547,7 +1727,12 @@ GetDriverFromMapping (
   FoundLastReturned  = FALSE;
   ImageInfoListIndex = GetFirstNode (&OverrideItem->DriverInfoList);
   while (!IsNull (&OverrideItem->DriverInfoList, ImageInfoListIndex)) {
-    DriverImageInfo = CR (ImageInfoListIndex, DRIVER_IMAGE_INFO, Link, DRIVER_IMAGE_INFO_SIGNATURE);
+    DriverImageInfo = CR (
+                        ImageInfoListIndex,
+                        DRIVER_IMAGE_INFO,
+                        Link,
+                        DRIVER_IMAGE_INFO_SIGNATURE
+                        );
     if (DriverImageInfo->ImageHandle != NULL) {
       if ((*DriverImageHandle == NULL) || FoundLastReturned) {
         //
@@ -1566,7 +1751,10 @@ GetDriverFromMapping (
       }
     }
 
-    ImageInfoListIndex = GetNextNode (&OverrideItem->DriverInfoList, ImageInfoListIndex);
+    ImageInfoListIndex = GetNextNode (
+                           &OverrideItem->DriverInfoList,
+                           ImageInfoListIndex
+                           );
   }
 
   return EFI_NOT_FOUND;
@@ -1622,9 +1810,17 @@ CheckMapping (
   OverrideItem          = NULL;
   OverrideItemListIndex = GetFirstNode (MappingDataBase);
   while (!IsNull (MappingDataBase, OverrideItemListIndex)) {
-    OverrideItem   = CR (OverrideItemListIndex, PLATFORM_OVERRIDE_ITEM, Link, PLATFORM_OVERRIDE_ITEM_SIGNATURE);
+    OverrideItem = CR (
+                     OverrideItemListIndex,
+                     PLATFORM_OVERRIDE_ITEM,
+                     Link,
+                     PLATFORM_OVERRIDE_ITEM_SIGNATURE
+                     );
     DevicePathSize = GetDevicePathSize (ControllerDevicePath);
-    if (DevicePathSize == GetDevicePathSize (OverrideItem->ControllerDevicePath)) {
+    if (DevicePathSize == GetDevicePathSize (
+                            OverrideItem->ControllerDevicePath
+                            ))
+    {
       if (CompareMem (
             ControllerDevicePath,
             OverrideItem->ControllerDevicePath,
@@ -1637,7 +1833,10 @@ CheckMapping (
       }
     }
 
-    OverrideItemListIndex = GetNextNode (MappingDataBase, OverrideItemListIndex);
+    OverrideItemListIndex = GetNextNode (
+                              MappingDataBase,
+                              OverrideItemListIndex
+                              );
   }
 
   if (!Found) {
@@ -1667,10 +1866,18 @@ CheckMapping (
   Found              = FALSE;
   ImageInfoListIndex = GetFirstNode (&OverrideItem->DriverInfoList);
   while (!IsNull (&OverrideItem->DriverInfoList, ImageInfoListIndex)) {
-    DriverImageInfo = CR (ImageInfoListIndex, DRIVER_IMAGE_INFO, Link, DRIVER_IMAGE_INFO_SIGNATURE);
+    DriverImageInfo = CR (
+                        ImageInfoListIndex,
+                        DRIVER_IMAGE_INFO,
+                        Link,
+                        DRIVER_IMAGE_INFO_SIGNATURE
+                        );
     ImageNO++;
     DevicePathSize = GetDevicePathSize (DriverImageDevicePath);
-    if (DevicePathSize == GetDevicePathSize (DriverImageInfo->DriverImagePath)) {
+    if (DevicePathSize == GetDevicePathSize (
+                            DriverImageInfo->DriverImagePath
+                            ))
+    {
       if (CompareMem (
             DriverImageDevicePath,
             DriverImageInfo->DriverImagePath,
@@ -1683,7 +1890,10 @@ CheckMapping (
       }
     }
 
-    ImageInfoListIndex = GetNextNode (&OverrideItem->DriverInfoList, ImageInfoListIndex);
+    ImageInfoListIndex = GetNextNode (
+                           &OverrideItem->DriverInfoList,
+                           ImageInfoListIndex
+                           );
   }
 
   if (!Found) {
@@ -1771,9 +1981,17 @@ InsertDriverImage (
   OverrideItem          = NULL;
   OverrideItemListIndex = GetFirstNode (MappingDataBase);
   while (!IsNull (MappingDataBase, OverrideItemListIndex)) {
-    OverrideItem   = CR (OverrideItemListIndex, PLATFORM_OVERRIDE_ITEM, Link, PLATFORM_OVERRIDE_ITEM_SIGNATURE);
+    OverrideItem = CR (
+                     OverrideItemListIndex,
+                     PLATFORM_OVERRIDE_ITEM,
+                     Link,
+                     PLATFORM_OVERRIDE_ITEM_SIGNATURE
+                     );
     DevicePathSize = GetDevicePathSize (ControllerDevicePath);
-    if (DevicePathSize == GetDevicePathSize (OverrideItem->ControllerDevicePath)) {
+    if (DevicePathSize == GetDevicePathSize (
+                            OverrideItem->ControllerDevicePath
+                            ))
+    {
       if (CompareMem (
             ControllerDevicePath,
             OverrideItem->ControllerDevicePath,
@@ -1786,7 +2004,10 @@ InsertDriverImage (
       }
     }
 
-    OverrideItemListIndex = GetNextNode (MappingDataBase, OverrideItemListIndex);
+    OverrideItemListIndex = GetNextNode (
+                              MappingDataBase,
+                              OverrideItemListIndex
+                              );
   }
 
   //
@@ -1797,7 +2018,9 @@ InsertDriverImage (
     OverrideItem = AllocateZeroPool (sizeof (PLATFORM_OVERRIDE_ITEM));
     ASSERT (OverrideItem != NULL);
     OverrideItem->Signature            = PLATFORM_OVERRIDE_ITEM_SIGNATURE;
-    OverrideItem->ControllerDevicePath = DuplicateDevicePath (ControllerDevicePath);
+    OverrideItem->ControllerDevicePath = DuplicateDevicePath (
+                                           ControllerDevicePath
+                                           );
     InitializeListHead (&OverrideItem->DriverInfoList);
     InsertTailList (MappingDataBase, &OverrideItem->Link);
   }
@@ -1808,7 +2031,9 @@ InsertDriverImage (
   DriverImageInfo = AllocateZeroPool (sizeof (DRIVER_IMAGE_INFO));
   ASSERT (DriverImageInfo != NULL);
   DriverImageInfo->Signature       = DRIVER_IMAGE_INFO_SIGNATURE;
-  DriverImageInfo->DriverImagePath = DuplicateDevicePath (DriverImageDevicePath);
+  DriverImageInfo->DriverImagePath = DuplicateDevicePath (
+                                       DriverImageDevicePath
+                                       );
   //
   // Find the driver image wanted order location
   //
@@ -1827,7 +2052,10 @@ InsertDriverImage (
     }
 
     ImageNO++;
-    ImageInfoListIndex = GetNextNode (&OverrideItem->DriverInfoList, ImageInfoListIndex);
+    ImageInfoListIndex = GetNextNode (
+                           &OverrideItem->DriverInfoList,
+                           ImageInfoListIndex
+                           );
   }
 
   if (!Found) {
@@ -1901,9 +2129,17 @@ DeleteDriverImage (
   OverrideItem          = NULL;
   OverrideItemListIndex = GetFirstNode (MappingDataBase);
   while (!IsNull (MappingDataBase, OverrideItemListIndex)) {
-    OverrideItem   = CR (OverrideItemListIndex, PLATFORM_OVERRIDE_ITEM, Link, PLATFORM_OVERRIDE_ITEM_SIGNATURE);
+    OverrideItem = CR (
+                     OverrideItemListIndex,
+                     PLATFORM_OVERRIDE_ITEM,
+                     Link,
+                     PLATFORM_OVERRIDE_ITEM_SIGNATURE
+                     );
     DevicePathSize = GetDevicePathSize (ControllerDevicePath);
-    if (DevicePathSize == GetDevicePathSize (OverrideItem->ControllerDevicePath)) {
+    if (DevicePathSize == GetDevicePathSize (
+                            OverrideItem->ControllerDevicePath
+                            ))
+    {
       if (CompareMem (
             ControllerDevicePath,
             OverrideItem->ControllerDevicePath,
@@ -1916,7 +2152,10 @@ DeleteDriverImage (
       }
     }
 
-    OverrideItemListIndex = GetNextNode (MappingDataBase, OverrideItemListIndex);
+    OverrideItemListIndex = GetNextNode (
+                              MappingDataBase,
+                              OverrideItemListIndex
+                              );
   }
 
   ASSERT (Found);
@@ -1925,14 +2164,25 @@ DeleteDriverImage (
   Found              = FALSE;
   ImageInfoListIndex = GetFirstNode (&OverrideItem->DriverInfoList);
   while (!IsNull (&OverrideItem->DriverInfoList, ImageInfoListIndex)) {
-    DriverImageInfo    = CR (ImageInfoListIndex, DRIVER_IMAGE_INFO, Link, DRIVER_IMAGE_INFO_SIGNATURE);
-    ImageInfoListIndex = GetNextNode (&OverrideItem->DriverInfoList, ImageInfoListIndex);
+    DriverImageInfo = CR (
+                        ImageInfoListIndex,
+                        DRIVER_IMAGE_INFO,
+                        Link,
+                        DRIVER_IMAGE_INFO_SIGNATURE
+                        );
+    ImageInfoListIndex = GetNextNode (
+                           &OverrideItem->DriverInfoList,
+                           ImageInfoListIndex
+                           );
     if (DriverImageDevicePath != NULL) {
       //
       // Search for the specified DriverImageDevicePath and remove it, then break.
       //
       DevicePathSize = GetDevicePathSize (DriverImageDevicePath);
-      if (DevicePathSize == GetDevicePathSize (DriverImageInfo->DriverImagePath)) {
+      if (DevicePathSize == GetDevicePathSize (
+                              DriverImageInfo->DriverImagePath
+                              ))
+      {
         if (CompareMem (
               DriverImageDevicePath,
               DriverImageInfo->DriverImagePath,

@@ -161,7 +161,8 @@ MonotonicCounterDriverGetNextHighMonotonicCount (
   return EfiSetVariable (
            MTC_VARIABLE_NAME,
            &gMtcVendorGuid,
-           EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS,
+           EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_RUNTIME_ACCESS |
+           EFI_VARIABLE_BOOTSERVICE_ACCESS,
            sizeof (UINT32),
            HighCount
            );
@@ -209,7 +210,10 @@ MonotonicCounterDriverInitialize (
   //
   // Make sure the Monotonic Counter Architectural Protocol has not been installed in the system yet.
   //
-  ASSERT_PROTOCOL_ALREADY_INSTALLED (NULL, &gEfiMonotonicCounterArchProtocolGuid);
+  ASSERT_PROTOCOL_ALREADY_INSTALLED (
+    NULL,
+    &gEfiMonotonicCounterArchProtocolGuid
+    );
 
   //
   // Initialize event to handle low-part overflow
@@ -254,7 +258,8 @@ MonotonicCounterDriverInitialize (
   // Fill in the EFI Boot Services and EFI Runtime Services Monotonic Counter Fields
   //
   gBS->GetNextMonotonicCount     = MonotonicCounterDriverGetNextMonotonicCount;
-  gRT->GetNextHighMonotonicCount = MonotonicCounterDriverGetNextHighMonotonicCount;
+  gRT->GetNextHighMonotonicCount =
+    MonotonicCounterDriverGetNextHighMonotonicCount;
 
   //
   // Install the Monotonic Counter Architctural Protocol onto a new handle

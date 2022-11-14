@@ -73,7 +73,10 @@ HiiSetString (
     //
     // Allocate a copy of the SupportLanguages string that passed in
     //
-    AllocatedLanguages = AllocateCopyPool (AsciiStrSize (SupportedLanguages), SupportedLanguages);
+    AllocatedLanguages = AllocateCopyPool (
+                           AsciiStrSize (SupportedLanguages),
+                           SupportedLanguages
+                           );
   }
 
   //
@@ -103,7 +106,12 @@ HiiSetString (
       *(Supported++) = '\0';
     }
 
-    if ((SupportedLanguages == NULL) && (AsciiStrnCmp (Language, UEFI_CONFIG_LANG, AsciiStrLen (UEFI_CONFIG_LANG)) == 0)) {
+    if ((SupportedLanguages == NULL) && (AsciiStrnCmp (
+                                           Language,
+                                           UEFI_CONFIG_LANG,
+                                           AsciiStrLen (UEFI_CONFIG_LANG)
+                                           ) == 0))
+    {
       //
       // Skip string package used for keyword protocol.
       //
@@ -114,9 +122,24 @@ HiiSetString (
     // If StringId is 0, then call NewString().  Otherwise, call SetString()
     //
     if (StringId == (EFI_STRING_ID)(0)) {
-      Status = gHiiString->NewString (gHiiString, HiiHandle, &StringId, Language, NULL, String, NULL);
+      Status = gHiiString->NewString (
+                             gHiiString,
+                             HiiHandle,
+                             &StringId,
+                             Language,
+                             NULL,
+                             String,
+                             NULL
+                             );
     } else {
-      Status = gHiiString->SetString (gHiiString, HiiHandle, StringId, Language, String, NULL);
+      Status = gHiiString->SetString (
+                             gHiiString,
+                             HiiHandle,
+                             StringId,
+                             Language,
+                             String,
+                             NULL
+                             );
     }
 
     //

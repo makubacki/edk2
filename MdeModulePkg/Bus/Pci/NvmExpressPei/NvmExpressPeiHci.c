@@ -138,7 +138,11 @@ NvmeBaseMemPageOffset (
   PageSizeList[4] = NVME_PRP_SIZE; /* PRPs */
 
   if (BaseMemIndex > MAX_BASEMEM_COUNT) {
-    DEBUG ((DEBUG_ERROR, "%a: The input BaseMem index is invalid.\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: The input BaseMem index is invalid.\n",
+      __FUNCTION__
+      ));
     ASSERT (FALSE);
     return 0;
   }
@@ -191,7 +195,12 @@ NvmeWaitController (
     //
     Status = NVME_GET_CSTS (Private, &Csts);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: NVME_GET_CSTS fail, Status - %r\n", __FUNCTION__, Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: NVME_GET_CSTS fail, Status - %r\n",
+        __FUNCTION__,
+        Status
+        ));
       return Status;
     }
 
@@ -232,7 +241,12 @@ NvmeDisableController (
   //
   Status = NVME_GET_CC (Private, &Cc);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: NVME_GET_CC fail, Status - %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: NVME_GET_CC fail, Status - %r\n",
+      __FUNCTION__,
+      Status
+      ));
     goto ErrorExit;
   }
 
@@ -243,14 +257,24 @@ NvmeDisableController (
     //
     Status = NVME_SET_CC (Private, &Cc);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: NVME_SET_CC fail, Status - %r\n", __FUNCTION__, Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a: NVME_SET_CC fail, Status - %r\n",
+        __FUNCTION__,
+        Status
+        ));
       goto ErrorExit;
     }
   }
 
   Status = NvmeWaitController (Private, FALSE);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: NvmeWaitController fail, Status - %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: NvmeWaitController fail, Status - %r\n",
+      __FUNCTION__,
+      Status
+      ));
     goto ErrorExit;
   }
 
@@ -289,13 +313,23 @@ NvmeEnableController (
   Cc.Iocqes = 4;
   Status    = NVME_SET_CC (Private, &Cc);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: NVME_SET_CC fail, Status - %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: NVME_SET_CC fail, Status - %r\n",
+      __FUNCTION__,
+      Status
+      ));
     goto ErrorExit;
   }
 
   Status = NvmeWaitController (Private, TRUE);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: NvmeWaitController fail, Status - %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: NvmeWaitController fail, Status - %r\n",
+      __FUNCTION__,
+      Status
+      ));
     goto ErrorExit;
   }
 
@@ -432,9 +466,17 @@ NvmeDumpControllerData (
   DEBUG ((DEBUG_INFO, "    PCI SSVID : 0x%x\n", ControllerData->Ssvid));
   DEBUG ((DEBUG_INFO, "    SN        : %a\n", Sn));
   DEBUG ((DEBUG_INFO, "    MN        : %a\n", Mn));
-  DEBUG ((DEBUG_INFO, "    FR        : 0x%lx\n", *((UINT64 *)ControllerData->Fr)));
+  DEBUG ((
+    DEBUG_INFO,
+    "    FR        : 0x%lx\n",
+    *((UINT64 *)ControllerData->Fr)
+    ));
   DEBUG ((DEBUG_INFO, "    RAB       : 0x%x\n", ControllerData->Rab));
-  DEBUG ((DEBUG_INFO, "    IEEE      : 0x%x\n", *(UINT32 *)ControllerData->Ieee_oui));
+  DEBUG ((
+    DEBUG_INFO,
+    "    IEEE      : 0x%x\n",
+    *(UINT32 *)ControllerData->Ieee_oui
+    ));
   DEBUG ((DEBUG_INFO, "    AERL      : 0x%x\n", ControllerData->Aerl));
   DEBUG ((DEBUG_INFO, "    SQES      : 0x%x\n", ControllerData->Sqes));
   DEBUG ((DEBUG_INFO, "    CQES      : 0x%x\n", ControllerData->Cqes));
@@ -565,14 +607,23 @@ NvmeControllerInit (
   // Dump the NVME controller implementation version
   //
   NVME_GET_VER (Private, &Ver);
-  DEBUG ((DEBUG_INFO, "NVME controller implementation version: %d.%d\n", Ver.Mjr, Ver.Mnr));
+  DEBUG ((
+    DEBUG_INFO,
+    "NVME controller implementation version: %d.%d\n",
+    Ver.Mjr,
+    Ver.Mnr
+    ));
 
   //
   // Read the controller Capabilities register and verify that the NVM command set is supported
   //
   NVME_GET_CAP (Private, &Private->Cap);
   if ((Private->Cap.Css & BIT0) == 0) {
-    DEBUG ((DEBUG_ERROR, "%a: The NVME controller doesn't support NVMe command set.\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: The NVME controller doesn't support NVMe command set.\n",
+      __FUNCTION__
+      ));
     return EFI_UNSUPPORTED;
   }
 
@@ -580,7 +631,11 @@ NvmeControllerInit (
   // Currently, the driver only supports 4k page size
   //
   if ((Private->Cap.Mpsmin + 12) > EFI_PAGE_SHIFT) {
-    DEBUG ((DEBUG_ERROR, "%a: The driver doesn't support page size other than 4K.\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: The driver doesn't support page size other than 4K.\n",
+      __FUNCTION__
+      ));
     ASSERT (FALSE);
     return EFI_UNSUPPORTED;
   }
@@ -599,7 +654,12 @@ NvmeControllerInit (
   //
   Status = NvmeDisableController (Private);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: NvmeDisableController fail, Status - %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: NvmeDisableController fail, Status - %r\n",
+      __FUNCTION__,
+      Status
+      ));
     return Status;
   }
 
@@ -624,12 +684,36 @@ NvmeControllerInit (
   Private->CqBuffer[0] = (NVME_CQ *)(UINTN)NVME_ACQ_BASE (Private);    // NVME_ADMIN_QUEUE
   Private->SqBuffer[1] = (NVME_SQ *)(UINTN)NVME_SQ_BASE (Private, 0);  // NVME_IO_QUEUE
   Private->CqBuffer[1] = (NVME_CQ *)(UINTN)NVME_CQ_BASE (Private, 0);  // NVME_IO_QUEUE
-  DEBUG ((DEBUG_INFO, "Admin Submission Queue Size (Aqa.Asqs) = [%08X]\n", Aqa.Asqs));
-  DEBUG ((DEBUG_INFO, "Admin Completion Queue Size (Aqa.Acqs) = [%08X]\n", Aqa.Acqs));
-  DEBUG ((DEBUG_INFO, "Admin Submission Queue (SqBuffer[0]) =   [%08X]\n", Private->SqBuffer[0]));
-  DEBUG ((DEBUG_INFO, "Admin Completion Queue (CqBuffer[0]) =   [%08X]\n", Private->CqBuffer[0]));
-  DEBUG ((DEBUG_INFO, "I/O   Submission Queue (SqBuffer[1]) =   [%08X]\n", Private->SqBuffer[1]));
-  DEBUG ((DEBUG_INFO, "I/O   Completion Queue (CqBuffer[1]) =   [%08X]\n", Private->CqBuffer[1]));
+  DEBUG ((
+    DEBUG_INFO,
+    "Admin Submission Queue Size (Aqa.Asqs) = [%08X]\n",
+    Aqa.Asqs
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Admin Completion Queue Size (Aqa.Acqs) = [%08X]\n",
+    Aqa.Acqs
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Admin Submission Queue (SqBuffer[0]) =   [%08X]\n",
+    Private->SqBuffer[0]
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "Admin Completion Queue (CqBuffer[0]) =   [%08X]\n",
+    Private->CqBuffer[0]
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "I/O   Submission Queue (SqBuffer[1]) =   [%08X]\n",
+    Private->SqBuffer[1]
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "I/O   Completion Queue (CqBuffer[1]) =   [%08X]\n",
+    Private->CqBuffer[1]
+    ));
 
   //
   // Program admin queue attributes
@@ -647,7 +731,12 @@ NvmeControllerInit (
   //
   Status = NvmeEnableController (Private);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: NvmeEnableController fail, Status - %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: NvmeEnableController fail, Status - %r\n",
+      __FUNCTION__,
+      Status
+      ));
     return Status;
   }
 
@@ -655,7 +744,10 @@ NvmeControllerInit (
   // Get the Identify Controller data
   //
   if (Private->ControllerData == NULL) {
-    Private->ControllerData = (NVME_ADMIN_CONTROLLER_DATA *)AllocateZeroPool (sizeof (NVME_ADMIN_CONTROLLER_DATA));
+    Private->ControllerData = (NVME_ADMIN_CONTROLLER_DATA *)AllocateZeroPool (
+                                                              sizeof (
+                                                                                     NVME_ADMIN_CONTROLLER_DATA)
+                                                              );
     if (Private->ControllerData == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -663,7 +755,12 @@ NvmeControllerInit (
 
   Status = NvmeIdentifyController (Private, Private->ControllerData);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: NvmeIdentifyController fail, Status - %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: NvmeIdentifyController fail, Status - %r\n",
+      __FUNCTION__,
+      Status
+      ));
     return Status;
   }
 
@@ -672,7 +769,9 @@ NvmeControllerInit (
   //
   // Check the namespace number for storing the namespaces information
   //
-  if (Private->ControllerData->Nn > MAX_UINT32 / sizeof (PEI_NVME_NAMESPACE_INFO)) {
+  if (Private->ControllerData->Nn > MAX_UINT32 /
+      sizeof (PEI_NVME_NAMESPACE_INFO))
+  {
     DEBUG ((
       DEBUG_ERROR,
       "%a: Number of Namespaces field in Identify Controller data not supported by the driver.\n",
@@ -686,13 +785,23 @@ NvmeControllerInit (
   //
   Status = NvmeCreateIoCompletionQueue (Private);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Create IO completion queue fail, Status - %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Create IO completion queue fail, Status - %r\n",
+      __FUNCTION__,
+      Status
+      ));
     return Status;
   }
 
   Status = NvmeCreateIoSubmissionQueue (Private);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Create IO submission queue fail, Status - %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: Create IO submission queue fail, Status - %r\n",
+      __FUNCTION__,
+      Status
+      ));
   }
 
   return Status;

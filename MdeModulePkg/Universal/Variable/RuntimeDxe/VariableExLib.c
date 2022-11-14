@@ -56,14 +56,24 @@ VariableExLibFindVariable (
     return Status;
   }
 
-  AuthVariableInfo->DataSize   = DataSizeOfVariable (Variable.CurrPtr, mVariableModuleGlobal->VariableGlobal.AuthFormat);
-  AuthVariableInfo->Data       = GetVariableDataPtr (Variable.CurrPtr, mVariableModuleGlobal->VariableGlobal.AuthFormat);
+  AuthVariableInfo->DataSize = DataSizeOfVariable (
+                                 Variable.CurrPtr,
+                                 mVariableModuleGlobal->VariableGlobal.
+                                   AuthFormat
+                                 );
+  AuthVariableInfo->Data = GetVariableDataPtr (
+                             Variable.CurrPtr,
+                             mVariableModuleGlobal->VariableGlobal.AuthFormat
+                             );
   AuthVariableInfo->Attributes = Variable.CurrPtr->Attributes;
   if (mVariableModuleGlobal->VariableGlobal.AuthFormat) {
-    AuthVariable                     = (AUTHENTICATED_VARIABLE_HEADER *)Variable.CurrPtr;
+    AuthVariable =
+      (AUTHENTICATED_VARIABLE_HEADER *)Variable.CurrPtr;
     AuthVariableInfo->PubKeyIndex    = AuthVariable->PubKeyIndex;
-    AuthVariableInfo->MonotonicCount = ReadUnaligned64 (&(AuthVariable->MonotonicCount));
-    AuthVariableInfo->TimeStamp      = &AuthVariable->TimeStamp;
+    AuthVariableInfo->MonotonicCount = ReadUnaligned64 (
+                                         &(AuthVariable->MonotonicCount)
+                                         );
+    AuthVariableInfo->TimeStamp = &AuthVariable->TimeStamp;
   }
 
   return EFI_SUCCESS;
@@ -100,9 +110,13 @@ VariableExLibFindNextVariable (
   AUTHENTICATED_VARIABLE_HEADER  *AuthVariablePtr;
   VARIABLE_STORE_HEADER          *VariableStoreHeader[VariableStoreTypeMax];
 
-  VariableStoreHeader[VariableStoreTypeVolatile] = (VARIABLE_STORE_HEADER *)(UINTN)mVariableModuleGlobal->VariableGlobal.VolatileVariableBase;
-  VariableStoreHeader[VariableStoreTypeHob]      = (VARIABLE_STORE_HEADER *)(UINTN)mVariableModuleGlobal->VariableGlobal.HobVariableBase;
-  VariableStoreHeader[VariableStoreTypeNv]       = mNvVariableCache;
+  VariableStoreHeader[VariableStoreTypeVolatile] =
+    (VARIABLE_STORE_HEADER *)(UINTN)mVariableModuleGlobal->VariableGlobal.
+      VolatileVariableBase;
+  VariableStoreHeader[VariableStoreTypeHob] =
+    (VARIABLE_STORE_HEADER *)(UINTN)mVariableModuleGlobal->VariableGlobal.
+      HobVariableBase;
+  VariableStoreHeader[VariableStoreTypeNv] = mNvVariableCache;
 
   Status = VariableServiceGetNextVariableInternal (
              VariableName,
@@ -123,16 +137,34 @@ VariableExLibFindNextVariable (
     return Status;
   }
 
-  AuthVariableInfo->VariableName = GetVariableNamePtr (VariablePtr, mVariableModuleGlobal->VariableGlobal.AuthFormat);
-  AuthVariableInfo->VendorGuid   = GetVendorGuidPtr (VariablePtr, mVariableModuleGlobal->VariableGlobal.AuthFormat);
-  AuthVariableInfo->DataSize     = DataSizeOfVariable (VariablePtr, mVariableModuleGlobal->VariableGlobal.AuthFormat);
-  AuthVariableInfo->Data         = GetVariableDataPtr (VariablePtr, mVariableModuleGlobal->VariableGlobal.AuthFormat);
-  AuthVariableInfo->Attributes   = VariablePtr->Attributes;
+  AuthVariableInfo->VariableName = GetVariableNamePtr (
+                                     VariablePtr,
+                                     mVariableModuleGlobal->VariableGlobal.
+                                       AuthFormat
+                                     );
+  AuthVariableInfo->VendorGuid = GetVendorGuidPtr (
+                                   VariablePtr,
+                                   mVariableModuleGlobal->VariableGlobal.
+                                     AuthFormat
+                                   );
+  AuthVariableInfo->DataSize = DataSizeOfVariable (
+                                 VariablePtr,
+                                 mVariableModuleGlobal->VariableGlobal.
+                                   AuthFormat
+                                 );
+  AuthVariableInfo->Data = GetVariableDataPtr (
+                             VariablePtr,
+                             mVariableModuleGlobal->VariableGlobal.AuthFormat
+                             );
+  AuthVariableInfo->Attributes = VariablePtr->Attributes;
   if (mVariableModuleGlobal->VariableGlobal.AuthFormat) {
-    AuthVariablePtr                  = (AUTHENTICATED_VARIABLE_HEADER *)VariablePtr;
+    AuthVariablePtr =
+      (AUTHENTICATED_VARIABLE_HEADER *)VariablePtr;
     AuthVariableInfo->PubKeyIndex    = AuthVariablePtr->PubKeyIndex;
-    AuthVariableInfo->MonotonicCount = ReadUnaligned64 (&(AuthVariablePtr->MonotonicCount));
-    AuthVariableInfo->TimeStamp      = &AuthVariablePtr->TimeStamp;
+    AuthVariableInfo->MonotonicCount = ReadUnaligned64 (
+                                         &(AuthVariablePtr->MonotonicCount)
+                                         );
+    AuthVariableInfo->TimeStamp = &AuthVariablePtr->TimeStamp;
   }
 
   return EFI_SUCCESS;
@@ -158,7 +190,13 @@ VariableExLibUpdateVariable (
 {
   VARIABLE_POINTER_TRACK  Variable;
 
-  FindVariable (AuthVariableInfo->VariableName, AuthVariableInfo->VendorGuid, &Variable, &mVariableModuleGlobal->VariableGlobal, FALSE);
+  FindVariable (
+    AuthVariableInfo->VariableName,
+    AuthVariableInfo->VendorGuid,
+    &Variable,
+    &mVariableModuleGlobal->VariableGlobal,
+    FALSE
+    );
   return UpdateVariable (
            AuthVariableInfo->VariableName,
            AuthVariableInfo->VendorGuid,
@@ -199,7 +237,11 @@ VariableExLibGetScratchBuffer (
     return EFI_UNSUPPORTED;
   }
 
-  *ScratchBuffer = GetEndPointer ((VARIABLE_STORE_HEADER *)((UINTN)mVariableModuleGlobal->VariableGlobal.VolatileVariableBase));
+  *ScratchBuffer = GetEndPointer (
+                     (VARIABLE_STORE_HEADER *)((UINTN)mVariableModuleGlobal->
+                                                 VariableGlobal.
+                                                 VolatileVariableBase)
+                     );
   return EFI_SUCCESS;
 }
 

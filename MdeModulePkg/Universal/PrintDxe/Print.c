@@ -39,8 +39,14 @@ PrintDxeUnicodeValueToString (
   IN UINTN       Width
   )
 {
-  DEBUG ((DEBUG_ERROR, "PrintDxe: The UnicodeValueToString service in EFI_PRINT2_PROTOCOL is no longer supported for security reason.\n"));
-  DEBUG ((DEBUG_ERROR, "PrintDxe: Please consider using the UnicodeValueToStringS service in EFI_PRINT2S_PROTOCOL.\n"));
+  DEBUG ((
+    DEBUG_ERROR,
+    "PrintDxe: The UnicodeValueToString service in EFI_PRINT2_PROTOCOL is no longer supported for security reason.\n"
+    ));
+  DEBUG ((
+    DEBUG_ERROR,
+    "PrintDxe: Please consider using the UnicodeValueToStringS service in EFI_PRINT2S_PROTOCOL.\n"
+    ));
   ASSERT (FALSE);
   return 0;
 }
@@ -68,8 +74,14 @@ PrintDxeAsciiValueToString (
   IN  UINTN  Width
   )
 {
-  DEBUG ((DEBUG_ERROR, "PrintDxe: The AsciiValueToString service in EFI_PRINT2_PROTOCOL is no longer supported for security reason.\n"));
-  DEBUG ((DEBUG_ERROR, "PrintDxe: Please consider using the AsciiValueToStringS service in EFI_PRINT2S_PROTOCOL.\n"));
+  DEBUG ((
+    DEBUG_ERROR,
+    "PrintDxe: The AsciiValueToString service in EFI_PRINT2_PROTOCOL is no longer supported for security reason.\n"
+    ));
+  DEBUG ((
+    DEBUG_ERROR,
+    "PrintDxe: Please consider using the AsciiValueToStringS service in EFI_PRINT2S_PROTOCOL.\n"
+    ));
   ASSERT (FALSE);
   return 0;
 }

@@ -78,7 +78,12 @@ PrintStringAt (
       return 0;
     }
 
-    Status = StrnCpyS (TurncateString, ShowingLength + 1, String, ShowingLength - 3);
+    Status = StrnCpyS (
+               TurncateString,
+               ShowingLength + 1,
+               String,
+               ShowingLength - 3
+               );
 
     if (EFI_ERROR (Status)) {
       FreePool (TurncateString);
@@ -165,7 +170,8 @@ GetLineWidth (
       // Advance to the null-terminator or to the first width directive
       //
       for ( ;
-            (String[Index] != NARROW_CHAR) && (String[Index] != WIDE_CHAR) && (String[Index] != 0);
+            (String[Index] != NARROW_CHAR) && (String[Index] != WIDE_CHAR) &&
+            (String[Index] != 0);
             Index++, LineWidth = LineWidth + IncrementValue
             )
       {
@@ -269,19 +275,25 @@ InitializeBootMenuScreen (
   if (BootMenuData->ItemCount + UnSelectableItmes > MaxPrintRows) {
     BootMenuData->MenuScreen.Height                   = MaxPrintRows;
     BootMenuData->ScrollBarControl.HasScrollBar       = TRUE;
-    BootMenuData->ScrollBarControl.ItemCountPerScreen = MaxPrintRows - UnSelectableItmes;
-    BootMenuData->ScrollBarControl.FirstItem          = 0;
-    BootMenuData->ScrollBarControl.LastItem           = MaxPrintRows - UnSelectableItmes - 1;
+    BootMenuData->ScrollBarControl.ItemCountPerScreen = MaxPrintRows -
+                                                        UnSelectableItmes;
+    BootMenuData->ScrollBarControl.FirstItem = 0;
+    BootMenuData->ScrollBarControl.LastItem  = MaxPrintRows -
+                                               UnSelectableItmes - 1;
   } else {
-    BootMenuData->MenuScreen.Height                   = BootMenuData->ItemCount + UnSelectableItmes;
+    BootMenuData->MenuScreen.Height =
+      BootMenuData->ItemCount + UnSelectableItmes;
     BootMenuData->ScrollBarControl.HasScrollBar       = FALSE;
     BootMenuData->ScrollBarControl.ItemCountPerScreen = BootMenuData->ItemCount;
     BootMenuData->ScrollBarControl.FirstItem          = 0;
-    BootMenuData->ScrollBarControl.LastItem           = BootMenuData->ItemCount - 1;
+    BootMenuData->ScrollBarControl.LastItem           =
+      BootMenuData->ItemCount - 1;
   }
 
-  BootMenuData->MenuScreen.StartCol = (Column -  BootMenuData->MenuScreen.Width) / 2;
-  BootMenuData->MenuScreen.StartRow = (Row -  BootMenuData->MenuScreen.Height) / 2;
+  BootMenuData->MenuScreen.StartCol = (Column -
+                                       BootMenuData->MenuScreen.Width) / 2;
+  BootMenuData->MenuScreen.StartRow = (Row -  BootMenuData->MenuScreen.Height) /
+                                      2;
 
   return EFI_SUCCESS;
 }
@@ -308,7 +320,8 @@ IsBootManagerMenu (
     EfiBootManagerFreeLoadOption (&BootManagerMenu);
   }
 
-  return (BOOLEAN)(!EFI_ERROR (Status) && (BootOption->OptionNumber == BootManagerMenu.OptionNumber));
+  return (BOOLEAN)(!EFI_ERROR (Status) && (BootOption->OptionNumber ==
+                                           BootManagerMenu.OptionNumber));
 }
 
 /**
@@ -330,9 +343,20 @@ IgnoreBootOption (
   //
   // Ignore myself.
   //
-  Status = gBS->HandleProtocol (gImageHandle, &gEfiLoadedImageDevicePathProtocolGuid, (VOID **)&ImageDevicePath);
+  Status = gBS->HandleProtocol (
+                  gImageHandle,
+                  &gEfiLoadedImageDevicePathProtocolGuid,
+                  (VOID **)&ImageDevicePath
+                  );
   ASSERT_EFI_ERROR (Status);
-  if (CompareMem (BootOption->FilePath, ImageDevicePath, GetDevicePathSize (ImageDevicePath)) == 0) {
+  if (CompareMem (
+        BootOption->FilePath,
+        ImageDevicePath,
+        GetDevicePathSize (
+          ImageDevicePath
+          )
+        ) == 0)
+  {
     return TRUE;
   }
 
@@ -346,7 +370,9 @@ IgnoreBootOption (
   //
   // Ignore the hidden/inactive boot option.
   //
-  if (((BootOption->Attributes & LOAD_OPTION_HIDDEN) != 0) || ((BootOption->Attributes & LOAD_OPTION_ACTIVE) == 0)) {
+  if (((BootOption->Attributes & LOAD_OPTION_HIDDEN) != 0) ||
+      ((BootOption->Attributes & LOAD_OPTION_ACTIVE) == 0))
+  {
     return TRUE;
   }
 
@@ -379,7 +405,10 @@ InitializeBootMenuData (
   }
 
   BootMenuData->TitleToken[0] = STRING_TOKEN (STR_BOOT_POPUP_MENU_TITLE_STRING);
-  BootMenuData->PtrTokens     = AllocateZeroPool (BootOptionCount * sizeof (EFI_STRING_ID));
+  BootMenuData->PtrTokens     = AllocateZeroPool (
+                                  BootOptionCount *
+                                  sizeof (EFI_STRING_ID)
+                                  );
   ASSERT (BootMenuData->PtrTokens != NULL);
 
   //
@@ -462,10 +491,12 @@ BootMenuSelectItem (
     //
     if (WantSelectItem < BootMenuData->ScrollBarControl.FirstItem) {
       BootMenuData->ScrollBarControl.FirstItem = WantSelectItem;
-      BootMenuData->ScrollBarControl.LastItem  = WantSelectItem + ItemCountPerScreen - 1;
+      BootMenuData->ScrollBarControl.LastItem  = WantSelectItem +
+                                                 ItemCountPerScreen - 1;
     } else if (WantSelectItem > BootMenuData->ScrollBarControl.LastItem) {
-      BootMenuData->ScrollBarControl.FirstItem = WantSelectItem - ItemCountPerScreen + 1;
-      BootMenuData->ScrollBarControl.LastItem  = WantSelectItem;
+      BootMenuData->ScrollBarControl.FirstItem = WantSelectItem -
+                                                 ItemCountPerScreen + 1;
+      BootMenuData->ScrollBarControl.LastItem = WantSelectItem;
     }
 
     gST->ConOut->SetAttribute (gST->ConOut, EFI_WHITE | EFI_BACKGROUND_BLUE);
@@ -487,13 +518,17 @@ BootMenuSelectItem (
 
     LowShadeNum = 0;
     if (LastItem != BootMenuData->ItemCount - 1) {
-      LowShadeNum = ((BootMenuData->ItemCount - 1 - LastItem) * ItemCountPerScreen) / BootMenuData->ItemCount;
-      if (((BootMenuData->ItemCount - 1 - LastItem) * ItemCountPerScreen) % BootMenuData->ItemCount != 0) {
+      LowShadeNum = ((BootMenuData->ItemCount - 1 - LastItem) *
+                     ItemCountPerScreen) / BootMenuData->ItemCount;
+      if (((BootMenuData->ItemCount - 1 - LastItem) * ItemCountPerScreen) %
+          BootMenuData->ItemCount != 0)
+      {
         LowShadeNum++;
       }
 
       PrintCol = StartCol  + BootMenuData->MenuScreen.Width - 2;
-      PrintRow = StartRow + TITLE_TOKEN_COUNT + 2 + ItemCountPerScreen - LowShadeNum;
+      PrintRow = StartRow + TITLE_TOKEN_COUNT + 2 + ItemCountPerScreen -
+                 LowShadeNum;
       for (Index = 0; Index < LowShadeNum; Index++, PrintRow++) {
         PrintCharAt (PrintCol, PrintRow, BLOCKELEMENT_LIGHT_SHADE);
       }
@@ -501,7 +536,9 @@ BootMenuSelectItem (
 
     PrintCol = StartCol  + BootMenuData->MenuScreen.Width - 2;
     PrintRow = StartRow + TITLE_TOKEN_COUNT + 2 + TopShadeNum;
-    for (Index = TopShadeNum; Index < ItemCountPerScreen - LowShadeNum; Index++, PrintRow++) {
+    for (Index = TopShadeNum; Index < ItemCountPerScreen - LowShadeNum; Index++,
+         PrintRow++)
+    {
       PrintCharAt (PrintCol, PrintRow, BLOCKELEMENT_FULL_BLOCK);
     }
 
@@ -510,7 +547,10 @@ BootMenuSelectItem (
     //
     PrintCol = StartCol  + 1;
     PrintRow = StartRow + TITLE_TOKEN_COUNT + 2;
-    String   = AllocateZeroPool ((BootMenuData->MenuScreen.Width - 2) * sizeof (CHAR16));
+    String   = AllocateZeroPool (
+                 (BootMenuData->MenuScreen.Width - 2) *
+                 sizeof (CHAR16)
+                 );
     ASSERT (String != NULL);
     for (Index = 0; Index < BootMenuData->MenuScreen.Width - 3; Index++) {
       String[Index] = 0x20;
@@ -525,7 +565,12 @@ BootMenuSelectItem (
     // print selectable items
     //
     for (Index = 0; Index < ItemCountPerScreen; Index++, PrintRow++) {
-      String = HiiGetString (gStringPackHandle, BootMenuData->PtrTokens[Index + FirstItem], NULL);
+      String = HiiGetString (
+                 gStringPackHandle,
+                 BootMenuData->PtrTokens[Index +
+                                         FirstItem],
+                 NULL
+                 );
       PrintStringAt (PrintCol, PrintRow, String);
       FreePool (String);
     }
@@ -540,7 +585,11 @@ BootMenuSelectItem (
   FirstItem = BootMenuData->ScrollBarControl.FirstItem;
   if ((WantSelectItem != BootMenuData->SelectItem) && !RePaintItems) {
     gST->ConOut->SetAttribute (gST->ConOut, EFI_WHITE | EFI_BACKGROUND_BLUE);
-    String   = HiiGetString (gStringPackHandle, BootMenuData->PtrTokens[BootMenuData->SelectItem], NULL);
+    String = HiiGetString (
+               gStringPackHandle,
+               BootMenuData->PtrTokens[BootMenuData->SelectItem],
+               NULL
+               );
     PrintCol = StartCol  + 1;
     PrintRow = StartRow + 3 + BootMenuData->SelectItem - FirstItem;
     PrintStringAt (PrintCol, PrintRow, String);
@@ -551,7 +600,11 @@ BootMenuSelectItem (
   // Print want to select item
   //
   gST->ConOut->SetAttribute (gST->ConOut, EFI_WHITE | EFI_BACKGROUND_BLACK);
-  String   = HiiGetString (gStringPackHandle, BootMenuData->PtrTokens[WantSelectItem], NULL);
+  String = HiiGetString (
+             gStringPackHandle,
+             BootMenuData->PtrTokens[WantSelectItem],
+             NULL
+             );
   PrintCol = StartCol  + 1;
   PrintRow = StartRow + TITLE_TOKEN_COUNT + 2 + WantSelectItem - FirstItem;
   PrintStringAt (PrintCol, PrintRow, String);
@@ -674,7 +727,11 @@ DrawBootPopupMenu (
   //
   PrintRow = StartRow + 1;
   for (Index = 0; Index < TITLE_TOKEN_COUNT; Index++, PrintRow++) {
-    String    = HiiGetString (gStringPackHandle, BootMenuData->TitleToken[Index], NULL);
+    String = HiiGetString (
+               gStringPackHandle,
+               BootMenuData->TitleToken[Index],
+               NULL
+               );
     LineWidth = GetLineWidth (BootMenuData->TitleToken[Index]);
     PrintCol  = StartCol + (Width - LineWidth) / 2;
     PrintStringAt (PrintCol, PrintRow, String);
@@ -687,7 +744,11 @@ DrawBootPopupMenu (
   PrintCol = StartCol + 1;
   PrintRow = StartRow + TITLE_TOKEN_COUNT + 2;
   for (Index = 0; Index < ItemCountPerScreen; Index++, PrintRow++) {
-    String = HiiGetString (gStringPackHandle, BootMenuData->PtrTokens[Index], NULL);
+    String = HiiGetString (
+               gStringPackHandle,
+               BootMenuData->PtrTokens[Index],
+               NULL
+               );
     PrintStringAt (PrintCol, PrintRow, String);
     FreePool (String);
   }
@@ -697,7 +758,11 @@ DrawBootPopupMenu (
   //
   PrintRow++;
   for (Index = 0; Index < HELP_TOKEN_COUNT; Index++, PrintRow++) {
-    String    = HiiGetString (gStringPackHandle, BootMenuData->HelpToken[Index], NULL);
+    String = HiiGetString (
+               gStringPackHandle,
+               BootMenuData->HelpToken[Index],
+               NULL
+               );
     LineWidth = GetLineWidth (BootMenuData->HelpToken[Index]);
     PrintCol  = StartCol + (Width - LineWidth) / 2;
     PrintStringAt (PrintCol, PrintRow, String);
@@ -862,13 +927,20 @@ BdsSetConsoleMode (
       if ((Info->HorizontalResolution == NewHorizontalResolution) &&
           (Info->VerticalResolution == NewVerticalResolution))
       {
-        if ((GraphicsOutput->Mode->Info->HorizontalResolution == NewHorizontalResolution) &&
-            (GraphicsOutput->Mode->Info->VerticalResolution == NewVerticalResolution))
+        if ((GraphicsOutput->Mode->Info->HorizontalResolution ==
+             NewHorizontalResolution) &&
+            (GraphicsOutput->Mode->Info->VerticalResolution ==
+             NewVerticalResolution))
         {
           //
           // Current resolution is same with required resolution, check if text mode need be set
           //
-          Status = SimpleTextOut->QueryMode (SimpleTextOut, SimpleTextOut->Mode->Mode, &CurrentColumn, &CurrentRow);
+          Status = SimpleTextOut->QueryMode (
+                                    SimpleTextOut,
+                                    SimpleTextOut->Mode->Mode,
+                                    &CurrentColumn,
+                                    &CurrentRow
+                                    );
           ASSERT_EFI_ERROR (Status);
           if ((CurrentColumn == NewColumns) && (CurrentRow == NewRows)) {
             //
@@ -881,7 +953,12 @@ BdsSetConsoleMode (
             // If current text mode is different from required text mode.  Set new video mode
             //
             for (Index = 0; Index < MaxTextMode; Index++) {
-              Status = SimpleTextOut->QueryMode (SimpleTextOut, Index, &CurrentColumn, &CurrentRow);
+              Status = SimpleTextOut->QueryMode (
+                                        SimpleTextOut,
+                                        Index,
+                                        &CurrentColumn,
+                                        &CurrentRow
+                                        );
               if (!EFI_ERROR (Status)) {
                 if ((CurrentColumn == NewColumns) && (CurrentRow == NewRows)) {
                   //
@@ -1011,7 +1088,11 @@ BootManagerMenuEntry (
   // Set Logo status invalid when boot manager menu is launched
   //
   BootLogo = NULL;
-  Status   = gBS->LocateProtocol (&gEfiBootLogoProtocolGuid, NULL, (VOID **)&BootLogo);
+  Status   = gBS->LocateProtocol (
+                    &gEfiBootLogoProtocolGuid,
+                    NULL,
+                    (VOID **)&BootLogo
+                    );
   if (!EFI_ERROR (Status) && (BootLogo != NULL)) {
     Status = BootLogo->SetBootLogo (BootLogo, NULL, 0, 0, 0, 0);
     ASSERT_EFI_ERROR (Status);
@@ -1033,7 +1114,10 @@ BootManagerMenuEntry (
   EfiBootManagerConnectAll ();
   EfiBootManagerRefreshAllBootOption ();
 
-  BootOption = EfiBootManagerGetLoadOptions (&BootOptionCount, LoadOptionTypeBoot);
+  BootOption = EfiBootManagerGetLoadOptions (
+                 &BootOptionCount,
+                 LoadOptionTypeBoot
+                 );
 
   if (!mModeInitialized) {
     //
@@ -1062,8 +1146,10 @@ BootManagerMenuEntry (
       //
       // Get current video resolution and text mode.
       //
-      mBootHorizontalResolution = GraphicsOutput->Mode->Info->HorizontalResolution;
-      mBootVerticalResolution   = GraphicsOutput->Mode->Info->VerticalResolution;
+      mBootHorizontalResolution =
+        GraphicsOutput->Mode->Info->HorizontalResolution;
+      mBootVerticalResolution =
+        GraphicsOutput->Mode->Info->VerticalResolution;
     }
 
     if (SimpleTextOut != NULL) {
@@ -1113,12 +1199,15 @@ BootManagerMenuEntry (
         case CHAR_NULL:
           switch (Key.ScanCode) {
             case SCAN_UP:
-              SelectItem = BootMenuData.SelectItem == 0 ? BootMenuData.ItemCount - 1 : BootMenuData.SelectItem - 1;
+              SelectItem = BootMenuData.SelectItem == 0 ?
+                           BootMenuData.ItemCount - 1 :
+                           BootMenuData.SelectItem - 1;
               BootMenuSelectItem (SelectItem, &BootMenuData);
               break;
 
             case SCAN_DOWN:
-              SelectItem = BootMenuData.SelectItem == BootMenuData.ItemCount - 1 ? 0 : BootMenuData.SelectItem + 1;
+              SelectItem = BootMenuData.SelectItem == BootMenuData.ItemCount -
+                           1 ? 0 : BootMenuData.SelectItem + 1;
               BootMenuSelectItem (SelectItem, &BootMenuData);
               break;
 
@@ -1143,7 +1232,11 @@ BootManagerMenuEntry (
           // Set boot resolution for normal boot
           //
           BdsSetConsoleMode (FALSE);
-          BootFromSelectOption (BootOption, BootOptionCount, BootMenuData.SelectItem);
+          BootFromSelectOption (
+            BootOption,
+            BootOptionCount,
+            BootMenuData.SelectItem
+            );
           //
           // Back to boot manager menu again, set back to setup resolution
           //

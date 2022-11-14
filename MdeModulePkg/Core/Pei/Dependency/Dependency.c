@@ -125,7 +125,12 @@ PeimDispatchReadiness (
         //
         StackPtr->Operator = (VOID *)Iterator;
         Iterator           = Iterator + sizeof (EFI_GUID);
-        DEBUG ((DEBUG_DISPATCH, "  PUSH GUID(%g) = %a\n", StackPtr->Operator, IsPpiInstalled (PeiServices, StackPtr) ? "TRUE" : "FALSE"));
+        DEBUG ((
+          DEBUG_DISPATCH,
+          "  PUSH GUID(%g) = %a\n",
+          StackPtr->Operator,
+          IsPpiInstalled (PeiServices, StackPtr) ? "TRUE" : "FALSE"
+          ));
         StackPtr++;
         break;
 
@@ -189,7 +194,14 @@ PeimDispatchReadiness (
           return FALSE;
         }
 
-        DEBUG ((DEBUG_DISPATCH, "  RESULT = %a\n", IsPpiInstalled (PeiServices, StackPtr) ? "TRUE" : "FALSE"));
+        DEBUG ((
+          DEBUG_DISPATCH,
+          "  RESULT = %a\n",
+          IsPpiInstalled (
+            PeiServices,
+            StackPtr
+            ) ? "TRUE" : "FALSE"
+          ));
         return IsPpiInstalled (PeiServices, StackPtr);
 
       case (EFI_DEP_NOT):
@@ -205,7 +217,10 @@ PeimDispatchReadiness (
           return FALSE;
         }
 
-        (StackPtr-1)->Result   = (BOOLEAN) !IsPpiInstalled (PeiServices, (StackPtr-1));
+        (StackPtr-1)->Result = (BOOLEAN) !IsPpiInstalled (
+                                            PeiServices,
+                                            (StackPtr-1)
+                                            );
         (StackPtr-1)->Operator = NULL;
         break;
 

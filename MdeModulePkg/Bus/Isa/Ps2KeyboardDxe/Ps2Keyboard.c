@@ -141,7 +141,8 @@ KbdControllerDriverSupported (
   } while (!IsDevicePathEnd (DevicePath));
 
   if ((DevicePathType (Acpi) != ACPI_DEVICE_PATH) ||
-      ((DevicePathSubType (Acpi) != ACPI_DP) && (DevicePathSubType (Acpi) != ACPI_EXTENDED_DP)))
+      ((DevicePathSubType (Acpi) != ACPI_DP) && (DevicePathSubType (Acpi) !=
+                                                 ACPI_EXTENDED_DP)))
   {
     return EFI_UNSUPPORTED;
   }
@@ -283,7 +284,9 @@ KbdControllerDriverStart (
   //
   if (!PcdGetBool (PcdFastPS2Detection)) {
     KeyboardRead (ConsoleIn, &Data);
-    if ((KeyReadStatusRegister (ConsoleIn) & (KBC_PARE | KBC_TIM)) == (KBC_PARE | KBC_TIM)) {
+    if ((KeyReadStatusRegister (ConsoleIn) & (KBC_PARE | KBC_TIM)) ==
+        (KBC_PARE | KBC_TIM))
+    {
       //
       // If nobody decodes KBC I/O port, it will read back as 0xFF.
       // Check the Time-Out and Parity bit to see if it has an active KBC in system
@@ -374,7 +377,12 @@ KbdControllerDriverStart (
   //
   // Reset the keyboard device
   //
-  Status = ConsoleIn->ConInEx.Reset (&ConsoleIn->ConInEx, FeaturePcdGet (PcdPs2KbdExtendedVerification));
+  Status = ConsoleIn->ConInEx.Reset (
+                                &ConsoleIn->ConInEx,
+                                FeaturePcdGet (
+                                  PcdPs2KbdExtendedVerification
+                                  )
+                                );
   if (EFI_ERROR (Status)) {
     Status     = EFI_DEVICE_ERROR;
     StatusCode = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_NOT_DETECTED;

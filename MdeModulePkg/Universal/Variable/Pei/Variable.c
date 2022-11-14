@@ -84,7 +84,10 @@ GetEndPointer (
   //
   // The end of variable store
   //
-  return (VARIABLE_HEADER *)HEADER_ALIGN ((UINTN)VarStoreHeader + VarStoreHeader->Size);
+  return (VARIABLE_HEADER *)HEADER_ALIGN (
+                              (UINTN)VarStoreHeader +
+                              VarStoreHeader->Size
+                              );
 }
 
 /**
@@ -307,9 +310,18 @@ GetNextVariablePtr (
   EFI_PHYSICAL_ADDRESS  SpareAddress;
   UINTN                 Value;
 
-  Value  =  (UINTN)GetVariableDataPtr (Variable, VariableHeader, StoreInfo->AuthFlag);
+  Value =  (UINTN)GetVariableDataPtr (
+                    Variable,
+                    VariableHeader,
+                    StoreInfo->AuthFlag
+                    );
   Value += DataSizeOfVariable (VariableHeader, StoreInfo->AuthFlag);
-  Value += GET_PAD_SIZE (DataSizeOfVariable (VariableHeader, StoreInfo->AuthFlag));
+  Value += GET_PAD_SIZE (
+             DataSizeOfVariable (
+               VariableHeader,
+               StoreInfo->AuthFlag
+               )
+             );
   //
   // Be careful about pad size for alignment
   //
@@ -318,7 +330,9 @@ GetNextVariablePtr (
   if (StoreInfo->FtwLastWriteData != NULL) {
     TargetAddress = StoreInfo->FtwLastWriteData->TargetAddress;
     SpareAddress  = StoreInfo->FtwLastWriteData->SpareAddress;
-    if (((UINTN)Variable < (UINTN)TargetAddress) && (Value >= (UINTN)TargetAddress)) {
+    if (((UINTN)Variable < (UINTN)TargetAddress) && (Value >=
+                                                     (UINTN)TargetAddress))
+    {
       //
       // Next variable is in spare block.
       //
@@ -344,7 +358,10 @@ GetVariableStoreStatus (
   IN VARIABLE_STORE_HEADER  *VarStoreHeader
   )
 {
-  if ((CompareGuid (&VarStoreHeader->Signature, &gEfiAuthenticatedVariableGuid) ||
+  if ((CompareGuid (
+         &VarStoreHeader->Signature,
+         &gEfiAuthenticatedVariableGuid
+         ) ||
        CompareGuid (&VarStoreHeader->Signature, &gEfiVariableGuid)) &&
       (VarStoreHeader->Format == VARIABLE_STORE_FORMATTED) &&
       (VarStoreHeader->State == VARIABLE_STORE_HEALTHY)
@@ -395,7 +412,9 @@ CompareVariableName (
   if (StoreInfo->FtwLastWriteData != NULL) {
     TargetAddress = StoreInfo->FtwLastWriteData->TargetAddress;
     SpareAddress  = StoreInfo->FtwLastWriteData->SpareAddress;
-    if (((UINTN)Name1 < (UINTN)TargetAddress) && (((UINTN)Name1 + NameSize) > (UINTN)TargetAddress)) {
+    if (((UINTN)Name1 < (UINTN)TargetAddress) && (((UINTN)Name1 + NameSize) >
+                                                  (UINTN)TargetAddress))
+    {
       //
       // Name1 is inconsecutive.
       //
@@ -407,13 +426,22 @@ CompareVariableName (
         //
         // Another partial content is in spare block.
         //
-        if (CompareMem ((UINT8 *)(UINTN)SpareAddress, (UINT8 *)Name2 + PartialNameSize, NameSize - PartialNameSize) == 0) {
+        if (CompareMem (
+              (UINT8 *)(UINTN)SpareAddress,
+              (UINT8 *)Name2 +
+              PartialNameSize,
+              NameSize - PartialNameSize
+              ) == 0)
+        {
           return TRUE;
         }
       }
 
       return FALSE;
-    } else if (((UINTN)Name2 < (UINTN)TargetAddress) && (((UINTN)Name2 + NameSize) > (UINTN)TargetAddress)) {
+    } else if (((UINTN)Name2 < (UINTN)TargetAddress) && (((UINTN)Name2 +
+                                                          NameSize) >
+                                                         (UINTN)TargetAddress))
+    {
       //
       // Name2 is inconsecutive.
       //
@@ -425,7 +453,13 @@ CompareVariableName (
         //
         // Another partial content is in spare block.
         //
-        if (CompareMem ((UINT8 *)(UINTN)SpareAddress, (UINT8 *)Name1 + PartialNameSize, NameSize - PartialNameSize) == 0) {
+        if (CompareMem (
+              (UINT8 *)(UINTN)SpareAddress,
+              (UINT8 *)Name1 +
+              PartialNameSize,
+              NameSize - PartialNameSize
+              ) == 0)
+        {
           return TRUE;
         }
       }
@@ -490,7 +524,13 @@ CompareWithValidVariable (
     {
       ASSERT (NameSizeOfVariable (VariableHeader, StoreInfo->AuthFlag) != 0);
       Point = (VOID *)GetVariableNamePtr (Variable, StoreInfo->AuthFlag);
-      if (CompareVariableName (StoreInfo, VariableName, Point, NameSizeOfVariable (VariableHeader, StoreInfo->AuthFlag))) {
+      if (CompareVariableName (
+            StoreInfo,
+            VariableName,
+            Point,
+            NameSizeOfVariable (VariableHeader, StoreInfo->AuthFlag)
+            ))
+      {
         PtrTrack->CurrPtr = Variable;
         return EFI_SUCCESS;
       }
@@ -521,17 +561,28 @@ GetHobVariableStore (
   DEBUG_CODE_BEGIN ();
   GuidHob = GetFirstGuidHob (&gEfiAuthenticatedVariableGuid);
   if (GuidHob != NULL) {
-    if ((GetNextGuidHob (&gEfiAuthenticatedVariableGuid, GET_NEXT_HOB (GuidHob)) != NULL)) {
+    if ((GetNextGuidHob (
+           &gEfiAuthenticatedVariableGuid,
+           GET_NEXT_HOB (
+             GuidHob
+             )
+           ) != NULL))
+    {
       DEBUG ((DEBUG_ERROR, "ERROR: Found two Auth Variable HOBs\n"));
       ASSERT (FALSE);
     } else if (GetFirstGuidHob (&gEfiVariableGuid) != NULL) {
-      DEBUG ((DEBUG_ERROR, "ERROR: Found one Auth + one Normal Variable HOBs\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "ERROR: Found one Auth + one Normal Variable HOBs\n"
+        ));
       ASSERT (FALSE);
     }
   } else {
     GuidHob = GetFirstGuidHob (&gEfiVariableGuid);
     if (GuidHob != NULL) {
-      if ((GetNextGuidHob (&gEfiVariableGuid, GET_NEXT_HOB (GuidHob)) != NULL)) {
+      if ((GetNextGuidHob (&gEfiVariableGuid, GET_NEXT_HOB (GuidHob)) !=
+           NULL))
+      {
         DEBUG ((DEBUG_ERROR, "ERROR: Found two Normal Variable HOBs\n"));
         ASSERT (FALSE);
       }
@@ -547,8 +598,10 @@ GetHobVariableStore (
   } else {
     GuidHob = GetFirstGuidHob (&gEfiVariableGuid);
     if (GuidHob != NULL) {
-      *VariableStoreHeader = (VARIABLE_STORE_HEADER *)GET_GUID_HOB_DATA (GuidHob);
-      StoreInfo->AuthFlag  = FALSE;
+      *VariableStoreHeader = (VARIABLE_STORE_HEADER *)GET_GUID_HOB_DATA (
+                                                        GuidHob
+                                                        );
+      StoreInfo->AuthFlag = FALSE;
     }
   }
 }
@@ -593,7 +646,10 @@ GetVariableStore (
         // Emulated non-volatile variable mode is not enabled.
         //
 
-        Status = GetVariableFlashNvStorageInfo (&NvStorageBase, &NvStorageSize64);
+        Status = GetVariableFlashNvStorageInfo (
+                   &NvStorageBase,
+                   &NvStorageSize64
+                   );
         ASSERT_EFI_ERROR (Status);
 
         Status = SafeUint64ToUint32 (NvStorageSize64, &NvStorageSize);
@@ -613,20 +669,36 @@ GetVariableStore (
         BackUpOffset = 0;
         GuidHob      = GetFirstGuidHob (&gEdkiiFaultTolerantWriteGuid);
         if (GuidHob != NULL) {
-          FtwLastWriteData = (FAULT_TOLERANT_WRITE_LAST_WRITE_DATA *)GET_GUID_HOB_DATA (GuidHob);
+          FtwLastWriteData =
+            (FAULT_TOLERANT_WRITE_LAST_WRITE_DATA *)GET_GUID_HOB_DATA (GuidHob);
           if (FtwLastWriteData->TargetAddress == NvStorageBase) {
             //
             // Let FvHeader point to spare block.
             //
-            FvHeader = (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)FtwLastWriteData->SpareAddress;
-            DEBUG ((DEBUG_INFO, "PeiVariable: NV storage is backed up in spare block: 0x%x\n", (UINTN)FtwLastWriteData->SpareAddress));
-          } else if ((FtwLastWriteData->TargetAddress > NvStorageBase) && (FtwLastWriteData->TargetAddress < (NvStorageBase + NvStorageSize))) {
+            FvHeader =
+              (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)FtwLastWriteData->
+                SpareAddress;
+            DEBUG ((
+              DEBUG_INFO,
+              "PeiVariable: NV storage is backed up in spare block: 0x%x\n",
+              (UINTN)FtwLastWriteData->SpareAddress
+              ));
+          } else if ((FtwLastWriteData->TargetAddress > NvStorageBase) &&
+                     (FtwLastWriteData->TargetAddress < (NvStorageBase +
+                                                         NvStorageSize)))
+          {
             StoreInfo->FtwLastWriteData = FtwLastWriteData;
             //
             // Flash NV storage from the offset is backed up in spare block.
             //
-            BackUpOffset = (UINT32)(FtwLastWriteData->TargetAddress - NvStorageBase);
-            DEBUG ((DEBUG_INFO, "PeiVariable: High partial NV storage from offset: %x is backed up in spare block: 0x%x\n", BackUpOffset, (UINTN)FtwLastWriteData->SpareAddress));
+            BackUpOffset = (UINT32)(FtwLastWriteData->TargetAddress -
+                                    NvStorageBase);
+            DEBUG ((
+              DEBUG_INFO,
+              "PeiVariable: High partial NV storage from offset: %x is backed up in spare block: 0x%x\n",
+              BackUpOffset,
+              (UINTN)FtwLastWriteData->SpareAddress
+              ));
             //
             // At least one block data in flash NV storage is still valid, so still leave FvHeader point to NV storage base.
             //
@@ -636,14 +708,27 @@ GetVariableStore (
         //
         // Check if the Firmware Volume is not corrupted
         //
-        if ((FvHeader->Signature != EFI_FVH_SIGNATURE) || (!CompareGuid (&gEfiSystemNvDataFvGuid, &FvHeader->FileSystemGuid))) {
-          DEBUG ((DEBUG_ERROR, "Firmware Volume for Variable Store is corrupted\n"));
+        if ((FvHeader->Signature != EFI_FVH_SIGNATURE) || (!CompareGuid (
+                                                              &
+                                                              gEfiSystemNvDataFvGuid,
+                                                              &FvHeader->
+                                                                FileSystemGuid
+                                                              )))
+        {
+          DEBUG ((
+            DEBUG_ERROR,
+            "Firmware Volume for Variable Store is corrupted\n"
+            ));
           break;
         }
 
-        VariableStoreHeader = (VARIABLE_STORE_HEADER *)((UINT8 *)FvHeader + FvHeader->HeaderLength);
+        VariableStoreHeader = (VARIABLE_STORE_HEADER *)((UINT8 *)FvHeader +
+                                                        FvHeader->HeaderLength);
 
-        StoreInfo->AuthFlag = (BOOLEAN)(CompareGuid (&VariableStoreHeader->Signature, &gEfiAuthenticatedVariableGuid));
+        StoreInfo->AuthFlag = (BOOLEAN)(CompareGuid (
+                                          &VariableStoreHeader->Signature,
+                                          &gEfiAuthenticatedVariableGuid
+                                          ));
 
         GuidHob = GetFirstGuidHob (&gEfiVariableIndexTableGuid);
         if (GuidHob != NULL) {
@@ -655,10 +740,18 @@ GetVariableStore (
           // Note that as the resource of PEI phase is limited, only store the limited number of
           // VAR_ADDED type variables to reduce access time.
           //
-          StoreInfo->IndexTable              = (VARIABLE_INDEX_TABLE *)BuildGuidHob (&gEfiVariableIndexTableGuid, sizeof (VARIABLE_INDEX_TABLE));
-          StoreInfo->IndexTable->Length      = 0;
-          StoreInfo->IndexTable->StartPtr    = GetStartPointer (VariableStoreHeader);
-          StoreInfo->IndexTable->EndPtr      = GetEndPointer (VariableStoreHeader);
+          StoreInfo->IndexTable =
+            (VARIABLE_INDEX_TABLE *)BuildGuidHob (
+                                      &gEfiVariableIndexTableGuid,
+                                      sizeof (VARIABLE_INDEX_TABLE)
+                                      );
+          StoreInfo->IndexTable->Length   = 0;
+          StoreInfo->IndexTable->StartPtr = GetStartPointer (
+                                              VariableStoreHeader
+                                              );
+          StoreInfo->IndexTable->EndPtr = GetEndPointer (
+                                            VariableStoreHeader
+                                            );
           StoreInfo->IndexTable->GoneThrough = 0;
         }
       }
@@ -710,7 +803,8 @@ GetVariableHeader (
     TargetAddress = StoreInfo->FtwLastWriteData->TargetAddress;
     SpareAddress  = StoreInfo->FtwLastWriteData->SpareAddress;
     if (((UINTN)Variable > (UINTN)SpareAddress) &&
-        (((UINTN)Variable - (UINTN)SpareAddress + (UINTN)TargetAddress) >= (UINTN)GetEndPointer (StoreInfo->VariableStoreHeader)))
+        (((UINTN)Variable - (UINTN)SpareAddress + (UINTN)TargetAddress) >=
+         (UINTN)GetEndPointer (StoreInfo->VariableStoreHeader)))
     {
       //
       // Reach the end of variable store.
@@ -718,7 +812,11 @@ GetVariableHeader (
       return FALSE;
     }
 
-    if (((UINTN)Variable < (UINTN)TargetAddress) && (((UINTN)Variable + GetVariableHeaderSize (StoreInfo->AuthFlag)) > (UINTN)TargetAddress)) {
+    if (((UINTN)Variable < (UINTN)TargetAddress) && (((UINTN)Variable +
+                                                      GetVariableHeaderSize (
+                                                        StoreInfo->AuthFlag)) >
+                                                     (UINTN)TargetAddress))
+    {
       //
       // Variable header pointed by Variable is inconsecutive,
       // create a guid hob to combine the two partial variable header content together.
@@ -727,16 +825,30 @@ GetVariableHeader (
       if (GuidHob != NULL) {
         *VariableHeader = (VARIABLE_HEADER *)GET_GUID_HOB_DATA (GuidHob);
       } else {
-        *VariableHeader   = (VARIABLE_HEADER *)BuildGuidHob (&gEfiCallerIdGuid, GetVariableHeaderSize (StoreInfo->AuthFlag));
+        *VariableHeader = (VARIABLE_HEADER *)BuildGuidHob (
+                                               &gEfiCallerIdGuid,
+                                               GetVariableHeaderSize (
+                                                 StoreInfo->AuthFlag)
+                                               );
         PartialHeaderSize = (UINTN)TargetAddress - (UINTN)Variable;
         //
         // Partial content is in NV storage.
         //
-        CopyMem ((UINT8 *)*VariableHeader, (UINT8 *)Variable, PartialHeaderSize);
+        CopyMem (
+          (UINT8 *)*VariableHeader,
+          (UINT8 *)Variable,
+          PartialHeaderSize
+          );
         //
         // Another partial content is in spare block.
         //
-        CopyMem ((UINT8 *)*VariableHeader + PartialHeaderSize, (UINT8 *)(UINTN)SpareAddress, GetVariableHeaderSize (StoreInfo->AuthFlag) - PartialHeaderSize);
+        CopyMem (
+          (UINT8 *)*VariableHeader + PartialHeaderSize,
+          (UINT8 *)(UINTN)SpareAddress,
+          GetVariableHeaderSize (
+            StoreInfo->AuthFlag
+            ) - PartialHeaderSize
+          );
       }
     }
   } else {
@@ -775,7 +887,10 @@ GetVariableNameOrData (
   if (StoreInfo->FtwLastWriteData != NULL) {
     TargetAddress = StoreInfo->FtwLastWriteData->TargetAddress;
     SpareAddress  = StoreInfo->FtwLastWriteData->SpareAddress;
-    if (((UINTN)NameOrData < (UINTN)TargetAddress) && (((UINTN)NameOrData + Size) > (UINTN)TargetAddress)) {
+    if (((UINTN)NameOrData < (UINTN)TargetAddress) && (((UINTN)NameOrData +
+                                                        Size) >
+                                                       (UINTN)TargetAddress))
+    {
       //
       // Variable name/data is inconsecutive.
       //
@@ -787,7 +902,12 @@ GetVariableNameOrData (
       //
       // Another partial content is in spare block.
       //
-      CopyMem (Buffer + PartialSize, (UINT8 *)(UINTN)SpareAddress, Size - PartialSize);
+      CopyMem (
+        Buffer + PartialSize,
+        (UINT8 *)(UINTN)SpareAddress,
+        Size -
+        PartialSize
+        );
       return;
     }
   }
@@ -862,11 +982,22 @@ FindVariableEx (
     // The IndexTable->Index[Index] records the distance of two neighbouring VAR_ADDED type variables.
     //
     for (Offset = 0, Index = 0; Index < IndexTable->Length; Index++) {
-      ASSERT (Index < sizeof (IndexTable->Index) / sizeof (IndexTable->Index[0]));
+      ASSERT (
+        Index < sizeof (IndexTable->Index) /
+        sizeof (IndexTable->Index[0])
+        );
       Offset  += IndexTable->Index[Index];
       MaxIndex = (VARIABLE_HEADER *)((UINT8 *)IndexTable->StartPtr + Offset);
       GetVariableHeader (StoreInfo, MaxIndex, &VariableHeader);
-      if (CompareWithValidVariable (StoreInfo, MaxIndex, VariableHeader, VariableName, VendorGuid, PtrTrack) == EFI_SUCCESS) {
+      if (CompareWithValidVariable (
+            StoreInfo,
+            MaxIndex,
+            VariableHeader,
+            VariableName,
+            VendorGuid,
+            PtrTrack
+            ) == EFI_SUCCESS)
+      {
         if (VariableHeader->State == (VAR_IN_DELETED_TRANSITION & VAR_ADDED)) {
           InDeletedVariable = PtrTrack->CurrPtr;
         } else {
@@ -905,13 +1036,19 @@ FindVariableEx (
   //
   StopRecord = FALSE;
   while (GetVariableHeader (StoreInfo, Variable, &VariableHeader)) {
-    if ((VariableHeader->State == VAR_ADDED) || (VariableHeader->State == (VAR_IN_DELETED_TRANSITION & VAR_ADDED))) {
+    if ((VariableHeader->State == VAR_ADDED) || (VariableHeader->State ==
+                                                 (VAR_IN_DELETED_TRANSITION &
+                                                  VAR_ADDED)))
+    {
       //
       // Record Variable in VariableIndex HOB
       //
       if ((IndexTable != NULL) && !StopRecord) {
         Offset = (UINTN)Variable - (UINTN)LastVariable;
-        if ((Offset > 0x0FFFF) || (IndexTable->Length >= sizeof (IndexTable->Index) / sizeof (IndexTable->Index[0]))) {
+        if ((Offset > 0x0FFFF) || (IndexTable->Length >=
+                                   sizeof (IndexTable->Index) /
+                                   sizeof (IndexTable->Index[0])))
+        {
           //
           // Stop to record if the distance of two neighbouring VAR_ADDED variable is larger than the allowable scope(UINT16),
           // or the record buffer is full.
@@ -923,7 +1060,15 @@ FindVariableEx (
         }
       }
 
-      if (CompareWithValidVariable (StoreInfo, Variable, VariableHeader, VariableName, VendorGuid, PtrTrack) == EFI_SUCCESS) {
+      if (CompareWithValidVariable (
+            StoreInfo,
+            Variable,
+            VariableHeader,
+            VariableName,
+            VendorGuid,
+            PtrTrack
+            ) == EFI_SUCCESS)
+      {
         if (VariableHeader->State == (VAR_IN_DELETED_TRANSITION & VAR_ADDED)) {
           InDeletedVariable = PtrTrack->CurrPtr;
         } else {
@@ -1063,7 +1208,16 @@ PeiGetVariable (
       return EFI_INVALID_PARAMETER;
     }
 
-    GetVariableNameOrData (&StoreInfo, GetVariableDataPtr (Variable.CurrPtr, VariableHeader, StoreInfo.AuthFlag), VarDataSize, Data);
+    GetVariableNameOrData (
+      &StoreInfo,
+      GetVariableDataPtr (
+        Variable.CurrPtr,
+        VariableHeader,
+        StoreInfo.AuthFlag
+        ),
+      VarDataSize,
+      Data
+      );
     Status = EFI_SUCCESS;
   } else {
     Status = EFI_BUFFER_TOO_SMALL;
@@ -1128,7 +1282,9 @@ PeiGetNextVariableName (
   VARIABLE_STORE_INFO     StoreInfoForNv;
   VARIABLE_STORE_INFO     StoreInfoForHob;
 
-  if ((VariableName == NULL) || (VariableGuid == NULL) || (VariableNameSize == NULL)) {
+  if ((VariableName == NULL) || (VariableGuid == NULL) || (VariableNameSize ==
+                                                           NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1144,11 +1300,21 @@ PeiGetNextVariableName (
     // If variable name is not NULL, get next variable
     //
     GetVariableHeader (&StoreInfo, Variable.CurrPtr, &VariableHeader);
-    Variable.CurrPtr = GetNextVariablePtr (&StoreInfo, Variable.CurrPtr, VariableHeader);
+    Variable.CurrPtr = GetNextVariablePtr (
+                         &StoreInfo,
+                         Variable.CurrPtr,
+                         VariableHeader
+                         );
   }
 
-  VariableStoreHeader[VariableStoreTypeHob] = GetVariableStore (VariableStoreTypeHob, &StoreInfoForHob);
-  VariableStoreHeader[VariableStoreTypeNv]  = GetVariableStore (VariableStoreTypeNv, &StoreInfoForNv);
+  VariableStoreHeader[VariableStoreTypeHob] = GetVariableStore (
+                                                VariableStoreTypeHob,
+                                                &StoreInfoForHob
+                                                );
+  VariableStoreHeader[VariableStoreTypeNv] = GetVariableStore (
+                                               VariableStoreTypeNv,
+                                               &StoreInfoForNv
+                                               );
 
   while (TRUE) {
     //
@@ -1159,7 +1325,10 @@ PeiGetNextVariableName (
       // Find current storage index
       //
       for (Type = (VARIABLE_STORE_TYPE)0; Type < VariableStoreTypeMax; Type++) {
-        if ((VariableStoreHeader[Type] != NULL) && (Variable.StartPtr == GetStartPointer (VariableStoreHeader[Type]))) {
+        if ((VariableStoreHeader[Type] != NULL) && (Variable.StartPtr ==
+                                                    GetStartPointer (
+                                                      VariableStoreHeader[Type])))
+        {
           break;
         }
       }
@@ -1189,7 +1358,10 @@ PeiGetNextVariableName (
       GetVariableStore (Type, &StoreInfo);
     }
 
-    if ((VariableHeader->State == VAR_ADDED) || (VariableHeader->State == (VAR_IN_DELETED_TRANSITION & VAR_ADDED))) {
+    if ((VariableHeader->State == VAR_ADDED) || (VariableHeader->State ==
+                                                 (VAR_IN_DELETED_TRANSITION &
+                                                  VAR_ADDED)))
+    {
       if (VariableHeader->State == (VAR_IN_DELETED_TRANSITION & VAR_ADDED)) {
         //
         // If it is a IN_DELETED_TRANSITION variable,
@@ -1202,8 +1374,14 @@ PeiGetNextVariableName (
                    GetVendorGuidPtr (VariableHeader, StoreInfo.AuthFlag),
                    &VariablePtrTrack
                    );
-        if (!EFI_ERROR (Status) && (VariablePtrTrack.CurrPtr != Variable.CurrPtr)) {
-          Variable.CurrPtr = GetNextVariablePtr (&StoreInfo, Variable.CurrPtr, VariableHeader);
+        if (!EFI_ERROR (Status) && (VariablePtrTrack.CurrPtr !=
+                                    Variable.CurrPtr))
+        {
+          Variable.CurrPtr = GetNextVariablePtr (
+                               &StoreInfo,
+                               Variable.CurrPtr,
+                               VariableHeader
+                               );
           continue;
         }
       }
@@ -1211,8 +1389,11 @@ PeiGetNextVariableName (
       //
       // Don't return NV variable when HOB overrides it
       //
-      if ((VariableStoreHeader[VariableStoreTypeHob] != NULL) && (VariableStoreHeader[VariableStoreTypeNv] != NULL) &&
-          (Variable.StartPtr == GetStartPointer (VariableStoreHeader[VariableStoreTypeNv]))
+      if ((VariableStoreHeader[VariableStoreTypeHob] != NULL) &&
+          (VariableStoreHeader[VariableStoreTypeNv] != NULL) &&
+          (Variable.StartPtr == GetStartPointer (
+                                  VariableStoreHeader[VariableStoreTypeNv]
+                                  ))
           )
       {
         Status = FindVariableEx (
@@ -1222,7 +1403,11 @@ PeiGetNextVariableName (
                    &VariableInHob
                    );
         if (!EFI_ERROR (Status)) {
-          Variable.CurrPtr = GetNextVariablePtr (&StoreInfo, Variable.CurrPtr, VariableHeader);
+          Variable.CurrPtr = GetNextVariablePtr (
+                               &StoreInfo,
+                               Variable.CurrPtr,
+                               VariableHeader
+                               );
           continue;
         }
       }
@@ -1231,9 +1416,24 @@ PeiGetNextVariableName (
       ASSERT (VarNameSize != 0);
 
       if (VarNameSize <= *VariableNameSize) {
-        GetVariableNameOrData (&StoreInfo, (UINT8 *)GetVariableNamePtr (Variable.CurrPtr, StoreInfo.AuthFlag), VarNameSize, (UINT8 *)VariableName);
+        GetVariableNameOrData (
+          &StoreInfo,
+          (UINT8 *)GetVariableNamePtr (
+                     Variable.CurrPtr,
+                     StoreInfo.AuthFlag
+                     ),
+          VarNameSize,
+          (UINT8 *)VariableName
+          );
 
-        CopyMem (VariableGuid, GetVendorGuidPtr (VariableHeader, StoreInfo.AuthFlag), sizeof (EFI_GUID));
+        CopyMem (
+          VariableGuid,
+          GetVendorGuidPtr (
+            VariableHeader,
+            StoreInfo.AuthFlag
+            ),
+          sizeof (EFI_GUID)
+          );
 
         Status = EFI_SUCCESS;
       } else {
@@ -1246,7 +1446,11 @@ PeiGetNextVariableName (
       //
       return Status;
     } else {
-      Variable.CurrPtr = GetNextVariablePtr (&StoreInfo, Variable.CurrPtr, VariableHeader);
+      Variable.CurrPtr = GetNextVariablePtr (
+                           &StoreInfo,
+                           Variable.CurrPtr,
+                           VariableHeader
+                           );
     }
   }
 }

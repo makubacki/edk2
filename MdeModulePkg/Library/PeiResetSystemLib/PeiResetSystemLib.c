@@ -75,7 +75,12 @@ ResetPlatformSpecific (
   IN VOID   *ResetData
   )
 {
-  PeiServicesResetSystem2 (EfiResetPlatformSpecific, EFI_SUCCESS, DataSize, ResetData);
+  PeiServicesResetSystem2 (
+    EfiResetPlatformSpecific,
+    EFI_SUCCESS,
+    DataSize,
+    ResetData
+    );
 }
 
 /**

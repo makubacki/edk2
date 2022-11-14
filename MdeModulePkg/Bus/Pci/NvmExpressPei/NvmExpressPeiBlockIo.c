@@ -108,7 +108,11 @@ NvmeRead (
   OrginalBlocks = Blocks;
 
   if (Private->ControllerData->Mdts != 0) {
-    MaxTransferBlocks = (1 << (Private->ControllerData->Mdts)) * (1 << (Private->Cap.Mpsmin + 12)) / BlockSize;
+    MaxTransferBlocks = (1 << (Private->ControllerData->Mdts)) * (1 <<
+                                                                  (Private->Cap.
+                                                                     Mpsmin +
+                                                                   12)) /
+                        BlockSize;
   } else {
     MaxTransferBlocks = 1024;
   }
@@ -125,7 +129,12 @@ NvmeRead (
       MaxTransferBlocks = MaxTransferBlocks >> 1;
 
       if ((Retries > NVME_READ_MAX_RETRY) || (MaxTransferBlocks < 1)) {
-        DEBUG ((DEBUG_ERROR, "%a: ReadSectors fail, Status - %r\n", __FUNCTION__, Status));
+        DEBUG ((
+          DEBUG_ERROR,
+          "%a: ReadSectors fail, Status - %r\n",
+          __FUNCTION__,
+          Status
+          ));
         break;
       }
 
@@ -259,10 +268,13 @@ NvmeBlockIoPeimGetMediaInfo (
     return EFI_INVALID_PARAMETER;
   }
 
-  MediaInfo->DeviceType   = (EFI_PEI_BLOCK_DEVICE_TYPE)EDKII_PEI_BLOCK_DEVICE_TYPE_NVME;
+  MediaInfo->DeviceType =
+    (EFI_PEI_BLOCK_DEVICE_TYPE)EDKII_PEI_BLOCK_DEVICE_TYPE_NVME;
   MediaInfo->MediaPresent = TRUE;
-  MediaInfo->LastBlock    = (UINTN)Private->NamespaceInfo[DeviceIndex-1].Media.LastBlock;
-  MediaInfo->BlockSize    = Private->NamespaceInfo[DeviceIndex-1].Media.BlockSize;
+  MediaInfo->LastBlock    = (UINTN)Private->NamespaceInfo[DeviceIndex-
+                                                          1].Media.LastBlock;
+  MediaInfo->BlockSize    = Private->NamespaceInfo[DeviceIndex-
+                                                   1].Media.BlockSize;
 
   return EFI_SUCCESS;
 }

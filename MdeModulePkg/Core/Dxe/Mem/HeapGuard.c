@@ -41,7 +41,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED UINTN  mLevelMask[GUARDED_HEAP_MAP_TABLE_DEPTH]
 //
 // Used for promoting freed but not used pages.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_PHYSICAL_ADDRESS  mLastPromotedPage = BASE_4GB;
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PHYSICAL_ADDRESS  mLastPromotedPage =
+  BASE_4GB;
 
 /**
   Set corresponding bits in bitmap table to 1 according to the address.
@@ -520,7 +521,12 @@ SetGuardPage (
   // Note: This might overwrite other attributes needed by other features,
   // such as NX memory protection.
   //
-  Status = gCpu->SetMemoryAttributes (gCpu, BaseAddress, EFI_PAGE_SIZE, EFI_MEMORY_RP);
+  Status = gCpu->SetMemoryAttributes (
+                   gCpu,
+                   BaseAddress,
+                   EFI_PAGE_SIZE,
+                   EFI_MEMORY_RP
+                   );
   ASSERT_EFI_ERROR (Status);
   mOnGuarding = FALSE;
 }
@@ -553,7 +559,10 @@ UnsetGuardPage (
   // memory.
   //
   Attributes = 0;
-  if ((PcdGet64 (PcdDxeNxMemoryProtectionPolicy) & (1 << EfiConventionalMemory)) != 0) {
+  if ((PcdGet64 (PcdDxeNxMemoryProtectionPolicy) & (1 <<
+                                                    EfiConventionalMemory)) !=
+      0)
+  {
     Attributes |= EFI_MEMORY_XP;
   }
 
@@ -567,7 +576,12 @@ UnsetGuardPage (
   // such as memory protection (NX). Please make sure they are not enabled
   // at the same time.
   //
-  Status = gCpu->SetMemoryAttributes (gCpu, BaseAddress, EFI_PAGE_SIZE, Attributes);
+  Status = gCpu->SetMemoryAttributes (
+                   gCpu,
+                   BaseAddress,
+                   EFI_PAGE_SIZE,
+                   Attributes
+                   );
   ASSERT_EFI_ERROR (Status);
   mOnGuarding = FALSE;
 }
@@ -1322,7 +1336,12 @@ GuardFreedPages (
     // calling. It's rare case so it's OK to let a few tiny holes be not-guarded.
     //
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_WARN, "Failed to guard freed pages: %p (%lu)\n", BaseAddress, (UINT64)Pages));
+      DEBUG ((
+        DEBUG_WARN,
+        "Failed to guard freed pages: %p (%lu)\n",
+        BaseAddress,
+        (UINT64)Pages
+        ));
     }
 
     mOnGuarding = FALSE;
@@ -1476,7 +1495,10 @@ MergeGuardPages (
   }
 
   Bitmap = 0;
-  Pages  = EFI_SIZE_TO_PAGES ((UINTN)(MaxAddress - MemoryMapEntry->PhysicalStart));
+  Pages  = EFI_SIZE_TO_PAGES (
+             (UINTN)(MaxAddress -
+                     MemoryMapEntry->PhysicalStart)
+             );
   Pages -= (INTN)MemoryMapEntry->NumberOfPages;
   while (Pages > 0) {
     if (Bitmap == 0) {
@@ -1561,7 +1583,12 @@ PromoteGuardedFreePages (
   }
 
   if (AvailablePages != 0) {
-    DEBUG ((DEBUG_INFO, "Promoted pages: %lX (%lx)\r\n", Start, (UINT64)AvailablePages));
+    DEBUG ((
+      DEBUG_INFO,
+      "Promoted pages: %lX (%lx)\r\n",
+      Start,
+      (UINT64)AvailablePages
+      ));
     ClearGuardedMemoryBits (Start, AvailablePages);
 
     if (gCpu != NULL) {
@@ -1570,7 +1597,14 @@ PromoteGuardedFreePages (
       // operation; otherwise infinite loops could be caused.
       //
       mOnGuarding = TRUE;
-      Status      = gCpu->SetMemoryAttributes (gCpu, Start, EFI_PAGES_TO_SIZE (AvailablePages), 0);
+      Status      = gCpu->SetMemoryAttributes (
+                            gCpu,
+                            Start,
+                            EFI_PAGES_TO_SIZE (
+                              AvailablePages
+                              ),
+                            0
+                            );
       ASSERT_EFI_ERROR (Status);
       mOnGuarding = FALSE;
     }
@@ -1597,7 +1631,10 @@ HeapGuardCpuArchProtocolNotify (
   if (IsHeapGuardEnabled (GUARD_HEAP_TYPE_PAGE|GUARD_HEAP_TYPE_POOL) &&
       IsHeapGuardEnabled (GUARD_HEAP_TYPE_FREED))
   {
-    DEBUG ((DEBUG_ERROR, "Heap guard and freed memory guard cannot be enabled at the same time.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Heap guard and freed memory guard cannot be enabled at the same time.\n"
+      ));
     CpuDeadLoop ();
   }
 

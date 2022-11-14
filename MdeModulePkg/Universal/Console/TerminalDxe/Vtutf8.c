@@ -30,7 +30,10 @@ VTUTF8RawDataToUnicode (
   // and translate it into unicode, then push
   // the unicode into unicode fifo, until the raw fifo is empty.
   //
-  while (!IsRawFiFoEmpty (TerminalDevice) && !IsUnicodeFiFoFull (TerminalDevice)) {
+  while (!IsRawFiFoEmpty (TerminalDevice) && !IsUnicodeFiFoFull (
+                                                TerminalDevice
+                                                ))
+  {
     GetOneValidUtf8Char (TerminalDevice, &Utf8Char, &ValidBytes);
 
     if ((ValidBytes < 1) || (ValidBytes > 3)) {
@@ -274,7 +277,8 @@ UnicodeToUtf8 (
     //                Utf8_2[0], Utf8_2[1]
     //
     Utf8Char->Utf8_2[1] = (UINT8)((UnicodeByte0 & 0x3f) + 0x80);
-    Utf8Char->Utf8_2[0] = (UINT8)((((UnicodeByte1 << 2) + (UnicodeByte0 >> 6)) & 0x1f) + 0xc0);
+    Utf8Char->Utf8_2[0] = (UINT8)((((UnicodeByte1 << 2) + (UnicodeByte0 >> 6)) &
+                                   0x1f) + 0xc0);
 
     *ValidBytes = 2;
   } else {
@@ -283,7 +287,8 @@ UnicodeToUtf8 (
     //                Utf8_3[0], Utf8_3[1], Utf8_3[2]
     //
     Utf8Char->Utf8_3[2] = (UINT8)((UnicodeByte0 & 0x3f) + 0x80);
-    Utf8Char->Utf8_3[1] = (UINT8)((((UnicodeByte1 << 2) + (UnicodeByte0 >> 6)) & 0x3f) + 0x80);
+    Utf8Char->Utf8_3[1] = (UINT8)((((UnicodeByte1 << 2) + (UnicodeByte0 >> 6)) &
+                                   0x3f) + 0x80);
     Utf8Char->Utf8_3[0] = (UINT8)(((UnicodeByte1 >> 4) & 0x0f) + 0xe0);
 
     *ValidBytes = 3;

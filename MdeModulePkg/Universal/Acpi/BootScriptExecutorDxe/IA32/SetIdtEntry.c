@@ -44,7 +44,10 @@ SetIdtEntry (
   //
   S3DebugBuffer = (UINTN)(AcpiS3Context->S3DebugBufferAddress);
   if (*(UINTN *)S3DebugBuffer != (UINTN)-1) {
-    IdtEntry                  = (IA32_IDT_GATE_DESCRIPTOR *)(IdtDescriptor->Base + (3 * sizeof (IA32_IDT_GATE_DESCRIPTOR)));
+    IdtEntry =
+      (IA32_IDT_GATE_DESCRIPTOR *)(IdtDescriptor->Base + (3 *
+                                                          sizeof (
+                                                                                               IA32_IDT_GATE_DESCRIPTOR)));
     IdtEntry->Bits.OffsetLow  = (UINT16)S3DebugBuffer;
     IdtEntry->Bits.Selector   = (UINT16)AsmReadCs ();
     IdtEntry->Bits.Reserved_0 = 0;

@@ -272,23 +272,39 @@ LocateHiiImageDecoder (
       return NULL;
   }
 
-  Status = gBS->LocateHandleBuffer (ByProtocol, &gEfiHiiImageDecoderProtocolGuid, NULL, &HandleNum, &Handles);
+  Status = gBS->LocateHandleBuffer (
+                  ByProtocol,
+                  &gEfiHiiImageDecoderProtocolGuid,
+                  NULL,
+                  &HandleNum,
+                  &Handles
+                  );
   if (EFI_ERROR (Status)) {
     return NULL;
   }
 
   for (Index = 0; Index < HandleNum; Index++) {
-    Status = gBS->HandleProtocol (Handles[Index], &gEfiHiiImageDecoderProtocolGuid, (VOID **)&Decoder);
+    Status = gBS->HandleProtocol (
+                    Handles[Index],
+                    &gEfiHiiImageDecoderProtocolGuid,
+                    (VOID **)&Decoder
+                    );
     if (EFI_ERROR (Status)) {
       continue;
     }
 
-    Status = Decoder->GetImageDecoderName (Decoder, &DecoderNames, &NumberOfDecoderName);
+    Status = Decoder->GetImageDecoderName (
+                        Decoder,
+                        &DecoderNames,
+                        &NumberOfDecoderName
+                        );
     if (EFI_ERROR (Status)) {
       continue;
     }
 
-    for (DecoderNameIndex = 0; DecoderNameIndex < NumberOfDecoderName; DecoderNameIndex++) {
+    for (DecoderNameIndex = 0; DecoderNameIndex < NumberOfDecoderName;
+         DecoderNameIndex++)
+    {
       if (CompareGuid (DecoderName, &DecoderNames[DecoderNameIndex])) {
         return Decoder;
       }
@@ -372,12 +388,22 @@ HiiGetImageInfo (
       //
       // Use the common block code since the definition of two structures is the same.
       //
-      ASSERT (OFFSET_OF (EFI_HII_IIBT_JPEG_BLOCK, Data) == OFFSET_OF (EFI_HII_IIBT_PNG_BLOCK, Data));
+      ASSERT (
+        OFFSET_OF (EFI_HII_IIBT_JPEG_BLOCK, Data) == OFFSET_OF (
+                                                       EFI_HII_IIBT_PNG_BLOCK,
+                                                       Data
+                                                       )
+        );
       ASSERT (
         sizeof (((EFI_HII_IIBT_JPEG_BLOCK *)CurrentImageBlock)->Data) ==
         sizeof (((EFI_HII_IIBT_PNG_BLOCK *)CurrentImageBlock)->Data)
         );
-      ASSERT (OFFSET_OF (EFI_HII_IIBT_JPEG_BLOCK, Size) == OFFSET_OF (EFI_HII_IIBT_PNG_BLOCK, Size));
+      ASSERT (
+        OFFSET_OF (EFI_HII_IIBT_JPEG_BLOCK, Size) == OFFSET_OF (
+                                                       EFI_HII_IIBT_PNG_BLOCK,
+                                                       Size
+                                                       )
+        );
       ASSERT (
         sizeof (((EFI_HII_IIBT_JPEG_BLOCK *)CurrentImageBlock)->Size) ==
         sizeof (((EFI_HII_IIBT_PNG_BLOCK *)CurrentImageBlock)->Size)
@@ -411,15 +437,28 @@ HiiGetImageInfo (
       //
       // Use the common block code since the definition of these structures is the same.
       //
-      Image->Width        = ReadUnaligned16 (&((EFI_HII_IIBT_IMAGE_1BIT_BLOCK *)CurrentImageBlock)->Bitmap.Width);
-      Image->Height       = ReadUnaligned16 (&((EFI_HII_IIBT_IMAGE_1BIT_BLOCK *)CurrentImageBlock)->Bitmap.Height);
+      Image->Width = ReadUnaligned16 (
+                       &((EFI_HII_IIBT_IMAGE_1BIT_BLOCK *)CurrentImageBlock)->
+                         Bitmap.Width
+                       );
+      Image->Height = ReadUnaligned16 (
+                        &((EFI_HII_IIBT_IMAGE_1BIT_BLOCK *)CurrentImageBlock)->
+                          Bitmap.Height
+                        );
       Image->Image.Bitmap = NULL;
       return EFI_SUCCESS;
 
     case EFI_HII_IIBT_IMAGE_24BIT_TRANS:
     case EFI_HII_IIBT_IMAGE_24BIT:
-      Image->Width        = ReadUnaligned16 ((VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)CurrentImageBlock)->Bitmap.Width);
-      Image->Height       = ReadUnaligned16 ((VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)CurrentImageBlock)->Bitmap.Height);
+      Image->Width = ReadUnaligned16 (
+                       (VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)
+                                 CurrentImageBlock)->Bitmap.Width
+                       );
+      Image->Height = ReadUnaligned16 (
+                        (VOID *)&((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *)
+                                  CurrentImageBlock)->Bitmap.
+                          Height
+                        );
       Image->Image.Bitmap = NULL;
       return EFI_SUCCESS;
 

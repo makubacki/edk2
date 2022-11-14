@@ -41,8 +41,10 @@ extern EFI_COMPONENT_NAME2_PROTOCOL  gPs2KeyboardComponentName2;
 //
 // Driver Private Data
 //
-#define KEYBOARD_CONSOLE_IN_DEV_SIGNATURE        SIGNATURE_32 ('k', 'k', 'e', 'y')
-#define KEYBOARD_CONSOLE_IN_EX_NOTIFY_SIGNATURE  SIGNATURE_32 ('k', 'c', 'e', 'n')
+#define KEYBOARD_CONSOLE_IN_DEV_SIGNATURE        \
+          SIGNATURE_32 ('k', 'k', 'e', 'y')
+#define KEYBOARD_CONSOLE_IN_EX_NOTIFY_SIGNATURE  \
+          SIGNATURE_32 ('k', 'c', 'e', 'n')
 
 typedef struct _KEYBOARD_CONSOLE_IN_EX_NOTIFY {
   UINTN                      Signature;
@@ -116,7 +118,9 @@ typedef struct {
   EFI_EVENT                            KeyNotifyProcessEvent;
 } KEYBOARD_CONSOLE_IN_DEV;
 
-#define KEYBOARD_CONSOLE_IN_DEV_FROM_THIS(a)  CR (a, KEYBOARD_CONSOLE_IN_DEV, ConIn, KEYBOARD_CONSOLE_IN_DEV_SIGNATURE)
+#define KEYBOARD_CONSOLE_IN_DEV_FROM_THIS( \
+                                         a)  \
+  CR (a, KEYBOARD_CONSOLE_IN_DEV, ConIn, KEYBOARD_CONSOLE_IN_DEV_SIGNATURE)
 #define TEXT_INPUT_EX_KEYBOARD_CONSOLE_IN_DEV_FROM_THIS(a) \
   CR (a, \
       KEYBOARD_CONSOLE_IN_DEV, \

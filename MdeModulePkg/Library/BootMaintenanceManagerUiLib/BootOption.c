@@ -36,7 +36,11 @@ BmmSetupResetReminder (
   //
   // Use BrowserEx2 protocol to check whether reset is required.
   //
-  Status = gBS->LocateProtocol (&gEdkiiFormBrowserEx2ProtocolGuid, NULL, (VOID **)&FormBrowserEx2);
+  Status = gBS->LocateProtocol (
+                  &gEdkiiFormBrowserEx2ProtocolGuid,
+                  NULL,
+                  (VOID **)&FormBrowserEx2
+                  );
 
   //
   // check any reset required change is applied? if yes, reset system
@@ -46,13 +50,23 @@ BmmSetupResetReminder (
     ASSERT (StringBuffer1 != NULL);
     StringBuffer2 = AllocateZeroPool (MAX_CHAR * sizeof (CHAR16));
     ASSERT (StringBuffer2 != NULL);
-    StrCpyS (StringBuffer1, MAX_CHAR, L"Configuration changed. Reset to apply it Now.");
+    StrCpyS (
+      StringBuffer1,
+      MAX_CHAR,
+      L"Configuration changed. Reset to apply it Now."
+      );
     StrCpyS (StringBuffer2, MAX_CHAR, L"Press ENTER to reset");
     //
     // Popup a menu to notice user
     //
     do {
-      CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, StringBuffer1, StringBuffer2, NULL);
+      CreatePopUp (
+        EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
+        &Key,
+        StringBuffer1,
+        StringBuffer2,
+        NULL
+        );
     } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
 
     FreePool (StringBuffer1);
@@ -322,7 +336,11 @@ BOpt_GetBootOptions (
   //
   // Get the BootOrder from the Var
   //
-  GetEfiGlobalVariable2 (L"BootOrder", (VOID **)&BootOrderList, &BootOrderListSize);
+  GetEfiGlobalVariable2 (
+    L"BootOrder",
+    (VOID **)&BootOrderList,
+    &BootOrderListSize
+    );
   if (BootOrderList == NULL) {
     return EFI_NOT_FOUND;
   }
@@ -338,20 +356,34 @@ BOpt_GetBootOptions (
     }
   }
 
-  BootOption = EfiBootManagerGetLoadOptions (&BootOptionCount, LoadOptionTypeBoot);
+  BootOption = EfiBootManagerGetLoadOptions (
+                 &BootOptionCount,
+                 LoadOptionTypeBoot
+                 );
   for (Index = 0; Index < BootOrderListSize / sizeof (UINT16); Index++) {
     //
     // Don't display the hidden/inactive boot option
     //
-    if (((BootOption[Index].Attributes & LOAD_OPTION_HIDDEN) != 0) || ((BootOption[Index].Attributes & LOAD_OPTION_ACTIVE) == 0)) {
+    if (((BootOption[Index].Attributes & LOAD_OPTION_HIDDEN) != 0) ||
+        ((BootOption[Index].Attributes & LOAD_OPTION_ACTIVE) == 0))
+    {
       continue;
     }
 
-    UnicodeSPrint (BootString, sizeof (BootString), L"Boot%04x", BootOrderList[Index]);
+    UnicodeSPrint (
+      BootString,
+      sizeof (BootString),
+      L"Boot%04x",
+      BootOrderList[Index]
+      );
     //
     //  Get all loadoptions from the VAR
     //
-    GetEfiGlobalVariable2 (BootString, (VOID **)&LoadOptionFromVar, &BootOptionSize);
+    GetEfiGlobalVariable2 (
+      BootString,
+      (VOID **)&LoadOptionFromVar,
+      &BootOptionSize
+      );
     if (LoadOptionFromVar == NULL) {
       continue;
     }
@@ -398,7 +430,9 @@ BOpt_GetBootOptions (
     // Now Ptr point to Device Path
     //
     DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)Ptr;
-    if ((BBS_DEVICE_PATH == DevicePath->Type) && (BBS_BBS_DP == DevicePath->SubType)) {
+    if ((BBS_DEVICE_PATH == DevicePath->Type) && (BBS_BBS_DP ==
+                                                  DevicePath->SubType))
+    {
       NewLoadContext->IsLegacy = TRUE;
     } else {
       NewLoadContext->IsLegacy = FALSE;
@@ -419,17 +453,33 @@ BOpt_GetBootOptions (
 
     StringSize = StrSize ((UINT16 *)LoadOptionPtr);
 
-    NewLoadContext->Description = AllocateZeroPool (StrSize ((UINT16 *)LoadOptionPtr));
+    NewLoadContext->Description = AllocateZeroPool (
+                                    StrSize (
+                                      (UINT16 *)LoadOptionPtr
+                                      )
+                                    );
     ASSERT (NewLoadContext->Description != NULL);
-    StrCpyS (NewLoadContext->Description, StrSize ((UINT16 *)LoadOptionPtr) / sizeof (UINT16), (UINT16 *)LoadOptionPtr);
+    StrCpyS (
+      NewLoadContext->Description,
+      StrSize ((UINT16 *)LoadOptionPtr) /
+      sizeof (UINT16),
+      (UINT16 *)LoadOptionPtr
+      );
 
     ASSERT (NewLoadContext->Description != NULL);
     NewMenuEntry->DisplayString      = NewLoadContext->Description;
-    NewMenuEntry->DisplayStringToken = HiiSetString (CallbackData->BmmHiiHandle, 0, NewMenuEntry->DisplayString, NULL);
+    NewMenuEntry->DisplayStringToken = HiiSetString (
+                                         CallbackData->BmmHiiHandle,
+                                         0,
+                                         NewMenuEntry->DisplayString,
+                                         NULL
+                                         );
 
     LoadOptionPtr += StringSize;
 
-    NewLoadContext->FilePathList = AllocateZeroPool (NewLoadContext->FilePathListLength);
+    NewLoadContext->FilePathList = AllocateZeroPool (
+                                     NewLoadContext->FilePathListLength
+                                     );
     ASSERT (NewLoadContext->FilePathList != NULL);
     CopyMem (
       NewLoadContext->FilePathList,
@@ -437,8 +487,15 @@ BOpt_GetBootOptions (
       NewLoadContext->FilePathListLength
       );
 
-    NewMenuEntry->HelpString      = UiDevicePathToStr (NewLoadContext->FilePathList);
-    NewMenuEntry->HelpStringToken = HiiSetString (CallbackData->BmmHiiHandle, 0, NewMenuEntry->HelpString, NULL);
+    NewMenuEntry->HelpString = UiDevicePathToStr (
+                                 NewLoadContext->FilePathList
+                                 );
+    NewMenuEntry->HelpStringToken = HiiSetString (
+                                      CallbackData->BmmHiiHandle,
+                                      0,
+                                      NewMenuEntry->HelpString,
+                                      NULL
+                                      );
 
     LoadOptionPtr += NewLoadContext->FilePathListLength;
 
@@ -553,14 +610,22 @@ BOpt_FindDrivers (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    NewHandleContext                 = (BM_HANDLE_CONTEXT *)NewMenuEntry->VariableContext;
-    NewHandleContext->Handle         = CurHandle;
-    NewHandleContext->DevicePath     = DevicePathFromHandle (CurHandle);
-    NewMenuEntry->DisplayString      = UiDevicePathToStr (NewHandleContext->DevicePath);
-    NewMenuEntry->DisplayStringToken = HiiSetString (mBmmCallbackInfo->BmmHiiHandle, 0, NewMenuEntry->DisplayString, NULL);
-    NewMenuEntry->HelpString         = NULL;
-    NewMenuEntry->HelpStringToken    = NewMenuEntry->DisplayStringToken;
-    NewMenuEntry->OptionNumber       = OptionNumber;
+    NewHandleContext =
+      (BM_HANDLE_CONTEXT *)NewMenuEntry->VariableContext;
+    NewHandleContext->Handle     = CurHandle;
+    NewHandleContext->DevicePath = DevicePathFromHandle (CurHandle);
+    NewMenuEntry->DisplayString  = UiDevicePathToStr (
+                                     NewHandleContext->DevicePath
+                                     );
+    NewMenuEntry->DisplayStringToken = HiiSetString (
+                                         mBmmCallbackInfo->BmmHiiHandle,
+                                         0,
+                                         NewMenuEntry->DisplayString,
+                                         NULL
+                                         );
+    NewMenuEntry->HelpString      = NULL;
+    NewMenuEntry->HelpStringToken = NewMenuEntry->DisplayStringToken;
+    NewMenuEntry->OptionNumber    = OptionNumber;
     OptionNumber++;
     InsertTailList (&DriverMenu.Head, &NewMenuEntry->Link);
   }
@@ -619,7 +684,13 @@ BOpt_GetOptionNumber (
       continue;
     }
 
-    UnicodeSPrint (StrTemp, sizeof (StrTemp), L"%s%04x", Type, (UINTN)OptionNumber);
+    UnicodeSPrint (
+      StrTemp,
+      sizeof (StrTemp),
+      L"%s%04x",
+      Type,
+      (UINTN)OptionNumber
+      );
     DEBUG ((DEBUG_ERROR, "Option = %s\n", StrTemp));
     GetEfiGlobalVariable2 (StrTemp, (VOID **)&OptionBuffer, &OptionSize);
     if (NULL == OptionBuffer) {
@@ -702,7 +773,11 @@ BOpt_GetDriverOptions (
   //
   // Get the DriverOrder from the Var
   //
-  GetEfiGlobalVariable2 (L"DriverOrder", (VOID **)&DriverOrderList, &DriverOrderListSize);
+  GetEfiGlobalVariable2 (
+    L"DriverOrder",
+    (VOID **)&DriverOrderList,
+    &DriverOrderListSize
+    );
   if (DriverOrderList == NULL) {
     return EFI_NOT_FOUND;
   }
@@ -717,7 +792,11 @@ BOpt_GetDriverOptions (
     //
     //  Get all loadoptions from the VAR
     //
-    GetEfiGlobalVariable2 (DriverString, (VOID **)&LoadOptionFromVar, &DriverOptionSize);
+    GetEfiGlobalVariable2 (
+      DriverString,
+      (VOID **)&LoadOptionFromVar,
+      &DriverOptionSize
+      );
     if (LoadOptionFromVar == NULL) {
       continue;
     }
@@ -727,7 +806,8 @@ BOpt_GetDriverOptions (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    NewLoadContext             = (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
+    NewLoadContext =
+      (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
     LoadOptionPtr              = LoadOptionFromVar;
     LoadOptionEnd              = LoadOptionFromVar + DriverOptionSize;
     NewMenuEntry->OptionNumber = DriverOrderList[Index];
@@ -756,11 +836,18 @@ BOpt_GetDriverOptions (
       StringSize
       );
     NewMenuEntry->DisplayString      = NewLoadContext->Description;
-    NewMenuEntry->DisplayStringToken = HiiSetString (CallbackData->BmmHiiHandle, 0, NewMenuEntry->DisplayString, NULL);
+    NewMenuEntry->DisplayStringToken = HiiSetString (
+                                         CallbackData->BmmHiiHandle,
+                                         0,
+                                         NewMenuEntry->DisplayString,
+                                         NULL
+                                         );
 
     LoadOptionPtr += StringSize;
 
-    NewLoadContext->FilePathList = AllocateZeroPool (NewLoadContext->FilePathListLength);
+    NewLoadContext->FilePathList = AllocateZeroPool (
+                                     NewLoadContext->FilePathListLength
+                                     );
     ASSERT (NewLoadContext->FilePathList != NULL);
     CopyMem (
       NewLoadContext->FilePathList,
@@ -768,8 +855,15 @@ BOpt_GetDriverOptions (
       NewLoadContext->FilePathListLength
       );
 
-    NewMenuEntry->HelpString      = UiDevicePathToStr (NewLoadContext->FilePathList);
-    NewMenuEntry->HelpStringToken = HiiSetString (CallbackData->BmmHiiHandle, 0, NewMenuEntry->HelpString, NULL);
+    NewMenuEntry->HelpString = UiDevicePathToStr (
+                                 NewLoadContext->FilePathList
+                                 );
+    NewMenuEntry->HelpStringToken = HiiSetString (
+                                      CallbackData->BmmHiiHandle,
+                                      0,
+                                      NewMenuEntry->HelpString,
+                                      NULL
+                                      );
 
     LoadOptionPtr += NewLoadContext->FilePathListLength;
 
@@ -826,15 +920,20 @@ GetBootOrder (
   ZeroMem (BmmConfig->BootOptionOrder, sizeof (BmmConfig->BootOptionOrder));
 
   for (Index = 0, OptionOrderIndex = 0; ((Index < BootOptionMenu.MenuNumber) &&
-                                         (OptionOrderIndex < (sizeof (BmmConfig->BootOptionOrder) / sizeof (BmmConfig->BootOptionOrder[0]))));
+                                         (OptionOrderIndex <
+                                          (sizeof (BmmConfig->BootOptionOrder) /
+                                           sizeof (BmmConfig->BootOptionOrder[0]))));
        Index++)
   {
     NewMenuEntry   = BOpt_GetMenuEntry (&BootOptionMenu, Index);
     NewLoadContext = (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
 
     if (NewLoadContext->IsLegacy) {
-      if (((BBS_BBS_DEVICE_PATH *)NewLoadContext->FilePathList)->DeviceType != DeviceType) {
-        DeviceType = ((BBS_BBS_DEVICE_PATH *)NewLoadContext->FilePathList)->DeviceType;
+      if (((BBS_BBS_DEVICE_PATH *)NewLoadContext->FilePathList)->DeviceType !=
+          DeviceType)
+      {
+        DeviceType =
+          ((BBS_BBS_DEVICE_PATH *)NewLoadContext->FilePathList)->DeviceType;
       } else {
         //
         // Only show one legacy boot option for the same device type
@@ -844,7 +943,8 @@ GetBootOrder (
       }
     }
 
-    BmmConfig->BootOptionOrder[OptionOrderIndex++] = (UINT32)(NewMenuEntry->OptionNumber + 1);
+    BmmConfig->BootOptionOrder[OptionOrderIndex++] =
+      (UINT32)(NewMenuEntry->OptionNumber + 1);
   }
 }
 
@@ -872,16 +972,25 @@ GetDriverOrder (
   BmmConfig  = &CallbackData->BmmFakeNvData;
   ZeroMem (BmmConfig->DriverOptionOrder, sizeof (BmmConfig->DriverOptionOrder));
 
-  for (Index = 0, OptionOrderIndex = 0; ((Index < DriverOptionMenu.MenuNumber) &&
-                                         (OptionOrderIndex < (sizeof (BmmConfig->DriverOptionOrder) / sizeof (BmmConfig->DriverOptionOrder[0]))));
+  for (Index = 0, OptionOrderIndex = 0; ((Index <
+                                          DriverOptionMenu.MenuNumber) &&
+                                         (OptionOrderIndex <
+                                          (sizeof (BmmConfig->DriverOptionOrder)
+                                           /
+                                           sizeof (BmmConfig->DriverOptionOrder[
+                                                                                                                                          0
+                                                   ]))));
        Index++)
   {
     NewMenuEntry   = BOpt_GetMenuEntry (&DriverOptionMenu, Index);
     NewLoadContext = (BM_LOAD_CONTEXT *)NewMenuEntry->VariableContext;
 
     if (NewLoadContext->IsLegacy) {
-      if (((BBS_BBS_DEVICE_PATH *)NewLoadContext->FilePathList)->DeviceType != DeviceType) {
-        DeviceType = ((BBS_BBS_DEVICE_PATH *)NewLoadContext->FilePathList)->DeviceType;
+      if (((BBS_BBS_DEVICE_PATH *)NewLoadContext->FilePathList)->DeviceType !=
+          DeviceType)
+      {
+        DeviceType =
+          ((BBS_BBS_DEVICE_PATH *)NewLoadContext->FilePathList)->DeviceType;
       } else {
         //
         // Only show one legacy boot option for the same device type
@@ -891,7 +1000,8 @@ GetDriverOrder (
       }
     }
 
-    BmmConfig->DriverOptionOrder[OptionOrderIndex++] = (UINT32)(NewMenuEntry->OptionNumber + 1);
+    BmmConfig->DriverOptionOrder[OptionOrderIndex++] =
+      (UINT32)(NewMenuEntry->OptionNumber + 1);
   }
 }
 

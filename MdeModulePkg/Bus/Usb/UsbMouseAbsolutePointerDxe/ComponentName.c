@@ -11,7 +11,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUsbMouseAbsolutePointerComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gUsbMouseAbsolutePointerComponentName = {
   UsbMouseAbsolutePointerComponentNameGetDriverName,
   UsbMouseAbsolutePointerComponentNameGetControllerName,
   "eng"
@@ -20,15 +21,19 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gUsbMouseAbsolutePoin
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gUsbMouseAbsolutePointerComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)UsbMouseAbsolutePointerComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)UsbMouseAbsolutePointerComponentNameGetControllerName,
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gUsbMouseAbsolutePointerComponentName2 = {
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)
+  UsbMouseAbsolutePointerComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  UsbMouseAbsolutePointerComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mUsbMouseAbsolutePointerDriverNameTable[] = {
-  { "eng;en", L"Usb Mouse Absolute Pointer Driver" },
-  { NULL,     NULL                                 }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mUsbMouseAbsolutePointerDriverNameTable[] = {
+  { "eng;en", L"Usb Mouse Absolute Pointer Driver"         },
+  { NULL,     NULL                                         }
 };
 
 /**
@@ -204,7 +209,9 @@ UsbMouseAbsolutePointerComponentNameGetControllerName (
     return Status;
   }
 
-  UsbMouseAbsolutePointerDev = USB_MOUSE_ABSOLUTE_POINTER_DEV_FROM_MOUSE_PROTOCOL (AbsolutePointerProtocol);
+  UsbMouseAbsolutePointerDev =
+    USB_MOUSE_ABSOLUTE_POINTER_DEV_FROM_MOUSE_PROTOCOL (
+      AbsolutePointerProtocol);
 
   return LookupUnicodeString2 (
            Language,

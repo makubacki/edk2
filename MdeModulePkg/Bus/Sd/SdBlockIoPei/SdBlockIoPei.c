@@ -59,7 +59,8 @@ SD_PEIM_HC_PRIVATE_DATA  gSdHcPrivateTemplate = {
     NULL
   },
   {
-    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+    (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+     EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
     &gEfiEndOfPeiSignalPpiGuid,
     SdBlockIoPeimEndOfPei
   },
@@ -175,13 +176,16 @@ SdBlockIoPeimGetMediaInfo (
 
   Private = GET_SD_PEIM_HC_PRIVATE_DATA_FROM_THIS (This);
 
-  if ((DeviceIndex == 0) || (DeviceIndex > Private->TotalBlkIoDevices) || (DeviceIndex > SD_PEIM_MAX_SLOTS)) {
+  if ((DeviceIndex == 0) || (DeviceIndex > Private->TotalBlkIoDevices) ||
+      (DeviceIndex > SD_PEIM_MAX_SLOTS))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
   MediaInfo->DeviceType   = SD;
   MediaInfo->MediaPresent = TRUE;
-  MediaInfo->LastBlock    = (UINTN)Private->Slot[DeviceIndex - 1].Media.LastBlock;
+  MediaInfo->LastBlock    = (UINTN)Private->Slot[DeviceIndex -
+                                                 1].Media.LastBlock;
   MediaInfo->BlockSize    = Private->Slot[DeviceIndex - 1].Media.BlockSize;
 
   return EFI_SUCCESS;
@@ -253,7 +257,9 @@ SdBlockIoPeimReadBlocks (
     return EFI_SUCCESS;
   }
 
-  if ((DeviceIndex == 0) || (DeviceIndex > Private->TotalBlkIoDevices) || (DeviceIndex > SD_PEIM_MAX_SLOTS)) {
+  if ((DeviceIndex == 0) || (DeviceIndex > Private->TotalBlkIoDevices) ||
+      (DeviceIndex > SD_PEIM_MAX_SLOTS))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -283,9 +289,23 @@ SdBlockIoPeimReadBlocks (
 
     BufferSize = NumberOfBlocks * BlockSize;
     if (NumberOfBlocks != 1) {
-      Status = SdPeimRwMultiBlocks (&Private->Slot[DeviceIndex - 1], StartLBA, BlockSize, Buffer, BufferSize, TRUE);
+      Status = SdPeimRwMultiBlocks (
+                 &Private->Slot[DeviceIndex - 1],
+                 StartLBA,
+                 BlockSize,
+                 Buffer,
+                 BufferSize,
+                 TRUE
+                 );
     } else {
-      Status = SdPeimRwSingleBlock (&Private->Slot[DeviceIndex - 1], StartLBA, BlockSize, Buffer, BufferSize, TRUE);
+      Status = SdPeimRwSingleBlock (
+                 &Private->Slot[DeviceIndex - 1],
+                 StartLBA,
+                 BlockSize,
+                 Buffer,
+                 BufferSize,
+                 TRUE
+                 );
     }
 
     if (EFI_ERROR (Status)) {
@@ -401,7 +421,11 @@ SdBlockIoPeimGetMediaInfo2 (
     return Status;
   }
 
-  CopyMem (MediaInfo, &(Private->Slot[DeviceIndex - 1].Media), sizeof (EFI_PEI_BLOCK_IO2_MEDIA));
+  CopyMem (
+    MediaInfo,
+    &(Private->Slot[DeviceIndex - 1].Media),
+    sizeof (EFI_PEI_BLOCK_IO2_MEDIA)
+    );
   return EFI_SUCCESS;
 }
 
@@ -556,7 +580,12 @@ InitializeSdBlockIoPeim (
   Controller = 0;
   MmioBase   = NULL;
   while (TRUE) {
-    Status = SdMmcHcPpi->GetSdMmcHcMmioBar (SdMmcHcPpi, Controller, &MmioBase, &BarNum);
+    Status = SdMmcHcPpi->GetSdMmcHcMmioBar (
+                           SdMmcHcPpi,
+                           Controller,
+                           &MmioBase,
+                           &BarNum
+                           );
     //
     // When status is error, meant no controller is found
     //
@@ -569,7 +598,10 @@ InitializeSdBlockIoPeim (
       continue;
     }
 
-    Private = AllocateCopyPool (sizeof (SD_PEIM_HC_PRIVATE_DATA), &gSdHcPrivateTemplate);
+    Private = AllocateCopyPool (
+                sizeof (SD_PEIM_HC_PRIVATE_DATA),
+                &gSdHcPrivateTemplate
+                );
     if (Private == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       break;
@@ -593,7 +625,11 @@ InitializeSdBlockIoPeim (
       }
 
       if (Capability.SlotType != 0x1) {
-        DEBUG ((DEBUG_INFO, "The slot at 0x%x is not embedded slot type\n", MmioBase[Index]));
+        DEBUG ((
+          DEBUG_INFO,
+          "The slot at 0x%x is not embedded slot type\n",
+          MmioBase[Index]
+          ));
         Status = EFI_UNSUPPORTED;
         continue;
       }
@@ -631,7 +667,13 @@ InitializeSdBlockIoPeim (
         CSize                  = (Csd->CSizeHigh << 2 | Csd->CSizeLow) + 1;
         CSizeMul               = (1 << (Csd->CSizeMul + 2));
         ReadBlLen              = (1 << (Csd->ReadBlLen));
-        Capacity               = MultU64x32 (MultU64x32 ((UINT64)CSize, CSizeMul), ReadBlLen);
+        Capacity               = MultU64x32 (
+                                   MultU64x32 (
+                                     (UINT64)CSize,
+                                     CSizeMul
+                                     ),
+                                   ReadBlLen
+                                   );
       } else {
         Slot->SectorAddressing = TRUE;
         Csd2                   = (SD_CSD2 *)(VOID *)Csd;

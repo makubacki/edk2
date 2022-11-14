@@ -87,7 +87,9 @@ AmlFindNodeInThis (
     //
     // AML name is same as the one stored
     //
-    if (CompareMem (CurrentAmlNodeList->Name, NameSeg, AML_NAME_SEG_SIZE) == 0) {
+    if (CompareMem (CurrentAmlNodeList->Name, NameSeg, AML_NAME_SEG_SIZE) ==
+        0)
+    {
       //
       // Good! Found it
       //
@@ -334,7 +336,12 @@ AmlConstructNodeListForChild (
     //
     // Find the child node.
     //
-    Status = SdtOpenEx (CurrentBuffer, (UINTN)Buffer + BufferSize - (UINTN)CurrentBuffer, (EFI_ACPI_HANDLE *)&AmlChildHandle);
+    Status = SdtOpenEx (
+               CurrentBuffer,
+               (UINTN)Buffer + BufferSize -
+               (UINTN)CurrentBuffer,
+               (EFI_ACPI_HANDLE *)&AmlChildHandle
+               );
     if (EFI_ERROR (Status)) {
       //
       // No child found, break now.
@@ -407,7 +414,13 @@ AmlConstructNodeList (
   // Now, we need to insert node to the node list.
   // NOTE: The name here could be AML NameString. So the callee need parse it.
   //
-  AmlNodeList = AmlInsertNodeToTree (NameString, AmlHandle->Buffer, AmlHandle->Size, AmlRootNodeList, AmlParentNodeList);
+  AmlNodeList = AmlInsertNodeToTree (
+                  NameString,
+                  AmlHandle->Buffer,
+                  AmlHandle->Size,
+                  AmlRootNodeList,
+                  AmlParentNodeList
+                  );
   ASSERT (AmlNodeList != NULL);
 
   //
@@ -537,7 +550,11 @@ AmlFindPath (
   //
   RootNameSeg[0]  = AML_ROOT_CHAR;
   RootNameSeg[1]  = 0;
-  AmlRootNodeList = AmlCreateNode (RootNameSeg, NULL, AmlHandle->AmlByteEncoding);
+  AmlRootNodeList = AmlCreateNode (
+                      RootNameSeg,
+                      NULL,
+                      AmlHandle->AmlByteEncoding
+                      );
 
   Status = AmlConstructNodeList (
              AmlHandle,

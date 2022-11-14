@@ -76,9 +76,13 @@ typedef struct {
   LIST_ENTRY                         Maps;
 } PCI_ROOT_BRIDGE_INSTANCE;
 
-#define ROOT_BRIDGE_FROM_THIS(a)  CR (a, PCI_ROOT_BRIDGE_INSTANCE, RootBridgeIo, PCI_ROOT_BRIDGE_SIGNATURE)
+#define ROOT_BRIDGE_FROM_THIS( \
+                             a)  \
+  CR (a, PCI_ROOT_BRIDGE_INSTANCE, RootBridgeIo, PCI_ROOT_BRIDGE_SIGNATURE)
 
-#define ROOT_BRIDGE_FROM_LINK(a)  CR (a, PCI_ROOT_BRIDGE_INSTANCE, Link, PCI_ROOT_BRIDGE_SIGNATURE)
+#define ROOT_BRIDGE_FROM_LINK( \
+                             a)  \
+  CR (a, PCI_ROOT_BRIDGE_INSTANCE, Link, PCI_ROOT_BRIDGE_SIGNATURE)
 
 /**
   Construct the Pci Root Bridge instance.

@@ -301,8 +301,12 @@ SetDebugPrintErrorLevel (
       Size             = sizeof (GlobalErrorLevel);
       Status           = mSystemTable->RuntimeServices->SetVariable (
                                                           DEBUG_MASK_VARIABLE_NAME,
-                                                          &gEfiGenericVariableGuid,
-                                                          (EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS),
+                                                          &
+                                                          gEfiGenericVariableGuid,
+                                                          (
+                                                          EFI_VARIABLE_NON_VOLATILE
+                                                          |
+                                                          EFI_VARIABLE_BOOTSERVICE_ACCESS),
                                                           Size,
                                                           &GlobalErrorLevel
                                                           );

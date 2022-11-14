@@ -13,7 +13,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Alignment for PCD Variable and check data header.
 //
 #define HEADER_ALIGNMENT  4
-#define HEADER_ALIGN(Header)  (((UINTN) (Header) + HEADER_ALIGNMENT - 1) & (~(HEADER_ALIGNMENT - 1)))
+#define HEADER_ALIGN( \
+                    Header)  \
+  (((UINTN) (Header) + HEADER_ALIGNMENT - 1) & (~(HEADER_ALIGNMENT - 1)))
 
 #pragma pack (1)
 

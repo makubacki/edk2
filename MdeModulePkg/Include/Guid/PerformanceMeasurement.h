@@ -20,7 +20,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define SMM_PERFORMANCE_MEASUREMENT_PROTOCOL_GUID \
   { 0xd56b6d73, 0x1a7b, 0x4015, {0x9b, 0xb4, 0x7b, 0x07, 0x17, 0x29, 0xed, 0x24 } }
 
-typedef struct _EDKII_PERFORMANCE_MEASUREMENT_PROTOCOL EDKII_PERFORMANCE_MEASUREMENT_PROTOCOL;
+typedef struct _EDKII_PERFORMANCE_MEASUREMENT_PROTOCOL
+EDKII_PERFORMANCE_MEASUREMENT_PROTOCOL;
 
 typedef enum {
   PerfStartEntry,                        // used in StartPerformanceMeasurement()/StartPerformanceMeasurementEx()

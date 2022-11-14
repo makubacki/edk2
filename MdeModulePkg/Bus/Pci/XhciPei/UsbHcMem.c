@@ -104,7 +104,11 @@ UsbHcFreeMemBlock (
 {
   ASSERT ((Pool != NULL) && (Block != NULL));
 
-  IoMmuFreeBuffer (EFI_SIZE_TO_PAGES (Block->BufLen), Block->BufHost, Block->Mapping);
+  IoMmuFreeBuffer (
+    EFI_SIZE_TO_PAGES (Block->BufLen),
+    Block->BufHost,
+    Block->Mapping
+    );
 
   //
   // No free memory in PEI.
@@ -218,7 +222,9 @@ UsbHcGetPciAddrForHostAddr (
     // scan the memory block list for the memory block that
     // completely contains the allocated memory.
     //
-    if ((Block->BufHost <= (UINT8 *)Mem) && (((UINT8 *)Mem + AllocSize) <= (Block->BufHost + Block->BufLen))) {
+    if ((Block->BufHost <= (UINT8 *)Mem) && (((UINT8 *)Mem + AllocSize) <=
+                                             (Block->BufHost + Block->BufLen)))
+    {
       break;
     }
   }
@@ -267,7 +273,9 @@ UsbHcGetHostAddrForPciAddr (
     // scan the memory block list for the memory block that
     // completely contains the allocated memory.
     //
-    if ((Block->Buf <= (UINT8 *)Mem) && (((UINT8 *)Mem + AllocSize) <= (Block->Buf + Block->BufLen))) {
+    if ((Block->Buf <= (UINT8 *)Mem) && (((UINT8 *)Mem + AllocSize) <=
+                                         (Block->Buf + Block->BufLen)))
+    {
       break;
     }
   }
@@ -500,7 +508,9 @@ UsbHcFreeMem (
     // scan the memory block list for the memory block that
     // completely contains the memory to free.
     //
-    if ((Block->BufHost <= ToFree) && ((ToFree + AllocSize) <= (Block->BufHost + Block->BufLen))) {
+    if ((Block->BufHost <= ToFree) && ((ToFree + AllocSize) <= (Block->BufHost +
+                                                                Block->BufLen)))
+    {
       //
       // compute the start byte and bit in the bit array
       //

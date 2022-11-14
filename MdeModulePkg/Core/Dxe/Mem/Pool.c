@@ -156,7 +156,9 @@ LookupPoolHead (
   // MemoryType values in the range 0x70000000..0x7FFFFFFF are reserved for OEM use.
   //
   if ((UINT32)MemoryType >= MEMORY_TYPE_OEM_RESERVED_MIN) {
-    for (Link = mPoolHeadList.ForwardLink; Link != &mPoolHeadList; Link = Link->ForwardLink) {
+    for (Link = mPoolHeadList.ForwardLink; Link != &mPoolHeadList; Link =
+           Link->ForwardLink)
+    {
       Pool = CR (Link, POOL, Link, POOL_SIGNATURE);
       if (Pool->MemoryType == MemoryType) {
         return Pool;
@@ -212,7 +214,8 @@ CoreInternalAllocatePool (
   //
   // If it's not a valid type, fail it
   //
-  if (((PoolType >= EfiMaxMemoryType) && (PoolType < MEMORY_TYPE_OEM_RESERVED_MIN)) ||
+  if (((PoolType >= EfiMaxMemoryType) && (PoolType <
+                                          MEMORY_TYPE_OEM_RESERVED_MIN)) ||
       (PoolType == EfiConventionalMemory) || (PoolType == EfiPersistentMemory))
   {
     return EFI_INVALID_PARAMETER;
@@ -415,7 +418,12 @@ CoreAllocatePoolI (
 
     NoPages  = EFI_SIZE_TO_PAGES (Size) + EFI_SIZE_TO_PAGES (Granularity) - 1;
     NoPages &= ~(UINTN)(EFI_SIZE_TO_PAGES (Granularity) - 1);
-    Head     = CoreAllocatePoolPagesI (PoolType, NoPages, Granularity, NeedGuard);
+    Head     = CoreAllocatePoolPagesI (
+                 PoolType,
+                 NoPages,
+                 Granularity,
+                 NeedGuard
+                 );
     if (NeedGuard) {
       Head = AdjustPoolHeadA ((EFI_PHYSICAL_ADDRESS)(UINTN)Head, NoPages, Size);
     }
@@ -435,7 +443,12 @@ CoreAllocatePoolI (
     //
     while (++Index < SIZE_TO_LIST (Granularity)) {
       if (!IsListEmpty (&Pool->FreeList[Index])) {
-        Free = CR (Pool->FreeList[Index].ForwardLink, POOL_FREE, Link, POOL_FREE_SIGNATURE);
+        Free = CR (
+                 Pool->FreeList[Index].ForwardLink,
+                 POOL_FREE,
+                 Link,
+                 POOL_FREE_SIGNATURE
+                 );
         RemoveEntryList (&Free->Link);
         NewPage   = (VOID *)Free;
         MaxOffset = LIST_TO_SIZE (Index);
@@ -488,7 +501,12 @@ Carve:
   //
   // Remove entry from free pool list
   //
-  Free = CR (Pool->FreeList[Index].ForwardLink, POOL_FREE, Link, POOL_FREE_SIGNATURE);
+  Free = CR (
+           Pool->FreeList[Index].ForwardLink,
+           POOL_FREE,
+           Link,
+           POOL_FREE_SIGNATURE
+           );
   RemoveEntryList (&Free->Link);
 
   Head = (POOL_HEAD *)Free;
@@ -505,10 +523,11 @@ Done:
     //
     // If we have a pool buffer, fill in the header & tail info
     //
-    Head->Signature = (PageAsPool) ? POOLPAGE_HEAD_SIGNATURE : POOL_HEAD_SIGNATURE;
-    Head->Size      = Size;
-    Head->Type      = (EFI_MEMORY_TYPE)PoolType;
-    Buffer          = Head->Data;
+    Head->Signature = (PageAsPool) ? POOLPAGE_HEAD_SIGNATURE :
+                      POOL_HEAD_SIGNATURE;
+    Head->Size = Size;
+    Head->Type = (EFI_MEMORY_TYPE)PoolType;
+    Buffer     = Head->Data;
 
     if (HasPoolTail) {
       Tail            = HEAD_TO_TAIL (Head);
@@ -531,7 +550,11 @@ Done:
       (UINT64)Pool->Used
       ));
   } else {
-    DEBUG ((DEBUG_ERROR | DEBUG_POOL, "AllocatePool: failed to allocate %ld bytes\n", (UINT64)Size));
+    DEBUG ((
+      DEBUG_ERROR | DEBUG_POOL,
+      "AllocatePool: failed to allocate %ld bytes\n",
+      (UINT64)Size
+      ));
   }
 
   return Buffer;
@@ -751,7 +774,13 @@ CoreFreePoolI (
   }
 
   Pool->Used -= Size;
-  DEBUG ((DEBUG_POOL, "FreePool: %p (len %lx) %,ld\n", Head->Data, (UINT64)(Head->Size - POOL_OVERHEAD), (UINT64)Pool->Used));
+  DEBUG ((
+    DEBUG_POOL,
+    "FreePool: %p (len %lx) %,ld\n",
+    Head->Data,
+    (UINT64)(Head->Size - POOL_OVERHEAD),
+    (UINT64)Pool->Used
+    ));
 
   if ((Head->Type == EfiACPIReclaimMemory) ||
       (Head->Type == EfiACPIMemoryNVS) ||
@@ -862,7 +891,9 @@ CoreFreePoolI (
   // portion of that memory type has been freed.  If it has, then free the
   // list entry for that memory type
   //
-  if (((UINT32)Pool->MemoryType >= MEMORY_TYPE_OEM_RESERVED_MIN) && (Pool->Used == 0)) {
+  if (((UINT32)Pool->MemoryType >= MEMORY_TYPE_OEM_RESERVED_MIN) &&
+      (Pool->Used == 0))
+  {
     RemoveEntryList (&Pool->Link);
     CoreFreePoolI (Pool, NULL);
   }

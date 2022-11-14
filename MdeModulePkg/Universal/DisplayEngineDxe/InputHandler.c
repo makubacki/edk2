@@ -81,8 +81,10 @@ ReadString (
   BOOLEAN                        IsPassword;
   UINTN                          MaxLen;
 
-  DimensionsWidth  = gStatementDimensions.RightColumn - gStatementDimensions.LeftColumn;
-  DimensionsHeight = gStatementDimensions.BottomRow - gStatementDimensions.TopRow;
+  DimensionsWidth = gStatementDimensions.RightColumn -
+                    gStatementDimensions.LeftColumn;
+  DimensionsHeight = gStatementDimensions.BottomRow -
+                     gStatementDimensions.TopRow;
 
   NullCharacter = CHAR_NULL;
   ScreenSize    = GetStringWidth (Prompt) / sizeof (CHAR16);
@@ -113,15 +115,29 @@ ReadString (
   BufferedString = AllocateZeroPool (ScreenSize * 2);
   ASSERT (BufferedString);
 
-  Start = (DimensionsWidth - ScreenSize - 2) / 2 + gStatementDimensions.LeftColumn + 1;
-  Top   = ((DimensionsHeight - 6) / 2) + gStatementDimensions.TopRow - 1;
+  Start = (DimensionsWidth - ScreenSize - 2) / 2 +
+          gStatementDimensions.LeftColumn + 1;
+  Top = ((DimensionsHeight - 6) / 2) + gStatementDimensions.TopRow - 1;
 
   //
   // Display prompt for string
   //
   // CreateDialog (NULL, "", Prompt, Space, "", NULL);
-  CreateMultiStringPopUp (ScreenSize, 4, &NullCharacter, Prompt, Space, &NullCharacter);
-  gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_BLACK, EFI_LIGHTGRAY));
+  CreateMultiStringPopUp (
+    ScreenSize,
+    4,
+    &NullCharacter,
+    Prompt,
+    Space,
+    &NullCharacter
+    );
+  gST->ConOut->SetAttribute (
+                 gST->ConOut,
+                 EFI_TEXT_ATTR (
+                   EFI_BLACK,
+                   EFI_LIGHTGRAY
+                   )
+                 );
 
   CursorVisible = gST->ConOut->Mode->CursorVisible;
   gST->ConOut->EnableCursor (gST->ConOut, TRUE);
@@ -144,7 +160,9 @@ ReadString (
       gST->ConOut->SetCursorPosition (gST->ConOut, Start + 1, Top + 3);
     }
 
-    for (Count = 0; Index + 1 < GetStringWidth (StringPtr) / 2; Index++, Count++) {
+    for (Count = 0; Index + 1 < GetStringWidth (StringPtr) / 2; Index++,
+         Count++)
+    {
       BufferedString[Count] = StringPtr[Index];
 
       if (IsPassword) {
@@ -156,15 +174,33 @@ ReadString (
       PrintStringAt (Start + 1, Top + 3, BufferedString);
     }
 
-    gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
-    gST->ConOut->SetCursorPosition (gST->ConOut, Start + GetStringWidth (StringPtr) / 2, Top + 3);
+    gST->ConOut->SetAttribute (
+                   gST->ConOut,
+                   EFI_TEXT_ATTR (
+                     EFI_LIGHTGRAY,
+                     EFI_BLACK
+                     )
+                   );
+    gST->ConOut->SetCursorPosition (
+                   gST->ConOut,
+                   Start + GetStringWidth (
+                             StringPtr
+                             ) / 2,
+                   Top + 3
+                   );
   }
 
   do {
     Status = WaitForKeyStroke (&Key);
     ASSERT_EFI_ERROR (Status);
 
-    gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_BLACK, EFI_LIGHTGRAY));
+    gST->ConOut->SetAttribute (
+                   gST->ConOut,
+                   EFI_TEXT_ATTR (
+                     EFI_BLACK,
+                     EFI_LIGHTGRAY
+                     )
+                   );
     switch (Key.UnicodeChar) {
       case CHAR_NULL:
         switch (Key.ScanCode) {
@@ -185,14 +221,27 @@ ReadString (
           case SCAN_ESC:
             FreePool (TempString);
             FreePool (BufferedString);
-            gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
+            gST->ConOut->SetAttribute (
+                           gST->ConOut,
+                           EFI_TEXT_ATTR (
+                             EFI_LIGHTGRAY,
+                             EFI_BLACK
+                             )
+                           );
             gST->ConOut->EnableCursor (gST->ConOut, CursorVisible);
             return EFI_DEVICE_ERROR;
 
           case SCAN_DELETE:
-            for (Index = CurrentCursor; StringPtr[Index] != CHAR_NULL; Index++) {
+            for (Index = CurrentCursor; StringPtr[Index] != CHAR_NULL;
+                 Index++)
+            {
               StringPtr[Index] = StringPtr[Index + 1];
-              PrintCharAt (Start + Index + 1, Top + 3, IsPassword && StringPtr[Index] != CHAR_NULL ? L'*' : StringPtr[Index]);
+              PrintCharAt (
+                Start + Index + 1,
+                Top + 3,
+                IsPassword &&
+                StringPtr[Index] != CHAR_NULL ? L'*' : StringPtr[Index]
+                );
             }
 
             break;
@@ -207,7 +256,13 @@ ReadString (
         if (GetStringWidth (StringPtr) >= ((Minimum + 1) * sizeof (CHAR16))) {
           FreePool (TempString);
           FreePool (BufferedString);
-          gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
+          gST->ConOut->SetAttribute (
+                         gST->ConOut,
+                         EFI_TEXT_ATTR (
+                           EFI_LIGHTGRAY,
+                           EFI_BLACK
+                           )
+                         );
           gST->ConOut->EnableCursor (gST->ConOut, CursorVisible);
           return EFI_SUCCESS;
         } else {
@@ -216,12 +271,25 @@ ReadString (
           // To save code space, we can then treat this as an error and return back to the menu.
           //
           do {
-            CreateDialog (&Key, &NullCharacter, gMiniString, gPressEnter, &NullCharacter, NULL);
+            CreateDialog (
+              &Key,
+              &NullCharacter,
+              gMiniString,
+              gPressEnter,
+              &NullCharacter,
+              NULL
+              );
           } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
 
           FreePool (TempString);
           FreePool (BufferedString);
-          gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
+          gST->ConOut->SetAttribute (
+                         gST->ConOut,
+                         EFI_TEXT_ATTR (
+                           EFI_LIGHTGRAY,
+                           EFI_BLACK
+                           )
+                         );
           gST->ConOut->EnableCursor (gST->ConOut, CursorVisible);
           return EFI_DEVICE_ERROR;
         }
@@ -234,7 +302,9 @@ ReadString (
 
           Count = GetStringWidth (StringPtr) / 2 - 1;
           if (Count >= CurrentCursor) {
-            for (Index = CurrentCursor - 1, Index2 = CurrentCursor; Index2 < Count; Index++, Index2++) {
+            for (Index = CurrentCursor - 1, Index2 = CurrentCursor; Index2 <
+                 Count; Index++, Index2++)
+            {
               TempString[Index] = StringPtr[Index2];
             }
 
@@ -252,10 +322,15 @@ ReadString (
         //
         // If it is the beginning of the string, don't worry about checking maximum limits
         //
-        if ((StringPtr[0] == CHAR_NULL) && (Key.UnicodeChar != CHAR_BACKSPACE)) {
+        if ((StringPtr[0] == CHAR_NULL) && (Key.UnicodeChar !=
+                                            CHAR_BACKSPACE))
+        {
           StrnCpyS (StringPtr, MaxLen, &Key.UnicodeChar, 1);
           CurrentCursor++;
-        } else if ((GetStringWidth (StringPtr) < ((Maximum + 1) * sizeof (CHAR16))) && (Key.UnicodeChar != CHAR_BACKSPACE)) {
+        } else if ((GetStringWidth (StringPtr) < ((Maximum + 1) *
+                                                  sizeof (CHAR16))) &&
+                   (Key.UnicodeChar != CHAR_BACKSPACE))
+        {
           KeyPad[0] = Key.UnicodeChar;
           KeyPad[1] = CHAR_NULL;
           Count     = GetStringWidth (StringPtr) / 2 - 1;
@@ -292,7 +367,9 @@ ReadString (
           gST->ConOut->SetCursorPosition (gST->ConOut, Start + 1, Top + 3);
         }
 
-        for (Count = 0; Index + 1 < GetStringWidth (StringPtr) / 2; Index++, Count++) {
+        for (Count = 0; Index + 1 < GetStringWidth (StringPtr) / 2; Index++,
+             Count++)
+        {
           BufferedString[Count] = StringPtr[Index];
 
           if (IsPassword) {
@@ -307,8 +384,18 @@ ReadString (
         break;
     }
 
-    gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
-    gST->ConOut->SetCursorPosition (gST->ConOut, Start + CurrentCursor + 1, Top + 3);
+    gST->ConOut->SetAttribute (
+                   gST->ConOut,
+                   EFI_TEXT_ATTR (
+                     EFI_LIGHTGRAY,
+                     EFI_BLACK
+                     )
+                   );
+    gST->ConOut->SetCursorPosition (
+                   gST->ConOut,
+                   Start + CurrentCursor + 1,
+                   Top + 3
+                   );
   } while (TRUE);
 }
 
@@ -538,7 +625,9 @@ GetNumericInput (
   //
   ManualInput = (BOOLEAN)(gDirection == 0 ? TRUE : FALSE);
 
-  if ((Question->OpCode->OpCode == EFI_IFR_DATE_OP) || (Question->OpCode->OpCode == EFI_IFR_TIME_OP)) {
+  if ((Question->OpCode->OpCode == EFI_IFR_DATE_OP) ||
+      (Question->OpCode->OpCode == EFI_IFR_TIME_OP))
+  {
     DateOrTime = TRUE;
   } else {
     DateOrTime = FALSE;
@@ -626,7 +715,17 @@ GetNumericInput (
   } else {
     ASSERT (Question->OpCode->OpCode == EFI_IFR_NUMERIC_OP);
     NumericOp = (EFI_IFR_NUMERIC *)Question->OpCode;
-    GetValueFromNum (Question->OpCode, (NumericOp->Flags & EFI_IFR_DISPLAY) == 0, QuestionValue, &EditValue, &Minimum, &Maximum, &Step, &StorageWidth);
+    GetValueFromNum (
+      Question->OpCode,
+      (NumericOp->Flags & EFI_IFR_DISPLAY) ==
+      0,
+      QuestionValue,
+      &EditValue,
+      &Minimum,
+      &Maximum,
+      &Step,
+      &StorageWidth
+      );
     EraseLen = gOptionBlockWidth;
   }
 
@@ -844,12 +943,22 @@ TheKey2:
                   //
                   // Year
                   //
-                  UnicodeSPrint (FormattedNumber, 21 * sizeof (CHAR16), L"%04d", (UINT16)EditValue);
+                  UnicodeSPrint (
+                    FormattedNumber,
+                    21 * sizeof (CHAR16),
+                    L"%04d",
+                    (UINT16)EditValue
+                    );
                 } else {
                   //
                   // Month/Day
                   //
-                  UnicodeSPrint (FormattedNumber, 21 * sizeof (CHAR16), L"%02d", (UINT8)EditValue);
+                  UnicodeSPrint (
+                    FormattedNumber,
+                    21 * sizeof (CHAR16),
+                    L"%02d",
+                    (UINT8)EditValue
+                    );
                 }
 
                 if (MenuOption->Sequence == 0) {
@@ -860,7 +969,12 @@ TheKey2:
                   FormattedNumber[EraseLen - 1] = DATE_SEPARATOR;
                 }
               } else if (Question->OpCode->OpCode == EFI_IFR_TIME_OP) {
-                UnicodeSPrint (FormattedNumber, 21 * sizeof (CHAR16), L"%02d", (UINT8)EditValue);
+                UnicodeSPrint (
+                  FormattedNumber,
+                  21 * sizeof (CHAR16),
+                  L"%02d",
+                  (UINT8)EditValue
+                  );
 
                 if (MenuOption->Sequence == 0) {
                   ASSERT (EraseLen >= 2);
@@ -871,12 +985,21 @@ TheKey2:
                 }
               } else {
                 QuestionValue->Value.u64 = EditValue;
-                PrintFormattedNumber (Question, FormattedNumber, 21 * sizeof (CHAR16));
+                PrintFormattedNumber (
+                  Question,
+                  FormattedNumber,
+                  21 *
+                  sizeof (CHAR16)
+                  );
               }
 
               gST->ConOut->SetAttribute (gST->ConOut, GetFieldTextColor ());
               for (Loop = 0; Loop < EraseLen; Loop++) {
-                PrintStringAt (MenuOption->OptCol + Loop, MenuOption->Row, L" ");
+                PrintStringAt (
+                  MenuOption->OptCol + Loop,
+                  MenuOption->Row,
+                  L" "
+                  );
               }
 
               gST->ConOut->SetAttribute (gST->ConOut, GetHighlightTextColor ());
@@ -937,7 +1060,11 @@ EnterCarriageReturn:
         }
 
         UpdateStatusBar (INPUT_ERROR, FALSE);
-        CopyMem (&gUserInput->InputValue, &Question->CurrentValue, sizeof (EFI_HII_VALUE));
+        CopyMem (
+          &gUserInput->InputValue,
+          &Question->CurrentValue,
+          sizeof (EFI_HII_VALUE)
+          );
         QuestionValue = &gUserInput->InputValue;
         //
         // Store Edit value back to Question
@@ -1057,7 +1184,8 @@ EnterCarriageReturn:
               //
               // Save the negative number.
               //
-              EditValue = ~(MultU64x32 (~(EditValue - 1), 10) + (Key.UnicodeChar - L'0')) + 1;
+              EditValue = ~(MultU64x32 (~(EditValue - 1), 10) +
+                            (Key.UnicodeChar - L'0')) + 1;
             } else {
               EditValue = MultU64x32 (EditValue, 10) + (Key.UnicodeChar - L'0');
             }
@@ -1164,11 +1292,19 @@ AdjustOptionOrder (
 
   for (Index = 0; Index < *PopUpMenuLines; Index++) {
     HiiValueArray[Index].Type      = ValueType;
-    HiiValueArray[Index].Value.u64 = GetArrayData (ValueArray, ValueType, Index);
+    HiiValueArray[Index].Value.u64 = GetArrayData (
+                                       ValueArray,
+                                       ValueType,
+                                       Index
+                                       );
   }
 
   for (Index = 0; Index < *PopUpMenuLines; Index++) {
-    OneOfOption = ValueToOption (Question, &HiiValueArray[*PopUpMenuLines - Index - 1]);
+    OneOfOption = ValueToOption (
+                    Question,
+                    &HiiValueArray[*PopUpMenuLines -
+                                   Index - 1]
+                    );
     if (OneOfOption == NULL) {
       return EFI_NOT_FOUND;
     }
@@ -1311,7 +1447,8 @@ GetSelectionInputPopUp (
   INTN                           Result;
   EFI_IFR_ORDERED_LIST           *OrderList;
 
-  DimensionsWidth = gStatementDimensions.RightColumn - gStatementDimensions.LeftColumn;
+  DimensionsWidth = gStatementDimensions.RightColumn -
+                    gStatementDimensions.LeftColumn;
 
   ValueArray    = NULL;
   ValueType     = 0;
@@ -1358,15 +1495,28 @@ GetSelectionInputPopUp (
   for (Index = 0; Index < PopUpMenuLines; Index++) {
     OneOfOption = DISPLAY_QUESTION_OPTION_FROM_LINK (Link);
 
-    StringPtr = GetToken (OneOfOption->OptionOpCode->Option, gFormData->HiiHandle);
+    StringPtr = GetToken (
+                  OneOfOption->OptionOpCode->Option,
+                  gFormData->HiiHandle
+                  );
     if (StrLen (StringPtr) > PopUpWidth) {
       PopUpWidth = StrLen (StringPtr);
     }
 
     FreePool (StringPtr);
     HiiValue.Type = OneOfOption->OptionOpCode->Type;
-    SetValuesByType (&HiiValue.Value, &OneOfOption->OptionOpCode->Value, HiiValue.Type);
-    if (!OrderedList && (CompareHiiValue (&Question->CurrentValue, &HiiValue, &Result, NULL) == EFI_SUCCESS) && (Result == 0)) {
+    SetValuesByType (
+      &HiiValue.Value,
+      &OneOfOption->OptionOpCode->Value,
+      HiiValue.Type
+      );
+    if (!OrderedList && (CompareHiiValue (
+                           &Question->CurrentValue,
+                           &HiiValue,
+                           &Result,
+                           NULL
+                           ) == EFI_SUCCESS) && (Result == 0))
+    {
       //
       // Find current selected Option for OneOf
       //
@@ -1388,7 +1538,8 @@ GetSelectionInputPopUp (
     PopUpWidth = DimensionsWidth - POPUP_FRAME_WIDTH;
   }
 
-  Start  = (DimensionsWidth - PopUpWidth - POPUP_FRAME_WIDTH) / 2 + gStatementDimensions.LeftColumn;
+  Start = (DimensionsWidth - PopUpWidth - POPUP_FRAME_WIDTH) / 2 +
+          gStatementDimensions.LeftColumn;
   End    = Start + PopUpWidth + POPUP_FRAME_WIDTH;
   Top    = gStatementDimensions.TopRow;
   Bottom = gStatementDimensions.BottomRow - 1;
@@ -1448,11 +1599,16 @@ GetSelectionInputPopUp (
     // Display the One of options
     //
     Index2 = Top + 1;
-    for (Index = TopOptionIndex; (Index < PopUpMenuLines) && (Index2 < Bottom); Index++) {
+    for (Index = TopOptionIndex; (Index < PopUpMenuLines) && (Index2 < Bottom);
+         Index++)
+    {
       OneOfOption = DISPLAY_QUESTION_OPTION_FROM_LINK (Link);
       Link        = GetNextNode (&Question->OptionListHead, Link);
 
-      StringPtr = GetToken (OneOfOption->OptionOpCode->Option, gFormData->HiiHandle);
+      StringPtr = GetToken (
+                    OneOfOption->OptionOpCode->Option,
+                    gFormData->HiiHandle
+                    );
       ASSERT (StringPtr != NULL);
       //
       // If the string occupies multiple lines, truncate it to fit in one line,
@@ -1461,7 +1617,12 @@ GetSelectionInputPopUp (
       if (StrLen (StringPtr) > (PopUpWidth - 1)) {
         TempStringPtr = AllocateZeroPool (sizeof (CHAR16) * (PopUpWidth - 1));
         ASSERT (TempStringPtr != NULL);
-        CopyMem (TempStringPtr, StringPtr, (sizeof (CHAR16) * (PopUpWidth - 5)));
+        CopyMem (
+          TempStringPtr,
+          StringPtr,
+          (sizeof (CHAR16) * (PopUpWidth -
+                              5))
+          );
         FreePool (StringPtr);
         StringPtr = TempStringPtr;
         StrCatS (StringPtr, PopUpWidth - 1, L"...");
@@ -1516,7 +1677,9 @@ TheKey:
     switch (Key.UnicodeChar) {
       case '+':
         if (OrderedList) {
-          if ((TopOptionIndex > 0) && (TopOptionIndex == HighlightOptionIndex)) {
+          if ((TopOptionIndex > 0) && (TopOptionIndex ==
+                                       HighlightOptionIndex))
+          {
             //
             // Highlight reaches the top of the popup window, scroll one menu item.
             //
@@ -1532,7 +1695,10 @@ TheKey:
             HighlightOptionIndex--;
 
             ASSERT (CurrentOption != NULL);
-            SwapListEntries (CurrentOption->Link.BackLink, &CurrentOption->Link);
+            SwapListEntries (
+              CurrentOption->Link.BackLink,
+              &CurrentOption->Link
+              );
           }
         }
 
@@ -1562,7 +1728,10 @@ TheKey:
             HighlightOptionIndex++;
 
             ASSERT (CurrentOption != NULL);
-            SwapListEntries (&CurrentOption->Link, CurrentOption->Link.ForwardLink);
+            SwapListEntries (
+              &CurrentOption->Link,
+              CurrentOption->Link.ForwardLink
+              );
           }
         }
 
@@ -1573,7 +1742,9 @@ TheKey:
           case SCAN_UP:
           case SCAN_DOWN:
             if (Key.ScanCode == SCAN_UP) {
-              if ((TopOptionIndex > 0) && (TopOptionIndex == HighlightOptionIndex)) {
+              if ((TopOptionIndex > 0) && (TopOptionIndex ==
+                                           HighlightOptionIndex))
+              {
                 //
                 // Highlight reaches the top of the popup window, scroll one menu item.
                 //
@@ -1590,7 +1761,8 @@ TheKey:
               }
             } else {
               if (((TopOptionIndex + MenuLinesInView) < PopUpMenuLines) &&
-                  (HighlightOptionIndex == (TopOptionIndex + MenuLinesInView - 1)))
+                  (HighlightOptionIndex == (TopOptionIndex + MenuLinesInView -
+                                            1)))
               {
                 //
                 // Highlight reaches the bottom of the popup window, scroll one menu item.
@@ -1620,7 +1792,11 @@ TheKey:
               HiiValue.Type      = ValueType;
               HiiValue.Value.u64 = 0;
               for (Index = 0; Index < OrderList->MaxContainers; Index++) {
-                HiiValue.Value.u64 = GetArrayData (ValueArray, ValueType, Index);
+                HiiValue.Value.u64 = GetArrayData (
+                                       ValueArray,
+                                       ValueType,
+                                       Index
+                                       );
                 if (HiiValue.Value.u64 == 0) {
                   break;
                 }
@@ -1656,7 +1832,12 @@ TheKey:
             OneOfOption = DISPLAY_QUESTION_OPTION_FROM_LINK (Link);
             Link        = GetNextNode (&Question->OptionListHead, Link);
 
-            SetArrayData (ReturnValue, ValueType, Index, OneOfOption->OptionOpCode->Value.u64);
+            SetArrayData (
+              ReturnValue,
+              ValueType,
+              Index,
+              OneOfOption->OptionOpCode->Value.u64
+              );
 
             Index++;
             if (Index > OrderList->MaxContainers) {
@@ -1664,7 +1845,12 @@ TheKey:
             }
           }
 
-          if (CompareMem (ReturnValue, ValueArray, Question->CurrentValue.BufferLen) == 0) {
+          if (CompareMem (
+                ReturnValue,
+                ValueArray,
+                Question->CurrentValue.BufferLen
+                ) == 0)
+          {
             FreePool (ReturnValue);
             return EFI_DEVICE_ERROR;
           } else {
@@ -1674,10 +1860,19 @@ TheKey:
         } else {
           ASSERT (CurrentOption != NULL);
           gUserInput->InputValue.Type = CurrentOption->OptionOpCode->Type;
-          if (IsValuesEqual (&Question->CurrentValue.Value, &CurrentOption->OptionOpCode->Value, gUserInput->InputValue.Type)) {
+          if (IsValuesEqual (
+                &Question->CurrentValue.Value,
+                &CurrentOption->OptionOpCode->Value,
+                gUserInput->InputValue.Type
+                ))
+          {
             return EFI_DEVICE_ERROR;
           } else {
-            SetValuesByType (&gUserInput->InputValue.Value, &CurrentOption->OptionOpCode->Value, gUserInput->InputValue.Type);
+            SetValuesByType (
+              &gUserInput->InputValue.Value,
+              &CurrentOption->OptionOpCode->Value,
+              gUserInput->InputValue.Type
+              );
           }
         }
 

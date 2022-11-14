@@ -9,7 +9,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include "PeiMain.h"
 
 EFI_PEI_NOTIFY_DESCRIPTOR  mNotifyList = {
-  EFI_PEI_PPI_DESCRIPTOR_NOTIFY_DISPATCH | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
+  EFI_PEI_PPI_DESCRIPTOR_NOTIFY_DISPATCH |
+  EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
   &gEfiPeiSecurity2PpiGuid,
   SecurityPpiNotifyCallback
 };
@@ -101,7 +102,9 @@ VerifyPeim (
     // Check AuthenticationStatus first.
     //
     if ((AuthenticationStatus & EFI_AUTH_STATUS_IMAGE_SIGNED) != 0) {
-      if ((AuthenticationStatus & (EFI_AUTH_STATUS_TEST_FAILED | EFI_AUTH_STATUS_NOT_TESTED)) != 0) {
+      if ((AuthenticationStatus & (EFI_AUTH_STATUS_TEST_FAILED |
+                                   EFI_AUTH_STATUS_NOT_TESTED)) != 0)
+      {
         Status = EFI_SECURITY_VIOLATION;
       }
     }
@@ -110,7 +113,9 @@ VerifyPeim (
     // Check to see if the image is OK
     //
     Status = PrivateData->PrivateSecurityPpi->AuthenticationState (
-                                                (CONST EFI_PEI_SERVICES **)&PrivateData->Ps,
+                                                (CONST
+                                                 EFI_PEI_SERVICES **)&
+                                                PrivateData->Ps,
                                                 PrivateData->PrivateSecurityPpi,
                                                 AuthenticationStatus,
                                                 VolumeHandle,

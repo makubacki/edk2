@@ -29,14 +29,20 @@ typedef struct {
   EFI_PCI_HOST_BRIDGE_RESOURCE_ALLOCATION_PROTOCOL    ResAlloc;
 } PCI_HOST_BRIDGE_INSTANCE;
 
-#define PCI_HOST_BRIDGE_FROM_THIS(a)  CR (a, PCI_HOST_BRIDGE_INSTANCE, ResAlloc, PCI_HOST_BRIDGE_SIGNATURE)
+#define PCI_HOST_BRIDGE_FROM_THIS( \
+                                 a)  \
+  CR (a, PCI_HOST_BRIDGE_INSTANCE, ResAlloc, PCI_HOST_BRIDGE_SIGNATURE)
 
 //
 // Macros to translate device address to host address and vice versa. According
 // to UEFI 2.7, device address = host address + translation offset.
 //
-#define TO_HOST_ADDRESS(DeviceAddress, TranslationOffset)  ((DeviceAddress) - (TranslationOffset))
-#define TO_DEVICE_ADDRESS(HostAddress, TranslationOffset)  ((HostAddress) + (TranslationOffset))
+#define TO_HOST_ADDRESS(DeviceAddress, \
+                        TranslationOffset)  \
+      ((DeviceAddress) - (TranslationOffset))
+#define TO_DEVICE_ADDRESS(HostAddress, \
+                          TranslationOffset)  \
+      ((HostAddress) + (TranslationOffset))
 
 //
 // Driver Entry Point

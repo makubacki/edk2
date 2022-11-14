@@ -70,7 +70,12 @@ HookPageFaultHandler (
   // Set Page Fault entry to catch >4G access
   //
   PageFaultHandlerHookAddress = (UINTN)PageFaultHandlerHook;
-  mOriginalHandler            = (VOID *)(UINTN)(LShiftU64 (IdtEntry->Bits.OffsetUpper, 32) + IdtEntry->Bits.OffsetLow + (IdtEntry->Bits.OffsetHigh << 16));
+  mOriginalHandler            = (VOID *)(UINTN)(LShiftU64 (
+                                                  IdtEntry->Bits.OffsetUpper,
+                                                  32
+                                                  ) + IdtEntry->Bits.OffsetLow +
+                                                (IdtEntry->Bits.OffsetHigh <<
+                                                 16));
   IdtEntry->Bits.OffsetLow    = (UINT16)PageFaultHandlerHookAddress;
   IdtEntry->Bits.Selector     = (UINT16)AsmReadCs ();
   IdtEntry->Bits.Reserved_0   = 0;
@@ -80,9 +85,13 @@ HookPageFaultHandler (
   IdtEntry->Bits.Reserved_1   = 0;
 
   if (mPage1GSupport) {
-    mPageFaultBuffer = (UINTN)(AsmReadCr3 () & mPhyMask) + EFI_PAGES_TO_SIZE (2);
+    mPageFaultBuffer = (UINTN)(AsmReadCr3 () & mPhyMask) + EFI_PAGES_TO_SIZE (
+                                                             2
+                                                             );
   } else {
-    mPageFaultBuffer = (UINTN)(AsmReadCr3 () & mPhyMask) + EFI_PAGES_TO_SIZE (6);
+    mPageFaultBuffer = (UINTN)(AsmReadCr3 () & mPhyMask) + EFI_PAGES_TO_SIZE (
+                                                             6
+                                                             );
   }
 
   ZeroMem (mPageFaultUplink, sizeof (mPageFaultUplink));
@@ -103,9 +112,12 @@ IsLongModeWakingVector (
 {
   EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE  *Facs;
 
-  Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE *)((UINTN)(AcpiS3Context->AcpiFacsTable));
+  Facs =
+    (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE *)((UINTN)(AcpiS3Context->
+                                                               AcpiFacsTable));
   if ((Facs == NULL) ||
-      (Facs->Signature != EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE) ||
+      (Facs->Signature !=
+       EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE) ||
       ((Facs->FirmwareWakingVector == 0) && (Facs->XFirmwareWakingVector == 0)))
   {
     // Something wrong with FACS
@@ -113,7 +125,8 @@ IsLongModeWakingVector (
   }
 
   if (Facs->XFirmwareWakingVector != 0) {
-    if ((Facs->Version == EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION) &&
+    if ((Facs->Version ==
+         EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION) &&
         ((Facs->Flags & EFI_ACPI_4_0_64BIT_WAKE_SUPPORTED_F) != 0) &&
         ((Facs->OspmFlags & EFI_ACPI_4_0_OSPM_64BIT_WAKE__F) != 0))
     {
@@ -161,7 +174,10 @@ SetIdtEntry (
   //
   S3DebugBuffer = (UINTN)(AcpiS3Context->S3DebugBufferAddress);
   if (*(UINTN *)S3DebugBuffer != (UINTN)-1) {
-    IdtEntry                   = (IA32_IDT_GATE_DESCRIPTOR *)(IdtDescriptor->Base + (3 * sizeof (IA32_IDT_GATE_DESCRIPTOR)));
+    IdtEntry =
+      (IA32_IDT_GATE_DESCRIPTOR *)(IdtDescriptor->Base + (3 *
+                                                          sizeof (
+                                                                                                IA32_IDT_GATE_DESCRIPTOR)));
     IdtEntry->Bits.OffsetLow   = (UINT16)S3DebugBuffer;
     IdtEntry->Bits.Selector    = (UINT16)AsmReadCs ();
     IdtEntry->Bits.Reserved_0  = 0;
@@ -179,7 +195,9 @@ SetIdtEntry (
   // no need to hook page fault handler.
   //
   if (!IsLongModeWakingVector (AcpiS3Context)) {
-    IdtEntry = (IA32_IDT_GATE_DESCRIPTOR *)(IdtDescriptor->Base + (14 * sizeof (IA32_IDT_GATE_DESCRIPTOR)));
+    IdtEntry = (IA32_IDT_GATE_DESCRIPTOR *)(IdtDescriptor->Base + (14 *
+                                                                   sizeof (
+                                                                               IA32_IDT_GATE_DESCRIPTOR)));
     HookPageFaultHandler (IdtEntry);
   }
 }
@@ -204,7 +222,8 @@ AcquirePage (
   // Cut the previous uplink if it exists and wasn't overwritten.
   //
   if ((mPageFaultUplink[mPageFaultIndex] != NULL) &&
-      ((*mPageFaultUplink[mPageFaultIndex] & ~mAddressEncMask & mPhyMask) == Address))
+      ((*mPageFaultUplink[mPageFaultIndex] & ~mAddressEncMask & mPhyMask) ==
+       Address))
   {
     *mPageFaultUplink[mPageFaultIndex] = 0;
   }
@@ -212,7 +231,8 @@ AcquirePage (
   //
   // Link & Record the current uplink.
   //
-  *Uplink                           = Address | mAddressEncMask | IA32_PG_P | IA32_PG_RW;
+  *Uplink = Address | mAddressEncMask | IA32_PG_P |
+            IA32_PG_RW;
   mPageFaultUplink[mPageFaultIndex] = Uplink;
 
   mPageFaultIndex = (mPageFaultIndex + 1) % EXTRA_PAGE_TABLE_PAGES;
@@ -252,20 +272,24 @@ PageFaultHandler (
     AcquirePage (&PageTable[PTIndex]);
   }
 
-  PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask & mPhyMask);
+  PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask &
+                                mPhyMask);
   PTIndex   = BitFieldRead64 (PFAddress, 30, 38);
   // PDPTE
   if (mPage1GSupport) {
-    PageTable[PTIndex] = ((PFAddress | mAddressEncMask) & ~((1ull << 30) - 1)) | IA32_PG_P | IA32_PG_RW | IA32_PG_PS;
+    PageTable[PTIndex] = ((PFAddress | mAddressEncMask) & ~((1ull << 30) - 1)) |
+                         IA32_PG_P | IA32_PG_RW | IA32_PG_PS;
   } else {
     if ((PageTable[PTIndex] & IA32_PG_P) == 0) {
       AcquirePage (&PageTable[PTIndex]);
     }
 
-    PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask & mPhyMask);
+    PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask &
+                                  mPhyMask);
     PTIndex   = BitFieldRead64 (PFAddress, 21, 29);
     // PD
-    PageTable[PTIndex] = ((PFAddress | mAddressEncMask) & ~((1ull << 21) - 1)) | IA32_PG_P | IA32_PG_RW | IA32_PG_PS;
+    PageTable[PTIndex] = ((PFAddress | mAddressEncMask) & ~((1ull << 21) - 1)) |
+                         IA32_PG_P | IA32_PG_RW | IA32_PG_PS;
   }
 
   return TRUE;

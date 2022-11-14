@@ -11,23 +11,26 @@
 //
 // Driver name table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mEmmcDxeDriverNameTable[] = {
-  { "eng;en", L"Edkii Emmc Device Driver" },
-  { NULL,     NULL                        }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mEmmcDxeDriverNameTable[] = {
+  { "eng;en", L"Edkii Emmc Device Driver"     },
+  { NULL,     NULL                            }
 };
 
 //
 // Controller name table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mEmmcDxeControllerNameTable[] = {
-  { "eng;en", L"Edkii Emmc Host Controller" },
-  { NULL,     NULL                          }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mEmmcDxeControllerNameTable[] = {
+  { "eng;en", L"Edkii Emmc Host Controller"     },
+  { NULL,     NULL                              }
 };
 
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gEmmcDxeComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gEmmcDxeComponentName = {
   EmmcDxeComponentNameGetDriverName,
   EmmcDxeComponentNameGetControllerName,
   "eng"
@@ -36,7 +39,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gEmmcDxeComponentName
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gEmmcDxeComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gEmmcDxeComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)EmmcDxeComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)EmmcDxeComponentNameGetControllerName,
   "en"

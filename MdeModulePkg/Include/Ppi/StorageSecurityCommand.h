@@ -21,7 +21,8 @@
 //
 // Forward declaration for the EDKII_PEI_STORAGE_SECURITY_CMD_PPI.
 //
-typedef struct _EDKII_PEI_STORAGE_SECURITY_CMD_PPI EDKII_PEI_STORAGE_SECURITY_CMD_PPI;
+typedef struct _EDKII_PEI_STORAGE_SECURITY_CMD_PPI
+EDKII_PEI_STORAGE_SECURITY_CMD_PPI;
 
 //
 // Revision The revision to which the Storage Security Command interface adheres.

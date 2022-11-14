@@ -85,7 +85,8 @@ TerminalConInReset (
   TerminalDevice->RawFiFo->Head             = TerminalDevice->RawFiFo->Tail;
   TerminalDevice->UnicodeFiFo->Head         = TerminalDevice->UnicodeFiFo->Tail;
   TerminalDevice->EfiKeyFiFo->Head          = TerminalDevice->EfiKeyFiFo->Tail;
-  TerminalDevice->EfiKeyFiFoForNotify->Head = TerminalDevice->EfiKeyFiFoForNotify->Tail;
+  TerminalDevice->EfiKeyFiFoForNotify->Head =
+    TerminalDevice->EfiKeyFiFoForNotify->Tail;
 
   if (EFI_ERROR (Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
@@ -215,7 +216,10 @@ TerminalConInResetEx (
 
   TerminalDevice = TERMINAL_CON_IN_EX_DEV_FROM_THIS (This);
 
-  Status = TerminalDevice->SimpleInput.Reset (&TerminalDevice->SimpleInput, ExtendedVerification);
+  Status = TerminalDevice->SimpleInput.Reset (
+                                         &TerminalDevice->SimpleInput,
+                                         ExtendedVerification
+                                         );
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -327,7 +331,9 @@ TerminalConInRegisterKeyNotify (
   LIST_ENTRY                     *NotifyList;
   TERMINAL_CONSOLE_IN_EX_NOTIFY  *CurrentNotify;
 
-  if ((KeyData == NULL) || (NotifyHandle == NULL) || (KeyNotificationFunction == NULL)) {
+  if ((KeyData == NULL) || (NotifyHandle == NULL) || (KeyNotificationFunction ==
+                                                      NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -337,7 +343,9 @@ TerminalConInRegisterKeyNotify (
   // Return EFI_SUCCESS if the (KeyData, NotificationFunction) is already registered.
   //
   NotifyList = &TerminalDevice->NotifyList;
-  for (Link = GetFirstNode (NotifyList); !IsNull (NotifyList, Link); Link = GetNextNode (NotifyList, Link)) {
+  for (Link = GetFirstNode (NotifyList); !IsNull (NotifyList, Link); Link =
+         GetNextNode (NotifyList, Link))
+  {
     CurrentNotify = CR (
                       Link,
                       TERMINAL_CONSOLE_IN_EX_NOTIFY,
@@ -355,7 +363,10 @@ TerminalConInRegisterKeyNotify (
   //
   // Allocate resource to save the notification function
   //
-  NewNotify = (TERMINAL_CONSOLE_IN_EX_NOTIFY *)AllocateZeroPool (sizeof (TERMINAL_CONSOLE_IN_EX_NOTIFY));
+  NewNotify = (TERMINAL_CONSOLE_IN_EX_NOTIFY *)AllocateZeroPool (
+                                                 sizeof (
+                                                                        TERMINAL_CONSOLE_IN_EX_NOTIFY)
+                                                 );
   if (NewNotify == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -401,7 +412,9 @@ TerminalConInUnregisterKeyNotify (
   TerminalDevice = TERMINAL_CON_IN_EX_DEV_FROM_THIS (This);
 
   NotifyList = &TerminalDevice->NotifyList;
-  for (Link = GetFirstNode (NotifyList); !IsNull (NotifyList, Link); Link = GetNextNode (NotifyList, Link)) {
+  for (Link = GetFirstNode (NotifyList); !IsNull (NotifyList, Link); Link =
+         GetNextNode (NotifyList, Link))
+  {
     CurrentNotify = CR (
                       Link,
                       TERMINAL_CONSOLE_IN_EX_NOTIFY,
@@ -531,7 +544,8 @@ TerminalConInTimerHandler (
       //
       // According to BAUD rate to calculate the timeout value.
       //
-      SerialInTimeOut = (1 + Mode->DataBits + Mode->StopBits) * 2 * 1000000 / (UINTN)Mode->BaudRate;
+      SerialInTimeOut = (1 + Mode->DataBits + Mode->StopBits) * 2 * 1000000 /
+                        (UINTN)Mode->BaudRate;
     }
 
     Status = SerialIo->SetAttributes (
@@ -621,7 +635,10 @@ KeyNotifyProcessHandler (
     // Enter critical section
     //
     OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
-    HasKey = EfiKeyFiFoForNotifyRemoveOneKey (TerminalDevice->EfiKeyFiFoForNotify, &Key);
+    HasKey = EfiKeyFiFoForNotifyRemoveOneKey (
+               TerminalDevice->EfiKeyFiFoForNotify,
+               &Key
+               );
     CopyMem (&KeyData.Key, &Key, sizeof (EFI_INPUT_KEY));
     KeyData.KeyState.KeyShiftState  = 0;
     KeyData.KeyState.KeyToggleState = 0;
@@ -633,8 +650,15 @@ KeyNotifyProcessHandler (
       break;
     }
 
-    for (Link = GetFirstNode (NotifyList); !IsNull (NotifyList, Link); Link = GetNextNode (NotifyList, Link)) {
-      CurrentNotify = CR (Link, TERMINAL_CONSOLE_IN_EX_NOTIFY, NotifyEntry, TERMINAL_CONSOLE_IN_EX_NOTIFY_SIGNATURE);
+    for (Link = GetFirstNode (NotifyList); !IsNull (NotifyList, Link); Link =
+           GetNextNode (NotifyList, Link))
+    {
+      CurrentNotify = CR (
+                        Link,
+                        TERMINAL_CONSOLE_IN_EX_NOTIFY,
+                        NotifyEntry,
+                        TERMINAL_CONSOLE_IN_EX_NOTIFY_SIGNATURE
+                        );
       if (IsKeyRegistered (&CurrentNotify->KeyData, &KeyData)) {
         CurrentNotify->KeyNotificationFn (&KeyData);
       }
@@ -716,7 +740,8 @@ RawFiFoInsertOneKey (
 
   TerminalDevice->RawFiFo->Data[Tail] = Input;
 
-  TerminalDevice->RawFiFo->Tail = (UINT8)((Tail + 1) % (RAW_FIFO_MAX_NUMBER + 1));
+  TerminalDevice->RawFiFo->Tail = (UINT8)((Tail + 1) % (RAW_FIFO_MAX_NUMBER +
+                                                        1));
 
   return TRUE;
 }
@@ -751,7 +776,8 @@ RawFiFoRemoveOneKey (
 
   *Output = TerminalDevice->RawFiFo->Data[Head];
 
-  TerminalDevice->RawFiFo->Head = (UINT8)((Head + 1) % (RAW_FIFO_MAX_NUMBER + 1));
+  TerminalDevice->RawFiFo->Head = (UINT8)((Head + 1) % (RAW_FIFO_MAX_NUMBER +
+                                                        1));
 
   return TRUE;
 }
@@ -957,7 +983,9 @@ EfiKeyFiFoInsertOneKey (
   // Signal KeyNotify process event if this key pressed matches any key registered.
   //
   NotifyList = &TerminalDevice->NotifyList;
-  for (Link = GetFirstNode (NotifyList); !IsNull (NotifyList, Link); Link = GetNextNode (NotifyList, Link)) {
+  for (Link = GetFirstNode (NotifyList); !IsNull (NotifyList, Link); Link =
+         GetNextNode (NotifyList, Link))
+  {
     CurrentNotify = CR (
                       Link,
                       TERMINAL_CONSOLE_IN_EX_NOTIFY,
@@ -970,7 +998,10 @@ EfiKeyFiFoInsertOneKey (
       // while current TPL is TPL_NOTIFY. It will be invoked in
       // KeyNotifyProcessHandler() which runs at TPL_CALLBACK.
       //
-      EfiKeyFiFoForNotifyInsertOneKey (TerminalDevice->EfiKeyFiFoForNotify, Key);
+      EfiKeyFiFoForNotifyInsertOneKey (
+        TerminalDevice->EfiKeyFiFoForNotify,
+        Key
+        );
       gBS->SignalEvent (TerminalDevice->KeyNotifyProcessEvent);
       break;
     }
@@ -983,9 +1014,14 @@ EfiKeyFiFoInsertOneKey (
     return FALSE;
   }
 
-  CopyMem (&TerminalDevice->EfiKeyFiFo->Data[Tail], Key, sizeof (EFI_INPUT_KEY));
+  CopyMem (
+    &TerminalDevice->EfiKeyFiFo->Data[Tail],
+    Key,
+    sizeof (EFI_INPUT_KEY)
+    );
 
-  TerminalDevice->EfiKeyFiFo->Tail = (UINT8)((Tail + 1) % (FIFO_MAX_NUMBER + 1));
+  TerminalDevice->EfiKeyFiFo->Tail = (UINT8)((Tail + 1) % (FIFO_MAX_NUMBER +
+                                                           1));
 
   return TRUE;
 }
@@ -1020,9 +1056,14 @@ EfiKeyFiFoRemoveOneKey (
     return FALSE;
   }
 
-  CopyMem (Output, &TerminalDevice->EfiKeyFiFo->Data[Head], sizeof (EFI_INPUT_KEY));
+  CopyMem (
+    Output,
+    &TerminalDevice->EfiKeyFiFo->Data[Head],
+    sizeof (EFI_INPUT_KEY)
+    );
 
-  TerminalDevice->EfiKeyFiFo->Head = (UINT8)((Head + 1) % (FIFO_MAX_NUMBER + 1));
+  TerminalDevice->EfiKeyFiFo->Head = (UINT8)((Head + 1) % (FIFO_MAX_NUMBER +
+                                                           1));
 
   return TRUE;
 }
@@ -1106,7 +1147,8 @@ UnicodeFiFoInsertOneKey (
 
   TerminalDevice->UnicodeFiFo->Data[Tail] = Input;
 
-  TerminalDevice->UnicodeFiFo->Tail = (UINT8)((Tail + 1) % (FIFO_MAX_NUMBER + 1));
+  TerminalDevice->UnicodeFiFo->Tail = (UINT8)((Tail + 1) % (FIFO_MAX_NUMBER +
+                                                            1));
 
   return TRUE;
 }
@@ -1133,7 +1175,8 @@ UnicodeFiFoRemoveOneKey (
 
   *Output = TerminalDevice->UnicodeFiFo->Data[Head];
 
-  TerminalDevice->UnicodeFiFo->Head = (UINT8)((Head + 1) % (FIFO_MAX_NUMBER + 1));
+  TerminalDevice->UnicodeFiFo->Head = (UINT8)((Head + 1) % (FIFO_MAX_NUMBER +
+                                                            1));
 }
 
 /**
@@ -1352,7 +1395,10 @@ UnicodeToEfiKey (
     TerminalDevice->ResetState = RESET_STATE_DEFAULT;
   }
 
-  while (!IsUnicodeFiFoEmpty (TerminalDevice) && !IsEfiKeyFiFoFull (TerminalDevice)) {
+  while (!IsUnicodeFiFoEmpty (TerminalDevice) && !IsEfiKeyFiFoFull (
+                                                    TerminalDevice
+                                                    ))
+  {
     if (TerminalDevice->InputState != INPUT_STATE_DEFAULT) {
       //
       // Check to see if the 2 seconds timer has expired
@@ -1384,10 +1430,14 @@ UnicodeToEfiKey (
           continue;
         }
 
-        if ((UnicodeChar == 'O') && ((TerminalDevice->TerminalType == TerminalTypeVt100) ||
-                                     (TerminalDevice->TerminalType == TerminalTypeTtyTerm) ||
-                                     (TerminalDevice->TerminalType == TerminalTypeXtermR6) ||
-                                     (TerminalDevice->TerminalType == TerminalTypeVt100Plus)))
+        if ((UnicodeChar == 'O') && ((TerminalDevice->TerminalType ==
+                                      TerminalTypeVt100) ||
+                                     (TerminalDevice->TerminalType ==
+                                      TerminalTypeTtyTerm) ||
+                                     (TerminalDevice->TerminalType ==
+                                      TerminalTypeXtermR6) ||
+                                     (TerminalDevice->TerminalType ==
+                                      TerminalTypeVt100Plus)))
         {
           TerminalDevice->InputState |= INPUT_STATE_O;
           TerminalDevice->ResetState  = RESET_STATE_DEFAULT;
@@ -1631,23 +1681,31 @@ UnicodeToEfiKey (
 
       case INPUT_STATE_ESC | INPUT_STATE_LEFTOPENBRACKET:
 
-        if ((UnicodeChar == '1') && ((TerminalDevice->TerminalType == TerminalTypeXtermR6) ||
-                                     (TerminalDevice->TerminalType == TerminalTypeVt400) ||
-                                     (TerminalDevice->TerminalType == TerminalTypeLinux)))
+        if ((UnicodeChar == '1') && ((TerminalDevice->TerminalType ==
+                                      TerminalTypeXtermR6) ||
+                                     (TerminalDevice->TerminalType ==
+                                      TerminalTypeVt400) ||
+                                     (TerminalDevice->TerminalType ==
+                                      TerminalTypeLinux)))
         {
           TerminalDevice->InputState |= INPUT_STATE_1;
           continue;
         }
 
-        if ((UnicodeChar == '2') && ((TerminalDevice->TerminalType == TerminalTypeXtermR6) ||
-                                     (TerminalDevice->TerminalType == TerminalTypeVt400) ||
-                                     (TerminalDevice->TerminalType == TerminalTypeLinux)))
+        if ((UnicodeChar == '2') && ((TerminalDevice->TerminalType ==
+                                      TerminalTypeXtermR6) ||
+                                     (TerminalDevice->TerminalType ==
+                                      TerminalTypeVt400) ||
+                                     (TerminalDevice->TerminalType ==
+                                      TerminalTypeLinux)))
         {
           TerminalDevice->InputState |= INPUT_STATE_2;
           continue;
         }
 
-        if ((UnicodeChar == LEFTOPENBRACKET) && (TerminalDevice->TerminalType == TerminalTypeLinux)) {
+        if ((UnicodeChar == LEFTOPENBRACKET) && (TerminalDevice->TerminalType ==
+                                                 TerminalTypeLinux))
+        {
           TerminalDevice->InputState |= INPUT_STATE_LEFTOPENBRACKET_2ND;
           continue;
         }
@@ -1967,7 +2025,8 @@ UnicodeToEfiKey (
 
         break;
 
-      case INPUT_STATE_ESC | INPUT_STATE_LEFTOPENBRACKET | INPUT_STATE_LEFTOPENBRACKET_2ND:
+      case INPUT_STATE_ESC | INPUT_STATE_LEFTOPENBRACKET |
+        INPUT_STATE_LEFTOPENBRACKET_2ND:
 
         TerminalDevice->InputState = INPUT_STATE_DEFAULT;
         Key.ScanCode               = SCAN_NULL;
@@ -2004,7 +2063,8 @@ UnicodeToEfiKey (
 
         break;
 
-      case INPUT_STATE_ESC | INPUT_STATE_LEFTOPENBRACKET | INPUT_STATE_LEFTOPENBRACKET_TTY:
+      case INPUT_STATE_ESC | INPUT_STATE_LEFTOPENBRACKET |
+        INPUT_STATE_LEFTOPENBRACKET_TTY:
         /*
          * Here we handle the VT220 escape codes that we accept.  This
          * state is only used by the TTY terminal type.
@@ -2014,7 +2074,8 @@ UnicodeToEfiKey (
           if ((UnicodeChar == '~') && (TerminalDevice->TtyEscapeIndex <= 2)) {
             UINT16  EscCode;
             TerminalDevice->TtyEscapeStr[TerminalDevice->TtyEscapeIndex] = 0; /* Terminate string */
-            EscCode                                                      = (UINT16)StrDecimalToUintn (TerminalDevice->TtyEscapeStr);
+            EscCode                                                      =
+              (UINT16)StrDecimalToUintn (TerminalDevice->TtyEscapeStr);
             switch (EscCode) {
               case 2:
                 Key.ScanCode = SCAN_INSERT;
@@ -2051,7 +2112,8 @@ UnicodeToEfiKey (
             }
           } else if (TerminalDevice->TtyEscapeIndex == 1) {
             /* 2 character escape code   */
-            TerminalDevice->TtyEscapeStr[TerminalDevice->TtyEscapeIndex++] = UnicodeChar;
+            TerminalDevice->TtyEscapeStr[TerminalDevice->TtyEscapeIndex++] =
+              UnicodeChar;
             continue;
           } else {
             DEBUG ((DEBUG_ERROR, "Unexpected state in escape2\n"));

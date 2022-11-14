@@ -90,7 +90,17 @@ RamDiskPublishSsdt (
       break;
     }
 
-    if (Table->OemTableId == SIGNATURE_64 ('R', 'a', 'm', 'D', 'i', 's', 'k', ' ')) {
+    if (Table->OemTableId == SIGNATURE_64 (
+                               'R',
+                               'a',
+                               'm',
+                               'D',
+                               'i',
+                               's',
+                               'k',
+                               ' '
+                               ))
+    {
       Status = mAcpiTableProtocol->InstallAcpiTable (
                                      mAcpiTableProtocol,
                                      Table,
@@ -183,7 +193,8 @@ RamDiskPublishNfit (
   ASSERT_EFI_ERROR (Status);
 
   MemoryMapEntry = MemoryMap;
-  MemoryMapEnd   = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap + MemoryMapSize);
+  MemoryMapEnd   = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)MemoryMap +
+                                             MemoryMapSize);
   while ((UINTN)MemoryMapEntry < (UINTN)MemoryMapEnd) {
     if ((MemoryMapEntry->Type == EfiReservedMemoryType) &&
         (MemoryMapEntry->PhysicalStart <= PrivateData->StartingAddr) &&
@@ -244,8 +255,10 @@ RamDiskPublishNfit (
       ));
 
     NfitHeader = (EFI_ACPI_DESCRIPTION_HEADER *)TableHeader;
-    NfitLen    = NfitHeader->Length + sizeof (EFI_ACPI_6_1_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE);
-    Nfit       = AllocateZeroPool (NfitLen);
+    NfitLen    = NfitHeader->Length +
+                 sizeof (
+                                             EFI_ACPI_6_1_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE);
+    Nfit = AllocateZeroPool (NfitLen);
     if (Nfit == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -315,26 +328,35 @@ RamDiskPublishNfit (
     }
 
     SpaRange = (EFI_ACPI_6_1_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *)
-               ((UINT8 *)Nfit + sizeof (EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE));
+               ((UINT8 *)Nfit +
+                sizeof (EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE));
 
-    NfitHeader                  = (EFI_ACPI_DESCRIPTION_HEADER *)Nfit;
-    NfitHeader->Signature       = EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE_STRUCTURE_SIGNATURE;
-    NfitHeader->Length          = NfitLen;
-    NfitHeader->Revision        = EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE_REVISION;
+    NfitHeader            = (EFI_ACPI_DESCRIPTION_HEADER *)Nfit;
+    NfitHeader->Signature =
+      EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE_STRUCTURE_SIGNATURE;
+    NfitHeader->Length   = NfitLen;
+    NfitHeader->Revision =
+      EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE_REVISION;
     NfitHeader->Checksum        = 0;
     NfitHeader->OemRevision     = PcdGet32 (PcdAcpiDefaultOemRevision);
     NfitHeader->CreatorId       = PcdGet32 (PcdAcpiDefaultCreatorId);
     NfitHeader->CreatorRevision = PcdGet32 (PcdAcpiDefaultCreatorRevision);
     CurrentData                 = PcdGet64 (PcdAcpiDefaultOemTableId);
-    CopyMem (NfitHeader->OemId, PcdGetPtr (PcdAcpiDefaultOemId), sizeof (NfitHeader->OemId));
+    CopyMem (
+      NfitHeader->OemId,
+      PcdGetPtr (PcdAcpiDefaultOemId),
+      sizeof (NfitHeader->OemId)
+      );
     CopyMem (&NfitHeader->OemTableId, &CurrentData, sizeof (UINT64));
   }
 
   //
   // Fill in the content of the SPA Range Structure.
   //
-  SpaRange->Type                             = EFI_ACPI_6_1_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE_TYPE;
-  SpaRange->Length                           = sizeof (EFI_ACPI_6_1_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE);
+  SpaRange->Type =
+    EFI_ACPI_6_1_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE_TYPE;
+  SpaRange->Length =
+    sizeof (EFI_ACPI_6_1_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE);
   SpaRange->SystemPhysicalAddressRangeBase   = PrivateData->StartingAddr;
   SpaRange->SystemPhysicalAddressRangeLength = PrivateData->Size;
   CopyGuid (&SpaRange->AddressRangeTypeGUID, &PrivateData->TypeGuid);
@@ -477,7 +499,11 @@ RamDiskUnpublishNfit (
   //
   // Get a copy of the old NFIT header content.
   //
-  CopyMem (NewNfit, TableHeader, sizeof (EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE));
+  CopyMem (
+    NewNfit,
+    TableHeader,
+    sizeof (EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE)
+    );
   NewNfitHeader           = (EFI_ACPI_DESCRIPTION_HEADER *)NewNfit;
   NewNfitHeader->Length   = NewNfitLen;
   NewNfitHeader->Checksum = 0;
@@ -485,26 +511,38 @@ RamDiskUnpublishNfit (
   //
   // Copy the content of required NFIT structures.
   //
-  NewNfitPtr       = (UINT8 *)NewNfit + sizeof (EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE);
-  RemainLen        = NewNfitLen - sizeof (EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE);
+  NewNfitPtr = (UINT8 *)NewNfit +
+               sizeof (EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE);
+  RemainLen = NewNfitLen -
+              sizeof (EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE);
   NfitStructHeader = (EFI_ACPI_6_1_NFIT_STRUCTURE_HEADER *)
-                     ((UINT8 *)TableHeader + sizeof (EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE));
+                     ((UINT8 *)TableHeader +
+                      sizeof (EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE));
   while (RemainLen > 0) {
-    if ((NfitStructHeader->Type == EFI_ACPI_6_1_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE_TYPE) &&
-        (NfitStructHeader->Length == sizeof (EFI_ACPI_6_1_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE)))
+    if ((NfitStructHeader->Type ==
+         EFI_ACPI_6_1_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE_TYPE) &&
+        (NfitStructHeader->Length ==
+         sizeof (EFI_ACPI_6_1_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE)))
     {
-      SpaRange = (EFI_ACPI_6_1_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *)NfitStructHeader;
+      SpaRange =
+        (EFI_ACPI_6_1_NFIT_SYSTEM_PHYSICAL_ADDRESS_RANGE_STRUCTURE *)
+        NfitStructHeader;
 
-      if ((SpaRange->SystemPhysicalAddressRangeBase == PrivateData->StartingAddr) &&
+      if ((SpaRange->SystemPhysicalAddressRangeBase ==
+           PrivateData->StartingAddr) &&
           (SpaRange->SystemPhysicalAddressRangeLength == PrivateData->Size) &&
-          (CompareGuid (&SpaRange->AddressRangeTypeGUID, &PrivateData->TypeGuid)))
+          (CompareGuid (
+             &SpaRange->AddressRangeTypeGUID,
+             &PrivateData->TypeGuid
+             )))
       {
         //
         // Skip the SPA Range Structure for the RAM disk to be unpublished
         // from NFIT.
         //
         NfitStructHeader = (EFI_ACPI_6_1_NFIT_STRUCTURE_HEADER *)
-                           ((UINT8 *)NfitStructHeader + NfitStructHeader->Length);
+                           ((UINT8 *)NfitStructHeader +
+                            NfitStructHeader->Length);
         continue;
       }
     }
@@ -523,7 +561,10 @@ RamDiskUnpublishNfit (
                        ((UINT8 *)NfitStructHeader + NfitStructHeader->Length);
   }
 
-  Checksum                = CalculateCheckSum8 ((UINT8 *)NewNfit, NewNfitHeader->Length);
+  Checksum = CalculateCheckSum8 (
+               (UINT8 *)NewNfit,
+               NewNfitHeader->Length
+               );
   NewNfitHeader->Checksum = Checksum;
 
   Status = mAcpiTableProtocol->UninstallAcpiTable (
@@ -670,7 +711,10 @@ RamDiskRegister (
 
     BASE_LIST_FOR_EACH (Entry, &RegisteredRamDisks) {
       RegisteredPrivateData = RAM_DISK_PRIVATE_FROM_THIS (Entry);
-      if (DevicePathSize == GetDevicePathSize (RegisteredPrivateData->DevicePath)) {
+      if (DevicePathSize == GetDevicePathSize (
+                              RegisteredPrivateData->DevicePath
+                              ))
+      {
         //
         // Compare device path
         //

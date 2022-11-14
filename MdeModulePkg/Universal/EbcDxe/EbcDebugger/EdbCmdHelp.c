@@ -34,9 +34,15 @@ DebuggerHelp (
   // if no argument, print all the command title
   //
   if (CommandArg == NULL) {
-    for (Index = 0; DebuggerPrivate->DebuggerCommandSet[Index].CommandName != NULL; Index++) {
+    for (Index = 0; DebuggerPrivate->DebuggerCommandSet[Index].CommandName !=
+         NULL; Index++)
+    {
       EDBPrint (DebuggerPrivate->DebuggerCommandSet[Index].ClassName);
-      if (StrCmp (DebuggerPrivate->DebuggerCommandSet[Index].CommandTitle, L"") != 0) {
+      if (StrCmp (
+            DebuggerPrivate->DebuggerCommandSet[Index].CommandTitle,
+            L""
+            ) != 0)
+      {
         EDBPrint (L"  ");
         EDBPrint (DebuggerPrivate->DebuggerCommandSet[Index].CommandTitle);
       }
@@ -49,8 +55,14 @@ DebuggerHelp (
   // If there is argument, the argument should be command name.
   // Find the command and print the detail information.
   //
-  for (Index = 0; DebuggerPrivate->DebuggerCommandSet[Index].CommandName != NULL; Index++) {
-    if (StriCmp (CommandArg, DebuggerPrivate->DebuggerCommandSet[Index].CommandName) == 0) {
+  for (Index = 0; DebuggerPrivate->DebuggerCommandSet[Index].CommandName !=
+       NULL; Index++)
+  {
+    if (StriCmp (
+          CommandArg,
+          DebuggerPrivate->DebuggerCommandSet[Index].CommandName
+          ) == 0)
+    {
       EDBPrint (DebuggerPrivate->DebuggerCommandSet[Index].CommandHelp);
       EDBPrint (DebuggerPrivate->DebuggerCommandSet[Index].CommandSyntax);
       return EFI_DEBUG_CONTINUE;

@@ -42,7 +42,12 @@ UiCustomizeFrontPage (
   //
   // Find third party drivers which need to be shown in the front page.
   //
-  UiListThirdPartyDrivers (HiiHandle, &gEfiIfrFrontPageGuid, NULL, StartOpCodeHandle);
+  UiListThirdPartyDrivers (
+    HiiHandle,
+    &gEfiIfrFrontPageGuid,
+    NULL,
+    StartOpCodeHandle
+    );
 
   //
   // Create empty line.
@@ -90,7 +95,16 @@ UiFrontPageCallbackHandler (
 {
   EFI_STATUS  Status;
 
-  if (UiSupportLibCallbackHandler (HiiHandle, Action, QuestionId, Type, Value, ActionRequest, &Status)) {
+  if (UiSupportLibCallbackHandler (
+        HiiHandle,
+        Action,
+        QuestionId,
+        Type,
+        Value,
+        ActionRequest,
+        &Status
+        ))
+  {
     return Status;
   }
 
@@ -133,7 +147,13 @@ UiCustomizeFrontPageBanner (
         FreePool (*BannerStr);
       }
 
-      *BannerStr = HiiGetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_TEST_KEY_USED), NULL);
+      *BannerStr = HiiGetString (
+                     gFrontPagePrivate.HiiHandle,
+                     STRING_TOKEN (
+                       STR_TEST_KEY_USED
+                       ),
+                     NULL
+                     );
     }
   }
 

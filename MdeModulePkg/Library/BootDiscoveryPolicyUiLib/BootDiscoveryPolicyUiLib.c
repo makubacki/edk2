@@ -86,7 +86,12 @@ BootDiscoveryPolicyUiLibConstructor (
                   &BootDiscoveryPolicy
                   );
   if (EFI_ERROR (Status)) {
-    Status = PcdSet32S (PcdBootDiscoveryPolicy, PcdGet32 (PcdBootDiscoveryPolicy));
+    Status = PcdSet32S (
+               PcdBootDiscoveryPolicy,
+               PcdGet32 (
+                 PcdBootDiscoveryPolicy
+                 )
+               );
     ASSERT_EFI_ERROR (Status);
   }
 

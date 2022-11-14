@@ -101,9 +101,17 @@ UsbHcGetRootHubPortStatus (
   EFI_STATUS  Status;
 
   if (UsbBus->Usb2Hc != NULL) {
-    Status = UsbBus->Usb2Hc->GetRootHubPortStatus (UsbBus->Usb2Hc, PortIndex, PortStatus);
+    Status = UsbBus->Usb2Hc->GetRootHubPortStatus (
+                               UsbBus->Usb2Hc,
+                               PortIndex,
+                               PortStatus
+                               );
   } else {
-    Status = UsbBus->UsbHc->GetRootHubPortStatus (UsbBus->UsbHc, PortIndex, PortStatus);
+    Status = UsbBus->UsbHc->GetRootHubPortStatus (
+                              UsbBus->UsbHc,
+                              PortIndex,
+                              PortStatus
+                              );
   }
 
   return Status;
@@ -130,9 +138,17 @@ UsbHcSetRootHubPortFeature (
   EFI_STATUS  Status;
 
   if (UsbBus->Usb2Hc != NULL) {
-    Status = UsbBus->Usb2Hc->SetRootHubPortFeature (UsbBus->Usb2Hc, PortIndex, Feature);
+    Status = UsbBus->Usb2Hc->SetRootHubPortFeature (
+                               UsbBus->Usb2Hc,
+                               PortIndex,
+                               Feature
+                               );
   } else {
-    Status = UsbBus->UsbHc->SetRootHubPortFeature (UsbBus->UsbHc, PortIndex, Feature);
+    Status = UsbBus->UsbHc->SetRootHubPortFeature (
+                              UsbBus->UsbHc,
+                              PortIndex,
+                              Feature
+                              );
   }
 
   return Status;
@@ -159,9 +175,17 @@ UsbHcClearRootHubPortFeature (
   EFI_STATUS  Status;
 
   if (UsbBus->Usb2Hc != NULL) {
-    Status = UsbBus->Usb2Hc->ClearRootHubPortFeature (UsbBus->Usb2Hc, PortIndex, Feature);
+    Status = UsbBus->Usb2Hc->ClearRootHubPortFeature (
+                               UsbBus->Usb2Hc,
+                               PortIndex,
+                               Feature
+                               );
   } else {
-    Status = UsbBus->UsbHc->ClearRootHubPortFeature (UsbBus->UsbHc, PortIndex, Feature);
+    Status = UsbBus->UsbHc->ClearRootHubPortFeature (
+                              UsbBus->UsbHc,
+                              PortIndex,
+                              Feature
+                              );
   }
 
   return Status;
@@ -610,13 +634,17 @@ GetUsbDPFromFullDP (
   //
   // Create a new device path which only contain the above Usb part
   //
-  UsbDevicePathPtr = AllocateZeroPool (Size + sizeof (EFI_DEVICE_PATH_PROTOCOL));
+  UsbDevicePathPtr = AllocateZeroPool (
+                       Size +
+                       sizeof (EFI_DEVICE_PATH_PROTOCOL)
+                       );
   ASSERT (UsbDevicePathPtr != NULL);
   CopyMem (UsbDevicePathPtr, UsbDevicePathBeginPtr, Size);
   //
   // Append end device path node
   //
-  UsbDevicePathEndPtr = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)UsbDevicePathPtr + Size);
+  UsbDevicePathEndPtr = (EFI_DEVICE_PATH_PROTOCOL *)((UINTN)UsbDevicePathPtr +
+                                                     Size);
   SetDevicePathEndNode (UsbDevicePathEndPtr);
   return UsbDevicePathPtr;
 }
@@ -653,7 +681,12 @@ SearchUsbDPInList (
   Found     = FALSE;
   ListIndex = UsbIoDPList->ForwardLink;
   while (ListIndex != UsbIoDPList) {
-    ListItem = CR (ListIndex, DEVICE_PATH_LIST_ITEM, Link, DEVICE_PATH_LIST_ITEM_SIGNATURE);
+    ListItem = CR (
+                 ListIndex,
+                 DEVICE_PATH_LIST_ITEM,
+                 Link,
+                 DEVICE_PATH_LIST_ITEM_SIGNATURE
+                 );
     //
     // Compare DEVICE_PATH_LIST_ITEM.DevicePath[]
     //
@@ -661,7 +694,9 @@ SearchUsbDPInList (
 
     UsbDpDevicePathSize = GetDevicePathSize (UsbDP);
     if (UsbDpDevicePathSize == GetDevicePathSize (ListItem->DevicePath)) {
-      if ((CompareMem (UsbDP, ListItem->DevicePath, UsbDpDevicePathSize)) == 0) {
+      if ((CompareMem (UsbDP, ListItem->DevicePath, UsbDpDevicePathSize)) ==
+          0)
+      {
         Found = TRUE;
         break;
       }
@@ -765,8 +800,10 @@ MatchUsbClass (
   //
   // If vendor id or product id is 0xffff, they will be ignored.
   //
-  if (((UsbClassDevicePathPtr->VendorId == 0xffff) || (UsbClassDevicePathPtr->VendorId == DevDesc->IdVendor)) &&
-      ((UsbClassDevicePathPtr->ProductId == 0xffff) || (UsbClassDevicePathPtr->ProductId == DevDesc->IdProduct)))
+  if (((UsbClassDevicePathPtr->VendorId == 0xffff) ||
+       (UsbClassDevicePathPtr->VendorId == DevDesc->IdVendor)) &&
+      ((UsbClassDevicePathPtr->ProductId == 0xffff) ||
+       (UsbClassDevicePathPtr->ProductId == DevDesc->IdProduct)))
   {
     //
     // If Class in Device Descriptor is set to 0, the counterparts in interface should be checked.
@@ -774,18 +811,22 @@ MatchUsbClass (
     if (DevDesc->DeviceClass == 0) {
       if (((UsbClassDevicePathPtr->DeviceClass == ActIfDesc->InterfaceClass) ||
            (UsbClassDevicePathPtr->DeviceClass == 0xff)) &&
-          ((UsbClassDevicePathPtr->DeviceSubClass == ActIfDesc->InterfaceSubClass) ||
+          ((UsbClassDevicePathPtr->DeviceSubClass ==
+            ActIfDesc->InterfaceSubClass) ||
            (UsbClassDevicePathPtr->DeviceSubClass == 0xff)) &&
-          ((UsbClassDevicePathPtr->DeviceProtocol == ActIfDesc->InterfaceProtocol) ||
+          ((UsbClassDevicePathPtr->DeviceProtocol ==
+            ActIfDesc->InterfaceProtocol) ||
            (UsbClassDevicePathPtr->DeviceProtocol == 0xff)))
       {
         return TRUE;
       }
     } else if (((UsbClassDevicePathPtr->DeviceClass == DevDesc->DeviceClass) ||
                 (UsbClassDevicePathPtr->DeviceClass == 0xff)) &&
-               ((UsbClassDevicePathPtr->DeviceSubClass == DevDesc->DeviceSubClass) ||
+               ((UsbClassDevicePathPtr->DeviceSubClass ==
+                 DevDesc->DeviceSubClass) ||
                 (UsbClassDevicePathPtr->DeviceSubClass == 0xff)) &&
-               ((UsbClassDevicePathPtr->DeviceProtocol == DevDesc->DeviceProtocol) ||
+               ((UsbClassDevicePathPtr->DeviceProtocol ==
+                 DevDesc->DeviceProtocol) ||
                 (UsbClassDevicePathPtr->DeviceProtocol == 0xff)))
     {
       return TRUE;
@@ -863,7 +904,8 @@ MatchUsbWwid (
   // Serial number in USB WWID device path is the last 64-or-less UTF-16 characters.
   //
   CompareStr = (CHAR16 *)(UINTN)(UsbWWIDDevicePathPtr + 1);
-  CompareLen = (DevicePathNodeLength (UsbWWIDDevicePathPtr) - sizeof (USB_WWID_DEVICE_PATH)) / sizeof (CHAR16);
+  CompareLen = (DevicePathNodeLength (UsbWWIDDevicePathPtr) -
+                sizeof (USB_WWID_DEVICE_PATH)) / sizeof (CHAR16);
   if (CompareStr[CompareLen - 1] == L'\0') {
     CompareLen--;
   }
@@ -872,14 +914,22 @@ MatchUsbWwid (
   // Compare serial number in each supported language.
   //
   for (Index = 0; Index < UsbIf->Device->TotalLangId; Index++) {
-    StrDesc = UsbGetOneString (UsbIf->Device, DevDesc->StrSerialNumber, UsbIf->Device->LangId[Index]);
+    StrDesc = UsbGetOneString (
+                UsbIf->Device,
+                DevDesc->StrSerialNumber,
+                UsbIf->Device->LangId[Index]
+                );
     if (StrDesc == NULL) {
       continue;
     }
 
     Length = (StrDesc->Length - 2) / sizeof (CHAR16);
     if ((Length >= CompareLen) &&
-        (CompareMem (StrDesc->String + Length - CompareLen, CompareStr, CompareLen * sizeof (CHAR16)) == 0))
+        (CompareMem (
+           StrDesc->String + Length - CompareLen,
+           CompareStr,
+           CompareLen * sizeof (CHAR16)
+           ) == 0))
     {
       return TRUE;
     }
@@ -915,7 +965,12 @@ UsbBusFreeUsbDPList (
 
   ListIndex = UsbIoDPList->ForwardLink;
   while (ListIndex != UsbIoDPList) {
-    ListItem = CR (ListIndex, DEVICE_PATH_LIST_ITEM, Link, DEVICE_PATH_LIST_ITEM_SIGNATURE);
+    ListItem = CR (
+                 ListIndex,
+                 DEVICE_PATH_LIST_ITEM,
+                 Link,
+                 DEVICE_PATH_LIST_ITEM_SIGNATURE
+                 );
     //
     // Free DEVICE_PATH_LIST_ITEM.DevicePath[]
     //
@@ -985,7 +1040,9 @@ UsbBusAddWantedUsbIoDP (
     //
     Status = UsbBusFreeUsbDPList (&Bus->WantedUsbIoDPList);
     ASSERT (!EFI_ERROR (Status));
-    DevicePathPtr = DuplicateDevicePath ((EFI_DEVICE_PATH_PROTOCOL *)&mAllUsbClassDevicePath);
+    DevicePathPtr = DuplicateDevicePath (
+                      (EFI_DEVICE_PATH_PROTOCOL *)&mAllUsbClassDevicePath
+                      );
   } else if (!IsDevicePathEnd (RemainingDevicePath)) {
     //
     // If RemainingDevicePath isn't the End of Device Path Node,
@@ -1048,7 +1105,11 @@ UsbBusIsWantedUsbIO (
   //
   // Check whether all Usb devices in this bus are wanted
   //
-  if (SearchUsbDPInList ((EFI_DEVICE_PATH_PROTOCOL *)&mAllUsbClassDevicePath, &Bus->WantedUsbIoDPList)) {
+  if (SearchUsbDPInList (
+        (EFI_DEVICE_PATH_PROTOCOL *)&mAllUsbClassDevicePath,
+        &Bus->WantedUsbIoDPList
+        ))
+  {
     return TRUE;
   }
 
@@ -1065,7 +1126,12 @@ UsbBusIsWantedUsbIO (
   DoConvert       = FALSE;
   WantedListIndex = WantedUsbIoDPListPtr->ForwardLink;
   while (WantedListIndex != WantedUsbIoDPListPtr) {
-    WantedListItem = CR (WantedListIndex, DEVICE_PATH_LIST_ITEM, Link, DEVICE_PATH_LIST_ITEM_SIGNATURE);
+    WantedListItem = CR (
+                       WantedListIndex,
+                       DEVICE_PATH_LIST_ITEM,
+                       Link,
+                       DEVICE_PATH_LIST_ITEM_SIGNATURE
+                       );
     ASSERT (WantedListItem->DevicePath->Type == MESSAGING_DEVICE_PATH);
     switch (WantedListItem->DevicePath->SubType) {
       case MSG_USB_DP:
@@ -1084,13 +1150,21 @@ UsbBusIsWantedUsbIO (
 
         break;
       case MSG_USB_CLASS_DP:
-        if (MatchUsbClass ((USB_CLASS_DEVICE_PATH *)WantedListItem->DevicePath, UsbIf)) {
+        if (MatchUsbClass (
+              (USB_CLASS_DEVICE_PATH *)WantedListItem->DevicePath,
+              UsbIf
+              ))
+        {
           DoConvert = TRUE;
         }
 
         break;
       case MSG_USB_WWID_DP:
-        if (MatchUsbWwid ((USB_WWID_DEVICE_PATH *)WantedListItem->DevicePath, UsbIf)) {
+        if (MatchUsbWwid (
+              (USB_WWID_DEVICE_PATH *)WantedListItem->DevicePath,
+              UsbIf
+              ))
+        {
           DoConvert = TRUE;
         }
 
@@ -1154,7 +1228,13 @@ UsbBusRecursivelyConnectWantedUsbIo (
   // Get all Usb IO handles in system
   //
   UsbIoHandleCount = 0;
-  Status           = gBS->LocateHandleBuffer (ByProtocol, &gEfiUsbIoProtocolGuid, NULL, &UsbIoHandleCount, &UsbIoBuffer);
+  Status           = gBS->LocateHandleBuffer (
+                            ByProtocol,
+                            &gEfiUsbIoProtocolGuid,
+                            NULL,
+                            &UsbIoHandleCount,
+                            &UsbIoBuffer
+                            );
   if ((Status == EFI_NOT_FOUND) || (UsbIoHandleCount == 0)) {
     return EFI_SUCCESS;
   }
@@ -1167,7 +1247,11 @@ UsbBusRecursivelyConnectWantedUsbIo (
     // Note: The usb child handle maybe invalid because of hot plugged out during the loop
     //
     UsbIoDevicePath = NULL;
-    Status          = gBS->HandleProtocol (UsbIoBuffer[Index], &gEfiDevicePathProtocolGuid, (VOID *)&UsbIoDevicePath);
+    Status          = gBS->HandleProtocol (
+                             UsbIoBuffer[Index],
+                             &gEfiDevicePathProtocolGuid,
+                             (VOID *)&UsbIoDevicePath
+                             );
     if (EFI_ERROR (Status) || (UsbIoDevicePath == NULL)) {
       continue;
     }
@@ -1175,7 +1259,8 @@ UsbBusRecursivelyConnectWantedUsbIo (
     if (CompareMem (
           UsbIoDevicePath,
           Bus->DevicePath,
-          (GetDevicePathSize (Bus->DevicePath) - sizeof (EFI_DEVICE_PATH_PROTOCOL))
+          (GetDevicePathSize (Bus->DevicePath) -
+           sizeof (EFI_DEVICE_PATH_PROTOCOL))
           ) != 0)
     {
       continue;
@@ -1200,10 +1285,23 @@ UsbBusRecursivelyConnectWantedUsbIo (
         //
         // Recursively connect the wanted Usb Io handle
         //
-        DEBUG ((DEBUG_INFO, "UsbBusRecursivelyConnectWantedUsbIo: TPL before connect is %d\n", (UINT32)UsbGetCurrentTpl ()));
-        Status           = gBS->ConnectController (UsbIf->Handle, NULL, NULL, TRUE);
+        DEBUG ((
+          DEBUG_INFO,
+          "UsbBusRecursivelyConnectWantedUsbIo: TPL before connect is %d\n",
+          (UINT32)UsbGetCurrentTpl ()
+          ));
+        Status = gBS->ConnectController (
+                        UsbIf->Handle,
+                        NULL,
+                        NULL,
+                        TRUE
+                        );
         UsbIf->IsManaged = (BOOLEAN) !EFI_ERROR (Status);
-        DEBUG ((DEBUG_INFO, "UsbBusRecursivelyConnectWantedUsbIo: TPL after connect is %d\n", (UINT32)UsbGetCurrentTpl ()));
+        DEBUG ((
+          DEBUG_INFO,
+          "UsbBusRecursivelyConnectWantedUsbIo: TPL after connect is %d\n",
+          (UINT32)UsbGetCurrentTpl ()
+          ));
       }
     }
   }

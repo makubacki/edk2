@@ -19,29 +19,61 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // entry.
 //
 EFI_CORE_PROTOCOL_NOTIFY_ENTRY  mArchProtocols[] = {
-  { &gEfiSecurityArchProtocolGuid,         (VOID **)&gSecurity,      NULL, NULL, FALSE },
-  { &gEfiCpuArchProtocolGuid,              (VOID **)&gCpu,           NULL, NULL, FALSE },
-  { &gEfiMetronomeArchProtocolGuid,        (VOID **)&gMetronome,     NULL, NULL, FALSE },
-  { &gEfiTimerArchProtocolGuid,            (VOID **)&gTimer,         NULL, NULL, FALSE },
-  { &gEfiBdsArchProtocolGuid,              (VOID **)&gBds,           NULL, NULL, FALSE },
-  { &gEfiWatchdogTimerArchProtocolGuid,    (VOID **)&gWatchdogTimer, NULL, NULL, FALSE },
-  { &gEfiRuntimeArchProtocolGuid,          (VOID **)&gRuntime,       NULL, NULL, FALSE },
-  { &gEfiVariableArchProtocolGuid,         (VOID **)NULL,            NULL, NULL, FALSE },
-  { &gEfiVariableWriteArchProtocolGuid,    (VOID **)NULL,            NULL, NULL, FALSE },
-  { &gEfiCapsuleArchProtocolGuid,          (VOID **)NULL,            NULL, NULL, FALSE },
-  { &gEfiMonotonicCounterArchProtocolGuid, (VOID **)NULL,            NULL, NULL, FALSE },
-  { &gEfiResetArchProtocolGuid,            (VOID **)NULL,            NULL, NULL, FALSE },
-  { &gEfiRealTimeClockArchProtocolGuid,    (VOID **)NULL,            NULL, NULL, FALSE },
-  { NULL,                                  (VOID **)NULL,            NULL, NULL, FALSE }
+  { &gEfiSecurityArchProtocolGuid,         (VOID **)&gSecurity,
+    NULL,            NULL, FALSE },
+  { &gEfiCpuArchProtocolGuid,              (VOID **)&gCpu,
+    NULL,                                   NULL,            FALSE },
+  { &gEfiMetronomeArchProtocolGuid,        (VOID **)&gMetronome,
+    NULL,                                  NULL,
+    FALSE            },
+  { &gEfiTimerArchProtocolGuid,            (VOID **)&gTimer,
+    NULL,                                  NULL,
+    FALSE                                              },
+  { &gEfiBdsArchProtocolGuid,              (VOID **)&gBds,
+    NULL,                                  NULL,
+    FALSE                                                                               },
+  { &gEfiWatchdogTimerArchProtocolGuid,    (VOID **)&gWatchdogTimer,
+    NULL,                                  NULL,
+    FALSE                                                                                                                },
+  { &gEfiRuntimeArchProtocolGuid,          (VOID **)&gRuntime,
+    NULL,                                  NULL,
+    FALSE                                                                                                                                                 },
+  { &gEfiVariableArchProtocolGuid,         (VOID **)NULL,
+    NULL,                                  NULL,
+    FALSE                                                                                                                                                                                  },
+  { &gEfiVariableWriteArchProtocolGuid,    (VOID **)NULL,
+    NULL,                                  NULL,
+    FALSE                                                                                                                                                                                                                   },
+  { &gEfiCapsuleArchProtocolGuid,          (VOID **)NULL,
+    NULL,                                  NULL,
+    FALSE                                                                                                                                                                                                                                                    },
+  { &gEfiMonotonicCounterArchProtocolGuid, (VOID **)NULL,
+    NULL,                                  NULL,
+    FALSE                                                                                                                                                                                                                                                                                     },
+  { &gEfiResetArchProtocolGuid,            (VOID **)NULL,
+    NULL,                                  NULL,
+    FALSE                                                                                                                                                                                                                                                                                                                      },
+  { &gEfiRealTimeClockArchProtocolGuid,    (VOID **)NULL,
+    NULL,                                  NULL,
+    FALSE                                                                                                                                                                                                                                                                                                                                                       },
+  { NULL,                                  (VOID **)NULL,
+    NULL, NULL,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                        }
 };
 
 //
 // Optional protocols that the DXE Core will use if they are present
 //
 EFI_CORE_PROTOCOL_NOTIFY_ENTRY  mOptionalProtocols[] = {
-  { &gEfiSecurity2ArchProtocolGuid, (VOID **)&gSecurity2, NULL, NULL, FALSE },
-  { &gEfiSmmBase2ProtocolGuid,      (VOID **)&gSmmBase2,  NULL, NULL, FALSE },
-  { NULL,                           (VOID **)NULL,        NULL, NULL, FALSE }
+  { &gEfiSecurity2ArchProtocolGuid, (VOID **)&gSecurity2,
+    NULL,                           NULL,
+    FALSE                                                                                                                                                                                                                                                                                                                                },
+  { &gEfiSmmBase2ProtocolGuid,      (VOID **)&gSmmBase2,
+    NULL,                            NULL,
+    FALSE                                                                                                                                                                                                                                                                                                                                                          },
+  { NULL,                           (VOID **)NULL,
+    NULL, NULL,
+    FALSE                                                                                                                                                                                                                                                                                                                                                                                    }
 };
 
 //
@@ -52,21 +84,36 @@ typedef struct {
   CHAR8       *GuidString;
 } GUID_TO_STRING_PROTOCOL_ENTRY;
 
-GLOBAL_REMOVE_IF_UNREFERENCED CONST GUID_TO_STRING_PROTOCOL_ENTRY  mMissingProtocols[] = {
-  { &gEfiSecurityArchProtocolGuid,         "Security"          },
-  { &gEfiCpuArchProtocolGuid,              "CPU"               },
-  { &gEfiMetronomeArchProtocolGuid,        "Metronome"         },
-  { &gEfiTimerArchProtocolGuid,            "Timer"             },
-  { &gEfiBdsArchProtocolGuid,              "Bds"               },
-  { &gEfiWatchdogTimerArchProtocolGuid,    "Watchdog Timer"    },
-  { &gEfiRuntimeArchProtocolGuid,          "Runtime"           },
-  { &gEfiVariableArchProtocolGuid,         "Variable"          },
-  { &gEfiVariableWriteArchProtocolGuid,    "Variable Write"    },
-  { &gEfiCapsuleArchProtocolGuid,          "Capsule"           },
-  { &gEfiMonotonicCounterArchProtocolGuid, "Monotonic Counter" },
-  { &gEfiResetArchProtocolGuid,            "Reset"             },
-  { &gEfiRealTimeClockArchProtocolGuid,    "Real Time Clock"   },
-  { NULL,                                  ""                  }
+GLOBAL_REMOVE_IF_UNREFERENCED CONST GUID_TO_STRING_PROTOCOL_ENTRY
+  mMissingProtocols[] = {
+  { &gEfiSecurityArchProtocolGuid,
+    "Security"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
+  { &gEfiCpuArchProtocolGuid,
+    "CPU"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { &gEfiMetronomeArchProtocolGuid,
+    "Metronome"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { &gEfiTimerArchProtocolGuid,
+    "Timer"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { &gEfiBdsArchProtocolGuid,
+    "Bds"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+  { &gEfiWatchdogTimerArchProtocolGuid,
+    "Watchdog Timer"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
+  { &gEfiRuntimeArchProtocolGuid,
+    "Runtime"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+  { &gEfiVariableArchProtocolGuid,
+    "Variable"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+  { &gEfiVariableWriteArchProtocolGuid,
+    "Variable Write"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+  { &gEfiCapsuleArchProtocolGuid,
+    "Capsule"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { &gEfiMonotonicCounterArchProtocolGuid,
+    "Monotonic Counter"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { &gEfiResetArchProtocolGuid,
+    "Reset"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+  { &gEfiRealTimeClockArchProtocolGuid,
+    "Real Time Clock"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { NULL,
+    ""                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 }
 };
 
 /**
@@ -126,7 +173,8 @@ GenericProtocolNotify (
   //
   // See if the expected protocol is present in the handle database
   //
-  Status = CoreLocateProtocol (Entry->ProtocolGuid, Entry->Registration, &Protocol);
+  Status = CoreLocateProtocol (Entry->ProtocolGuid, Entry->Registration,
+             &Protocol);
   if (EFI_ERROR (Status)) {
     return;
   }
@@ -169,7 +217,8 @@ GenericProtocolNotify (
     //
     // Copy all the registered Image to new gRuntime protocol
     //
-    for (Link = gRuntimeTemplate.ImageHead.ForwardLink; Link != &gRuntimeTemplate.ImageHead; Link = TempLinkNode.ForwardLink) {
+    for (Link = gRuntimeTemplate.ImageHead.ForwardLink; Link !=
+         &gRuntimeTemplate.ImageHead; Link = TempLinkNode.ForwardLink) {
       CopyMem (&TempLinkNode, Link, sizeof (LIST_ENTRY));
       InsertTailList (&gRuntime->ImageHead, Link);
     }
@@ -177,7 +226,8 @@ GenericProtocolNotify (
     //
     // Copy all the registered Event to new gRuntime protocol
     //
-    for (Link = gRuntimeTemplate.EventHead.ForwardLink; Link != &gRuntimeTemplate.EventHead; Link = TempLinkNode.ForwardLink) {
+    for (Link = gRuntimeTemplate.EventHead.ForwardLink; Link !=
+         &gRuntimeTemplate.EventHead; Link = TempLinkNode.ForwardLink) {
       CopyMem (&TempLinkNode, Link, sizeof (LIST_ENTRY));
       InsertTailList (&gRuntime->EventHead, Link);
     }
@@ -268,9 +318,11 @@ CoreDisplayMissingArchProtocols (
 
   for (Entry = mArchProtocols; Entry->ProtocolGuid != NULL; Entry++) {
     if (!Entry->Present) {
-      for (MissingEntry = mMissingProtocols; MissingEntry->ProtocolGuid != NULL; MissingEntry++) {
+      for (MissingEntry = mMissingProtocols; MissingEntry->ProtocolGuid != NULL;
+           MissingEntry++) {
         if (CompareGuid (Entry->ProtocolGuid, MissingEntry->ProtocolGuid)) {
-          DEBUG ((DEBUG_ERROR, "\n%a Arch Protocol not present!!\n", MissingEntry->GuidString));
+          DEBUG ((DEBUG_ERROR, "\n%a Arch Protocol not present!!\n",
+            MissingEntry->GuidString));
           break;
         }
       }

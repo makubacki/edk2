@@ -85,9 +85,11 @@ typedef struct _USB_DEV_CONTEXT    USB_DEV_CONTEXT;
 
 #define EFI_LIST_CONTAINER(Entry, Type, Field)  BASE_CR(Entry, Type, Field)
 
-#define XHC_LOW_32BIT(Addr64)      ((UINT32)(((UINTN)(Addr64)) & 0xFFFFFFFF))
-#define XHC_HIGH_32BIT(Addr64)     ((UINT32)(RShiftU64((UINT64)(UINTN)(Addr64), 32) & 0xFFFFFFFF))
-#define XHC_BIT_IS_SET(Data, Bit)  ((BOOLEAN)(((Data) & (Bit)) == (Bit)))
+#define XHC_LOW_32BIT(Addr64)        ((UINT32)(((UINTN)(Addr64)) & 0xFFFFFFFF))
+#define XHC_HIGH_32BIT( \
+                      Addr64)     \
+                                     ((UINT32)(RShiftU64((UINT64)(UINTN)(Addr64), 32) & 0xFFFFFFFF))
+#define XHC_BIT_IS_SET(Data, Bit)    ((BOOLEAN)(((Data) & (Bit)) == (Bit)))
 
 #define XHC_REG_BIT_IS_SET(Xhc, Offset, Bit) \
           (XHC_BIT_IS_SET(XhcReadOpReg ((Xhc), (Offset)), (Bit)))

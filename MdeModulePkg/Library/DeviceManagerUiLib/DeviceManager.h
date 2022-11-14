@@ -51,7 +51,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 extern UINT8  DeviceManagerVfrBin[];
 
-#define DEVICE_MANAGER_CALLBACK_DATA_SIGNATURE  SIGNATURE_32 ('D', 'M', 'C', 'B')
+#define DEVICE_MANAGER_CALLBACK_DATA_SIGNATURE  \
+  SIGNATURE_32 ('D', 'M', 'C', 'B')
 
 ///
 /// HII specific Vendor Device Path definition.

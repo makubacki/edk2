@@ -38,7 +38,12 @@ EhcReadCapRegister (
                              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EhcReadCapRegister: Pci Io read error - %r at %d\n", Status, Offset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EhcReadCapRegister: Pci Io read error - %r at %d\n",
+      Status,
+      Offset
+      ));
     Data = 0xFFFF;
   }
 
@@ -74,7 +79,12 @@ EhcReadDbgRegister (
                              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EhcReadDbgRegister: Pci Io read error - %r at %d\n", Status, Offset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EhcReadDbgRegister: Pci Io read error - %r at %d\n",
+      Status,
+      Offset
+      ));
     Data = 0xFFFF;
   }
 
@@ -164,7 +174,12 @@ EhcReadOpReg (
                              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EhcReadOpReg: Pci Io Read error - %r at %d\n", Status, Offset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EhcReadOpReg: Pci Io Read error - %r at %d\n",
+      Status,
+      Offset
+      ));
     Data = 0xFFFF;
   }
 
@@ -200,7 +215,12 @@ EhcWriteOpReg (
                              );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EhcWriteOpReg: Pci Io Write error: %r at %d\n", Status, Offset));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EhcWriteOpReg: Pci Io Write error: %r at %d\n",
+      Status,
+      Offset
+      ));
   }
 }
 
@@ -301,7 +321,10 @@ EhcClearLegacySupport (
   UINT32               Value;
   UINT32               TimeOut;
 
-  DEBUG ((DEBUG_INFO, "EhcClearLegacySupport: called to clear legacy support\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "EhcClearLegacySupport: called to clear legacy support\n"
+    ));
 
   PciIo     = Ehc->PciIo;
   ExtendCap = (Ehc->HcCapParams >> 8) & 0xFF;
@@ -401,7 +424,13 @@ EhcEnablePeriodSchd (
 
   EhcSetOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_ENABLE_PERIOD);
 
-  Status = EhcWaitOpRegBit (Ehc, EHC_USBSTS_OFFSET, USBSTS_PERIOD_ENABLED, TRUE, Timeout);
+  Status = EhcWaitOpRegBit (
+             Ehc,
+             EHC_USBSTS_OFFSET,
+             USBSTS_PERIOD_ENABLED,
+             TRUE,
+             Timeout
+             );
   return Status;
 }
 
@@ -425,7 +454,13 @@ EhcEnableAsyncSchd (
 
   EhcSetOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_ENABLE_ASYNC);
 
-  Status = EhcWaitOpRegBit (Ehc, EHC_USBSTS_OFFSET, USBSTS_ASYNC_ENABLED, TRUE, Timeout);
+  Status = EhcWaitOpRegBit (
+             Ehc,
+             EHC_USBSTS_OFFSET,
+             USBSTS_ASYNC_ENABLED,
+             TRUE,
+             Timeout
+             );
   return Status;
 }
 
@@ -493,7 +528,13 @@ EhcResetHC (
   }
 
   EhcSetOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_RESET);
-  Status = EhcWaitOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_RESET, FALSE, Timeout);
+  Status = EhcWaitOpRegBit (
+             Ehc,
+             EHC_USBCMD_OFFSET,
+             USBCMD_RESET,
+             FALSE,
+             Timeout
+             );
   return Status;
 }
 
@@ -539,7 +580,13 @@ EhcRunHC (
   EFI_STATUS  Status;
 
   EhcSetOpRegBit (Ehc, EHC_USBCMD_OFFSET, USBCMD_RUN);
-  Status = EhcWaitOpRegBit (Ehc, EHC_USBSTS_OFFSET, USBSTS_HALT, FALSE, Timeout);
+  Status = EhcWaitOpRegBit (
+             Ehc,
+             EHC_USBSTS_OFFSET,
+             USBSTS_HALT,
+             FALSE,
+             Timeout
+             );
   return Status;
 }
 
@@ -600,12 +647,18 @@ EhcInitHC (
   // 3. Power up all ports if EHCI has Port Power Control (PPC) support
   //
   if (Ehc->HcStructParams & HCSP_PPC) {
-    for (Index = 0; Index < (UINT8)(Ehc->HcStructParams & HCSP_NPORTS); Index++) {
+    for (Index = 0; Index < (UINT8)(Ehc->HcStructParams & HCSP_NPORTS);
+         Index++)
+    {
       //
       // Do not clear port status bits on initialization.  Otherwise devices will
       // not enumerate properly at startup.
       //
-      RegVal  = EhcReadOpReg (Ehc, (UINT32)(EHC_PORT_STAT_OFFSET + (4 * Index)));
+      RegVal = EhcReadOpReg (
+                 Ehc,
+                 (UINT32)(EHC_PORT_STAT_OFFSET + (4 *
+                                                  Index))
+                 );
       RegVal &= ~PORTSC_CHANGE_MASK;
       RegVal |= PORTSC_POWER;
       EhcWriteOpReg (Ehc, (UINT32)(EHC_PORT_STAT_OFFSET + (4 * Index)), RegVal);

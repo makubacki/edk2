@@ -89,7 +89,9 @@ typedef struct {
 } USB_CLASSC;
 #pragma pack()
 
-#define UHC_FROM_USB2_HC_PROTO(This)  CR(This, USB_HC_DEV, Usb2Hc, USB_HC_DEV_SIGNATURE)
+#define UHC_FROM_USB2_HC_PROTO( \
+                              This)  \
+  CR(This, USB_HC_DEV, Usb2Hc, USB_HC_DEV_SIGNATURE)
 
 //
 // USB_HC_DEV support the UHCI hardware controller. It schedules

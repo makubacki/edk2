@@ -114,9 +114,18 @@ MorLockInitAtEndOfDxe (
   EDKII_VARIABLE_POLICY_PROTOCOL  *VariablePolicy;
 
   // First, we obviously need to locate the VariablePolicy protocol.
-  Status = gBS->LocateProtocol (&gEdkiiVariablePolicyProtocolGuid, NULL, (VOID **)&VariablePolicy);
+  Status = gBS->LocateProtocol (
+                  &gEdkiiVariablePolicyProtocolGuid,
+                  NULL,
+                  (VOID **)&VariablePolicy
+                  );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - Could not locate VariablePolicy protocol! %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Could not locate VariablePolicy protocol! %r\n",
+      __FUNCTION__,
+      Status
+      ));
     return;
   }
 
@@ -132,7 +141,13 @@ MorLockInitAtEndOfDxe (
              VARIABLE_POLICY_TYPE_LOCK_NOW
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - Could not lock variable %s! %r\n", __FUNCTION__, MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Could not lock variable %s! %r\n",
+      __FUNCTION__,
+      MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME,
+      Status
+      ));
   }
 
   Status = RegisterBasicVariablePolicy (
@@ -146,7 +161,13 @@ MorLockInitAtEndOfDxe (
              VARIABLE_POLICY_TYPE_LOCK_NOW
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - Could not lock variable %s! %r\n", __FUNCTION__, MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Could not lock variable %s! %r\n",
+      __FUNCTION__,
+      MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
+      Status
+      ));
   }
 
   return;

@@ -110,7 +110,9 @@ PciIoVerifyBarAccess (
 
   Width = (EFI_PCI_IO_PROTOCOL_WIDTH)(Width & 0x03);
 
-  if ((*Offset + Count * (UINTN)(1 << Width)) - 1 >= PciIoDevice->PciBar[BarIndex].Length) {
+  if ((*Offset + Count * (UINTN)(1 << Width)) - 1 >=
+      PciIoDevice->PciBar[BarIndex].Length)
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -152,19 +154,31 @@ PciIoVerifyConfigAccess (
   Width = (EFI_PCI_IO_PROTOCOL_WIDTH)(Width & 0x03);
 
   if (PciIoDevice->IsPciExp) {
-    if ((*Offset + Count * (UINTN)(1 << Width)) - 1 >= PCI_EXP_MAX_CONFIG_OFFSET) {
+    if ((*Offset + Count * (UINTN)(1 << Width)) - 1 >=
+        PCI_EXP_MAX_CONFIG_OFFSET)
+    {
       return EFI_UNSUPPORTED;
     }
 
     ExtendOffset = LShiftU64 (*Offset, 32);
-    *Offset      = EFI_PCI_ADDRESS (PciIoDevice->BusNumber, PciIoDevice->DeviceNumber, PciIoDevice->FunctionNumber, 0);
-    *Offset      = (*Offset) | ExtendOffset;
+    *Offset      = EFI_PCI_ADDRESS (
+                     PciIoDevice->BusNumber,
+                     PciIoDevice->DeviceNumber,
+                     PciIoDevice->FunctionNumber,
+                     0
+                     );
+    *Offset = (*Offset) | ExtendOffset;
   } else {
     if ((*Offset + Count * (UINTN)(1 << Width)) - 1 >= PCI_MAX_CONFIG_OFFSET) {
       return EFI_UNSUPPORTED;
     }
 
-    *Offset = EFI_PCI_ADDRESS (PciIoDevice->BusNumber, PciIoDevice->DeviceNumber, PciIoDevice->FunctionNumber, *Offset);
+    *Offset = EFI_PCI_ADDRESS (
+                PciIoDevice->BusNumber,
+                PciIoDevice->DeviceNumber,
+                PciIoDevice->FunctionNumber,
+                *Offset
+                );
   }
 
   return EFI_SUCCESS;
@@ -214,7 +228,14 @@ PciIoPollMem (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = PciIoVerifyBarAccess (PciIoDevice, BarIndex, PciBarTypeMem, Width, 1, &Offset);
+  Status = PciIoVerifyBarAccess (
+             PciIoDevice,
+             BarIndex,
+             PciBarTypeMem,
+             Width,
+             1,
+             &Offset
+             );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -263,7 +284,9 @@ PciIoPollMem (
 
   Status = PciIoDevice->PciRootBridgeIo->PollMem (
                                            PciIoDevice->PciRootBridgeIo,
-                                           (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)Width,
+                                           (
+                                           EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                           Width,
                                            Offset,
                                            Mask,
                                            Value,
@@ -326,7 +349,14 @@ PciIoPollIo (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = PciIoVerifyBarAccess (PciIoDevice, BarIndex, PciBarTypeIo, Width, 1, &Offset);
+  Status = PciIoVerifyBarAccess (
+             PciIoDevice,
+             BarIndex,
+             PciBarTypeIo,
+             Width,
+             1,
+             &Offset
+             );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -371,7 +401,9 @@ PciIoPollIo (
 
   Status = PciIoDevice->PciRootBridgeIo->PollIo (
                                            PciIoDevice->PciRootBridgeIo,
-                                           (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)Width,
+                                           (
+                                           EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                           Width,
                                            Offset,
                                            Mask,
                                            Value,
@@ -434,7 +466,14 @@ PciIoMemRead (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = PciIoVerifyBarAccess (PciIoDevice, BarIndex, PciBarTypeMem, Width, Count, &Offset);
+  Status = PciIoVerifyBarAccess (
+             PciIoDevice,
+             BarIndex,
+             PciBarTypeMem,
+             Width,
+             Count,
+             &Offset
+             );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -451,7 +490,9 @@ PciIoMemRead (
 
   Status = PciIoDevice->PciRootBridgeIo->Mem.Read (
                                                PciIoDevice->PciRootBridgeIo,
-                                               (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)Width,
+                                               (
+                                               EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                               Width,
                                                Offset,
                                                Count,
                                                Buffer
@@ -512,7 +553,14 @@ PciIoMemWrite (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = PciIoVerifyBarAccess (PciIoDevice, BarIndex, PciBarTypeMem, Width, Count, &Offset);
+  Status = PciIoVerifyBarAccess (
+             PciIoDevice,
+             BarIndex,
+             PciBarTypeMem,
+             Width,
+             Count,
+             &Offset
+             );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -529,7 +577,9 @@ PciIoMemWrite (
 
   Status = PciIoDevice->PciRootBridgeIo->Mem.Write (
                                                PciIoDevice->PciRootBridgeIo,
-                                               (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)Width,
+                                               (
+                                               EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                               Width,
                                                Offset,
                                                Count,
                                                Buffer
@@ -590,7 +640,14 @@ PciIoIoRead (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = PciIoVerifyBarAccess (PciIoDevice, BarIndex, PciBarTypeIo, Width, Count, &Offset);
+  Status = PciIoVerifyBarAccess (
+             PciIoDevice,
+             BarIndex,
+             PciBarTypeIo,
+             Width,
+             Count,
+             &Offset
+             );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -607,7 +664,9 @@ PciIoIoRead (
 
   Status = PciIoDevice->PciRootBridgeIo->Io.Read (
                                               PciIoDevice->PciRootBridgeIo,
-                                              (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)Width,
+                                              (
+                                              EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                              Width,
                                               Offset,
                                               Count,
                                               Buffer
@@ -668,7 +727,14 @@ PciIoIoWrite (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = PciIoVerifyBarAccess (PciIoDevice, BarIndex, PciBarTypeIo, Width, Count, &Offset);
+  Status = PciIoVerifyBarAccess (
+             PciIoDevice,
+             BarIndex,
+             PciBarTypeIo,
+             Width,
+             Count,
+             &Offset
+             );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -685,7 +751,9 @@ PciIoIoWrite (
 
   Status = PciIoDevice->PciRootBridgeIo->Io.Write (
                                               PciIoDevice->PciRootBridgeIo,
-                                              (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)Width,
+                                              (
+                                              EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                              Width,
                                               Offset,
                                               Count,
                                               Buffer
@@ -754,7 +822,9 @@ PciIoConfigRead (
 
   Status = PciIoDevice->PciRootBridgeIo->Pci.Read (
                                                PciIoDevice->PciRootBridgeIo,
-                                               (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)Width,
+                                               (
+                                               EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                               Width,
                                                Address,
                                                Count,
                                                Buffer
@@ -823,7 +893,9 @@ PciIoConfigWrite (
 
   Status = PciIoDevice->PciRootBridgeIo->Pci.Write (
                                                PciIoDevice->PciRootBridgeIo,
-                                               (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)Width,
+                                               (
+                                               EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                               Width,
                                                Address,
                                                Count,
                                                Buffer
@@ -901,12 +973,26 @@ PciIoCopyMem (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = PciIoVerifyBarAccess (PciIoDevice, DestBarIndex, PciBarTypeMem, Width, Count, &DestOffset);
+  Status = PciIoVerifyBarAccess (
+             PciIoDevice,
+             DestBarIndex,
+             PciBarTypeMem,
+             Width,
+             Count,
+             &DestOffset
+             );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
 
-  Status = PciIoVerifyBarAccess (PciIoDevice, SrcBarIndex, PciBarTypeMem, Width, Count, &SrcOffset);
+  Status = PciIoVerifyBarAccess (
+             PciIoDevice,
+             SrcBarIndex,
+             PciBarTypeMem,
+             Width,
+             Count,
+             &SrcOffset
+             );
   if (EFI_ERROR (Status)) {
     return EFI_UNSUPPORTED;
   }
@@ -915,7 +1001,11 @@ PciIoCopyMem (
   // If request is not aligned, then convert request to EfiPciIoWithXXXUint8
   //
   if (FeaturePcdGet (PcdUnalignedPciIoEnable)) {
-    if (((SrcOffset & ((1 << (Width & 0x03)) - 1)) != 0) || ((DestOffset & ((1 << (Width & 0x03)) - 1)) != 0)) {
+    if (((SrcOffset & ((1 << (Width & 0x03)) - 1)) != 0) || ((DestOffset &
+                                                              ((1 << (Width &
+                                                                      0x03)) -
+                                                               1)) != 0))
+    {
       Count *=  (UINTN)(1 << (Width & 0x03));
       Width  = (EFI_PCI_IO_PROTOCOL_WIDTH)(Width & (~0x03));
     }
@@ -923,7 +1013,9 @@ PciIoCopyMem (
 
   Status = PciIoDevice->PciRootBridgeIo->CopyMem (
                                            PciIoDevice->PciRootBridgeIo,
-                                           (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)Width,
+                                           (
+                                           EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                           Width,
                                            DestOffset,
                                            SrcOffset,
                                            Count
@@ -981,13 +1073,20 @@ PciIoMap (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((HostAddress == NULL) || (NumberOfBytes == NULL) || (DeviceAddress == NULL) || (Mapping == NULL)) {
+  if ((HostAddress == NULL) || (NumberOfBytes == NULL) || (DeviceAddress ==
+                                                           NULL) || (Mapping ==
+                                                                     NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
   RootBridgeIoOperation = (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_OPERATION)Operation;
-  if ((PciIoDevice->Attributes & EFI_PCI_IO_ATTRIBUTE_DUAL_ADDRESS_CYCLE) != 0) {
-    RootBridgeIoOperation = (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_OPERATION)(Operation + EfiPciOperationBusMasterRead64);
+  if ((PciIoDevice->Attributes & EFI_PCI_IO_ATTRIBUTE_DUAL_ADDRESS_CYCLE) !=
+      0)
+  {
+    RootBridgeIoOperation =
+      (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_OPERATION)(Operation +
+                                                  EfiPciOperationBusMasterRead64);
   }
 
   Status = PciIoDevice->PciRootBridgeIo->Map (
@@ -1118,14 +1217,17 @@ PciIoAllocateBuffer (
   PCI_IO_DEVICE  *PciIoDevice;
 
   if ((Attributes &
-       (~(EFI_PCI_ATTRIBUTE_MEMORY_WRITE_COMBINE | EFI_PCI_ATTRIBUTE_MEMORY_CACHED))) != 0)
+       (~(EFI_PCI_ATTRIBUTE_MEMORY_WRITE_COMBINE |
+          EFI_PCI_ATTRIBUTE_MEMORY_CACHED))) != 0)
   {
     return EFI_UNSUPPORTED;
   }
 
   PciIoDevice = PCI_IO_DEVICE_FROM_PCI_IO_THIS (This);
 
-  if ((PciIoDevice->Attributes & EFI_PCI_IO_ATTRIBUTE_DUAL_ADDRESS_CYCLE) != 0) {
+  if ((PciIoDevice->Attributes & EFI_PCI_IO_ATTRIBUTE_DUAL_ADDRESS_CYCLE) !=
+      0)
+  {
     Attributes |= EFI_PCI_ATTRIBUTE_DUAL_ADDRESS_CYCLE;
   }
 
@@ -1254,7 +1356,9 @@ PciIoGetLocation (
 
   PciIoDevice = PCI_IO_DEVICE_FROM_PCI_IO_THIS (This);
 
-  if ((Segment == NULL) || (Bus == NULL) || (Device == NULL) || (Function == NULL)) {
+  if ((Segment == NULL) || (Bus == NULL) || (Device == NULL) || (Function ==
+                                                                 NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1420,7 +1524,9 @@ SupportPaletteSnoopAttributes (
   //
   // Get the boot VGA on the same Host Bridge
   //
-  Temp = LocateVgaDeviceOnHostBridge (PciIoDevice->PciRootBridgeIo->ParentHandle);
+  Temp = LocateVgaDeviceOnHostBridge (
+           PciIoDevice->PciRootBridgeIo->ParentHandle
+           );
 
   if (Temp == NULL) {
     //
@@ -1611,8 +1717,12 @@ PciIoAttributes (
   //
   // Check VGA and VGA16, they can not be set at the same time
   //
-  if ((Attributes & (EFI_PCI_IO_ATTRIBUTE_VGA_IO | EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO)) != 0) {
-    if ((Attributes & (EFI_PCI_IO_ATTRIBUTE_VGA_IO_16 | EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO_16)) != 0) {
+  if ((Attributes & (EFI_PCI_IO_ATTRIBUTE_VGA_IO |
+                     EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO)) != 0)
+  {
+    if ((Attributes & (EFI_PCI_IO_ATTRIBUTE_VGA_IO_16 |
+                       EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO_16)) != 0)
+    {
       return EFI_UNSUPPORTED;
     }
   }
@@ -1640,8 +1750,13 @@ PciIoAttributes (
   //
   // For PPB & P2C, set relevant attribute bits
   //
-  if (IS_PCI_BRIDGE (&PciIoDevice->Pci) || IS_CARDBUS_BRIDGE (&PciIoDevice->Pci)) {
-    if ((Attributes & (EFI_PCI_IO_ATTRIBUTE_VGA_IO | EFI_PCI_IO_ATTRIBUTE_VGA_IO_16)) != 0) {
+  if (IS_PCI_BRIDGE (&PciIoDevice->Pci) || IS_CARDBUS_BRIDGE (
+                                             &PciIoDevice->Pci
+                                             ))
+  {
+    if ((Attributes & (EFI_PCI_IO_ATTRIBUTE_VGA_IO |
+                       EFI_PCI_IO_ATTRIBUTE_VGA_IO_16)) != 0)
+    {
       BridgeControl |= EFI_PCI_BRIDGE_CONTROL_VGA;
     }
 
@@ -1649,11 +1764,15 @@ PciIoAttributes (
       BridgeControl |= EFI_PCI_BRIDGE_CONTROL_ISA;
     }
 
-    if ((Attributes & (EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO | EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO_16)) != 0) {
+    if ((Attributes & (EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO |
+                       EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO_16)) != 0)
+    {
       Command |= EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO;
     }
 
-    if ((Attributes & (EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO_16 | EFI_PCI_IO_ATTRIBUTE_VGA_IO_16)) != 0) {
+    if ((Attributes & (EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO_16 |
+                       EFI_PCI_IO_ATTRIBUTE_VGA_IO_16)) != 0)
+    {
       BridgeControl |= EFI_PCI_BRIDGE_CONTROL_VGA_16;
     }
   } else {
@@ -1673,7 +1792,9 @@ PciIoAttributes (
         //
         // Check if there have been an active VGA device on the same Host Bridge
         //
-        Temp = LocateVgaDeviceOnHostBridge (PciIoDevice->PciRootBridgeIo->ParentHandle);
+        Temp = LocateVgaDeviceOnHostBridge (
+                 PciIoDevice->PciRootBridgeIo->ParentHandle
+                 );
         if ((Temp != NULL) && (Temp != PciIoDevice)) {
           //
           // An active VGA has been detected, so can not enable another
@@ -1686,7 +1807,9 @@ PciIoAttributes (
     //
     // Do with the attributes on GFX
     //
-    if ((Attributes & (EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO | EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO_16)) != 0) {
+    if ((Attributes & (EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO |
+                       EFI_PCI_IO_ATTRIBUTE_VGA_PALETTE_IO_16)) != 0)
+    {
       if (Operation == EfiPciIoAttributeOperationEnable) {
         //
         // Check if snoop can be enabled in current configuration
@@ -1817,8 +1940,10 @@ GetMmioAddressTranslationOffset (
   // we convert host address to device address for range compare.
   while (Configuration->Desc == ACPI_ADDRESS_SPACE_DESCRIPTOR) {
     if ((Configuration->ResType == ACPI_ADDRESS_SPACE_TYPE_MEM) &&
-        (Configuration->AddrRangeMin + Configuration->AddrTranslationOffset <= AddrRangeMin) &&
-        (Configuration->AddrRangeMin + Configuration->AddrLen + Configuration->AddrTranslationOffset >= AddrRangeMin + AddrLen)
+        (Configuration->AddrRangeMin + Configuration->AddrTranslationOffset <=
+         AddrRangeMin) &&
+        (Configuration->AddrRangeMin + Configuration->AddrLen +
+         Configuration->AddrTranslationOffset >= AddrRangeMin + AddrLen)
         )
     {
       return Configuration->AddrTranslationOffset;
@@ -1875,7 +2000,9 @@ PciIoGetBarAttributes (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((BarIndex >= PCI_MAX_BAR) || (PciIoDevice->PciBar[BarIndex].BarType == PciBarTypeUnknown)) {
+  if ((BarIndex >= PCI_MAX_BAR) || (PciIoDevice->PciBar[BarIndex].BarType ==
+                                    PciBarTypeUnknown))
+  {
     return EFI_UNSUPPORTED;
   }
 
@@ -1884,19 +2011,24 @@ PciIoGetBarAttributes (
   // CACHED attributes for BAR ranges.
   //
   if (Supports != NULL) {
-    *Supports = PciIoDevice->Supports & EFI_PCI_IO_ATTRIBUTE_MEMORY_CACHED & EFI_PCI_IO_ATTRIBUTE_MEMORY_WRITE_COMBINE;
+    *Supports = PciIoDevice->Supports & EFI_PCI_IO_ATTRIBUTE_MEMORY_CACHED &
+                EFI_PCI_IO_ATTRIBUTE_MEMORY_WRITE_COMBINE;
   }
 
   if (Resources != NULL) {
-    Descriptor = AllocateZeroPool (sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR));
+    Descriptor = AllocateZeroPool (
+                   sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) +
+                   sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)
+                   );
     if (Descriptor == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
     *Resources = Descriptor;
 
-    Descriptor->Desc         = ACPI_ADDRESS_SPACE_DESCRIPTOR;
-    Descriptor->Len          = (UINT16)(sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3);
+    Descriptor->Desc = ACPI_ADDRESS_SPACE_DESCRIPTOR;
+    Descriptor->Len  =
+      (UINT16)(sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3);
     Descriptor->AddrRangeMin = PciIoDevice->PciBar[BarIndex].BaseAddress;
     Descriptor->AddrLen      = PciIoDevice->PciBar[BarIndex].Length;
     Descriptor->AddrRangeMax = PciIoDevice->PciBar[BarIndex].Alignment;
@@ -1914,7 +2046,8 @@ PciIoGetBarAttributes (
         //
         // prefetchable
         //
-        Descriptor->SpecificFlag = EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
+        Descriptor->SpecificFlag =
+          EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
       //
       // Fall through
       //
@@ -1933,7 +2066,8 @@ PciIoGetBarAttributes (
         //
         // prefetchable
         //
-        Descriptor->SpecificFlag = EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
+        Descriptor->SpecificFlag =
+          EFI_ACPI_MEMORY_RESOURCE_SPECIFIC_FLAG_CACHEABLE_PREFETCHABLE;
       //
       // Fall through
       //
@@ -2038,7 +2172,8 @@ PciIoSetBarAttributes (
   // This driver does not support setting the WRITE_COMBINE or the CACHED attributes.
   // If Attributes is not 0, then return EFI_UNSUPPORTED.
   //
-  Supports = PciIoDevice->Supports & EFI_PCI_IO_ATTRIBUTE_MEMORY_CACHED & EFI_PCI_IO_ATTRIBUTE_MEMORY_WRITE_COMBINE;
+  Supports = PciIoDevice->Supports & EFI_PCI_IO_ATTRIBUTE_MEMORY_CACHED &
+             EFI_PCI_IO_ATTRIBUTE_MEMORY_WRITE_COMBINE;
 
   if (Attributes != (Attributes & Supports)) {
     return EFI_UNSUPPORTED;

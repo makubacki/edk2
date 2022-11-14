@@ -30,7 +30,11 @@ InitializeDiskInfo (
   IN  USB_MASS_DEVICE  *UsbMass
   )
 {
-  CopyMem (&UsbMass->DiskInfo, &gUsbDiskInfoProtocolTemplate, sizeof (gUsbDiskInfoProtocolTemplate));
+  CopyMem (
+    &UsbMass->DiskInfo,
+    &gUsbDiskInfoProtocolTemplate,
+    sizeof (gUsbDiskInfoProtocolTemplate)
+    );
 }
 
 /**

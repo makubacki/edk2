@@ -87,9 +87,17 @@ VariableLockCapsuleLongModeBufferVariable (
   //
   // Mark EFI_CAPSULE_LONG_MODE_BUFFER_NAME variable to read-only if the Variable Lock protocol exists
   //
-  Status = gBS->LocateProtocol (&gEdkiiVariableLockProtocolGuid, NULL, (VOID **)&VariableLock);
+  Status = gBS->LocateProtocol (
+                  &gEdkiiVariableLockProtocolGuid,
+                  NULL,
+                  (VOID **)&VariableLock
+                  );
   if (!EFI_ERROR (Status)) {
-    Status = VariableLock->RequestToLock (VariableLock, EFI_CAPSULE_LONG_MODE_BUFFER_NAME, &gEfiCapsuleVendorGuid);
+    Status = VariableLock->RequestToLock (
+                             VariableLock,
+                             EFI_CAPSULE_LONG_MODE_BUFFER_NAME,
+                             &gEfiCapsuleVendorGuid
+                             );
     ASSERT_EFI_ERROR (Status);
   }
 }
@@ -143,29 +151,50 @@ PrepareContextForCapsulePei (
   //
   if (PhysicalAddressBits <= 39 ) {
     NumberOfPml4EntriesNeeded = 1;
-    NumberOfPdpEntriesNeeded  = (UINT32)LShiftU64 (1, (PhysicalAddressBits - 30));
+    NumberOfPdpEntriesNeeded  = (UINT32)LShiftU64 (
+                                          1,
+                                          (PhysicalAddressBits -
+                                           30)
+                                          );
   } else {
-    NumberOfPml4EntriesNeeded = (UINT32)LShiftU64 (1, (PhysicalAddressBits - 39));
-    NumberOfPdpEntriesNeeded  = 512;
+    NumberOfPml4EntriesNeeded = (UINT32)LShiftU64 (
+                                          1,
+                                          (PhysicalAddressBits -
+                                           39)
+                                          );
+    NumberOfPdpEntriesNeeded = 512;
   }
 
   if (!Page1GSupport) {
-    TotalPagesNum = (NumberOfPdpEntriesNeeded + 1) * NumberOfPml4EntriesNeeded + 1;
+    TotalPagesNum = (NumberOfPdpEntriesNeeded + 1) * NumberOfPml4EntriesNeeded +
+                    1;
   } else {
     TotalPagesNum = NumberOfPml4EntriesNeeded + 1;
   }
 
   TotalPagesNum += ExtraPageTablePages;
-  DEBUG ((DEBUG_INFO, "CapsuleRuntimeDxe X64 TotalPagesNum - 0x%x pages\n", TotalPagesNum));
+  DEBUG ((
+    DEBUG_INFO,
+    "CapsuleRuntimeDxe X64 TotalPagesNum - 0x%x pages\n",
+    TotalPagesNum
+    ));
 
-  LongModeBuffer.PageTableAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateReservedMemoryBelow4G (EFI_PAGES_TO_SIZE (TotalPagesNum));
+  LongModeBuffer.PageTableAddress =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateReservedMemoryBelow4G (
+                                   EFI_PAGES_TO_SIZE (TotalPagesNum)
+                                   );
   ASSERT (LongModeBuffer.PageTableAddress != 0);
 
   //
   // Allocate stack
   //
   LongModeBuffer.StackSize        = PcdGet32 (PcdCapsulePeiLongModeStackSize);
-  LongModeBuffer.StackBaseAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateReservedMemoryBelow4G (PcdGet32 (PcdCapsulePeiLongModeStackSize));
+  LongModeBuffer.StackBaseAddress =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateReservedMemoryBelow4G (
+                                   PcdGet32 (
+                                     PcdCapsulePeiLongModeStackSize
+                                     )
+                                   );
   ASSERT (LongModeBuffer.StackBaseAddress != 0);
 
   Status = gRT->SetVariable (
@@ -188,8 +217,17 @@ PrepareContextForCapsulePei (
       &Registration
       );
   } else {
-    DEBUG ((DEBUG_ERROR, "FATAL ERROR: CapsuleLongModeBuffer cannot be saved: %r. Capsule in PEI may fail!\n", Status));
-    gBS->FreePages (LongModeBuffer.StackBaseAddress, EFI_SIZE_TO_PAGES (LongModeBuffer.StackSize));
+    DEBUG ((
+      DEBUG_ERROR,
+      "FATAL ERROR: CapsuleLongModeBuffer cannot be saved: %r. Capsule in PEI may fail!\n",
+      Status
+      ));
+    gBS->FreePages (
+           LongModeBuffer.StackBaseAddress,
+           EFI_SIZE_TO_PAGES (
+             LongModeBuffer.StackSize
+             )
+           );
   }
 }
 
@@ -202,7 +240,10 @@ SaveLongModeContext (
   VOID
   )
 {
-  if ((FeaturePcdGet (PcdSupportUpdateCapsuleReset)) && (FeaturePcdGet (PcdDxeIplSwitchToLongMode))) {
+  if ((FeaturePcdGet (PcdSupportUpdateCapsuleReset)) && (FeaturePcdGet (
+                                                           PcdDxeIplSwitchToLongMode
+                                                           )))
+  {
     //
     // Allocate memory for Capsule IA32 PEIM, it will create page table to transfer to long mode to access capsule above 4GB.
     //

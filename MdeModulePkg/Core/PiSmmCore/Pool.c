@@ -13,7 +13,8 @@ LIST_ENTRY  mSmmPoolLists[SmmPoolTypeMax][MAX_POOL_INDEX];
 // To cache the SMRAM base since when Loading modules At fixed address feature is enabled,
 // all module is assigned an offset relative the SMRAM base in build time.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED  EFI_PHYSICAL_ADDRESS  gLoadModuleAtFixAddressSmramBase = 0;
+GLOBAL_REMOVE_IF_UNREFERENCED  EFI_PHYSICAL_ADDRESS
+  gLoadModuleAtFixAddressSmramBase = 0;
 
 /**
   Convert a UEFI memory type to SMM pool type.
@@ -27,7 +28,10 @@ UefiMemoryTypeToSmmPoolType (
   IN  EFI_MEMORY_TYPE  MemoryType
   )
 {
-  ASSERT ((MemoryType == EfiRuntimeServicesCode) || (MemoryType == EfiRuntimeServicesData));
+  ASSERT (
+    (MemoryType == EfiRuntimeServicesCode) || (MemoryType ==
+                                               EfiRuntimeServicesData)
+    );
   switch (MemoryType) {
     case EfiRuntimeServicesCode:
       return SmmPoolTypeCode;
@@ -59,8 +63,12 @@ SmmInitializeMemoryServices (
   //
   // Initialize Pool list
   //
-  for (SmmPoolTypeIndex = 0; SmmPoolTypeIndex < SmmPoolTypeMax; SmmPoolTypeIndex++) {
-    for (Index = 0; Index < ARRAY_SIZE (mSmmPoolLists[SmmPoolTypeIndex]); Index++) {
+  for (SmmPoolTypeIndex = 0; SmmPoolTypeIndex < SmmPoolTypeMax;
+       SmmPoolTypeIndex++)
+  {
+    for (Index = 0; Index < ARRAY_SIZE (mSmmPoolLists[SmmPoolTypeIndex]);
+         Index++)
+    {
       InitializeListHead (&mSmmPoolLists[SmmPoolTypeIndex][Index]);
     }
   }
@@ -78,7 +86,9 @@ SmmInitializeMemoryServices (
   // Need add Free memory at first, to let gSmmMemoryMap record data
   //
   for (Index = 0; Index < SmramRangeCount; Index++) {
-    if ((SmramRanges[Index].RegionState & (EFI_ALLOCATED | EFI_NEEDS_TESTING | EFI_NEEDS_ECC_INITIALIZATION)) != 0) {
+    if ((SmramRanges[Index].RegionState & (EFI_ALLOCATED | EFI_NEEDS_TESTING |
+                                           EFI_NEEDS_ECC_INITIALIZATION)) != 0)
+    {
       continue;
     }
 
@@ -94,7 +104,9 @@ SmmInitializeMemoryServices (
   // Add the allocated SMRAM regions
   //
   for (Index = 0; Index < SmramRangeCount; Index++) {
-    if ((SmramRanges[Index].RegionState & (EFI_ALLOCATED | EFI_NEEDS_TESTING | EFI_NEEDS_ECC_INITIALIZATION)) == 0) {
+    if ((SmramRanges[Index].RegionState & (EFI_ALLOCATED | EFI_NEEDS_TESTING |
+                                           EFI_NEEDS_ECC_INITIALIZATION)) == 0)
+    {
       continue;
     }
 
@@ -151,7 +163,11 @@ InternalAllocPoolByIndex (
 
     Hdr = (FREE_POOL_HEADER *)(UINTN)Address;
   } else if (!IsListEmpty (&mSmmPoolLists[SmmPoolType][PoolIndex])) {
-    Hdr = BASE_CR (GetFirstNode (&mSmmPoolLists[SmmPoolType][PoolIndex]), FREE_POOL_HEADER, Link);
+    Hdr = BASE_CR (
+            GetFirstNode (&mSmmPoolLists[SmmPoolType][PoolIndex]),
+            FREE_POOL_HEADER,
+            Link
+            );
     RemoveEntryList (&Hdr->Link);
   } else {
     Status = InternalAllocPoolByIndex (PoolType, PoolIndex + 1, &Hdr);
@@ -206,7 +222,9 @@ InternalFreePoolByIndex (
 
   SmmPoolType = UefiMemoryTypeToSmmPoolType (FreePoolHdr->Header.Type);
 
-  PoolIndex                     = (UINTN)(HighBitSet32 ((UINT32)FreePoolHdr->Header.Size) - MIN_POOL_SHIFT);
+  PoolIndex                     = (UINTN)(HighBitSet32 (
+                                            (UINT32)FreePoolHdr->Header.Size
+                                            ) - MIN_POOL_SHIFT);
   FreePoolHdr->Header.Signature = 0;
   FreePoolHdr->Header.Available = TRUE;
   FreePoolHdr->Header.Type      = 0;

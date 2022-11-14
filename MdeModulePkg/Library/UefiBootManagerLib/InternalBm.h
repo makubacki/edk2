@@ -78,7 +78,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 #define EFI_REMOVABLE_MEDIA_FILE_NAME  L"\\EFI\\BOOT\\BOOTEBC.EFI"
   #else
-    #error "Can not determine the default boot file name for unknown processor type!"
+    #error \
+  "Can not determine the default boot file name for unknown processor type!"
   #endif
 #endif
 

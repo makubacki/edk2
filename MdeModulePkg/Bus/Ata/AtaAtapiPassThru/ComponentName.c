@@ -11,28 +11,32 @@
 //
 // Driver name table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mAtaAtapiPassThruDriverNameTable[] = {
-  { "eng;en", L"AtaAtapiPassThru Driver" },
-  { NULL,     NULL                       }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mAtaAtapiPassThruDriverNameTable[] = {
+  { "eng;en", L"AtaAtapiPassThru Driver"     },
+  { NULL,     NULL                           }
 };
 
 //
 // Controller name table
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mAtaAtapiPassThruIdeControllerNameTable[] = {
-  { "eng;en", L"IDE Controller" },
-  { NULL,     NULL              }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mAtaAtapiPassThruIdeControllerNameTable[] = {
+  { "eng;en", L"IDE Controller"     },
+  { NULL,     NULL                  }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mAtaAtapiPassThruAhciControllerNameTable[] = {
-  { "eng;en", L"AHCI Controller" },
-  { NULL,     NULL               }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mAtaAtapiPassThruAhciControllerNameTable[] = {
+  { "eng;en", L"AHCI Controller"     },
+  { NULL,     NULL                   }
 };
 
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gAtaAtapiPassThruComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gAtaAtapiPassThruComponentName = {
   AtaAtapiPassThruComponentNameGetDriverName,
   AtaAtapiPassThruComponentNameGetControllerName,
   "eng"
@@ -41,9 +45,12 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gAtaAtapiPassThruComp
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gAtaAtapiPassThruComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)AtaAtapiPassThruComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)AtaAtapiPassThruComponentNameGetControllerName,
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gAtaAtapiPassThruComponentName2 = {
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)
+  AtaAtapiPassThruComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  AtaAtapiPassThruComponentNameGetControllerName,
   "en"
 };
 

@@ -194,7 +194,9 @@ LibCallback (
   NewFileName   = NULL;
   NewFolderName = NULL;
 
-  if ((Action != EFI_BROWSER_ACTION_CHANGING) && (Action != EFI_BROWSER_ACTION_CHANGED)) {
+  if ((Action != EFI_BROWSER_ACTION_CHANGING) && (Action !=
+                                                  EFI_BROWSER_ACTION_CHANGED))
+  {
     //
     // Do nothing for other UEFI Action. Only do call back when data is changed.
     //
@@ -233,7 +235,11 @@ LibCallback (
     }
 
     if (QuestionId == NEW_FILE_NAME_ID) {
-      NewFileName = HiiGetString (gFileExplorerPrivate.FeHiiHandle, Value->string, NULL);
+      NewFileName = HiiGetString (
+                      gFileExplorerPrivate.FeHiiHandle,
+                      Value->string,
+                      NULL
+                      );
       if (NewFileName != NULL) {
         StrCpyS (mNewFileName, MAX_FILE_NAME_LEN, NewFileName);
         FreePool (NewFileName);
@@ -244,7 +250,11 @@ LibCallback (
     }
 
     if (QuestionId == NEW_FOLDER_NAME_ID) {
-      NewFolderName = HiiGetString (gFileExplorerPrivate.FeHiiHandle, Value->string, NULL);
+      NewFolderName = HiiGetString (
+                        gFileExplorerPrivate.FeHiiHandle,
+                        Value->string,
+                        NULL
+                        );
       if (NewFolderName != NULL) {
         StrCpyS (mNewFolderName, MAX_FOLDER_NAME_LEN, NewFolderName);
         FreePool (NewFolderName);
@@ -261,7 +271,9 @@ LibCallback (
       // Process the extra action.
       //
       if (gFileExplorerPrivate.ChooseHandler != NULL) {
-        NeedExit = gFileExplorerPrivate.ChooseHandler (gFileExplorerPrivate.RetDevicePath);
+        NeedExit = gFileExplorerPrivate.ChooseHandler (
+                                          gFileExplorerPrivate.RetDevicePath
+                                          );
       }
 
       if (NeedExit) {
@@ -655,7 +667,8 @@ LibIsSupportedFileType (
   ASSERT (TmpStr != NULL);
   LibToLowerString (TmpStr);
 
-  IsSupported = (StrStr (gFileExplorerPrivate.FileType, TmpStr) == NULL ? FALSE : TRUE);
+  IsSupported = (StrStr (gFileExplorerPrivate.FileType, TmpStr) == NULL ?
+                 FALSE : TRUE);
 
   FreePool (TmpStr);
   return IsSupported;
@@ -692,7 +705,9 @@ LibAppendFileName (
   //
   // Check overflow
   //
-  if (((MAX_UINTN - Size1) < Size2) || ((MAX_UINTN - Size1 - Size2) < sizeof (CHAR16))) {
+  if (((MAX_UINTN - Size1) < Size2) || ((MAX_UINTN - Size1 - Size2) <
+                                        sizeof (CHAR16)))
+  {
     return NULL;
   }
 
@@ -713,7 +728,10 @@ LibAppendFileName (
   Ptr       = Str;
   LastSlash = Str;
   while (*Ptr != 0) {
-    if ((*Ptr == '\\') && (*(Ptr + 1) == '.') && (*(Ptr + 2) == '.') && (*(Ptr + 3) == L'\\')) {
+    if ((*Ptr == '\\') && (*(Ptr + 1) == '.') && (*(Ptr + 2) == '.') && (*(Ptr +
+                                                                           3) ==
+                                                                         L'\\'))
+    {
       //
       // Convert "\Name\..\" to "\"
       // DO NOT convert the .. if it is at the end of the string. This will
@@ -725,7 +743,12 @@ LibAppendFileName (
       // that overlap.
       //
       StrCpyS (TmpStr, MaxLen, Ptr + 3);
-      StrCpyS (LastSlash, MaxLen - ((UINTN)LastSlash - (UINTN)Str) / sizeof (CHAR16), TmpStr);
+      StrCpyS (
+        LastSlash,
+        MaxLen - ((UINTN)LastSlash - (UINTN)Str) /
+        sizeof (CHAR16),
+        TmpStr
+        );
       Ptr = LastSlash;
     } else if ((*Ptr == '\\') && (*(Ptr + 1) == '.') && (*(Ptr + 2) == '\\')) {
       //
@@ -737,7 +760,11 @@ LibAppendFileName (
       // that overlap.
       //
       StrCpyS (TmpStr, MaxLen, Ptr + 2);
-      StrCpyS (Ptr, MaxLen - ((UINTN)Ptr - (UINTN)Str) / sizeof (CHAR16), TmpStr);
+      StrCpyS (
+        Ptr,
+        MaxLen - ((UINTN)Ptr - (UINTN)Str) / sizeof (CHAR16),
+        TmpStr
+        );
       Ptr = LastSlash;
     } else if (*Ptr == '\\') {
       LastSlash = Ptr;
@@ -811,16 +838,27 @@ LibFindFileSystem (
         continue;
       }
 
-      MenuEntry->HelpString   = LibDevicePathToStr (DevicePathFromHandle (FileContext->DeviceHandle));
+      MenuEntry->HelpString = LibDevicePathToStr (
+                                DevicePathFromHandle (
+                                  FileContext->DeviceHandle
+                                  )
+                                );
       FileContext->FileName   = LibStrDuplicate (L"\\");
-      FileContext->DevicePath = FileDevicePath (FileContext->DeviceHandle, FileContext->FileName);
-      FileContext->IsDir      = TRUE;
-      FileContext->IsRoot     = TRUE;
+      FileContext->DevicePath = FileDevicePath (
+                                  FileContext->DeviceHandle,
+                                  FileContext->FileName
+                                  );
+      FileContext->IsDir  = TRUE;
+      FileContext->IsRoot = TRUE;
 
       //
       // Get current file system's Volume Label
       //
-      Info = (EFI_FILE_SYSTEM_VOLUME_LABEL *)LibFileInfo (FileContext->FileHandle, &gEfiFileSystemVolumeLabelInfoIdGuid);
+      Info = (EFI_FILE_SYSTEM_VOLUME_LABEL *)LibFileInfo (
+                                               FileContext->FileHandle,
+                                               &
+                                               gEfiFileSystemVolumeLabelInfoIdGuid
+                                               );
       if (Info == NULL) {
         VolumeLabel = L"NO FILE SYSTEM INFO";
       } else {
@@ -851,7 +889,10 @@ LibFindFileSystem (
       }
 
       OptionNumber++;
-      InsertTailList (&gFileExplorerPrivate.FsOptionMenu->Head, &MenuEntry->Link);
+      InsertTailList (
+        &gFileExplorerPrivate.FsOptionMenu->Head,
+        &MenuEntry->Link
+        );
     }
   }
 
@@ -944,12 +985,20 @@ LibGetFileHandleFromDevicePath (
   // Attempt to access the file via a file system interface
   //
   DevicePathNode = RootDirectory;
-  Status         = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, &DevicePathNode, &Handle);
+  Status         = gBS->LocateDevicePath (
+                          &gEfiSimpleFileSystemProtocolGuid,
+                          &DevicePathNode,
+                          &Handle
+                          );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = gBS->HandleProtocol (Handle, &gEfiSimpleFileSystemProtocolGuid, (VOID **)&Volume);
+  Status = gBS->HandleProtocol (
+                  Handle,
+                  &gEfiSimpleFileSystemProtocolGuid,
+                  (VOID **)&Volume
+                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1010,9 +1059,17 @@ LibGetFileHandleFromDevicePath (
                            0
                            );
     if (*ParentFileName == NULL) {
-      *ParentFileName = AllocateCopyPool (StrSize (((FILEPATH_DEVICE_PATH *)DevicePathNode)->PathName), ((FILEPATH_DEVICE_PATH *)DevicePathNode)->PathName);
+      *ParentFileName = AllocateCopyPool (
+                          StrSize (
+                            ((FILEPATH_DEVICE_PATH *)DevicePathNode)->PathName
+                            ),
+                          ((FILEPATH_DEVICE_PATH *)DevicePathNode)->PathName
+                          );
     } else {
-      TempPath = LibAppendFileName (*ParentFileName, ((FILEPATH_DEVICE_PATH *)DevicePathNode)->PathName);
+      TempPath = LibAppendFileName (
+                   *ParentFileName,
+                   ((FILEPATH_DEVICE_PATH *)DevicePathNode)->PathName
+                   );
       if (TempPath == NULL) {
         LastHandle->Close (LastHandle);
         Status = EFI_OUT_OF_RESOURCES;
@@ -1075,7 +1132,12 @@ LibCreateNewFile (
   NewHandle    = NULL;
   FullFileName = NULL;
 
-  LibGetFileHandleFromDevicePath (gFileExplorerPrivate.RetDevicePath, &FileHandle, &ParentName, &DeviceHandle);
+  LibGetFileHandleFromDevicePath (
+    gFileExplorerPrivate.RetDevicePath,
+    &FileHandle,
+    &ParentName,
+    &DeviceHandle
+    );
   FullFileName = LibAppendFileName (ParentName, FileName);
   if (FullFileName == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -1086,7 +1148,8 @@ LibCreateNewFile (
                            FileHandle,
                            &NewHandle,
                            FullFileName,
-                           EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE| EFI_FILE_MODE_CREATE,
+                           EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE|
+                           EFI_FILE_MODE_CREATE,
                            0
                            );
     if (EFI_ERROR (Status)) {
@@ -1098,7 +1161,8 @@ LibCreateNewFile (
                            FileHandle,
                            &NewHandle,
                            FullFileName,
-                           EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE| EFI_FILE_MODE_CREATE,
+                           EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE|
+                           EFI_FILE_MODE_CREATE,
                            EFI_FILE_DIRECTORY
                            );
     if (EFI_ERROR (Status)) {
@@ -1112,7 +1176,10 @@ LibCreateNewFile (
   //
   // Return the DevicePath of the new created file or folder.
   //
-  gFileExplorerPrivate.RetDevicePath = FileDevicePath (DeviceHandle, FullFileName);
+  gFileExplorerPrivate.RetDevicePath = FileDevicePath (
+                                         DeviceHandle,
+                                         FullFileName
+                                         );
 
   return EFI_SUCCESS;
 }
@@ -1182,7 +1249,9 @@ LibFindFiles (
         continue;
       }
 
-      if (!(((DirInfo->Attribute & EFI_FILE_DIRECTORY) != 0) || LibIsSupportedFileType (DirInfo->FileName))) {
+      if (!(((DirInfo->Attribute & EFI_FILE_DIRECTORY) != 0) ||
+            LibIsSupportedFileType (DirInfo->FileName)))
+      {
         //
         // Slip file unless it is a directory entry or a .EFI file
         //
@@ -1195,9 +1264,13 @@ LibFindFiles (
         goto Done;
       }
 
-      NewFileContext               = (FILE_CONTEXT *)NewMenuEntry->VariableContext;
+      NewFileContext =
+        (FILE_CONTEXT *)NewMenuEntry->VariableContext;
       NewFileContext->DeviceHandle = DeviceHandle;
-      NewFileContext->FileName     = LibAppendFileName (FileName, DirInfo->FileName);
+      NewFileContext->FileName     = LibAppendFileName (
+                                       FileName,
+                                       DirInfo->FileName
+                                       );
       if (NewFileContext->FileName == NULL) {
         LibDestroyMenuEntry (NewMenuEntry);
         Status = EFI_OUT_OF_RESOURCES;
@@ -1205,9 +1278,14 @@ LibFindFiles (
       }
 
       NewFileContext->FileHandle = FileHandle;
-      NewFileContext->DevicePath = FileDevicePath (NewFileContext->DeviceHandle, NewFileContext->FileName);
-      NewMenuEntry->HelpString   = NULL;
-      NewFileContext->IsDir      = (BOOLEAN)((DirInfo->Attribute & EFI_FILE_DIRECTORY) == EFI_FILE_DIRECTORY);
+      NewFileContext->DevicePath = FileDevicePath (
+                                     NewFileContext->DeviceHandle,
+                                     NewFileContext->FileName
+                                     );
+      NewMenuEntry->HelpString = NULL;
+      NewFileContext->IsDir    = (BOOLEAN)((DirInfo->Attribute &
+                                            EFI_FILE_DIRECTORY) ==
+                                           EFI_FILE_DIRECTORY);
 
       if (NewFileContext->IsDir) {
         BufferSize                  = StrLen (DirInfo->FileName) * 2 + 6;
@@ -1232,7 +1310,10 @@ LibFindFiles (
       NewFileContext->IsRoot = FALSE;
 
       OptionNumber++;
-      InsertTailList (&gFileExplorerPrivate.FsOptionMenu->Head, &NewMenuEntry->Link);
+      InsertTailList (
+        &gFileExplorerPrivate.FsOptionMenu->Head,
+        &NewMenuEntry->Link
+        );
     }
   }
 
@@ -1411,7 +1492,10 @@ LibUpdateFileExplorer (
 
   Status         = EFI_SUCCESS;
   FileOptionMask = (UINT16)(FILE_OPTION_MASK & KeyValue) - mQuestionIdUpdate;
-  NewMenuEntry   = LibGetMenuEntry (gFileExplorerPrivate.FsOptionMenu, FileOptionMask);
+  NewMenuEntry   = LibGetMenuEntry (
+                     gFileExplorerPrivate.FsOptionMenu,
+                     FileOptionMask
+                     );
   NewFileContext = (FILE_CONTEXT *)NewMenuEntry->VariableContext;
 
   if (NewFileContext->IsDir) {
@@ -1419,7 +1503,11 @@ LibUpdateFileExplorer (
     LibFreeMenu (gFileExplorerPrivate.FsOptionMenu);
     Status = LibGetFileHandleFromMenu (NewMenuEntry, &FileHandle);
     if (!EFI_ERROR (Status)) {
-      Status = LibFindFiles (FileHandle, NewFileContext->FileName, NewFileContext->DeviceHandle);
+      Status = LibFindFiles (
+                 FileHandle,
+                 NewFileContext->FileName,
+                 NewFileContext->DeviceHandle
+                 );
       if (!EFI_ERROR (Status)) {
         LibUpdateFileExplorePage ();
       } else {
@@ -1450,7 +1538,10 @@ LibGetDevicePath (
 
   FileOptionMask = (UINT16)(FILE_OPTION_MASK & KeyValue) - mQuestionIdUpdate;
 
-  NewMenuEntry = LibGetMenuEntry (gFileExplorerPrivate.FsOptionMenu, FileOptionMask);
+  NewMenuEntry = LibGetMenuEntry (
+                   gFileExplorerPrivate.FsOptionMenu,
+                   FileOptionMask
+                   );
 
   NewFileContext = (FILE_CONTEXT *)NewMenuEntry->VariableContext;
 
@@ -1458,7 +1549,9 @@ LibGetDevicePath (
     FreePool (gFileExplorerPrivate.RetDevicePath);
   }
 
-  gFileExplorerPrivate.RetDevicePath = DuplicateDevicePath (NewFileContext->DevicePath);
+  gFileExplorerPrivate.RetDevicePath = DuplicateDevicePath (
+                                         NewFileContext->DevicePath
+                                         );
 }
 
 /**
@@ -1504,7 +1597,10 @@ ChooseFile (
   gFileExplorerPrivate.RetDevicePath = NULL;
   gFileExplorerPrivate.ChooseHandler = ChooseHandler;
   if (FileType != NULL) {
-    gFileExplorerPrivate.FileType = AllocateCopyPool (StrSize (FileType), FileType);
+    gFileExplorerPrivate.FileType = AllocateCopyPool (
+                                      StrSize (FileType),
+                                      FileType
+                                      );
     ASSERT (gFileExplorerPrivate.FileType != NULL);
     LibToLowerString (gFileExplorerPrivate.FileType);
   } else {
@@ -1514,7 +1610,12 @@ ChooseFile (
   if (RootDirectory == NULL) {
     Status = LibFindFileSystem ();
   } else {
-    Status = LibGetFileHandleFromDevicePath (RootDirectory, &FileHandle, &FileName, &DeviceHandle);
+    Status = LibGetFileHandleFromDevicePath (
+               RootDirectory,
+               &FileHandle,
+               &FileName,
+               &DeviceHandle
+               );
     if (EFI_ERROR (Status)) {
       goto Done;
     }
@@ -1577,7 +1678,10 @@ FileExplorerLibConstructor (
 {
   EFI_STATUS  Status;
 
-  gHiiVendorDevicePath = (HII_VENDOR_DEVICE_PATH *)DuplicateDevicePath ((EFI_DEVICE_PATH_PROTOCOL *)&FeHiiVendorDevicePath);
+  gHiiVendorDevicePath = (HII_VENDOR_DEVICE_PATH *)DuplicateDevicePath (
+                                                     (EFI_DEVICE_PATH_PROTOCOL *)
+                                                     &FeHiiVendorDevicePath
+                                                     );
   ASSERT (gHiiVendorDevicePath != NULL);
   CopyGuid (&gHiiVendorDevicePath->VendorDevicePath.Guid, &gEfiCallerIdGuid);
 
@@ -1615,7 +1719,11 @@ FileExplorerLibConstructor (
   //
   // Locate Formbrowser2 protocol
   //
-  Status = gBS->LocateProtocol (&gEfiFormBrowser2ProtocolGuid, NULL, (VOID **)&gFileExplorerPrivate.FormBrowser2);
+  Status = gBS->LocateProtocol (
+                  &gEfiFormBrowser2ProtocolGuid,
+                  NULL,
+                  (VOID **)&gFileExplorerPrivate.FormBrowser2
+                  );
   ASSERT_EFI_ERROR (Status);
 
   InitializeListHead (&gFileExplorerPrivate.FsOptionMenu->Head);

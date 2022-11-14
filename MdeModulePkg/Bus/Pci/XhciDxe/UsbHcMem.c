@@ -172,7 +172,9 @@ UsbHcAllocMemFromBlock (
     if (!USB_HC_BIT_IS_SET (Block->Bits[Byte], Bit)) {
       if (AllocationForRing && (Available != 0)) {
         MemUnitAddr = (UINTN)Block->BufHost + (Byte * 8 + Bit) * USBHC_MEM_UNIT;
-        if ((MemUnitAddr & AlignmentMask) != ((MemUnitAddr - USBHC_MEM_UNIT) & AlignmentMask)) {
+        if ((MemUnitAddr & AlignmentMask) != ((MemUnitAddr - USBHC_MEM_UNIT) &
+                                              AlignmentMask))
+        {
           //
           // If the TRB Ring memory cross 64K-byte boundary, then restart the
           // search starting at current memory unit.
@@ -255,7 +257,9 @@ UsbHcGetPciAddrForHostAddr (
     // scan the memory block list for the memory block that
     // completely contains the allocated memory.
     //
-    if ((Block->BufHost <= (UINT8 *)Mem) && (((UINT8 *)Mem + AllocSize) <= (Block->BufHost + Block->BufLen))) {
+    if ((Block->BufHost <= (UINT8 *)Mem) && (((UINT8 *)Mem + AllocSize) <=
+                                             (Block->BufHost + Block->BufLen)))
+    {
       break;
     }
   }
@@ -304,7 +308,9 @@ UsbHcGetHostAddrForPciAddr (
     // scan the memory block list for the memory block that
     // completely contains the allocated memory.
     //
-    if ((Block->Buf <= (UINT8 *)Mem) && (((UINT8 *)Mem + AllocSize) <= (Block->Buf + Block->BufLen))) {
+    if ((Block->Buf <= (UINT8 *)Mem) && (((UINT8 *)Mem + AllocSize) <=
+                                         (Block->Buf + Block->BufLen)))
+    {
       break;
     }
   }
@@ -487,7 +493,11 @@ UsbHcAllocateMem (
   // First check whether current memory blocks can satisfy the allocation.
   //
   for (Block = Head; Block != NULL; Block = Block->Next) {
-    Mem = UsbHcAllocMemFromBlock (Block, AllocSize / USBHC_MEM_UNIT, AllocationForRing);
+    Mem = UsbHcAllocMemFromBlock (
+            Block,
+            AllocSize / USBHC_MEM_UNIT,
+            AllocationForRing
+            );
 
     if (Mem != NULL) {
       ZeroMem (Mem, Size);
@@ -522,7 +532,11 @@ UsbHcAllocateMem (
   // Add the new memory block to the pool, then allocate memory from it
   //
   UsbHcInsertMemBlockToPool (Head, NewBlock);
-  Mem = UsbHcAllocMemFromBlock (NewBlock, AllocSize / USBHC_MEM_UNIT, AllocationForRing);
+  Mem = UsbHcAllocMemFromBlock (
+          NewBlock,
+          AllocSize / USBHC_MEM_UNIT,
+          AllocationForRing
+          );
 
   if (Mem != NULL) {
     ZeroMem (Mem, Size);
@@ -563,7 +577,9 @@ UsbHcFreeMem (
     // scan the memory block list for the memory block that
     // completely contains the memory to free.
     //
-    if ((Block->BufHost <= ToFree) && ((ToFree + AllocSize) <= (Block->BufHost + Block->BufLen))) {
+    if ((Block->BufHost <= ToFree) && ((ToFree + AllocSize) <= (Block->BufHost +
+                                                                Block->BufLen)))
+    {
       //
       // compute the start byte and bit in the bit array
       //

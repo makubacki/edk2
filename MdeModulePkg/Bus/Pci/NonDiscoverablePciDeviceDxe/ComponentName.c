@@ -18,8 +18,10 @@
 
 STATIC
 EFI_UNICODE_STRING_TABLE  mDriverNameTable[] = {
-  { "eng;en", L"PCI I/O protocol emulation driver for non-discoverable devices" },
-  { NULL,     NULL                                                              }
+  { "eng;en",
+    L"PCI I/O protocol emulation driver for non-discoverable devices"     },
+  { NULL,
+    NULL                                                                   }
 };
 
 EFI_COMPONENT_NAME_PROTOCOL  gComponentName;

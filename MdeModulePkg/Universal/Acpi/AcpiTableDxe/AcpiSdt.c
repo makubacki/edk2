@@ -69,7 +69,8 @@ FindTableByBuffer (
   while (CurrentLink != StartLink) {
     CurrentTableList = EFI_ACPI_TABLE_LIST_FROM_LINK (CurrentLink);
     if (((UINTN)CurrentTableList->Table <= (UINTN)Buffer) &&
-        ((UINTN)CurrentTableList->Table + CurrentTableList->TableSize > (UINTN)Buffer))
+        ((UINTN)CurrentTableList->Table + CurrentTableList->TableSize >
+         (UINTN)Buffer))
     {
       //
       // Good! Found Table.
@@ -135,7 +136,8 @@ SdtGetMaxAmlBufferSize (
     return EFI_NOT_FOUND;
   }
 
-  *MaxSize = (UINTN)CurrentTableList->Table + CurrentTableList->Table->Length - (UINTN)Buffer;
+  *MaxSize = (UINTN)CurrentTableList->Table + CurrentTableList->Table->Length -
+             (UINTN)Buffer;
   return EFI_SUCCESS;
 }
 
@@ -181,7 +183,11 @@ SdtNotifyAcpiList (
     //
     // Inovke notification
     //
-    CurrentNotifyList->Notification ((EFI_ACPI_SDT_HEADER *)Table->Table, Version, Handle);
+    CurrentNotifyList->Notification (
+                         (EFI_ACPI_SDT_HEADER *)Table->Table,
+                         Version,
+                         Handle
+                         );
 
     CurrentLink = CurrentLink->ForwardLink;
   }
@@ -484,9 +490,11 @@ SdtOpenSdtTable (
 
   AmlHandle = AllocatePool (sizeof (*AmlHandle));
   ASSERT (AmlHandle != NULL);
-  AmlHandle->Signature       = EFI_AML_ROOT_HANDLE_SIGNATURE;
-  AmlHandle->Buffer          = (VOID *)((UINTN)Table->Table + sizeof (EFI_ACPI_SDT_HEADER));
-  AmlHandle->Size            = Table->Table->Length - sizeof (EFI_ACPI_SDT_HEADER);
+  AmlHandle->Signature = EFI_AML_ROOT_HANDLE_SIGNATURE;
+  AmlHandle->Buffer    = (VOID *)((UINTN)Table->Table +
+                                  sizeof (EFI_ACPI_SDT_HEADER));
+  AmlHandle->Size      = Table->Table->Length -
+                         sizeof (EFI_ACPI_SDT_HEADER);
   AmlHandle->AmlByteEncoding = NULL;
   AmlHandle->Modified        = FALSE;
 
@@ -717,7 +725,13 @@ GetOption (
   //
   // Parse option
   //
-  Status = AmlParseOptionHandleCommon (AmlHandle, (AML_OP_PARSE_INDEX)Index, DataType, (VOID **)Data, DataSize);
+  Status = AmlParseOptionHandleCommon (
+             AmlHandle,
+             (AML_OP_PARSE_INDEX)Index,
+             DataType,
+             (VOID **)Data,
+             DataSize
+             );
   if (EFI_ERROR (Status)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -782,7 +796,13 @@ SetOption (
   //
   // Parse option
   //
-  Status = AmlParseOptionHandleCommon (AmlHandle, (AML_OP_PARSE_INDEX)Index, &DataType, &OrgData, &OrgDataSize);
+  Status = AmlParseOptionHandleCommon (
+             AmlHandle,
+             (AML_OP_PARSE_INDEX)Index,
+             &DataType,
+             &OrgData,
+             &OrgDataSize
+             );
   if (EFI_ERROR (Status)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -837,7 +857,9 @@ GetChild (
   }
 
   AmlHandle = *Handle;
-  if ((AmlHandle != NULL) && (AmlHandle->Signature != EFI_AML_HANDLE_SIGNATURE)) {
+  if ((AmlHandle != NULL) && (AmlHandle->Signature !=
+                              EFI_AML_HANDLE_SIGNATURE))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -868,7 +890,12 @@ GetChild (
     return EFI_SUCCESS;
   }
 
-  return SdtOpenEx (Buffer, (UINTN)AmlParentHandle->Buffer + AmlParentHandle->Size - (UINTN)Buffer, Handle);
+  return SdtOpenEx (
+           Buffer,
+           (UINTN)AmlParentHandle->Buffer +
+           AmlParentHandle->Size - (UINTN)Buffer,
+           Handle
+           );
 }
 
 /**
@@ -909,7 +936,12 @@ SdtFindPathFromNonRoot (
     return EFI_SUCCESS;
   }
 
-  return SdtOpenEx (Buffer, (UINTN)AmlHandle->Buffer + AmlHandle->Size - (UINTN)Buffer, HandleOut);
+  return SdtOpenEx (
+           Buffer,
+           (UINTN)AmlHandle->Buffer + AmlHandle->Size -
+           (UINTN)Buffer,
+           HandleOut
+           );
 }
 
 /**
@@ -1001,7 +1033,12 @@ SdtFindPathFromRoot (
       //
       // Great! Find it, open
       //
-      Status = SdtOpenEx (Buffer, (UINTN)AmlHandle->Buffer + AmlHandle->Size - (UINTN)Buffer, HandleOut);
+      Status = SdtOpenEx (
+                 Buffer,
+                 (UINTN)AmlHandle->Buffer + AmlHandle->Size -
+                 (UINTN)Buffer,
+                 HandleOut
+                 );
       if (!EFI_ERROR (Status)) {
         return EFI_SUCCESS;
       }
@@ -1093,8 +1130,13 @@ SdtAcpiTableAcpiSdtConstructor (
   )
 {
   InitializeListHead (&AcpiTableInstance->NotifyList);
-  CopyMem (&AcpiTableInstance->AcpiSdtProtocol, &mAcpiSdtProtocolTemplate, sizeof (mAcpiSdtProtocolTemplate));
-  AcpiTableInstance->AcpiSdtProtocol.AcpiVersion = (EFI_ACPI_TABLE_VERSION)PcdGet32 (PcdAcpiExposedTableVersions);
+  CopyMem (
+    &AcpiTableInstance->AcpiSdtProtocol,
+    &mAcpiSdtProtocolTemplate,
+    sizeof (mAcpiSdtProtocolTemplate)
+    );
+  AcpiTableInstance->AcpiSdtProtocol.AcpiVersion =
+    (EFI_ACPI_TABLE_VERSION)PcdGet32 (PcdAcpiExposedTableVersions);
 
   return;
 }

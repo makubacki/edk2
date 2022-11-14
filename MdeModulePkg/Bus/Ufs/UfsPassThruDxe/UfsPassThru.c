@@ -12,11 +12,13 @@
 // Template for Ufs Pass Thru private data.
 //
 UFS_PASS_THRU_PRIVATE_DATA  gUfsPassThruTemplate = {
-  UFS_PASS_THRU_SIG,                                                                                                                      // Signature
-  NULL,                                                                                                                                   // Handle
+  UFS_PASS_THRU_SIG,                             // Signature
+  NULL,                                          // Handle
   {                               // ExtScsiPassThruMode
     0xFFFFFFFF,
-    EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_PHYSICAL | EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_LOGICAL | EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_NONBLOCKIO,
+    EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_PHYSICAL |
+    EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_LOGICAL |
+    EFI_EXT_SCSI_PASS_THRU_ATTRIBUTES_NONBLOCKIO,
     sizeof (UINTN)
   },
   {                               // ExtScsiPassThru
@@ -34,17 +36,19 @@ UFS_PASS_THRU_PRIVATE_DATA  gUfsPassThruTemplate = {
     UfsRwUfsFlag,
     UfsRwUfsAttribute
   },
-  0,                                                                                                                                               // UfsHostController
-  0,                                                                                                                                               // UfsHcBase
-  { 0,                                                                                                                                    0     }, // UfsHcInfo
-  { NULL,                                                                                                                                 NULL  }, // UfsHcDriverInterface
-  0,                                                                                                                                               // TaskTag
-  0,                                                                                                                                               // UtpTrlBase
-  0,                                                                                                                                               // Nutrs
-  0,                                                                                                                                               // TrlMapping
-  0,                                                                                                                                               // UtpTmrlBase
-  0,                                                                                                                                               // Nutmrs
-  0,                                                                                                                                               // TmrlMapping
+  0,                                             // UfsHostController
+  0,                                             // UfsHcBase
+  { 0,
+    0                                                                                                                                      },// UfsHcInfo
+  { NULL,
+    NULL                                                                                                                                   }, // UfsHcDriverInterface
+  0,                                                                                                                                          // TaskTag
+  0,                                                                                                                                          // UtpTrlBase
+  0,                                                                                                                                          // Nutrs
+  0,                                                                                                                                          // TrlMapping
+  0,                                                                                                                                          // UtpTmrlBase
+  0,                                                                                                                                          // Nutmrs
+  0,                                                                                                                                          // TmrlMapping
   {                               // Luns
     {
       UFS_LUN_0,                      // Ufs Common Lun 0
@@ -60,10 +64,10 @@ UFS_PASS_THRU_PRIVATE_DATA  gUfsPassThruTemplate = {
       UFS_WLUN_BOOT,                  // Ufs Boot Well Known Lun
       UFS_WLUN_RPMB                   // RPMB Well Known Lun
     },
-    0x0000,                                                                                                                               // By default don't expose any Luns.
+    0x0000,                                      // By default don't expose any Luns.
     0x0
   },
-  NULL,                                                                                                                                   // TimerEvent
+  NULL,                                          // TimerEvent
   {                               // Queue
     NULL,
     NULL
@@ -171,15 +175,18 @@ UfsPassThruPassThru (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (Packet->InDataBuffer, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (Packet->InDataBuffer,
+                                      This->Mode->IoAlign)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (Packet->OutDataBuffer, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (Packet->OutDataBuffer,
+                                      This->Mode->IoAlign)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (Packet->SenseData, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED (Packet->SenseData,
+                                      This->Mode->IoAlign)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -187,7 +194,8 @@ UfsPassThruPassThru (
   // For UFS 2.0 compatible device, 0 is always used to represent the location of the UFS device.
   //
   SetMem (mUfsTargetId, TARGET_MAX_BYTES, 0x00);
-  if ((Target == NULL) || (CompareMem (Target, mUfsTargetId, TARGET_MAX_BYTES) != 0)) {
+  if ((Target == NULL) || (CompareMem (Target, mUfsTargetId,
+                             TARGET_MAX_BYTES) != 0)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -425,7 +433,8 @@ UfsPassThruBuildDevicePath (
     return EFI_NOT_FOUND;
   }
 
-  DevicePathNode = AllocateCopyPool (sizeof (UFS_DEVICE_PATH), &mUfsDevicePathTemplate);
+  DevicePathNode = AllocateCopyPool (sizeof (UFS_DEVICE_PATH),
+                     &mUfsDevicePathTemplate);
   if (DevicePathNode == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -488,7 +497,8 @@ UfsPassThruGetTargetLun (
   //
   // Check whether the DevicePath belongs to UFS_DEVICE_PATH
   //
-  if ((DevicePath->Type != MESSAGING_DEVICE_PATH) || (DevicePath->SubType != MSG_UFS_DP) ||
+  if ((DevicePath->Type != MESSAGING_DEVICE_PATH) || (DevicePath->SubType !=
+                                                      MSG_UFS_DP) ||
       (DevicePathNodeLength (DevicePath) != sizeof (UFS_DEVICE_PATH)))
   {
     return EFI_UNSUPPORTED;
@@ -783,10 +793,13 @@ UfsFinishDeviceInitialization (
   } while (DeviceInitStatus != 0 && Timeout != 0);
 
   if (Timeout == 0) {
-    DEBUG ((DEBUG_ERROR, "UfsFinishDeviceInitialization DeviceInitStatus=%x EFI_TIMEOUT \n", DeviceInitStatus));
+    DEBUG ((DEBUG_ERROR,
+      "UfsFinishDeviceInitialization DeviceInitStatus=%x EFI_TIMEOUT \n",
+      DeviceInitStatus));
     return EFI_TIMEOUT;
   } else {
-    DEBUG ((DEBUG_INFO, "UfsFinishDeviceInitialization Timeout left=%x EFI_SUCCESS \n", Timeout));
+    DEBUG ((DEBUG_INFO,
+      "UfsFinishDeviceInitialization Timeout left=%x EFI_SUCCESS \n", Timeout));
     return EFI_SUCCESS;
   }
 }
@@ -863,7 +876,8 @@ UfsPassThruDriverBindingStart (
                   );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Open Ufs Host Controller Protocol Error, Status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR,
+      "Open Ufs Host Controller Protocol Error, Status = %r\n", Status));
     goto Error;
   }
 
@@ -872,33 +886,38 @@ UfsPassThruDriverBindingStart (
   //
   Status = UfsHc->GetUfsHcMmioBar (UfsHc, &UfsHcBase);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Get Ufs Host Controller Mmio Bar Error, Status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR,
+      "Get Ufs Host Controller Mmio Bar Error, Status = %r\n", Status));
     goto Error;
   }
 
   //
   // Initialize Ufs Pass Thru private data for managed UFS Host Controller.
   //
-  Private = AllocateCopyPool (sizeof (UFS_PASS_THRU_PRIVATE_DATA), &gUfsPassThruTemplate);
+  Private = AllocateCopyPool (sizeof (UFS_PASS_THRU_PRIVATE_DATA),
+              &gUfsPassThruTemplate);
   if (Private == NULL) {
     DEBUG ((DEBUG_ERROR, "Unable to allocate Ufs Pass Thru private data\n"));
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;
   }
 
-  Private->ExtScsiPassThru.Mode                   = &Private->ExtScsiPassThruMode;
+  Private->ExtScsiPassThru.Mode =
+    &Private->ExtScsiPassThruMode;
   Private->UfsHostController                      = UfsHc;
   Private->UfsHcBase                              = UfsHcBase;
   Private->Handle                                 = Controller;
   Private->UfsHcDriverInterface.UfsHcProtocol     = UfsHc;
-  Private->UfsHcDriverInterface.UfsExecUicCommand = UfsHcDriverInterfaceExecUicCommand;
+  Private->UfsHcDriverInterface.UfsExecUicCommand =
+    UfsHcDriverInterfaceExecUicCommand;
   InitializeListHead (&Private->Queue);
 
   //
   // This has to be done before initializing UfsHcInfo or calling the UfsControllerInit
   //
   if (mUfsHcPlatform == NULL) {
-    Status = gBS->LocateProtocol (&gEdkiiUfsHcPlatformProtocolGuid, NULL, (VOID **)&mUfsHcPlatform);
+    Status = gBS->LocateProtocol (&gEdkiiUfsHcPlatformProtocolGuid, NULL,
+                    (VOID **)&mUfsHcPlatform);
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_INFO, "No UfsHcPlatformProtocol present\n"));
     }
@@ -915,7 +934,8 @@ UfsPassThruDriverBindingStart (
   //
   Status = UfsControllerInit (Private);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Ufs Host Controller Initialization Error, Status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR,
+      "Ufs Host Controller Initialization Error, Status = %r\n", Status));
     goto Error;
   }
 
@@ -926,13 +946,15 @@ UfsPassThruDriverBindingStart (
   //
   Status = UfsExecNopCmds (Private);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Ufs Sending NOP IN command Error, Status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "Ufs Sending NOP IN command Error, Status = %r\n",
+      Status));
     goto Error;
   }
 
   Status = UfsFinishDeviceInitialization (Private);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Device failed to finish initialization, Status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR,
+      "Device failed to finish initialization, Status = %r\n", Status));
     goto Error;
   }
 
@@ -943,7 +965,8 @@ UfsPassThruDriverBindingStart (
   {
     RefClkAttr = UfsAttrRefClkFreq;
     Attributes = EdkiiUfsCardRefClkFreqObsolete;
-    Status     = UfsRwAttributes (Private, TRUE, RefClkAttr, 0, 0, (UINT32 *)&Attributes);
+    Status     = UfsRwAttributes (Private, TRUE, RefClkAttr, 0, 0,
+                   (UINT32 *)&Attributes);
     if (!EFI_ERROR (Status)) {
       if (Attributes != mUfsHcPlatform->RefClkFreq) {
         Attributes = mUfsHcPlatform->RefClkFreq;
@@ -953,7 +976,8 @@ UfsPassThruDriverBindingStart (
            RefClkAttr,
            Attributes)
           );
-        Status = UfsRwAttributes (Private, FALSE, RefClkAttr, 0, 0, (UINT32 *)&Attributes);
+        Status = UfsRwAttributes (Private, FALSE, RefClkAttr, 0, 0,
+                   (UINT32 *)&Attributes);
         if (EFI_ERROR (Status)) {
           DEBUG (
             (DEBUG_ERROR,
@@ -973,7 +997,9 @@ UfsPassThruDriverBindingStart (
   }
 
   if ((mUfsHcPlatform != NULL) && (mUfsHcPlatform->Callback != NULL)) {
-    Status = mUfsHcPlatform->Callback (Private->Handle, EdkiiUfsHcPostLinkStartup, &Private->UfsHcDriverInterface);
+    Status = mUfsHcPlatform->Callback (Private->Handle,
+                               EdkiiUfsHcPostLinkStartup,
+                               &Private->UfsHcDriverInterface);
     if (EFI_ERROR (Status)) {
       DEBUG (
         (DEBUG_ERROR,
@@ -989,9 +1015,12 @@ UfsPassThruDriverBindingStart (
   //
   UnitDescriptorSize = sizeof (UFS_UNIT_DESC);
   for (Index = 0; Index < 8; Index++) {
-    Status = UfsRwDeviceDesc (Private, TRUE, UfsUnitDesc, (UINT8)Index, 0, &UnitDescriptor, &UnitDescriptorSize);
+    Status = UfsRwDeviceDesc (Private, TRUE, UfsUnitDesc, (UINT8)Index, 0,
+               &UnitDescriptor, &UnitDescriptorSize);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Failed to read unit descriptor, index = %X, status = %r\n", Index, Status));
+      DEBUG ((DEBUG_ERROR,
+        "Failed to read unit descriptor, index = %X, status = %r\n", Index,
+        Status));
       continue;
     }
 
@@ -1005,9 +1034,11 @@ UfsPassThruDriverBindingStart (
   // Check if RPMB WLUN is supported and set corresponding bit mask.
   //
   DeviceDescriptorSize = sizeof (UFS_DEV_DESC);
-  Status               = UfsRwDeviceDesc (Private, TRUE, UfsDeviceDesc, 0, 0, &DeviceDescriptor, &DeviceDescriptorSize);
+  Status               = UfsRwDeviceDesc (Private, TRUE, UfsDeviceDesc, 0, 0,
+                           &DeviceDescriptor, &DeviceDescriptorSize);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to read device descriptor, status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "Failed to read device descriptor, status = %r\n",
+      Status));
   } else {
     if (DeviceDescriptor.SecurityLun == 0x1) {
       DEBUG ((DEBUG_INFO, "UFS WLUN RPMB is supported\n"));
@@ -1026,7 +1057,8 @@ UfsPassThruDriverBindingStart (
                   &Private->TimerEvent
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Ufs Create Async Tasks Event Error, Status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "Ufs Create Async Tasks Event Error, Status = %r\n",
+      Status));
     goto Error;
   }
 
@@ -1036,7 +1068,8 @@ UfsPassThruDriverBindingStart (
                   UFS_HC_ASYNC_TIMER
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Ufs Set Periodic Timer Error, Status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "Ufs Set Periodic Timer Error, Status = %r\n",
+      Status));
     goto Error;
   }
 
@@ -1059,7 +1092,8 @@ Error:
     }
 
     if (Private->UtpTmrlBase != NULL) {
-      UfsHc->FreeBuffer (UfsHc, EFI_SIZE_TO_PAGES (Private->Nutmrs * sizeof (UTP_TMRD)), Private->UtpTmrlBase);
+      UfsHc->FreeBuffer (UfsHc, EFI_SIZE_TO_PAGES (Private->Nutmrs *
+                                  sizeof (UTP_TMRD)), Private->UtpTmrlBase);
     }
 
     if (Private->TrlMapping != NULL) {
@@ -1067,7 +1101,8 @@ Error:
     }
 
     if (Private->UtpTrlBase != NULL) {
-      UfsHc->FreeBuffer (UfsHc, EFI_SIZE_TO_PAGES (Private->Nutrs * sizeof (UTP_TMRD)), Private->UtpTrlBase);
+      UfsHc->FreeBuffer (UfsHc, EFI_SIZE_TO_PAGES (Private->Nutrs *
+                                  sizeof (UTP_TMRD)), Private->UtpTrlBase);
     }
 
     if (Private->TimerEvent != NULL) {
@@ -1132,7 +1167,8 @@ UfsPassThruDriverBindingStop (
   LIST_ENTRY                          *Entry;
   LIST_ENTRY                          *NextEntry;
 
-  DEBUG ((DEBUG_INFO, "==UfsPassThru Stop== Controller Controller = %x\n", Controller));
+  DEBUG ((DEBUG_INFO, "==UfsPassThru Stop== Controller Controller = %x\n",
+    Controller));
 
   Status = gBS->OpenProtocol (
                   Controller,
@@ -1192,7 +1228,8 @@ UfsPassThruDriverBindingStop (
   }
 
   if (Private->UtpTmrlBase != NULL) {
-    UfsHc->FreeBuffer (UfsHc, EFI_SIZE_TO_PAGES (Private->Nutmrs * sizeof (UTP_TMRD)), Private->UtpTmrlBase);
+    UfsHc->FreeBuffer (UfsHc, EFI_SIZE_TO_PAGES (Private->Nutmrs *
+                                sizeof (UTP_TMRD)), Private->UtpTmrlBase);
   }
 
   if (Private->TrlMapping != NULL) {
@@ -1200,7 +1237,8 @@ UfsPassThruDriverBindingStop (
   }
 
   if (Private->UtpTrlBase != NULL) {
-    UfsHc->FreeBuffer (UfsHc, EFI_SIZE_TO_PAGES (Private->Nutrs * sizeof (UTP_TMRD)), Private->UtpTrlBase);
+    UfsHc->FreeBuffer (UfsHc, EFI_SIZE_TO_PAGES (Private->Nutrs *
+                                sizeof (UTP_TMRD)), Private->UtpTrlBase);
   }
 
   if (Private->TimerEvent != NULL) {

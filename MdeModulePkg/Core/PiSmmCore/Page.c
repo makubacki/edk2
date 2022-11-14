@@ -44,7 +44,9 @@ UINTN       mFreeMapStack = 0;
 ///
 /// This list maintain the free memory map list
 ///
-LIST_ENTRY  mFreeMemoryMapEntryList = INITIALIZE_LIST_HEAD_VARIABLE (mFreeMemoryMapEntryList);
+LIST_ENTRY  mFreeMemoryMapEntryList = INITIALIZE_LIST_HEAD_VARIABLE (
+                                        mFreeMemoryMapEntryList
+                                        );
 
 /**
   Allocates pages from the memory map.
@@ -117,9 +119,14 @@ AllocateMemoryMapEntry (
       //
       // Enqueue the free memory map entries into the list
       //
-      for (Index = 0; Index < RUNTIME_PAGE_ALLOCATION_GRANULARITY / sizeof (MEMORY_MAP); Index++) {
+      for (Index = 0; Index < RUNTIME_PAGE_ALLOCATION_GRANULARITY /
+           sizeof (MEMORY_MAP); Index++)
+      {
         FreeDescriptorEntries[Index].Signature = MEMORY_MAP_SIGNATURE;
-        InsertTailList (&mFreeMemoryMapEntryList, &FreeDescriptorEntries[Index].Link);
+        InsertTailList (
+          &mFreeMemoryMapEntryList,
+          &FreeDescriptorEntries[Index].Link
+          );
       }
     } else {
       return NULL;
@@ -129,7 +136,12 @@ AllocateMemoryMapEntry (
   //
   // dequeue the first descriptor from the list
   //
-  Entry = CR (mFreeMemoryMapEntryList.ForwardLink, MEMORY_MAP, Link, MEMORY_MAP_SIGNATURE);
+  Entry = CR (
+            mFreeMemoryMapEntryList.ForwardLink,
+            MEMORY_MAP,
+            Link,
+            MEMORY_MAP_SIGNATURE
+            );
   RemoveEntryList (&Entry->Link);
 
   return Entry;
@@ -370,7 +382,9 @@ ConvertSmmMemoryMapEntry (
           // ---|gMemoryMep|---|Entry1|---|EntryX     Entry3|---
           //    +----------+   +------+   +-----------------+
           //
-          if ((Entry->Type == NextEntry->Type) && (Entry->End + 1 == NextEntry->Start)) {
+          if ((Entry->Type == NextEntry->Type) && (Entry->End + 1 ==
+                                                   NextEntry->Start))
+          {
             Entry->End = NextEntry->End;
             RemoveOldEntry (NextEntry);
           }
@@ -378,14 +392,21 @@ ConvertSmmMemoryMapEntry (
 
         PreviousLink = Entry->Link.BackLink;
         if (PreviousLink != &gMemoryMap) {
-          PreviousEntry = CR (PreviousLink, MEMORY_MAP, Link, MEMORY_MAP_SIGNATURE);
+          PreviousEntry = CR (
+                            PreviousLink,
+                            MEMORY_MAP,
+                            Link,
+                            MEMORY_MAP_SIGNATURE
+                            );
           //
           // ---------------------------------------------------
           // |  +----------+   +-----------------+   +------+  |
           // ---|gMemoryMep|---|Entry1     EntryX|---|Entry3|---
           //    +----------+   +-----------------+   +------+
           //
-          if ((PreviousEntry->Type == Entry->Type) && (PreviousEntry->End + 1 == Entry->Start)) {
+          if ((PreviousEntry->Type == Entry->Type) && (PreviousEntry->End + 1 ==
+                                                       Entry->Start))
+          {
             PreviousEntry->End = Entry->End;
             RemoveOldEntry (Entry);
           }
@@ -478,7 +499,9 @@ InternalAllocPagesOnOneNode (
   Bottom = Top - NumberOfPages;
 
   if (Top < Pages->NumberOfPages) {
-    Node                = (FREE_PAGE_LIST *)((UINTN)Pages + EFI_PAGES_TO_SIZE (Top));
+    Node                = (FREE_PAGE_LIST *)((UINTN)Pages + EFI_PAGES_TO_SIZE (
+                                                              Top
+                                                              ));
     Node->NumberOfPages = Pages->NumberOfPages - Top;
     InsertHeadList (&Pages->Link, &Node->Link);
   }
@@ -512,7 +535,9 @@ InternalAllocMaxAddress (
   LIST_ENTRY      *Node;
   FREE_PAGE_LIST  *Pages;
 
-  for (Node = FreePageList->BackLink; Node != FreePageList; Node = Node->BackLink) {
+  for (Node = FreePageList->BackLink; Node != FreePageList; Node =
+         Node->BackLink)
+  {
     Pages = BASE_CR (Node, FREE_PAGE_LIST, Link);
     if ((Pages->NumberOfPages >= NumberOfPages) &&
         ((UINTN)Pages + EFI_PAGES_TO_SIZE (NumberOfPages) - 1 <= MaxAddress))
@@ -550,10 +575,14 @@ InternalAllocAddress (
   }
 
   EndAddress = Address + EFI_PAGES_TO_SIZE (NumberOfPages);
-  for (Node = FreePageList->BackLink; Node != FreePageList; Node = Node->BackLink) {
+  for (Node = FreePageList->BackLink; Node != FreePageList; Node =
+         Node->BackLink)
+  {
     Pages = BASE_CR (Node, FREE_PAGE_LIST, Link);
     if ((UINTN)Pages <= Address) {
-      if ((UINTN)Pages + EFI_PAGES_TO_SIZE (Pages->NumberOfPages) < EndAddress) {
+      if ((UINTN)Pages + EFI_PAGES_TO_SIZE (Pages->NumberOfPages) <
+          EndAddress)
+      {
         break;
       }
 
@@ -803,7 +832,9 @@ SmmInternalFreePagesEx (
   LIST_ENTRY      *Node;
   FREE_PAGE_LIST  *Pages;
 
-  if (((Memory & EFI_PAGE_MASK) != 0) || (Memory == 0) || (NumberOfPages == 0)) {
+  if (((Memory & EFI_PAGE_MASK) != 0) || (Memory == 0) || (NumberOfPages ==
+                                                           0))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -848,7 +879,12 @@ SmmInternalFreePagesEx (
   //
   // Update SmmMemoryMap here.
   //
-  ConvertSmmMemoryMapEntry (EfiConventionalMemory, Memory, NumberOfPages, AddRegion);
+  ConvertSmmMemoryMapEntry (
+    EfiConventionalMemory,
+    Memory,
+    NumberOfPages,
+    AddRegion
+    );
   if (!AddRegion) {
     CoreFreeMemoryMapStack ();
   }
@@ -981,7 +1017,9 @@ SmmAddMemoryRegion (
   //
   // Add EfiRuntimeServicesData for memory regions that is already allocated, needs testing, or needs ECC initialization
   //
-  if ((Attributes & (EFI_ALLOCATED | EFI_NEEDS_TESTING | EFI_NEEDS_ECC_INITIALIZATION)) != 0) {
+  if ((Attributes & (EFI_ALLOCATED | EFI_NEEDS_TESTING |
+                     EFI_NEEDS_ECC_INITIALIZATION)) != 0)
+  {
     Type = EfiRuntimeServicesData;
   } else {
     Type = EfiConventionalMemory;
@@ -999,9 +1037,20 @@ SmmAddMemoryRegion (
   AlignedMemBase = (UINTN)(MemBase + EFI_PAGE_MASK) & ~EFI_PAGE_MASK;
   MemLength     -= AlignedMemBase - MemBase;
   if (Type == EfiConventionalMemory) {
-    SmmInternalFreePagesEx (AlignedMemBase, TRUNCATE_TO_PAGES ((UINTN)MemLength), TRUE);
+    SmmInternalFreePagesEx (
+      AlignedMemBase,
+      TRUNCATE_TO_PAGES (
+        (UINTN)MemLength
+        ),
+      TRUE
+      );
   } else {
-    ConvertSmmMemoryMapEntry (EfiRuntimeServicesData, AlignedMemBase, TRUNCATE_TO_PAGES ((UINTN)MemLength), TRUE);
+    ConvertSmmMemoryMapEntry (
+      EfiRuntimeServicesData,
+      AlignedMemBase,
+      TRUNCATE_TO_PAGES ((UINTN)MemLength),
+      TRUE
+      );
   }
 
   CoreFreeMemoryMapStack ();
@@ -1090,7 +1139,10 @@ SmmCoreGetMemoryMap (
 
     MemoryMap->Type          = Entry->Type;
     MemoryMap->PhysicalStart = Entry->Start;
-    MemoryMap->NumberOfPages = RShiftU64 (Entry->End - Entry->Start + 1, EFI_PAGE_SHIFT);
+    MemoryMap->NumberOfPages = RShiftU64 (
+                                 Entry->End - Entry->Start + 1,
+                                 EFI_PAGE_SHIFT
+                                 );
 
     MemoryMap = NEXT_MEMORY_DESCRIPTOR (MemoryMap, Size);
   }

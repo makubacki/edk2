@@ -22,7 +22,8 @@
 //
 // Protocol interface structure
 //
-typedef struct _EDKII_PLATFORM_BOOT_MANAGER_PROTOCOL EDKII_PLATFORM_BOOT_MANAGER_PROTOCOL;
+typedef struct _EDKII_PLATFORM_BOOT_MANAGER_PROTOCOL
+EDKII_PLATFORM_BOOT_MANAGER_PROTOCOL;
 
 //
 // Revision The revision to which the protocol interface adheres.

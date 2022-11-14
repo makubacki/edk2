@@ -27,9 +27,10 @@ EFI_UNICODE_COLLATION_PROTOCOL  *mUnicodeCollation = NULL;
 //
 #define GUID_STRING_SIZE  (37 * sizeof (CHAR16))
 
-#define FVFS_VOLUME_LABEL_PREFIX    L"Firmware Volume: "
-#define FVFS_VOLUME_LABEL_SIZE      (sizeof (FVFS_VOLUME_LABEL_PREFIX) + GUID_STRING_SIZE - sizeof (CHAR16))
-#define FVFS_FALLBACK_VOLUME_LABEL  L"Firmware Volume"
+#define FVFS_VOLUME_LABEL_PREFIX      L"Firmware Volume: "
+#define FVFS_VOLUME_LABEL_SIZE      \
+                                      (sizeof (FVFS_VOLUME_LABEL_PREFIX) + GUID_STRING_SIZE - sizeof (CHAR16))
+#define FVFS_FALLBACK_VOLUME_LABEL    L"Firmware Volume"
 
 //
 // Template for EFI_SIMPLE_FILE_SYSTEM_PROTOCOL data structure.
@@ -110,14 +111,19 @@ FvSimpleFileSystemOpenVolume (
     Instance->Root  = Root;
     Root->Instance  = Instance;
     Root->Signature = FVFS_FILE_SIGNATURE;
-    CopyMem (&Root->FileProtocol, &mFileSystemTemplate, sizeof (mFileSystemTemplate));
+    CopyMem (
+      &Root->FileProtocol,
+      &mFileSystemTemplate,
+      sizeof (mFileSystemTemplate)
+      );
     Root->FvFileInfo = AllocateZeroPool (sizeof (FV_FILESYSTEM_FILE_INFO));
     if (Root->FvFileInfo == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
     Root->FvFileInfo->FileInfo.Size      = sizeof (EFI_FILE_INFO);
-    Root->FvFileInfo->FileInfo.Attribute = EFI_FILE_DIRECTORY | EFI_FILE_READ_ONLY;
+    Root->FvFileInfo->FileInfo.Attribute = EFI_FILE_DIRECTORY |
+                                           EFI_FILE_READ_ONLY;
 
     //
     // Populate the instance's list of files. We consider anything a file that
@@ -180,7 +186,10 @@ FvSimpleFileSystemOpenVolume (
         NameLen += StrSize (L".efi") - sizeof (CHAR16);
       }
 
-      FvFileInfo = AllocateZeroPool (sizeof (FV_FILESYSTEM_FILE_INFO) + NameLen - sizeof (CHAR16));
+      FvFileInfo = AllocateZeroPool (
+                     sizeof (FV_FILESYSTEM_FILE_INFO) +
+                     NameLen - sizeof (CHAR16)
+                     );
       if (FvFileInfo == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -194,16 +203,27 @@ FvSimpleFileSystemOpenVolume (
       // Add ".efi" to filenames of drivers and applications.
       //
       DestMax = NameLen / sizeof (CHAR16);
-      Status  = StrnCpyS (&FvFileInfo->FileInfo.FileName[0], DestMax, Name, StrLen (Name));
+      Status  = StrnCpyS (
+                  &FvFileInfo->FileInfo.FileName[0],
+                  DestMax,
+                  Name,
+                  StrLen (Name)
+                  );
       ASSERT_EFI_ERROR (Status);
 
       if (FV_FILETYPE_IS_EXECUTABLE (FileType)) {
-        Status = StrnCatS (&FvFileInfo->FileInfo.FileName[0], DestMax, L".efi", StrLen (L".efi"));
+        Status = StrnCatS (
+                   &FvFileInfo->FileInfo.FileName[0],
+                   DestMax,
+                   L".efi",
+                   StrLen (L".efi")
+                   );
         ASSERT_EFI_ERROR (Status);
       }
 
-      FvFileInfo->FileInfo.Size = sizeof (EFI_FILE_INFO) + NameLen - sizeof (CHAR16);
-      Status                    = FvFsGetFileSize (FvProtocol, FvFileInfo);
+      FvFileInfo->FileInfo.Size = sizeof (EFI_FILE_INFO) + NameLen -
+                                  sizeof (CHAR16);
+      Status = FvFsGetFileSize (FvProtocol, FvFileInfo);
       ASSERT_EFI_ERROR (Status);
       FvFileInfo->FileInfo.PhysicalSize = FvFileInfo->FileInfo.FileSize;
       FvFileInfo->FileInfo.Attribute    = EFI_FILE_READ_ONLY;
@@ -426,7 +446,9 @@ FvSimpleFileSystemDriverStart (
   EFI_GUID                       *FvGuid;
   UINTN                          NumChars;
 
-  Status = InitializeUnicodeCollationSupport (DriverBinding->DriverBindingHandle);
+  Status = InitializeUnicodeCollationSupport (
+             DriverBinding->DriverBindingHandle
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }

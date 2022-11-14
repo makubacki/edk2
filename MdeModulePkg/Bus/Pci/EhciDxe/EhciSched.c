@@ -63,9 +63,17 @@ EhcCreateHelpQ (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  PciAddr           = UsbHcGetPciAddressForHostMem (Ehc->MemPool, Qh, sizeof (EHC_QH));
+  PciAddr = UsbHcGetPciAddressForHostMem (
+              Ehc->MemPool,
+              Qh,
+              sizeof (EHC_QH)
+              );
   QhHw              = &Qh->QhHw;
-  QhHw->HorizonLink = QH_LINK (PciAddr + OFFSET_OF (EHC_QH, QhHw), EHC_TYPE_QH, FALSE);
+  QhHw->HorizonLink = QH_LINK (
+                        PciAddr + OFFSET_OF (EHC_QH, QhHw),
+                        EHC_TYPE_QH,
+                        FALSE
+                        );
   QhHw->Status      = QTD_STAT_HALTED;
   QhHw->ReclaimHead = 1;
   Qh->NextQh        = Qh;
@@ -195,13 +203,21 @@ EhcInitSched (
     goto ErrorExit;
   }
 
-  PciAddr = UsbHcGetPciAddressForHostMem (Ehc->MemPool, Ehc->PeriodOne, sizeof (EHC_QH));
+  PciAddr = UsbHcGetPciAddressForHostMem (
+              Ehc->MemPool,
+              Ehc->PeriodOne,
+              sizeof (EHC_QH)
+              );
 
   for (Index = 0; Index < EHC_FRAME_LEN; Index++) {
     //
     // Store the pci bus address of the QH in period frame list which will be accessed by pci bus master.
     //
-    ((UINT32 *)(Ehc->PeriodFrame))[Index] = QH_LINK (PciAddr, EHC_TYPE_QH, FALSE);
+    ((UINT32 *)(Ehc->PeriodFrame))[Index] = QH_LINK (
+                                              PciAddr,
+                                              EHC_TYPE_QH,
+                                              FALSE
+                                              );
     //
     // Store the host address of the QH in period frame list which will be accessed by host.
     //
@@ -213,7 +229,11 @@ EhcInitSched (
   // Only need to set the AsynListAddr register to
   // the reclamation header
   //
-  PciAddr = UsbHcGetPciAddressForHostMem (Ehc->MemPool, Ehc->ReclaimHead, sizeof (EHC_QH));
+  PciAddr = UsbHcGetPciAddressForHostMem (
+              Ehc->MemPool,
+              Ehc->ReclaimHead,
+              sizeof (EHC_QH)
+              );
   EhcWriteOpReg (Ehc, EHC_ASYNC_HEAD_OFFSET, EHC_LOW_32BIT (PciAddr));
   return EFI_SUCCESS;
 
@@ -327,9 +347,17 @@ EhcLinkQhToAsync (
   Qh->NextQh   = Head->NextQh;
   Head->NextQh = Qh;
 
-  PciAddr                = UsbHcGetPciAddressForHostMem (Ehc->MemPool, Qh->NextQh, sizeof (EHC_QH));
-  Qh->QhHw.HorizonLink   = QH_LINK (PciAddr, EHC_TYPE_QH, FALSE);
-  PciAddr                = UsbHcGetPciAddressForHostMem (Ehc->MemPool, Head->NextQh, sizeof (EHC_QH));
+  PciAddr = UsbHcGetPciAddressForHostMem (
+              Ehc->MemPool,
+              Qh->NextQh,
+              sizeof (EHC_QH)
+              );
+  Qh->QhHw.HorizonLink = QH_LINK (PciAddr, EHC_TYPE_QH, FALSE);
+  PciAddr              = UsbHcGetPciAddressForHostMem (
+                           Ehc->MemPool,
+                           Head->NextQh,
+                           sizeof (EHC_QH)
+                           );
   Head->QhHw.HorizonLink = QH_LINK (PciAddr, EHC_TYPE_QH, FALSE);
 }
 
@@ -363,7 +391,11 @@ EhcUnlinkQhFromAsync (
   Head->NextQh = Qh->NextQh;
   Qh->NextQh   = NULL;
 
-  PciAddr                = UsbHcGetPciAddressForHostMem (Ehc->MemPool, Head->NextQh, sizeof (EHC_QH));
+  PciAddr = UsbHcGetPciAddressForHostMem (
+              Ehc->MemPool,
+              Head->NextQh,
+              sizeof (EHC_QH)
+              );
   Head->QhHw.HorizonLink = QH_LINK (PciAddr, EHC_TYPE_QH, FALSE);
 
   //
@@ -372,7 +404,10 @@ EhcUnlinkQhFromAsync (
   Status = EhcSetAndWaitDoorBell (Ehc, EHC_GENERIC_TIMEOUT);
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "EhcUnlinkQhFromAsync: Failed to synchronize with doorbell\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EhcUnlinkQhFromAsync: Failed to synchronize with doorbell\n"
+      ));
   }
 }
 
@@ -449,8 +484,12 @@ EhcLinkQhToPeriod (
       Qh->NextQh   = Next;
       Prev->NextQh = Qh;
 
-      Qh->QhHw.HorizonLink   = Prev->QhHw.HorizonLink;
-      PciAddr                = UsbHcGetPciAddressForHostMem (Ehc->MemPool, Qh, sizeof (EHC_QH));
+      Qh->QhHw.HorizonLink = Prev->QhHw.HorizonLink;
+      PciAddr              = UsbHcGetPciAddressForHostMem (
+                               Ehc->MemPool,
+                               Qh,
+                               sizeof (EHC_QH)
+                               );
       Prev->QhHw.HorizonLink = QH_LINK (PciAddr, EHC_TYPE_QH, FALSE);
       break;
     }
@@ -461,15 +500,23 @@ EhcLinkQhToPeriod (
     // guarranted by 2^n polling interval.
     //
     if (Qh->NextQh == NULL) {
-      Qh->NextQh           = Next;
-      PciAddr              = UsbHcGetPciAddressForHostMem (Ehc->MemPool, Next, sizeof (EHC_QH));
+      Qh->NextQh = Next;
+      PciAddr    = UsbHcGetPciAddressForHostMem (
+                     Ehc->MemPool,
+                     Next,
+                     sizeof (EHC_QH)
+                     );
       Qh->QhHw.HorizonLink = QH_LINK (PciAddr, EHC_TYPE_QH, FALSE);
     }
 
     PciAddr = UsbHcGetPciAddressForHostMem (Ehc->MemPool, Qh, sizeof (EHC_QH));
 
     if (Prev == NULL) {
-      ((UINT32 *)Ehc->PeriodFrame)[Index]    = QH_LINK (PciAddr, EHC_TYPE_QH, FALSE);
+      ((UINT32 *)Ehc->PeriodFrame)[Index] = QH_LINK (
+                                              PciAddr,
+                                              EHC_TYPE_QH,
+                                              FALSE
+                                              );
       ((UINTN *)Ehc->PeriodFrameHost)[Index] = (UINTN)Qh;
     } else {
       Prev->NextQh           = Qh;
@@ -624,15 +671,25 @@ EhcCheckUrbResult (
         // ShortReadStop. If it is a setup transfer, need to check the
         // Status Stage of the setup transfer to get the finial result
         //
-        PciAddr = UsbHcGetPciAddressForHostMem (Ehc->MemPool, Ehc->ShortReadStop, sizeof (EHC_QTD));
+        PciAddr = UsbHcGetPciAddressForHostMem (
+                    Ehc->MemPool,
+                    Ehc->ShortReadStop,
+                    sizeof (EHC_QTD)
+                    );
         if (QtdHw->AltNext == QTD_LINK (PciAddr, FALSE)) {
-          DEBUG ((DEBUG_VERBOSE, "EhcCheckUrbResult: Short packet read, break\n"));
+          DEBUG ((
+            DEBUG_VERBOSE,
+            "EhcCheckUrbResult: Short packet read, break\n"
+            ));
 
           Finished = TRUE;
           goto ON_EXIT;
         }
 
-        DEBUG ((DEBUG_VERBOSE, "EhcCheckUrbResult: Short packet read, continue\n"));
+        DEBUG ((
+          DEBUG_VERBOSE,
+          "EhcCheckUrbResult: Short packet read, continue\n"
+          ));
       }
     }
   }
@@ -702,12 +759,20 @@ EhcExecTransfer (
   }
 
   if (!Finished) {
-    DEBUG ((DEBUG_ERROR, "EhcExecTransfer: transfer not finished in %dms\n", (UINT32)TimeOut));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EhcExecTransfer: transfer not finished in %dms\n",
+      (UINT32)TimeOut
+      ));
     EhcDumpQh (Urb->Qh, NULL, FALSE);
 
     Status = EFI_TIMEOUT;
   } else if (Urb->Result != EFI_USB_NOERROR) {
-    DEBUG ((DEBUG_ERROR, "EhcExecTransfer: transfer failed with %x\n", Urb->Result));
+    DEBUG ((
+      DEBUG_ERROR,
+      "EhcExecTransfer: transfer failed with %x\n",
+      Urb->Result
+      ));
     EhcDumpQh (Urb->Qh, NULL, FALSE);
 
     Status = EFI_DEVICE_ERROR;
@@ -975,7 +1040,8 @@ EhcUpdateAsyncRequest (
       //
       // calculate physical address by offset.
       //
-      PciAddr            = (UINTN)Urb->DataPhy + ((UINTN)Qtd->Data - (UINTN)Urb->Data);
+      PciAddr            = (UINTN)Urb->DataPhy + ((UINTN)Qtd->Data -
+                                                  (UINTN)Urb->Data);
       QtdHw->Page[0]     = EHC_LOW_32BIT (PciAddr);
       QtdHw->PageHigh[0] = EHC_HIGH_32BIT (PciAddr);
     }
@@ -1002,7 +1068,11 @@ EhcUpdateAsyncRequest (
       QhHw->PageHigh[Index] = 0;
     }
 
-    PciAddr       = UsbHcGetPciAddressForHostMem (Ehc->MemPool, FirstQtd, sizeof (EHC_QTD));
+    PciAddr = UsbHcGetPciAddressForHostMem (
+                Ehc->MemPool,
+                FirstQtd,
+                sizeof (EHC_QTD)
+                );
     QhHw->NextQtd = QTD_LINK (PciAddr, FALSE);
   }
 
@@ -1054,7 +1124,10 @@ EhcMonitorAsyncRequests (
     //
     Status = EhcFlushAsyncIntMap (Ehc, Urb);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "EhcMonitorAsyncRequests: Fail to Flush AsyncInt Mapped Memeory\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "EhcMonitorAsyncRequests: Fail to Flush AsyncInt Mapped Memeory\n"
+        ));
     }
 
     //

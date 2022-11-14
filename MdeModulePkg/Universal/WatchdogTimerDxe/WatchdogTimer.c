@@ -59,7 +59,10 @@ WatchdogTimerDriverExpires (
   IN VOID       *Context
   )
 {
-  REPORT_STATUS_CODE (EFI_ERROR_CODE | EFI_ERROR_MINOR, (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_TIMER_EXPIRED));
+  REPORT_STATUS_CODE (
+    EFI_ERROR_CODE | EFI_ERROR_MINOR,
+    (EFI_COMPUTING_UNIT_HOST_PROCESSOR | EFI_CU_HP_EC_TIMER_EXPIRED)
+    );
 
   //
   // If a notification function has been registered, then call it

@@ -14,19 +14,45 @@
 //
 // NVME host controller registers operation definitions
 //
-#define NVME_GET_CAP(Private, Cap)             NvmeMmioRead  (Cap, Private->MmioBase + NVME_CAP_OFFSET, sizeof (NVME_CAP))
-#define NVME_GET_CC(Private, Cc)               NvmeMmioRead  (Cc, Private->MmioBase + NVME_CC_OFFSET, sizeof (NVME_CC))
-#define NVME_SET_CC(Private, Cc)               NvmeMmioWrite (Private->MmioBase + NVME_CC_OFFSET, Cc, sizeof (NVME_CC))
-#define NVME_GET_CSTS(Private, Csts)           NvmeMmioRead  (Csts, Private->MmioBase + NVME_CSTS_OFFSET, sizeof (NVME_CSTS))
-#define NVME_GET_AQA(Private, Aqa)             NvmeMmioRead  (Aqa, Private->MmioBase + NVME_AQA_OFFSET, sizeof (NVME_AQA))
-#define NVME_SET_AQA(Private, Aqa)             NvmeMmioWrite (Private->MmioBase + NVME_AQA_OFFSET, Aqa, sizeof (NVME_AQA))
-#define NVME_GET_ASQ(Private, Asq)             NvmeMmioRead  (Asq, Private->MmioBase + NVME_ASQ_OFFSET, sizeof (NVME_ASQ))
-#define NVME_SET_ASQ(Private, Asq)             NvmeMmioWrite (Private->MmioBase + NVME_ASQ_OFFSET, Asq, sizeof (NVME_ASQ))
-#define NVME_GET_ACQ(Private, Acq)             NvmeMmioRead  (Acq, Private->MmioBase + NVME_ACQ_OFFSET, sizeof (NVME_ACQ))
-#define NVME_SET_ACQ(Private, Acq)             NvmeMmioWrite (Private->MmioBase + NVME_ACQ_OFFSET, Acq, sizeof (NVME_ACQ))
-#define NVME_GET_VER(Private, Ver)             NvmeMmioRead  (Ver, Private->MmioBase + NVME_VER_OFFSET, sizeof (NVME_VER))
-#define NVME_SET_SQTDBL(Private, Qid, Sqtdbl)  NvmeMmioWrite (Private->MmioBase + NVME_SQTDBL_OFFSET(Qid, Private->Cap.Dstrd), Sqtdbl, sizeof (NVME_SQTDBL))
-#define NVME_SET_CQHDBL(Private, Qid, Cqhdbl)  NvmeMmioWrite (Private->MmioBase + NVME_CQHDBL_OFFSET(Qid, Private->Cap.Dstrd), Cqhdbl, sizeof (NVME_CQHDBL))
+#define NVME_GET_CAP(Private, \
+                     Cap)             \
+      NvmeMmioRead  (Cap, Private->MmioBase + NVME_CAP_OFFSET, sizeof (NVME_CAP))
+#define NVME_GET_CC(Private, \
+                    Cc)               \
+      NvmeMmioRead  (Cc, Private->MmioBase + NVME_CC_OFFSET, sizeof (NVME_CC))
+#define NVME_SET_CC(Private, \
+                    Cc)               \
+      NvmeMmioWrite (Private->MmioBase + NVME_CC_OFFSET, Cc, sizeof (NVME_CC))
+#define NVME_GET_CSTS(Private, \
+                      Csts)           \
+      NvmeMmioRead  (Csts, Private->MmioBase + NVME_CSTS_OFFSET, sizeof (NVME_CSTS))
+#define NVME_GET_AQA(Private, \
+                     Aqa)             \
+      NvmeMmioRead  (Aqa, Private->MmioBase + NVME_AQA_OFFSET, sizeof (NVME_AQA))
+#define NVME_SET_AQA(Private, \
+                     Aqa)             \
+      NvmeMmioWrite (Private->MmioBase + NVME_AQA_OFFSET, Aqa, sizeof (NVME_AQA))
+#define NVME_GET_ASQ(Private, \
+                     Asq)             \
+      NvmeMmioRead  (Asq, Private->MmioBase + NVME_ASQ_OFFSET, sizeof (NVME_ASQ))
+#define NVME_SET_ASQ(Private, \
+                     Asq)             \
+      NvmeMmioWrite (Private->MmioBase + NVME_ASQ_OFFSET, Asq, sizeof (NVME_ASQ))
+#define NVME_GET_ACQ(Private, \
+                     Acq)             \
+      NvmeMmioRead  (Acq, Private->MmioBase + NVME_ACQ_OFFSET, sizeof (NVME_ACQ))
+#define NVME_SET_ACQ(Private, \
+                     Acq)             \
+      NvmeMmioWrite (Private->MmioBase + NVME_ACQ_OFFSET, Acq, sizeof (NVME_ACQ))
+#define NVME_GET_VER(Private, \
+                     Ver)             \
+      NvmeMmioRead  (Ver, Private->MmioBase + NVME_VER_OFFSET, sizeof (NVME_VER))
+#define NVME_SET_SQTDBL(Private, Qid, \
+                        Sqtdbl)  \
+      NvmeMmioWrite (Private->MmioBase + NVME_SQTDBL_OFFSET(Qid, Private->Cap.Dstrd), Sqtdbl, sizeof (NVME_SQTDBL))
+#define NVME_SET_CQHDBL(Private, Qid, \
+                        Cqhdbl)  \
+      NvmeMmioWrite (Private->MmioBase + NVME_CQHDBL_OFFSET(Qid, Private->Cap.Dstrd), Cqhdbl, sizeof (NVME_CQHDBL))
 
 //
 // Base memory address enum types
@@ -43,13 +69,23 @@ enum {
 //
 // All of base memories are 4K(0x1000) alignment
 //
-#define ALIGN(v, a)                   (UINTN)((((v) - 1) | ((a) - 1)) + 1)
-#define NVME_MEM_BASE(Private)        ((UINTN)(Private->Buffer))
-#define NVME_ASQ_BASE(Private)        (ALIGN (NVME_MEM_BASE(Private) + ((NvmeBaseMemPageOffset (BASEMEM_ASQ))                                * EFI_PAGE_SIZE), EFI_PAGE_SIZE))
-#define NVME_ACQ_BASE(Private)        (ALIGN (NVME_MEM_BASE(Private) + ((NvmeBaseMemPageOffset (BASEMEM_ACQ))                                * EFI_PAGE_SIZE), EFI_PAGE_SIZE))
-#define NVME_SQ_BASE(Private, Index)  (ALIGN (NVME_MEM_BASE(Private) + ((NvmeBaseMemPageOffset (BASEMEM_SQ) + ((Index)*(NVME_MAX_QUEUES-1))) * EFI_PAGE_SIZE), EFI_PAGE_SIZE))
-#define NVME_CQ_BASE(Private, Index)  (ALIGN (NVME_MEM_BASE(Private) + ((NvmeBaseMemPageOffset (BASEMEM_CQ) + ((Index)*(NVME_MAX_QUEUES-1))) * EFI_PAGE_SIZE), EFI_PAGE_SIZE))
-#define NVME_PRP_BASE(Private)        (ALIGN (NVME_MEM_BASE(Private) + ((NvmeBaseMemPageOffset (BASEMEM_PRP))                                * EFI_PAGE_SIZE), EFI_PAGE_SIZE))
+#define ALIGN(v, a)               (UINTN)((((v) - 1) | ((a) - 1)) + 1)
+#define NVME_MEM_BASE(Private)    ((UINTN)(Private->Buffer))
+#define NVME_ASQ_BASE( \
+                     Private)        \
+                                  (ALIGN (NVME_MEM_BASE(Private) + ((NvmeBaseMemPageOffset (BASEMEM_ASQ))                                * EFI_PAGE_SIZE), EFI_PAGE_SIZE))
+#define NVME_ACQ_BASE( \
+                     Private)        \
+                                  (ALIGN (NVME_MEM_BASE(Private) + ((NvmeBaseMemPageOffset (BASEMEM_ACQ))                                * EFI_PAGE_SIZE), EFI_PAGE_SIZE))
+#define NVME_SQ_BASE(Private, \
+                     Index)  \
+                                  (ALIGN (NVME_MEM_BASE(Private) + ((NvmeBaseMemPageOffset (BASEMEM_SQ) + ((Index)*(NVME_MAX_QUEUES-1))) * EFI_PAGE_SIZE), EFI_PAGE_SIZE))
+#define NVME_CQ_BASE(Private, \
+                     Index)  \
+                                  (ALIGN (NVME_MEM_BASE(Private) + ((NvmeBaseMemPageOffset (BASEMEM_CQ) + ((Index)*(NVME_MAX_QUEUES-1))) * EFI_PAGE_SIZE), EFI_PAGE_SIZE))
+#define NVME_PRP_BASE( \
+                     Private)        \
+                                  (ALIGN (NVME_MEM_BASE(Private) + ((NvmeBaseMemPageOffset (BASEMEM_PRP))                                * EFI_PAGE_SIZE), EFI_PAGE_SIZE))
 
 /**
   Transfer MMIO Data to memory.

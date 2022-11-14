@@ -11,7 +11,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gScsiBusComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gScsiBusComponentName = {
   ScsiBusComponentNameGetDriverName,
   ScsiBusComponentNameGetControllerName,
   "eng"
@@ -20,15 +21,17 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gScsiBusComponentName
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gScsiBusComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gScsiBusComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)ScsiBusComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)ScsiBusComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mScsiBusDriverNameTable[] = {
-  { "eng;en", (CHAR16 *)L"SCSI Bus Driver" },
-  { NULL,     NULL                         }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mScsiBusDriverNameTable[] = {
+  { "eng;en", (CHAR16 *)L"SCSI Bus Driver"     },
+  { NULL,     NULL                             }
 };
 
 /**

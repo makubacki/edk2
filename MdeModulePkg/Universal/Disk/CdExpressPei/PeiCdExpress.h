@@ -69,7 +69,9 @@ typedef struct {
 
   UINT8                                 *BlockBuffer;
   UINTN                                 CapsuleCount;
-  PEI_CD_EXPRESS_CAPSULE_DATA           CapsuleData[PEI_CD_EXPRESS_MAX_CAPSULE_NUMBER];
+  PEI_CD_EXPRESS_CAPSULE_DATA           CapsuleData[
+                                                    PEI_CD_EXPRESS_MAX_CAPSULE_NUMBER
+  ];
 } PEI_CD_EXPRESS_PRIVATE_DATA;
 
 #define PEI_CD_EXPRESS_PRIVATE_DATA_FROM_THIS(a) \

@@ -22,7 +22,8 @@
 //
 // Forward declaration for the EDKII_PEI_NVM_EXPRESS_PASS_THRU_PPI.
 //
-typedef struct _EDKII_PEI_NVM_EXPRESS_PASS_THRU_PPI EDKII_PEI_NVM_EXPRESS_PASS_THRU_PPI;
+typedef struct _EDKII_PEI_NVM_EXPRESS_PASS_THRU_PPI
+EDKII_PEI_NVM_EXPRESS_PASS_THRU_PPI;
 
 //
 // Revision The revision to which the Nvme Pass Thru PPI interface adheres.

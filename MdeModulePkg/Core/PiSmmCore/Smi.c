@@ -287,7 +287,8 @@ SmiHandlerUnRegister (
   //
   SmiHandler = NULL;
   for ( HandlerLink = GetFirstNode (&mRootSmiEntry.SmiHandlers)
-        ; !IsNull (&mRootSmiEntry.SmiHandlers, HandlerLink) && ((EFI_HANDLE)SmiHandler != DispatchHandle)
+        ; !IsNull (&mRootSmiEntry.SmiHandlers, HandlerLink) &&
+        ((EFI_HANDLE)SmiHandler != DispatchHandle)
         ; HandlerLink = GetNextNode (&mRootSmiEntry.SmiHandlers, HandlerLink)
         )
   {
@@ -298,13 +299,15 @@ SmiHandlerUnRegister (
   // Look for it in non-root SMI handlers
   //
   for ( EntryLink = GetFirstNode (&mSmiEntryList)
-        ; !IsNull (&mSmiEntryList, EntryLink) && ((EFI_HANDLE)SmiHandler != DispatchHandle)
+        ; !IsNull (&mSmiEntryList, EntryLink) && ((EFI_HANDLE)SmiHandler !=
+                                                  DispatchHandle)
         ; EntryLink = GetNextNode (&mSmiEntryList, EntryLink)
         )
   {
     SmiEntry = CR (EntryLink, SMI_ENTRY, AllEntries, SMI_ENTRY_SIGNATURE);
     for ( HandlerLink = GetFirstNode (&SmiEntry->SmiHandlers)
-          ; !IsNull (&SmiEntry->SmiHandlers, HandlerLink) && ((EFI_HANDLE)SmiHandler != DispatchHandle)
+          ; !IsNull (&SmiEntry->SmiHandlers, HandlerLink) &&
+          ((EFI_HANDLE)SmiHandler != DispatchHandle)
           ; HandlerLink = GetNextNode (&SmiEntry->SmiHandlers, HandlerLink)
           )
     {

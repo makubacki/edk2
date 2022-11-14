@@ -54,7 +54,10 @@ FtwGetLastWriteHeader (
   Offset          = sizeof (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER);
 
   while (FtwHeader->Complete == FTW_VALID_STATE) {
-    Offset += FTW_WRITE_TOTAL_SIZE (FtwHeader->NumberOfWrites, FtwHeader->PrivateDataSize);
+    Offset += FTW_WRITE_TOTAL_SIZE (
+                FtwHeader->NumberOfWrites,
+                FtwHeader->PrivateDataSize
+                );
     //
     // If Offset exceed the FTW work space boudary, return error.
     //
@@ -63,7 +66,8 @@ FtwGetLastWriteHeader (
       return EFI_ABORTED;
     }
 
-    FtwHeader = (EFI_FAULT_TOLERANT_WRITE_HEADER *)((UINT8 *)FtwWorkSpaceHeader + Offset);
+    FtwHeader =
+      (EFI_FAULT_TOLERANT_WRITE_HEADER *)((UINT8 *)FtwWorkSpaceHeader + Offset);
   }
 
   //
@@ -114,7 +118,9 @@ FtwGetLastWriteRecord (
     FtwRecord++;
 
     if (FtwWriteHeader->PrivateDataSize != 0) {
-      FtwRecord = (EFI_FAULT_TOLERANT_WRITE_RECORD *)((UINTN)FtwRecord + (UINTN)FtwWriteHeader->PrivateDataSize);
+      FtwRecord = (EFI_FAULT_TOLERANT_WRITE_RECORD *)((UINTN)FtwRecord +
+                                                      (UINTN)FtwWriteHeader->
+                                                        PrivateDataSize);
     }
   }
 
@@ -125,7 +131,10 @@ FtwGetLastWriteRecord (
   //  also return the last record.
   //
   if (Index == FtwWriteHeader->NumberOfWrites) {
-    *FtwWriteRecord = (EFI_FAULT_TOLERANT_WRITE_RECORD *)((UINTN)FtwRecord - FTW_RECORD_SIZE (FtwWriteHeader->PrivateDataSize));
+    *FtwWriteRecord = (EFI_FAULT_TOLERANT_WRITE_RECORD *)((UINTN)FtwRecord -
+                                                          FTW_RECORD_SIZE (
+                                                            FtwWriteHeader->
+                                                              PrivateDataSize));
     return EFI_SUCCESS;
   }
 
@@ -155,21 +164,36 @@ IsValidWorkSpace (
     return FALSE;
   }
 
-  if ((WorkingHeader->WorkingBlockValid != FTW_VALID_STATE) || (WorkingHeader->WorkingBlockInvalid == FTW_VALID_STATE)) {
+  if ((WorkingHeader->WorkingBlockValid != FTW_VALID_STATE) ||
+      (WorkingHeader->WorkingBlockInvalid == FTW_VALID_STATE))
+  {
     DEBUG ((DEBUG_ERROR, "FtwPei: Work block header valid bit check error\n"));
     return FALSE;
   }
 
-  if (WorkingHeader->WriteQueueSize != (WorkingLength - sizeof (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER))) {
-    DEBUG ((DEBUG_ERROR, "FtwPei: Work block header WriteQueueSize check error\n"));
+  if (WorkingHeader->WriteQueueSize != (WorkingLength -
+                                        sizeof (
+                                                               EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER)))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "FtwPei: Work block header WriteQueueSize check error\n"
+      ));
     return FALSE;
   }
 
   //
   // Check signature with gEdkiiWorkingBlockSignatureGuid
   //
-  if (!CompareGuid (&gEdkiiWorkingBlockSignatureGuid, &WorkingHeader->Signature)) {
-    DEBUG ((DEBUG_ERROR, "FtwPei: Work block header signature check error, it should be gEdkiiWorkingBlockSignatureGuid\n"));
+  if (!CompareGuid (
+         &gEdkiiWorkingBlockSignatureGuid,
+         &WorkingHeader->Signature
+         ))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "FtwPei: Work block header signature check error, it should be gEdkiiWorkingBlockSignatureGuid\n"
+      ));
     //
     // To be compatible with old signature gEfiSystemNvDataFvGuid.
     //
@@ -178,7 +202,10 @@ IsValidWorkSpace (
     } else {
       Data = *(UINT8 *)(WorkingHeader + 1);
       if (Data != 0xff) {
-        DEBUG ((DEBUG_ERROR, "FtwPei: Old format FTW structure can't be handled\n"));
+        DEBUG ((
+          DEBUG_ERROR,
+          "FtwPei: Old format FTW structure can't be handled\n"
+          ));
         ASSERT (FALSE);
         return FALSE;
       }
@@ -245,7 +272,8 @@ PeimFaultTolerantWriteInitialize (
   //
   ASSERT ((WorkSpaceAddress != 0) && (SpareAreaAddress != 0));
 
-  FtwWorkingBlockHeader = (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER *)(UINTN)WorkSpaceAddress;
+  FtwWorkingBlockHeader =
+    (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER *)(UINTN)WorkSpaceAddress;
   if (IsValidWorkSpace (FtwWorkingBlockHeader, WorkSpaceLength)) {
     Status = FtwGetLastWriteHeader (
                FtwWorkingBlockHeader,
@@ -261,16 +289,20 @@ PeimFaultTolerantWriteInitialize (
 
     if (!EFI_ERROR (Status)) {
       ASSERT (FtwLastWriteRecord != NULL);
-      if ((FtwLastWriteRecord->SpareComplete == FTW_VALID_STATE) && (FtwLastWriteRecord->DestinationComplete != FTW_VALID_STATE)) {
+      if ((FtwLastWriteRecord->SpareComplete == FTW_VALID_STATE) &&
+          (FtwLastWriteRecord->DestinationComplete != FTW_VALID_STATE))
+      {
         //
         // If FTW last write was still in progress with SpareComplete set and DestinationComplete not set.
         // It means the target buffer has been backed up in spare block, then target block has been erased,
         // but the target buffer has not been writen in target block from spare block, we need to build
         // FAULT_TOLERANT_WRITE_LAST_WRITE_DATA GUID hob to hold the FTW last write data.
         //
-        FtwLastWrite.TargetAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)((INT64)SpareAreaAddress + FtwLastWriteRecord->RelativeOffset);
-        FtwLastWrite.SpareAddress  = SpareAreaAddress;
-        FtwLastWrite.Length        = SpareAreaLength;
+        FtwLastWrite.TargetAddress =
+          (EFI_PHYSICAL_ADDRESS)(UINTN)((INT64)SpareAreaAddress +
+                                        FtwLastWriteRecord->RelativeOffset);
+        FtwLastWrite.SpareAddress = SpareAreaAddress;
+        FtwLastWrite.Length       = SpareAreaLength;
         DEBUG ((
           DEBUG_INFO,
           "FtwPei last write data: TargetAddress - 0x%x SpareAddress - 0x%x Length - 0x%x\n",
@@ -278,7 +310,11 @@ PeimFaultTolerantWriteInitialize (
           (UINTN)FtwLastWrite.SpareAddress,
           (UINTN)FtwLastWrite.Length
           ));
-        BuildGuidDataHob (&gEdkiiFaultTolerantWriteGuid, (VOID *)&FtwLastWrite, sizeof (FAULT_TOLERANT_WRITE_LAST_WRITE_DATA));
+        BuildGuidDataHob (
+          &gEdkiiFaultTolerantWriteGuid,
+          (VOID *)&FtwLastWrite,
+          sizeof (FAULT_TOLERANT_WRITE_LAST_WRITE_DATA)
+          );
       }
     }
   } else {
@@ -288,23 +324,37 @@ PeimFaultTolerantWriteInitialize (
     //
     WorkSpaceInSpareArea = SpareAreaAddress + SpareAreaLength - WorkSpaceLength;
     while (WorkSpaceInSpareArea >= SpareAreaAddress) {
-      if (CompareGuid (&gEdkiiWorkingBlockSignatureGuid, (EFI_GUID *)(UINTN)WorkSpaceInSpareArea)) {
+      if (CompareGuid (
+            &gEdkiiWorkingBlockSignatureGuid,
+            (EFI_GUID *)(UINTN)WorkSpaceInSpareArea
+            ))
+      {
         //
         // Found the workspace.
         //
-        DEBUG ((DEBUG_INFO, "FtwPei: workspace in spare block is at 0x%x.\n", (UINTN)WorkSpaceInSpareArea));
-        FtwWorkingBlockHeader = (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER *)(UINTN)WorkSpaceInSpareArea;
+        DEBUG ((
+          DEBUG_INFO,
+          "FtwPei: workspace in spare block is at 0x%x.\n",
+          (UINTN)WorkSpaceInSpareArea
+          ));
+        FtwWorkingBlockHeader =
+          (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER *)(UINTN)WorkSpaceInSpareArea;
         break;
       }
 
       WorkSpaceInSpareArea = WorkSpaceInSpareArea - sizeof (EFI_GUID);
     }
 
-    if ((FtwWorkingBlockHeader != NULL) && IsValidWorkSpace (FtwWorkingBlockHeader, WorkSpaceLength)) {
+    if ((FtwWorkingBlockHeader != NULL) && IsValidWorkSpace (
+                                             FtwWorkingBlockHeader,
+                                             WorkSpaceLength
+                                             ))
+    {
       //
       // It was workspace self reclaim, build FAULT_TOLERANT_WRITE_LAST_WRITE_DATA GUID hob for it.
       //
-      FtwLastWrite.TargetAddress = WorkSpaceAddress - (WorkSpaceInSpareArea - SpareAreaAddress);
+      FtwLastWrite.TargetAddress = WorkSpaceAddress - (WorkSpaceInSpareArea -
+                                                       SpareAreaAddress);
       FtwLastWrite.SpareAddress  = SpareAreaAddress;
       FtwLastWrite.Length        = SpareAreaLength;
       DEBUG ((
@@ -314,12 +364,19 @@ PeimFaultTolerantWriteInitialize (
         (UINTN)FtwLastWrite.SpareAddress,
         (UINTN)FtwLastWrite.Length
         ));
-      BuildGuidDataHob (&gEdkiiFaultTolerantWriteGuid, (VOID *)&FtwLastWrite, sizeof (FAULT_TOLERANT_WRITE_LAST_WRITE_DATA));
+      BuildGuidDataHob (
+        &gEdkiiFaultTolerantWriteGuid,
+        (VOID *)&FtwLastWrite,
+        sizeof (FAULT_TOLERANT_WRITE_LAST_WRITE_DATA)
+        );
     } else {
       //
       // Both are invalid.
       //
-      DEBUG ((DEBUG_ERROR, "FtwPei: Both working and spare block are invalid.\n"));
+      DEBUG ((
+        DEBUG_ERROR,
+        "FtwPei: Both working and spare block are invalid.\n"
+        ));
     }
   }
 

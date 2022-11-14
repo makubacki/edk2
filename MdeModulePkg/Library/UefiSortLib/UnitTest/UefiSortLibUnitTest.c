@@ -85,8 +85,18 @@ SortUINT32ArrayShouldSucceed (
     TestResult[Index] = TEST_ARRAY_SIZE_9 - Index;
   }
 
-  PerformQuickSort (TestBuffer, TestCount, sizeof (UINT32), (SORT_COMPARE)TestCompareFunction);
-  UT_ASSERT_MEM_EQUAL (TestBuffer, TestResult, sizeof (UINT32) * TEST_ARRAY_SIZE_9);
+  PerformQuickSort (
+    TestBuffer,
+    TestCount,
+    sizeof (UINT32),
+    (SORT_COMPARE)TestCompareFunction
+    );
+  UT_ASSERT_MEM_EQUAL (
+    TestBuffer,
+    TestResult,
+    sizeof (UINT32) *
+    TEST_ARRAY_SIZE_9
+    );
 
   return UNIT_TEST_PASSED;
 }
@@ -147,18 +157,37 @@ UnitTestingEntry (
   //
   // Start setting up the test framework for running the tests.
   //
-  Status = InitUnitTestFramework (&Framework, UNIT_TEST_APP_NAME, gEfiCallerBaseName, UNIT_TEST_APP_VERSION);
+  Status = InitUnitTestFramework (
+             &Framework,
+             UNIT_TEST_APP_NAME,
+             gEfiCallerBaseName,
+             UNIT_TEST_APP_VERSION
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in InitUnitTestFramework. Status = %r\n",
+      Status
+      ));
     goto EXIT;
   }
 
   //
   // Populate the UefiSortLib Unit Test Suite.
   //
-  Status = CreateUnitTestSuite (&SortTests, Framework, "UefiSortLib Sort Tests", "UefiSortLib.SortLib", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &SortTests,
+             Framework,
+             "UefiSortLib Sort Tests",
+             "UefiSortLib.SortLib",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for UefiSortLib API Tests\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for UefiSortLib API Tests\n"
+      ));
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
@@ -166,8 +195,24 @@ UnitTestingEntry (
   //
   // --------------Suite--------Description------------Name--------------Function----------------Pre---Post---Context-----------
   //
-  AddTestCase (SortTests, "Sort the Array", "Sort", SortUINT32ArrayShouldSucceed, NULL, NULL, NULL);
-  AddTestCase (SortTests, "Compare the Buffer", "Compare", CompareSameBufferShouldSucceed, NULL, NULL, NULL);
+  AddTestCase (
+    SortTests,
+    "Sort the Array",
+    "Sort",
+    SortUINT32ArrayShouldSucceed,
+    NULL,
+    NULL,
+    NULL
+    );
+  AddTestCase (
+    SortTests,
+    "Compare the Buffer",
+    "Compare",
+    CompareSameBufferShouldSucceed,
+    NULL,
+    NULL,
+    NULL
+    );
 
   //
   // Execute the tests.

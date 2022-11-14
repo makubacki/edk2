@@ -67,7 +67,8 @@ GrowDepexStack (
   //
   // Make the Stack pointer point to the old data in the new stack
   //
-  mDepexEvaluationStackPointer = NewStack + (mDepexEvaluationStackPointer - mDepexEvaluationStack);
+  mDepexEvaluationStackPointer = NewStack + (mDepexEvaluationStackPointer -
+                                             mDepexEvaluationStack);
   mDepexEvaluationStack        = NewStack;
   mDepexEvaluationStackEnd     = NewStack + Size;
 
@@ -216,14 +217,21 @@ CoreIsSchedulable (
     return FALSE;
   }
 
-  DEBUG ((DEBUG_DISPATCH, "Evaluate DXE DEPEX for FFS(%g)\n", &DriverEntry->FileName));
+  DEBUG ((
+    DEBUG_DISPATCH,
+    "Evaluate DXE DEPEX for FFS(%g)\n",
+    &DriverEntry->FileName
+    ));
 
   if (DriverEntry->Depex == NULL) {
     //
     // A NULL Depex means treat the driver like an UEFI 2.0 thing.
     //
     Status = CoreAllEfiServicesAvailable ();
-    DEBUG ((DEBUG_DISPATCH, "  All UEFI Services Available                     = "));
+    DEBUG ((
+      DEBUG_DISPATCH,
+      "  All UEFI Services Available                     = "
+      ));
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_DISPATCH, "FALSE\n  RESULT = FALSE\n"));
       return FALSE;
@@ -246,8 +254,13 @@ CoreIsSchedulable (
     // Check to see if we are attempting to fetch dependency expression instructions
     // past the end of the dependency expression.
     //
-    if (((UINTN)Iterator - (UINTN)DriverEntry->Depex) >= DriverEntry->DepexSize) {
-      DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Attempt to fetch past end of depex)\n"));
+    if (((UINTN)Iterator - (UINTN)DriverEntry->Depex) >=
+        DriverEntry->DepexSize)
+    {
+      DEBUG ((
+        DEBUG_DISPATCH,
+        "  RESULT = FALSE (Attempt to fetch past end of depex)\n"
+        ));
       return FALSE;
     }
 
@@ -263,7 +276,10 @@ CoreIsSchedulable (
         // If the code flow arrives at this point, there was a BEFORE or AFTER
         // that were not the first opcodes.
         //
-        DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected BEFORE or AFTER opcode)\n"));
+        DEBUG ((
+          DEBUG_DISPATCH,
+          "  RESULT = FALSE (Unexpected BEFORE or AFTER opcode)\n"
+          ));
         ASSERT (FALSE);
       case EFI_DEP_SOR:
         //
@@ -272,11 +288,17 @@ CoreIsSchedulable (
         //
         if (Iterator != DriverEntry->Depex) {
           DEBUG ((DEBUG_DISPATCH, "  SOR\n"));
-          DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected SOR opcode)\n"));
+          DEBUG ((
+            DEBUG_DISPATCH,
+            "  RESULT = FALSE (Unexpected SOR opcode)\n"
+            ));
           return FALSE;
         }
 
-        DEBUG ((DEBUG_DISPATCH, "  SOR                                             = Requested\n"));
+        DEBUG ((
+          DEBUG_DISPATCH,
+          "  SOR                                             = Requested\n"
+          ));
         //
         // Otherwise, it is the first opcode and should be treated as a NOP.
         //
@@ -396,7 +418,12 @@ CoreIsSchedulable (
           return FALSE;
         }
 
-        DEBUG ((DEBUG_DISPATCH, "  RESULT = %a\n", Operator ? "TRUE" : "FALSE"));
+        DEBUG ((
+          DEBUG_DISPATCH,
+          "  RESULT = %a\n",
+          Operator ? "TRUE" :
+          "FALSE"
+          ));
         return Operator;
 
       case EFI_DEP_REPLACE_TRUE:

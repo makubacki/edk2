@@ -13,7 +13,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Global function
 //
 EFI_PEI_NOTIFY_DESCRIPTOR  mNotifyList = {
-  EFI_PEI_PPI_DESCRIPTOR_NOTIFY_DISPATCH | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
+  EFI_PEI_PPI_DESCRIPTOR_NOTIFY_DISPATCH |
+  EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
   &gPeiUsbIoPpiGuid,
   NotifyOnUsbIoPpi
 };
@@ -93,7 +94,9 @@ PeimInitializeUsbBot (
   //
   // locate all usb io PPIs
   //
-  for (UsbIoPpiInstance = 0; UsbIoPpiInstance < PEI_FAT_MAX_USB_IO_PPI; UsbIoPpiInstance++) {
+  for (UsbIoPpiInstance = 0; UsbIoPpiInstance < PEI_FAT_MAX_USB_IO_PPI;
+       UsbIoPpiInstance++)
+  {
     Status = PeiServicesLocatePpi (
                &gPeiUsbIoPpiGuid,
                UsbIoPpiInstance,
@@ -181,7 +184,9 @@ InitUsbBot (
   //
   // Check if it is the BOT device we support
   //
-  if ((InterfaceDesc->InterfaceClass != 0x08) || (InterfaceDesc->InterfaceProtocol != 0x50)) {
+  if ((InterfaceDesc->InterfaceClass != 0x08) ||
+      (InterfaceDesc->InterfaceProtocol != 0x50))
+  {
     return EFI_NOT_FOUND;
   }
 

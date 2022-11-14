@@ -11,7 +11,8 @@
 //
 /// EFI Component Name Protocol
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gSataControllerComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gSataControllerComponentName = {
   SataControllerComponentNameGetDriverName,
   SataControllerComponentNameGetControllerName,
   "eng"
@@ -20,16 +21,19 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gSataControllerCompon
 //
 /// EFI Component Name 2 Protocol
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gSataControllerComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gSataControllerComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)SataControllerComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)SataControllerComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  SataControllerComponentNameGetControllerName,
   "en"
 };
 
 //
 /// Driver Name Strings
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mSataControllerDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mSataControllerDriverNameTable[] = {
   {
     "eng;en",
     (CHAR16 *)L"Sata Controller Init Driver"
@@ -43,7 +47,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mSataControllerDriverNam
 ///
 /// Controller Name Strings
 ///
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mSataControllerControllerNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mSataControllerControllerNameTable[] = {
   {
     "eng;en",
     (CHAR16 *)L"Sata Controller"

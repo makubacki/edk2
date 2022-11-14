@@ -58,7 +58,12 @@ UsbBootRequestSense (
                         &CmdResult
                         );
   if (EFI_ERROR (Status) || (CmdResult != USB_MASS_CMD_SUCCESS)) {
-    DEBUG ((DEBUG_ERROR, "UsbBootRequestSense: (%r) CmdResult=0x%x\n", Status, CmdResult));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbBootRequestSense: (%r) CmdResult=0x%x\n",
+      Status,
+      CmdResult
+      ));
     if (!EFI_ERROR (Status)) {
       Status = EFI_DEVICE_ERROR;
     }
@@ -195,7 +200,12 @@ UsbBootExecCmd (
                            );
 
   if (Status == EFI_TIMEOUT) {
-    DEBUG ((DEBUG_ERROR, "UsbBootExecCmd: %r to Exec 0x%x Cmd\n", Status, *(UINT8 *)Cmd));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbBootExecCmd: %r to Exec 0x%x Cmd\n",
+      Status,
+      *(UINT8 *)Cmd
+      ));
     return EFI_TIMEOUT;
   }
 
@@ -210,7 +220,13 @@ UsbBootExecCmd (
   //
   // If command execution failed, then retrieve error info via sense request.
   //
-  DEBUG ((DEBUG_ERROR, "UsbBootExecCmd: %r to Exec 0x%x Cmd (Result = %x)\n", Status, *(UINT8 *)Cmd, CmdResult));
+  DEBUG ((
+    DEBUG_ERROR,
+    "UsbBootExecCmd: %r to Exec 0x%x Cmd (Result = %x)\n",
+    Status,
+    *(UINT8 *)Cmd,
+    CmdResult
+    ));
   return UsbBootRequestSense (UsbMass);
 }
 
@@ -263,7 +279,13 @@ UsbBootExecCmdWithRetry (
     return Status;
   }
 
-  Status = gBS->SetTimer (TimeoutEvt, TimerRelative, EFI_TIMER_PERIOD_SECONDS (60));
+  Status = gBS->SetTimer (
+                  TimeoutEvt,
+                  TimerRelative,
+                  EFI_TIMER_PERIOD_SECONDS (
+                    60
+                    )
+                  );
   if (EFI_ERROR (Status)) {
     goto EXIT;
   }
@@ -387,7 +409,9 @@ UsbBootInquiry (
   // from the inquiry data.
   //
   UsbMass->Pdt          = (UINT8)(USB_BOOT_PDT (UsbMass->InquiryData.Pdt));
-  Media->RemovableMedia = (BOOLEAN)(USB_BOOT_REMOVABLE (UsbMass->InquiryData.Removable));
+  Media->RemovableMedia = (BOOLEAN)(USB_BOOT_REMOVABLE (
+                                      UsbMass->InquiryData.Removable
+                                      ));
   //
   // Set block size to the default value of 512 Bytes, in case no media is present at first time.
   //
@@ -458,9 +482,19 @@ UsbBootReadCapacity16 (
   // from READ CAPACITY data.
   //
   Media->MediaPresent = TRUE;
-  Media->LastBlock    = SwapBytes64 (ReadUnaligned64 ((CONST UINT64 *)&(CapacityData.LastLba7)));
+  Media->LastBlock    = SwapBytes64 (
+                          ReadUnaligned64 (
+                            (CONST
+                             UINT64 *)&(CapacityData.LastLba7)
+                            )
+                          );
 
-  BlockSize = SwapBytes32 (ReadUnaligned32 ((CONST UINT32 *)&(CapacityData.BlockSize3)));
+  BlockSize = SwapBytes32 (
+                ReadUnaligned32 (
+                  (CONST
+                   UINT32 *)&(CapacityData.BlockSize3)
+                  )
+                );
 
   Media->LowestAlignedLba = (CapacityData.LowestAlignLogic2 << 8) |
                             CapacityData.LowestAlignLogic1;
@@ -529,9 +563,19 @@ UsbBootReadCapacity (
   // from READ CAPACITY data.
   //
   Media->MediaPresent = TRUE;
-  Media->LastBlock    = SwapBytes32 (ReadUnaligned32 ((CONST UINT32 *)CapacityData.LastLba));
+  Media->LastBlock    = SwapBytes32 (
+                          ReadUnaligned32 (
+                            (CONST
+                             UINT32 *)CapacityData.LastLba
+                            )
+                          );
 
-  BlockSize = SwapBytes32 (ReadUnaligned32 ((CONST UINT32 *)CapacityData.BlockLen));
+  BlockSize = SwapBytes32 (
+                ReadUnaligned32 (
+                  (CONST
+                   UINT32 *)CapacityData.BlockLen
+                  )
+                );
   if (BlockSize == 0) {
     //
     //  Get sense data
@@ -645,7 +689,11 @@ UsbBootGetParams (
       (UsbMass->Pdt != USB_PDT_OPTICAL) &&
       (UsbMass->Pdt != USB_PDT_SIMPLE_DIRECT))
   {
-    DEBUG ((DEBUG_ERROR, "UsbBootGetParams: Found an unsupported peripheral type[%d]\n", UsbMass->Pdt));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbBootGetParams: Found an unsupported peripheral type[%d]\n",
+      UsbMass->Pdt
+      ));
     return EFI_UNSUPPORTED;
   }
 
@@ -692,11 +740,16 @@ UsbBootDetectMedia (
 
   CopyMem (&OldMedia, &(UsbMass->BlockIoMedia), sizeof (EFI_BLOCK_IO_MEDIA));
 
-  CmdSet = ((EFI_USB_INTERFACE_DESCRIPTOR *)(UsbMass->Context))->InterfaceSubClass;
+  CmdSet =
+    ((EFI_USB_INTERFACE_DESCRIPTOR *)(UsbMass->Context))->InterfaceSubClass;
 
   Status = UsbBootIsUnitReady (UsbMass);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "UsbBootDetectMedia: UsbBootIsUnitReady (%r)\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "UsbBootDetectMedia: UsbBootIsUnitReady (%r)\n",
+      Status
+      ));
   }
 
   //
@@ -720,7 +773,11 @@ UsbBootDetectMedia (
 
     Status = UsbBootReadCapacity (UsbMass);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "UsbBootDetectMedia: UsbBootReadCapacity (%r)\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "UsbBootDetectMedia: UsbBootReadCapacity (%r)\n",
+        Status
+        ));
     }
   }
 

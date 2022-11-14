@@ -298,7 +298,10 @@ RegisterPciDevice (
   //
   // Determine if there are EFI images in the option rom
   //
-  HasEfiImage = ContainEfiImage (PciIoDevice->PciIo.RomImage, PciIoDevice->PciIo.RomSize);
+  HasEfiImage = ContainEfiImage (
+                  PciIoDevice->PciIo.RomImage,
+                  PciIoDevice->PciIo.RomSize
+                  );
 
   if (HasEfiImage) {
     Status = gBS->InstallMultipleProtocolInterfaces (
@@ -653,7 +656,9 @@ StartPciDevicesOnBridge (
                    );
       }
 
-      if ((NumberOfChildren != NULL) && (ChildHandleBuffer != NULL) && PciIoDevice->Registered) {
+      if ((NumberOfChildren != NULL) && (ChildHandleBuffer != NULL) &&
+          PciIoDevice->Registered)
+      {
         ChildHandleBuffer[*NumberOfChildren] = PciIoDevice->Handle;
         (*NumberOfChildren)++;
       }
@@ -712,7 +717,9 @@ StartPciDevicesOnBridge (
                    );
       }
 
-      if ((NumberOfChildren != NULL) && (ChildHandleBuffer != NULL) && PciIoDevice->Registered) {
+      if ((NumberOfChildren != NULL) && (ChildHandleBuffer != NULL) &&
+          PciIoDevice->Registered)
+      {
         ChildHandleBuffer[*NumberOfChildren] = PciIoDevice->Handle;
         (*NumberOfChildren)++;
       }

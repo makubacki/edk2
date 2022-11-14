@@ -213,57 +213,206 @@ InitializeDisplayStrings (
   VOID
   )
 {
-  gReconnectConfirmChanges = GetToken (STRING_TOKEN (RECONNECT_CONFIRM_CHANGES), gHiiHandle);
-  mUnknownString           = GetToken (STRING_TOKEN (UNKNOWN_STRING), gHiiHandle);
-  gSaveFailed              = GetToken (STRING_TOKEN (SAVE_FAILED), gHiiHandle);
-  gNoSubmitIfFailed        = GetToken (STRING_TOKEN (NO_SUBMIT_IF_CHECK_FAILED), gHiiHandle);
-  gReconnectFail           = GetToken (STRING_TOKEN (RECONNECT_FAILED), gHiiHandle);
-  gReconnectRequired       = GetToken (STRING_TOKEN (RECONNECT_REQUIRED), gHiiHandle);
-  gChangesOpt              = GetToken (STRING_TOKEN (RECONNECT_CHANGES_OPTIONS), gHiiHandle);
-  gSaveProcess             = GetToken (STRING_TOKEN (DISCARD_OR_JUMP), gHiiHandle);
-  gSaveNoSubmitProcess     = GetToken (STRING_TOKEN (DISCARD_OR_CHECK), gHiiHandle);
-  gDiscardChange           = GetToken (STRING_TOKEN (DISCARD_OR_JUMP_DISCARD), gHiiHandle);
-  gJumpToFormSet           = GetToken (STRING_TOKEN (DISCARD_OR_JUMP_JUMP), gHiiHandle);
-  gCheckError              = GetToken (STRING_TOKEN (DISCARD_OR_CHECK_CHECK), gHiiHandle);
-  gPromptForData           = GetToken (STRING_TOKEN (PROMPT_FOR_DATA), gHiiHandle);
-  gPromptForPassword       = GetToken (STRING_TOKEN (PROMPT_FOR_PASSWORD), gHiiHandle);
-  gPromptForNewPassword    = GetToken (STRING_TOKEN (PROMPT_FOR_NEW_PASSWORD), gHiiHandle);
-  gConfirmPassword         = GetToken (STRING_TOKEN (CONFIRM_PASSWORD), gHiiHandle);
-  gConfirmError            = GetToken (STRING_TOKEN (CONFIRM_ERROR), gHiiHandle);
-  gPassowordInvalid        = GetToken (STRING_TOKEN (PASSWORD_INVALID), gHiiHandle);
-  gPressEnter              = GetToken (STRING_TOKEN (PRESS_ENTER), gHiiHandle);
-  gEmptyString             = GetToken (STRING_TOKEN (EMPTY_STRING), gHiiHandle);
-  gMiniString              = GetToken (STRING_TOKEN (MINI_STRING), gHiiHandle);
-  gOptionMismatch          = GetToken (STRING_TOKEN (OPTION_MISMATCH), gHiiHandle);
-  gFormSuppress            = GetToken (STRING_TOKEN (FORM_SUPPRESSED), gHiiHandle);
-  gProtocolNotFound        = GetToken (STRING_TOKEN (PROTOCOL_NOT_FOUND), gHiiHandle);
-  gFormNotFound            = GetToken (STRING_TOKEN (STATUS_BROWSER_FORM_NOT_FOUND), gHiiHandle);
-  gNoSubmitIf              = GetToken (STRING_TOKEN (STATUS_BROWSER_NO_SUBMIT_IF), gHiiHandle);
-  gBrowserError            = GetToken (STRING_TOKEN (STATUS_BROWSER_ERROR), gHiiHandle);
-  gConfirmDefaultMsg       = GetToken (STRING_TOKEN (CONFIRM_DEFAULT_MESSAGE), gHiiHandle);
-  gConfirmDiscardMsg       = GetToken (STRING_TOKEN (CONFIRM_DISCARD_MESSAGE), gHiiHandle);
-  gConfirmSubmitMsg        = GetToken (STRING_TOKEN (CONFIRM_SUBMIT_MESSAGE), gHiiHandle);
-  gConfirmResetMsg         = GetToken (STRING_TOKEN (CONFIRM_RESET_MESSAGE), gHiiHandle);
-  gConfirmExitMsg          = GetToken (STRING_TOKEN (CONFIRM_EXIT_MESSAGE), gHiiHandle);
-  gConfirmDefaultMsg2nd    = GetToken (STRING_TOKEN (CONFIRM_DEFAULT_MESSAGE_2ND), gHiiHandle);
-  gConfirmSubmitMsg2nd     = GetToken (STRING_TOKEN (CONFIRM_SUBMIT_MESSAGE_2ND), gHiiHandle);
-  gConfirmResetMsg2nd      = GetToken (STRING_TOKEN (CONFIRM_RESET_MESSAGE_2ND), gHiiHandle);
-  gConfirmExitMsg2nd       = GetToken (STRING_TOKEN (CONFIRM_EXIT_MESSAGE_2ND), gHiiHandle);
-  gConfirmOpt              = GetToken (STRING_TOKEN (CONFIRM_OPTION), gHiiHandle);
-  gConfirmOptYes           = GetToken (STRING_TOKEN (CONFIRM_OPTION_YES), gHiiHandle);
-  gConfirmOptNo            = GetToken (STRING_TOKEN (CONFIRM_OPTION_NO), gHiiHandle);
-  gConfirmOptOk            = GetToken (STRING_TOKEN (CONFIRM_OPTION_OK), gHiiHandle);
-  gConfirmOptCancel        = GetToken (STRING_TOKEN (CONFIRM_OPTION_CANCEL), gHiiHandle);
-  gYesOption               = GetToken (STRING_TOKEN (YES_SELECTABLE_OPTION), gHiiHandle);
-  gNoOption                = GetToken (STRING_TOKEN (NO_SELECTABLE_OPTION), gHiiHandle);
-  gOkOption                = GetToken (STRING_TOKEN (OK_SELECTABLE_OPTION), gHiiHandle);
-  gCancelOption            = GetToken (STRING_TOKEN (CANCEL_SELECTABLE_OPTION), gHiiHandle);
-  gErrorPopup              = GetToken (STRING_TOKEN (ERROR_POPUP_STRING), gHiiHandle);
-  gWarningPopup            = GetToken (STRING_TOKEN (WARNING_POPUP_STRING), gHiiHandle);
-  gInfoPopup               = GetToken (STRING_TOKEN (INFO_POPUP_STRING), gHiiHandle);
-  gConfirmMsgConnect       = GetToken (STRING_TOKEN (CONFIRM_OPTION_CONNECT), gHiiHandle);
-  gConfirmMsgEnd           = GetToken (STRING_TOKEN (CONFIRM_OPTION_END), gHiiHandle);
-  gPasswordUnsupported     = GetToken (STRING_TOKEN (PASSWORD_NOT_SUPPORTED), gHiiHandle);
+  gReconnectConfirmChanges = GetToken (
+                               STRING_TOKEN (RECONNECT_CONFIRM_CHANGES),
+                               gHiiHandle
+                               );
+  mUnknownString = GetToken (
+                     STRING_TOKEN (UNKNOWN_STRING),
+                     gHiiHandle
+                     );
+  gSaveFailed       = GetToken (STRING_TOKEN (SAVE_FAILED), gHiiHandle);
+  gNoSubmitIfFailed = GetToken (
+                        STRING_TOKEN (NO_SUBMIT_IF_CHECK_FAILED),
+                        gHiiHandle
+                        );
+  gReconnectFail = GetToken (
+                     STRING_TOKEN (RECONNECT_FAILED),
+                     gHiiHandle
+                     );
+  gReconnectRequired = GetToken (
+                         STRING_TOKEN (RECONNECT_REQUIRED),
+                         gHiiHandle
+                         );
+  gChangesOpt = GetToken (
+                  STRING_TOKEN (RECONNECT_CHANGES_OPTIONS),
+                  gHiiHandle
+                  );
+  gSaveProcess = GetToken (
+                   STRING_TOKEN (DISCARD_OR_JUMP),
+                   gHiiHandle
+                   );
+  gSaveNoSubmitProcess = GetToken (
+                           STRING_TOKEN (DISCARD_OR_CHECK),
+                           gHiiHandle
+                           );
+  gDiscardChange = GetToken (
+                     STRING_TOKEN (DISCARD_OR_JUMP_DISCARD),
+                     gHiiHandle
+                     );
+  gJumpToFormSet = GetToken (
+                     STRING_TOKEN (DISCARD_OR_JUMP_JUMP),
+                     gHiiHandle
+                     );
+  gCheckError = GetToken (
+                  STRING_TOKEN (DISCARD_OR_CHECK_CHECK),
+                  gHiiHandle
+                  );
+  gPromptForData = GetToken (
+                     STRING_TOKEN (PROMPT_FOR_DATA),
+                     gHiiHandle
+                     );
+  gPromptForPassword = GetToken (
+                         STRING_TOKEN (PROMPT_FOR_PASSWORD),
+                         gHiiHandle
+                         );
+  gPromptForNewPassword = GetToken (
+                            STRING_TOKEN (PROMPT_FOR_NEW_PASSWORD),
+                            gHiiHandle
+                            );
+  gConfirmPassword = GetToken (
+                       STRING_TOKEN (CONFIRM_PASSWORD),
+                       gHiiHandle
+                       );
+  gConfirmError = GetToken (
+                    STRING_TOKEN (CONFIRM_ERROR),
+                    gHiiHandle
+                    );
+  gPassowordInvalid = GetToken (
+                        STRING_TOKEN (PASSWORD_INVALID),
+                        gHiiHandle
+                        );
+  gPressEnter     = GetToken (STRING_TOKEN (PRESS_ENTER), gHiiHandle);
+  gEmptyString    = GetToken (STRING_TOKEN (EMPTY_STRING), gHiiHandle);
+  gMiniString     = GetToken (STRING_TOKEN (MINI_STRING), gHiiHandle);
+  gOptionMismatch = GetToken (
+                      STRING_TOKEN (OPTION_MISMATCH),
+                      gHiiHandle
+                      );
+  gFormSuppress = GetToken (
+                    STRING_TOKEN (FORM_SUPPRESSED),
+                    gHiiHandle
+                    );
+  gProtocolNotFound = GetToken (
+                        STRING_TOKEN (PROTOCOL_NOT_FOUND),
+                        gHiiHandle
+                        );
+  gFormNotFound = GetToken (
+                    STRING_TOKEN (
+                      STATUS_BROWSER_FORM_NOT_FOUND
+                      ),
+                    gHiiHandle
+                    );
+  gNoSubmitIf = GetToken (
+                  STRING_TOKEN (
+                    STATUS_BROWSER_NO_SUBMIT_IF
+                    ),
+                  gHiiHandle
+                  );
+  gBrowserError = GetToken (
+                    STRING_TOKEN (STATUS_BROWSER_ERROR),
+                    gHiiHandle
+                    );
+  gConfirmDefaultMsg = GetToken (
+                         STRING_TOKEN (CONFIRM_DEFAULT_MESSAGE),
+                         gHiiHandle
+                         );
+  gConfirmDiscardMsg = GetToken (
+                         STRING_TOKEN (CONFIRM_DISCARD_MESSAGE),
+                         gHiiHandle
+                         );
+  gConfirmSubmitMsg = GetToken (
+                        STRING_TOKEN (CONFIRM_SUBMIT_MESSAGE),
+                        gHiiHandle
+                        );
+  gConfirmResetMsg = GetToken (
+                       STRING_TOKEN (CONFIRM_RESET_MESSAGE),
+                       gHiiHandle
+                       );
+  gConfirmExitMsg = GetToken (
+                      STRING_TOKEN (CONFIRM_EXIT_MESSAGE),
+                      gHiiHandle
+                      );
+  gConfirmDefaultMsg2nd = GetToken (
+                            STRING_TOKEN (
+                              CONFIRM_DEFAULT_MESSAGE_2ND
+                              ),
+                            gHiiHandle
+                            );
+  gConfirmSubmitMsg2nd = GetToken (
+                           STRING_TOKEN (
+                             CONFIRM_SUBMIT_MESSAGE_2ND
+                             ),
+                           gHiiHandle
+                           );
+  gConfirmResetMsg2nd = GetToken (
+                          STRING_TOKEN (CONFIRM_RESET_MESSAGE_2ND),
+                          gHiiHandle
+                          );
+  gConfirmExitMsg2nd = GetToken (
+                         STRING_TOKEN (CONFIRM_EXIT_MESSAGE_2ND),
+                         gHiiHandle
+                         );
+  gConfirmOpt = GetToken (
+                  STRING_TOKEN (CONFIRM_OPTION),
+                  gHiiHandle
+                  );
+  gConfirmOptYes = GetToken (
+                     STRING_TOKEN (CONFIRM_OPTION_YES),
+                     gHiiHandle
+                     );
+  gConfirmOptNo = GetToken (
+                    STRING_TOKEN (CONFIRM_OPTION_NO),
+                    gHiiHandle
+                    );
+  gConfirmOptOk = GetToken (
+                    STRING_TOKEN (CONFIRM_OPTION_OK),
+                    gHiiHandle
+                    );
+  gConfirmOptCancel = GetToken (
+                        STRING_TOKEN (CONFIRM_OPTION_CANCEL),
+                        gHiiHandle
+                        );
+  gYesOption = GetToken (
+                 STRING_TOKEN (YES_SELECTABLE_OPTION),
+                 gHiiHandle
+                 );
+  gNoOption = GetToken (
+                STRING_TOKEN (NO_SELECTABLE_OPTION),
+                gHiiHandle
+                );
+  gOkOption = GetToken (
+                STRING_TOKEN (OK_SELECTABLE_OPTION),
+                gHiiHandle
+                );
+  gCancelOption = GetToken (
+                    STRING_TOKEN (CANCEL_SELECTABLE_OPTION),
+                    gHiiHandle
+                    );
+  gErrorPopup = GetToken (
+                  STRING_TOKEN (ERROR_POPUP_STRING),
+                  gHiiHandle
+                  );
+  gWarningPopup = GetToken (
+                    STRING_TOKEN (WARNING_POPUP_STRING),
+                    gHiiHandle
+                    );
+  gInfoPopup = GetToken (
+                 STRING_TOKEN (INFO_POPUP_STRING),
+                 gHiiHandle
+                 );
+  gConfirmMsgConnect = GetToken (
+                         STRING_TOKEN (CONFIRM_OPTION_CONNECT),
+                         gHiiHandle
+                         );
+  gConfirmMsgEnd = GetToken (
+                     STRING_TOKEN (CONFIRM_OPTION_END),
+                     gHiiHandle
+                     );
+  gPasswordUnsupported = GetToken (
+                           STRING_TOKEN (PASSWORD_NOT_SUPPORTED),
+                           gHiiHandle
+                           );
 }
 
 /**
@@ -384,7 +533,9 @@ GetWidth (
       *AdjustWidth = LEFT_SKIPPED_COLUMNS;
     }
 
-    return (UINT16)(gStatementDimensions.RightColumn - gStatementDimensions.LeftColumn - 2 * (gModalSkipColumn + LEFT_SKIPPED_COLUMNS));
+    return (UINT16)(gStatementDimensions.RightColumn -
+                    gStatementDimensions.LeftColumn - 2 * (gModalSkipColumn +
+                                                           LEFT_SKIPPED_COLUMNS));
   }
 
   Size = 0;
@@ -496,7 +647,9 @@ GetLineByWidth (
   // NARROW_CHAR can not be printed in screen, so if a line only contain  the two CHARs: 'NARROW_CHAR + CHAR_CARRIAGE_RETURN' , it is a empty line  in Screen.
   // To avoid displaying this  empty line in screen,  just skip  the two CHARs here.
   //
-  if ((InputString[*Index] == NARROW_CHAR) && (InputString[*Index + 1] == CHAR_CARRIAGE_RETURN)) {
+  if ((InputString[*Index] == NARROW_CHAR) && (InputString[*Index + 1] ==
+                                               CHAR_CARRIAGE_RETURN))
+  {
     *Index = *Index + 2;
   }
 
@@ -525,7 +678,9 @@ GetLineByWidth (
         //
         // Record the last space info in this line. Will be used in rewind.
         //
-        if ((InputString[*Index + StrOffset] == CHAR_SPACE) && (GlyphOffset <= LineWidth)) {
+        if ((InputString[*Index + StrOffset] == CHAR_SPACE) && (GlyphOffset <=
+                                                                LineWidth))
+        {
           LastSpaceOffset = StrOffset;
           LastGlyphWidth  = *GlyphWidth;
         }
@@ -580,7 +735,12 @@ GetLineByWidth (
     *(*OutputString) = WIDE_CHAR;
   }
 
-  CopyMem ((*OutputString) + 1, &InputString[*Index], StrOffset * sizeof (CHAR16));
+  CopyMem (
+    (*OutputString) + 1,
+    &InputString[*Index],
+    StrOffset *
+    sizeof (CHAR16)
+    );
 
   if (InputString[*Index + StrOffset] == CHAR_SPACE) {
     //
@@ -649,7 +809,9 @@ UiAddMenuOption (
   PromptId = GetPrompt (Statement->OpCode);
   ASSERT (PromptId != 0);
 
-  if ((Statement->OpCode->OpCode == EFI_IFR_DATE_OP) || (Statement->OpCode->OpCode == EFI_IFR_TIME_OP)) {
+  if ((Statement->OpCode->OpCode == EFI_IFR_DATE_OP) ||
+      (Statement->OpCode->OpCode == EFI_IFR_TIME_OP))
+  {
     Count = 3;
   }
 
@@ -672,14 +834,18 @@ UiAddMenuOption (
       MenuOption->GrayOut = FALSE;
     }
 
-    if (((Statement->Attribute & HII_DISPLAY_LOCK) != 0) || ((gFormData->Attribute & HII_DISPLAY_LOCK) != 0)) {
+    if (((Statement->Attribute & HII_DISPLAY_LOCK) != 0) ||
+        ((gFormData->Attribute & HII_DISPLAY_LOCK) != 0))
+    {
       MenuOption->GrayOut = TRUE;
     }
 
     //
     // If the form or the question has the lock attribute, deal same as grayout.
     //
-    if (((gFormData->Attribute & HII_DISPLAY_LOCK) != 0) || ((Statement->Attribute & HII_DISPLAY_LOCK) != 0)) {
+    if (((gFormData->Attribute & HII_DISPLAY_LOCK) != 0) ||
+        ((Statement->Attribute & HII_DISPLAY_LOCK) != 0))
+    {
       MenuOption->GrayOut = TRUE;
     }
 
@@ -724,7 +890,14 @@ UiAddMenuOption (
         (Statement->OpCode->OpCode != EFI_IFR_TIME_OP))
     {
       Width = GetWidth (MenuOption, NULL);
-      for ( ; GetLineByWidth (MenuOption->Description, Width, &GlyphWidth, &ArrayEntry, &OutputString) != 0x0000;) {
+      for ( ; GetLineByWidth (
+                MenuOption->Description,
+                Width,
+                &GlyphWidth,
+                &ArrayEntry,
+                &OutputString
+                ) != 0x0000;)
+      {
         //
         // If there is more string to process print on the next row and increment the Skip value
         //
@@ -849,7 +1022,8 @@ GetStringWidth (
     // Advance to the null-terminator or to the first width directive
     //
     for ( ;
-          (String[Index] != NARROW_CHAR) && (String[Index] != WIDE_CHAR) && (String[Index] != 0);
+          (String[Index] != NARROW_CHAR) && (String[Index] != WIDE_CHAR) &&
+          (String[Index] != 0);
           Index++, Count = Count + IncrementValue
           )
     {
@@ -912,7 +1086,14 @@ UpdateSkipInfoForMenu (
   GlyphWidth = 1;
   Row        = 1;
 
-  for (Index = 0; GetLineByWidth (OptionString, Width, &GlyphWidth, &Index, &OutputString) != 0x0000;) {
+  for (Index = 0; GetLineByWidth (
+                    OptionString,
+                    Width,
+                    &GlyphWidth,
+                    &Index,
+                    &OutputString
+                    ) != 0x0000;)
+  {
     if (StrLen (&OptionString[Index]) != 0) {
       Row++;
     }
@@ -950,8 +1131,13 @@ UpdateOptionSkipLines (
     FreePool (OptionString);
   }
 
-  if ((MenuOption->ThisTag->OpCode->OpCode  == EFI_IFR_TEXT_OP) && (((EFI_IFR_TEXT *)MenuOption->ThisTag->OpCode)->TextTwo != 0)) {
-    OptionString = GetToken (((EFI_IFR_TEXT *)MenuOption->ThisTag->OpCode)->TextTwo, gFormData->HiiHandle);
+  if ((MenuOption->ThisTag->OpCode->OpCode  == EFI_IFR_TEXT_OP) &&
+      (((EFI_IFR_TEXT *)MenuOption->ThisTag->OpCode)->TextTwo != 0))
+  {
+    OptionString = GetToken (
+                     ((EFI_IFR_TEXT *)MenuOption->ThisTag->OpCode)->TextTwo,
+                     gFormData->HiiHandle
+                     );
 
     if (OptionString != NULL) {
       UpdateSkipInfoForMenu (MenuOption, OptionString);
@@ -998,8 +1184,13 @@ PrintableMenu (
     return TRUE;
   }
 
-  if ((MenuOption->ThisTag->OpCode->OpCode  == EFI_IFR_TEXT_OP) && (((EFI_IFR_TEXT *)MenuOption->ThisTag->OpCode)->TextTwo != 0)) {
-    OptionString = GetToken (((EFI_IFR_TEXT *)MenuOption->ThisTag->OpCode)->TextTwo, gFormData->HiiHandle);
+  if ((MenuOption->ThisTag->OpCode->OpCode  == EFI_IFR_TEXT_OP) &&
+      (((EFI_IFR_TEXT *)MenuOption->ThisTag->OpCode)->TextTwo != 0))
+  {
+    OptionString = GetToken (
+                     ((EFI_IFR_TEXT *)MenuOption->ThisTag->OpCode)->TextTwo,
+                     gFormData->HiiHandle
+                     );
     ASSERT (OptionString != NULL);
     if (OptionString[0] != '\0') {
       FreePool (OptionString);
@@ -1027,7 +1218,9 @@ IsSelectable (
   )
 {
   if ((MenuOption->ThisTag->OpCode->OpCode == EFI_IFR_SUBTITLE_OP) ||
-      MenuOption->GrayOut || MenuOption->ReadOnly || !PrintableMenu (MenuOption))
+      MenuOption->GrayOut || MenuOption->ReadOnly || !PrintableMenu (
+                                                        MenuOption
+                                                        ))
   {
     return FALSE;
   } else {
@@ -1184,19 +1377,25 @@ ProcessStringForDateTime (
     //                        |month|day|year|
     //                          4     3    5
     //
-    if ((Date->Flags & EFI_QF_DATE_MONTH_SUPPRESS) && (MenuOption->Sequence == 0)) {
+    if ((Date->Flags & EFI_QF_DATE_MONTH_SUPPRESS) && (MenuOption->Sequence ==
+                                                       0))
+    {
       //
       // At this point, only "<**:" in the optionstring.
       // Clean the day's ** field, after clean, the format is "<  :"
       //
       SetUnicodeMem (&OptionString[1], 2, L' ');
-    } else if ((Date->Flags & EFI_QF_DATE_DAY_SUPPRESS) && (MenuOption->Sequence == 1)) {
+    } else if ((Date->Flags & EFI_QF_DATE_DAY_SUPPRESS) &&
+               (MenuOption->Sequence == 1))
+    {
       //
       // At this point, only "**:" in the optionstring.
       // Clean the month's "**" field, after clean, the format is "  :"
       //
       SetUnicodeMem (&OptionString[0], 2, L' ');
-    } else if ((Date->Flags & EFI_QF_DATE_YEAR_SUPPRESS) && (MenuOption->Sequence == 2)) {
+    } else if ((Date->Flags & EFI_QF_DATE_YEAR_SUPPRESS) &&
+               (MenuOption->Sequence == 2))
+    {
       //
       // At this point, only "****>" in the optionstring.
       // Clean the year's "****" field, after clean, the format is "  >"
@@ -1215,13 +1414,17 @@ ProcessStringForDateTime (
       // Clean the hour's ** field, after clean, the format is "<  :"
       //
       SetUnicodeMem (&OptionString[1], 2, L' ');
-    } else if ((Time->Flags & QF_TIME_MINUTE_SUPPRESS) && (MenuOption->Sequence == 1)) {
+    } else if ((Time->Flags & QF_TIME_MINUTE_SUPPRESS) &&
+               (MenuOption->Sequence == 1))
+    {
       //
       // At this point, only "**:" in the optionstring.
       // Clean the minute's "**" field, after clean, the format is "  :"
       //
       SetUnicodeMem (&OptionString[0], 2, L' ');
-    } else if ((Time->Flags & QF_TIME_SECOND_SUPPRESS) && (MenuOption->Sequence == 2)) {
+    } else if ((Time->Flags & QF_TIME_SECOND_SUPPRESS) &&
+               (MenuOption->Sequence == 2))
+    {
       //
       // At this point, only "**>" in the optionstring.
       // Clean the second's "**" field, after clean, the format is "  >"
@@ -1502,11 +1705,14 @@ GetQuestionIdInfo (
 {
   EFI_IFR_QUESTION_HEADER  *QuestionHeader;
 
-  if (OpCode->Length < sizeof (EFI_IFR_OP_HEADER) + sizeof (EFI_IFR_QUESTION_HEADER)) {
+  if (OpCode->Length < sizeof (EFI_IFR_OP_HEADER) +
+      sizeof (EFI_IFR_QUESTION_HEADER))
+  {
     return 0;
   }
 
-  QuestionHeader = (EFI_IFR_QUESTION_HEADER *)((UINT8 *)OpCode + sizeof (EFI_IFR_OP_HEADER));
+  QuestionHeader = (EFI_IFR_QUESTION_HEADER *)((UINT8 *)OpCode +
+                                               sizeof (EFI_IFR_OP_HEADER));
 
   return QuestionHeader->QuestionId;
 }
@@ -1584,7 +1790,9 @@ GetIndexInfoForOpcode (
   NewPos = gMenuOption.ForwardLink;
   Index  = 0;
 
-  for (NewPos = gMenuOption.ForwardLink; NewPos != &gMenuOption; NewPos = NewPos->ForwardLink) {
+  for (NewPos = gMenuOption.ForwardLink; NewPos != &gMenuOption; NewPos =
+         NewPos->ForwardLink)
+  {
     MenuOption = MENU_OPTION_FROM_LINK (NewPos);
 
     if (CompareMem (MenuOption->ThisTag->OpCode, OpCode, OpCode->Length) == 0) {
@@ -1617,10 +1825,23 @@ IsSavedHighlightStatement (
       (gFormData->FormId == gHighligthMenuInfo.FormId))
   {
     if (gHighligthMenuInfo.HLTQuestionId != 0) {
-      return (BOOLEAN)(gHighligthMenuInfo.HLTQuestionId == GetQuestionIdInfo (HighLightedStatement->OpCode));
+      return (BOOLEAN)(gHighligthMenuInfo.HLTQuestionId == GetQuestionIdInfo (
+                                                             HighLightedStatement
+                                                               ->OpCode
+                                                             ));
     } else {
-      if (CompareMem (gHighligthMenuInfo.HLTOpCode, HighLightedStatement->OpCode, gHighligthMenuInfo.HLTOpCode->Length) == 0) {
-        if ((gHighligthMenuInfo.HLTIndex == 0) || (gHighligthMenuInfo.HLTIndex == GetIndexInfoForOpcode (HighLightedStatement->OpCode))) {
+      if (CompareMem (
+            gHighligthMenuInfo.HLTOpCode,
+            HighLightedStatement->OpCode,
+            gHighligthMenuInfo.HLTOpCode->Length
+            ) ==
+          0)
+      {
+        if ((gHighligthMenuInfo.HLTIndex == 0) ||
+            (gHighligthMenuInfo.HLTIndex == GetIndexInfoForOpcode (
+                                              HighLightedStatement->OpCode
+                                              )))
+        {
           return TRUE;
         } else {
           return FALSE;
@@ -1647,13 +1868,24 @@ IsHighLightMenuOption (
   )
 {
   if (gHighligthMenuInfo.HLTQuestionId != 0) {
-    if (GetQuestionIdInfo (MenuOption->ThisTag->OpCode) == gHighligthMenuInfo.HLTQuestionId) {
+    if (GetQuestionIdInfo (MenuOption->ThisTag->OpCode) ==
+        gHighligthMenuInfo.HLTQuestionId)
+    {
       return (BOOLEAN)(MenuOption->Sequence == gHighligthMenuInfo.HLTSequence);
     }
   } else {
-    if (CompareMem (gHighligthMenuInfo.HLTOpCode, MenuOption->ThisTag->OpCode, gHighligthMenuInfo.HLTOpCode->Length) == 0) {
-      if ((gHighligthMenuInfo.HLTIndex == 0) || (gHighligthMenuInfo.HLTIndex == GetIndexInfoForOpcode (MenuOption->ThisTag->OpCode))) {
-        return (BOOLEAN)(MenuOption->Sequence == gHighligthMenuInfo.HLTSequence);
+    if (CompareMem (
+          gHighligthMenuInfo.HLTOpCode,
+          MenuOption->ThisTag->OpCode,
+          gHighligthMenuInfo.HLTOpCode->Length
+          ) == 0)
+    {
+      if ((gHighligthMenuInfo.HLTIndex == 0) || (gHighligthMenuInfo.HLTIndex ==
+                                                 GetIndexInfoForOpcode (
+                                                   MenuOption->ThisTag->OpCode)))
+      {
+        return (BOOLEAN)(MenuOption->Sequence ==
+                         gHighligthMenuInfo.HLTSequence);
       } else {
         return FALSE;
       }
@@ -1741,11 +1973,20 @@ IsTopOfScreeMenuOption (
   )
 {
   if (gHighligthMenuInfo.TOSQuestionId != 0) {
-    return (BOOLEAN)(GetQuestionIdInfo (MenuOption->ThisTag->OpCode) == gHighligthMenuInfo.TOSQuestionId);
+    return (BOOLEAN)(GetQuestionIdInfo (MenuOption->ThisTag->OpCode) ==
+                     gHighligthMenuInfo.TOSQuestionId);
   }
 
-  if (CompareMem (gHighligthMenuInfo.TOSOpCode, MenuOption->ThisTag->OpCode, gHighligthMenuInfo.TOSOpCode->Length) == 0) {
-    if ((gHighligthMenuInfo.TOSIndex == 0) || (gHighligthMenuInfo.TOSIndex == GetIndexInfoForOpcode (MenuOption->ThisTag->OpCode))) {
+  if (CompareMem (
+        gHighligthMenuInfo.TOSOpCode,
+        MenuOption->ThisTag->OpCode,
+        gHighligthMenuInfo.TOSOpCode->Length
+        ) == 0)
+  {
+    if ((gHighligthMenuInfo.TOSIndex == 0) || (gHighligthMenuInfo.TOSIndex ==
+                                               GetIndexInfoForOpcode (
+                                                 MenuOption->ThisTag->OpCode)))
+    {
       return TRUE;
     } else {
       return FALSE;
@@ -1837,7 +2078,9 @@ FindTopOfScreenMenuOption (
   // may be dynamically inserted between highlightmenu and previous top of screen menu,
   // So previous record top of screen menu is not appropriate for current display.
   //
-  if (GetDistanceBetweenMenus (HighLightMenu, NewPos) + 1 > BottomRow - TopRow) {
+  if (GetDistanceBetweenMenus (HighLightMenu, NewPos) + 1 > BottomRow -
+      TopRow)
+  {
     return NULL;
   }
 
@@ -1872,7 +2115,9 @@ FindTopMenu (
   // When option mismatch happens,there exist two cases,one is reenter the form, just like the if case below,
   // and the other is exit current form and enter last form, it can be covered by the else case.
   //
-  if (gMisMatch && (gFormData->HiiHandle == gHighligthMenuInfo.HiiHandle) && (gFormData->FormId == gHighligthMenuInfo.FormId)) {
+  if (gMisMatch && (gFormData->HiiHandle == gHighligthMenuInfo.HiiHandle) &&
+      (gFormData->FormId == gHighligthMenuInfo.FormId))
+  {
     //
     // Reenter caused by option mismatch or auto exit caused by refresh form(refresh interval/guid),
     // base on the record highlight info to find the highlight menu.
@@ -1910,7 +2155,12 @@ FindTopMenu (
           *TopOfScreen = *HighlightMenu;
           TmpValue     = 0;
         } else {
-          *TopOfScreen = FindTopOfScreenMenu (*HighlightMenu, BottomRow - TopRow - MenuOption->Skip, &TmpValue);
+          *TopOfScreen = FindTopOfScreenMenu (
+                           *HighlightMenu,
+                           BottomRow -
+                           TopRow - MenuOption->Skip,
+                           &TmpValue
+                           );
         }
 
         *SkipValue = TmpValue;
@@ -1954,7 +2204,12 @@ FindTopMenu (
           *TopOfScreen = *HighlightMenu;
           TmpValue     = 0;
         } else {
-          *TopOfScreen = FindTopOfScreenMenu (*HighlightMenu, BottomRow - TopRow - MenuOption->Skip, &TmpValue);
+          *TopOfScreen = FindTopOfScreenMenu (
+                           *HighlightMenu,
+                           BottomRow -
+                           TopRow - MenuOption->Skip,
+                           &TmpValue
+                           );
         }
 
         *SkipValue = TmpValue;
@@ -1983,7 +2238,12 @@ FindTopMenu (
         *TopOfScreen = *HighlightMenu;
         TmpValue     = 0;
       } else {
-        *TopOfScreen = FindTopOfScreenMenu (*HighlightMenu, BottomRow - TopRow - MenuOption->Skip, &TmpValue);
+        *TopOfScreen = FindTopOfScreenMenu (
+                         *HighlightMenu,
+                         BottomRow - TopRow -
+                         MenuOption->Skip,
+                         &TmpValue
+                         );
       }
 
       *SkipValue = TmpValue;
@@ -2049,7 +2309,10 @@ UpdateHighlightMenuInfo (
         FreePool (gHighligthMenuInfo.HLTOpCode);
       }
 
-      gHighligthMenuInfo.HLTOpCode = AllocateCopyPool (Statement->OpCode->Length, Statement->OpCode);
+      gHighligthMenuInfo.HLTOpCode = AllocateCopyPool (
+                                       Statement->OpCode->Length,
+                                       Statement->OpCode
+                                       );
       ASSERT (gHighligthMenuInfo.HLTOpCode != NULL);
 
       gHighligthMenuInfo.HLTIndex = GetIndexInfoForOpcode (Statement->OpCode);
@@ -2067,7 +2330,10 @@ UpdateHighlightMenuInfo (
         FreePool (gHighligthMenuInfo.TOSOpCode);
       }
 
-      gHighligthMenuInfo.TOSOpCode = AllocateCopyPool (Statement->OpCode->Length, Statement->OpCode);
+      gHighligthMenuInfo.TOSOpCode = AllocateCopyPool (
+                                       Statement->OpCode->Length,
+                                       Statement->OpCode
+                                       );
       ASSERT (gHighligthMenuInfo.TOSOpCode != NULL);
 
       gHighligthMenuInfo.TOSIndex = GetIndexInfoForOpcode (Statement->OpCode);
@@ -2353,11 +2619,18 @@ FxConfirmPopup (
 
   do {
     CreateDialog (&Key, gEmptyString, CfmStr, gConfirmOpt, gEmptyString, NULL);
-  } while (((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) != (gConfirmOptYes[0] | UPPER_LOWER_CASE_OFFSET)) &&
-           ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) != (gConfirmOptNo[0] | UPPER_LOWER_CASE_OFFSET)) &&
-           (Key.ScanCode != SCAN_ESC));
+  } while (  ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) !=
+              (gConfirmOptYes[0] |
+               UPPER_LOWER_CASE_OFFSET))
+          &&
+             ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) != (gConfirmOptNo[0] |
+                                                              UPPER_LOWER_CASE_OFFSET))
+          &&
+             (Key.ScanCode != SCAN_ESC));
 
-  if ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) == (gConfirmOptYes[0] | UPPER_LOWER_CASE_OFFSET)) {
+  if ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) == (gConfirmOptYes[0] |
+                                                      UPPER_LOWER_CASE_OFFSET))
+  {
     RetVal = TRUE;
   } else {
     RetVal = FALSE;
@@ -2437,7 +2710,9 @@ DisplayOneMenu (
   }
 
   if (OptionString != NULL) {
-    if ((Statement->OpCode->OpCode == EFI_IFR_DATE_OP) || (Statement->OpCode->OpCode == EFI_IFR_TIME_OP)) {
+    if ((Statement->OpCode->OpCode == EFI_IFR_DATE_OP) ||
+        (Statement->OpCode->OpCode == EFI_IFR_TIME_OP))
+    {
       //
       // Adjust option string for date/time opcode.
       //
@@ -2449,9 +2724,18 @@ DisplayOneMenu (
     GlyphWidth    = 1;
     OptionLineNum = 0;
 
-    for (Index = 0; GetLineByWidth (OptionString, Width, &GlyphWidth, &Index, &OutputString) != 0x0000;) {
+    for (Index = 0; GetLineByWidth (
+                      OptionString,
+                      Width,
+                      &GlyphWidth,
+                      &Index,
+                      &OutputString
+                      ) != 0x0000;)
+    {
       if (((Temp2 == 0)) && (Row <= BottomRow)) {
-        if ((Statement->OpCode->OpCode == EFI_IFR_DATE_OP) || (Statement->OpCode->OpCode == EFI_IFR_TIME_OP)) {
+        if ((Statement->OpCode->OpCode == EFI_IFR_DATE_OP) ||
+            (Statement->OpCode->OpCode == EFI_IFR_TIME_OP))
+        {
           //
           // For date/time question, it has three menu options for this qustion.
           // The first/second menu options with the skip value is 0. the last one
@@ -2462,16 +2746,37 @@ DisplayOneMenu (
             // For date/ time, print the last past (year for date and second for time)
             // - 7 means skip [##/##/ for date and [##:##: for time.
             //
-            DisplayMenuString (MenuOption, MenuOption->OptCol, Row, OutputString, Width + 1 - 7, Highlight);
+            DisplayMenuString (
+              MenuOption,
+              MenuOption->OptCol,
+              Row,
+              OutputString,
+              Width + 1 - 7,
+              Highlight
+              );
           } else {
             //
             // For date/ time, print the first and second past (year for date and second for time)
             // The OutputString has a NARROW_CHAR or WIDE_CHAR at the begin of the string,
             // so need to - 1 to remove it, otherwise, it will clean 1 extr char follow it.
-            DisplayMenuString (MenuOption, MenuOption->OptCol, Row, OutputString, StrLen (OutputString) - 1, Highlight);
+            DisplayMenuString (
+              MenuOption,
+              MenuOption->OptCol,
+              Row,
+              OutputString,
+              StrLen (OutputString) - 1,
+              Highlight
+              );
           }
         } else {
-          DisplayMenuString (MenuOption, MenuOption->OptCol, Row, OutputString, Width + 1, Highlight);
+          DisplayMenuString (
+            MenuOption,
+            MenuOption->OptCol,
+            Row,
+            OutputString,
+            Width + 1,
+            Highlight
+            );
         }
 
         OptionLineNum++;
@@ -2515,18 +2820,36 @@ DisplayOneMenu (
   GlyphWidth    = 1;
   PromptLineNum = 0;
 
-  if ((MenuOption->Description == NULL) || (MenuOption->Description[0] == '\0')) {
-    PrintStringAtWithWidth (BeginCol, Row, L"", PromptWidth + AdjustValue + SkipWidth);
+  if ((MenuOption->Description == NULL) || (MenuOption->Description[0] ==
+                                            '\0'))
+  {
+    PrintStringAtWithWidth (
+      BeginCol,
+      Row,
+      L"",
+      PromptWidth + AdjustValue +
+      SkipWidth
+      );
     PromptLineNum++;
   } else {
-    for (Index = 0; GetLineByWidth (MenuOption->Description, PromptWidth, &GlyphWidth, &Index, &OutputString) != 0x0000;) {
+    for (Index = 0; GetLineByWidth (
+                      MenuOption->Description,
+                      PromptWidth,
+                      &GlyphWidth,
+                      &Index,
+                      &OutputString
+                      ) != 0x0000;)
+    {
       if ((Temp == 0) && (Row <= BottomRow)) {
         //
         // 1.Clean the start LEFT_SKIPPED_COLUMNS
         //
         PrintStringAtWithWidth (BeginCol, Row, L"", SkipWidth);
 
-        if ((Statement->OpCode->OpCode == EFI_IFR_REF_OP) && (MenuOption->Col >= 2) && IsProcessingFirstRow) {
+        if ((Statement->OpCode->OpCode == EFI_IFR_REF_OP) && (MenuOption->Col >=
+                                                              2) &&
+            IsProcessingFirstRow)
+        {
           //
           // Print Arrow for Goto button.
           //
@@ -2538,7 +2861,14 @@ DisplayOneMenu (
           IsProcessingFirstRow = FALSE;
         }
 
-        DisplayMenuString (MenuOption, MenuOption->Col, Row, OutputString, PromptWidth + AdjustValue, Highlight);
+        DisplayMenuString (
+          MenuOption,
+          MenuOption->Col,
+          Row,
+          OutputString,
+          PromptWidth + AdjustValue,
+          Highlight
+          );
         PromptLineNum++;
       }
 
@@ -2563,17 +2893,36 @@ DisplayOneMenu (
   //
   // 3. If this is a text op with secondary text information
   //
-  if ((Statement->OpCode->OpCode  == EFI_IFR_TEXT_OP) && (((EFI_IFR_TEXT *)Statement->OpCode)->TextTwo != 0)) {
-    StringPtr = GetToken (((EFI_IFR_TEXT *)Statement->OpCode)->TextTwo, gFormData->HiiHandle);
+  if ((Statement->OpCode->OpCode  == EFI_IFR_TEXT_OP) &&
+      (((EFI_IFR_TEXT *)Statement->OpCode)->TextTwo != 0))
+  {
+    StringPtr = GetToken (
+                  ((EFI_IFR_TEXT *)Statement->OpCode)->TextTwo,
+                  gFormData->HiiHandle
+                  );
 
     Width         = (UINT16)gOptionBlockWidth - 1;
     Row           = MenuOption->Row;
     GlyphWidth    = 1;
     OptionLineNum = 0;
 
-    for (Index = 0; GetLineByWidth (StringPtr, Width, &GlyphWidth, &Index, &OutputString) != 0x0000;) {
+    for (Index = 0; GetLineByWidth (
+                      StringPtr,
+                      Width,
+                      &GlyphWidth,
+                      &Index,
+                      &OutputString
+                      ) != 0x0000;)
+    {
       if ((Temp3 == 0) && (Row <= BottomRow)) {
-        DisplayMenuString (MenuOption, MenuOption->OptCol, Row, OutputString, Width + 1, Highlight);
+        DisplayMenuString (
+          MenuOption,
+          MenuOption->OptCol,
+          Row,
+          OutputString,
+          Width + 1,
+          Highlight
+          );
         OptionLineNum++;
       }
 
@@ -2606,10 +2955,13 @@ DisplayOneMenu (
   //  Clean the column whose line number is less.
   //
   if (HasOptionString (MenuOption) && (OptionLineNum != PromptLineNum)) {
-    Col    =  OptionLineNum < PromptLineNum ? MenuOption->OptCol : BeginCol;
-    Row    = (OptionLineNum < PromptLineNum ? OptionLineNum : PromptLineNum) + MenuOption->Row;
-    Width  = (UINT16)(OptionLineNum < PromptLineNum ? gOptionBlockWidth : PromptWidth + AdjustValue + SkipWidth);
-    MaxRow = (OptionLineNum < PromptLineNum ? PromptLineNum : OptionLineNum) + MenuOption->Row - 1;
+    Col =  OptionLineNum < PromptLineNum ? MenuOption->OptCol : BeginCol;
+    Row = (OptionLineNum < PromptLineNum ? OptionLineNum : PromptLineNum) +
+          MenuOption->Row;
+    Width  = (UINT16)(OptionLineNum < PromptLineNum ? gOptionBlockWidth :
+                      PromptWidth + AdjustValue + SkipWidth);
+    MaxRow = (OptionLineNum < PromptLineNum ? PromptLineNum : OptionLineNum) +
+             MenuOption->Row - 1;
 
     while (Row <= MaxRow) {
       DisplayMenuString (MenuOption, Col, Row++, L"", Width, FALSE);
@@ -2712,7 +3064,8 @@ UiDisplayMenu (
   HotKey           = NULL;
   Repaint          = TRUE;
   MenuOption       = NULL;
-  gModalSkipColumn = (CHAR16)(gStatementDimensions.RightColumn - gStatementDimensions.LeftColumn) / 6;
+  gModalSkipColumn = (CHAR16)(gStatementDimensions.RightColumn -
+                              gStatementDimensions.LeftColumn) / 6;
 
   ZeroMem (&Key, sizeof (EFI_INPUT_KEY));
 
@@ -2721,7 +3074,8 @@ UiDisplayMenu (
 
   Row = TopRow;
   if ((FormData->Attribute & HII_DISPLAY_MODAL) != 0) {
-    Col = gStatementDimensions.LeftColumn + LEFT_SKIPPED_COLUMNS + gModalSkipColumn;
+    Col = gStatementDimensions.LeftColumn + LEFT_SKIPPED_COLUMNS +
+          gModalSkipColumn;
   } else {
     Col = gStatementDimensions.LeftColumn + LEFT_SKIPPED_COLUMNS;
   }
@@ -2777,15 +3131,29 @@ UiDisplayMenu (
           }
 
           if ((FormData->Attribute & HII_DISPLAY_MODAL) != 0) {
-            PrintStringAtWithWidth (gStatementDimensions.LeftColumn + gModalSkipColumn, TopRow - 1, L"", gStatementDimensions.RightColumn - gStatementDimensions.LeftColumn - 2 * gModalSkipColumn);
+            PrintStringAtWithWidth (
+              gStatementDimensions.LeftColumn +
+              gModalSkipColumn,
+              TopRow - 1,
+              L"",
+              gStatementDimensions.RightColumn -
+              gStatementDimensions.LeftColumn - 2 * gModalSkipColumn
+              );
           } else {
-            PrintStringAtWithWidth (gStatementDimensions.LeftColumn, TopRow - 1, L"", gStatementDimensions.RightColumn - gStatementDimensions.LeftColumn);
+            PrintStringAtWithWidth (
+              gStatementDimensions.LeftColumn,
+              TopRow - 1,
+              L"",
+              gStatementDimensions.RightColumn -
+              gStatementDimensions.LeftColumn
+              );
           }
 
           if (UpArrow) {
             gST->ConOut->SetAttribute (gST->ConOut, GetArrowColor ());
             PrintCharAt (
-              gStatementDimensions.LeftColumn + gPromptBlockWidth + gOptionBlockWidth + 1,
+              gStatementDimensions.LeftColumn + gPromptBlockWidth +
+              gOptionBlockWidth + 1,
               TopRow - SCROLL_ARROW_HEIGHT,
               ARROW_UP
               );
@@ -2795,14 +3163,19 @@ UiDisplayMenu (
           //
           // 2.Paint the menu.
           //
-          for (Link = TopOfScreen; Link != &gMenuOption; Link = Link->ForwardLink) {
+          for (Link = TopOfScreen; Link != &gMenuOption; Link =
+                 Link->ForwardLink)
+          {
             MenuOption      = MENU_OPTION_FROM_LINK (Link);
             MenuOption->Row = Row;
             MenuOption->Col = Col;
             if ((FormData->Attribute & HII_DISPLAY_MODAL) != 0) {
-              MenuOption->OptCol = gStatementDimensions.LeftColumn + LEFT_SKIPPED_COLUMNS + gPromptBlockWidth + gModalSkipColumn;
+              MenuOption->OptCol = gStatementDimensions.LeftColumn +
+                                   LEFT_SKIPPED_COLUMNS + gPromptBlockWidth +
+                                   gModalSkipColumn;
             } else {
-              MenuOption->OptCol = gStatementDimensions.LeftColumn + LEFT_SKIPPED_COLUMNS + gPromptBlockWidth;
+              MenuOption->OptCol = gStatementDimensions.LeftColumn +
+                                   LEFT_SKIPPED_COLUMNS + gPromptBlockWidth;
             }
 
             if (MenuOption->NestInStatement) {
@@ -2824,7 +3197,9 @@ UiDisplayMenu (
                          gStatementDimensions.LeftColumn + gModalSkipColumn,
                          Link == TopOfScreen ? SkipValue : 0,
                          BottomRow,
-                         (BOOLEAN)((Link == NewPos) && IsSelectable (MenuOption)),
+                         (BOOLEAN)((Link == NewPos) && IsSelectable (
+                                                         MenuOption
+                                                         )),
                          TRUE
                          );
             } else {
@@ -2834,7 +3209,9 @@ UiDisplayMenu (
                          gStatementDimensions.LeftColumn,
                          Link == TopOfScreen ? SkipValue : 0,
                          BottomRow,
-                         (BOOLEAN)((Link == NewPos) && IsSelectable (MenuOption)),
+                         (BOOLEAN)((Link == NewPos) && IsSelectable (
+                                                         MenuOption
+                                                         )),
                          TRUE
                          );
             }
@@ -2871,9 +3248,22 @@ UiDisplayMenu (
           //
           while (Row <= BottomRow) {
             if ((FormData->Attribute & HII_DISPLAY_MODAL) != 0) {
-              PrintStringAtWithWidth (gStatementDimensions.LeftColumn + gModalSkipColumn, Row++, L"", gStatementDimensions.RightColumn - gStatementDimensions.LeftColumn - 2 * gModalSkipColumn);
+              PrintStringAtWithWidth (
+                gStatementDimensions.LeftColumn +
+                gModalSkipColumn,
+                Row++,
+                L"",
+                gStatementDimensions.RightColumn -
+                gStatementDimensions.LeftColumn - 2 * gModalSkipColumn
+                );
             } else {
-              PrintStringAtWithWidth (gStatementDimensions.LeftColumn, Row++, L"", gStatementDimensions.RightColumn - gHelpBlockWidth - gStatementDimensions.LeftColumn);
+              PrintStringAtWithWidth (
+                gStatementDimensions.LeftColumn,
+                Row++,
+                L"",
+                gStatementDimensions.RightColumn - gHelpBlockWidth -
+                gStatementDimensions.LeftColumn
+                );
             }
           }
 
@@ -2881,15 +3271,31 @@ UiDisplayMenu (
           // 4. Print the down arrow row.
           //
           if ((FormData->Attribute & HII_DISPLAY_MODAL) != 0) {
-            PrintStringAtWithWidth (gStatementDimensions.LeftColumn + gModalSkipColumn, BottomRow + 1, L"", gStatementDimensions.RightColumn - gStatementDimensions.LeftColumn - 2 *  +gModalSkipColumn);
+            PrintStringAtWithWidth (
+              gStatementDimensions.LeftColumn +
+              gModalSkipColumn,
+              BottomRow + 1,
+              L"",
+              gStatementDimensions.RightColumn -
+              gStatementDimensions.LeftColumn -
+              2 *  +gModalSkipColumn
+              );
           } else {
-            PrintStringAtWithWidth (gStatementDimensions.LeftColumn, BottomRow + 1, L"", gStatementDimensions.RightColumn - gStatementDimensions.LeftColumn);
+            PrintStringAtWithWidth (
+              gStatementDimensions.LeftColumn,
+              BottomRow +
+              1,
+              L"",
+              gStatementDimensions.RightColumn -
+              gStatementDimensions.LeftColumn
+              );
           }
 
           if (DownArrow) {
             gST->ConOut->SetAttribute (gST->ConOut, GetArrowColor ());
             PrintCharAt (
-              gStatementDimensions.LeftColumn + gPromptBlockWidth + gOptionBlockWidth + 1,
+              gStatementDimensions.LeftColumn + gPromptBlockWidth +
+              gOptionBlockWidth + 1,
               BottomRow + SCROLL_ARROW_HEIGHT,
               ARROW_DOWN
               );
@@ -3000,22 +3406,51 @@ UiDisplayMenu (
             // Don't print anything if it is a NULL help token
             //
             ASSERT (MenuOption != NULL);
-            HelpInfo       = ((EFI_IFR_STATEMENT_HEADER *)((CHAR8 *)MenuOption->ThisTag->OpCode + sizeof (EFI_IFR_OP_HEADER)))->Help;
+            HelpInfo =
+              ((EFI_IFR_STATEMENT_HEADER *)((CHAR8 *)MenuOption->ThisTag->OpCode
+                                            +
+                                            sizeof (EFI_IFR_OP_HEADER)))->Help;
             Statement      = MenuOption->ThisTag;
             StatementValue = &Statement->CurrentValue;
             if ((HelpInfo == 0) || !IsSelectable (MenuOption)) {
-              if (((Statement->OpCode->OpCode == EFI_IFR_DATE_OP) && (StatementValue->Value.date.Month == 0xff)) || ((Statement->OpCode->OpCode == EFI_IFR_TIME_OP) && (StatementValue->Value.time.Hour == 0xff))) {
+              if (((Statement->OpCode->OpCode == EFI_IFR_DATE_OP) &&
+                   (StatementValue->Value.date.Month == 0xff)) ||
+                  ((Statement->OpCode->OpCode == EFI_IFR_TIME_OP) &&
+                   (StatementValue->Value.time.Hour == 0xff)))
+              {
                 StringPtr = GetToken (STRING_TOKEN (GET_TIME_FAIL), gHiiHandle);
               } else {
                 StringPtr = GetToken (STRING_TOKEN (EMPTY_STRING), gHiiHandle);
               }
             } else {
-              if (((Statement->OpCode->OpCode == EFI_IFR_DATE_OP) && (StatementValue->Value.date.Month == 0xff)) || ((Statement->OpCode->OpCode == EFI_IFR_TIME_OP) && (StatementValue->Value.time.Hour == 0xff))) {
+              if (((Statement->OpCode->OpCode == EFI_IFR_DATE_OP) &&
+                   (StatementValue->Value.date.Month == 0xff)) ||
+                  ((Statement->OpCode->OpCode == EFI_IFR_TIME_OP) &&
+                   (StatementValue->Value.time.Hour == 0xff)))
+              {
                 StringRightPtr = GetToken (HelpInfo, gFormData->HiiHandle);
-                StringErrorPtr = GetToken (STRING_TOKEN (GET_TIME_FAIL), gHiiHandle);
-                StringPtr      = AllocateZeroPool ((StrLen (StringRightPtr) + StrLen (StringErrorPtr)+ 1) * sizeof (CHAR16));
-                StrCpyS (StringPtr, StrLen (StringRightPtr) + StrLen (StringErrorPtr) + 1, StringRightPtr);
-                StrCatS (StringPtr, StrLen (StringRightPtr) + StrLen (StringErrorPtr) + 1, StringErrorPtr);
+                StringErrorPtr = GetToken (
+                                   STRING_TOKEN (GET_TIME_FAIL),
+                                   gHiiHandle
+                                   );
+                StringPtr = AllocateZeroPool (
+                              (StrLen (StringRightPtr) +
+                               StrLen (StringErrorPtr)+ 1) * sizeof (CHAR16)
+                              );
+                StrCpyS (
+                  StringPtr,
+                  StrLen (StringRightPtr) + StrLen (
+                                              StringErrorPtr
+                                              ) + 1,
+                  StringRightPtr
+                  );
+                StrCatS (
+                  StringPtr,
+                  StrLen (StringRightPtr) + StrLen (
+                                              StringErrorPtr
+                                              ) + 1,
+                  StringErrorPtr
+                  );
                 FreePool (StringRightPtr);
                 FreePool (StringErrorPtr);
               } else {
@@ -3034,26 +3469,47 @@ UiDisplayMenu (
             HelpString = NULL;
           }
 
-          HelpLine = ProcessHelpString (StringPtr, &HelpString, &EachLineWidth, RowCount);
+          HelpLine = ProcessHelpString (
+                       StringPtr,
+                       &HelpString,
+                       &EachLineWidth,
+                       RowCount
+                       );
           FreePool (StringPtr);
 
           if (HelpLine > RowCount) {
             MultiHelpPage = TRUE;
-            StringPtr     = GetToken (STRING_TOKEN (ADJUST_HELP_PAGE_UP), gHiiHandle);
+            StringPtr     = GetToken (
+                              STRING_TOKEN (ADJUST_HELP_PAGE_UP),
+                              gHiiHandle
+                              );
             if (HelpHeaderString != NULL) {
               FreePool (HelpHeaderString);
               HelpHeaderString = NULL;
             }
 
-            HelpHeaderLine = ProcessHelpString (StringPtr, &HelpHeaderString, &HeaderLineWidth, 0);
+            HelpHeaderLine = ProcessHelpString (
+                               StringPtr,
+                               &HelpHeaderString,
+                               &HeaderLineWidth,
+                               0
+                               );
             FreePool (StringPtr);
-            StringPtr = GetToken (STRING_TOKEN (ADJUST_HELP_PAGE_DOWN), gHiiHandle);
+            StringPtr = GetToken (
+                          STRING_TOKEN (ADJUST_HELP_PAGE_DOWN),
+                          gHiiHandle
+                          );
             if (HelpBottomString != NULL) {
               FreePool (HelpBottomString);
               HelpBottomString = NULL;
             }
 
-            HelpBottomLine = ProcessHelpString (StringPtr, &HelpBottomString, &BottomLineWidth, 0);
+            HelpBottomLine = ProcessHelpString (
+                               StringPtr,
+                               &HelpBottomString,
+                               &BottomLineWidth,
+                               0
+                               );
             FreePool (StringPtr);
             //
             // Calculate the help page count.
@@ -3081,7 +3537,10 @@ UiDisplayMenu (
           gST->ConOut->SetAttribute (gST->ConOut, GetInfoTextColor ());
           for (Index = 0; Index < HelpHeaderLine; Index++) {
             ASSERT (HelpHeaderLine == 1);
-            ASSERT (GetStringWidth (HelpHeaderString) / 2 < ((UINT32)gHelpBlockWidth - 1));
+            ASSERT (
+              GetStringWidth (HelpHeaderString) / 2 <
+              ((UINT32)gHelpBlockWidth - 1)
+              );
             PrintStringAtWithWidth (
               gStatementDimensions.RightColumn - gHelpBlockWidth,
               Index + TopRow,
@@ -3089,7 +3548,9 @@ UiDisplayMenu (
               gHelpBlockWidth
               );
             PrintStringAt (
-              gStatementDimensions.RightColumn - GetStringWidth (HelpHeaderString) / 2 - 1,
+              gStatementDimensions.RightColumn - GetStringWidth (
+                                                   HelpHeaderString
+                                                   ) / 2 - 1,
               Index + TopRow,
               &HelpHeaderString[Index * HeaderLineWidth]
               );
@@ -3119,7 +3580,11 @@ UiDisplayMenu (
               );
           }
 
-          gST->ConOut->SetCursorPosition (gST->ConOut, gStatementDimensions.RightColumn-1, BottomRow);
+          gST->ConOut->SetCursorPosition (
+                         gST->ConOut,
+                         gStatementDimensions.RightColumn-1,
+                         BottomRow
+                         );
         } else {
           if (HelpPageIndex == 0) {
             for (Index = 0; Index < RowCount - HelpBottomLine; Index++) {
@@ -3131,13 +3596,16 @@ UiDisplayMenu (
                 );
             }
           } else {
-            for (Index = 0; (Index < RowCount - HelpBottomLine - HelpHeaderLine) &&
-                 (Index + HelpPageIndex * (RowCount - 2) + 1 < HelpLine); Index++)
+            for (Index = 0; (Index < RowCount - HelpBottomLine -
+                             HelpHeaderLine) &&
+                 (Index + HelpPageIndex * (RowCount - 2) + 1 < HelpLine);
+                 Index++)
             {
               PrintStringAtWithWidth (
                 gStatementDimensions.RightColumn - gHelpBlockWidth,
                 Index + TopRow + HelpHeaderLine,
-                &HelpString[(Index + HelpPageIndex * (RowCount - 2) + 1)* EachLineWidth],
+                &HelpString[(Index + HelpPageIndex * (RowCount - 2) + 1)*
+                            EachLineWidth],
                 gHelpBlockWidth
                 );
             }
@@ -3152,7 +3620,11 @@ UiDisplayMenu (
                   );
               }
 
-              gST->ConOut->SetCursorPosition (gST->ConOut, gStatementDimensions.RightColumn-1, BottomRow);
+              gST->ConOut->SetCursorPosition (
+                             gST->ConOut,
+                             gStatementDimensions.RightColumn-1,
+                             BottomRow
+                             );
             }
           }
         }
@@ -3167,7 +3639,10 @@ UiDisplayMenu (
           gST->ConOut->SetAttribute (gST->ConOut, GetInfoTextColor ());
           for (Index = 0; Index < HelpBottomLine; Index++) {
             ASSERT (HelpBottomLine == 1);
-            ASSERT (GetStringWidth (HelpBottomString) / 2 < ((UINT32)gHelpBlockWidth - 1));
+            ASSERT (
+              GetStringWidth (HelpBottomString) / 2 <
+              ((UINT32)gHelpBlockWidth - 1)
+              );
             PrintStringAtWithWidth (
               gStatementDimensions.RightColumn - gHelpBlockWidth,
               BottomRow + Index - HelpBottomLine + 1,
@@ -3175,7 +3650,9 @@ UiDisplayMenu (
               gHelpBlockWidth
               );
             PrintStringAt (
-              gStatementDimensions.RightColumn - GetStringWidth (HelpBottomString) / 2 - 1,
+              gStatementDimensions.RightColumn - GetStringWidth (
+                                                   HelpBottomString
+                                                   ) / 2 - 1,
               BottomRow + Index - HelpBottomLine + 1,
               &HelpBottomString[Index * BottomLineWidth]
               );
@@ -3237,7 +3714,9 @@ UiDisplayMenu (
 
         switch (Key.UnicodeChar) {
           case CHAR_CARRIAGE_RETURN:
-            if ((MenuOption == NULL) || MenuOption->GrayOut || MenuOption->ReadOnly) {
+            if ((MenuOption == NULL) || MenuOption->GrayOut ||
+                MenuOption->ReadOnly)
+            {
               ControlFlag = CfReadKey;
               break;
             }
@@ -3257,7 +3736,9 @@ UiDisplayMenu (
             // ignore the selection and go back to reading keys.
             //
             ASSERT (MenuOption != NULL);
-            if (IsListEmpty (&gMenuOption) || MenuOption->GrayOut || MenuOption->ReadOnly) {
+            if (IsListEmpty (&gMenuOption) || MenuOption->GrayOut ||
+                MenuOption->ReadOnly)
+            {
               ControlFlag = CfReadKey;
               break;
             }
@@ -3265,7 +3746,8 @@ UiDisplayMenu (
             Statement = MenuOption->ThisTag;
             if (  (Statement->OpCode->OpCode == EFI_IFR_DATE_OP)
                || (Statement->OpCode->OpCode == EFI_IFR_TIME_OP)
-               || ((Statement->OpCode->OpCode == EFI_IFR_NUMERIC_OP) && (GetFieldFromNum (Statement->OpCode) != 0))
+               || ((Statement->OpCode->OpCode == EFI_IFR_NUMERIC_OP) &&
+                   (GetFieldFromNum (Statement->OpCode) != 0))
                   )
             {
               if (Key.UnicodeChar == '+') {
@@ -3308,7 +3790,9 @@ UiDisplayMenu (
             }
 
             ASSERT (MenuOption != NULL);
-            if ((MenuOption->ThisTag->OpCode->OpCode == EFI_IFR_CHECKBOX_OP) && !MenuOption->GrayOut && !MenuOption->ReadOnly) {
+            if ((MenuOption->ThisTag->OpCode->OpCode == EFI_IFR_CHECKBOX_OP) &&
+                !MenuOption->GrayOut && !MenuOption->ReadOnly)
+            {
               ScreenOperation = UiSelect;
             }
 
@@ -3322,7 +3806,8 @@ UiDisplayMenu (
             }
 
             ControlFlag   = CfUpdateHelpString;
-            HelpPageIndex = HelpPageIndex < HelpPageCount - 1 ? HelpPageIndex + 1 : HelpPageCount - 1;
+            HelpPageIndex = HelpPageIndex < HelpPageCount - 1 ? HelpPageIndex +
+                            1 : HelpPageCount - 1;
             break;
 
           case 'U':
@@ -3344,7 +3829,9 @@ UiDisplayMenu (
               }
             }
 
-            if (((FormData->Attribute & HII_DISPLAY_MODAL) != 0) && ((Key.ScanCode == SCAN_ESC) || (Index == mScanCodeNumber))) {
+            if (((FormData->Attribute & HII_DISPLAY_MODAL) != 0) &&
+                ((Key.ScanCode == SCAN_ESC) || (Index == mScanCodeNumber)))
+            {
               //
               // ModalForm has no ESC key and Hot Key.
               //
@@ -3382,7 +3869,9 @@ UiDisplayMenu (
              Index++
              )
         {
-          if (ScreenOperation == gScreenOperationToControlFlag[Index].ScreenOperation) {
+          if (ScreenOperation ==
+              gScreenOperationToControlFlag[Index].ScreenOperation)
+          {
             ControlFlag = gScreenOperationToControlFlag[Index].ControlFlag;
             break;
           }
@@ -3453,7 +3942,9 @@ UiDisplayMenu (
 
         if (FxConfirmPopup (HotKey->Action)) {
           gUserInput->Action = HotKey->Action;
-          if ((HotKey->Action & BROWSER_ACTION_DEFAULT) == BROWSER_ACTION_DEFAULT) {
+          if ((HotKey->Action & BROWSER_ACTION_DEFAULT) ==
+              BROWSER_ACTION_DEFAULT)
+          {
             gUserInput->DefaultId = HotKey->DefaultId;
           }
 
@@ -3469,7 +3960,9 @@ UiDisplayMenu (
       case CfUiLeft:
         ControlFlag = CfRepaint;
         ASSERT (MenuOption != NULL);
-        if ((MenuOption->ThisTag->OpCode->OpCode == EFI_IFR_DATE_OP) || (MenuOption->ThisTag->OpCode->OpCode == EFI_IFR_TIME_OP)) {
+        if ((MenuOption->ThisTag->OpCode->OpCode == EFI_IFR_DATE_OP) ||
+            (MenuOption->ThisTag->OpCode->OpCode == EFI_IFR_TIME_OP))
+        {
           if (MenuOption->Sequence != 0) {
             //
             // In the middle or tail of the Date/Time op-code set, go left.
@@ -3484,7 +3977,9 @@ UiDisplayMenu (
       case CfUiRight:
         ControlFlag = CfRepaint;
         ASSERT (MenuOption != NULL);
-        if ((MenuOption->ThisTag->OpCode->OpCode == EFI_IFR_DATE_OP) || (MenuOption->ThisTag->OpCode->OpCode == EFI_IFR_TIME_OP)) {
+        if ((MenuOption->ThisTag->OpCode->OpCode == EFI_IFR_DATE_OP) ||
+            (MenuOption->ThisTag->OpCode->OpCode == EFI_IFR_TIME_OP))
+        {
           if (MenuOption->Sequence != 2) {
             //
             // In the middle or tail of the Date/Time op-code set, go left.
@@ -3515,7 +4010,13 @@ UiDisplayMenu (
         //
         // Find next selectable menu or the first menu beyond current form.
         //
-        Difference = MoveToNextStatement (TRUE, &NewPos, MenuOption->Row - TopRow, FALSE);
+        Difference = MoveToNextStatement (
+                       TRUE,
+                       &NewPos,
+                       MenuOption->Row -
+                       TopRow,
+                       FALSE
+                       );
         if (Difference < 0) {
           //
           // We hit the begining MenuOption that can be focused
@@ -3530,8 +4031,13 @@ UiDisplayMenu (
             //
             // Scroll up to the last page when we have arrived at top page.
             //
-            TopOfScreen = FindTopOfScreenMenu (gMenuOption.BackLink, BottomRow - TopRow, &SkipValue);
-            NewPos      = gMenuOption.BackLink;
+            TopOfScreen = FindTopOfScreenMenu (
+                            gMenuOption.BackLink,
+                            BottomRow -
+                            TopRow,
+                            &SkipValue
+                            );
+            NewPos = gMenuOption.BackLink;
             MoveToNextStatement (TRUE, &NewPos, BottomRow - TopRow, TRUE);
           }
         } else {
@@ -3628,7 +4134,9 @@ UiDisplayMenu (
         //
         // Count to the menu option which will show at the top of the next form.
         //
-        while ((Index <= BottomRow + 1) && (Link->ForwardLink != &gMenuOption)) {
+        while ((Index <= BottomRow + 1) && (Link->ForwardLink !=
+                                            &gMenuOption))
+        {
           Link           = Link->ForwardLink;
           NextMenuOption = MENU_OPTION_FROM_LINK (Link);
           Index          = Index + NextMenuOption->Skip;
@@ -3715,7 +4223,13 @@ UiDisplayMenu (
             Difference = 0;
           }
         } else {
-          Difference = MoveToNextStatement (FALSE, &NewPos, BottomRow + 1 - (MenuOption->Row + MenuOption->Skip - Temp2), FALSE);
+          Difference = MoveToNextStatement (
+                         FALSE,
+                         &NewPos,
+                         BottomRow + 1 -
+                         (MenuOption->Row + MenuOption->Skip - Temp2),
+                         FALSE
+                         );
         }
 
         if (Difference < 0) {
@@ -3756,7 +4270,8 @@ UiDisplayMenu (
         //
         // Calculate new highlight menu end row.
         //
-        Temp = (MenuOption->Row + MenuOption->Skip - Temp2) + Difference + NextMenuOption->Skip - 1;
+        Temp = (MenuOption->Row + MenuOption->Skip - Temp2) + Difference +
+               NextMenuOption->Skip - 1;
         if (Temp > BottomRow) {
           //
           // Get the top screen menu info.
@@ -3773,7 +4288,8 @@ UiDisplayMenu (
             // Skip the top op-code
             //
             TopOfScreen   = TopOfScreen->ForwardLink;
-            DistanceValue = (Temp - BottomRow) - (SavedMenuOption->Skip - SkipValue);
+            DistanceValue = (Temp - BottomRow) - (SavedMenuOption->Skip -
+                                                  SkipValue);
 
             SavedMenuOption = MENU_OPTION_FROM_LINK (TopOfScreen);
 
@@ -3781,7 +4297,9 @@ UiDisplayMenu (
             // If we have a remainder, skip that many more op-codes until we drain the remainder
             // Special case is the selected highlight menu has more than one form of menus.
             //
-            while (DistanceValue >= SavedMenuOption->Skip && TopOfScreen != NewPos) {
+            while (DistanceValue >= SavedMenuOption->Skip && TopOfScreen !=
+                   NewPos)
+            {
               //
               // Since the Difference is greater than or equal to this op-code's skip value, skip it
               //
@@ -3850,7 +4368,13 @@ UiDisplayMenu (
         break;
 
       case CfExit:
-        gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
+        gST->ConOut->SetAttribute (
+                       gST->ConOut,
+                       EFI_TEXT_ATTR (
+                         EFI_LIGHTGRAY,
+                         EFI_BLACK
+                         )
+                       );
         if (HelpString != NULL) {
           FreePool (HelpString);
         }
@@ -3949,7 +4473,8 @@ BrowserStatusProcess (
     {
       StringToken = ((EFI_IFR_NO_SUBMIT_IF *)OpCodeBuf)->Error;
     } else if ((gFormData->BrowserStatus == (BROWSER_INCONSISTENT_IF)) &&
-               ((OpCodeBuf != NULL) && (OpCodeBuf->OpCode == EFI_IFR_INCONSISTENT_IF_OP)))
+               ((OpCodeBuf != NULL) && (OpCodeBuf->OpCode ==
+                                        EFI_IFR_INCONSISTENT_IF_OP)))
     {
       StringToken = ((EFI_IFR_INCONSISTENT_IF *)OpCodeBuf)->Error;
     }
@@ -4023,11 +4548,25 @@ BrowserStatusProcess (
       }
 
       do {
-        CreateDialog (&Key, gEmptyString, ErrorInfo, PrintString, gEmptyString, NULL);
-      } while (((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) != (DiscardChange | UPPER_LOWER_CASE_OFFSET)) &&
-               ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) != (JumpToFormSet | UPPER_LOWER_CASE_OFFSET)));
+        CreateDialog (
+          &Key,
+          gEmptyString,
+          ErrorInfo,
+          PrintString,
+          gEmptyString,
+          NULL
+          );
+      } while (  ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) !=
+                  (DiscardChange |
+                   UPPER_LOWER_CASE_OFFSET))
+              &&
+                 ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) !=
+                  (JumpToFormSet |
+                   UPPER_LOWER_CASE_OFFSET)));
 
-      if ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) == (DiscardChange | UPPER_LOWER_CASE_OFFSET)) {
+      if ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) == (DiscardChange |
+                                                          UPPER_LOWER_CASE_OFFSET))
+      {
         gUserInput->Action = BROWSER_ACTION_DISCARD;
       } else {
         gUserInput->Action = BROWSER_ACTION_GOTO;
@@ -4038,17 +4577,36 @@ BrowserStatusProcess (
     default:
       if (TimeOut == 0) {
         do {
-          CreateDialog (&Key, gEmptyString, ErrorInfo, gPressEnter, gEmptyString, NULL);
+          CreateDialog (
+            &Key,
+            gEmptyString,
+            ErrorInfo,
+            gPressEnter,
+            gEmptyString,
+            NULL
+            );
         } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
       } else {
-        Status = gBS->CreateEvent (EVT_NOTIFY_WAIT, TPL_CALLBACK, EmptyEventProcess, NULL, &TimeOutEvent);
+        Status = gBS->CreateEvent (
+                        EVT_NOTIFY_WAIT,
+                        TPL_CALLBACK,
+                        EmptyEventProcess,
+                        NULL,
+                        &TimeOutEvent
+                        );
         ASSERT_EFI_ERROR (Status);
 
         EventContext.SyncEvent = TimeOutEvent;
         EventContext.TimeOut   = &TimeOut;
         EventContext.ErrorInfo = ErrorInfo;
 
-        Status = gBS->CreateEvent (EVT_TIMER | EVT_NOTIFY_SIGNAL, TPL_CALLBACK, RefreshTimeOutProcess, &EventContext, &RefreshIntervalEvent);
+        Status = gBS->CreateEvent (
+                        EVT_TIMER | EVT_NOTIFY_SIGNAL,
+                        TPL_CALLBACK,
+                        RefreshTimeOutProcess,
+                        &EventContext,
+                        &RefreshIntervalEvent
+                        );
         ASSERT_EFI_ERROR (Status);
 
         //
@@ -4056,12 +4614,18 @@ BrowserStatusProcess (
         //
         gBS->SignalEvent (RefreshIntervalEvent);
 
-        Status = gBS->SetTimer (RefreshIntervalEvent, TimerPeriodic, ONE_SECOND);
+        Status = gBS->SetTimer (
+                        RefreshIntervalEvent,
+                        TimerPeriodic,
+                        ONE_SECOND
+                        );
         ASSERT_EFI_ERROR (Status);
 
         while (TRUE) {
           Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-          if (!EFI_ERROR (Status) && (Key.UnicodeChar == CHAR_CARRIAGE_RETURN)) {
+          if (!EFI_ERROR (Status) && (Key.UnicodeChar ==
+                                      CHAR_CARRIAGE_RETURN))
+          {
             break;
           }
 
@@ -4148,9 +4712,12 @@ FormDisplay (
   //   |<-.->|<-.........->|<- .........->|<-...........->|
   //     Skip    Prompt         Option         Help
   //
-  gOptionBlockWidth = (CHAR16)((gStatementDimensions.RightColumn - gStatementDimensions.LeftColumn) / 3) + 1;
+  gOptionBlockWidth = (CHAR16)((gStatementDimensions.RightColumn -
+                                gStatementDimensions.LeftColumn) / 3) + 1;
   gHelpBlockWidth   = (CHAR16)(gOptionBlockWidth - 1 - LEFT_SKIPPED_COLUMNS);
-  gPromptBlockWidth = (CHAR16)(gStatementDimensions.RightColumn - gStatementDimensions.LeftColumn - 2 * (gOptionBlockWidth - 1) - 1);
+  gPromptBlockWidth = (CHAR16)(gStatementDimensions.RightColumn -
+                               gStatementDimensions.LeftColumn - 2 *
+                               (gOptionBlockWidth - 1) - 1);
 
   ConvertStatementToMenu ();
 
@@ -4284,22 +4851,48 @@ InitializeDisplayEngine (
   //
   // Use BrowserEx2 protocol to register HotKey.
   //
-  Status = gBS->LocateProtocol (&gEdkiiFormBrowserEx2ProtocolGuid, NULL, (VOID **)&FormBrowserEx2);
+  Status = gBS->LocateProtocol (
+                  &gEdkiiFormBrowserEx2ProtocolGuid,
+                  NULL,
+                  (VOID **)&FormBrowserEx2
+                  );
   if (!EFI_ERROR (Status)) {
     //
     // Register the default HotKey F9 and F10 again.
     //
     HotKey.UnicodeChar = CHAR_NULL;
     HotKey.ScanCode    = SCAN_F10;
-    NewString          = HiiGetString (gHiiHandle, STRING_TOKEN (FUNCTION_TEN_STRING), NULL);
+    NewString          = HiiGetString (
+                           gHiiHandle,
+                           STRING_TOKEN (
+                             FUNCTION_TEN_STRING
+                             ),
+                           NULL
+                           );
     ASSERT (NewString != NULL);
-    FormBrowserEx2->RegisterHotKey (&HotKey, BROWSER_ACTION_SUBMIT, 0, NewString);
+    FormBrowserEx2->RegisterHotKey (
+                      &HotKey,
+                      BROWSER_ACTION_SUBMIT,
+                      0,
+                      NewString
+                      );
     FreePool (NewString);
 
     HotKey.ScanCode = SCAN_F9;
-    NewString       = HiiGetString (gHiiHandle, STRING_TOKEN (FUNCTION_NINE_STRING), NULL);
+    NewString       = HiiGetString (
+                        gHiiHandle,
+                        STRING_TOKEN (
+                          FUNCTION_NINE_STRING
+                          ),
+                        NULL
+                        );
     ASSERT (NewString != NULL);
-    FormBrowserEx2->RegisterHotKey (&HotKey, BROWSER_ACTION_DEFAULT, EFI_HII_DEFAULT_CLASS_STANDARD, NewString);
+    FormBrowserEx2->RegisterHotKey (
+                      &HotKey,
+                      BROWSER_ACTION_DEFAULT,
+                      EFI_HII_DEFAULT_CLASS_STANDARD,
+                      NewString
+                      );
     FreePool (NewString);
   }
 

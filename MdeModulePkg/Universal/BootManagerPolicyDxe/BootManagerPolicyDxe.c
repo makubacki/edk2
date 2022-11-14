@@ -41,7 +41,13 @@ ConnectAllAndCreateNetworkDeviceList (
 
   EfiBootManagerConnectAll ();
 
-  Status = gBS->LocateHandleBuffer (ByProtocol, &gEfiManagedNetworkServiceBindingProtocolGuid, NULL, &HandleCount, &Handles);
+  Status = gBS->LocateHandleBuffer (
+                  ByProtocol,
+                  &gEfiManagedNetworkServiceBindingProtocolGuid,
+                  NULL,
+                  &HandleCount,
+                  &Handles
+                  );
   if (EFI_ERROR (Status)) {
     Handles     = NULL;
     HandleCount = 0;
@@ -49,7 +55,11 @@ ConnectAllAndCreateNetworkDeviceList (
 
   Devices = NULL;
   while (HandleCount-- != 0) {
-    Status = gBS->HandleProtocol (Handles[HandleCount], &gEfiDevicePathProtocolGuid, (VOID **)&SingleDevice);
+    Status = gBS->HandleProtocol (
+                    Handles[HandleCount],
+                    &gEfiDevicePathProtocolGuid,
+                    (VOID **)&SingleDevice
+                    );
     if (EFI_ERROR (Status) || (SingleDevice == NULL)) {
       continue;
     }
@@ -171,7 +181,11 @@ BootManagerPolicyConnectDevicePath (
   if (Recursive) {
     Status = EfiBootManagerConnectDevicePath (DevicePath, NULL);
   } else {
-    Status = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &DevicePath, &Controller);
+    Status = gBS->LocateDevicePath (
+                    &gEfiDevicePathProtocolGuid,
+                    &DevicePath,
+                    &Controller
+                    );
     if (!EFI_ERROR (Status)) {
       Status = gBS->ConnectController (Controller, NULL, DevicePath, FALSE);
     }

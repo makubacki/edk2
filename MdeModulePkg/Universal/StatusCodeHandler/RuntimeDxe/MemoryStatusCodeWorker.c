@@ -37,8 +37,12 @@ RtMemoryStatusCodeInitializeWorker (
   mRtMemoryStatusCodeTable->RecordIndex      = 0;
   mRtMemoryStatusCodeTable->NumberOfRecords  = 0;
   mRtMemoryStatusCodeTable->MaxRecordsNumber =
-    (PcdGet16 (PcdStatusCodeMemorySize) * 1024) / sizeof (MEMORY_STATUSCODE_RECORD);
-  Status = gBS->InstallConfigurationTable (&gMemoryStatusCodeRecordGuid, mRtMemoryStatusCodeTable);
+    (PcdGet16 (PcdStatusCodeMemorySize) * 1024) /
+    sizeof (MEMORY_STATUSCODE_RECORD);
+  Status = gBS->InstallConfigurationTable (
+                  &gMemoryStatusCodeRecordGuid,
+                  mRtMemoryStatusCodeTable
+                  );
 
   return Status;
 }
@@ -95,7 +99,9 @@ RtMemoryStatusCodeReportWorker (
   // If it is less then max number, index of the first record is zero.
   //
   mRtMemoryStatusCodeTable->NumberOfRecords++;
-  if (mRtMemoryStatusCodeTable->RecordIndex == mRtMemoryStatusCodeTable->MaxRecordsNumber) {
+  if (mRtMemoryStatusCodeTable->RecordIndex ==
+      mRtMemoryStatusCodeTable->MaxRecordsNumber)
+  {
     //
     // Wrap around record index.
     //

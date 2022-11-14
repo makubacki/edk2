@@ -227,7 +227,9 @@ CompareHiiValue (
   UINT8   *Buf2;
   UINT16  Buf2Len;
 
-  if ((Value1->Type == EFI_IFR_TYPE_STRING) && (Value2->Type == EFI_IFR_TYPE_STRING)) {
+  if ((Value1->Type == EFI_IFR_TYPE_STRING) && (Value2->Type ==
+                                                EFI_IFR_TYPE_STRING))
+  {
     if ((Value1->Value.string == 0) || (Value2->Value.string == 0)) {
       //
       // StringId 0 is reserved
@@ -328,9 +330,18 @@ ValueToOption (
 
     ZeroMem (&Value, sizeof (EFI_HII_VALUE));
     Value.Type = Option->OptionOpCode->Type;
-    CopyMem (&Value.Value, &Option->OptionOpCode->Value, Option->OptionOpCode->Header.Length - OFFSET_OF (EFI_IFR_ONE_OF_OPTION, Value));
+    CopyMem (
+      &Value.Value,
+      &Option->OptionOpCode->Value,
+      Option->OptionOpCode->Header.Length - OFFSET_OF (
+                                              EFI_IFR_ONE_OF_OPTION,
+                                              Value
+                                              )
+      );
 
-    if ((CompareHiiValue (&Value, OptionValue, &Result, NULL) == EFI_SUCCESS) && (Result == 0)) {
+    if ((CompareHiiValue (&Value, OptionValue, &Result, NULL) == EFI_SUCCESS) &&
+        (Result == 0))
+    {
       return Option;
     }
 
@@ -597,8 +608,10 @@ CreateSharedPopUp (
   UINTN   DimensionsWidth;
   UINTN   DimensionsHeight;
 
-  DimensionsWidth  = gStatementDimensions.RightColumn - gStatementDimensions.LeftColumn;
-  DimensionsHeight = gStatementDimensions.BottomRow - gStatementDimensions.TopRow;
+  DimensionsWidth = gStatementDimensions.RightColumn -
+                    gStatementDimensions.LeftColumn;
+  DimensionsHeight = gStatementDimensions.BottomRow -
+                     gStatementDimensions.TopRow;
 
   gST->ConOut->SetAttribute (gST->ConOut, GetPopupColor ());
 
@@ -610,10 +623,12 @@ CreateSharedPopUp (
   // Subtract the PopUp width from total Columns, allow for one space extra on
   // each end plus a border.
   //
-  Start = (DimensionsWidth - RequestedWidth - 2) / 2 + gStatementDimensions.LeftColumn + 1;
-  End   = Start + RequestedWidth + 1;
+  Start = (DimensionsWidth - RequestedWidth - 2) / 2 +
+          gStatementDimensions.LeftColumn + 1;
+  End = Start + RequestedWidth + 1;
 
-  Top    = ((DimensionsHeight - NumberOfLines - 2) / 2) + gStatementDimensions.TopRow - 1;
+  Top = ((DimensionsHeight - NumberOfLines - 2) / 2) +
+        gStatementDimensions.TopRow - 1;
   Bottom = Top + NumberOfLines + 2;
 
   Character = BOXDRAW_DOWN_RIGHT;
@@ -644,7 +659,13 @@ CreateSharedPopUp (
     // Passing in a space results in the assumption that this is where typing will occur
     //
     if (String[0] == L' ') {
-      ClearLines (Start + 1, End - 1, Index + 1, Index + 1, GetPopupInverseColor ());
+      ClearLines (
+        Start + 1,
+        End - 1,
+        Index + 1,
+        Index + 1,
+        GetPopupInverseColor ()
+        );
     }
 
     //
@@ -655,7 +676,8 @@ CreateSharedPopUp (
     }
 
     PrintStringAt (
-      ((DimensionsWidth - GetStringWidth (String) / 2) / 2) + gStatementDimensions.LeftColumn + 1,
+      ((DimensionsWidth - GetStringWidth (String) / 2) / 2) +
+      gStatementDimensions.LeftColumn + 1,
       Index + 1,
       String
       );
@@ -745,7 +767,15 @@ RefreshTimeOutProcess (
 
   UnicodeSPrint (TimeOutString, MAX_TIME_OUT_LEN, L"%d", *(EventInfo->TimeOut));
 
-  CreateDialog (NULL, gEmptyString, EventInfo->ErrorInfo, gPressEnter, gEmptyString, TimeOutString, NULL);
+  CreateDialog (
+    NULL,
+    gEmptyString,
+    EventInfo->ErrorInfo,
+    gPressEnter,
+    gEmptyString,
+    TimeOutString,
+    NULL
+    );
 
   *(EventInfo->TimeOut) -= 1;
 }
@@ -765,7 +795,14 @@ PasswordInvalid (
   // Invalid password, prompt error message
   //
   do {
-    CreateDialog (&Key, gEmptyString, gPassowordInvalid, gPressEnter, gEmptyString, NULL);
+    CreateDialog (
+      &Key,
+      gEmptyString,
+      gPassowordInvalid,
+      gPressEnter,
+      gEmptyString,
+      NULL
+      );
   } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
 }
 
@@ -810,7 +847,14 @@ PasswordProcess (
     //
     if (Status == EFI_UNSUPPORTED) {
       do {
-        CreateDialog (&Key, gEmptyString, gPasswordUnsupported, gPressEnter, gEmptyString, NULL);
+        CreateDialog (
+          &Key,
+          gEmptyString,
+          gPasswordUnsupported,
+          gPressEnter,
+          gEmptyString,
+          NULL
+          );
       } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
     }
 
@@ -886,10 +930,18 @@ PasswordProcess (
   // Compare two typed-in new passwords
   //
   if (StrCmp (StringPtr, TempString) == 0) {
-    gUserInput->InputValue.Buffer       = AllocateCopyPool (Question->CurrentValue.BufferLen, StringPtr);
+    gUserInput->InputValue.Buffer = AllocateCopyPool (
+                                      Question->CurrentValue.BufferLen,
+                                      StringPtr
+                                      );
     gUserInput->InputValue.BufferLen    = Question->CurrentValue.BufferLen;
     gUserInput->InputValue.Type         = Question->CurrentValue.Type;
-    gUserInput->InputValue.Value.string = HiiSetString (gFormData->HiiHandle, gUserInput->InputValue.Value.string, StringPtr, NULL);
+    gUserInput->InputValue.Value.string = HiiSetString (
+                                            gFormData->HiiHandle,
+                                            gUserInput->InputValue.Value.string,
+                                            StringPtr,
+                                            NULL
+                                            );
 
     Status = EFI_SUCCESS;
   } else {
@@ -902,7 +954,14 @@ PasswordProcess (
     // Two password mismatch, prompt error message
     //
     do {
-      CreateDialog (&Key, gEmptyString, gConfirmError, gPressEnter, gEmptyString, NULL);
+      CreateDialog (
+        &Key,
+        gEmptyString,
+        gConfirmError,
+        gPressEnter,
+        gEmptyString,
+        NULL
+        );
     } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
 
     Status = EFI_INVALID_PARAMETER;
@@ -944,49 +1003,124 @@ PrintMismatchMenuInfo (
   UINTN                          FormsetBufferSize;
 
   Question = MenuOption->ThisTag;
-  HiiGetFormSetFromHiiHandle (gFormData->HiiHandle, &FormsetBuffer, &FormsetBufferSize);
+  HiiGetFormSetFromHiiHandle (
+    gFormData->HiiHandle,
+    &FormsetBuffer,
+    &FormsetBufferSize
+    );
 
-  FormSetTitleStr = GetToken (FormsetBuffer->FormSetTitle, gFormData->HiiHandle);
-  FormTitleStr    = GetToken (gFormData->FormTitle, gFormData->HiiHandle);
+  FormSetTitleStr = GetToken (
+                      FormsetBuffer->FormSetTitle,
+                      gFormData->HiiHandle
+                      );
+  FormTitleStr = GetToken (gFormData->FormTitle, gFormData->HiiHandle);
 
-  DEBUG ((DEBUG_ERROR, "\n[%a]: Mismatch Formset    : Formset Guid = %g,  FormSet title = %s\n", gEfiCallerBaseName, &gFormData->FormSetGuid, FormSetTitleStr));
-  DEBUG ((DEBUG_ERROR, "[%a]: Mismatch Form       : FormId = %d,  Form title = %s.\n", gEfiCallerBaseName, gFormData->FormId, FormTitleStr));
+  DEBUG ((
+    DEBUG_ERROR,
+    "\n[%a]: Mismatch Formset    : Formset Guid = %g,  FormSet title = %s\n",
+    gEfiCallerBaseName,
+    &gFormData->FormSetGuid,
+    FormSetTitleStr
+    ));
+  DEBUG ((
+    DEBUG_ERROR,
+    "[%a]: Mismatch Form       : FormId = %d,  Form title = %s.\n",
+    gEfiCallerBaseName,
+    gFormData->FormId,
+    FormTitleStr
+    ));
 
   if (Question->OpCode->OpCode == EFI_IFR_ORDERED_LIST_OP) {
-    QuestionName = GetToken (((EFI_IFR_ORDERED_LIST *)MenuOption->ThisTag->OpCode)->Question.Header.Prompt, gFormData->HiiHandle);
-    Link         = GetFirstNode (&Question->OptionListHead);
-    Option       = DISPLAY_QUESTION_OPTION_FROM_LINK (Link);
-    ValueType    = Option->OptionOpCode->Type;
-    DEBUG ((DEBUG_ERROR, "[%a]: Mismatch Error      : OrderedList value in the array doesn't match with option value.\n", gEfiCallerBaseName));
-    DEBUG ((DEBUG_ERROR, "[%a]: Mismatch OrderedList: Name = %s.\n", gEfiCallerBaseName, QuestionName));
-    DEBUG ((DEBUG_ERROR, "[%a]: Mismatch OrderedList: OrderedList array value :\n", gEfiCallerBaseName));
+    QuestionName = GetToken (
+                     ((EFI_IFR_ORDERED_LIST *)MenuOption->ThisTag->OpCode)->
+                       Question.Header.
+                       Prompt,
+                     gFormData->HiiHandle
+                     );
+    Link      = GetFirstNode (&Question->OptionListHead);
+    Option    = DISPLAY_QUESTION_OPTION_FROM_LINK (Link);
+    ValueType = Option->OptionOpCode->Type;
+    DEBUG ((
+      DEBUG_ERROR,
+      "[%a]: Mismatch Error      : OrderedList value in the array doesn't match with option value.\n",
+      gEfiCallerBaseName
+      ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[%a]: Mismatch OrderedList: Name = %s.\n",
+      gEfiCallerBaseName,
+      QuestionName
+      ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[%a]: Mismatch OrderedList: OrderedList array value :\n",
+      gEfiCallerBaseName
+      ));
 
     OrderList = (EFI_IFR_ORDERED_LIST *)Question->OpCode;
     for (Index = 0; Index < OrderList->MaxContainers; Index++) {
       ValueArray         = Question->CurrentValue.Buffer;
       HiiValue.Value.u64 = GetArrayData (ValueArray, ValueType, Index);
-      DEBUG ((DEBUG_ERROR, "                                       Value[%d] =%ld.\n", Index, HiiValue.Value.u64));
+      DEBUG ((
+        DEBUG_ERROR,
+        "                                       Value[%d] =%ld.\n",
+        Index,
+        HiiValue.Value.u64
+        ));
     }
   } else if (Question->OpCode->OpCode == EFI_IFR_ONE_OF_OP) {
-    QuestionName  = GetToken (((EFI_IFR_ONE_OF *)MenuOption->ThisTag->OpCode)->Question.Header.Prompt, gFormData->HiiHandle);
+    QuestionName = GetToken (
+                     ((EFI_IFR_ONE_OF *)MenuOption->ThisTag->OpCode)->Question.
+                       Header.Prompt,
+                     gFormData->HiiHandle
+                     );
     QuestionValue = &Question->CurrentValue;
-    DEBUG ((DEBUG_ERROR, "[%a]: Mismatch Error      : OneOf value doesn't match with option value.\n", gEfiCallerBaseName));
-    DEBUG ((DEBUG_ERROR, "[%a]: Mismatch OneOf      : Name = %s.\n", gEfiCallerBaseName, QuestionName));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[%a]: Mismatch Error      : OneOf value doesn't match with option value.\n",
+      gEfiCallerBaseName
+      ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "[%a]: Mismatch OneOf      : Name = %s.\n",
+      gEfiCallerBaseName,
+      QuestionName
+      ));
     switch (QuestionValue->Type) {
       case EFI_IFR_TYPE_NUM_SIZE_64:
-        DEBUG ((DEBUG_ERROR, "[%a]: Mismatch OneOf      : OneOf value = %ld.\n", gEfiCallerBaseName, QuestionValue->Value.u64));
+        DEBUG ((
+          DEBUG_ERROR,
+          "[%a]: Mismatch OneOf      : OneOf value = %ld.\n",
+          gEfiCallerBaseName,
+          QuestionValue->Value.u64
+          ));
         break;
 
       case EFI_IFR_TYPE_NUM_SIZE_32:
-        DEBUG ((DEBUG_ERROR, "[%a]: Mismatch OneOf      : OneOf value = %d.\n", gEfiCallerBaseName, QuestionValue->Value.u32));
+        DEBUG ((
+          DEBUG_ERROR,
+          "[%a]: Mismatch OneOf      : OneOf value = %d.\n",
+          gEfiCallerBaseName,
+          QuestionValue->Value.u32
+          ));
         break;
 
       case EFI_IFR_TYPE_NUM_SIZE_16:
-        DEBUG ((DEBUG_ERROR, "[%a]: Mismatch OneOf      : OneOf value = %d.\n", gEfiCallerBaseName, QuestionValue->Value.u16));
+        DEBUG ((
+          DEBUG_ERROR,
+          "[%a]: Mismatch OneOf      : OneOf value = %d.\n",
+          gEfiCallerBaseName,
+          QuestionValue->Value.u16
+          ));
         break;
 
       case EFI_IFR_TYPE_NUM_SIZE_8:
-        DEBUG ((DEBUG_ERROR, "[%a]: Mismatch OneOf      : OneOf value = %d.\n", gEfiCallerBaseName, QuestionValue->Value.u8));
+        DEBUG ((
+          DEBUG_ERROR,
+          "[%a]: Mismatch OneOf      : OneOf value = %d.\n",
+          gEfiCallerBaseName,
+          QuestionValue->Value.u8
+          ));
         break;
 
       default:
@@ -999,22 +1133,53 @@ PrintMismatchMenuInfo (
   Link  = GetFirstNode (&Question->OptionListHead);
   while (!IsNull (&Question->OptionListHead, Link)) {
     Option         = DISPLAY_QUESTION_OPTION_FROM_LINK (Link);
-    OneOfOptionStr = GetToken (Option->OptionOpCode->Option, gFormData->HiiHandle);
+    OneOfOptionStr = GetToken (
+                       Option->OptionOpCode->Option,
+                       gFormData->HiiHandle
+                       );
     switch (Option->OptionOpCode->Type) {
       case EFI_IFR_TYPE_NUM_SIZE_64:
-        DEBUG ((DEBUG_ERROR, "[%a]: Option %d            : Option Value = %ld,  Option Name = %s.\n", gEfiCallerBaseName, Index, Option->OptionOpCode->Value.u64, OneOfOptionStr));
+        DEBUG ((
+          DEBUG_ERROR,
+          "[%a]: Option %d            : Option Value = %ld,  Option Name = %s.\n",
+          gEfiCallerBaseName,
+          Index,
+          Option->OptionOpCode->Value.u64,
+          OneOfOptionStr
+          ));
         break;
 
       case EFI_IFR_TYPE_NUM_SIZE_32:
-        DEBUG ((DEBUG_ERROR, "[%a]: Option %d            : Option Value = %d,  Option Name = %s.\n", gEfiCallerBaseName, Index, Option->OptionOpCode->Value.u32, OneOfOptionStr));
+        DEBUG ((
+          DEBUG_ERROR,
+          "[%a]: Option %d            : Option Value = %d,  Option Name = %s.\n",
+          gEfiCallerBaseName,
+          Index,
+          Option->OptionOpCode->Value.u32,
+          OneOfOptionStr
+          ));
         break;
 
       case EFI_IFR_TYPE_NUM_SIZE_16:
-        DEBUG ((DEBUG_ERROR, "[%a]: Option %d            : Option Value = %d,  Option Name = %s.\n", gEfiCallerBaseName, Index, Option->OptionOpCode->Value.u16, OneOfOptionStr));
+        DEBUG ((
+          DEBUG_ERROR,
+          "[%a]: Option %d            : Option Value = %d,  Option Name = %s.\n",
+          gEfiCallerBaseName,
+          Index,
+          Option->OptionOpCode->Value.u16,
+          OneOfOptionStr
+          ));
         break;
 
       case EFI_IFR_TYPE_NUM_SIZE_8:
-        DEBUG ((DEBUG_ERROR, "[%a]: Option %d            : Option Value = %d,  Option Name = %s.\n", gEfiCallerBaseName, Index, Option->OptionOpCode->Value.u8, OneOfOptionStr));
+        DEBUG ((
+          DEBUG_ERROR,
+          "[%a]: Option %d            : Option Value = %d,  Option Name = %s.\n",
+          gEfiCallerBaseName,
+          Index,
+          Option->OptionOpCode->Value.u8,
+          OneOfOptionStr
+          ));
         break;
 
       default:
@@ -1142,7 +1307,14 @@ ProcessOptions (
             // Show error message
             //
             do {
-              CreateDialog (&Key, gEmptyString, gOptionMismatch, gPressEnter, gEmptyString, NULL);
+              CreateDialog (
+                &Key,
+                gEmptyString,
+                gOptionMismatch,
+                gPressEnter,
+                gEmptyString,
+                NULL
+                );
             } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
 
             //
@@ -1151,7 +1323,9 @@ ProcessOptions (
             //
             gUserInput->SelectedStatement = Question;
             gMisMatch                     = TRUE;
-            ValueArray                    = AllocateZeroPool (Question->CurrentValue.BufferLen);
+            ValueArray                    = AllocateZeroPool (
+                                              Question->CurrentValue.BufferLen
+                                              );
             ASSERT (ValueArray != NULL);
             gUserInput->InputValue.Buffer    = ValueArray;
             gUserInput->InputValue.BufferLen = Question->CurrentValue.BufferLen;
@@ -1159,10 +1333,17 @@ ProcessOptions (
 
             Link   = GetFirstNode (&Question->OptionListHead);
             Index2 = 0;
-            while (!IsNull (&Question->OptionListHead, Link) && Index2 < OrderList->MaxContainers) {
+            while (!IsNull (&Question->OptionListHead, Link) && Index2 <
+                   OrderList->MaxContainers)
+            {
               Option = DISPLAY_QUESTION_OPTION_FROM_LINK (Link);
               Link   = GetNextNode (&Question->OptionListHead, Link);
-              SetArrayData (ValueArray, ValueType, Index2, Option->OptionOpCode->Value.u64);
+              SetArrayData (
+                ValueArray,
+                ValueType,
+                Index2,
+                Option->OptionOpCode->Value.u64
+                );
               Index2++;
             }
 
@@ -1175,7 +1356,10 @@ ProcessOptions (
 
           Character[0] = LEFT_ONEOF_DELIMITER;
           NewStrCat (OptionString[0], MaxLen, Character);
-          StringPtr = GetToken (OneOfOption->OptionOpCode->Option, gFormData->HiiHandle);
+          StringPtr = GetToken (
+                        OneOfOption->OptionOpCode->Option,
+                        gFormData->HiiHandle
+                        );
           ASSERT (StringPtr != NULL);
           NewStrCat (OptionString[0], MaxLen, StringPtr);
           Character[0] = RIGHT_ONEOF_DELIMITER;
@@ -1200,7 +1384,13 @@ ProcessOptions (
           OneOfOption = DISPLAY_QUESTION_OPTION_FROM_LINK (Link);
           Link        = GetNextNode (&Question->OptionListHead, Link);
 
-          if (FindArrayData (ValueArray, ValueType, OneOfOption->OptionOpCode->Value.u64, NULL)) {
+          if (FindArrayData (
+                ValueArray,
+                ValueType,
+                OneOfOption->OptionOpCode->Value.u64,
+                NULL
+                ))
+          {
             continue;
           }
 
@@ -1215,7 +1405,10 @@ ProcessOptions (
             //
             Character[0] = LEFT_ONEOF_DELIMITER;
             NewStrCat (OptionString[0], MaxLen, Character);
-            StringPtr = GetToken (OneOfOption->OptionOpCode->Option, gFormData->HiiHandle);
+            StringPtr = GetToken (
+                          OneOfOption->OptionOpCode->Option,
+                          gFormData->HiiHandle
+                          );
             ASSERT (StringPtr != NULL);
             NewStrCat (OptionString[0], MaxLen, StringPtr);
             Character[0] = RIGHT_ONEOF_DELIMITER;
@@ -1233,7 +1426,14 @@ ProcessOptions (
             // Show error message
             //
             do {
-              CreateDialog (&Key, gEmptyString, gOptionMismatch, gPressEnter, gEmptyString, NULL);
+              CreateDialog (
+                &Key,
+                gEmptyString,
+                gOptionMismatch,
+                gPressEnter,
+                gEmptyString,
+                NULL
+                );
             } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
 
             //
@@ -1242,14 +1442,22 @@ ProcessOptions (
             //
             gUserInput->SelectedStatement = Question;
             gMisMatch                     = TRUE;
-            ValueArray                    = AllocateCopyPool (Question->CurrentValue.BufferLen, Question->CurrentValue.Buffer);
+            ValueArray                    = AllocateCopyPool (
+                                              Question->CurrentValue.BufferLen,
+                                              Question->CurrentValue.Buffer
+                                              );
             ASSERT (ValueArray != NULL);
             gUserInput->InputValue.Buffer    = ValueArray;
             gUserInput->InputValue.BufferLen = Question->CurrentValue.BufferLen;
             gUserInput->InputValue.Type      = Question->CurrentValue.Type;
           }
 
-          SetArrayData (ValueArray, ValueType, Index++, OneOfOption->OptionOpCode->Value.u64);
+          SetArrayData (
+            ValueArray,
+            ValueType,
+            Index++,
+            OneOfOption->OptionOpCode->Value.u64
+            );
         }
 
         if (ValueInvalid) {
@@ -1297,7 +1505,14 @@ ProcessOptions (
             // Show error message
             //
             do {
-              CreateDialog (&Key, gEmptyString, gOptionMismatch, gPressEnter, gEmptyString, NULL);
+              CreateDialog (
+                &Key,
+                gEmptyString,
+                gOptionMismatch,
+                gPressEnter,
+                gEmptyString,
+                NULL
+                );
             } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
 
             //
@@ -1310,16 +1525,29 @@ ProcessOptions (
             gUserInput->InputValue.Type = Option->OptionOpCode->Type;
             switch (gUserInput->InputValue.Type) {
               case EFI_IFR_TYPE_NUM_SIZE_8:
-                gUserInput->InputValue.Value.u8 = Option->OptionOpCode->Value.u8;
+                gUserInput->InputValue.Value.u8 =
+                  Option->OptionOpCode->Value.u8;
                 break;
               case EFI_IFR_TYPE_NUM_SIZE_16:
-                CopyMem (&gUserInput->InputValue.Value.u16, &Option->OptionOpCode->Value.u16, sizeof (UINT16));
+                CopyMem (
+                  &gUserInput->InputValue.Value.u16,
+                  &Option->OptionOpCode->Value.u16,
+                  sizeof (UINT16)
+                  );
                 break;
               case EFI_IFR_TYPE_NUM_SIZE_32:
-                CopyMem (&gUserInput->InputValue.Value.u32, &Option->OptionOpCode->Value.u32, sizeof (UINT32));
+                CopyMem (
+                  &gUserInput->InputValue.Value.u32,
+                  &Option->OptionOpCode->Value.u32,
+                  sizeof (UINT32)
+                  );
                 break;
               case EFI_IFR_TYPE_NUM_SIZE_64:
-                CopyMem (&gUserInput->InputValue.Value.u64, &Option->OptionOpCode->Value.u64, sizeof (UINT64));
+                CopyMem (
+                  &gUserInput->InputValue.Value.u64,
+                  &Option->OptionOpCode->Value.u64,
+                  sizeof (UINT64)
+                  );
                 break;
               default:
                 ASSERT (FALSE);
@@ -1336,7 +1564,10 @@ ProcessOptions (
 
         Character[0] = LEFT_ONEOF_DELIMITER;
         NewStrCat (OptionString[0], MaxLen, Character);
-        StringPtr = GetToken (OneOfOption->OptionOpCode->Option, gFormData->HiiHandle);
+        StringPtr = GetToken (
+                      OneOfOption->OptionOpCode->Option,
+                      gFormData->HiiHandle
+                      );
         ASSERT (StringPtr != NULL);
         NewStrCat (OptionString[0], MaxLen, StringPtr);
         Character[0] = RIGHT_ONEOF_DELIMITER;
@@ -1353,7 +1584,8 @@ ProcessOptions (
         // Since this is a BOOLEAN operation, flip it upon selection
         //
         gUserInput->InputValue.Type    = QuestionValue->Type;
-        gUserInput->InputValue.Value.b = (BOOLEAN)(QuestionValue->Value.b ? FALSE : TRUE);
+        gUserInput->InputValue.Value.b = (BOOLEAN)(QuestionValue->Value.b ?
+                                                   FALSE : TRUE);
 
         //
         // Perform inconsistent check
@@ -1416,7 +1648,12 @@ ProcessOptions (
             if (QuestionValue->Value.date.Month == 0xff) {
               UnicodeSPrint (OptionString[0] + 1, 21 * sizeof (CHAR16), L"??");
             } else {
-              UnicodeSPrint (OptionString[0] + 1, 21 * sizeof (CHAR16), L"%02d", QuestionValue->Value.date.Month);
+              UnicodeSPrint (
+                OptionString[0] + 1,
+                21 * sizeof (CHAR16),
+                L"%02d",
+                QuestionValue->Value.date.Month
+                );
             }
 
             *(OptionString[0] + 3) = DATE_SEPARATOR;
@@ -1427,7 +1664,12 @@ ProcessOptions (
             if (QuestionValue->Value.date.Day == 0xff) {
               UnicodeSPrint (OptionString[0] + 4, 21 * sizeof (CHAR16), L"??");
             } else {
-              UnicodeSPrint (OptionString[0] + 4, 21 * sizeof (CHAR16), L"%02d", QuestionValue->Value.date.Day);
+              UnicodeSPrint (
+                OptionString[0] + 4,
+                21 * sizeof (CHAR16),
+                L"%02d",
+                QuestionValue->Value.date.Day
+                );
             }
 
             *(OptionString[0] + 6) = DATE_SEPARATOR;
@@ -1436,9 +1678,18 @@ ProcessOptions (
           case 2:
             SetUnicodeMem (OptionString[0], 7, L' ');
             if (QuestionValue->Value.date.Year == 0xff) {
-              UnicodeSPrint (OptionString[0] + 7, 21 * sizeof (CHAR16), L"????");
+              UnicodeSPrint (
+                OptionString[0] + 7,
+                21 * sizeof (CHAR16),
+                L"????"
+                );
             } else {
-              UnicodeSPrint (OptionString[0] + 7, 21 * sizeof (CHAR16), L"%04d", QuestionValue->Value.date.Year);
+              UnicodeSPrint (
+                OptionString[0] + 7,
+                21 * sizeof (CHAR16),
+                L"%04d",
+                QuestionValue->Value.date.Year
+                );
             }
 
             *(OptionString[0] + 11) = RIGHT_NUMERIC_DELIMITER;
@@ -1464,7 +1715,12 @@ ProcessOptions (
             if (QuestionValue->Value.time.Hour == 0xff) {
               UnicodeSPrint (OptionString[0] + 1, 21 * sizeof (CHAR16), L"??");
             } else {
-              UnicodeSPrint (OptionString[0] + 1, 21 * sizeof (CHAR16), L"%02d", QuestionValue->Value.time.Hour);
+              UnicodeSPrint (
+                OptionString[0] + 1,
+                21 * sizeof (CHAR16),
+                L"%02d",
+                QuestionValue->Value.time.Hour
+                );
             }
 
             *(OptionString[0] + 3) = TIME_SEPARATOR;
@@ -1475,7 +1731,12 @@ ProcessOptions (
             if (QuestionValue->Value.time.Minute == 0xff) {
               UnicodeSPrint (OptionString[0] + 4, 21 * sizeof (CHAR16), L"??");
             } else {
-              UnicodeSPrint (OptionString[0] + 4, 21 * sizeof (CHAR16), L"%02d", QuestionValue->Value.time.Minute);
+              UnicodeSPrint (
+                OptionString[0] + 4,
+                21 * sizeof (CHAR16),
+                L"%02d",
+                QuestionValue->Value.time.Minute
+                );
             }
 
             *(OptionString[0] + 6) = TIME_SEPARATOR;
@@ -1486,7 +1747,12 @@ ProcessOptions (
             if (QuestionValue->Value.time.Second == 0xff) {
               UnicodeSPrint (OptionString[0] + 7, 21 * sizeof (CHAR16), L"??");
             } else {
-              UnicodeSPrint (OptionString[0] + 7, 21 * sizeof (CHAR16), L"%02d", QuestionValue->Value.time.Second);
+              UnicodeSPrint (
+                OptionString[0] + 7,
+                21 * sizeof (CHAR16),
+                L"%02d",
+                QuestionValue->Value.time.Second
+                );
             }
 
             *(OptionString[0] + 9) = RIGHT_NUMERIC_DELIMITER;
@@ -1498,9 +1764,16 @@ ProcessOptions (
 
     case EFI_IFR_STRING_OP:
       if (Selected) {
-        StringPtr = AllocateZeroPool (Question->CurrentValue.BufferLen + sizeof (CHAR16));
+        StringPtr = AllocateZeroPool (
+                      Question->CurrentValue.BufferLen +
+                      sizeof (CHAR16)
+                      );
         ASSERT (StringPtr);
-        CopyMem (StringPtr, Question->CurrentValue.Buffer, Question->CurrentValue.BufferLen);
+        CopyMem (
+          StringPtr,
+          Question->CurrentValue.Buffer,
+          Question->CurrentValue.BufferLen
+          );
 
         Status = ReadString (MenuOption, gPromptForData, StringPtr);
         if (EFI_ERROR (Status)) {
@@ -1508,10 +1781,19 @@ ProcessOptions (
           return Status;
         }
 
-        gUserInput->InputValue.Buffer       = AllocateCopyPool (Question->CurrentValue.BufferLen, StringPtr);
+        gUserInput->InputValue.Buffer = AllocateCopyPool (
+                                          Question->CurrentValue.BufferLen,
+                                          StringPtr
+                                          );
         gUserInput->InputValue.BufferLen    = Question->CurrentValue.BufferLen;
         gUserInput->InputValue.Type         = Question->CurrentValue.Type;
-        gUserInput->InputValue.Value.string = HiiSetString (gFormData->HiiHandle, gUserInput->InputValue.Value.string, StringPtr, NULL);
+        gUserInput->InputValue.Value.string = HiiSetString (
+                                                gFormData->HiiHandle,
+                                                gUserInput->InputValue.Value.
+                                                  string,
+                                                StringPtr,
+                                                NULL
+                                                );
         FreePool (StringPtr);
         return EFI_SUCCESS;
       } else {
@@ -1525,7 +1807,11 @@ ProcessOptions (
             BufferSize = Question->CurrentValue.BufferLen;
           }
 
-          CopyMem (OptionString[0], (CHAR16 *)Question->CurrentValue.Buffer, BufferSize);
+          CopyMem (
+            OptionString[0],
+            (CHAR16 *)Question->CurrentValue.Buffer,
+            BufferSize
+            );
         }
       }
 
@@ -1587,7 +1873,14 @@ ProcessHelpString (
   //
   // Get row number of the String.
   //
-  while ((StringLen = GetLineByWidth (StringPtr, LineWidth, &GlyphWidth, &Index, &OutputString)) != 0) {
+  while ((StringLen = GetLineByWidth (
+                        StringPtr,
+                        LineWidth,
+                        &GlyphWidth,
+                        &Index,
+                        &OutputString
+                        )) != 0)
+  {
     if (StringLen > MaxStringLen) {
       MaxStringLen = StringLen;
     }
@@ -1598,7 +1891,10 @@ ProcessHelpString (
 
   *EachLineWidth = MaxStringLen;
 
-  *FormattedString = AllocateZeroPool (TotalRowNum * MaxStringLen * sizeof (CHAR16));
+  *FormattedString = AllocateZeroPool (
+                       TotalRowNum * MaxStringLen *
+                       sizeof (CHAR16)
+                       );
   ASSERT (*FormattedString != NULL);
 
   //
@@ -1606,8 +1902,19 @@ ProcessHelpString (
   //
   GlyphWidth = 1;
   Index      = 0;
-  while ((StringLen = GetLineByWidth (StringPtr, LineWidth, &GlyphWidth, &Index, &OutputString)) != 0) {
-    CopyMem (*FormattedString + CheckedNum * MaxStringLen, OutputString, StringLen * sizeof (CHAR16));
+  while ((StringLen = GetLineByWidth (
+                        StringPtr,
+                        LineWidth,
+                        &GlyphWidth,
+                        &Index,
+                        &OutputString
+                        )) != 0)
+  {
+    CopyMem (
+      *FormattedString + CheckedNum * MaxStringLen,
+      OutputString,
+      StringLen * sizeof (CHAR16)
+      );
     CheckedNum++;
     FreePool (OutputString);
   }

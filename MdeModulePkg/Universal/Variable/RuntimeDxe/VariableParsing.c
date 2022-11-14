@@ -26,7 +26,9 @@ IsValidVariableHeader (
   IN  VARIABLE_HEADER  *VariableStoreEnd
   )
 {
-  if ((Variable == NULL) || (Variable >= VariableStoreEnd) || (Variable->StartId != VARIABLE_DATA)) {
+  if ((Variable == NULL) || (Variable >= VariableStoreEnd) ||
+      (Variable->StartId != VARIABLE_DATA))
+  {
     //
     // Variable is NULL or has reached the end of variable store,
     // or the StartId is not correct.
@@ -53,7 +55,10 @@ GetVariableStoreStatus (
   IN VARIABLE_STORE_HEADER  *VarStoreHeader
   )
 {
-  if ((CompareGuid (&VarStoreHeader->Signature, &gEfiAuthenticatedVariableGuid) ||
+  if ((CompareGuid (
+         &VarStoreHeader->Signature,
+         &gEfiAuthenticatedVariableGuid
+         ) ||
        CompareGuid (&VarStoreHeader->Signature, &gEfiVariableGuid)) &&
       (VarStoreHeader->Format == VARIABLE_STORE_FORMATTED) &&
       (VarStoreHeader->State == VARIABLE_STORE_HEALTHY)
@@ -410,7 +415,10 @@ GetEndPointer (
   //
   // The end of variable store
   //
-  return (VARIABLE_HEADER *)HEADER_ALIGN ((UINTN)VarStoreHeader + VarStoreHeader->Size);
+  return (VARIABLE_HEADER *)HEADER_ALIGN (
+                              (UINTN)VarStoreHeader +
+                              VarStoreHeader->Size
+                              );
 }
 
 /**
@@ -487,21 +495,43 @@ FindVariableEx (
         (PtrTrack->CurrPtr->State == (VAR_IN_DELETED_TRANSITION & VAR_ADDED))
         )
     {
-      if (IgnoreRtCheck || !AtRuntime () || ((PtrTrack->CurrPtr->Attributes & EFI_VARIABLE_RUNTIME_ACCESS) != 0)) {
+      if (IgnoreRtCheck || !AtRuntime () || ((PtrTrack->CurrPtr->Attributes &
+                                              EFI_VARIABLE_RUNTIME_ACCESS) !=
+                                             0))
+      {
         if (VariableName[0] == 0) {
-          if (PtrTrack->CurrPtr->State == (VAR_IN_DELETED_TRANSITION & VAR_ADDED)) {
+          if (PtrTrack->CurrPtr->State == (VAR_IN_DELETED_TRANSITION &
+                                           VAR_ADDED))
+          {
             InDeletedVariable = PtrTrack->CurrPtr;
           } else {
             PtrTrack->InDeletedTransitionPtr = InDeletedVariable;
             return EFI_SUCCESS;
           }
         } else {
-          if (CompareGuid (VendorGuid, GetVendorGuidPtr (PtrTrack->CurrPtr, AuthFormat))) {
+          if (CompareGuid (
+                VendorGuid,
+                GetVendorGuidPtr (
+                  PtrTrack->CurrPtr,
+                  AuthFormat
+                  )
+                ))
+          {
             Point = (VOID *)GetVariableNamePtr (PtrTrack->CurrPtr, AuthFormat);
 
             ASSERT (NameSizeOfVariable (PtrTrack->CurrPtr, AuthFormat) != 0);
-            if (CompareMem (VariableName, Point, NameSizeOfVariable (PtrTrack->CurrPtr, AuthFormat)) == 0) {
-              if (PtrTrack->CurrPtr->State == (VAR_IN_DELETED_TRANSITION & VAR_ADDED)) {
+            if (CompareMem (
+                  VariableName,
+                  Point,
+                  NameSizeOfVariable (
+                    PtrTrack->CurrPtr,
+                    AuthFormat
+                    )
+                  ) == 0)
+            {
+              if (PtrTrack->CurrPtr->State == (VAR_IN_DELETED_TRANSITION &
+                                               VAR_ADDED))
+              {
                 InDeletedVariable = PtrTrack->CurrPtr;
               } else {
                 PtrTrack->InDeletedTransitionPtr = InDeletedVariable;
@@ -564,7 +594,9 @@ VariableServiceGetNextVariableInternal (
   ZeroMem (&Variable, sizeof (Variable));
 
   // Check if the variable exists in the given variable store list
-  for (StoreType = (VARIABLE_STORE_TYPE)0; StoreType < VariableStoreTypeMax; StoreType++) {
+  for (StoreType = (VARIABLE_STORE_TYPE)0; StoreType < VariableStoreTypeMax;
+       StoreType++)
+  {
     if (VariableStoreList[StoreType] == NULL) {
       continue;
     }
@@ -573,7 +605,13 @@ VariableServiceGetNextVariableInternal (
     Variable.EndPtr   = GetEndPointer (VariableStoreList[StoreType]);
     Variable.Volatile = (BOOLEAN)(StoreType == VariableStoreTypeVolatile);
 
-    Status = FindVariableEx (VariableName, VendorGuid, FALSE, &Variable, AuthFormat);
+    Status = FindVariableEx (
+               VariableName,
+               VendorGuid,
+               FALSE,
+               &Variable,
+               AuthFormat
+               );
     if (!EFI_ERROR (Status)) {
       break;
     }
@@ -612,8 +650,15 @@ VariableServiceGetNextVariableInternal (
       //
       // Find current storage index
       //
-      for (StoreType = (VARIABLE_STORE_TYPE)0; StoreType < VariableStoreTypeMax; StoreType++) {
-        if ((VariableStoreList[StoreType] != NULL) && (Variable.StartPtr == GetStartPointer (VariableStoreList[StoreType]))) {
+      for (StoreType = (VARIABLE_STORE_TYPE)0; StoreType < VariableStoreTypeMax;
+           StoreType++)
+      {
+        if ((VariableStoreList[StoreType] != NULL) && (Variable.StartPtr ==
+                                                       GetStartPointer (
+                                                         VariableStoreList[
+                                                                                                              StoreType
+                                                         ])))
+        {
           break;
         }
       }
@@ -646,9 +691,16 @@ VariableServiceGetNextVariableInternal (
     //
     // Variable is found
     //
-    if ((Variable.CurrPtr->State == VAR_ADDED) || (Variable.CurrPtr->State == (VAR_IN_DELETED_TRANSITION & VAR_ADDED))) {
-      if (!AtRuntime () || ((Variable.CurrPtr->Attributes & EFI_VARIABLE_RUNTIME_ACCESS) != 0)) {
-        if (Variable.CurrPtr->State == (VAR_IN_DELETED_TRANSITION & VAR_ADDED)) {
+    if ((Variable.CurrPtr->State == VAR_ADDED) || (Variable.CurrPtr->State ==
+                                                   (VAR_IN_DELETED_TRANSITION &
+                                                    VAR_ADDED)))
+    {
+      if (!AtRuntime () || ((Variable.CurrPtr->Attributes &
+                             EFI_VARIABLE_RUNTIME_ACCESS) != 0))
+      {
+        if (Variable.CurrPtr->State == (VAR_IN_DELETED_TRANSITION &
+                                        VAR_ADDED))
+        {
           //
           // If it is a IN_DELETED_TRANSITION variable,
           // and there is also a same ADDED one at the same time,
@@ -657,14 +709,25 @@ VariableServiceGetNextVariableInternal (
           VariablePtrTrack.StartPtr = Variable.StartPtr;
           VariablePtrTrack.EndPtr   = Variable.EndPtr;
           Status                    = FindVariableEx (
-                                        GetVariableNamePtr (Variable.CurrPtr, AuthFormat),
-                                        GetVendorGuidPtr (Variable.CurrPtr, AuthFormat),
+                                        GetVariableNamePtr (
+                                          Variable.CurrPtr,
+                                          AuthFormat
+                                          ),
+                                        GetVendorGuidPtr (
+                                          Variable.CurrPtr,
+                                          AuthFormat
+                                          ),
                                         FALSE,
                                         &VariablePtrTrack,
                                         AuthFormat
                                         );
-          if (!EFI_ERROR (Status) && (VariablePtrTrack.CurrPtr->State == VAR_ADDED)) {
-            Variable.CurrPtr = GetNextVariablePtr (Variable.CurrPtr, AuthFormat);
+          if (!EFI_ERROR (Status) && (VariablePtrTrack.CurrPtr->State ==
+                                      VAR_ADDED))
+          {
+            Variable.CurrPtr = GetNextVariablePtr (
+                                 Variable.CurrPtr,
+                                 AuthFormat
+                                 );
             continue;
           }
         }
@@ -672,21 +735,37 @@ VariableServiceGetNextVariableInternal (
         //
         // Don't return NV variable when HOB overrides it
         //
-        if ((VariableStoreList[VariableStoreTypeHob] != NULL) && (VariableStoreList[VariableStoreTypeNv] != NULL) &&
-            (Variable.StartPtr == GetStartPointer (VariableStoreList[VariableStoreTypeNv]))
+        if ((VariableStoreList[VariableStoreTypeHob] != NULL) &&
+            (VariableStoreList[VariableStoreTypeNv] != NULL) &&
+            (Variable.StartPtr == GetStartPointer (
+                                    VariableStoreList[VariableStoreTypeNv]
+                                    ))
             )
         {
-          VariableInHob.StartPtr = GetStartPointer (VariableStoreList[VariableStoreTypeHob]);
-          VariableInHob.EndPtr   = GetEndPointer (VariableStoreList[VariableStoreTypeHob]);
-          Status                 = FindVariableEx (
-                                     GetVariableNamePtr (Variable.CurrPtr, AuthFormat),
-                                     GetVendorGuidPtr (Variable.CurrPtr, AuthFormat),
-                                     FALSE,
-                                     &VariableInHob,
-                                     AuthFormat
+          VariableInHob.StartPtr = GetStartPointer (
+                                     VariableStoreList[VariableStoreTypeHob]
                                      );
+          VariableInHob.EndPtr = GetEndPointer (
+                                   VariableStoreList[VariableStoreTypeHob]
+                                   );
+          Status = FindVariableEx (
+                     GetVariableNamePtr (
+                       Variable.CurrPtr,
+                       AuthFormat
+                       ),
+                     GetVendorGuidPtr (
+                       Variable.CurrPtr,
+                       AuthFormat
+                       ),
+                     FALSE,
+                     &VariableInHob,
+                     AuthFormat
+                     );
           if (!EFI_ERROR (Status)) {
-            Variable.CurrPtr = GetNextVariablePtr (Variable.CurrPtr, AuthFormat);
+            Variable.CurrPtr = GetNextVariablePtr (
+                                 Variable.CurrPtr,
+                                 AuthFormat
+                                 );
             continue;
           }
         }
@@ -740,7 +819,9 @@ UpdateVariableInfo (
   VARIABLE_INFO_ENTRY  *Entry;
 
   if (FeaturePcdGet (PcdVariableCollectStatistics)) {
-    if ((VariableName == NULL) || (VendorGuid == NULL) || (VariableInfo == NULL)) {
+    if ((VariableName == NULL) || (VendorGuid == NULL) || (VariableInfo ==
+                                                           NULL))
+    {
       return;
     }
 
@@ -760,7 +841,11 @@ UpdateVariableInfo (
       CopyGuid (&(*VariableInfo)->VendorGuid, VendorGuid);
       (*VariableInfo)->Name = AllocateZeroPool (StrSize (VariableName));
       ASSERT ((*VariableInfo)->Name != NULL);
-      StrCpyS ((*VariableInfo)->Name, StrSize (VariableName)/sizeof (CHAR16), VariableName);
+      StrCpyS (
+        (*VariableInfo)->Name,
+        StrSize (VariableName)/sizeof (CHAR16),
+        VariableName
+        );
       (*VariableInfo)->Volatile = Volatile;
     }
 
@@ -798,7 +883,11 @@ UpdateVariableInfo (
         CopyGuid (&Entry->Next->VendorGuid, VendorGuid);
         Entry->Next->Name = AllocateZeroPool (StrSize (VariableName));
         ASSERT (Entry->Next->Name != NULL);
-        StrCpyS (Entry->Next->Name, StrSize (VariableName)/sizeof (CHAR16), VariableName);
+        StrCpyS (
+          Entry->Next->Name,
+          StrSize (VariableName)/sizeof (CHAR16),
+          VariableName
+          );
         Entry->Next->Volatile = Volatile;
       }
     }

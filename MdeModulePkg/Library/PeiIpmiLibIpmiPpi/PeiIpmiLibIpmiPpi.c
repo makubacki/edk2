@@ -54,7 +54,11 @@ IpmiSubmitCommand (
     //
     // Ipmi Ppi is not installed. So, IPMI device is not present.
     //
-    DEBUG ((DEBUG_ERROR, "IpmiSubmitCommand in Pei Phase under SMS Status - %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "IpmiSubmitCommand in Pei Phase under SMS Status - %r\n",
+      Status
+      ));
     return EFI_NOT_FOUND;
   }
 
