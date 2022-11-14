@@ -60,7 +60,7 @@ typedef struct {
 } CONTEXT_STACK_64;
 
 #define CONTEXT_STACK_OFFSET( \
-                            x)  \
+                              x)  \
   (sizeof(UINTN) == sizeof (UINT32) ? (UINTN)&((CONTEXT_STACK *)(UINTN)0)->x : (UINTN)&((CONTEXT_STACK_64 *)(UINTN)0)->x)
 
 #pragma pack()

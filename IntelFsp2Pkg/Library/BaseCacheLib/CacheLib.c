@@ -69,17 +69,17 @@ typedef struct {
 } EFI_FIXED_MTRR;
 
 EFI_FIXED_MTRR  mFixedMtrrTable[] = {
-  { EFI_MSR_IA32_MTRR_FIX64K_00000, 0,        0x10000              },
-  { EFI_MSR_IA32_MTRR_FIX16K_80000, 0x80000,  0x4000               },
-  { EFI_MSR_IA32_MTRR_FIX16K_A0000, 0xA0000,  0x4000               },
-  { EFI_MSR_IA32_MTRR_FIX4K_C0000,  0xC0000,  0x1000               },
-  { EFI_MSR_IA32_MTRR_FIX4K_C8000,  0xC8000,  0x1000               },
-  { EFI_MSR_IA32_MTRR_FIX4K_D0000,  0xD0000,  0x1000               },
-  { EFI_MSR_IA32_MTRR_FIX4K_D8000,  0xD8000,  0x1000               },
-  { EFI_MSR_IA32_MTRR_FIX4K_E0000,  0xE0000,  0x1000               },
-  { EFI_MSR_IA32_MTRR_FIX4K_E8000,  0xE8000,  0x1000               },
-  { EFI_MSR_IA32_MTRR_FIX4K_F0000,  0xF0000,  0x1000               },
-  { EFI_MSR_IA32_MTRR_FIX4K_F8000,  0xF8000,  0x1000               }
+  { EFI_MSR_IA32_MTRR_FIX64K_00000, 0,       0x10000 },
+  { EFI_MSR_IA32_MTRR_FIX16K_80000, 0x80000, 0x4000  },
+  { EFI_MSR_IA32_MTRR_FIX16K_A0000, 0xA0000, 0x4000  },
+  { EFI_MSR_IA32_MTRR_FIX4K_C0000,  0xC0000, 0x1000  },
+  { EFI_MSR_IA32_MTRR_FIX4K_C8000,  0xC8000, 0x1000  },
+  { EFI_MSR_IA32_MTRR_FIX4K_D0000,  0xD0000, 0x1000  },
+  { EFI_MSR_IA32_MTRR_FIX4K_D8000,  0xD8000, 0x1000  },
+  { EFI_MSR_IA32_MTRR_FIX4K_E0000,  0xE0000, 0x1000  },
+  { EFI_MSR_IA32_MTRR_FIX4K_E8000,  0xE8000, 0x1000  },
+  { EFI_MSR_IA32_MTRR_FIX4K_F0000,  0xF0000, 0x1000  },
+  { EFI_MSR_IA32_MTRR_FIX4K_F8000,  0xF8000, 0x1000  }
 };
 
 /**
@@ -721,7 +721,7 @@ SearchForExactMtrr (
 
     *UsedMemoryCacheType = (EFI_MEMORY_CACHE_TYPE)(TempQword &
                                                    B_EFI_MSR_CACHE_MEMORY_TYPE);
-    *UsedMsrNum          = MsrNum;
+    *UsedMsrNum = MsrNum;
 
     return EFI_SUCCESS;
   }

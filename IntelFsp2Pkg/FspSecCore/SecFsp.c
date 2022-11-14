@@ -33,8 +33,8 @@ FspGetExceptionHandler (
   IdtGateDescriptor             = &ExceptionHandler;
   Entry                         = (IdtGateDescriptor->Bits.OffsetHigh <<
                                    16) | IdtGateDescriptor->Bits.OffsetLow;
-  Entry                         = FspInfoHeader->ImageBase +
-                                  FspInfoHeader->ImageSize - (~Entry + 1);
+  Entry = FspInfoHeader->ImageBase +
+          FspInfoHeader->ImageSize - (~Entry + 1);
   IdtGateDescriptor->Bits.OffsetHigh = (UINT16)(Entry >> 16);
   IdtGateDescriptor->Bits.OffsetLow  = (UINT16)Entry;
 
