@@ -439,7 +439,7 @@ ParseIrqMap (
                                                 (*(UINT32 *)&Data[Offset]) &
                                                 (*(UINT32 *)&IrqMapMask[3 *
                                                                         sizeof (
-                                                                                   UINT32)
+                                                                                UINT32)
                                                  ])
                                                 );
     // -1 to translate from device-tree (INTA=1) to ACPI (INTA=0) irq IDs.

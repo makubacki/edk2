@@ -666,7 +666,7 @@ AddProcHierarchyNodes (
     ProcStruct->NumberOfPrivateResources = ProcInfoNode->NoOfPrivateResources;
     PrivateResources                     = (UINT32 *)((UINT8 *)ProcStruct +
                                                       sizeof (
-                                                             EFI_ACPI_6_4_PPTT_STRUCTURE_PROCESSOR));
+                                                              EFI_ACPI_6_4_PPTT_STRUCTURE_PROCESSOR));
 
     if (ProcStruct->NumberOfPrivateResources != 0) {
       // Populate the private resources array

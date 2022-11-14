@@ -37,7 +37,7 @@
 */
 typedef struct DynamicTableFactoryProtocol
                                           EDKII_DYNAMIC_TABLE_FACTORY_PROTOCOL;
-typedef struct DynamicTableFactoryInfo    EDKII_DYNAMIC_TABLE_FACTORY_INFO;
+typedef struct DynamicTableFactoryInfo EDKII_DYNAMIC_TABLE_FACTORY_INFO;
 
 /** Return a pointer to the ACPI table generator.
 

@@ -136,7 +136,7 @@ AddGenericTimerInfo (
   Gtdt->PlatformTimerCount  = PlatformTimerCount;
   Gtdt->PlatformTimerOffset = (PlatformTimerCount == 0) ? 0 :
                               sizeof (
-                                     EFI_ACPI_6_4_GENERIC_TIMER_DESCRIPTION_TABLE);
+                                      EFI_ACPI_6_4_GENERIC_TIMER_DESCRIPTION_TABLE);
 
   if (AcpiTableRevision >
       EFI_ACPI_6_2_GENERIC_TIMER_DESCRIPTION_TABLE_REVISION)

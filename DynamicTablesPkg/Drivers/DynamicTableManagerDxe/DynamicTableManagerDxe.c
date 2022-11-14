@@ -68,22 +68,22 @@ typedef struct {
 ///
 ACPI_TABLE_PRESENCE_INFO  mAcpiVerifyTables[ACPI_TABLE_VERIFY_COUNT] = {
   { EStdAcpiTableIdFadt, EFI_ACPI_6_2_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE,
-    "FADT",                      TRUE,  0  },
+    "FADT", TRUE, 0 },
   { EStdAcpiTableIdMadt, EFI_ACPI_6_2_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE,
-    "MADT",                       TRUE,                       0   },
+    "MADT", TRUE, 0 },
   { EStdAcpiTableIdGtdt, EFI_ACPI_6_2_GENERIC_TIMER_DESCRIPTION_TABLE_SIGNATURE,
-    "GTDT",                      TRUE,
-    0                         },
+    "GTDT", TRUE,
+    0 },
   { EStdAcpiTableIdDsdt,
     EFI_ACPI_6_2_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, "DSDT",
     TRUE,
-    0                                                },
+    0 },
   { EStdAcpiTableIdDbg2, EFI_ACPI_6_2_DEBUG_PORT_2_TABLE_SIGNATURE,
-    "DBG2",         FALSE,
-    0                                                                     },
+    "DBG2", FALSE,
+    0 },
   { EStdAcpiTableIdSpcr,
     EFI_ACPI_6_2_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE, "SPCR", FALSE,
-    0                                                                                          },
+    0 },
 };
 
 /** This macro expands to a function that retrieves the ACPI Table
@@ -485,7 +485,8 @@ VerifyMandatoryTablesArePresent (
   while (AcpiTableCount-- != 0) {
     for (Index = 0; Index < ACPI_TABLE_VERIFY_COUNT; Index++) {
       if (AcpiTableInfo[AcpiTableCount].AcpiTableSignature ==
-          mAcpiVerifyTables[Index].AcpiTableSignature) {
+          mAcpiVerifyTables[Index].AcpiTableSignature)
+      {
         mAcpiVerifyTables[Index].Presence |= ACPI_TABLE_PRESENT_INFO_LIST;
         // Found this table, skip the rest.
         break;
@@ -496,13 +497,19 @@ VerifyMandatoryTablesArePresent (
   // They also might be published already, so we can search from there
   if (FeaturePcdGet (PcdInstallAcpiSdtProtocol)) {
     AcpiSdt = NULL;
-    Status  = gBS->LocateProtocol (&gEfiAcpiSdtProtocolGuid, NULL,
-                     (VOID **)&AcpiSdt);
+    Status  = gBS->LocateProtocol (
+                     &gEfiAcpiSdtProtocolGuid,
+                     NULL,
+                     (VOID **)&AcpiSdt
+                     );
 
     if (EFI_ERROR (Status) || (AcpiSdt == NULL)) {
-      DEBUG ((DEBUG_ERROR,
-        "ERROR: Failed to locate ACPI SDT protocol (0x%p) - %r\n", AcpiSdt,
-        Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "ERROR: Failed to locate ACPI SDT protocol (0x%p) - %r\n",
+        AcpiSdt,
+        Status
+        ));
       return Status;
     }
 
@@ -510,9 +517,12 @@ VerifyMandatoryTablesArePresent (
       Handle              = 0;
       InstalledTableIndex = 0;
       do {
-        Status = AcpiSdt->GetAcpiTable (InstalledTableIndex,
-                            (EFI_ACPI_SDT_HEADER **)&DescHeader, &Version,
-                            &Handle);
+        Status = AcpiSdt->GetAcpiTable (
+                            InstalledTableIndex,
+                            (EFI_ACPI_SDT_HEADER **)&DescHeader,
+                            &Version,
+                            &Handle
+                            );
         if (EFI_ERROR (Status)) {
           break;
         }
@@ -532,18 +542,27 @@ VerifyMandatoryTablesArePresent (
   for (Index = 0; Index < ACPI_TABLE_VERIFY_COUNT; Index++) {
     if (mAcpiVerifyTables[Index].Presence == 0) {
       if (mAcpiVerifyTables[Index].IsMandatory) {
-        DEBUG ((DEBUG_ERROR, "ERROR: %a Table not found.\n",
-          mAcpiVerifyTables[Index].AcpiTableName));
+        DEBUG ((
+          DEBUG_ERROR,
+          "ERROR: %a Table not found.\n",
+          mAcpiVerifyTables[Index].AcpiTableName
+          ));
         Status = EFI_NOT_FOUND;
       } else {
-        DEBUG ((DEBUG_WARN, "WARNING: %a Table not found.\n",
-          mAcpiVerifyTables[Index].AcpiTableName));
+        DEBUG ((
+          DEBUG_WARN,
+          "WARNING: %a Table not found.\n",
+          mAcpiVerifyTables[Index].AcpiTableName
+          ));
       }
     } else if (mAcpiVerifyTables[Index].Presence ==
                (ACPI_TABLE_PRESENT_INFO_LIST | ACPI_TABLE_PRESENT_INSTALLED))
     {
-      DEBUG ((DEBUG_ERROR, "ERROR: %a Table found while already published.\n",
-        mAcpiVerifyTables[Index].AcpiTableName));
+      DEBUG ((
+        DEBUG_ERROR,
+        "ERROR: %a Table found while already published.\n",
+        mAcpiVerifyTables[Index].AcpiTableName
+        ));
       Status = EFI_ALREADY_STARTED;
     }
   }
@@ -645,7 +664,8 @@ ProcessAcpiTables (
 
   // Add the FADT Table first.
   if ((mAcpiVerifyTables[ACPI_TABLE_VERIFY_FADT].Presence &
-       ACPI_TABLE_PRESENT_INSTALLED) == 0) {
+       ACPI_TABLE_PRESENT_INSTALLED) == 0)
+  {
     // FADT is not yet installed
     for (Idx = 0; Idx < AcpiTableCount; Idx++) {
       if (CREATE_STD_ACPI_TABLE_GEN_ID (EStdAcpiTableIdFadt) ==

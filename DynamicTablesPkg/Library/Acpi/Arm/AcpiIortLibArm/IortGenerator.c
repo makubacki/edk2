@@ -900,7 +900,7 @@ AddItsGroupNodes (
     ItsGroupNode->NumItsIdentifiers = NodeList->ItsIdCount;
     ItsIds                          = (UINT32 *)((UINT8 *)ItsGroupNode +
                                                  sizeof (
-                                                        EFI_ACPI_6_0_IO_REMAPPING_ITS_NODE));
+                                                         EFI_ACPI_6_0_IO_REMAPPING_ITS_NODE));
 
     Status = GetEArmObjGicItsIdentifierArray (
                CfgMgrProtocol,
@@ -1018,7 +1018,7 @@ AddNamedComponentNodes (
     NcNode->Node.IdReference = (NodeList->IdMappingCount == 0) ?
                                0 :
                                ((UINT32)(sizeof (
-                                                    EFI_ACPI_6_0_IO_REMAPPING_NAMED_COMP_NODE)
+                                                 EFI_ACPI_6_0_IO_REMAPPING_NAMED_COMP_NODE)
                                          +
                                          (ALIGN_VALUE (
                                             ObjectNameLength,
@@ -1566,7 +1566,7 @@ AddSmmuV3Nodes (
     SmmuV3Node->Node.IdReference   = (NodeList->IdMappingCount == 0) ?
                                      0 :
                                      sizeof (
-                                                EFI_ACPI_6_0_IO_REMAPPING_SMMU3_NODE);
+                                             EFI_ACPI_6_0_IO_REMAPPING_SMMU3_NODE);
 
     if (AcpiTableInfo->AcpiTableRevision <
         EFI_ACPI_IO_REMAPPING_TABLE_REVISION_05)
