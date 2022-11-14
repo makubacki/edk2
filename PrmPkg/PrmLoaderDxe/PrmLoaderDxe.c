@@ -118,7 +118,7 @@ ProcessPrmModules (
                                                   HandlerInfoStructure
                                                   ) *  mPrmModuleCount) +
                                                (sizeof (
-                                                       PRM_HANDLER_INFORMATION_STRUCT)
+                                                        PRM_HANDLER_INFORMATION_STRUCT)
                                                 * mPrmHandlerCount)
                                                );
   DEBUG ((
@@ -195,7 +195,7 @@ ProcessPrmModules (
                                                 (CurrentExportDescriptorStruct
                                                    ->Header.NumberPrmHandlers *
                                                  sizeof (
-                                                                                                                    PRM_HANDLER_INFORMATION_STRUCT))
+                                                         PRM_HANDLER_INFORMATION_STRUCT))
                                                 );
     CopyGuid (
       &CurrentModuleInfoStruct->Identifier,
@@ -260,7 +260,7 @@ ProcessPrmModules (
                                             CHAR8 *)
                                            CurrentExportDescriptorStruct->
                                              PrmHandlerExportDescriptors[
-                                                                                                                    HandlerIndex
+                                                                         HandlerIndex
                                            ].PrmHandlerName;
 
       Status =  GetContextBuffer (
@@ -308,7 +308,7 @@ ProcessPrmModules (
             CurrentHandlerInfoStruct->AcpiParameterBuffer = (UINT64)(UINTN)(
                                                                             CurrentModuleAcpiParamDescriptors
                                                                             [
-                                                                                                             AcpiParamIndex
+                                                                             AcpiParamIndex
                                                                             ].
                                                                               AcpiParameterBufferAddress
                                                                             );

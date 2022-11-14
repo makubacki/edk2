@@ -367,7 +367,8 @@ ValidatePrmContextBuffer (
   if ((PrmContextBuffer->StaticDataBuffer != NULL) && EFI_ERROR (
                                                         ValidatePrmDataBuffer (
                                                           PrmContextBuffer->
-                                                            StaticDataBuffer)
+                                                            StaticDataBuffer
+                                                          )
                                                         ))
   {
     DEBUG ((

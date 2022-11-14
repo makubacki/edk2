@@ -298,40 +298,86 @@ NullPointerArgumentsShouldFailGracefully (
   PRM_MODULE_CONTEXT_BUFFERS  ModuleContextBuffers;
   PRM_MODULE_CONTEXT_BUFFERS  *ModuleContextBuffersPtr;
 
-  UT_ASSERT_EQUAL (FindContextBufferInModuleBuffers (NULL, NULL, NULL),
-    EFI_INVALID_PARAMETER);
-  UT_ASSERT_EQUAL (FindContextBufferInModuleBuffers (NULL,
-                     &ModuleContextBuffers, (CONST
-                                             PRM_CONTEXT_BUFFER **)&
-                     ContextBufferPtr),
-    EFI_INVALID_PARAMETER);
-  UT_ASSERT_EQUAL (FindContextBufferInModuleBuffers (&Guid, NULL, (CONST
-                                                                   PRM_CONTEXT_BUFFER
-                                                                   **)&
-                     ContextBufferPtr), EFI_INVALID_PARAMETER);
-  UT_ASSERT_EQUAL (FindContextBufferInModuleBuffers (&Guid,
-                     &ModuleContextBuffers, NULL), EFI_INVALID_PARAMETER);
+  UT_ASSERT_EQUAL (
+    FindContextBufferInModuleBuffers (NULL, NULL, NULL),
+    EFI_INVALID_PARAMETER
+    );
+  UT_ASSERT_EQUAL (
+    FindContextBufferInModuleBuffers (
+      NULL,
+      &ModuleContextBuffers,
+      (CONST
+       PRM_CONTEXT_BUFFER **)&
+      ContextBufferPtr
+      ),
+    EFI_INVALID_PARAMETER
+    );
+  UT_ASSERT_EQUAL (
+    FindContextBufferInModuleBuffers (
+      &Guid,
+      NULL,
+      (CONST
+       PRM_CONTEXT_BUFFER
+       **)&
+      ContextBufferPtr
+      ),
+    EFI_INVALID_PARAMETER
+    );
+  UT_ASSERT_EQUAL (
+    FindContextBufferInModuleBuffers (
+      &Guid,
+      &ModuleContextBuffers,
+      NULL
+      ),
+    EFI_INVALID_PARAMETER
+    );
 
-  UT_ASSERT_EQUAL (GetModuleContextBuffers (ByModuleGuid, NULL, NULL),
-    EFI_INVALID_PARAMETER);
-  UT_ASSERT_EQUAL (GetModuleContextBuffers (ByModuleGuid, NULL, (CONST
-                                                                 PRM_MODULE_CONTEXT_BUFFERS
-                                                                 **)&
-                     ModuleContextBuffersPtr),
-    EFI_INVALID_PARAMETER);
-  UT_ASSERT_EQUAL (GetModuleContextBuffers (ByModuleGuid, &Guid, NULL),
-    EFI_INVALID_PARAMETER);
+  UT_ASSERT_EQUAL (
+    GetModuleContextBuffers (ByModuleGuid, NULL, NULL),
+    EFI_INVALID_PARAMETER
+    );
+  UT_ASSERT_EQUAL (
+    GetModuleContextBuffers (
+      ByModuleGuid,
+      NULL,
+      (CONST
+       PRM_MODULE_CONTEXT_BUFFERS
+       **)&
+      ModuleContextBuffersPtr
+      ),
+    EFI_INVALID_PARAMETER
+    );
+  UT_ASSERT_EQUAL (
+    GetModuleContextBuffers (ByModuleGuid, &Guid, NULL),
+    EFI_INVALID_PARAMETER
+    );
 
   UT_ASSERT_EQUAL (GetContextBuffer (NULL, NULL, NULL), EFI_INVALID_PARAMETER);
-  UT_ASSERT_EQUAL (GetContextBuffer (NULL, &ModuleContextBuffers, (CONST
-                                                                   PRM_CONTEXT_BUFFER
-                                                                   **)&
-                     ContextBufferPtr), EFI_INVALID_PARAMETER);
-  UT_ASSERT_EQUAL (GetContextBuffer (&Guid, NULL, (CONST
-                                                   PRM_CONTEXT_BUFFER **)&
-                     ContextBufferPtr), EFI_NOT_FOUND);
-  UT_ASSERT_EQUAL (GetContextBuffer (&Guid, &ModuleContextBuffers, NULL),
-    EFI_INVALID_PARAMETER);
+  UT_ASSERT_EQUAL (
+    GetContextBuffer (
+      NULL,
+      &ModuleContextBuffers,
+      (CONST
+       PRM_CONTEXT_BUFFER
+       **)&
+      ContextBufferPtr
+      ),
+    EFI_INVALID_PARAMETER
+    );
+  UT_ASSERT_EQUAL (
+    GetContextBuffer (
+      &Guid,
+      NULL,
+      (CONST
+       PRM_CONTEXT_BUFFER **)&
+      ContextBufferPtr
+      ),
+    EFI_NOT_FOUND
+    );
+  UT_ASSERT_EQUAL (
+    GetContextBuffer (&Guid, &ModuleContextBuffers, NULL),
+    EFI_INVALID_PARAMETER
+    );
 
   return UNIT_TEST_PASSED;
 }
@@ -374,8 +420,10 @@ InitializeFunctionalCorrectness (
     return UNIT_TEST_ERROR_PREREQUISITE_NOT_MET;
   }
 
-  CopyGuid (&PrmConfigProtocol->ModuleContextBuffers.ModuleGuid,
-    &ModuleContextBuffers->ModuleGuid);
+  CopyGuid (
+    &PrmConfigProtocol->ModuleContextBuffers.ModuleGuid,
+    &ModuleContextBuffers->ModuleGuid
+    );
   PrmConfigProtocol->ModuleContextBuffers.BufferCount =
     ModuleContextBuffers->BufferCount;
   PrmConfigProtocol->ModuleContextBuffers.Buffer =
@@ -463,14 +511,21 @@ VerifyGetModuleContextBuffers (
   ContextBuffers = NULL;
   TestContext    = (PRM_CONTEXT_BUFFERS_TEST_CONTEXT *)Context;
 
-  Status = GetModuleContextBuffers (TestContext->GuidSearchType,
-             TestContext->Guid, (CONST
-                                 PRM_MODULE_CONTEXT_BUFFERS **)&ContextBuffers);
+  Status = GetModuleContextBuffers (
+             TestContext->GuidSearchType,
+             TestContext->Guid,
+             (CONST
+              PRM_MODULE_CONTEXT_BUFFERS **)&ContextBuffers
+             );
   UT_ASSERT_STATUS_EQUAL (Status, TestContext->ExpectedStatus);
 
   if (!EFI_ERROR (TestContext->ExpectedStatus)) {
-    UT_ASSERT_TRUE (CompareGuid (TestContext->ExpectedModuleGuid,
-                      &ContextBuffers->ModuleGuid));
+    UT_ASSERT_TRUE (
+      CompareGuid (
+        TestContext->ExpectedModuleGuid,
+        &ContextBuffers->ModuleGuid
+        )
+      );
     UT_LOG_INFO (
       "%a: Searching by %a GUID ({%g}) returned ContextBuffers at 0x%x\n",
       __FUNCTION__,
@@ -508,10 +563,13 @@ VerifyFindContextBufferInModuleBuffers (
   FoundContextBuffer = NULL;
   TestContext        = (PRM_CONTEXT_BUFFER_TEST_CONTEXT *)Context;
 
-  Status = FindContextBufferInModuleBuffers (TestContext->HandlerGuid,
-             TestContext->ContextBuffers, (CONST
-                                           PRM_CONTEXT_BUFFER **)&
-             FoundContextBuffer);
+  Status = FindContextBufferInModuleBuffers (
+             TestContext->HandlerGuid,
+             TestContext->ContextBuffers,
+             (CONST
+              PRM_CONTEXT_BUFFER **)&
+             FoundContextBuffer
+             );
   UT_ASSERT_STATUS_EQUAL (Status, TestContext->ExpectedStatus);
 
   if (!EFI_ERROR (TestContext->ExpectedStatus)) {
@@ -555,10 +613,13 @@ VerifyGetContextBuffer (
   FoundContextBuffer = NULL;
   TestContext        = (PRM_CONTEXT_BUFFER_TEST_CONTEXT *)Context;
 
-  Status = GetContextBuffer (TestContext->HandlerGuid,
-             TestContext->ContextBuffers, (CONST
-                                           PRM_CONTEXT_BUFFER **)&
-             FoundContextBuffer);
+  Status = GetContextBuffer (
+             TestContext->HandlerGuid,
+             TestContext->ContextBuffers,
+             (CONST
+              PRM_CONTEXT_BUFFER **)&
+             FoundContextBuffer
+             );
 
   UT_ASSERT_STATUS_EQUAL (Status, TestContext->ExpectedStatus);
 
@@ -601,23 +662,37 @@ main (
   //
   // Start setting up the test framework for running the tests.
   //
-  Status = InitUnitTestFramework (&Framework, UNIT_TEST_NAME,
-             gEfiCallerBaseName, UNIT_TEST_VERSION);
+  Status = InitUnitTestFramework (
+             &Framework,
+             UNIT_TEST_NAME,
+             gEfiCallerBaseName,
+             UNIT_TEST_VERSION
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n",
-      Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in InitUnitTestFramework. Status = %r\n",
+      Status
+      ));
     goto EXIT;
   }
 
   //
   // Add all test suites and tests.
   //
-  Status = CreateUnitTestSuite (&BasicTests, Framework,
-             "Basic Context Buffer Tests", "PrmContextBufferLib.Basic", NULL,
-             NULL);
+  Status = CreateUnitTestSuite (
+             &BasicTests,
+             Framework,
+             "Basic Context Buffer Tests",
+             "PrmContextBufferLib.Basic",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR,
-      "Failed in CreateUnitTestSuite for PrmContextBufferLib.Basic\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for PrmContextBufferLib.Basic\n"
+      ));
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
@@ -632,12 +707,19 @@ main (
     NULL
     );
 
-  Status = CreateUnitTestSuite (&FunctionalCorrectnessTests, Framework,
-             "Functional Correctness Tests", "PrmContextBufferLib.Functional",
-             NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &FunctionalCorrectnessTests,
+             Framework,
+             "Functional Correctness Tests",
+             "PrmContextBufferLib.Functional",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR,
-      "Failed in CreateUnitTestSuite for PrmContextBufferLib.Functional\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in CreateUnitTestSuite for PrmContextBufferLib.Functional\n"
+      ));
     Status = EFI_OUT_OF_RESOURCES;
     goto EXIT;
   }
@@ -647,8 +729,12 @@ main (
   //
   for (Index = 0; Index < ARRAY_SIZE (mContextBuffersArray); Index++) {
     ZeroMem (&TestCaseClassNameString[0], ARRAY_SIZE (TestCaseClassNameString));
-    ZeroMem (&TestCaseDescriptionString[0], ARRAY_SIZE (
-                                              TestCaseDescriptionString));
+    ZeroMem (
+      &TestCaseDescriptionString[0],
+      ARRAY_SIZE (
+        TestCaseDescriptionString
+        )
+      );
 
     AsciiSPrint (
       &TestCaseClassNameString[0],
@@ -678,8 +764,12 @@ main (
 
   for (Index = 0; Index < ARRAY_SIZE (mContextBufferArray); Index++) {
     ZeroMem (&TestCaseClassNameString[0], ARRAY_SIZE (TestCaseClassNameString));
-    ZeroMem (&TestCaseDescriptionString[0], ARRAY_SIZE (
-                                              TestCaseDescriptionString));
+    ZeroMem (
+      &TestCaseDescriptionString[0],
+      ARRAY_SIZE (
+        TestCaseDescriptionString
+        )
+      );
 
     AsciiSPrint (
       &TestCaseClassNameString[0],
@@ -707,8 +797,12 @@ main (
 
   for (Index = 0; Index < ARRAY_SIZE (mContextBufferArray); Index++) {
     ZeroMem (&TestCaseClassNameString[0], ARRAY_SIZE (TestCaseClassNameString));
-    ZeroMem (&TestCaseDescriptionString[0], ARRAY_SIZE (
-                                              TestCaseDescriptionString));
+    ZeroMem (
+      &TestCaseDescriptionString[0],
+      ARRAY_SIZE (
+        TestCaseDescriptionString
+        )
+      );
 
     AsciiSPrint (
       &TestCaseClassNameString[0],

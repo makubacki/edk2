@@ -74,14 +74,14 @@ GetPrmModuleExportDescriptorTable (
   //
   // The export name pointer table and export ordinal table form two parallel arrays associated by index.
   //
-  CurrentImageAddress    = PeCoffLoaderImageContext->ImageAddress;
-  ExportAddressTable     = (UINT32 *)((UINTN)CurrentImageAddress +
-                                      ImageExportDirectory->AddressOfFunctions);
+  CurrentImageAddress = PeCoffLoaderImageContext->ImageAddress;
+  ExportAddressTable  = (UINT32 *)((UINTN)CurrentImageAddress +
+                                   ImageExportDirectory->AddressOfFunctions);
   ExportNamePointerTable = (UINT32 *)((UINTN)CurrentImageAddress +
                                       ImageExportDirectory->AddressOfNames);
-  OrdinalTable           = (UINT16 *)((UINTN)CurrentImageAddress +
-                                      ImageExportDirectory->
-                                        AddressOfNameOrdinals);
+  OrdinalTable = (UINT16 *)((UINTN)CurrentImageAddress +
+                            ImageExportDirectory->
+                              AddressOfNameOrdinals);
 
   for (Index = 0; Index < ImageExportDirectory->NumberOfNames; Index++) {
     CurrentExportName = (CONST CHAR8 *)((UINTN)CurrentImageAddress +
@@ -124,7 +124,7 @@ GetPrmModuleExportDescriptorTable (
       TempExportDescriptor =
         (PRM_MODULE_EXPORT_DESCRIPTOR_STRUCT *)((UINTN)CurrentImageAddress +
                                                 ExportAddressTable[
-                                                                                                                    PrmModuleExportDescriptorOrdinal
+                                                                   PrmModuleExportDescriptorOrdinal
                                                 ]);
       if (TempExportDescriptor->Header.Signature ==
           PRM_MODULE_EXPORT_DESCRIPTOR_SIGNATURE)
@@ -259,7 +259,7 @@ GetExportDirectoryInPeCoffImage (
     DirectoryEntry =
       (EFI_IMAGE_DATA_DIRECTORY *)&(OptionalHeaderPtrUnion.Pe32->OptionalHeader.
                                       DataDirectory[
-                                                                                                                 EFI_IMAGE_DIRECTORY_ENTRY_EXPORT
+                                                    EFI_IMAGE_DIRECTORY_ENTRY_EXPORT
                                     ]);
   } else if (OptionalHeaderPtrUnion.Pe32->OptionalHeader.Magic ==
              EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC)
@@ -272,7 +272,7 @@ GetExportDirectoryInPeCoffImage (
     DirectoryEntry =
       (EFI_IMAGE_DATA_DIRECTORY *)&(OptionalHeaderPtrUnion.Pe32Plus->
                                       OptionalHeader.DataDirectory[
-                                                                                                                     EFI_IMAGE_DIRECTORY_ENTRY_EXPORT
+                                                                   EFI_IMAGE_DIRECTORY_ENTRY_EXPORT
                                     ]);
   } else {
     return EFI_UNSUPPORTED;
@@ -492,20 +492,20 @@ GetExportEntryAddress (
 
   *ExportPhysicalAddress = 0;
 
-  ExportAddressTable     = (UINT32 *)((UINTN)ImageBaseAddress +
-                                      ImageExportDirectory->AddressOfFunctions);
+  ExportAddressTable = (UINT32 *)((UINTN)ImageBaseAddress +
+                                  ImageExportDirectory->AddressOfFunctions);
   ExportNamePointerTable = (UINT32 *)((UINTN)ImageBaseAddress +
                                       ImageExportDirectory->AddressOfNames);
-  OrdinalTable           = (UINT16 *)((UINTN)ImageBaseAddress +
-                                      ImageExportDirectory->
-                                        AddressOfNameOrdinals);
+  OrdinalTable = (UINT16 *)((UINTN)ImageBaseAddress +
+                            ImageExportDirectory->
+                              AddressOfNameOrdinals);
 
   for (ExportNameIndex = 0; ExportNameIndex <
        ImageExportDirectory->NumberOfNames; ExportNameIndex++)
   {
     ExportNameTablePointerName = (CONST CHAR8 *)((UINTN)ImageBaseAddress +
                                                  ExportNamePointerTable[
-                                                                                                 ExportNameIndex
+                                                                        ExportNameIndex
                                                  ]);
 
     if (AsciiStrnCmp (
@@ -529,7 +529,7 @@ GetExportEntryAddress (
 
       *ExportPhysicalAddress = (EFI_PHYSICAL_ADDRESS)((UINTN)ImageBaseAddress +
                                                       ExportAddressTable[
-                                                                                                  CurrentExportOrdinal
+                                                                         CurrentExportOrdinal
                                                       ]);
       return EFI_SUCCESS;
     }

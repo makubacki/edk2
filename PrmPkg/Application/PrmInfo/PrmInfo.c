@@ -48,9 +48,9 @@ STATIC EFI_HII_HANDLE  mPrmInfoHiiHandle;
 STATIC LIST_ENTRY      mPrmHandlerList;
 
 STATIC CONST SHELL_PARAM_ITEM  mParamList[] = {
-  { L"-l", TypeFlag    },
-  { L"-t", TypeValue   },
-  { NULL,  TypeMax     }
+  { L"-l", TypeFlag  },
+  { L"-t", TypeValue },
+  { NULL,  TypeMax   }
 };
 
 /**
@@ -310,13 +310,13 @@ GatherPrmHandlerInfo (
       CurrentHandlerContext.ModuleName = (CHAR8 *)((UINTN)CurrentImageAddress +
                                                    CurrentImageExportDirectory->
                                                      Name);
-      CurrentHandlerContext.Guid       =
+      CurrentHandlerContext.Guid =
         &CurrentExportDescriptorStruct->PrmHandlerExportDescriptors[HandlerIndex
         ].
           PrmHandlerGuid;
       CurrentHandlerContext.Name =
         (CHAR8 *)CurrentExportDescriptorStruct->PrmHandlerExportDescriptors[
-                                                                                                              HandlerIndex
+                                                                            HandlerIndex
         ].PrmHandlerName;
 
       if (PrintInformation) {
