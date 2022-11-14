@@ -84,16 +84,16 @@ EFI_MM_SYSTEM_TABLE  gMmCoreMmst = {
 // Table of MMI Handlers that are registered by the MM Core when it is initialized
 //
 MM_CORE_MMI_HANDLERS  mMmCoreMmiHandlers[] = {
-  { MmReadyToLockHandler,     &gEfiDxeMmReadyToLockProtocolGuid,     NULL,
-    TRUE                               },
-  { MmEndOfDxeHandler,        &gEfiEndOfDxeEventGroupGuid,           NULL,
-    FALSE                                                                },
-  { MmExitBootServiceHandler, &gEfiEventExitBootServicesGuid,        NULL,
-    FALSE                                                                                                 },
-  { MmReadyToBootHandler,     &gEfiEventReadyToBootGuid,             NULL,
-    FALSE                                                                                                                                  },
-  { NULL,                     NULL,                                  NULL,
-    FALSE                                                                                                                                  },
+  { MmReadyToLockHandler,     &gEfiDxeMmReadyToLockProtocolGuid, NULL,
+    TRUE },
+  { MmEndOfDxeHandler,        &gEfiEndOfDxeEventGroupGuid,       NULL,
+    FALSE },
+  { MmExitBootServiceHandler, &gEfiEventExitBootServicesGuid,    NULL,
+    FALSE },
+  { MmReadyToBootHandler,     &gEfiEventReadyToBootGuid,         NULL,
+    FALSE },
+  { NULL,                     NULL,                              NULL,
+    FALSE },
 };
 
 EFI_SYSTEM_TABLE      *mEfiSystemTable;
@@ -561,7 +561,8 @@ StandaloneMmMain (
     //
     gMmCorePrivate = (MM_CORE_PRIVATE_DATA *)AllocateRuntimePages (
                                                EFI_SIZE_TO_PAGES (
-                                                 sizeof (MM_CORE_PRIVATE_DATA))
+                                                 sizeof (MM_CORE_PRIVATE_DATA)
+                                                 )
                                                );
     SetMem ((VOID *)(UINTN)gMmCorePrivate, sizeof (MM_CORE_PRIVATE_DATA), 0);
     gMmCorePrivate->Signature              = MM_CORE_PRIVATE_DATA_SIGNATURE;

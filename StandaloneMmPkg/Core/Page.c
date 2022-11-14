@@ -47,9 +47,9 @@ InternalAllocPagesOnOneNode (
   Bottom = Top - NumberOfPages;
 
   if (Top < Pages->NumberOfPages) {
-    Node                = (FREE_PAGE_LIST *)((UINTN)Pages + EFI_PAGES_TO_SIZE (
-                                                              Top
-                                                              ));
+    Node = (FREE_PAGE_LIST *)((UINTN)Pages + EFI_PAGES_TO_SIZE (
+                                               Top
+                                               ));
     Node->NumberOfPages = Pages->NumberOfPages - Top;
     InsertHeadList (&Pages->Link, &Node->Link);
   }

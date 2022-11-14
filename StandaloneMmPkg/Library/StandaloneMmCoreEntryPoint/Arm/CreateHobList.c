@@ -153,7 +153,7 @@ CreateHobListFromBootInfo (
                                                                  &
                                                                  gEfiArmTfCpuDriverEpDescriptorGuid,
                                                                  sizeof (
-                                                                        ARM_TF_CPU_DRIVER_EP_DESCRIPTOR)
+                                                                         ARM_TF_CPU_DRIVER_EP_DESCRIPTOR)
                                                                  );
 
   *CpuDriverEntryPoint                         = NULL;

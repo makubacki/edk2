@@ -227,9 +227,9 @@ InternalAllocateAlignedPages (
       ASSERT_EFI_ERROR (Status);
     }
 
-    Memory         = (EFI_PHYSICAL_ADDRESS)(AlignedMemory + EFI_PAGES_TO_SIZE (
-                                                              Pages
-                                                              ));
+    Memory = (EFI_PHYSICAL_ADDRESS)(AlignedMemory + EFI_PAGES_TO_SIZE (
+                                                      Pages
+                                                      ));
     UnalignedPages = RealPages - Pages - UnalignedPages;
     if (UnalignedPages > 0) {
       //

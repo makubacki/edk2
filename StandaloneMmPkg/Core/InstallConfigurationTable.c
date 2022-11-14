@@ -110,7 +110,7 @@ MmInstallConfigurationTable (
       //
       mMmSystemTableAllocateSize += (CONFIG_TABLE_SIZE_INCREASED *
                                      sizeof (EFI_CONFIGURATION_TABLE));
-      ConfigurationTable          = AllocatePool (mMmSystemTableAllocateSize);
+      ConfigurationTable = AllocatePool (mMmSystemTableAllocateSize);
       if (ConfigurationTable == NULL) {
         //
         // If a new table could not be allocated, then return an error.
