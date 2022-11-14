@@ -515,17 +515,17 @@ time        (
 //
 #define strcmp  AsciiStrCmp
 #define memcpy(dest, source, \
-               count)             CopyMem(dest,source,(UINTN)(count))
+               count)   CopyMem(dest,source,(UINTN)(count))
 #define memset(dest, ch, \
-               count)             SetMem(dest,(UINTN)(count),(UINT8)(ch))
+               count)   SetMem(dest,(UINTN)(count),(UINT8)(ch))
 #define memchr(buf, ch, \
-               count)             ScanMem8(buf,(UINTN)(count),(UINT8)ch)
+               count)   ScanMem8(buf,(UINTN)(count),(UINT8)ch)
 #define memcmp(buf1, buf2, \
-               count)             (int)(CompareMem(buf1,buf2,(UINTN)(count)))
+               count)   (int)(CompareMem(buf1,buf2,(UINTN)(count)))
 #define memmove(dest, source, \
-                count)            CopyMem(dest,source,(UINTN)(count))
+                count)  CopyMem(dest,source,(UINTN)(count))
 #define strlen( \
-              str)                (size_t)(AsciiStrnLenS(str,MAX_STRING_SIZE))
+                str)    (size_t)(AsciiStrnLenS(str,MAX_STRING_SIZE))
 #define strcpy(strDest, \
                strSource)                    \
                                   AsciiStrCpyS(strDest,(strlen(strSource)+1),strSource)
@@ -542,15 +542,15 @@ time        (
                ch)                               \
                                   ScanMem8((VOID *)(str),AsciiStrSize(str),(UINT8)ch)
 #define strcasecmp(str1, \
-                   str2)          (int)AsciiStriCmp(str1,str2)
-#define strstr(s1, s2)            AsciiStrStr(s1,s2)
+                   str2)  (int)AsciiStriCmp(str1,str2)
+#define strstr(s1, s2)    AsciiStrStr(s1,s2)
 #define snprintf(buf, len, \
-                 ...)             RedfishAsciiSPrint(buf,len,__VA_ARGS__)
+                 ...)     RedfishAsciiSPrint(buf,len,__VA_ARGS__)
 #define vsnprintf(buf, len, format, \
                   marker)           \
                                   RedfishAsciiVSPrint((buf),(len),(format),(marker))
-#define assert(expression)        ASSERT(expression)
-#define offsetof(type, member)    OFFSET_OF(type,member)
+#define assert(expression)      ASSERT(expression)
+#define offsetof(type, member)  OFFSET_OF(type,member)
 
 #define EOF  (-1)
 

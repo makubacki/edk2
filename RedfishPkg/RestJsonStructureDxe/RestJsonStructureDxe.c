@@ -79,7 +79,7 @@ RestJsonStructureRegister (
                                       sizeof (REST_JSON_STRUCTURE_INSTANCE) +
                                       NumberOfNS *
                                       sizeof (
-                                                                                                                  EFI_REST_JSON_RESOURCE_TYPE_IDENTIFIER)
+                                              EFI_REST_JSON_RESOURCE_TYPE_IDENTIFIER)
                                       );
   if (Instance == NULL) {
     return EFI_OUT_OF_RESOURCES;

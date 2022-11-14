@@ -914,7 +914,7 @@ AddAndSignalNewRedfishService (
       DiscoveredList =
         (EFI_REDFISH_DISCOVERED_INTERNAL_LIST *)AllocateZeroPool (
                                                   sizeof (
-                                                                                        EFI_REDFISH_DISCOVERED_INTERNAL_LIST)
+                                                          EFI_REDFISH_DISCOVERED_INTERNAL_LIST)
                                                   );
       if (DiscoveredList == NULL) {
         return EFI_OUT_OF_RESOURCES;
@@ -923,7 +923,7 @@ AddAndSignalNewRedfishService (
       InitializeListHead (&DiscoveredList->NextInstance);
       DiscoveredInstance = (EFI_REDFISH_DISCOVERED_INSTANCE *)AllocateZeroPool (
                                                                 sizeof (
-                                                                                       EFI_REDFISH_DISCOVERED_INSTANCE)
+                                                                        EFI_REDFISH_DISCOVERED_INSTANCE)
                                                                 );
       if (DiscoveredInstance == NULL) {
         FreePool ((VOID *)DiscoveredList);
@@ -948,7 +948,8 @@ AddAndSignalNewRedfishService (
                                                              AsciiStrSize (
                                                                (const
                                                                 CHAR8 *)
-                                                               RedfishLocation)
+                                                               RedfishLocation
+                                                               )
                                                              * sizeof (CHAR16)
                                                              );
       AsciiStrToUnicodeStrS (
@@ -968,9 +969,11 @@ AddAndSignalNewRedfishService (
 
     if (Uuid != NULL) {
       DiscoveredInstance->Information.Uuid = (CHAR16 *)AllocatePool (
-                                                         AsciiStrSize ((const
-                                                                        CHAR8 *)
-                                                           Uuid) *
+                                                         AsciiStrSize (
+                                                           (const
+                                                            CHAR8 *)
+                                                           Uuid
+                                                           ) *
                                                          sizeof (CHAR16)
                                                          );
       AsciiStrToUnicodeStrS (
@@ -988,8 +991,10 @@ AddAndSignalNewRedfishService (
 
     if (Os != NULL) {
       DiscoveredInstance->Information.Os = (CHAR16 *)AllocatePool (
-                                                       AsciiStrSize ((const
-                                                                      CHAR8 *)Os)
+                                                       AsciiStrSize (
+                                                         (const
+                                                          CHAR8 *)Os
+                                                         )
                                                        * sizeof (CHAR16)
                                                        );
       AsciiStrToUnicodeStrS (
@@ -1010,7 +1015,8 @@ AddAndSignalNewRedfishService (
       DiscoveredInstance->Information.OsVersion = (CHAR16 *)AllocatePool (
                                                               AsciiStrSize (
                                                                 (const
-                                                                 CHAR8 *)OsVer)
+                                                                 CHAR8 *)OsVer
+                                                                )
                                                               * sizeof (CHAR16)
                                                               );
       AsciiStrToUnicodeStrS (
@@ -1025,10 +1031,12 @@ AddAndSignalNewRedfishService (
 
     if ((Product != NULL) && (ProductVer != NULL)) {
       DiscoveredInstance->Information.Product = (CHAR16 *)AllocatePool (
-                                                            AsciiStrSize ((const
-                                                                           CHAR8
-                                                                           *)
-                                                              Product) *
+                                                            AsciiStrSize (
+                                                              (const
+                                                               CHAR8
+                                                               *)
+                                                              Product
+                                                              ) *
                                                             sizeof (CHAR16)
                                                             );
       AsciiStrToUnicodeStrS (
@@ -1043,7 +1051,8 @@ AddAndSignalNewRedfishService (
                                                                AsciiStrSize (
                                                                  (const
                                                                   CHAR8 *)
-                                                                 ProductVer) *
+                                                                 ProductVer
+                                                                 ) *
                                                                sizeof (CHAR16)
                                                                );
       AsciiStrToUnicodeStrS (
@@ -1319,7 +1328,7 @@ NetworkInterfaceGetSubnetInfo (
           NewNetworkInterface =
             (EFI_REDFISH_DISCOVER_NETWORK_INTERFACE_INTERNAL *)AllocateZeroPool (
                                                                  sizeof (
-                                                                                                            EFI_REDFISH_DISCOVER_NETWORK_INTERFACE_INTERNAL)
+                                                                         EFI_REDFISH_DISCOVER_NETWORK_INTERFACE_INTERNAL)
                                                                  );
           if (NewNetworkInterface != NULL) {
             CopyMem (
@@ -1418,7 +1427,7 @@ RedfishServiceGetNetworkInterface (
   ThisNetworkInterface =
     (EFI_REDFISH_DISCOVER_NETWORK_INTERFACE *)AllocateZeroPool (
                                                 sizeof (
-                                                                                            EFI_REDFISH_DISCOVER_NETWORK_INTERFACE)
+                                                        EFI_REDFISH_DISCOVER_NETWORK_INTERFACE)
                                                 * mNumNetworkInterface
                                                 );
   if (ThisNetworkInterface == NULL) {
@@ -1592,7 +1601,7 @@ RedfishServiceAcquireService (
         ));
       Instance = (EFI_REDFISH_DISCOVERED_INTERNAL_INSTANCE *)AllocateZeroPool (
                                                                sizeof (
-                                                                                      EFI_REDFISH_DISCOVERED_INTERNAL_INSTANCE)
+                                                                       EFI_REDFISH_DISCOVERED_INTERNAL_INSTANCE)
                                                                );
       if (Instance == NULL) {
         DEBUG ((DEBUG_ERROR, "%a:Memory allocation fail.\n", __FUNCTION__));
@@ -1804,7 +1813,7 @@ ReleaseNext:;
     ThisRedfishInstance =
       (EFI_REDFISH_DISCOVERED_INSTANCE *)((UINT8 *)ThisRedfishInstance +
                                           sizeof (
-                                                                                                    EFI_REDFISH_DISCOVERED_INSTANCE));
+                                                  EFI_REDFISH_DISCOVERED_INSTANCE));
   }
 
   if (AnyFailRelease) {
@@ -1900,7 +1909,7 @@ CreateRedfishDiscoverNetworkInterface (
     NewNetworkInterface =
       (EFI_REDFISH_DISCOVER_NETWORK_INTERFACE_INTERNAL *)AllocateZeroPool (
                                                            sizeof (
-                                                                                                      EFI_REDFISH_DISCOVER_NETWORK_INTERFACE_INTERNAL)
+                                                                   EFI_REDFISH_DISCOVER_NETWORK_INTERFACE_INTERNAL)
                                                            );
     if (NewNetworkInterface == NULL) {
       return EFI_OUT_OF_RESOURCES;
@@ -2134,7 +2143,7 @@ BuildupNetworkInterface (
       RestExInstance =
         (EFI_REDFISH_DISCOVER_REST_EX_INSTANCE_INTERNAL *)AllocateZeroPool (
                                                             sizeof (
-                                                                                                  EFI_REDFISH_DISCOVER_REST_EX_INSTANCE_INTERNAL)
+                                                                    EFI_REDFISH_DISCOVER_REST_EX_INSTANCE_INTERNAL)
                                                             );
       if (RestExInstance == NULL) {
         return EFI_OUT_OF_RESOURCES;

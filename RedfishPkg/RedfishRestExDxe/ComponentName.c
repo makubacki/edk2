@@ -125,8 +125,8 @@ EFI_COMPONENT_NAME2_PROTOCOL  gRedfishRestExComponentName2 = {
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_UNICODE_STRING_TABLE  mRedfishRestExDriverNameTable[] = {
-  { "eng;en", (CHAR16 *)L"Redfish RestEx Network Service Driver"     },
-  { NULL,     NULL                                                   }
+  { "eng;en", (CHAR16 *)L"Redfish RestEx Network Service Driver" },
+  { NULL,     NULL                                               }
 };
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  *
