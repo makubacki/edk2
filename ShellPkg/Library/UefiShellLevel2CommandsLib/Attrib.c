@@ -12,15 +12,15 @@
 STATIC CONST CHAR16  AllFiles[] = L"*";
 
 STATIC CONST SHELL_PARAM_ITEM  AttribParamList[] = {
-  { L"-a", TypeFlag   },
-  { L"+a", TypeFlag   },
-  { L"-s", TypeFlag   },
-  { L"+s", TypeFlag   },
-  { L"-h", TypeFlag   },
-  { L"+h", TypeFlag   },
-  { L"-r", TypeFlag   },
-  { L"+r", TypeFlag   },
-  { NULL,  TypeMax    }
+  { L"-a", TypeFlag },
+  { L"+a", TypeFlag },
+  { L"-s", TypeFlag },
+  { L"+s", TypeFlag },
+  { L"-h", TypeFlag },
+  { L"+h", TypeFlag },
+  { L"-r", TypeFlag },
+  { L"+r", TypeFlag },
+  { NULL,  TypeMax  }
 };
 
 /**

@@ -30,14 +30,14 @@ CONST UINT16  mShellMmAccessTypeStr[] = {
 };
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-mmio", TypeFlag      },
-  { L"-mem",  TypeFlag      },
-  { L"-io",   TypeFlag      },
-  { L"-pci",  TypeFlag      },
-  { L"-pcie", TypeFlag      },
-  { L"-n",    TypeFlag      },
-  { L"-w",    TypeValue     },
-  { NULL,     TypeMax       }
+  { L"-mmio", TypeFlag  },
+  { L"-mem",  TypeFlag  },
+  { L"-io",   TypeFlag  },
+  { L"-pci",  TypeFlag  },
+  { L"-pcie", TypeFlag  },
+  { L"-n",    TypeFlag  },
+  { L"-w",    TypeValue },
+  { NULL,     TypeMax   }
 };
 
 CONST UINT64                                 mShellMmMaxNumber[] = {

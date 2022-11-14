@@ -103,7 +103,8 @@ IsValidProfile (
   TempLocation = StrStr (ProfilesString, String);
   if ((TempLocation != NULL) && (*(TempLocation-1) == L';') && (*(TempLocation+
                                                                   StrLen (
-                                                                    String)) ==
+                                                                    String
+                                                                    )) ==
                                                                 L';'))
   {
     return (TRUE);
@@ -145,8 +146,11 @@ TestOperation (
                                    Compare1,
                                    FALSE,
                                    FALSE
-                                   ) || !ShellIsHexOrDecimalNumber (Compare2,
-                                           FALSE, FALSE))
+                                   ) || !ShellIsHexOrDecimalNumber (
+                                           Compare2,
+                                           FALSE,
+                                           FALSE
+                                           ))
       {
         //
         // string compare
@@ -191,8 +195,11 @@ TestOperation (
                                    Compare1,
                                    FALSE,
                                    FALSE
-                                   ) || !ShellIsHexOrDecimalNumber (Compare2,
-                                           FALSE, FALSE))
+                                   ) || !ShellIsHexOrDecimalNumber (
+                                           Compare2,
+                                           FALSE,
+                                           FALSE
+                                           ))
       {
         //
         // string compare
@@ -236,8 +243,11 @@ TestOperation (
                                    Compare1,
                                    FALSE,
                                    FALSE
-                                   ) || !ShellIsHexOrDecimalNumber (Compare2,
-                                           FALSE, FALSE))
+                                   ) || !ShellIsHexOrDecimalNumber (
+                                           Compare2,
+                                           FALSE,
+                                           FALSE
+                                           ))
       {
         //
         // string compare
@@ -275,8 +285,11 @@ TestOperation (
                                    Compare1,
                                    FALSE,
                                    FALSE
-                                   ) || !ShellIsHexOrDecimalNumber (Compare2,
-                                           FALSE, FALSE))
+                                   ) || !ShellIsHexOrDecimalNumber (
+                                           Compare2,
+                                           FALSE,
+                                           FALSE
+                                           ))
       {
         //
         // string compare
@@ -315,8 +328,11 @@ TestOperation (
                                    Compare1,
                                    FALSE,
                                    FALSE
-                                   ) || !ShellIsHexOrDecimalNumber (Compare2,
-                                           FALSE, FALSE))
+                                   ) || !ShellIsHexOrDecimalNumber (
+                                           Compare2,
+                                           FALSE,
+                                           FALSE
+                                           ))
       {
         //
         // string compare
@@ -361,8 +377,11 @@ TestOperation (
                                    Compare1,
                                    FALSE,
                                    FALSE
-                                   ) || !ShellIsHexOrDecimalNumber (Compare2,
-                                           FALSE, FALSE))
+                                   ) || !ShellIsHexOrDecimalNumber (
+                                           Compare2,
+                                           FALSE,
+                                           FALSE
+                                           ))
       {
         //
         // string compare
@@ -1175,7 +1194,7 @@ BuildNextStatement (
     } else if (gUnicodeCollation->StriColl (
                                     gUnicodeCollation,
                                     gEfiShellParametersProtocol->Argv[
-                                                                     ParameterNumber
+                                                                      ParameterNumber
                                     ],
                                     L"and"
                                     ) == 0)
@@ -1186,7 +1205,7 @@ BuildNextStatement (
     } else if (gUnicodeCollation->StriColl (
                                     gUnicodeCollation,
                                     gEfiShellParametersProtocol->Argv[
-                                                                     ParameterNumber
+                                                                      ParameterNumber
                                     ],
                                     L"then"
                                     ) == 0)

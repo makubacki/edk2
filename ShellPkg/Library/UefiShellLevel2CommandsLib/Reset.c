@@ -10,11 +10,11 @@
 #include "UefiShellLevel2CommandsLib.h"
 
 STATIC CONST SHELL_PARAM_ITEM  ResetParamList[] = {
-  { L"-w",    TypeValue         },
-  { L"-s",    TypeValue         },
-  { L"-c",    TypeValue         },
-  { L"-fwui", TypeFlag          },
-  { NULL,     TypeMax           }
+  { L"-w",    TypeValue },
+  { L"-s",    TypeValue },
+  { L"-c",    TypeValue },
+  { L"-fwui", TypeFlag  },
+  { NULL,     TypeMax   }
 };
 
 /**

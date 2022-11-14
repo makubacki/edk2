@@ -23,8 +23,8 @@ STATIC ACPI_DESCRIPTION_HEADER_INFO  AcpiHdrInfo;
 **/
 STATIC CONST ACPI_PARSER  SlitParser[] = {
   PARSE_ACPI_HEADER (&AcpiHdrInfo),
-  { L"Number of System Localities",   8,    36,     L"0x%lx", NULL,
-    (VOID **)&SlitSystemLocalityCount,NULL, NULL }
+  { L"Number of System Localities",   8,     36, L"0x%lx", NULL,
+    (VOID **)&SlitSystemLocalityCount,NULL,  NULL }
 };
 
 /**

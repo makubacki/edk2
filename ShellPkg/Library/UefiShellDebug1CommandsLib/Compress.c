@@ -39,7 +39,7 @@ typedef INT16 NODE;
              LoopVar5)  ((LoopVar7) + ((LoopVar5) << (WNDBIT - 9)) + WNDSIZ * 2)
 #define CRCPOLY  0xA001
 #define UPDATE_CRC( \
-                  LoopVar5)  \
+                    LoopVar5)  \
   mCrc = mCrcTable[(mCrc ^ (LoopVar5)) & 0xFF] ^ (mCrc >> UINT8_BIT)
 
 //

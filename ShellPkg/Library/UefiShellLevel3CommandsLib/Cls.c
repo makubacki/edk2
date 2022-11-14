@@ -11,8 +11,8 @@
 #include "UefiShellLevel3CommandsLib.h"
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-sfo", TypeFlag       },
-  { NULL,    TypeMax        }
+  { L"-sfo", TypeFlag },
+  { NULL,    TypeMax  }
 };
 
 /**

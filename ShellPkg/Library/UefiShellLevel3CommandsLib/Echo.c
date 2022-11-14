@@ -12,9 +12,9 @@
 #include <Library/ShellLib.h>
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-on",  TypeFlag    },
-  { L"-off", TypeFlag    },
-  { NULL,    TypeMax     }
+  { L"-on",  TypeFlag },
+  { L"-off", TypeFlag },
+  { NULL,    TypeMax  }
 };
 
 /**

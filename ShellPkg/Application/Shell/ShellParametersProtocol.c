@@ -1290,7 +1290,8 @@ UpdateStdInStdOutStdErr (
           //
        || ((StdOutFileName != NULL) && OutUnicode && OutAppend && (!EFI_ERROR (
                                                                       ShellFileExists (
-                                                                        StdOutFileName)
+                                                                        StdOutFileName
+                                                                        )
                                                                       ) &&
                                                                    EFI_ERROR (
                                                                      IsUnicodeFile (
@@ -1299,7 +1300,8 @@ UpdateStdInStdOutStdErr (
                                                                      )))
        || ((StdErrFileName != NULL) && ErrUnicode && ErrAppend && (!EFI_ERROR (
                                                                       ShellFileExists (
-                                                                        StdErrFileName)
+                                                                        StdErrFileName
+                                                                        )
                                                                       ) &&
                                                                    EFI_ERROR (
                                                                      IsUnicodeFile (
@@ -1308,7 +1310,8 @@ UpdateStdInStdOutStdErr (
                                                                      )))
        || ((StdOutFileName != NULL) && !OutUnicode && OutAppend && (!EFI_ERROR (
                                                                        ShellFileExists (
-                                                                         StdOutFileName)
+                                                                         StdOutFileName
+                                                                         )
                                                                        ) &&
                                                                     !EFI_ERROR (
                                                                        IsUnicodeFile (
@@ -1317,7 +1320,8 @@ UpdateStdInStdOutStdErr (
                                                                        )))
        || ((StdErrFileName != NULL) && !ErrUnicode && ErrAppend && (!EFI_ERROR (
                                                                        ShellFileExists (
-                                                                         StdErrFileName)
+                                                                         StdErrFileName
+                                                                         )
                                                                        ) &&
                                                                     !EFI_ERROR (
                                                                        IsUnicodeFile (

@@ -11,8 +11,8 @@
 #include "UefiShellDriver1CommandsLib.h"
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-r", TypeFlag  },
-  { NULL,  TypeMax   }
+  { L"-r", TypeFlag },
+  { NULL,  TypeMax  }
 };
 
 /**

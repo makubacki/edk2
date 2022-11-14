@@ -1842,14 +1842,14 @@ GetTextX (
                                    (INT32)MainEditor.ScreenSize.Column) /
                                   (INT32)(50 *
                                           (
-                                                                              INT32)
+                                           INT32)
                                           MainEditor.MouseInterface->Mode->
                                             ResolutionX);
   MainEditor.MouseAccumulatorX = (MainEditor.MouseAccumulatorX *
                                   (INT32)MainEditor.ScreenSize.Column) %
                                  (INT32)(50 *
                                          (
-                                                                             INT32)
+                                          INT32)
                                          MainEditor.MouseInterface->Mode->
                                            ResolutionX);
   MainEditor.MouseAccumulatorX = MainEditor.MouseAccumulatorX /
@@ -1876,14 +1876,14 @@ GetTextY (
                                    (INT32)MainEditor.ScreenSize.Row) /
                                   (INT32)(50 *
                                           (
-                                                                              INT32)
+                                           INT32)
                                           MainEditor.MouseInterface->Mode->
                                             ResolutionY);
   MainEditor.MouseAccumulatorY = (MainEditor.MouseAccumulatorY *
                                   (INT32)MainEditor.ScreenSize.Row) %
                                  (INT32)(50 *
                                          (
-                                                                             INT32)
+                                          INT32)
                                          MainEditor.MouseInterface->Mode->
                                            ResolutionY);
   MainEditor.MouseAccumulatorY = MainEditor.MouseAccumulatorY /

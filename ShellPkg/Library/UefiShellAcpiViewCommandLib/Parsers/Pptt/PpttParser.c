@@ -21,7 +21,7 @@ STATIC CONST
 UINT8  *ProcessorTopologyStructureType;
 STATIC CONST
 UINT8                                                 *
-                                                        ProcessorTopologyStructureLength;
+  ProcessorTopologyStructureLength;
 STATIC CONST
 UINT32                                                *NumberOfPrivateResources;
 STATIC CONST EFI_ACPI_6_4_PPTT_STRUCTURE_CACHE_FLAGS  *CacheFlags;
@@ -325,13 +325,13 @@ STATIC CONST ACPI_PARSER  PpttParser[] = {
   An ACPI_PARSER array describing the processor topology structure header.
 **/
 STATIC CONST ACPI_PARSER  ProcessorTopologyStructureHeaderParser[] = {
-  { L"Type",     1,     0,     NULL,     NULL,
+  { L"Type",     1, 0, NULL, NULL,
     (VOID **)&ProcessorTopologyStructureType,
     NULL, NULL },
-  { L"Length",   1,     1,     NULL,     NULL,
+  { L"Length",   1, 1, NULL, NULL,
     (VOID **)&ProcessorTopologyStructureLength,
     NULL, NULL },
-  { L"Reserved", 2,     2,     NULL,     NULL,    NULL,
+  { L"Reserved", 2, 2, NULL, NULL,NULL,
     NULL, NULL }
 };
 
@@ -339,25 +339,25 @@ STATIC CONST ACPI_PARSER  ProcessorTopologyStructureHeaderParser[] = {
   An ACPI_PARSER array describing the Processor Hierarchy Node Structure - Type 0.
 **/
 STATIC CONST ACPI_PARSER  ProcessorHierarchyNodeStructureParser[] = {
-  { L"Type",                        1,                        0,
-    L"0x%x",  NULL,    NULL,   NULL, NULL },
-  { L"Length",                      1,                        1,
-    L"%d",                            NULL,    NULL,    NULL,   NULL },
-  { L"Reserved",                    2,                        2,
-    L"0x%x",                         NULL,                            NULL,
-    NULL,    NULL   },
+  { L"Type",                        1, 0,
+    L"0x%x", NULL, NULL, NULL, NULL },
+  { L"Length",                      1, 1,
+    L"%d", NULL, NULL, NULL, NULL },
+  { L"Reserved",                    2, 2,
+    L"0x%x", NULL, NULL,
+    NULL, NULL },
 
-  { L"Flags",                       4,                        4,
-    L"0x%x",                         NULL,                           NULL,
-    NULL,    NULL      },
-  { L"Parent",                      4,                        8,
-    L"0x%x",                        NULL,                           NULL,
-    NULL,                            NULL         },
-  { L"ACPI Processor ID",           4,                        12,
-    L"0x%x",                      NULL,                          NULL,
-    NULL,                           NULL                                    },
-  { L"Number of private resources", 4,                        16,
-    L"%d",                        NULL,
+  { L"Flags",                       4, 4,
+    L"0x%x", NULL, NULL,
+    NULL, NULL },
+  { L"Parent",                      4, 8,
+    L"0x%x", NULL, NULL,
+    NULL, NULL },
+  { L"ACPI Processor ID",           4, 12,
+    L"0x%x", NULL, NULL,
+    NULL, NULL },
+  { L"Number of private resources", 4, 16,
+    L"%d", NULL,
     (VOID **)&NumberOfPrivateResources, NULL, NULL }
 };
 
@@ -365,41 +365,41 @@ STATIC CONST ACPI_PARSER  ProcessorHierarchyNodeStructureParser[] = {
   An ACPI_PARSER array describing the Cache Type Structure - Type 1.
 **/
 STATIC CONST ACPI_PARSER  CacheTypeStructureParser[] = {
-  { L"Type",                1,                0,                 L"0x%x",
-    NULL,                   NULL,                                   NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                             },
-  { L"Length",              1,                1,                 L"%d",
-    NULL,                    NULL,                                   NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                     },
-  { L"Reserved",            2,                2,                 L"0x%x",
-    NULL,                   NULL,                                    NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+  { L"Type",                1, 0,  L"0x%x",
+    NULL, NULL, NULL,
+    NULL },
+  { L"Length",              1, 1,  L"%d",
+    NULL, NULL, NULL,
+    NULL },
+  { L"Reserved",            2, 2,  L"0x%x",
+    NULL, NULL, NULL,
+    NULL },
 
-  { L"Flags",               4,                4,                 L"0x%x",
-    NULL,                   (VOID **)&CacheFlags,
+  { L"Flags",               4, 4,  L"0x%x",
+    NULL, (VOID **)&CacheFlags,
     ValidateCacheFlags,
     NULL },
-  { L"Next Level of Cache", 4,                8,                 L"0x%x",
-    NULL,                   NULL,                   NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
-  { L"Size",                4,                12,                L"0x%x",
-    NULL,                   NULL,                   NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
-  { L"Number of sets",      4,                16,                L"%d",
-    NULL,                   NULL,                   ValidateCacheNumberOfSets,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
-  { L"Associativity",       1,                20,                L"%d",
-    NULL,                   NULL,                   ValidateCacheAssociativity,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
-  { L"Attributes",          1,                21,                L"0x%x",
-    NULL,                   NULL,                   ValidateCacheAttributes,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
-  { L"Line size",           2,                22,                L"%d",
-    NULL,                   NULL,                   ValidateCacheLineSize,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
-  { L"Cache ID",            4,                24,                L"%d",
-    NULL, NULL,                   ValidateCacheId,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       }
+  { L"Next Level of Cache", 4, 8,  L"0x%x",
+    NULL, NULL, NULL,
+    NULL },
+  { L"Size",                4, 12, L"0x%x",
+    NULL, NULL, NULL,
+    NULL },
+  { L"Number of sets",      4, 16, L"%d",
+    NULL, NULL, ValidateCacheNumberOfSets,
+    NULL },
+  { L"Associativity",       1, 20, L"%d",
+    NULL, NULL, ValidateCacheAssociativity,
+    NULL },
+  { L"Attributes",          1, 21, L"0x%x",
+    NULL, NULL, ValidateCacheAttributes,
+    NULL },
+  { L"Line size",           2, 22, L"%d",
+    NULL, NULL, ValidateCacheLineSize,
+    NULL },
+  { L"Cache ID",            4, 24, L"%d",
+    NULL, NULL, ValidateCacheId,
+    NULL }
 };
 
 /**

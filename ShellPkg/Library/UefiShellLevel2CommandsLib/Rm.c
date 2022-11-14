@@ -10,8 +10,8 @@
 #include "UefiShellLevel2CommandsLib.h"
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-q", TypeFlag   },
-  { NULL,  TypeMax    }
+  { L"-q", TypeFlag },
+  { NULL,  TypeMax  }
 };
 
 /**

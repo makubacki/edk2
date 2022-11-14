@@ -158,9 +158,9 @@ TypeFileByHandle (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-a", TypeFlag  },
-  { L"-u", TypeFlag  },
-  { NULL,  TypeMax   }
+  { L"-a", TypeFlag },
+  { L"-u", TypeFlag },
+  { NULL,  TypeMax  }
 };
 
 /**

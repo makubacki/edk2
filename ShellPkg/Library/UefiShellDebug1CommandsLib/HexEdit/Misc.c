@@ -238,14 +238,14 @@ HGetTextX (
                                     (INT32)HMainEditor.ScreenSize.Column) /
                                    (INT32)(50 *
                                            (
-                                                                                INT32)
+                                            INT32)
                                            HMainEditor.MouseInterface->Mode->
                                              ResolutionX);
   HMainEditor.MouseAccumulatorX = (HMainEditor.MouseAccumulatorX *
                                    (INT32)HMainEditor.ScreenSize.Column) %
                                   (INT32)(50 *
                                           (
-                                                                               INT32)
+                                           INT32)
                                           HMainEditor.MouseInterface->Mode->
                                             ResolutionX);
   HMainEditor.MouseAccumulatorX = HMainEditor.MouseAccumulatorX /
@@ -272,14 +272,14 @@ HGetTextY (
                                     (INT32)HMainEditor.ScreenSize.Row) /
                                    (INT32)(50 *
                                            (
-                                                                                INT32)
+                                            INT32)
                                            HMainEditor.MouseInterface->Mode->
                                              ResolutionY);
   HMainEditor.MouseAccumulatorY = (HMainEditor.MouseAccumulatorY *
                                    (INT32)HMainEditor.ScreenSize.Row) %
                                   (INT32)(50 *
                                           (
-                                                                               INT32)
+                                           INT32)
                                           HMainEditor.MouseInterface->Mode->
                                             ResolutionY);
   HMainEditor.MouseAccumulatorY = HMainEditor.MouseAccumulatorY /

@@ -37,7 +37,7 @@ typedef struct _CONSOLE_LOGGER_PRIVATE_DATA {
 } CONSOLE_LOGGER_PRIVATE_DATA;
 
 #define CONSOLE_LOGGER_PRIVATE_DATA_FROM_THIS( \
-                                             a)  \
+                                               a)  \
   CR (a, CONSOLE_LOGGER_PRIVATE_DATA, OurConOut, CONSOLE_LOGGER_PRIVATE_DATA_SIGNATURE)
 
 /**

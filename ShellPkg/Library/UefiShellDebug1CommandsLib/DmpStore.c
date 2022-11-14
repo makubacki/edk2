@@ -903,13 +903,13 @@ ProcessVariables (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-d",    TypeFlag          },
-  { L"-l",    TypeValue         },
-  { L"-s",    TypeValue         },
-  { L"-all",  TypeFlag          },
-  { L"-guid", TypeValue         },
-  { L"-sfo",  TypeFlag          },
-  { NULL,     TypeMax           }
+  { L"-d",    TypeFlag  },
+  { L"-l",    TypeValue },
+  { L"-s",    TypeValue },
+  { L"-all",  TypeFlag  },
+  { L"-guid", TypeValue },
+  { L"-sfo",  TypeFlag  },
+  { NULL,     TypeMax   }
 };
 
 /**

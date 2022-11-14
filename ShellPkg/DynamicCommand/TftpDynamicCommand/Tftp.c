@@ -231,14 +231,14 @@ EFI_MTFTP4_CONFIG_DATA  DefaultMtftp4ConfigData = {
 };
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-i", TypeValue  },
-  { L"-l", TypeValue  },
-  { L"-r", TypeValue  },
-  { L"-c", TypeValue  },
-  { L"-t", TypeValue  },
-  { L"-s", TypeValue  },
-  { L"-w", TypeValue  },
-  { NULL,  TypeMax    }
+  { L"-i", TypeValue },
+  { L"-l", TypeValue },
+  { L"-r", TypeValue },
+  { L"-c", TypeValue },
+  { L"-t", TypeValue },
+  { L"-s", TypeValue },
+  { L"-w", TypeValue },
+  { NULL,  TypeMax   }
 };
 
 ///

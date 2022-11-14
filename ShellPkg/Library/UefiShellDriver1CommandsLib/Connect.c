@@ -487,9 +487,9 @@ ConvertAndConnectControllers (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-c", TypeFlag   },
-  { L"-r", TypeFlag   },
-  { NULL,  TypeMax    }
+  { L"-c", TypeFlag },
+  { L"-r", TypeFlag },
+  { NULL,  TypeMax  }
 };
 
 /**

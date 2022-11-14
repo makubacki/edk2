@@ -98,19 +98,32 @@ DoDiagnostics (
   } else {
     DriverHandleList = GetHandleListByProtocolList (DiagGuidList);
     if (DriverHandleList == NULL) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROTOCOL_NF),
-        gShellDriver1HiiHandle, L"drvdiag",
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROTOCOL_NF),
+        gShellDriver1HiiHandle,
+        L"drvdiag",
         L"gEfiDriverDiagnosticsProtocolGuid",
-        &gEfiDriverDiagnosticsProtocolGuid);
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROTOCOL_NF),
-        gShellDriver1HiiHandle, L"drvdiag",
+        &gEfiDriverDiagnosticsProtocolGuid
+        );
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROTOCOL_NF),
+        gShellDriver1HiiHandle,
+        L"drvdiag",
         L"gEfiDriverDiagnostics2ProtocolGuid",
-        &gEfiDriverDiagnostics2ProtocolGuid);
+        &gEfiDriverDiagnostics2ProtocolGuid
+        );
       return (EFI_NOT_FOUND);
     }
 
     for (Walker = DriverHandleList; Walker != NULL && *Walker != NULL;
-         DriverHandleListCount++, Walker++) {
+         DriverHandleListCount++, Walker++)
+    {
     }
   }
 
@@ -147,8 +160,13 @@ DoDiagnostics (
   }
 
   if (Mode == TestModeList) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_DRVDIAG_HEADER),
-      gShellDriver1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_DRVDIAG_HEADER),
+      gShellDriver1HiiHandle
+      );
   }
 
   for (DriverHandleListLoop = 0
@@ -157,21 +175,37 @@ DoDiagnostics (
        )
   {
     if (Mode == TestModeList) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_DRVDIAG_DRIVER_HEADER),
-        gShellDriver1HiiHandle, ConvertHandleToHandleIndex (
-                                  DriverHandleList[DriverHandleListLoop]));
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_DRVDIAG_DRIVER_HEADER),
+        gShellDriver1HiiHandle,
+        ConvertHandleToHandleIndex (
+          DriverHandleList[DriverHandleListLoop]
+          )
+        );
     }
 
     if (ControllerHandle == NULL) {
-      PARSE_HANDLE_DATABASE_DEVICES (DriverHandleList[DriverHandleListLoop],
-        &ControllerHandleListCount, &ControllerHandleList);
+      PARSE_HANDLE_DATABASE_DEVICES (
+        DriverHandleList[DriverHandleListLoop],
+        &ControllerHandleListCount,
+        &ControllerHandleList
+        );
     }
 
     if (ControllerHandleListCount == 0) {
       if (Mode == TestModeList) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (
-                                         STR_DRVDIAG_DRIVER_NO_HANDLES),
-          gShellDriver1HiiHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_DRVDIAG_DRIVER_NO_HANDLES
+            ),
+          gShellDriver1HiiHandle
+          );
       }
     } else {
       if (Mode == TestModeList) {
@@ -215,8 +249,10 @@ DoDiagnostics (
                               );
               if (!EFI_ERROR (Status) && (DriverDiagnostics2 != NULL)) {
                 Language = GetBestLanguageForDriver (
-                             DriverDiagnostics2->SupportedLanguages, Lang,
-                             FALSE);
+                             DriverDiagnostics2->SupportedLanguages,
+                             Lang,
+                             FALSE
+                             );
                 Found  = TRUE;
                 Status = DriverDiagnostics2->RunDiagnostics (
                                                DriverDiagnostics2,
@@ -226,7 +262,7 @@ DoDiagnostics (
                                                ChildHandleList == NULL ?
                                                NULL :
                                                ChildHandleList[
-                                                                                                 ChildHandleListLoop
+                                                               ChildHandleListLoop
                                                ],
                                                (EFI_DRIVER_DIAGNOSTIC_TYPE)
                                                Mode,
@@ -240,7 +276,8 @@ DoDiagnostics (
             }
 
             if (!Found && ((Lang == NULL) || ((Lang != NULL) && (Lang[2] !=
-                                                                 '-')))) {
+                                                                 '-'))))
+            {
               Status = gBS->OpenProtocol (
                               DriverHandleList[DriverHandleListLoop],
                               &gEfiDriverDiagnosticsProtocolGuid,
@@ -251,8 +288,10 @@ DoDiagnostics (
                               );
               if (!EFI_ERROR (Status)) {
                 Language = GetBestLanguageForDriver (
-                             DriverDiagnostics->SupportedLanguages, Lang,
-                             FALSE);
+                             DriverDiagnostics->SupportedLanguages,
+                             Lang,
+                             FALSE
+                             );
                 Status = DriverDiagnostics->RunDiagnostics (
                                               DriverDiagnostics,
                                               ControllerHandleList[
@@ -260,7 +299,7 @@ DoDiagnostics (
                                               ],
                                               ChildHandleList == NULL ? NULL :
                                               ChildHandleList[
-                                                                                                ChildHandleListLoop
+                                                              ChildHandleListLoop
                                               ],
                                               (EFI_DRIVER_DIAGNOSTIC_TYPE)Mode,
                                               Language,
@@ -277,9 +316,11 @@ DoDiagnostics (
             }
 
             HandleIndex1 = ConvertHandleToHandleIndex (
-                             DriverHandleList[DriverHandleListLoop]);
+                             DriverHandleList[DriverHandleListLoop]
+                             );
             HandleIndex2 = ConvertHandleToHandleIndex (
-                             ControllerHandleList[ControllerHandleListLoop]);
+                             ControllerHandleList[ControllerHandleListLoop]
+                             );
             ShellPrintHiiEx (
               -1,
               -1,
@@ -291,8 +332,9 @@ DoDiagnostics (
               HandleIndex2,
               ChildHandleList == NULL ? 0 : ConvertHandleToHandleIndex (
                                               ChildHandleList[
-                                                                                       ChildHandleListLoop
-                                              ]),
+                                                              ChildHandleListLoop
+                                              ]
+                                              ),
               Status
               );
             if (OutBuffer != NULL) {
@@ -306,9 +348,11 @@ DoDiagnostics (
             }
           } else {
             HandleIndex1 = ConvertHandleToHandleIndex (
-                             DriverHandleList[DriverHandleListLoop]);
+                             DriverHandleList[DriverHandleListLoop]
+                             );
             HandleIndex2 = ConvertHandleToHandleIndex (
-                             ControllerHandleList[ControllerHandleListLoop]);
+                             ControllerHandleList[ControllerHandleListLoop]
+                             );
             //
             // Print out the information that this set can be tested
             //
@@ -322,8 +366,9 @@ DoDiagnostics (
               HandleIndex2,
               ChildHandleList == NULL ? 0 : ConvertHandleToHandleIndex (
                                               ChildHandleList[
-                                                                                       ChildHandleListLoop
-                                              ])
+                                                              ChildHandleListLoop
+                                              ]
+                                              )
               );
           }
 
@@ -366,12 +411,12 @@ DoDiagnostics (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-c", TypeFlag       },
-  { L"-s", TypeFlag       },
-  { L"-e", TypeFlag       },
-  { L"-m", TypeFlag       },
-  { L"-l", TypeValue      },
-  { NULL,  TypeMax        }
+  { L"-c", TypeFlag  },
+  { L"-s", TypeFlag  },
+  { L"-e", TypeFlag  },
+  { L"-m", TypeFlag  },
+  { L"-l", TypeValue },
+  { NULL,  TypeMax   }
 };
 
 /**
@@ -421,8 +466,15 @@ ShellCommandRunDrvDiag (
   Status = ShellCommandLineParse (ParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM),
-        gShellDriver1HiiHandle, L"drvdiag", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellDriver1HiiHandle,
+        L"drvdiag",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -434,18 +486,30 @@ ShellCommandRunDrvDiag (
     //
     if (  (ShellCommandLineGetCount (Package) > 4)
        || (ShellCommandLineGetFlag (Package, L"-s") && ShellCommandLineGetFlag (
-                                                         Package, L"-e"))
+                                                         Package,
+                                                         L"-e"
+                                                         ))
        || (ShellCommandLineGetFlag (Package, L"-s") && ShellCommandLineGetFlag (
-                                                         Package, L"-m"))
+                                                         Package,
+                                                         L"-m"
+                                                         ))
        || (ShellCommandLineGetFlag (Package, L"-e") && ShellCommandLineGetFlag (
-                                                         Package, L"-m"))
+                                                         Package,
+                                                         L"-m"
+                                                         ))
           )
     {
       //
       // error for too many parameters
       //
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY),
-        gShellDriver1HiiHandle, L"drvdiag");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellDriver1HiiHandle,
+        L"drvdiag"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else if (  (ShellCommandLineGetFlag (Package, L"-s"))
               || (ShellCommandLineGetFlag (Package, L"-e"))
@@ -474,8 +538,15 @@ ShellCommandRunDrvDiag (
     Lang = ShellCommandLineGetValue (Package, L"-l");
     if (ShellCommandLineGetFlag (Package, L"-l") && (Lang == NULL)) {
       ASSERT (Language == NULL);
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_NO_VALUE),
-        gShellDriver1HiiHandle, L"drvdiag", L"-l");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_NO_VALUE),
+        gShellDriver1HiiHandle,
+        L"drvdiag",
+        L"-l"
+        );
       ShellCommandLineFreeVarList (Package);
       return (SHELL_INVALID_PARAMETER);
     } else if (Lang != NULL) {
@@ -497,8 +568,12 @@ ShellCommandRunDrvDiag (
     if (ControllerHandleStr == NULL) {
       Handle2 = NULL;
     } else {
-      ShellConvertStringToUint64 (ControllerHandleStr, &Intermediate, TRUE,
-        FALSE);
+      ShellConvertStringToUint64 (
+        ControllerHandleStr,
+        &Intermediate,
+        TRUE,
+        FALSE
+        );
       Handle2 = ConvertHandleIndexToHandle ((UINTN)Intermediate);
     }
 

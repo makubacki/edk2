@@ -1194,15 +1194,15 @@ AddMappingFromHandle (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  MapParamList[] = {
-  { L"-d",   TypeValue       },
-  { L"-r",   TypeFlag        },
-  { L"-v",   TypeFlag        },
-  { L"-c",   TypeFlag        },
-  { L"-f",   TypeFlag        },
-  { L"-u",   TypeFlag        },
-  { L"-t",   TypeValue       },
-  { L"-sfo", TypeValue       },
-  { NULL,    TypeMax         }
+  { L"-d",   TypeValue },
+  { L"-r",   TypeFlag  },
+  { L"-v",   TypeFlag  },
+  { L"-c",   TypeFlag  },
+  { L"-f",   TypeFlag  },
+  { L"-u",   TypeFlag  },
+  { L"-t",   TypeValue },
+  { L"-sfo", TypeValue },
+  { NULL,    TypeMax   }
 };
 
 /**

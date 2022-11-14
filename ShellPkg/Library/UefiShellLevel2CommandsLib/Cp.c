@@ -484,7 +484,8 @@ ValidateAndCopyFiles (
     //
     if (!EFI_ERROR (ShellIsDirectory (Node->FullName)) && EFI_ERROR (
                                                             ShellIsDirectory (
-                                                              CleanFilePathStr)
+                                                              CleanFilePathStr
+                                                              )
                                                             ))
     {
       //
@@ -879,9 +880,9 @@ ProcessValidateAndCopyFiles (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-r", TypeFlag   },
-  { L"-q", TypeFlag   },
-  { NULL,  TypeMax    }
+  { L"-r", TypeFlag },
+  { L"-q", TypeFlag },
+  { NULL,  TypeMax  }
 };
 
 /**

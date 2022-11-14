@@ -19,8 +19,8 @@ SHELL_PARAM_ITEM                EmptyParamList[] = {
   { NULL, TypeMax }
 };
 SHELL_PARAM_ITEM                SfoParamList[] = {
-  { L"-sfo", TypeFlag             },
-  { NULL,    TypeMax              }
+  { L"-sfo", TypeFlag },
+  { NULL,    TypeMax  }
 };
 EFI_SHELL_ENVIRONMENT2          *mEfiShellEnvironment2;
 EFI_SHELL_INTERFACE             *mEfiShellInterface;
@@ -2901,12 +2901,12 @@ ShellCommandLineCheckDuplicate (
       if ((((SHELL_PARAM_PACKAGE *)Node1)->Name != NULL) &&
           (((SHELL_PARAM_PACKAGE *)Node2)->Name != NULL) && (StrCmp (
                                                                ((
-                                                                                                                        SHELL_PARAM_PACKAGE
-                                                                                                                        *)
+                                                                 SHELL_PARAM_PACKAGE
+                                                                 *)
                                                                 Node1)->Name,
                                                                ((
-                                                                                                                                                              SHELL_PARAM_PACKAGE
-                                                                                                                                                              *)
+                                                                 SHELL_PARAM_PACKAGE
+                                                                 *)
                                                                 Node2)->Name
                                                                ) == 0))
       {

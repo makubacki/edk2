@@ -193,40 +193,40 @@ STATIC CONST ACPI_PARSER  AestParser[] = {
   An ACPI_PARSER array describing the AEST Node Header.
 **/
 STATIC CONST ACPI_PARSER  AestNodeHeaderParser[] = {
-  { L"Type",                           1,                           0,
+  { L"Type",                           1, 0,
     L"%d",
-    NULL,    (VOID **)&AestNodeType,   NULL,                     NULL },
-  { L"Length",                         2,                           1,
-    L"%d",   NULL,     (VOID **)&AestNodeLength,    NULL,
-    NULL                     },
-  { L"Reserved",                       1,                           3,
-    L"0x%x",                             NULL,   NULL,
-    NULL,                        NULL                                         },
-  { L"Node Data Offset",               4,                           4,
-    L"%d",                              NULL,
-    (VOID **)&NodeDataOffset,   NULL,
-    NULL                                                                },
-  { L"Node Interface Offset",          4,                           8,
-    L"%d",                              NULL,
+    NULL, (VOID **)&AestNodeType, NULL, NULL },
+  { L"Length",                         2, 1,
+    L"%d", NULL, (VOID **)&AestNodeLength, NULL,
+    NULL },
+  { L"Reserved",                       1, 3,
+    L"0x%x", NULL, NULL,
+    NULL, NULL },
+  { L"Node Data Offset",               4, 4,
+    L"%d", NULL,
+    (VOID **)&NodeDataOffset, NULL,
+    NULL },
+  { L"Node Interface Offset",          4, 8,
+    L"%d", NULL,
     (VOID **)&NodeInterfaceOffset, NULL, NULL },
-  { L"Node Interrupt Array Offset",    4,                           12,
-    L"%d",                              NULL,
+  { L"Node Interrupt Array Offset",    4, 12,
+    L"%d", NULL,
     (VOID **)&NodeInterruptArrayOffset, NULL, NULL },
-  { L"Node Interrupt Count",           4,                           16,
-    L"%d",                              NULL,
+  { L"Node Interrupt Count",           4, 16,
+    L"%d", NULL,
     (VOID **)&NodeInterruptCount, NULL, NULL },
-  { L"Timestamp Rate",                 8,                           20,
-    L"%ld",                             NULL,                             NULL,
+  { L"Timestamp Rate",                 8, 20,
+    L"%ld", NULL, NULL,
     NULL,
-    NULL                                                                                        },
-  { L"Reserved1",                      8,                           28,
-    L"0x%lx",                         NULL,                             NULL,
+    NULL },
+  { L"Reserved1",                      8, 28,
+    L"0x%lx", NULL, NULL,
     NULL,
-    NULL                                                                                                              },
-  { L"Error Injection Countdown Rate", 8,                           36,
-    L"%ld", NULL,                           NULL,
+    NULL },
+  { L"Error Injection Countdown Rate", 8, 36,
+    L"%ld", NULL, NULL,
     NULL,
-    NULL                                                                                                                                            }
+    NULL }
   // Node specific data...
   // Node interface...
   // Node interrupt array...
@@ -236,29 +236,29 @@ STATIC CONST ACPI_PARSER  AestNodeHeaderParser[] = {
   An ACPI_PARSER array describing the Processor error node specific data.
 **/
 STATIC CONST ACPI_PARSER  AestProcessorStructure[] = {
-  { L"ACPI Processor ID",                  4,                              0,
-    L"0x%x",                               NULL,
-    (VOID **)&ProcessorId,                                           NULL,
-    NULL                                                                                                                                                                                                                                                                       },
-  { L"Resource Type",                      1,                              4,
-    L"%d",                                 NULL,
-    (VOID **)&ProcessorResourceType,                                 NULL,
+  { L"ACPI Processor ID",                  4, 0,
+    L"0x%x", NULL,
+    (VOID **)&ProcessorId, NULL,
     NULL },
-  { L"Reserved",                           1,                              5,
-    L"0x%x",                                NULL,
-    NULL,                                                     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                  },
-  { L"Flags",                              1,                              6,
-    L"0x%x",                                NULL,
+  { L"Resource Type",                      1, 4,
+    L"%d", NULL,
+    (VOID **)&ProcessorResourceType, NULL,
+    NULL },
+  { L"Reserved",                           1, 5,
+    L"0x%x", NULL,
+    NULL, NULL,
+    NULL },
+  { L"Flags",                              1, 6,
+    L"0x%x", NULL,
     (VOID **)&ProcessorFlags,
     ValidateProcessorFlags, NULL },
-  { L"Revision",                           1,                              7,
-    L"%d",                                 NULL,
-    NULL,                                 NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                             },
-  { L"Processor Affinity Level Indicator", 8,                              8,
-    L"0x%lx",                              NULL,
-    NULL,                                 NULL,
+  { L"Revision",                           1, 7,
+    L"%d", NULL,
+    NULL, NULL,
+    NULL },
+  { L"Processor Affinity Level Indicator", 8, 8,
+    L"0x%lx", NULL,
+    NULL, NULL,
     NULL },
   // Resource specific data...
 };
@@ -267,24 +267,24 @@ STATIC CONST ACPI_PARSER  AestProcessorStructure[] = {
   An ACPI_PARSER array describing the processor cache resource substructure.
 **/
 STATIC CONST ACPI_PARSER  AestProcessorCacheResourceSubstructure[] = {
-  { L"Cache reference ID", 4,           0,           L"0x%x",           NULL,
-    NULL,             NULL,
-    NULL                                                                   },
-  { L"Reserved",           4,           4,           L"%d",             NULL,
-    NULL,  NULL,
-    NULL                                                                               }
+  { L"Cache reference ID", 4, 0, L"0x%x", NULL,
+    NULL, NULL,
+    NULL },
+  { L"Reserved",           4, 4, L"%d",   NULL,
+    NULL, NULL,
+    NULL }
 };
 
 /**
   An ACPI_PARSER array describing the processor TLB resource substructure.
 **/
 STATIC CONST ACPI_PARSER  AestProcessorTlbResourceSubstructure[] = {
-  { L"TLB reference ID", 4,         0,         L"0x%x",         NULL,
-    NULL,           NULL,
-    NULL                                                                             },
-  { L"Reserved",         4,         4,         L"%d",           NULL,
-    NULL,  NULL,
-    NULL                                                                                       }
+  { L"TLB reference ID", 4, 0, L"0x%x", NULL,
+    NULL, NULL,
+    NULL },
+  { L"Reserved",         4, 4, L"%d",   NULL,
+    NULL, NULL,
+    NULL }
 };
 
 /**
@@ -305,103 +305,103 @@ STATIC CONST ACPI_PARSER  AestMemoryControllerStructure[] = {
   An ACPI_PARSER array describing the SMMU structure.
 **/
 STATIC CONST ACPI_PARSER  AestSmmuStructure[] = {
-  { L"IORT Node reference ID",    4,    0,    L"0x%x",    NULL,    NULL,
-    NULL,    NULL                            },
-  { L"SubComponent reference ID", 4,    4,    L"0x%x",    NULL,    NULL,   NULL,
-    NULL                               }
+  { L"IORT Node reference ID",    4, 0, L"0x%x", NULL, NULL,
+    NULL, NULL },
+  { L"SubComponent reference ID", 4, 4, L"0x%x", NULL, NULL,NULL,
+    NULL }
 };
 
 /**
   An ACPI_PARSER array describing the vendor-defined structure.
 **/
 STATIC CONST ACPI_PARSER  AestVendorDefinedStructure[] = {
-  { L"Hardware ID",          4,            0,            L"0x%x",
-    NULL,                                 NULL,
+  { L"Hardware ID",          4,  0, L"0x%x",
+    NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
-  { L"Unique ID",            4,            4,            L"0x%x",
-    NULL,                                  NULL,
+    NULL },
+  { L"Unique ID",            4,  4, L"0x%x",
+    NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
-  { L"Vendor-specific data", 16,           8,            NULL,
+    NULL },
+  { L"Vendor-specific data", 16, 8, NULL,
     DumpVendorSpecificData, NULL,
-    NULL                                 }
+    NULL }
 };
 
 /**
   An ACPI_PARSER array describing the GIC structure.
 **/
 STATIC CONST ACPI_PARSER  AestGicStructure[] = {
-  { L"GIC Interface Type",         4,         0,         L"0x%x",         NULL,
-    NULL,         ValidateGicInterfaceType,
+  { L"GIC Interface Type",         4, 0, L"0x%x", NULL,
+    NULL, ValidateGicInterfaceType,
     NULL },
-  { L"GIC Interface reference ID", 4,         4,         L"0x%x",         NULL,
-    NULL,  NULL,         NULL}
+  { L"GIC Interface reference ID", 4, 4, L"0x%x", NULL,
+    NULL, NULL, NULL }
 };
 
 /**
   An ACPI_PARSER array describing the node interface.
 **/
 STATIC CONST ACPI_PARSER  AestNodeInterface[] = {
-  { L"Interface Type",            1,                     0,
-    L"%d",                            NULL,                            NULL,
+  { L"Interface Type",            1, 0,
+    L"%d", NULL, NULL,
     ValidateInterfaceType,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
-  { L"Reserved",                  3,                     1,
-    L"%x %x %x",                    Dump3Chars,                      NULL,
+    NULL },
+  { L"Reserved",                  3, 1,
+    L"%x %x %x", Dump3Chars, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
-  { L"Flags",                     4,                     4,
-    L"0x%x",                       NULL,                        NULL,
+    NULL },
+  { L"Flags",                     4, 4,
+    L"0x%x", NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
-  { L"Base Address",              8,                     8,
-    L"0x%lx",                     NULL,                       NULL,
+    NULL },
+  { L"Base Address",              8, 8,
+    L"0x%lx", NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
-  { L"Start Error Record Index",  4,                     16,
-    L"0x%x",                      NULL,                      NULL,
+    NULL },
+  { L"Start Error Record Index",  4, 16,
+    L"0x%x", NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
-  { L"Number of Error Records",   4,                     20,
-    L"0x%x",                      NULL,                      NULL,
+    NULL },
+  { L"Number of Error Records",   4, 20,
+    L"0x%x", NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
-  { L"Error Records Implemented", 8,                     24,
-    L"0x%lx",                     NULL,                     NULL,
+    NULL },
+  { L"Error Records Implemented", 8, 24,
+    L"0x%lx", NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
-  { L"Error Records Support",     8,                     32,
-    L"0x%lx",                     NULL,                     NULL,
+    NULL },
+  { L"Error Records Support",     8, 32,
+    L"0x%lx", NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
-  { L"Addressing mode",           8,                     40,
-    L"0x%lx", NULL,                     NULL,                     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }
+    NULL },
+  { L"Addressing mode",           8, 40,
+    L"0x%lx", NULL, NULL, NULL,
+    NULL }
 };
 
 /**
   An ACPI_PARSER array describing the node interrupts.
 **/
 STATIC CONST ACPI_PARSER  AestNodeInterrupt[] = {
-  { L"Interrupt Type",  1,              0,              L"%d",
-    NULL,                    NULL,                    ValidateInterruptType,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
-  { L"Reserved",        2,              1,              L"0x%x",
-    NULL,                     NULL,                    NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
-  { L"Interrupt Flags", 1,              3,              L"0x%x",
-    NULL,                    NULL,                     ValidateInterruptFlags,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
-  { L"Interrupt GSIV",  4,              4,              L"0x%x",
-    NULL,                    NULL,                    NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
-  { L"ID",              1,              8,              L"0x%x",
-    NULL,                    NULL,                    NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
-  { L"Reserved1",       3,              9,              L"%x %x %x",
-    Dump3Chars, NULL,              NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   }
+  { L"Interrupt Type",  1, 0, L"%d",
+    NULL, NULL, ValidateInterruptType,
+    NULL },
+  { L"Reserved",        2, 1, L"0x%x",
+    NULL, NULL, NULL,
+    NULL },
+  { L"Interrupt Flags", 1, 3, L"0x%x",
+    NULL, NULL, ValidateInterruptFlags,
+    NULL },
+  { L"Interrupt GSIV",  4, 4, L"0x%x",
+    NULL, NULL, NULL,
+    NULL },
+  { L"ID",              1, 8, L"0x%x",
+    NULL, NULL, NULL,
+    NULL },
+  { L"Reserved1",       3, 9, L"%x %x %x",
+    Dump3Chars, NULL, NULL,
+    NULL }
 };
 
 /**

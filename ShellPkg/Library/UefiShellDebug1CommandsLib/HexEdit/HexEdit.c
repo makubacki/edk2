@@ -14,10 +14,10 @@
 // Global Variables
 //
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-f", TypeFlag  },
-  { L"-d", TypeFlag  },
-  { L"-m", TypeFlag  },
-  { NULL,  TypeMax   }
+  { L"-f", TypeFlag },
+  { L"-d", TypeFlag },
+  { L"-m", TypeFlag },
+  { NULL,  TypeMax  }
 };
 
 /**

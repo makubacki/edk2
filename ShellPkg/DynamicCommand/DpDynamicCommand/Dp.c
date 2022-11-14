@@ -75,16 +75,16 @@ PERF_CUM_DATA  CumData[] = {
 UINT32 const  NumCum = sizeof (CumData) / sizeof (PERF_CUM_DATA);
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-v", TypeFlag     }, // -v   Verbose Mode
-  { L"-A", TypeFlag     }, // -A   All, Cooked
-  { L"-R", TypeFlag     }, // -R   RAW All
-  { L"-s", TypeFlag     }, // -s   Summary
-  { L"-x", TypeFlag     }, // -x   eXclude Cumulative Items
-  { L"-i", TypeFlag     }, // -i   Display Identifier
-  { L"-c", TypeValue    }, // -c   Display cumulative data.
-  { L"-n", TypeValue    }, // -n # Number of records to display for A and R
-  { L"-t", TypeValue    }, // -t # Threshold of interest
-  { NULL,  TypeMax      }
+  { L"-v", TypeFlag  },    // -v   Verbose Mode
+  { L"-A", TypeFlag  },    // -A   All, Cooked
+  { L"-R", TypeFlag  },    // -R   RAW All
+  { L"-s", TypeFlag  },    // -s   Summary
+  { L"-x", TypeFlag  },    // -x   eXclude Cumulative Items
+  { L"-i", TypeFlag  },    // -i   Display Identifier
+  { L"-c", TypeValue },    // -c   Display cumulative data.
+  { L"-n", TypeValue },    // -n # Number of records to display for A and R
+  { L"-t", TypeValue },    // -t # Threshold of interest
+  { NULL,  TypeMax   }
 };
 
 ///@}
@@ -877,9 +877,9 @@ RunDp (
   //
   // Boolean options
   //
-  VerboseMode    = ShellCommandLineGetFlag (ParamPackage, L"-v");
-  SummaryMode    = (BOOLEAN)(ShellCommandLineGetFlag (ParamPackage, L"-S") ||
-                             ShellCommandLineGetFlag (ParamPackage, L"-s"));
+  VerboseMode = ShellCommandLineGetFlag (ParamPackage, L"-v");
+  SummaryMode = (BOOLEAN)(ShellCommandLineGetFlag (ParamPackage, L"-S") ||
+                          ShellCommandLineGetFlag (ParamPackage, L"-s"));
   AllMode        = ShellCommandLineGetFlag (ParamPackage, L"-A");
   RawMode        = ShellCommandLineGetFlag (ParamPackage, L"-R");
   ExcludeMode    = ShellCommandLineGetFlag (ParamPackage, L"-x");

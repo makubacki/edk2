@@ -4358,16 +4358,16 @@ NotificationFunction (
   )
 {
   if (  ((KeyData->Key.UnicodeChar == L'c') &&
-       ((KeyData->KeyState.KeyShiftState == (EFI_SHIFT_STATE_VALID|
-                                             EFI_LEFT_CONTROL_PRESSED)) ||
-        (KeyData->KeyState.KeyShiftState  ==
-         (
-                                                                   EFI_SHIFT_STATE_VALID
-                                                                   |
-                                                                   EFI_RIGHT_CONTROL_PRESSED))))
+         ((KeyData->KeyState.KeyShiftState == (EFI_SHIFT_STATE_VALID|
+                                               EFI_LEFT_CONTROL_PRESSED)) ||
+          (KeyData->KeyState.KeyShiftState  ==
+           (
+            EFI_SHIFT_STATE_VALID
+            |
+            EFI_RIGHT_CONTROL_PRESSED))))
      ||
-      (KeyData->Key.UnicodeChar == 3)
-      )
+        (KeyData->Key.UnicodeChar == 3)
+        )
   {
     if (ShellInfoObject.NewEfiShellProtocol->ExecutionBreak == NULL) {
       return (EFI_UNSUPPORTED);
@@ -4381,9 +4381,9 @@ NotificationFunction (
                                                       EFI_LEFT_CONTROL_PRESSED))
              || (KeyData->KeyState.KeyShiftState  ==
                  (
-                                                                           EFI_SHIFT_STATE_VALID
-                                                                           |
-                                                                           EFI_RIGHT_CONTROL_PRESSED)))
+                  EFI_SHIFT_STATE_VALID
+                  |
+                  EFI_RIGHT_CONTROL_PRESSED)))
              )
   {
     ShellInfoObject.HaltOutput = TRUE;

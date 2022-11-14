@@ -24,11 +24,11 @@ UINTN  mNumberOfSmbios64BitStructures;
 UINTN  mSmbios64BitTableLength;
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-t", TypeValue    },
-  { L"-h", TypeValue    },
-  { L"-s", TypeFlag     },
-  { L"-a", TypeFlag     },
-  { NULL,  TypeMax      }
+  { L"-t", TypeValue },
+  { L"-h", TypeValue },
+  { L"-s", TypeFlag  },
+  { L"-a", TypeFlag  },
+  { NULL,  TypeMax   }
 };
 
 /**
@@ -1067,7 +1067,7 @@ InitSmbios64BitTableStatistics (
   mSmbios64BitStatisticsTable = (STRUCTURE_STATISTICS *)AllocateZeroPool (
                                                           mNumberOfSmbios64BitStructures
                                                           * sizeof (
-                                                                                                                  STRUCTURE_STATISTICS)
+                                                                    STRUCTURE_STATISTICS)
                                                           );
 
   if (mSmbios64BitStatisticsTable == NULL) {

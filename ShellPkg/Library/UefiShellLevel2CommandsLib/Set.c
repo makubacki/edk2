@@ -48,9 +48,9 @@ PrintAllShellEnvVars (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  SetParamList[] = {
-  { L"-d", TypeValue  },
-  { L"-v", TypeFlag   },
-  { NULL,  TypeMax    }
+  { L"-d", TypeValue },
+  { L"-v", TypeFlag  },
+  { NULL,  TypeMax   }
 };
 
 /**

@@ -276,7 +276,8 @@ PrintDynamicCommandHelp (
                                (CHAR16 *)DynamicCommand->CommandName,
                                (CHAR16 *)(gEfiShellProtocol->GetAlias (
                                                                CommandToGetHelpOn,
-                                                               NULL))
+                                                               NULL
+                                                               ))
                                ))))
     {
       // Print as Shell Help if in ManPage format.
@@ -315,11 +316,11 @@ PrintDynamicCommandHelp (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-usage",   TypeFlag                          },
-  { L"-section", TypeMaxValue                      },
-  { L"-verbose", TypeFlag                          },
-  { L"-v",       TypeFlag                          },
-  { NULL,        TypeMax                           }
+  { L"-usage",   TypeFlag     },
+  { L"-section", TypeMaxValue },
+  { L"-verbose", TypeFlag     },
+  { L"-v",       TypeFlag     },
+  { NULL,        TypeMax      }
 };
 
 /**

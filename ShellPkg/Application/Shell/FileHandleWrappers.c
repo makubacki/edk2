@@ -1876,7 +1876,8 @@ FileInterfaceMemWrite (
       MemFile->Buffer = ReallocatePool (
                           (UINTN)(MemFile->BufferSize),
                           (UINTN)(MemFile->BufferSize) + AsciiStrSize (
-                                                           AsciiBuffer) +
+                                                           AsciiBuffer
+                                                           ) +
                           MEM_WRITE_REALLOC_OVERHEAD,
                           MemFile->Buffer
                           );

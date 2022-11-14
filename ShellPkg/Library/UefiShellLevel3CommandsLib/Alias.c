@@ -178,9 +178,9 @@ ShellLevel3CommandsLibSetAlias (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-v", TypeFlag   },
-  { L"-d", TypeValue  },
-  { NULL,  TypeMax    }
+  { L"-v", TypeFlag  },
+  { L"-d", TypeValue },
+  { NULL,  TypeMax   }
 };
 
 /**

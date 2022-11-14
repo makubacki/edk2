@@ -144,13 +144,13 @@ UpdateOptionalData (
     ASSERT (OriginalData != NULL);
     OriginalOptionDataSize = sizeof (UINT32) + sizeof (UINT16) + StrSize (
                                                                    ((CHAR16 *)(
-                                                                                      OriginalData
-                                                                                      +
-                                                                                      sizeof (
-                                                                                                             UINT32)
-                                                                                      +
-                                                                                      sizeof (
-                                                                                                                               UINT16)))
+                                                                               OriginalData
+                                                                               +
+                                                                               sizeof (
+                                                                                       UINT32)
+                                                                               +
+                                                                               sizeof (
+                                                                                       UINT16)))
                                                                    );
     OriginalOptionDataSize += (*(UINT16 *)(OriginalData + sizeof (UINT32)));
     OriginalOptionDataSize -= OriginalSize;
@@ -1938,9 +1938,9 @@ InitBcfgStruct (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-v",   TypeFlag                             },
-  { L"-opt", TypeMaxValue                         },
-  { NULL,    TypeMax                              }
+  { L"-v",   TypeFlag     },
+  { L"-opt", TypeMaxValue },
+  { NULL,    TypeMax      }
 };
 
 /**
@@ -2046,7 +2046,9 @@ ShellCommandRunBcfg (
     } else if (gUnicodeCollation->StriColl (
                                     gUnicodeCollation,
                                     (CHAR16 *)ShellCommandLineGetRawValue (
-                                                Package, 1),
+                                                Package,
+                                                1
+                                                ),
                                     L"driver"
                                     ) == 0)
     {
@@ -2054,7 +2056,9 @@ ShellCommandRunBcfg (
     } else if (gUnicodeCollation->StriColl (
                                     gUnicodeCollation,
                                     (CHAR16 *)ShellCommandLineGetRawValue (
-                                                Package, 1),
+                                                Package,
+                                                1
+                                                ),
                                     L"boot"
                                     ) == 0)
     {
@@ -2198,8 +2202,10 @@ ShellCommandRunBcfg (
             CurrentOperation.FileName = StrnCatGrow (
                                           &CurrentOperation.FileName,
                                           NULL,
-                                          ShellCommandLineGetRawValue (Package,
-                                            ++ParamNumber),
+                                          ShellCommandLineGetRawValue (
+                                            Package,
+                                            ++ParamNumber
+                                            ),
                                           0
                                           );
             ASSERT (CurrentOperation.Description == NULL);
@@ -2264,8 +2270,10 @@ ShellCommandRunBcfg (
             CurrentOperation.FileName = StrnCatGrow (
                                           &CurrentOperation.FileName,
                                           NULL,
-                                          ShellCommandLineGetRawValue (Package,
-                                            ++ParamNumber),
+                                          ShellCommandLineGetRawValue (
+                                            Package,
+                                            ++ParamNumber
+                                            ),
                                           0
                                           );
             ASSERT (CurrentOperation.Description == NULL);
@@ -2599,7 +2607,9 @@ ShellCommandRunBcfg (
                                                  &CurrentOperation.Description,
                                                  NULL,
                                                  ShellCommandLineGetRawValue (
-                                                   Package, ++ParamNumber),
+                                                   Package,
+                                                   ++ParamNumber
+                                                   ),
                                                  0
                                                  );
               }

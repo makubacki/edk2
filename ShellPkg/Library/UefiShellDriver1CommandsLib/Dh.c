@@ -11,13 +11,13 @@
 #include "UefiShellDriver1CommandsLib.h"
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-p",       TypeValue               },
-  { L"-d",       TypeFlag                },
-  { L"-v",       TypeFlag                },
-  { L"-verbose", TypeFlag                },
-  { L"-sfo",     TypeFlag                },
-  { L"-l",       TypeValue               },
-  { NULL,        TypeMax                 }
+  { L"-p",       TypeValue },
+  { L"-d",       TypeFlag  },
+  { L"-v",       TypeFlag  },
+  { L"-verbose", TypeFlag  },
+  { L"-sfo",     TypeFlag  },
+  { L"-l",       TypeValue },
+  { NULL,        TypeMax   }
 };
 
 STATIC CONST EFI_GUID  *UefiDriverModelProtocolsGuidArray[] = {

@@ -10,9 +10,9 @@
 #include "UefiShellDebug1CommandsLib.h"
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-n", TypeValue  },
-  { L"-s", TypeValue  },
-  { NULL,  TypeMax    }
+  { L"-n", TypeValue },
+  { L"-s", TypeValue },
+  { NULL,  TypeMax   }
 };
 
 typedef enum {

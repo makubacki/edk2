@@ -2361,10 +2361,10 @@ PCIE_EXPLAIN_STRUCT  PcieExplainList[] = {
 //
 PCI_CONFIG_SPACE               *mConfigSpace = NULL;
 STATIC CONST SHELL_PARAM_ITEM  ParamList[]   = {
-  { L"-s",  TypeValue     },
-  { L"-i",  TypeFlag      },
-  { L"-ec", TypeValue     },
-  { NULL,   TypeMax       }
+  { L"-s",  TypeValue },
+  { L"-i",  TypeFlag  },
+  { L"-ec", TypeValue },
+  { NULL,   TypeMax   }
 };
 
 CHAR16  *DevicePortTypeTable[] = {
@@ -6173,7 +6173,8 @@ PrintInterpretedExtendedCompatibilityAcs (
   if (PCI_EXPRESS_EXTENDED_CAPABILITY_ACS_EXTENDED_GET_EGRES_CONTROL (Header)) {
     VectorSize =
       PCI_EXPRESS_EXTENDED_CAPABILITY_ACS_EXTENDED_GET_EGRES_VECTOR_SIZE (
-        Header);
+        Header
+        );
     if (VectorSize == 0) {
       VectorSize = 256;
     }
@@ -6376,7 +6377,7 @@ PrintInterpretedExtendedCompatibilityECEA (
     EFI_PCIE_CAPABILITY_BASE_OFFSET + ((UINT8 *)HeaderAddress -
                                        (UINT8 *)HeadersBaseAddress),
     sizeof (
-           PCI_EXPRESS_EXTENDED_CAPABILITIES_EVENT_COLLECTOR_ENDPOINT_ASSOCIATION),
+            PCI_EXPRESS_EXTENDED_CAPABILITIES_EVENT_COLLECTOR_ENDPOINT_ASSOCIATION),
     (VOID *)(HeaderAddress)
     );
   return (EFI_SUCCESS);

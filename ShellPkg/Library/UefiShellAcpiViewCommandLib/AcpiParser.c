@@ -641,17 +641,17 @@ ParseAcpi (
   the GAS structure.
 **/
 STATIC CONST ACPI_PARSER  GasParser[] = {
-  { L"Address Space ID",    1,             0,             L"0x%x",
-    NULL,  NULL,
+  { L"Address Space ID",    1, 0, L"0x%x",
+    NULL, NULL,
     NULL, NULL },
-  { L"Register Bit Width",  1,             1,             L"0x%x",
-    NULL,  NULL, NULL,   NULL },
-  { L"Register Bit Offset", 1,             2,             L"0x%x",
-    NULL,               NULL,  NULL, NULL   },
-  { L"Access Size",         1,             3,             L"0x%x",
-    NULL,             NULL,               NULL,  NULL   },
-  { L"Address",             8,             4,             L"0x%lx",
-    NULL, NULL,             NULL,               NULL    }
+  { L"Register Bit Width",  1, 1, L"0x%x",
+    NULL, NULL, NULL, NULL },
+  { L"Register Bit Offset", 1, 2, L"0x%x",
+    NULL, NULL, NULL, NULL },
+  { L"Access Size",         1, 3, L"0x%x",
+    NULL, NULL, NULL, NULL },
+  { L"Address",             8, 4, L"0x%lx",
+    NULL, NULL, NULL, NULL }
 };
 
 /**

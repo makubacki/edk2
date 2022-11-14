@@ -12,9 +12,9 @@
 #define MAX_LEN_DRIVER_NAME  35
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-sfo", TypeFlag     },
-  { L"-l",   TypeValue    },
-  { NULL,    TypeMax      }
+  { L"-sfo", TypeFlag  },
+  { L"-l",   TypeValue },
+  { NULL,    TypeMax   }
 };
 
 /**

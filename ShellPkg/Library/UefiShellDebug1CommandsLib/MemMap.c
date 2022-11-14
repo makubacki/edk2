@@ -302,8 +302,10 @@ ShellCommandRunMemMap (
                 gShellDebug1HiiHandle,
                 NameEfiReservedMemoryType,
                 Walker->PhysicalStart,
-                Walker->PhysicalStart+MultU64x64 (SIZE_4KB,
-                                        Walker->NumberOfPages)-
+                Walker->PhysicalStart+MultU64x64 (
+                                        SIZE_4KB,
+                                        Walker->NumberOfPages
+                                        )-
                 1,
                 Walker->NumberOfPages,
                 Walker->Attribute
@@ -461,8 +463,10 @@ ShellCommandRunMemMap (
                 gShellDebug1HiiHandle,
                 NameEfiConventionalMemory,
                 Walker->PhysicalStart,
-                Walker->PhysicalStart+MultU64x64 (SIZE_4KB,
-                                        Walker->NumberOfPages)-
+                Walker->PhysicalStart+MultU64x64 (
+                                        SIZE_4KB,
+                                        Walker->NumberOfPages
+                                        )-
                 1,
                 Walker->NumberOfPages,
                 Walker->Attribute
@@ -483,8 +487,10 @@ ShellCommandRunMemMap (
                 gShellDebug1HiiHandle,
                 NameEfiPersistentMemory,
                 Walker->PhysicalStart,
-                Walker->PhysicalStart+MultU64x64 (SIZE_4KB,
-                                        Walker->NumberOfPages)-
+                Walker->PhysicalStart+MultU64x64 (
+                                        SIZE_4KB,
+                                        Walker->NumberOfPages
+                                        )-
                 1,
                 Walker->NumberOfPages,
                 Walker->Attribute
@@ -601,8 +607,10 @@ ShellCommandRunMemMap (
                 NameEfiMemoryMappedIOPortSpaceShort :
                 NameEfiMemoryMappedIOPortSpace,
                 Walker->PhysicalStart,
-                Walker->PhysicalStart+MultU64x64 (SIZE_4KB,
-                                        Walker->NumberOfPages)-
+                Walker->PhysicalStart+MultU64x64 (
+                                        SIZE_4KB,
+                                        Walker->NumberOfPages
+                                        )-
                 1,
                 Walker->NumberOfPages,
                 Walker->Attribute
@@ -645,8 +653,10 @@ ShellCommandRunMemMap (
                 gShellDebug1HiiHandle,
                 NameEfiUnacceptedMemoryType,
                 Walker->PhysicalStart,
-                Walker->PhysicalStart+MultU64x64 (SIZE_4KB,
-                                        Walker->NumberOfPages)-
+                Walker->PhysicalStart+MultU64x64 (
+                                        SIZE_4KB,
+                                        Walker->NumberOfPages
+                                        )-
                 1,
                 Walker->NumberOfPages,
                 Walker->Attribute

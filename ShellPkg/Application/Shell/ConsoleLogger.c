@@ -306,8 +306,8 @@ UpdateDisplayFromHistory (
   ConsoleInfo->OldConOut->EnableCursor (ConsoleInfo->OldConOut, FALSE);
   ConsoleInfo->OldConOut->SetCursorPosition (ConsoleInfo->OldConOut, 0, 0);
 
-  Screen     = &ConsoleInfo->Buffer[(ConsoleInfo->ColsPerScreen + 2) *
-                                    ConsoleInfo->CurrentStartRow];
+  Screen = &ConsoleInfo->Buffer[(ConsoleInfo->ColsPerScreen + 2) *
+                                ConsoleInfo->CurrentStartRow];
   Attributes = &ConsoleInfo->Attributes[ConsoleInfo->ColsPerScreen *
                                         ConsoleInfo->CurrentStartRow];
   for ( CurrentRow = 0
@@ -1187,8 +1187,8 @@ ConsoleLoggerClearScreen (
   // Record console output history
   //
   if (!EFI_ERROR (Status)) {
-    Screen     = &ConsoleInfo->Buffer[(ConsoleInfo->ColsPerScreen + 2) *
-                                      ConsoleInfo->CurrentStartRow];
+    Screen = &ConsoleInfo->Buffer[(ConsoleInfo->ColsPerScreen + 2) *
+                                  ConsoleInfo->CurrentStartRow];
     Attributes = &ConsoleInfo->Attributes[ConsoleInfo->ColsPerScreen *
                                           ConsoleInfo->CurrentStartRow];
     for ( Row = ConsoleInfo->OriginalStartRow

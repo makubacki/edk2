@@ -150,13 +150,13 @@ STATIC CONST CHAR16  *ErrStatusDesc[] =
 };
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-i", TypeValue  },
-  { L"-k", TypeFlag   },
-  { L"-l", TypeValue  },
-  { L"-m", TypeFlag   },
-  { L"-s", TypeValue  },
-  { L"-t", TypeValue  },
-  { NULL,  TypeMax    }
+  { L"-i", TypeValue },
+  { L"-k", TypeFlag  },
+  { L"-l", TypeValue },
+  { L"-m", TypeFlag  },
+  { L"-s", TypeValue },
+  { L"-t", TypeValue },
+  { NULL,  TypeMax   }
 };
 
 //

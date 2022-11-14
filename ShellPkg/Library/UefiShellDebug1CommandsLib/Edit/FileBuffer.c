@@ -1209,14 +1209,14 @@ FileBufferRead (
       // last character is a return, SO create a new line
       //
       if (  (  ((Type == NewLineTypeCarriageReturnLineFeed) || (Type ==
-                                                            NewLineTypeLineFeedCarriageReturn))
-          && (LineSizeBackup == FileSize -
-              2))
+                                                                NewLineTypeLineFeedCarriageReturn))
+            && (LineSizeBackup == FileSize -
+                2))
          ||
-          (((Type == NewLineTypeLineFeed) || (Type ==
-                                              NewLineTypeCarriageReturn)) &&
-           (LineSizeBackup == FileSize - 1))
-          )
+            (((Type == NewLineTypeLineFeed) || (Type ==
+                                                NewLineTypeCarriageReturn)) &&
+             (LineSizeBackup == FileSize - 1))
+            )
       {
         Line = FileBufferCreateLine ();
         if (Line == NULL) {

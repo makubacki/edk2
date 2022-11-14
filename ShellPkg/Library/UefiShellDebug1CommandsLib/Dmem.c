@@ -111,8 +111,8 @@ DisplayMmioMemory (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-mmio", TypeFlag                     },
-  { NULL,     TypeMax                      }
+  { L"-mmio", TypeFlag },
+  { NULL,     TypeMax  }
 };
 
 /**
@@ -198,7 +198,9 @@ ShellCommandRunDmem (
                                                                    Temp1,
                                                                    (UINT64 *)&
                                                                    Address,
-                                                                   TRUE, FALSE)
+                                                                   TRUE,
+                                                                   FALSE
+                                                                   )
                                                                  ))
         {
           ShellPrintHiiEx (
@@ -222,7 +224,8 @@ ShellCommandRunDmem (
                                                                       Temp1,
                                                                       &Size,
                                                                       TRUE,
-                                                                      FALSE)
+                                                                      FALSE
+                                                                      )
                                                                     ))
           {
             ShellPrintHiiEx (

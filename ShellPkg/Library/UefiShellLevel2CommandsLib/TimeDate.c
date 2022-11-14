@@ -357,17 +357,17 @@ ShellCommandRunDate (
 // Note "-tz" is invalid for this (non-interactive) version of 'time'.
 //
 STATIC CONST SHELL_PARAM_ITEM  TimeParamList2[] = {
-  { L"-d", TypeValue                                          },
-  { NULL,  TypeMax                                            }
+  { L"-d", TypeValue },
+  { NULL,  TypeMax   }
 };
 
 STATIC CONST SHELL_PARAM_ITEM  TimeParamList3[] = {
   { L"-d",
-    TypeValue                                                             },
+    TypeValue },
   { L"-tz",
-    TypeValue                                                                },
+    TypeValue },
   { NULL,
-    TypeMax                                                                  }
+    TypeMax }
 };
 
 /**
@@ -883,125 +883,126 @@ typedef struct {
 } TIME_ZONE_ITEM;
 
 STATIC CONST SHELL_PARAM_ITEM  TimeZoneParamList2[] = {
-  { L"-l", TypeFlag                                          },
-  { L"-f", TypeFlag                                          },
-  { NULL,  TypeMax                                           }
+  { L"-l", TypeFlag },
+  { L"-f", TypeFlag },
+  { NULL,  TypeMax  }
 };
 STATIC CONST SHELL_PARAM_ITEM  TimeZoneParamList3[] = {
-  { L"-l", TypeFlag                                               },
-  { L"-f", TypeFlag                                               },
-  { L"-s", TypeTimeValue                                          },
-  { NULL,  TypeMax                                                }
+  { L"-l", TypeFlag      },
+  { L"-f", TypeFlag      },
+  { L"-s", TypeTimeValue },
+  { NULL,  TypeMax       }
 };
 
 STATIC CONST TIME_ZONE_ITEM  TimeZoneList[] = {
-  { 720,                      STRING_TOKEN (
-                                STR_TIMEZONE_M12
-                                )                                                 },
-  { 660,                      STRING_TOKEN (
-                                STR_TIMEZONE_M11
-                                )                                                                        },
-  { 600,                      STRING_TOKEN (
-                                STR_TIMEZONE_M10
-                                )                                                                                               },
-  { 540,                      STRING_TOKEN (
-                                STR_TIMEZONE_M9
-                                )                                                                                                                       },
-  { 480,                      STRING_TOKEN (
-                                STR_TIMEZONE_M8
-                                )                                                                                                                                              },
-  { 420,                      STRING_TOKEN (
-                                STR_TIMEZONE_M7
-                                )                                                                                                                                                                     },
-  { 360,                      STRING_TOKEN (
-                                STR_TIMEZONE_M6
-                                )                                                                                                                                                                                            },
-  { 300,                      STRING_TOKEN (
-                                STR_TIMEZONE_M5
-                                )                                                                                                                                                                                                                   },
-  { 270,                      STRING_TOKEN (
-                                STR_TIMEZONE_M430
-                                )                                                                                                                                                                                                                                        },
-  { 240,                      STRING_TOKEN (
-                                STR_TIMEZONE_M4
-                                )                                                                                                                                                                                                                                                                 },
-  { 210,                      STRING_TOKEN (
-                                STR_TIMEZONE_M330
-                                )                                                                                                                                                                                                                                                                                      },
-  { 180,                      STRING_TOKEN (
-                                STR_TIMEZONE_M3
-                                )                                                                                                                                                                                                                                                                                                               },
-  { 120,                      STRING_TOKEN (
-                                STR_TIMEZONE_M2
-                                )                                                                                                                                                                                                                                                                                                                                      },
-  { 60,                       STRING_TOKEN (
-                                STR_TIMEZONE_M1
-                                )                                                                                                                                                                                                                                                                                                                                                             },
-  { 0,                        STRING_TOKEN (
-                                STR_TIMEZONE_0
-                                )                                                                                                                                                                                                                                                                                                                                                                                   },
-  { -60,                      STRING_TOKEN (
-                                STR_TIMEZONE_P1
-                                )                                                                                                                                                                                                                                                                                                                                                                                                       },
-  { -120,                     STRING_TOKEN (
-                                STR_TIMEZONE_P2
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                           },
-  { -180,                     STRING_TOKEN (
-                                STR_TIMEZONE_P3
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                               },
-  { -210,                     STRING_TOKEN (
-                                STR_TIMEZONE_P330
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
-  { -240,                     STRING_TOKEN (
-                                STR_TIMEZONE_P4
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
-  { -270,                     STRING_TOKEN (
-                                STR_TIMEZONE_P430
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
-  { -300,                     STRING_TOKEN (
-                                STR_TIMEZONE_P5
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
-  { -330,                     STRING_TOKEN (
-                                STR_TIMEZONE_P530
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
-  { -345,                     STRING_TOKEN (
-                                STR_TIMEZONE_P545
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
-  { -360,                     STRING_TOKEN (
-                                STR_TIMEZONE_P6
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
-  { -390,                     STRING_TOKEN (
-                                STR_TIMEZONE_P630
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
-  { -420,                     STRING_TOKEN (
-                                STR_TIMEZONE_P7
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
-  { -480,                     STRING_TOKEN (
-                                STR_TIMEZONE_P8
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
-  { -540,                     STRING_TOKEN (
-                                STR_TIMEZONE_P9
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
-  { -570,                     STRING_TOKEN (
-                                STR_TIMEZONE_P930
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
-  { -600,                     STRING_TOKEN (
-                                STR_TIMEZONE_P10
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
-  { -660,                     STRING_TOKEN (
-                                STR_TIMEZONE_P11
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
-  { -720,                     STRING_TOKEN (
-                                STR_TIMEZONE_P12
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
-  { -780,                     STRING_TOKEN (
-                                STR_TIMEZONE_P13
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
-  { -840,                     STRING_TOKEN (
-                                STR_TIMEZONE_P14
-                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { 720, STRING_TOKEN (
+           STR_TIMEZONE_M12
+           ) },
+  { 660, STRING_TOKEN (
+           STR_TIMEZONE_M11
+           ) },
+  { 600, STRING_TOKEN (
+           STR_TIMEZONE_M10
+           ) },
+  { 540, STRING_TOKEN (
+           STR_TIMEZONE_M9
+           ) },
+  { 480, STRING_TOKEN (
+           STR_TIMEZONE_M8
+           ) },
+  { 420, STRING_TOKEN (
+           STR_TIMEZONE_M7
+           ) },
+  { 360, STRING_TOKEN (
+           STR_TIMEZONE_M6
+           ) },
+  { 300, STRING_TOKEN (
+           STR_TIMEZONE_M5
+           ) },
+  { 270, STRING_TOKEN (
+           STR_TIMEZONE_M430
+           ) },
+  { 240, STRING_TOKEN (
+           STR_TIMEZONE_M4
+           ) },
+  { 210, STRING_TOKEN (
+           STR_TIMEZONE_M330
+           ) },
+  { 180, STRING_TOKEN (
+           STR_TIMEZONE_M3
+           ) },
+  { 120, STRING_TOKEN (
+           STR_TIMEZONE_M2
+           ) },
+  { 60, STRING_TOKEN (
+          STR_TIMEZONE_M1
+          ) },
+  { 0, STRING_TOKEN (
+         STR_TIMEZONE_0
+         ) },
+  { -60, STRING_TOKEN (
+           STR_TIMEZONE_P1
+           ) },
+  { -120, STRING_TOKEN (
+            STR_TIMEZONE_P2
+            ) },
+  { -180, STRING_TOKEN (
+            STR_TIMEZONE_P3
+            ) },
+  { -210, STRING_TOKEN (
+            STR_TIMEZONE_P330
+            ) },
+  { -240, STRING_TOKEN (
+            STR_TIMEZONE_P4
+            ) },
+  { -270, STRING_TOKEN (
+            STR_TIMEZONE_P430
+            ) },
+  { -300, STRING_TOKEN (
+            STR_TIMEZONE_P5
+            ) },
+  { -330, STRING_TOKEN (
+            STR_TIMEZONE_P530
+            ) },
+  { -345, STRING_TOKEN (
+            STR_TIMEZONE_P545
+            ) },
+  { -360, STRING_TOKEN (
+            STR_TIMEZONE_P6
+            ) },
+  { -390, STRING_TOKEN (
+            STR_TIMEZONE_P630
+            ) },
+  { -420, STRING_TOKEN (
+            STR_TIMEZONE_P7
+            ) },
+  { -480, STRING_TOKEN (
+            STR_TIMEZONE_P8
+            ) },
+  { -540, STRING_TOKEN (
+            STR_TIMEZONE_P9
+            ) },
+  { -570, STRING_TOKEN (
+            STR_TIMEZONE_P930
+            ) },
+  { -600, STRING_TOKEN (
+            STR_TIMEZONE_P10
+            ) },
+  { -660, STRING_TOKEN (
+            STR_TIMEZONE_P11
+            ) },
+  { -720, STRING_TOKEN (
+            STR_TIMEZONE_P12
+            ) },
+  { -780, STRING_TOKEN (
+            STR_TIMEZONE_P13
+            ) },
+  { -840, STRING_TOKEN (
+            STR_TIMEZONE_P14
+            ) },
   { EFI_UNSPECIFIED_TIMEZONE, STRING_TOKEN (
-                                STR_TIMEZONE_LOCAL)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+                                STR_TIMEZONE_LOCAL
+                                ) }
 };
 
 /**

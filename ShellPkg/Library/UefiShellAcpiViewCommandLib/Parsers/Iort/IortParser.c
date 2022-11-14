@@ -176,14 +176,14 @@ ValidateRmrMemDescCount (
 **/
 STATIC CONST ACPI_PARSER  IortParser[] = {
   PARSE_ACPI_HEADER (&AcpiHdrInfo),
-  { L"Number of IORT Nodes",       4,                             36,
+  { L"Number of IORT Nodes",       4,     36,
     L"%d",                         NULL,
-    (VOID **)&IortNodeCount,       NULL,                          NULL },
-  { L"Offset to Array of IORT Nodes",4,                             40,
+    (VOID **)&IortNodeCount,       NULL,  NULL },
+  { L"Offset to Array of IORT Nodes",4,     40,
     L"0x%x",                       NULL,
-    (VOID **)&IortNodeOffset,      NULL,                          NULL },
-  { L"Reserved",                   4,                             44,
-    L"0x%x",                       NULL,                          NULL,
+    (VOID **)&IortNodeOffset,      NULL,  NULL },
+  { L"Reserved",                   4,     44,
+    L"0x%x",                       NULL,  NULL,
     NULL,                          NULL }
 };
 
@@ -199,87 +199,87 @@ STATIC CONST ACPI_PARSER  IortNodeHeaderParser[] = {
 **/
 STATIC CONST ACPI_PARSER  IortNodeSmmuV1V2Parser[] = {
   PARSE_IORT_NODE_HEADER (NULL,       NULL),
-  { L"Base Address",                  8,                               16,
-    L"0x%lx",                         NULL,                            NULL,
+  { L"Base Address",                  8,    16,
+    L"0x%lx",                         NULL, NULL,
     NULL,                             NULL },
-  { L"Span",                          8,                               24,
-    L"0x%lx",                         NULL,                            NULL,
+  { L"Span",                          8,    24,
+    L"0x%lx",                         NULL, NULL,
     NULL,                             NULL },
-  { L"Model",                         4,                               32,
-    L"%d",                            NULL,                            NULL,
-    NULL,                             NULL    },
-  { L"Flags",                         4,                               36,
-    L"0x%x",                          NULL,                            NULL,
-    NULL,                             NULL        },
-  { L"Global Interrupt Array Ref",    4,                               40,
-    L"0x%x",                          NULL,                            NULL,
+  { L"Model",                         4,    32,
+    L"%d",                            NULL, NULL,
+    NULL,                             NULL },
+  { L"Flags",                         4,    36,
+    L"0x%x",                          NULL, NULL,
+    NULL,                             NULL },
+  { L"Global Interrupt Array Ref",    4,    40,
+    L"0x%x",                          NULL, NULL,
     NULL,
     NULL },
-  { L"Number of context interrupts",  4,                               44,
+  { L"Number of context interrupts",  4,    44,
     L"%d",                            NULL,
     (VOID **)&InterruptContextCount,  NULL,
     NULL },
-  { L"Context Interrupt Array Ref",   4,                               48,
+  { L"Context Interrupt Array Ref",   4,    48,
     L"0x%x",                          NULL,
     (VOID **)&InterruptContextOffset, NULL,
     NULL },
-  { L"Number of PMU Interrupts",      4,                               52,
+  { L"Number of PMU Interrupts",      4,    52,
     L"%d",                            NULL,
     (VOID **)&PmuInterruptCount,      NULL,
     NULL },
-  { L"PMU Interrupt Array Ref",       4,                               56,
+  { L"PMU Interrupt Array Ref",       4,    56,
     L"0x%x",                          NULL,
     (VOID **)&PmuInterruptOffset,     NULL,
     NULL },
 
   // Interrupt Array
-  { L"SMMU_NSgIrpt",                  4,                               60,
+  { L"SMMU_NSgIrpt",                  4,    60,
     L"0x%x",                          NULL,
     NULL,                             NULL,
-    NULL               },
-  { L"SMMU_NSgIrpt interrupt flags",  4,                               64,
+    NULL },
+  { L"SMMU_NSgIrpt interrupt flags",  4,    64,
     L"0x%x",                          NULL,
     NULL,                             NULL,
-    NULL                                            },
-  { L"SMMU_NSgCfgIrpt",               4,                               68,
+    NULL },
+  { L"SMMU_NSgCfgIrpt",               4,    68,
     L"0x%x",                          NULL,
     NULL,                             NULL,
-    NULL                                                                       },
-  { L"SMMU_NSgCfgIrpt interrupt flags",4,                               72,
-    L"0x%x",                          NULL,                            NULL,
+    NULL },
+  { L"SMMU_NSgCfgIrpt interrupt flags",4,    72,
+    L"0x%x",                          NULL, NULL,
     NULL,
-    NULL                                                                                                }
+    NULL }
 };
 
 /**
   An ACPI_PARSER array describing the SMMUv1/2 Node Interrupt Array.
 **/
 STATIC CONST ACPI_PARSER  InterruptArrayParser[] = {
-  { L"Interrupt GSIV", 4,          0,          L"0x%x",          NULL,
-    NULL,          NULL,          NULL                                     },
-  { L"Flags",          4,          4,          L"0x%x",          NULL,
-    NULL,  NULL,          NULL                                              }
+  { L"Interrupt GSIV", 4, 0, L"0x%x", NULL,
+    NULL, NULL, NULL },
+  { L"Flags",          4, 4, L"0x%x", NULL,
+    NULL, NULL, NULL }
 };
 
 /**
   An ACPI_PARSER array describing the IORT ID Mapping.
 **/
 STATIC CONST ACPI_PARSER  IortNodeIdMappingParser[] = {
-  { L"Input base",       4,            0,             L"0x%x",             NULL,
-    NULL,             NULL,
-    NULL                                                                           },
-  { L"Number of IDs",    4,            4,             L"0x%x",             NULL,
-    NULL,              NULL,
-    NULL                                                                                       },
-  { L"Output base",      4,            8,             L"0x%x",             NULL,
-    NULL,             NULL,
-    NULL                                                                                                   },
-  { L"Output reference", 4,            12,            L"0x%x",             NULL,
-    NULL,             NULL,
-    NULL                                                                                                                },
-  { L"Flags",            4,            16,            L"0x%x",             NULL,
+  { L"Input base",       4, 0,  L"0x%x", NULL,
     NULL, NULL,
-    NULL                                                                                                                            }
+    NULL },
+  { L"Number of IDs",    4, 4,  L"0x%x", NULL,
+    NULL, NULL,
+    NULL },
+  { L"Output base",      4, 8,  L"0x%x", NULL,
+    NULL, NULL,
+    NULL },
+  { L"Output reference", 4, 12, L"0x%x", NULL,
+    NULL, NULL,
+    NULL },
+  { L"Flags",            4, 16, L"0x%x", NULL,
+    NULL, NULL,
+    NULL }
 };
 
 /**
@@ -287,50 +287,50 @@ STATIC CONST ACPI_PARSER  IortNodeIdMappingParser[] = {
 **/
 STATIC CONST ACPI_PARSER  IortNodeSmmuV3Parser[] = {
   PARSE_IORT_NODE_HEADER (NULL, NULL),
-  { L"Base Address",            8,                         16,
-    L"0x%lx",                   NULL,                      NULL,
+  { L"Base Address",            8,    16,
+    L"0x%lx",                   NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                            },
-  { L"Flags",                   4,                         24,
-    L"0x%x",                    NULL,                      NULL,
+    NULL },
+  { L"Flags",                   4,    24,
+    L"0x%x",                    NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                   },
-  { L"Reserved",                4,                         28,
-    L"0x%x",                    NULL,                      NULL,
+    NULL },
+  { L"Reserved",                4,    28,
+    L"0x%x",                    NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                          },
-  { L"VATOS Address",           8,                         32,
-    L"0x%lx",                   NULL,                      NULL,
+    NULL },
+  { L"VATOS Address",           8,    32,
+    L"0x%lx",                   NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                 },
-  { L"Model",                   4,                         40,
-    L"%d",                      NULL,                      NULL,
+    NULL },
+  { L"Model",                   4,    40,
+    L"%d",                      NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                        },
-  { L"Event",                   4,                         44,
+    NULL },
+  { L"Event",                   4,    44,
     L"0x%x",                    NULL,
     NULL,                       NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                },
-  { L"PRI",                     4,                         48,
+    NULL },
+  { L"PRI",                     4,    48,
     L"0x%x",                    NULL,
     NULL,                       NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                             },
-  { L"GERR",                    4,                         52,
+    NULL },
+  { L"GERR",                    4,    52,
     L"0x%x",                    NULL,
     NULL,                       NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
-  { L"Sync",                    4,                         56,
+    NULL },
+  { L"Sync",                    4,    56,
     L"0x%x",                    NULL,
     NULL,                       NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
-  { L"Proximity domain",        4,                         60,
+    NULL },
+  { L"Proximity domain",        4,    60,
     L"0x%x",                    NULL,
     NULL,                       NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
-  { L"Device ID mapping index", 4,                         64,
-    L"%d",                      NULL,                      NULL,
+    NULL },
+  { L"Device ID mapping index", 4,    64,
+    L"%d",                      NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }
+    NULL }
 };
 
 /**
@@ -341,7 +341,7 @@ STATIC CONST ACPI_PARSER  IortNodeItsParser[] = {
     ValidateItsIdMappingCount,
     ValidateItsIdArrayReference
     ),
-  { L"Number of ITSs",        4, 16, L"%d", NULL, (VOID **)&ItsCount, NULL}
+  { L"Number of ITSs",        4,16, L"%d", NULL, (VOID **)&ItsCount, NULL }
 };
 
 /**
@@ -356,18 +356,18 @@ STATIC CONST ACPI_PARSER  ItsIdParser[] = {
 **/
 STATIC CONST ACPI_PARSER  IortNodeNamedComponentParser[] = {
   PARSE_IORT_NODE_HEADER (NULL, NULL),
-  { L"Node Flags",              4,                         16,
+  { L"Node Flags",              4,    16,
     L"%d",
-    NULL,                       NULL,                      NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                               },
-  { L"Memory access properties",8,                         20,
-    L"0x%lx",                   NULL,                      NULL,
+    NULL,                       NULL, NULL,
+    NULL },
+  { L"Memory access properties",8,    20,
+    L"0x%lx",                   NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                               },
-  { L"Device memory address size limit",1,                         28,
-    L"%d",                      NULL,                      NULL,
+    NULL },
+  { L"Device memory address size limit",1,    28,
+    L"%d",                      NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                               }
+    NULL }
 };
 
 /**
@@ -375,34 +375,34 @@ STATIC CONST ACPI_PARSER  IortNodeNamedComponentParser[] = {
 **/
 STATIC CONST ACPI_PARSER  IortNodeRootComplexParser[] = {
   PARSE_IORT_NODE_HEADER (NULL, NULL),
-  { L"Memory access properties",8,                        16,
-    L"0x%lx",                   NULL,                     NULL,
+  { L"Memory access properties",8,    16,
+    L"0x%lx",                   NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
-  { L"ATS Attribute",           4,                        24,
-    L"0x%x",                    NULL,                     NULL,
+    NULL },
+  { L"ATS Attribute",           4,    24,
+    L"0x%x",                    NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
-  { L"PCI Segment number",      4,                        28,
-    L"0x%x",                    NULL,                     NULL,
+    NULL },
+  { L"PCI Segment number",      4,    28,
+    L"0x%x",                    NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
-  { L"Memory access size limit",1,                        32,
-    L"0x%x",                    NULL,                     NULL,
+    NULL },
+  { L"Memory access size limit",1,    32,
+    L"0x%x",                    NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
-  { L"PASID capabilities",      2,                        33,
-    L"0x%x",                    NULL,                     NULL,
+    NULL },
+  { L"PASID capabilities",      2,    33,
+    L"0x%x",                    NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
-  { L"Reserved",                1,                        35,
-    L"%x",                      NULL,                     NULL,
+    NULL },
+  { L"Reserved",                1,    35,
+    L"%x",                      NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
-  { L"Flags",                   4,                        36,
-    L"0x%x",                    NULL,                     NULL,
+    NULL },
+  { L"Flags",                   4,    36,
+    L"0x%x",                    NULL, NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+    NULL },
 };
 
 /**
@@ -414,22 +414,22 @@ STATIC CONST ACPI_PARSER  IortNodePmcgParser[] = {
     16,                                               L"0x%lx",
     NULL,                                             NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+    NULL },
   { L"Overflow interrupt GSIV",                       4,
     24,                                               L"0x%x",
     NULL,                                             NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+    NULL },
   { L"Node reference",                                4,
     28,                                               L"0x%x",
     NULL,                                             NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+    NULL },
   { L"Page 1 Base Address",                           8,
     32,                                               L"0x%lx",
     NULL,
     NULL,                                             NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }
+    NULL }
 };
 
 /**
@@ -437,30 +437,30 @@ STATIC CONST ACPI_PARSER  IortNodePmcgParser[] = {
 **/
 STATIC CONST ACPI_PARSER  IortNodeRmrParser[] = {
   PARSE_IORT_NODE_HEADER (NULL, NULL),
-  { L"Flags",                   4,                        16,
-    L"0x%x",                    NULL,                     NULL,
+  { L"Flags",                   4,                      16,
+    L"0x%x",                    NULL,                   NULL,
     NULL,
-    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
-  { L"Memory Range Desc count", 4,                        20,
+    NULL },
+  { L"Memory Range Desc count", 4,                      20,
     L"%d",                      NULL,
-    (VOID **)&RmrMemDescCount,  ValidateRmrMemDescCount,  NULL },
-  { L"Memory Range Desc Ref",   4,                        24,
+    (VOID **)&RmrMemDescCount,  ValidateRmrMemDescCount,NULL },
+  { L"Memory Range Desc Ref",   4,                      24,
     L"0x%x",                    NULL,
-    (VOID **)&RmrMemDescOffset, NULL,                     NULL }
+    (VOID **)&RmrMemDescOffset, NULL,                   NULL }
 };
 
 /**
   An ACPI_PARSER array describing the IORT RMR Memory Range Descriptor.
 **/
 STATIC CONST ACPI_PARSER  IortNodeRmrMemRangeDescParser[] = {
-  { L"Physical Range offset", 8,              0,               L"0x%lx",
-    NULL,                NULL,                ValidatePhysicalRange,
+  { L"Physical Range offset", 8, 0,  L"0x%lx",
+    NULL, NULL, ValidatePhysicalRange,
     NULL },
-  { L"Physical Range length", 8,              8,               L"0x%lx",
-    NULL,                NULL,                ValidatePhysicalRange,
+  { L"Physical Range length", 8, 8,  L"0x%lx",
+    NULL, NULL, ValidatePhysicalRange,
     NULL },
-  { L"Reserved",              4,              16,              L"0x%x",
-    NULL,  NULL,                NULL,                NULL}
+  { L"Reserved",              4, 16, L"0x%x",
+    NULL, NULL, NULL, NULL }
 };
 
 /**

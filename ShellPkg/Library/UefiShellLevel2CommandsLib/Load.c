@@ -214,8 +214,8 @@ LoadDriver (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  LoadParamList[] = {
-  { L"-nc", TypeFlag     },
-  { NULL,   TypeMax      }
+  { L"-nc", TypeFlag },
+  { NULL,   TypeMax  }
 };
 
 /**

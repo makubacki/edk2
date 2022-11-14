@@ -271,9 +271,9 @@ PerformParsing (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-i", TypeValue   },
-  { L"-s", TypeValue   },
-  { NULL,  TypeMax     }
+  { L"-i", TypeValue },
+  { L"-s", TypeValue },
+  { NULL,  TypeMax   }
 };
 
 /**

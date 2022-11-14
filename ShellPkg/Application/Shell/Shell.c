@@ -3478,7 +3478,7 @@ RunScriptFileHandle (
                                        NULL,
                                        ShellInfoObject.
                                          NewShellParametersProtocol->Argv[
-                                                                                                                                       LoopVar
+                                                                          LoopVar
                                        ],
                                        0
                                        );

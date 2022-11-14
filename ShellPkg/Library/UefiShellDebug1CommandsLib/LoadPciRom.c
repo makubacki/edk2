@@ -45,8 +45,8 @@ LoadEfiDriversFromRomImage (
   );
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-nc", TypeFlag   },
-  { NULL,   TypeMax    }
+  { L"-nc", TypeFlag },
+  { NULL,   TypeMax  }
 };
 
 /**

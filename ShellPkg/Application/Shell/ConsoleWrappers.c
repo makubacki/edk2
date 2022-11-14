@@ -119,8 +119,8 @@ FileBasedSimpleTextInReadKeyStroke (
   Key->ScanCode = 0;
   return (ShellInfoObject.NewEfiShellProtocol->ReadFile (
                                                  ((
-                                                  SHELL_EFI_SIMPLE_TEXT_INPUT_PROTOCOL
-                                                  *)This)->FileHandle,
+                                                   SHELL_EFI_SIMPLE_TEXT_INPUT_PROTOCOL
+                                                   *)This)->FileHandle,
                                                  &Size,
                                                  &Key->UnicodeChar
                                                  ));
@@ -435,8 +435,8 @@ FileBasedSimpleTextOutOutputString (
   Size = StrLen (WString) * sizeof (CHAR16);
   return (ShellInfoObject.NewEfiShellProtocol->WriteFile (
                                                  ((
-                                                  SHELL_EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL
-                                                  *)This)->FileHandle,
+                                                   SHELL_EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL
+                                                   *)This)->FileHandle,
                                                  &Size,
                                                  WString
                                                  ));

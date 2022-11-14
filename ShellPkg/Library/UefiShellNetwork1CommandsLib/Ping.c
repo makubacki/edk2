@@ -747,8 +747,8 @@ PingGenerateToken (
   //
   // Assembly echo request packet.
   //
-  Request->Type        = (UINT8)(Private->IpChoice == PING_IP_CHOICE_IP6 ?
-                                 ICMP_V6_ECHO_REQUEST : ICMP_V4_ECHO_REQUEST);
+  Request->Type = (UINT8)(Private->IpChoice == PING_IP_CHOICE_IP6 ?
+                          ICMP_V6_ECHO_REQUEST : ICMP_V4_ECHO_REQUEST);
   Request->Code        = 0;
   Request->SequenceNum = SequenceNum;
   Request->Identifier  = 0;
@@ -1287,7 +1287,7 @@ PingCreateIpInstance (
       {
         Addr =
           &(((EFI_IP6_CONFIG_INTERFACE_INFO *)IpXInterfaceInfo)->AddressInfo[
-                                                                                   AddrIndex
+                                                                             AddrIndex
             ].Address);
 
         if (UnspecifiedSrc) {

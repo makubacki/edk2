@@ -46,7 +46,8 @@ PrintSfoVolumeInfoTableEntry (
   if (Node->Handle == NULL) {
     DirectoryName = GetFullyQualifiedPath (
                       ((EFI_SHELL_FILE_INFO *)GetFirstNode (
-                                                &TheList->Link))->FullName
+                                                &TheList->Link
+                                                ))->FullName
                       );
 
     //
@@ -239,7 +240,8 @@ PrintFileInformation (
                                   (CHAR16 *)L".nsh",
                                   (CHAR16 *)&(TheNode->FileName[StrLen (
                                                                   TheNode->
-                                                                    FileName) -
+                                                                    FileName
+                                                                  ) -
                                                                 4])
                                   ) == 0)
          || (gUnicodeCollation->StriColl (
@@ -247,7 +249,8 @@ PrintFileInformation (
                                   (CHAR16 *)L".efi",
                                   (CHAR16 *)&(TheNode->FileName[StrLen (
                                                                   TheNode->
-                                                                    FileName) -
+                                                                    FileName
+                                                                  ) -
                                                                 4])
                                   ) == 0)
             )
@@ -741,10 +744,10 @@ PrintLsOutput (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  LsParamList[] = {
-  { L"-r",   TypeFlag              },
-  { L"-a",   TypeStart             },
-  { L"-sfo", TypeFlag              },
-  { NULL,    TypeMax               }
+  { L"-r",   TypeFlag  },
+  { L"-a",   TypeStart },
+  { L"-sfo", TypeFlag  },
+  { NULL,    TypeMax   }
 };
 
 /**

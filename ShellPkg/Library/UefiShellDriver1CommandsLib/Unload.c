@@ -38,10 +38,10 @@ DumpLoadedImageProtocolInfo (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-n",       TypeFlag               },
-  { L"-v",       TypeFlag               },
-  { L"-verbose", TypeFlag               },
-  { NULL,        TypeMax                }
+  { L"-n",       TypeFlag },
+  { L"-v",       TypeFlag },
+  { L"-verbose", TypeFlag },
+  { NULL,        TypeMax  }
 };
 
 /**

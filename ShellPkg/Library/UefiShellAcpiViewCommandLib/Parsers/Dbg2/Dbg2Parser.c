@@ -58,69 +58,69 @@ ValidateNameSpaceStrLen (
 /// An ACPI_PARSER array describing the ACPI DBG2 table.
 STATIC CONST ACPI_PARSER  Dbg2Parser[] = {
   PARSE_ACPI_HEADER (&AcpiHdrInfo),
-  { L"OffsetDbgDeviceInfo",        4,         36,         L"0x%x",         NULL,
-    (VOID **)&OffsetDbgDeviceInfo, NULL,      NULL },
-  { L"NumberDbgDeviceInfo",        4,         40,         L"%d",           NULL,
-    (VOID **)&NumberDbgDeviceInfo, NULL,      NULL }
+  { L"OffsetDbgDeviceInfo",        4,     36, L"0x%x", NULL,
+    (VOID **)&OffsetDbgDeviceInfo, NULL,  NULL },
+  { L"NumberDbgDeviceInfo",        4,     40, L"%d",   NULL,
+    (VOID **)&NumberDbgDeviceInfo, NULL,  NULL }
 };
 
 /// An ACPI_PARSER array describing the debug device information structure
 /// header.
 STATIC CONST ACPI_PARSER  DbgDevInfoHeaderParser[] = {
-  { L"Revision", 1,   0,   L"0x%x",   NULL,     NULL,
+  { L"Revision", 1, 0, L"0x%x", NULL, NULL,
     NULL,
-    NULL                    },
-  { L"Length",   2,   1,   L"%d",     NULL,     (VOID **)&DbgDevInfoLen,
+    NULL },
+  { L"Length",   2, 1, L"%d",   NULL, (VOID **)&DbgDevInfoLen,
     NULL,
-    NULL                 }
+    NULL }
 };
 
 /// An ACPI_PARSER array describing the debug device information.
 STATIC CONST ACPI_PARSER  DbgDevInfoParser[] = {
-  { L"Revision",                        1,                          0,
-    L"0x%x",                           NULL,    NULL,
-    NULL,                      NULL                                       },
-  { L"Length",                          2,                          1,
-    L"%d",                              NULL,                             NULL,
+  { L"Revision",                        1, 0,
+    L"0x%x", NULL, NULL,
+    NULL, NULL },
+  { L"Length",                          2, 1,
+    L"%d", NULL, NULL,
     NULL,
-    NULL                                                            },
+    NULL },
 
-  { L"Generic Address Registers Count", 1,                          3,
-    L"0x%x",                            NULL,
+  { L"Generic Address Registers Count", 1, 3,
+    L"0x%x", NULL,
     (VOID **)&GasCount, NULL, NULL },
-  { L"NameSpace String Length",         2,                          4,
-    L"%d",                              NULL,
+  { L"NameSpace String Length",         2, 4,
+    L"%d", NULL,
     (VOID **)&NameSpaceStringLength, ValidateNameSpaceStrLen, NULL },
-  { L"NameSpace String Offset",         2,                          6,
-    L"0x%x",                            NULL,
+  { L"NameSpace String Offset",         2, 6,
+    L"0x%x", NULL,
     (VOID **)&NameSpaceStringOffset, NULL, NULL },
-  { L"OEM Data Length",                 2,                          8,
-    L"%d",                              NULL,
+  { L"OEM Data Length",                 2, 8,
+    L"%d", NULL,
     (VOID **)&OEMDataLength,
     NULL, NULL },
-  { L"OEM Data Offset",                 2,                          10,
-    L"0x%x",                            NULL,
+  { L"OEM Data Offset",                 2, 10,
+    L"0x%x", NULL,
     (VOID **)&OEMDataOffset,
     NULL, NULL },
 
-  { L"Port Type",                       2,                          12,
-    L"0x%x",                          NULL,                              NULL,
+  { L"Port Type",                       2, 12,
+    L"0x%x", NULL, NULL,
     NULL,
-    NULL                                                                                  },
-  { L"Port SubType",                    2,                          14,
-    L"0x%x",                          NULL,                            NULL,
+    NULL },
+  { L"Port SubType",                    2, 14,
+    L"0x%x", NULL, NULL,
     NULL,
-    NULL                                                                                                        },
-  { L"Reserved",                        2,                          16,
-    L"%x",                            NULL,                            NULL,
+    NULL },
+  { L"Reserved",                        2, 16,
+    L"%x", NULL, NULL,
     NULL,
-    NULL                                                                                                                                    },
+    NULL },
 
-  { L"Base Address Register Offset",    2,                          18,
-    L"0x%x",                          NULL,
+  { L"Base Address Register Offset",    2, 18,
+    L"0x%x", NULL,
     (VOID **)&BaseAddrRegOffset, NULL, NULL },
-  { L"Address Size Offset",             2,                          20,
-    L"0x%x",                          NULL,
+  { L"Address Size Offset",             2, 20,
+    L"0x%x", NULL,
     (VOID **)&AddrSizeOffset, NULL, NULL }
 };
 

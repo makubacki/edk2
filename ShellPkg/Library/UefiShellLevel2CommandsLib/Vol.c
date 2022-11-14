@@ -231,9 +231,9 @@ HandleVol (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-d", TypeFlag     },
-  { L"-n", TypeValue    },
-  { NULL,  TypeMax      }
+  { L"-d", TypeFlag  },
+  { L"-n", TypeValue },
+  { NULL,  TypeMax   }
 };
 
 /**
