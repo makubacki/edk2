@@ -104,8 +104,8 @@ GrowDepexStack (
   //
   mDepexEvaluationStackPointer = NewStack + (mDepexEvaluationStackPointer -
                                              mDepexEvaluationStack);
-  mDepexEvaluationStack        = NewStack;
-  mDepexEvaluationStackEnd     = NewStack + Size;
+  mDepexEvaluationStack    = NewStack;
+  mDepexEvaluationStackEnd = NewStack + Size;
 
   return EFI_SUCCESS;
 }
@@ -737,9 +737,9 @@ GetImageDependency (
     return NULL;
   }
 
-  Depex        = (EFI_FIRMWARE_IMAGE_DEP *)((UINT8 *)Image +
-                                            sizeof (Image->MonotonicCount) +
-                                            Image->AuthInfo.Hdr.dwLength);
+  Depex = (EFI_FIRMWARE_IMAGE_DEP *)((UINT8 *)Image +
+                                     sizeof (Image->MonotonicCount) +
+                                     Image->AuthInfo.Hdr.dwLength);
   MaxDepexSize = ImageSize - (sizeof (Image->MonotonicCount) +
                               Image->AuthInfo.Hdr.dwLength);
 

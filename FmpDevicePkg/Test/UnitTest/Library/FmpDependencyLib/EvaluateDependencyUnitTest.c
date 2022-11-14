@@ -47,22 +47,22 @@ static FMP_DEPEX_CHECK_VERSION_DATA  mFmpVersions[] = {
 
 // Valid Dependency Expression 1: (Version(A) > 0x00000001) && (Version(B) >= 0x00000003)
 static UINT8  mExpression1[] = {
-  EFI_FMP_DEP_PUSH_VERSION, 0x01,                     0x00,
+  EFI_FMP_DEP_PUSH_VERSION, 0x01, 0x00,
   0x00,                     0x00,
-  EFI_FMP_DEP_PUSH_GUID,    0xFA,                     0x4D,
-  0x14,                     0x97,                     0x8E,
-  0xEB,                     0x4D,                     0xD1,
-  0x8B,                     0x4D,                     0x39,
-  0x88,                     0x24,                     0x96,
+  EFI_FMP_DEP_PUSH_GUID,    0xFA, 0x4D,
+  0x14,                     0x97, 0x8E,
+  0xEB,                     0x4D, 0xD1,
+  0x8B,                     0x4D, 0x39,
+  0x88,                     0x24, 0x96,
   0x56,                     0x42,
   EFI_FMP_DEP_GT,
-  EFI_FMP_DEP_PUSH_VERSION, 0x03,                     0x00,
+  EFI_FMP_DEP_PUSH_VERSION, 0x03, 0x00,
   0x00,                     0x00,
-  EFI_FMP_DEP_PUSH_GUID,    0x70,                     0x73,
-  0x2A,                     0xA4,                     0x3A,
-  0x43,                     0x4D,                     0x68,
-  0x9A,                     0xA1,                     0xDE,
-  0x62,                     0x23,                     0x30,
+  EFI_FMP_DEP_PUSH_GUID,    0x70, 0x73,
+  0x2A,                     0xA4, 0x3A,
+  0x43,                     0x4D, 0x68,
+  0x9A,                     0xA1, 0xDE,
+  0x62,                     0x23, 0x30,
   0x6C,                     0xF3,
   EFI_FMP_DEP_GTE,
   EFI_FMP_DEP_AND,
@@ -71,22 +71,22 @@ static UINT8  mExpression1[] = {
 
 // Valid Dependency Expression 2: (Version(A) < 0x00000002) || (Version(B) <= 0x00000003)
 static UINT8  mExpression2[] = {
-  EFI_FMP_DEP_PUSH_VERSION, 0x02,                     0x00,
+  EFI_FMP_DEP_PUSH_VERSION, 0x02, 0x00,
   0x00,                     0x00,
-  EFI_FMP_DEP_PUSH_GUID,    0xFA,                     0x4D,
-  0x14,                     0x97,                     0x8E,
-  0xEB,                     0x4D,                     0xD1,
-  0x8B,                     0x4D,                     0x39,
-  0x88,                     0x24,                     0x96,
+  EFI_FMP_DEP_PUSH_GUID,    0xFA, 0x4D,
+  0x14,                     0x97, 0x8E,
+  0xEB,                     0x4D, 0xD1,
+  0x8B,                     0x4D, 0x39,
+  0x88,                     0x24, 0x96,
   0x56,                     0x42,
   EFI_FMP_DEP_LT,
-  EFI_FMP_DEP_PUSH_VERSION, 0x03,                     0x00,
+  EFI_FMP_DEP_PUSH_VERSION, 0x03, 0x00,
   0x00,                     0x00,
-  EFI_FMP_DEP_PUSH_GUID,    0x70,                     0x73,
-  0x2A,                     0xA4,                     0x3A,
-  0x43,                     0x4D,                     0x68,
-  0x9A,                     0xA1,                     0xDE,
-  0x62,                     0x23,                     0x30,
+  EFI_FMP_DEP_PUSH_GUID,    0x70, 0x73,
+  0x2A,                     0xA4, 0x3A,
+  0x43,                     0x4D, 0x68,
+  0x9A,                     0xA1, 0xDE,
+  0x62,                     0x23, 0x30,
   0x6C,                     0xF3,
   EFI_FMP_DEP_LTE,
   EFI_FMP_DEP_OR,
@@ -95,14 +95,14 @@ static UINT8  mExpression2[] = {
 
 // Valid Dependency Expression 3: !(Version(A) == 0x0000002)
 static UINT8  mExpression3[] = {
-  EFI_FMP_DEP_PUSH_VERSION, 0x02,                     0x00,
+  EFI_FMP_DEP_PUSH_VERSION, 0x02, 0x00,
   0x00,                     0x00,
-  EFI_FMP_DEP_PUSH_GUID,    0xFA,                     0x4D,
-  0x14,                     0x97,                     0x8E,
-  0xEB,                     0x4D,                     0xD1,
+  EFI_FMP_DEP_PUSH_GUID,    0xFA, 0x4D,
+  0x14,                     0x97, 0x8E,
+  0xEB,                     0x4D, 0xD1,
   0x8B,
-  0x4D,                     0x39,                     0x88,
-  0x24,                     0x96,                     0x56,
+  0x4D,                     0x39, 0x88,
+  0x24,                     0x96, 0x56,
   0x42,
   EFI_FMP_DEP_EQ,
   EFI_FMP_DEP_NOT,
@@ -128,20 +128,20 @@ static UINT8  mExpression6[] = {
 
 // Invalid Dependency Expression 3: GUID is in invalid size
 static UINT8  mExpression7[] = {
-  EFI_FMP_DEP_PUSH_VERSION, 0x02,    0x00,    0x00,    0x00,
-  EFI_FMP_DEP_PUSH_GUID,    0xAA,    0xBB,    0xCC,    0xDD,
+  EFI_FMP_DEP_PUSH_VERSION, 0x02, 0x00, 0x00, 0x00,
+  EFI_FMP_DEP_PUSH_GUID,    0xAA, 0xBB, 0xCC, 0xDD,
   EFI_FMP_DEP_GTE,
   EFI_FMP_DEP_END
 };
 
 // Invalid Dependency Expression 4: Version is in invalid size
 static UINT8  mExpression8[] = {
-  EFI_FMP_DEP_PUSH_VERSION, 0x02,                     0x00,
-  EFI_FMP_DEP_PUSH_GUID,    0xDA,                     0xCB,
+  EFI_FMP_DEP_PUSH_VERSION, 0x02, 0x00,
+  EFI_FMP_DEP_PUSH_GUID,    0xDA, 0xCB,
   0x25,                     0xAC,
-  0x9E,                     0xCD,                     0x5E,
+  0x9E,                     0xCD, 0x5E,
   0xE2,                     0x9C,
-  0x5E,                     0x4A,                     0x99,
+  0x5E,                     0x4A, 0x99,
   0x35,                     0xA7,
   0x67,                     0x53,
   EFI_FMP_DEP_GTE,
@@ -155,13 +155,13 @@ static UINT8  mExpression9[] = {
 
 // Invalid Dependency Expression 6: GUID is NOT FOUND
 static UINT8  mExpression10[] = {
-  EFI_FMP_DEP_PUSH_VERSION, 0x02,                     0x00,
+  EFI_FMP_DEP_PUSH_VERSION, 0x02, 0x00,
   0x00,                     0x00,
-  EFI_FMP_DEP_PUSH_GUID,    0xDA,                     0xCB,
+  EFI_FMP_DEP_PUSH_GUID,    0xDA, 0xCB,
   0x25,                     0xAC,
-  0x9E,                     0xCD,                     0x5E,
+  0x9E,                     0xCD, 0x5E,
   0xE2,                     0x9C,
-  0x5E,                     0x4A,                     0x99,
+  0x5E,                     0x4A, 0x99,
   0x35,                     0xA7,
   0x67,                     0x53,
   EFI_FMP_DEP_GT,
@@ -281,48 +281,145 @@ UnitTestingEntry (
   //
   // Start setting up the test framework for running the tests.
   //
-  Status = InitUnitTestFramework (&Fw, UNIT_TEST_APP_NAME, gEfiCallerBaseName,
-             UNIT_TEST_APP_VERSION);
+  Status = InitUnitTestFramework (
+             &Fw,
+             UNIT_TEST_APP_NAME,
+             gEfiCallerBaseName,
+             UNIT_TEST_APP_VERSION
+             );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed in InitUnitTestFramework. Status = %r\n",
-      Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed in InitUnitTestFramework. Status = %r\n",
+      Status
+      ));
     goto EXIT;
   }
 
   //
   // Populate the Unit Test Suite.
   //
-  Status = CreateUnitTestSuite (&DepexEvalTests, Fw, "Evaluate Dependency Test",
-             "FmpDependencyLib.EvaluateDependency", NULL, NULL);
+  Status = CreateUnitTestSuite (
+             &DepexEvalTests,
+             Fw,
+             "Evaluate Dependency Test",
+             "FmpDependencyLib.EvaluateDependency",
+             NULL,
+             NULL
+             );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed in CreateUnitTestSuite for DepexEvalTests\n"));
     goto EXIT;
   }
 
-  AddTestCase (DepexEvalTests, "Evaluate to True - 1", "Test1",
-    EvaluateDependencyTest, NULL, NULL, &mBasicTestTrue1);
-  AddTestCase (DepexEvalTests, "Evaluate to True - 2", "Test2",
-    EvaluateDependencyTest, NULL, NULL, &mBasicTestTrue2);
-  AddTestCase (DepexEvalTests, "Evaluate to False - 1", "Test3",
-    EvaluateDependencyTest, NULL, NULL, &mBasicTestFalse1);
-  AddTestCase (DepexEvalTests, "Evaluate to False - 2", "Test4",
-    EvaluateDependencyTest, NULL, NULL, &mBasicTestFalse2);
-  AddTestCase (DepexEvalTests, "Error: Non-END-terminated expression", "Test5",
-    EvaluateDependencyTest, NULL, NULL, &mBasicTestInvalid1);
-  AddTestCase (DepexEvalTests, "Error: UNKNOWN Op-Code", "Test6",
-    EvaluateDependencyTest, NULL, NULL, &mBasicTestInvalid2);
-  AddTestCase (DepexEvalTests, "Error: Non-Null-terminated string", "Test7",
-    EvaluateDependencyTest, NULL, NULL, &mBasicTestInvalid3);
-  AddTestCase (DepexEvalTests, "Error: GUID size is not 16", "Test8",
-    EvaluateDependencyTest, NULL, NULL, &mBasicTestInvalid4);
-  AddTestCase (DepexEvalTests, "Error: Version size is not 4", "Test9",
-    EvaluateDependencyTest, NULL, NULL, &mBasicTestInvalid5);
-  AddTestCase (DepexEvalTests, "Error: Operand and operator mismatch", "Test10",
-    EvaluateDependencyTest, NULL, NULL, &mBasicTestInvalid6);
-  AddTestCase (DepexEvalTests, "Error: GUID is NOT FOUND", "Test11",
-    EvaluateDependencyTest, NULL, NULL, &mBasicTestInvalid7);
-  AddTestCase (DepexEvalTests, "Error: Stack Underflow", "Test12",
-    EvaluateDependencyTest, NULL, NULL, &mBasicTestInvalid8);
+  AddTestCase (
+    DepexEvalTests,
+    "Evaluate to True - 1",
+    "Test1",
+    EvaluateDependencyTest,
+    NULL,
+    NULL,
+    &mBasicTestTrue1
+    );
+  AddTestCase (
+    DepexEvalTests,
+    "Evaluate to True - 2",
+    "Test2",
+    EvaluateDependencyTest,
+    NULL,
+    NULL,
+    &mBasicTestTrue2
+    );
+  AddTestCase (
+    DepexEvalTests,
+    "Evaluate to False - 1",
+    "Test3",
+    EvaluateDependencyTest,
+    NULL,
+    NULL,
+    &mBasicTestFalse1
+    );
+  AddTestCase (
+    DepexEvalTests,
+    "Evaluate to False - 2",
+    "Test4",
+    EvaluateDependencyTest,
+    NULL,
+    NULL,
+    &mBasicTestFalse2
+    );
+  AddTestCase (
+    DepexEvalTests,
+    "Error: Non-END-terminated expression",
+    "Test5",
+    EvaluateDependencyTest,
+    NULL,
+    NULL,
+    &mBasicTestInvalid1
+    );
+  AddTestCase (
+    DepexEvalTests,
+    "Error: UNKNOWN Op-Code",
+    "Test6",
+    EvaluateDependencyTest,
+    NULL,
+    NULL,
+    &mBasicTestInvalid2
+    );
+  AddTestCase (
+    DepexEvalTests,
+    "Error: Non-Null-terminated string",
+    "Test7",
+    EvaluateDependencyTest,
+    NULL,
+    NULL,
+    &mBasicTestInvalid3
+    );
+  AddTestCase (
+    DepexEvalTests,
+    "Error: GUID size is not 16",
+    "Test8",
+    EvaluateDependencyTest,
+    NULL,
+    NULL,
+    &mBasicTestInvalid4
+    );
+  AddTestCase (
+    DepexEvalTests,
+    "Error: Version size is not 4",
+    "Test9",
+    EvaluateDependencyTest,
+    NULL,
+    NULL,
+    &mBasicTestInvalid5
+    );
+  AddTestCase (
+    DepexEvalTests,
+    "Error: Operand and operator mismatch",
+    "Test10",
+    EvaluateDependencyTest,
+    NULL,
+    NULL,
+    &mBasicTestInvalid6
+    );
+  AddTestCase (
+    DepexEvalTests,
+    "Error: GUID is NOT FOUND",
+    "Test11",
+    EvaluateDependencyTest,
+    NULL,
+    NULL,
+    &mBasicTestInvalid7
+    );
+  AddTestCase (
+    DepexEvalTests,
+    "Error: Stack Underflow",
+    "Test12",
+    EvaluateDependencyTest,
+    NULL,
+    NULL,
+    &mBasicTestInvalid8
+    );
 
   //
   // Execute the tests.
