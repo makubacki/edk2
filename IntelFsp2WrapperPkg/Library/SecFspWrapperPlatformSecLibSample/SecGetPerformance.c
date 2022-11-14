@@ -77,9 +77,9 @@ SecGetPerformance (
   Count              = *(UINT32 *)(UINTN)(TopOfTemporaryRam - sizeof (UINT32));
   Size               = Count * sizeof (UINT64);
 
-  Ticker                = *(UINT64 *)(UINTN)(TopOfTemporaryRam -
-                                             sizeof (UINT32) - Size -
-                                             sizeof (UINT32) * 2);
+  Ticker = *(UINT64 *)(UINTN)(TopOfTemporaryRam -
+                              sizeof (UINT32) - Size -
+                              sizeof (UINT32) * 2);
   Performance->ResetEnd = GetTimeInNanoSecond (Ticker);
 
   return EFI_SUCCESS;

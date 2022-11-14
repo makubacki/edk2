@@ -173,7 +173,7 @@ CallFspMemoryInit (
 
   FspMemoryInitApi = (FSP_MEMORY_INIT)((UINTN)FspHeader->ImageBase +
                                        FspHeader->FspMemoryInitEntryOffset);
-  InterruptState   = SaveAndDisableInterrupts ();
+  InterruptState = SaveAndDisableInterrupts ();
   if ((FspHeader->ImageAttribute & IMAGE_ATTRIBUTE_64BIT_MODE_SUPPORT) ==
       FSP_IA32)
   {
@@ -275,7 +275,7 @@ CallFspSiliconInit (
 
   FspSiliconInitApi = (FSP_SILICON_INIT)((UINTN)FspHeader->ImageBase +
                                          FspHeader->FspSiliconInitEntryOffset);
-  InterruptState    = SaveAndDisableInterrupts ();
+  InterruptState = SaveAndDisableInterrupts ();
   if ((FspHeader->ImageAttribute & IMAGE_ATTRIBUTE_64BIT_MODE_SUPPORT) ==
       FSP_IA32)
   {

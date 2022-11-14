@@ -59,7 +59,7 @@ GetMemorySizeInMemoryTypeInformation (
     {
       MemoryData = (EFI_MEMORY_TYPE_INFORMATION *)(Hob.Raw +
                                                    sizeof (
-                                                                    EFI_HOB_GENERIC_HEADER)
+                                                           EFI_HOB_GENERIC_HEADER)
                                                    + sizeof (EFI_GUID));
       break;
     }

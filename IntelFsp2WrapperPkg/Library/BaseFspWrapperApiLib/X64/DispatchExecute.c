@@ -50,19 +50,19 @@ typedef union {
 
 GLOBAL_REMOVE_IF_UNREFERENCED IA32_GDT  mGdtEntries[] = {
   {
-    { 0,      0,      0, 0,   0,   0, 0, 0,   0,   0, 0, 0, 0 }
+    { 0,      0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0, 0 }
   },                                                            /* 0x0:  reserve */
   {
-    { 0xFFFF, 0,      0, 0xB, 1,   0, 1, 0xF, 0,   0, 1, 1, 0 }
+    { 0xFFFF, 0, 0, 0xB, 1, 0, 1, 0xF, 0, 0, 1, 1, 0 }
   },                                                            /* 0x8:  compatibility mode */
   {
-    { 0xFFFF, 0,      0, 0xB, 1,   0, 1, 0xF, 0,   1, 0, 1, 0 }
+    { 0xFFFF, 0, 0, 0xB, 1, 0, 1, 0xF, 0, 1, 0, 1, 0 }
   },                                                            /* 0x10: for long mode */
   {
-    { 0xFFFF, 0,      0, 0x3, 1,   0, 1, 0xF, 0,   0, 1, 1, 0 }
+    { 0xFFFF, 0, 0, 0x3, 1, 0, 1, 0xF, 0, 0, 1, 1, 0 }
   },                                                            /* 0x18: data */
   {
-    { 0,      0,      0, 0,   0,   0, 0, 0,   0,   0, 0, 0, 0 }
+    { 0,      0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0, 0 }
   },                                                            /* 0x20: reserve */
 };
 
