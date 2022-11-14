@@ -447,6 +447,10 @@ PeiCore (
       //
       // Migrate installed content from Temporary RAM to Permanent RAM
       //
+
+      // This demonstrates multiple arguments on the same line are allowed in
+      // a function call.
+      // (1) function name and all args in same line
       EvacuateTempRam (&PrivateData, SecCoreData);
 
       DEBUG ((DEBUG_VERBOSE, "PPI lists after temporary RAM evacuation:\n"));
@@ -456,6 +460,10 @@ PeiCore (
     //
     // Try to locate Temporary RAM Done Ppi.
     //
+
+    // This demonstrates multiple arguments on the same line are allowed in
+    // a function call.
+    // (2) function name and each arg and ); each on their own line
     Status = PeiServicesLocatePpi (
                &gEfiTemporaryRamDonePpiGuid,
                0,
@@ -468,6 +476,31 @@ PeiCore (
       //
       TemporaryRamDonePpi->TemporaryRamDone ();
     }
+
+    // This demonstrates when multi-line arguments are provided, the first
+    // argument must be placed on the line below the function call.
+    Status = PeiServicesLocatePpi (&gEfiTemporaryRamDonePpiGuid,
+               0,
+               NULL,
+               (VOID **)&TemporaryRamDonePpi
+               );
+
+    // This demonstrates that multi-line arguments are currently forced to be
+    // on their own line.
+    Status = PeiServicesLocatePpi (
+              &gEfiTemporaryRamDonePpiGuid,
+               0, NULL,
+               (VOID **)&TemporaryRamDonePpi
+               );
+
+    // This demonstrates a single argument on a new line will cause all arguments
+    // to go to a new line to follow the multi-line argument convention
+    Status = PeiServicesLocatePpi (&gEfiTemporaryRamDonePpiGuid, 0, NULL,
+                                   (VOID **)&TemporaryRamDonePpi);
+
+    // This demonstrates that there is currently no column width enforcement for
+    // multiple arguments on the same line.
+    Status = PeiServicesLocatePpi (&gEfiTemporaryRamDonePpiGuid, 0, NULL, (VOID **)&TemporaryRamDonePpi);
 
     //
     // Alert any listeners that there is permanent memory available
