@@ -44,13 +44,15 @@ Returns:
   // Assume KeyShiftState/KeyToggleState = 0 in Registered key data means these state could be ignored.
   //
   if ((RegsiteredData->KeyState.KeyShiftState != 0) &&
-      (RegsiteredData->KeyState.KeyShiftState != InputData->KeyState.KeyShiftState))
+      (RegsiteredData->KeyState.KeyShiftState !=
+       InputData->KeyState.KeyShiftState))
   {
     return FALSE;
   }
 
   if ((RegsiteredData->KeyState.KeyToggleState != 0) &&
-      (RegsiteredData->KeyState.KeyToggleState != InputData->KeyState.KeyToggleState))
+      (RegsiteredData->KeyState.KeyToggleState !=
+       InputData->KeyState.KeyToggleState))
   {
     return FALSE;
   }
@@ -71,7 +73,9 @@ GopPrivateMakeCallbackFunction (
 
   KeyMapMake (KeyData);
 
-  for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList; Link = Link->ForwardLink) {
+  for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList;
+       Link = Link->ForwardLink)
+  {
     CurrentNotify = CR (
                       Link,
                       EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY,
@@ -134,7 +138,11 @@ EmuGopSimpleTextInReset (
   //
   // A reset is draining the Queue
   //
-  while (Private->EmuGraphicsWindow->GetKey (Private->EmuGraphicsWindow, &KeyData) == EFI_SUCCESS) {
+  while (Private->EmuGraphicsWindow->GetKey (
+                                       Private->EmuGraphicsWindow,
+                                       &KeyData
+                                       ) == EFI_SUCCESS)
+  {
   }
 
   //
@@ -180,7 +188,10 @@ EmuGopSimpleTextInReadKeyStroke (
   //
   OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
 
-  Status = Private->EmuGraphicsWindow->GetKey (Private->EmuGraphicsWindow, &KeyData);
+  Status = Private->EmuGraphicsWindow->GetKey (
+                                         Private->EmuGraphicsWindow,
+                                         &KeyData
+                                         );
   if (!EFI_ERROR (Status)) {
     if ((KeyData.Key.ScanCode == 0) && (KeyData.Key.UnicodeChar == 0)) {
       // Modifier key was pressed
@@ -387,7 +398,10 @@ EmuGopSimpleTextInExReadKeyStrokeEx (
   //
   OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
 
-  Status = Private->EmuGraphicsWindow->GetKey (Private->EmuGraphicsWindow, KeyData);
+  Status = Private->EmuGraphicsWindow->GetKey (
+                                         Private->EmuGraphicsWindow,
+                                         KeyData
+                                         );
 
   //
   // Leave critical section and return
@@ -437,7 +451,8 @@ EmuGopSimpleTextInExSetState (
     return EFI_NOT_READY;
   }
 
-  if (((Private->KeyState.KeyToggleState & EFI_TOGGLE_STATE_VALID) != EFI_TOGGLE_STATE_VALID) ||
+  if (((Private->KeyState.KeyToggleState & EFI_TOGGLE_STATE_VALID) !=
+       EFI_TOGGLE_STATE_VALID) ||
       ((*KeyToggleState & EFI_TOGGLE_STATE_VALID) != EFI_TOGGLE_STATE_VALID))
   {
     return EFI_UNSUPPORTED;
@@ -448,7 +463,10 @@ EmuGopSimpleTextInExSetState (
   //
   OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
 
-  Status = Private->EmuGraphicsWindow->KeySetState (Private->EmuGraphicsWindow, KeyToggleState);
+  Status = Private->EmuGraphicsWindow->KeySetState (
+                                         Private->EmuGraphicsWindow,
+                                         KeyToggleState
+                                         );
   //
   // Leave critical section and return
   //
@@ -471,7 +489,8 @@ EmuGopRegisterKeyCallback (
   IN VOID       *Context
   )
 {
-  EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY  *ExNotify = (EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY *)Context;
+  EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY  *ExNotify =
+    (EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY *)Context;
 
   ExNotify->KeyNotificationFn (&ExNotify->KeyData);
 }
@@ -516,7 +535,9 @@ EmuGopSimpleTextInExRegisterKeyNotify (
   LIST_ENTRY                       *Link;
   EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY  *NewNotify;
 
-  if ((KeyData == NULL) || (KeyNotificationFunction == NULL) || (NotifyHandle == NULL)) {
+  if ((KeyData == NULL) || (KeyNotificationFunction == NULL) || (NotifyHandle ==
+                                                                 NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -525,7 +546,9 @@ EmuGopSimpleTextInExRegisterKeyNotify (
   //
   // Return EFI_SUCCESS if the (KeyData, NotificationFunction) is already registered.
   //
-  for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList; Link = Link->ForwardLink) {
+  for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList;
+       Link = Link->ForwardLink)
+  {
     CurrentNotify = CR (
                       Link,
                       EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY,
@@ -543,7 +566,10 @@ EmuGopSimpleTextInExRegisterKeyNotify (
   //
   // Allocate resource to save the notification function
   //
-  NewNotify = (EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY *)AllocateZeroPool (sizeof (EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY));
+  NewNotify = (EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY *)AllocateZeroPool (
+                                                   sizeof (
+                                                                          EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY)
+                                                   );
   if (NewNotify == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -613,13 +639,17 @@ EmuGopSimpleTextInExUnregisterKeyNotify (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (((EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY *)NotificationHandle)->Signature != EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY_SIGNATURE) {
+  if (((EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY *)NotificationHandle)->Signature !=
+      EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY_SIGNATURE)
+  {
     return EFI_INVALID_PARAMETER;
   }
 
   Private = GOP_PRIVATE_DATA_FROM_TEXT_IN_EX_THIS (This);
 
-  for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList; Link = Link->ForwardLink) {
+  for (Link = Private->NotifyList.ForwardLink; Link != &Private->NotifyList;
+       Link = Link->ForwardLink)
+  {
     CurrentNotify = CR (
                       Link,
                       EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY,
@@ -680,11 +710,14 @@ EmuGopInitializeSimpleTextInForWindow (
   // Initialize Simple Text In Ex
   //
 
-  Private->SimpleTextInEx.Reset               = EmuGopSimpleTextInExResetEx;
-  Private->SimpleTextInEx.ReadKeyStrokeEx     = EmuGopSimpleTextInExReadKeyStrokeEx;
-  Private->SimpleTextInEx.SetState            = EmuGopSimpleTextInExSetState;
-  Private->SimpleTextInEx.RegisterKeyNotify   = EmuGopSimpleTextInExRegisterKeyNotify;
-  Private->SimpleTextInEx.UnregisterKeyNotify = EmuGopSimpleTextInExUnregisterKeyNotify;
+  Private->SimpleTextInEx.Reset           = EmuGopSimpleTextInExResetEx;
+  Private->SimpleTextInEx.ReadKeyStrokeEx =
+    EmuGopSimpleTextInExReadKeyStrokeEx;
+  Private->SimpleTextInEx.SetState          = EmuGopSimpleTextInExSetState;
+  Private->SimpleTextInEx.RegisterKeyNotify =
+    EmuGopSimpleTextInExRegisterKeyNotify;
+  Private->SimpleTextInEx.UnregisterKeyNotify =
+    EmuGopSimpleTextInExUnregisterKeyNotify;
 
   Private->SimpleTextInEx.Reset (&Private->SimpleTextInEx, FALSE);
 
@@ -742,7 +775,11 @@ EmuGopSimplePointerReset (
   //
   // A reset is draining the Queue
   //
-  while (Private->EmuGraphicsWindow->GetPointerState (Private->EmuGraphicsWindow, &State) == EFI_SUCCESS) {
+  while (Private->EmuGraphicsWindow->GetPointerState (
+                                       Private->EmuGraphicsWindow,
+                                       &State
+                                       ) == EFI_SUCCESS)
+  {
   }
 
   //
@@ -787,7 +824,10 @@ EmuGopSimplePointerGetState (
   //
   OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
 
-  Status = Private->EmuGraphicsWindow->GetPointerState (Private->EmuGraphicsWindow, State);
+  Status = Private->EmuGraphicsWindow->GetPointerState (
+                                         Private->EmuGraphicsWindow,
+                                         State
+                                         );
   //
   // Leave critical section and return
   //
@@ -824,7 +864,9 @@ EmuGopSimplePointerWaitForInput (
   //
   OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
 
-  Status = Private->EmuGraphicsWindow->CheckPointer (Private->EmuGraphicsWindow);
+  Status = Private->EmuGraphicsWindow->CheckPointer (
+                                         Private->EmuGraphicsWindow
+                                         );
   if (!EFI_ERROR (Status)) {
     //
     // If the pointer state has changed, signal our event.

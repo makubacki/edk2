@@ -106,7 +106,11 @@ PlatformBootManagerMemoryTest (
   Status = GenMemoryTest->Finished (GenMemoryTest);
 
 Done:
-  DEBUG ((DEBUG_INFO, "%d bytes of system memory tested OK\r\n", TotalMemorySize));
+  DEBUG ((
+    DEBUG_INFO,
+    "%d bytes of system memory tested OK\r\n",
+    TotalMemorySize
+    ));
 
   return ReturnStatus;
 }

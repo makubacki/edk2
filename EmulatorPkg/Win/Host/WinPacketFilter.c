@@ -113,7 +113,8 @@ typedef struct  {
 //
 //  Instance data for each SNP private instance
 //
-#define WIN_NT_SIMPLE_NETWORK_PRIVATE_SIGNATURE  SIGNATURE_32 ('N', 'T', 's', 'n')
+#define WIN_NT_SIMPLE_NETWORK_PRIVATE_SIGNATURE  \
+  SIGNATURE_32 ('N', 'T', 's', 'n')
 
 typedef struct {
   UINTN                      Signature;
@@ -153,12 +154,24 @@ WinNtSnpCreateMapping (
   //
   // Set the broadcast address.
   //
-  CopyMem (&Mode->BroadcastAddress, &Private->Instance.Mode.BroadcastAddress, sizeof (EFI_MAC_ADDRESS));
+  CopyMem (
+    &Mode->BroadcastAddress,
+    &Private->Instance.Mode.BroadcastAddress,
+    sizeof (EFI_MAC_ADDRESS)
+    );
   //
   // Set the MAC address.
   //
-  CopyMem (&Mode->CurrentAddress, &Private->Instance.Mode.CurrentAddress, sizeof (EFI_MAC_ADDRESS));
-  CopyMem (&Mode->PermanentAddress, &Private->Instance.Mode.PermanentAddress, sizeof (EFI_MAC_ADDRESS));
+  CopyMem (
+    &Mode->CurrentAddress,
+    &Private->Instance.Mode.CurrentAddress,
+    sizeof (EFI_MAC_ADDRESS)
+    );
+  CopyMem (
+    &Mode->PermanentAddress,
+    &Private->Instance.Mode.PermanentAddress,
+    sizeof (EFI_MAC_ADDRESS)
+    );
 
   return EFI_SUCCESS;
 }
@@ -427,7 +440,8 @@ WinNtSnpReceiveFilters (
   Private = WIN_NT_SNP_PRIVATE_DATA_FROM_THIS (This);
 
   ReturnValue = Private->NtNetUtilityTable.SetReceiveFilter (
-                                             Private->Instance.InterfaceInfo.InterfaceIndex,
+                                             Private->Instance.InterfaceInfo.
+                                               InterfaceIndex,
                                              Enable,
                                              (UINT32)MCastFilterCnt,
                                              MCastFilter
@@ -616,7 +630,9 @@ WinNtSnpGetStatus (
   if (TxBuf != NULL) {
     if (Private->Instance.RecycledTxBufCount != 0) {
       Private->Instance.RecycledTxBufCount--;
-      *((UINT8 **)TxBuf) = (UINT8 *)(UINTN)Private->Instance.RecycledTxBuf[Private->Instance.RecycledTxBufCount];
+      *((UINT8 **)TxBuf) =
+        (UINT8 *)(UINTN)Private->Instance.RecycledTxBuf[Private->Instance.
+                                                          RecycledTxBufCount];
     } else {
       *((UINT8 **)TxBuf) = NULL;
     }
@@ -684,7 +700,8 @@ WinNtSnpTransmit (
   }
 
   ReturnValue = Private->NtNetUtilityTable.Transmit (
-                                             Private->Instance.InterfaceInfo.InterfaceIndex,
+                                             Private->Instance.InterfaceInfo.
+                                               InterfaceIndex,
                                              (UINT32)HeaderSize,
                                              (UINT32)BufferSize,
                                              Buffer,
@@ -696,20 +713,33 @@ WinNtSnpTransmit (
   if (ReturnValue < 0) {
     return EFI_DEVICE_ERROR;
   } else {
-    if ((Private->Instance.MaxRecycledTxBuf + SNP_TX_BUFFER_INCREASEMENT) >= SNP_MAX_TX_BUFFER_NUM) {
+    if ((Private->Instance.MaxRecycledTxBuf + SNP_TX_BUFFER_INCREASEMENT) >=
+        SNP_MAX_TX_BUFFER_NUM)
+    {
       return EFI_NOT_READY;
     }
 
-    if (Private->Instance.RecycledTxBufCount < Private->Instance.MaxRecycledTxBuf) {
-      Private->Instance.RecycledTxBuf[Private->Instance.RecycledTxBufCount] = (UINT64)Buffer;
+    if (Private->Instance.RecycledTxBufCount <
+        Private->Instance.MaxRecycledTxBuf)
+    {
+      Private->Instance.RecycledTxBuf[Private->Instance.RecycledTxBufCount] =
+        (UINT64)Buffer;
       Private->Instance.RecycledTxBufCount++;
     } else {
-      Tmp = malloc (sizeof (UINT64) * (Private->Instance.MaxRecycledTxBuf + SNP_TX_BUFFER_INCREASEMENT));
+      Tmp = malloc (
+              sizeof (UINT64) * (Private->Instance.MaxRecycledTxBuf +
+                                 SNP_TX_BUFFER_INCREASEMENT)
+              );
       if (Tmp == NULL) {
         return EFI_DEVICE_ERROR;
       }
 
-      CopyMem (Tmp, Private->Instance.RecycledTxBuf, sizeof (UINT64) * Private->Instance.RecycledTxBufCount);
+      CopyMem (
+        Tmp,
+        Private->Instance.RecycledTxBuf,
+        sizeof (UINT64) *
+        Private->Instance.RecycledTxBufCount
+        );
       free (Private->Instance.RecycledTxBuf);
       Private->Instance.RecycledTxBuf     =  Tmp;
       Private->Instance.MaxRecycledTxBuf += SNP_TX_BUFFER_INCREASEMENT;
@@ -773,7 +803,8 @@ WinNtSnpReceive (
   ASSERT (Private->NtNetUtilityTable.Receive != NULL);
 
   ReturnValue = Private->NtNetUtilityTable.Receive (
-                                             Private->Instance.InterfaceInfo.InterfaceIndex,
+                                             Private->Instance.InterfaceInfo.
+                                               InterfaceIndex,
                                              BufferSize,
                                              Buffer
                                              );
@@ -846,7 +877,10 @@ WinNtInitializeInstanceData (
   //
   // Allocate the RecycledTxBuf.
   //
-  Instance->RecycledTxBuf = malloc (sizeof (UINT64) * Instance->MaxRecycledTxBuf);
+  Instance->RecycledTxBuf = malloc (
+                              sizeof (UINT64) *
+                              Instance->MaxRecycledTxBuf
+                              );
   if (Instance->RecycledTxBuf == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -864,8 +898,16 @@ WinNtInitializeInstanceData (
   //
   //  Copy Current/PermanentAddress MAC address
   //
-  CopyMem (&Instance->Mode.CurrentAddress, &Instance->InterfaceInfo.MacAddr, sizeof (Instance->Mode.CurrentAddress));
-  CopyMem (&Instance->Mode.PermanentAddress, &Instance->InterfaceInfo.MacAddr, sizeof (Instance->Mode.PermanentAddress));
+  CopyMem (
+    &Instance->Mode.CurrentAddress,
+    &Instance->InterfaceInfo.MacAddr,
+    sizeof (Instance->Mode.CurrentAddress)
+    );
+  CopyMem (
+    &Instance->Mode.PermanentAddress,
+    &Instance->InterfaceInfo.MacAddr,
+    sizeof (Instance->Mode.PermanentAddress)
+    );
 
   //
   //  Since the fake SNP is based on a real NIC, to avoid conflict with the host
@@ -919,31 +961,51 @@ WintNtInitializeNetUtilityData (
     return EFI_NOT_FOUND;
   }
 
-  Private->NtNetUtilityTable.Initialize = (NT_NET_INITIALIZE)GetProcAddress (Private->NetworkLibraryHandle, NETWORK_LIBRARY_INITIALIZE);
+  Private->NtNetUtilityTable.Initialize = (NT_NET_INITIALIZE)GetProcAddress (
+                                                               Private->
+                                                                 NetworkLibraryHandle,
+                                                               NETWORK_LIBRARY_INITIALIZE
+                                                               );
   if (NULL == Private->NtNetUtilityTable.Initialize) {
     Status = EFI_NOT_FOUND;
     goto ErrorReturn;
   }
 
-  Private->NtNetUtilityTable.Finalize = (NT_NET_FINALIZE)GetProcAddress (Private->NetworkLibraryHandle, NETWORK_LIBRARY_FINALIZE);
+  Private->NtNetUtilityTable.Finalize = (NT_NET_FINALIZE)GetProcAddress (
+                                                           Private->
+                                                             NetworkLibraryHandle,
+                                                           NETWORK_LIBRARY_FINALIZE
+                                                           );
   if (NULL == Private->NtNetUtilityTable.Finalize) {
     Status = EFI_NOT_FOUND;
     goto ErrorReturn;
   }
 
-  Private->NtNetUtilityTable.SetReceiveFilter = (NT_NET_SET_RECEIVE_FILTER)GetProcAddress (Private->NetworkLibraryHandle, NETWORK_LIBRARY_SET_RCV_FILTER);
+  Private->NtNetUtilityTable.SetReceiveFilter =
+    (NT_NET_SET_RECEIVE_FILTER)GetProcAddress (
+                                 Private->NetworkLibraryHandle,
+                                 NETWORK_LIBRARY_SET_RCV_FILTER
+                                 );
   if (NULL == Private->NtNetUtilityTable.SetReceiveFilter) {
     Status = EFI_NOT_FOUND;
     goto ErrorReturn;
   }
 
-  Private->NtNetUtilityTable.Receive = (NT_NET_RECEIVE)GetProcAddress (Private->NetworkLibraryHandle, NETWORK_LIBRARY_RECEIVE);
+  Private->NtNetUtilityTable.Receive = (NT_NET_RECEIVE)GetProcAddress (
+                                                         Private->
+                                                           NetworkLibraryHandle,
+                                                         NETWORK_LIBRARY_RECEIVE
+                                                         );
   if (NULL == Private->NtNetUtilityTable.Receive) {
     Status = EFI_NOT_FOUND;
     goto ErrorReturn;
   }
 
-  Private->NtNetUtilityTable.Transmit = (NT_NET_TRANSMIT)GetProcAddress (Private->NetworkLibraryHandle, NETWORK_LIBRARY_TRANSMIT);
+  Private->NtNetUtilityTable.Transmit = (NT_NET_TRANSMIT)GetProcAddress (
+                                                           Private->
+                                                             NetworkLibraryHandle,
+                                                           NETWORK_LIBRARY_TRANSMIT
+                                                           );
   if (NULL == Private->NtNetUtilityTable.Transmit) {
     Status = EFI_NOT_FOUND;
     goto ErrorReturn;
@@ -953,7 +1015,10 @@ WintNtInitializeNetUtilityData (
   //  Initialize the network utility library
   //  And enumerate the interfaces in emulator host
   //
-  ReturnValue = Private->NtNetUtilityTable.Initialize (&InterfaceCount, &NetInterfaceInfoBuffer[0]);
+  ReturnValue = Private->NtNetUtilityTable.Initialize (
+                                             &InterfaceCount,
+                                             &NetInterfaceInfoBuffer[0]
+                                             );
   if (ReturnValue <= 0) {
     Status = EFI_DEVICE_ERROR;
     goto ErrorReturn;
@@ -966,17 +1031,26 @@ WintNtInitializeNetUtilityData (
     goto ErrorReturn;
   }
 
-  DEBUG ((DEBUG_INFO, "%a, total %d interface(s) found\n", __FUNCTION__, InterfaceCount));
+  DEBUG ((
+    DEBUG_INFO,
+    "%a, total %d interface(s) found\n",
+    __FUNCTION__,
+    InterfaceCount
+    ));
   //
   // Active interface index is set to first interface if given instance does
   // not exist.
   //
-  ActiveInterfaceIndex = (ActiveInstance >= InterfaceCount ? DEFAULT_SELECTED_NIC_INDEX : ActiveInstance);
+  ActiveInterfaceIndex = (ActiveInstance >= InterfaceCount ?
+                          DEFAULT_SELECTED_NIC_INDEX : ActiveInstance);
 
   //
   // Initialize instance
   //
-  Status = WinNtInitializeInstanceData (&Private->Instance, &NetInterfaceInfoBuffer[ActiveInterfaceIndex]);
+  Status = WinNtInitializeInstanceData (
+             &Private->Instance,
+             &NetInterfaceInfoBuffer[ActiveInterfaceIndex]
+             );
   if (EFI_ERROR (Status)) {
     goto ErrorReturn;
   }

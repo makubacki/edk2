@@ -82,8 +82,16 @@ EmuSnpCreateMapping (
   //
   SetMem (&Mode->BroadcastAddress, sizeof (EFI_MAC_ADDRESS), 0xFF);
 
-  CopyMem (&Mode->CurrentAddress, &Private->MacAddress, sizeof (EFI_MAC_ADDRESS));
-  CopyMem (&Mode->PermanentAddress, &Private->MacAddress, sizeof (EFI_MAC_ADDRESS));
+  CopyMem (
+    &Mode->CurrentAddress,
+    &Private->MacAddress,
+    sizeof (EFI_MAC_ADDRESS)
+    );
+  CopyMem (
+    &Mode->PermanentAddress,
+    &Private->MacAddress,
+    sizeof (EFI_MAC_ADDRESS)
+    );
 
   //
   // Since the fake SNP is based on a real NIC, to avoid conflict with the host NIC
@@ -97,34 +105,58 @@ EmuSnpCreateMapping (
 
 static struct bpf_insn  mFilterInstructionTemplate[] = {
   // Load 4 bytes from the destination MAC address.
-  BPF_STMT (BPF_LD + BPF_W + BPF_ABS,  OFFSET_OF (ETHERNET_HEADER, DstAddr[0])),
+  BPF_STMT (BPF_LD + BPF_W + BPF_ABS,
+    OFFSET_OF (ETHERNET_HEADER,               DstAddr[0])),
 
   // Compare to first 4 bytes of fake MAC address.
-  BPF_JUMP (BPF_JMP + BPF_JEQ + BPF_K, 0x12345678,                 0,           3),
+  BPF_JUMP (
+    BPF_JMP + BPF_JEQ + BPF_K,
+    0x12345678,
+    0,
+    3
+    ),
 
   // Load remaining 2 bytes from the destination MAC address.
-  BPF_STMT (BPF_LD + BPF_H + BPF_ABS,  OFFSET_OF (ETHERNET_HEADER, DstAddr[4])),
+  BPF_STMT (BPF_LD + BPF_H + BPF_ABS,
+    OFFSET_OF (ETHERNET_HEADER,               DstAddr[4])),
 
   // Compare to remaining 2 bytes of fake MAC address.
-  BPF_JUMP (BPF_JMP + BPF_JEQ + BPF_K, 0x9ABC,                     5,           0),
+  BPF_JUMP (
+    BPF_JMP + BPF_JEQ + BPF_K,
+    0x9ABC,
+    5,
+    0
+    ),
 
   // Load 4 bytes from the destination MAC address.
-  BPF_STMT (BPF_LD + BPF_W + BPF_ABS,  OFFSET_OF (ETHERNET_HEADER, DstAddr[0])),
+  BPF_STMT (BPF_LD + BPF_W + BPF_ABS,
+    OFFSET_OF (ETHERNET_HEADER,               DstAddr[0])),
 
   // Compare to first 4 bytes of broadcast MAC address.
-  BPF_JUMP (BPF_JMP + BPF_JEQ + BPF_K, 0xFFFFFFFF,                 0,           2),
+  BPF_JUMP (
+    BPF_JMP + BPF_JEQ + BPF_K,
+    0xFFFFFFFF,
+    0,
+    2
+    ),
 
   // Load remaining 2 bytes from the destination MAC address.
-  BPF_STMT (BPF_LD + BPF_H + BPF_ABS,  OFFSET_OF (ETHERNET_HEADER, DstAddr[4])),
+  BPF_STMT (BPF_LD + BPF_H + BPF_ABS,
+    OFFSET_OF (ETHERNET_HEADER,               DstAddr[4])),
 
   // Compare to remaining 2 bytes of broadcast MAC address.
-  BPF_JUMP (BPF_JMP + BPF_JEQ + BPF_K, 0xFFFF,                     1,           0),
+  BPF_JUMP (
+    BPF_JMP + BPF_JEQ + BPF_K,
+    0xFFFF,
+    1,
+    0
+    ),
 
   // Reject packet.
-  BPF_STMT (BPF_RET + BPF_K,           0),
+  BPF_STMT (BPF_RET + BPF_K,                0),
 
   // Receive entire packet.
-  BPF_STMT (BPF_RET + BPF_K,           -1)
+  BPF_STMT (BPF_RET + BPF_K,                -1)
 };
 
 EFI_STATUS
@@ -235,7 +267,11 @@ EmuSnpStart (
     //
     // Associate our interface with this BPF file descriptor.
     //
-    AsciiStrCpyS (BoundIf.ifr_name, sizeof (BoundIf.ifr_name), Private->InterfaceName);
+    AsciiStrCpyS (
+      BoundIf.ifr_name,
+      sizeof (BoundIf.ifr_name),
+      Private->InterfaceName
+      );
     if (ioctl (Private->BpfFd, BIOCSETIF, &BoundIf) < 0) {
       goto DeviceErrorExit;
     }
@@ -290,7 +326,11 @@ EmuSnpStart (
       goto ErrorExit;
     }
 
-    CopyMem (FilterProgram, &mFilterInstructionTemplate, sizeof (mFilterInstructionTemplate));
+    CopyMem (
+      FilterProgram,
+      &mFilterInstructionTemplate,
+      sizeof (mFilterInstructionTemplate)
+      );
 
     //
     // Insert out fake MAC address into the filter.  The data has to be host endian.
@@ -300,7 +340,8 @@ EmuSnpStart (
     CopyMem (&Temp16, &Private->Mode->CurrentAddress.Addr[4], sizeof (UINT16));
     FilterProgram[3].k = NTOHS (Temp16);
 
-    BpfProgram.bf_len   = sizeof (mFilterInstructionTemplate) / sizeof (struct bpf_insn);
+    BpfProgram.bf_len   = sizeof (mFilterInstructionTemplate) / sizeof (struct
+                                                                        bpf_insn);
     BpfProgram.bf_insns = FilterProgram;
 
     if (ioctl (Private->BpfFd, BIOCSETF, &BpfProgram) < 0) {
@@ -373,7 +414,8 @@ EmuSnpStop (
 
   if (Private->ReadBuffer != NULL) {
     free (Private->ReadBuffer);
-    Private->CurrentReadPointer = Private->EndReadPointer = Private->ReadBuffer = NULL;
+    Private->CurrentReadPointer = Private->EndReadPointer =
+      Private->ReadBuffer       = NULL;
   }
 
   Private->Mode->State = EfiSimpleNetworkStopped;
@@ -530,7 +572,8 @@ EmuSnpShutdown (
 
   if (Private->ReadBuffer != NULL) {
     free (Private->ReadBuffer);
-    Private->CurrentReadPointer = Private->EndReadPointer = Private->ReadBuffer = NULL;
+    Private->CurrentReadPointer = Private->EndReadPointer =
+      Private->ReadBuffer       = NULL;
   }
 
   return EFI_SUCCESS;
@@ -812,7 +855,10 @@ EmuSnpTransmit (
   }
 
   if ( HeaderSize != 0 ) {
-    if ((DestAddr == NULL) || (Protocol == NULL) || (HeaderSize != Private->Mode->MediaHeaderSize)) {
+    if ((DestAddr == NULL) || (Protocol == NULL) || (HeaderSize !=
+                                                     Private->Mode->
+                                                       MediaHeaderSize))
+    {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -908,7 +954,11 @@ EmuSnpReceive (
   // Do we have any remaining packets from the previous read?
   //
   if (Private->CurrentReadPointer >= Private->EndReadPointer) {
-    Result = read (Private->BpfFd, Private->ReadBuffer, Private->ReadBufferSize);
+    Result = read (
+               Private->BpfFd,
+               Private->ReadBuffer,
+               Private->ReadBufferSize
+               );
     if (Result < 0) {
       // EAGAIN means that there's no I/O outstanding against this file descriptor.
       return (errno == EAGAIN) ? EFI_NOT_READY : EFI_DEVICE_ERROR;
@@ -951,7 +1001,10 @@ EmuSnpReceive (
     *Protocol = NTOHS (EnetHeader->Type);
   }
 
-  Private->CurrentReadPointer += BPF_WORDALIGN (BpfHeader->bh_hdrlen + BpfHeader->bh_caplen);
+  Private->CurrentReadPointer += BPF_WORDALIGN (
+                                   BpfHeader->bh_hdrlen +
+                                   BpfHeader->bh_caplen
+                                   );
   return EFI_SUCCESS;
 }
 

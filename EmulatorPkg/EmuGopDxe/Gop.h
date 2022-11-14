@@ -38,7 +38,8 @@ typedef struct {
   EFI_INPUT_KEY    Q[MAX_Q];
 } GOP_QUEUE_FIXED;
 
-#define EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY_SIGNATURE  SIGNATURE_32 ('U', 'g', 'S', 'n')
+#define EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY_SIGNATURE  \
+  SIGNATURE_32 ('U', 'g', 'S', 'n')
 typedef struct _EMU_GOP_SIMPLE_TEXTIN_EX_NOTIFY {
   UINTN                      Signature;
   EFI_HANDLE                 NotifyHandle;

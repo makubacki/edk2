@@ -257,7 +257,10 @@ Routine Description:
       (Time->Minute > 59) ||
       (Time->Second > 59) ||
       (Time->Nanosecond > 999999999) ||
-      (!((Time->TimeZone == EFI_UNSPECIFIED_TIMEZONE) || ((Time->TimeZone >= -1440) && (Time->TimeZone <= 1440)))) ||
+      (!((Time->TimeZone == EFI_UNSPECIFIED_TIMEZONE) || ((Time->TimeZone >=
+                                                           -1440) &&
+                                                          (Time->TimeZone <=
+                                                           1440)))) ||
       (Time->Daylight & (~(EFI_TIME_ADJUST_DAYLIGHT | EFI_TIME_IN_DAYLIGHT)))
       )
   {
@@ -272,7 +275,9 @@ DayValid (
   IN  EFI_TIME  *Time
   )
 {
-  STATIC const INTN  DayOfMonth[12] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+  STATIC const INTN  DayOfMonth[12] = {
+    31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+  };
 
   if ((Time->Day < 1) ||
       (Time->Day > DayOfMonth[Time->Month - 1]) ||

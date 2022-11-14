@@ -21,11 +21,11 @@ Abstract:
 EFI_EVENT  mGopScreenExitBootServicesEvent;
 
 GOP_MODE_DATA  mGopModeData[] = {
-  { 800,  600,  0, 0 },
-  { 640,  480,  0, 0 },
-  { 720,  400,  0, 0 },
-  { 1024, 768,  0, 0 },
-  { 1280, 1024, 0, 0 }
+  { 800,  600,  0,  0  },
+  { 640,  480,  0,  0  },
+  { 720,  400,  0,  0  },
+  { 1024, 768,  0,  0  },
+  { 1280, 1024, 0,  0  }
 };
 
 /**
@@ -57,7 +57,9 @@ EmuGopQuerytMode (
 
   Private = GOP_PRIVATE_DATA_FROM_THIS (This);
 
-  if ((Info == NULL) || (SizeOfInfo == NULL) || ((UINTN)ModeNumber >= This->Mode->MaxMode)) {
+  if ((Info == NULL) || (SizeOfInfo == NULL) || ((UINTN)ModeNumber >=
+                                                 This->Mode->MaxMode))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -69,10 +71,12 @@ EmuGopQuerytMode (
   *SizeOfInfo = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
 
   (*Info)->Version              = 0;
-  (*Info)->HorizontalResolution = Private->ModeData[ModeNumber].HorizontalResolution;
-  (*Info)->VerticalResolution   = Private->ModeData[ModeNumber].VerticalResolution;
-  (*Info)->PixelFormat          = PixelBltOnly;
-  (*Info)->PixelsPerScanLine    = (*Info)->HorizontalResolution;
+  (*Info)->HorizontalResolution =
+    Private->ModeData[ModeNumber].HorizontalResolution;
+  (*Info)->VerticalResolution =
+    Private->ModeData[ModeNumber].VerticalResolution;
+  (*Info)->PixelFormat       = PixelBltOnly;
+  (*Info)->PixelsPerScanLine = (*Info)->HorizontalResolution;
 
   return EFI_SUCCESS;
 }
@@ -125,9 +129,12 @@ EmuGopSetMode (
   }
 
   This->Mode->Mode                                         = ModeNumber;
-  Private->GraphicsOutput.Mode->Info->HorizontalResolution = ModeData->HorizontalResolution;
-  Private->GraphicsOutput.Mode->Info->VerticalResolution   = ModeData->VerticalResolution;
-  Private->GraphicsOutput.Mode->Info->PixelsPerScanLine    = ModeData->HorizontalResolution;
+  Private->GraphicsOutput.Mode->Info->HorizontalResolution =
+    ModeData->HorizontalResolution;
+  Private->GraphicsOutput.Mode->Info->VerticalResolution =
+    ModeData->VerticalResolution;
+  Private->GraphicsOutput.Mode->Info->PixelsPerScanLine =
+    ModeData->HorizontalResolution;
 
   Status = Private->EmuGraphicsWindow->Size (
                                          Private->EmuGraphicsWindow,
@@ -148,7 +155,8 @@ EmuGopSetMode (
           0,
           ModeData->HorizontalResolution,
           ModeData->VerticalResolution,
-          ModeData->HorizontalResolution * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+          ModeData->HorizontalResolution *
+          sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
           );
   return EFI_SUCCESS;
 }
@@ -231,9 +239,12 @@ EmuGopBlt (
   GopBltArgs.SourceY      = SourceY;
   GopBltArgs.Delta        = Delta;
   Status                  = Private->EmuGraphicsWindow->Blt (
-                                                          Private->EmuGraphicsWindow,
-                                                          (EFI_UGA_PIXEL *)BltBuffer,
-                                                          (EFI_UGA_BLT_OPERATION)BltOperation,
+                                                          Private->
+                                                            EmuGraphicsWindow,
+                                                          (EFI_UGA_PIXEL *)
+                                                          BltBuffer,
+                                                          (EFI_UGA_BLT_OPERATION)
+                                                          BltOperation,
                                                           &GopBltArgs
                                                           );
 
@@ -316,28 +327,37 @@ EmuGopConstructor (
   //
   // Allocate buffer for Graphics Output Protocol mode information
   //
-  Private->GraphicsOutput.Mode = AllocatePool (sizeof (EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE));
+  Private->GraphicsOutput.Mode = AllocatePool (
+                                   sizeof (EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE)
+                                   );
   if (Private->GraphicsOutput.Mode == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Private->GraphicsOutput.Mode->Info = AllocatePool (sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
+  Private->GraphicsOutput.Mode->Info = AllocatePool (
+                                         sizeof (
+                                                            EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
+                                         );
   if (Private->GraphicsOutput.Mode->Info == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Private->GraphicsOutput.Mode->MaxMode = sizeof (mGopModeData) / sizeof (GOP_MODE_DATA);
+  Private->GraphicsOutput.Mode->MaxMode = sizeof (mGopModeData) /
+                                          sizeof (GOP_MODE_DATA);
   //
   // Till now, we have no idea about the window size.
   //
-  Private->GraphicsOutput.Mode->Mode                       = GRAPHICS_OUTPUT_INVALIDE_MODE_NUMBER;
+  Private->GraphicsOutput.Mode->Mode =
+    GRAPHICS_OUTPUT_INVALIDE_MODE_NUMBER;
   Private->GraphicsOutput.Mode->Info->Version              = 0;
   Private->GraphicsOutput.Mode->Info->HorizontalResolution = 0;
   Private->GraphicsOutput.Mode->Info->VerticalResolution   = 0;
   Private->GraphicsOutput.Mode->Info->PixelFormat          = PixelBltOnly;
-  Private->GraphicsOutput.Mode->SizeOfInfo                 = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
-  Private->GraphicsOutput.Mode->FrameBufferBase            = (EFI_PHYSICAL_ADDRESS)(UINTN)NULL;
-  Private->GraphicsOutput.Mode->FrameBufferSize            = 0;
+  Private->GraphicsOutput.Mode->SizeOfInfo                 =
+    sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
+  Private->GraphicsOutput.Mode->FrameBufferBase =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)NULL;
+  Private->GraphicsOutput.Mode->FrameBufferSize = 0;
 
   Private->HardwareNeedsStarting = TRUE;
   Private->EmuGraphicsWindow     = NULL;

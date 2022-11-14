@@ -52,12 +52,20 @@ DevPathToTextVendorLib (
     return EFI_SUCCESS;
   }
 
-  if (CompareGuid (&Vendor->VendorDevicePath.Guid, &gEmuGraphicsWindowProtocolGuid)) {
+  if (CompareGuid (
+        &Vendor->VendorDevicePath.Guid,
+        &gEmuGraphicsWindowProtocolGuid
+        ))
+  {
     CatPrint (Str, L"EmuGraphics(%d)", Vendor->Instance);
     return EFI_SUCCESS;
   }
 
-  if (CompareGuid (&Vendor->VendorDevicePath.Guid, &gEfiSimpleFileSystemProtocolGuid)) {
+  if (CompareGuid (
+        &Vendor->VendorDevicePath.Guid,
+        &gEfiSimpleFileSystemProtocolGuid
+        ))
+  {
     CatPrint (Str, L"EmuFs(%d)", Vendor->Instance);
     return EFI_SUCCESS;
   }
@@ -67,7 +75,11 @@ DevPathToTextVendorLib (
     return EFI_SUCCESS;
   }
 
-  if (CompareGuid (&Vendor->VendorDevicePath.Guid, &gEmuThreadThunkProtocolGuid)) {
+  if (CompareGuid (
+        &Vendor->VendorDevicePath.Guid,
+        &gEmuThreadThunkProtocolGuid
+        ))
+  {
     CatPrint (Str, L"EmuThread()");
     return EFI_SUCCESS;
   }
@@ -147,7 +159,8 @@ DevPathFromTextEmuFs (
   Vendor = (EMU_VENDOR_DEVICE_PATH_NODE *)CreateDeviceNode (
                                             HARDWARE_DEVICE_PATH,
                                             HW_VENDOR_DP,
-                                            (UINT16)sizeof (EMU_VENDOR_DEVICE_PATH_NODE)
+                                            (UINT16)sizeof (
+                                                           EMU_VENDOR_DEVICE_PATH_NODE)
                                             );
   CopyGuid (&Vendor->VendorDevicePath.Guid, &gEfiSimpleFileSystemProtocolGuid);
   Vendor->Instance = (UINT32)StrDecimalToUintn (Str);

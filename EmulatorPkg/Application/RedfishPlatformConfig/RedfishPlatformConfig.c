@@ -60,9 +60,13 @@ PrintHelp (
 {
   Print (L"\n");
   Print (L"Format (Only Ipv4 Address is supported):\n");
-  Print (L"RedfishPlatformConfig.efi -s HostIpAddress HostIpMask RedfishServiceIpAddress RedfishServiceIpMask RedfishServiceIpPort\n");
+  Print (
+    L"RedfishPlatformConfig.efi -s HostIpAddress HostIpMask RedfishServiceIpAddress RedfishServiceIpMask RedfishServiceIpPort\n"
+    );
   Print (L"OR:\n");
-  Print (L"RedfishPlatformConfig.efi -a RedfishServiceIpAddress RedfishServiceIpMask RedfishServiceIpPort\n");
+  Print (
+    L"RedfishPlatformConfig.efi -a RedfishServiceIpAddress RedfishServiceIpMask RedfishServiceIpPort\n"
+    );
   Print (L"\n");
 }
 
@@ -212,7 +216,10 @@ UefiMain (
     Print (L"HostIpAssignmentType is Static!\n");
     Print (L"HostIpAddress: %s has been set Successfully!\n", Argv[2]);
     Print (L"HostIpMask: %s has been set Successfully!\n", Argv[3]);
-    Print (L"RedfishServiceIpAddress: %s has been set Successfully!\n", Argv[4]);
+    Print (
+      L"RedfishServiceIpAddress: %s has been set Successfully!\n",
+      Argv[4]
+      );
     Print (L"RedfishServiceIpMask: %s has been set Successfully!\n", Argv[5]);
     Print (L"RedfishServiceIpPort: %s has been set Successfully!\n", Argv[6]);
     Print (L"Please Restart!\n");
@@ -283,11 +290,16 @@ UefiMain (
 
     Print (L"\n");
     Print (L"HostIpAssignmentType is Auto!\n");
-    Print (L"RedfishServiceIpAddress: %s has been set Successfully!\n", Argv[2]);
+    Print (
+      L"RedfishServiceIpAddress: %s has been set Successfully!\n",
+      Argv[2]
+      );
     Print (L"RedfishServiceIpMask: %s has been set Successfully!\n", Argv[3]);
     Print (L"RedfishServiceIpPort: %s has been set Successfully!\n", Argv[4]);
     Print (L"Please Restart!\n");
-  } else if ((StrCmp (Argv[1], L"-h") == 0) || (StrCmp (Argv[1], L"-help") == 0)) {
+  } else if ((StrCmp (Argv[1], L"-h") == 0) || (StrCmp (Argv[1], L"-help") ==
+                                                0))
+  {
     PrintHelp ();
   } else {
     PrintHelp ();

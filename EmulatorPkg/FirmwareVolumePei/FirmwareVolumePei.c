@@ -83,7 +83,8 @@ Returns:
         //
         BuildResourceDescriptorHob (
           EFI_RESOURCE_FIRMWARE_DEVICE,
-          (EFI_RESOURCE_ATTRIBUTE_PRESENT | EFI_RESOURCE_ATTRIBUTE_INITIALIZED | EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE),
+          (EFI_RESOURCE_ATTRIBUTE_PRESENT | EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+           EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE),
           FdBase,
           (
            FvHeader->FvLength +
@@ -104,14 +105,18 @@ Returns:
           PcdGet32 (PcdFlashNvStorageFtwSpareSize) +
           PcdGet32 (PcdEmuFlashNvStorageEventLogSize);
 
-        BuildFvHob (FdFixUp + PcdGet64 (PcdEmuFlashNvStorageVariableBase), FdSize);
+        BuildFvHob (
+          FdFixUp + PcdGet64 (PcdEmuFlashNvStorageVariableBase),
+          FdSize
+          );
       } else {
         //
         // For other FD's just map them in.
         //
         BuildResourceDescriptorHob (
           EFI_RESOURCE_FIRMWARE_DEVICE,
-          (EFI_RESOURCE_ATTRIBUTE_PRESENT | EFI_RESOURCE_ATTRIBUTE_INITIALIZED | EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE),
+          (EFI_RESOURCE_ATTRIBUTE_PRESENT | EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+           EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE),
           FdBase,
           FdSize
           );

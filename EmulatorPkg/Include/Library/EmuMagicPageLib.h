@@ -27,6 +27,7 @@ typedef struct {
   EMU_THUNK_PROTOCOL        *Thunk;
 } EMU_MAGIC_PAGE_LAYOUT;
 
-#define EMU_MAGIC_PAGE()  ((EMU_MAGIC_PAGE_LAYOUT *)((UINTN)PcdGet64 (PcdPeiServicesTablePage)))
+#define EMU_MAGIC_PAGE()  \
+  ((EMU_MAGIC_PAGE_LAYOUT *)((UINTN)PcdGet64 (PcdPeiServicesTablePage)))
 
 #endif

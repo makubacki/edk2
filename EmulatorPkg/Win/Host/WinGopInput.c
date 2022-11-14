@@ -271,16 +271,21 @@ GopPrivateAddKey (
   //
   // Unmask the Shift bit for printable char
   //
-  if (((KeyData.Key.UnicodeChar >= L'a') && (KeyData.Key.UnicodeChar <= L'z')) ||
+  if (((KeyData.Key.UnicodeChar >= L'a') && (KeyData.Key.UnicodeChar <=
+                                             L'z')) ||
       ((KeyData.Key.UnicodeChar >= L'A') && (KeyData.Key.UnicodeChar <= L'Z'))
       )
   {
-    KeyData.KeyState.KeyShiftState &= ~(EFI_LEFT_SHIFT_PRESSED | EFI_RIGHT_SHIFT_PRESSED);
+    KeyData.KeyState.KeyShiftState &= ~(EFI_LEFT_SHIFT_PRESSED |
+                                        EFI_RIGHT_SHIFT_PRESSED);
   }
 
   GopPrivateAddQ (Private, &Private->QueueForRead, &KeyData);
   if (Private->MakeRegisterdKeyCallback != NULL) {
-    Private->MakeRegisterdKeyCallback (Private->RegisterdKeyCallbackContext, &KeyData);
+    Private->MakeRegisterdKeyCallback (
+               Private->RegisterdKeyCallbackContext,
+               &KeyData
+               );
   }
 
   return EFI_SUCCESS;
@@ -346,7 +351,9 @@ WinNtWndGetKey (
       // EFI_NOT_READY.
       //
       if (!Private->IsPartialKeySupport) {
-        if ((KeyData->Key.ScanCode == SCAN_NULL) && (KeyData->Key.UnicodeChar == CHAR_NULL)) {
+        if ((KeyData->Key.ScanCode == SCAN_NULL) && (KeyData->Key.UnicodeChar ==
+                                                     CHAR_NULL))
+        {
           Status = EFI_NOT_READY;
         }
       }

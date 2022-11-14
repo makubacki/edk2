@@ -50,7 +50,8 @@ EmuBusDriverBindingSupported (
       //
       if ((RemainingDevicePath->Type != HARDWARE_DEVICE_PATH) ||
           (RemainingDevicePath->SubType != HW_VENDOR_DP) ||
-          (DevicePathNodeLength (RemainingDevicePath) != sizeof (EMU_VENDOR_DEVICE_PATH_NODE)))
+          (DevicePathNodeLength (RemainingDevicePath) !=
+           sizeof (EMU_VENDOR_DEVICE_PATH_NODE)))
       {
         return EFI_UNSUPPORTED;
       }
@@ -225,10 +226,15 @@ EmuBusDriverBindingStart (
         Node = (EMU_VENDOR_DEVICE_PATH_NODE *)RemainingDevicePath;
         if ((Node->VendorDevicePath.Header.Type == HARDWARE_DEVICE_PATH) &&
             (Node->VendorDevicePath.Header.SubType == HW_VENDOR_DP) &&
-            (DevicePathNodeLength (&Node->VendorDevicePath.Header) == sizeof (EMU_VENDOR_DEVICE_PATH_NODE))
+            (DevicePathNodeLength (&Node->VendorDevicePath.Header) ==
+             sizeof (EMU_VENDOR_DEVICE_PATH_NODE))
             )
         {
-          if (CompareGuid (&Node->VendorDevicePath.Guid, EmuIoThunk->Protocol) && (Node->Instance == EmuIoThunk->Instance)) {
+          if (CompareGuid (
+                &Node->VendorDevicePath.Guid,
+                EmuIoThunk->Protocol
+                ) && (Node->Instance == EmuIoThunk->Instance))
+          {
             CreateDevice = TRUE;
           }
         }
@@ -247,7 +253,11 @@ EmuBusDriverBindingStart (
       EmuDevice->Handle           = NULL;
       EmuDevice->ControllerHandle = ControllerHandle;
       EmuDevice->ParentDevicePath = ParentDevicePath;
-      CopyMem (&EmuDevice->EmuIoThunk, EmuIoThunk, sizeof (EMU_IO_THUNK_PROTOCOL));
+      CopyMem (
+        &EmuDevice->EmuIoThunk,
+        EmuIoThunk,
+        sizeof (EMU_IO_THUNK_PROTOCOL)
+        );
 
       EmuDevice->ControllerNameTable = NULL;
 
@@ -465,7 +475,10 @@ EmuBusCreateDevicePath (
 
   DevicePath.VendorDevicePath.Header.Type    = HARDWARE_DEVICE_PATH;
   DevicePath.VendorDevicePath.Header.SubType = HW_VENDOR_DP;
-  SetDevicePathNodeLength (&DevicePath.VendorDevicePath.Header, sizeof (EMU_VENDOR_DEVICE_PATH_NODE));
+  SetDevicePathNodeLength (
+    &DevicePath.VendorDevicePath.Header,
+    sizeof (EMU_VENDOR_DEVICE_PATH_NODE)
+    );
 
   //
   // The GUID defines the Class

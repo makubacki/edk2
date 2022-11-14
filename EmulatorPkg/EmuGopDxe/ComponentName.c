@@ -47,15 +47,16 @@ EFI_COMPONENT_NAME_PROTOCOL  gEmuGopComponentName = {
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gEmuGopComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gEmuGopComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)EmuGopComponentNameGetDriverName,
   (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)EmuGopComponentNameGetControllerName,
   "en"
 };
 
 EFI_UNICODE_STRING_TABLE  mEmuGopDriverNameTable[] = {
-  { "eng", L"Emulator GOP Driver" },
-  { NULL,  NULL                   }
+  { "eng", L"Emulator GOP Driver"  },
+  { NULL,  NULL                    }
 };
 
 /**

@@ -10,7 +10,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "Host.h"
 
-#define EMU_SIMPLE_FILE_SYSTEM_PRIVATE_SIGNATURE  SIGNATURE_32 ('E', 'P', 'f', 's')
+#define EMU_SIMPLE_FILE_SYSTEM_PRIVATE_SIGNATURE  \
+  SIGNATURE_32 ('E', 'P', 'f', 's')
 
 typedef struct {
   UINTN                              Signature;
@@ -137,7 +138,11 @@ PosixOpenVolume (
   PrivateFile->IsDirectoryPath  = TRUE;
   PrivateFile->IsOpenedByRead   = TRUE;
 
-  CopyMem (&PrivateFile->EfiFile, &gPosixFileProtocol, sizeof (EFI_FILE_PROTOCOL));
+  CopyMem (
+    &PrivateFile->EfiFile,
+    &gPosixFileProtocol,
+    sizeof (EFI_FILE_PROTOCOL)
+    );
 
   PrivateFile->fd     = -1;
   PrivateFile->Dir    = NULL;
@@ -222,7 +227,10 @@ PosixSystemTimeToEfiTime (
   Time->Nanosecond = 0;
 
   Time->TimeZone = timezone / 60;
-  Time->Daylight = (daylight ? EFI_TIME_ADJUST_DAYLIGHT : 0) | (tm->tm_isdst > 0 ? EFI_TIME_IN_DAYLIGHT : 0);
+  Time->Daylight = (daylight ? EFI_TIME_ADJUST_DAYLIGHT : 0) | (tm->tm_isdst >
+                                                                0 ?
+                                                                EFI_TIME_IN_DAYLIGHT
+  : 0);
 }
 
 EFI_STATUS
@@ -377,8 +385,10 @@ PosixFileOpen (
   int                             res;
   UINTN                           Size;
 
-  PrivateFile    = EMU_EFI_FILE_PRIVATE_DATA_FROM_THIS (This);
-  PrivateRoot    = EMU_SIMPLE_FILE_SYSTEM_PRIVATE_DATA_FROM_THIS (PrivateFile->SimpleFileSystem);
+  PrivateFile = EMU_EFI_FILE_PRIVATE_DATA_FROM_THIS (This);
+  PrivateRoot = EMU_SIMPLE_FILE_SYSTEM_PRIVATE_DATA_FROM_THIS (
+                  PrivateFile->SimpleFileSystem
+                  );
   NewPrivateFile = NULL;
   Status         = EFI_OUT_OF_RESOURCES;
 
@@ -411,7 +421,9 @@ OpenRoot:
 
   CopyMem (NewPrivateFile, PrivateFile, sizeof (EMU_EFI_FILE_PRIVATE));
 
-  Size                     = AsciiStrSize (PrivateFile->FileName) + 1 + StrLen (FileName) + 1;
+  Size = AsciiStrSize (PrivateFile->FileName) + 1 + StrLen (
+                                                      FileName
+                                                      ) + 1;
   NewPrivateFile->FileName = malloc (Size);
   if (NewPrivateFile->FileName == NULL) {
     goto Done;
@@ -426,7 +438,9 @@ OpenRoot:
     Src = FileName;
   }
 
-  Dst          = NewPrivateFile->FileName + AsciiStrLen (NewPrivateFile->FileName);
+  Dst = NewPrivateFile->FileName + AsciiStrLen (
+                                     NewPrivateFile->FileName
+                                     );
   GuardPointer = NewPrivateFile->FileName + AsciiStrLen (PrivateRoot->FilePath);
   *Dst++       = '/';
   // Convert unicode to ascii and '\' to '/'
@@ -502,7 +516,9 @@ OpenRoot:
     goto OpenRoot;
   }
 
-  RealFileName = NewPrivateFile->FileName + AsciiStrLen (NewPrivateFile->FileName) - 1;
+  RealFileName = NewPrivateFile->FileName + AsciiStrLen (
+                                              NewPrivateFile->FileName
+                                              ) - 1;
   while (RealFileName > NewPrivateFile->FileName && *RealFileName != '/') {
     RealFileName--;
   }
@@ -573,7 +589,8 @@ OpenRoot:
     //
     NewPrivateFile->fd = open (
                            NewPrivateFile->FileName,
-                           ((OpenMode & EFI_FILE_MODE_CREATE) ? O_CREAT : 0) | (NewPrivateFile->IsOpenedByRead ? O_RDONLY : O_RDWR),
+                           ((OpenMode & EFI_FILE_MODE_CREATE) ? O_CREAT : 0) |
+                           (NewPrivateFile->IsOpenedByRead ? O_RDONLY : O_RDWR),
                            0666
                            );
     if (NewPrivateFile->fd < 0) {
@@ -591,7 +608,12 @@ OpenRoot:
     //
     InfoSize = 0;
     Info     = NULL;
-    Status   = PosixFileGetInfo (&NewPrivateFile->EfiFile, &gEfiFileInfoGuid, &InfoSize, Info);
+    Status   = PosixFileGetInfo (
+                 &NewPrivateFile->EfiFile,
+                 &gEfiFileInfoGuid,
+                 &InfoSize,
+                 Info
+                 );
     if (Status != EFI_BUFFER_TOO_SMALL) {
       Status = EFI_DEVICE_ERROR;
       goto Done;
@@ -602,13 +624,23 @@ OpenRoot:
       goto Done;
     }
 
-    Status = PosixFileGetInfo (&NewPrivateFile->EfiFile, &gEfiFileInfoGuid, &InfoSize, Info);
+    Status = PosixFileGetInfo (
+               &NewPrivateFile->EfiFile,
+               &gEfiFileInfoGuid,
+               &InfoSize,
+               Info
+               );
     if (EFI_ERROR (Status)) {
       goto Done;
     }
 
     Info->Attribute = Attributes;
-    PosixFileSetInfo (&NewPrivateFile->EfiFile, &gEfiFileInfoGuid, InfoSize, Info);
+    PosixFileSetInfo (
+      &NewPrivateFile->EfiFile,
+      &gEfiFileInfoGuid,
+      InfoSize,
+      Info
+      );
 
     free (Info);
   }
@@ -984,14 +1016,26 @@ PosixFileGetInfo (
   struct statfs                   buf;
 
   PrivateFile = EMU_EFI_FILE_PRIVATE_DATA_FROM_THIS (This);
-  PrivateRoot = EMU_SIMPLE_FILE_SYSTEM_PRIVATE_DATA_FROM_THIS (PrivateFile->SimpleFileSystem);
+  PrivateRoot = EMU_SIMPLE_FILE_SYSTEM_PRIVATE_DATA_FROM_THIS (
+                  PrivateFile->SimpleFileSystem
+                  );
 
   Status = EFI_SUCCESS;
   if (CompareGuid (InformationType, &gEfiFileInfoGuid)) {
-    Status = UnixSimpleFileSystemFileInfo (PrivateFile, NULL, BufferSize, Buffer);
+    Status = UnixSimpleFileSystemFileInfo (
+               PrivateFile,
+               NULL,
+               BufferSize,
+               Buffer
+               );
   } else if (CompareGuid (InformationType, &gEfiFileSystemInfoGuid)) {
-    if (*BufferSize < SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (PrivateRoot->VolumeLabel)) {
-      *BufferSize = SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (PrivateRoot->VolumeLabel);
+    if (*BufferSize < SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (
+                                                       PrivateRoot->VolumeLabel
+                                                       ))
+    {
+      *BufferSize = SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (
+                                                     PrivateRoot->VolumeLabel
+                                                     );
       return EFI_BUFFER_TOO_SMALL;
     }
 
@@ -1000,8 +1044,11 @@ PosixFileGetInfo (
       return EFI_DEVICE_ERROR;
     }
 
-    FileSystemInfoBuffer           = (EFI_FILE_SYSTEM_INFO *)Buffer;
-    FileSystemInfoBuffer->Size     = SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (PrivateRoot->VolumeLabel);
+    FileSystemInfoBuffer       = (EFI_FILE_SYSTEM_INFO *)Buffer;
+    FileSystemInfoBuffer->Size = SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (
+                                                                  PrivateRoot->
+                                                                    VolumeLabel
+                                                                  );
     FileSystemInfoBuffer->ReadOnly = FALSE;
 
     //
@@ -1016,8 +1063,14 @@ PosixFileGetInfo (
       (*BufferSize - SIZE_OF_EFI_FILE_SYSTEM_INFO) / sizeof (CHAR16),
       PrivateRoot->VolumeLabel
       );
-    *BufferSize = SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (PrivateRoot->VolumeLabel);
-  } else if (CompareGuid (InformationType, &gEfiFileSystemVolumeLabelInfoIdGuid)) {
+    *BufferSize = SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (
+                                                   PrivateRoot->VolumeLabel
+                                                   );
+  } else if (CompareGuid (
+               InformationType,
+               &gEfiFileSystemVolumeLabelInfoIdGuid
+               ))
+  {
     if (*BufferSize < StrSize (PrivateRoot->VolumeLabel)) {
       *BufferSize = StrSize (PrivateRoot->VolumeLabel);
       return EFI_BUFFER_TOO_SMALL;
@@ -1083,8 +1136,10 @@ PosixFileSetInfo (
   struct utimbuf                  Utime;
   UINTN                           Size;
 
-  PrivateFile    = EMU_EFI_FILE_PRIVATE_DATA_FROM_THIS (This);
-  PrivateRoot    = EMU_SIMPLE_FILE_SYSTEM_PRIVATE_DATA_FROM_THIS (PrivateFile->SimpleFileSystem);
+  PrivateFile = EMU_EFI_FILE_PRIVATE_DATA_FROM_THIS (This);
+  PrivateRoot = EMU_SIMPLE_FILE_SYSTEM_PRIVATE_DATA_FROM_THIS (
+                  PrivateFile->SimpleFileSystem
+                  );
   errno          = 0;
   Status         = EFI_UNSUPPORTED;
   OldFileInfo    = NewFileInfo = NULL;
@@ -1095,7 +1150,10 @@ PosixFileSetInfo (
   // Set file system information.
   //
   if (CompareGuid (InformationType, &gEfiFileSystemInfoGuid)) {
-    if (BufferSize < (SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (PrivateRoot->VolumeLabel))) {
+    if (BufferSize < (SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (
+                                                       PrivateRoot->VolumeLabel
+                                                       )))
+    {
       Status = EFI_BAD_BUFFER_SIZE;
       goto Done;
     }
@@ -1104,7 +1162,11 @@ PosixFileSetInfo (
 
     free (PrivateRoot->VolumeLabel);
 
-    PrivateRoot->VolumeLabel = malloc (StrSize (NewFileSystemInfo->VolumeLabel));
+    PrivateRoot->VolumeLabel = malloc (
+                                 StrSize (
+                                   NewFileSystemInfo->VolumeLabel
+                                   )
+                                 );
     if (PrivateRoot->VolumeLabel == NULL) {
       goto Done;
     }
@@ -1170,7 +1232,12 @@ PosixFileSetInfo (
   // of change request this is.
   //
   OldInfoSize = 0;
-  Status      = UnixSimpleFileSystemFileInfo (PrivateFile, NULL, &OldInfoSize, NULL);
+  Status      = UnixSimpleFileSystemFileInfo (
+                  PrivateFile,
+                  NULL,
+                  &OldInfoSize,
+                  NULL
+                  );
   if (Status != EFI_BUFFER_TOO_SMALL) {
     Status = EFI_DEVICE_ERROR;
     goto Done;
@@ -1181,7 +1248,12 @@ PosixFileSetInfo (
     goto Done;
   }
 
-  Status = UnixSimpleFileSystemFileInfo (PrivateFile, NULL, &OldInfoSize, OldFileInfo);
+  Status = UnixSimpleFileSystemFileInfo (
+             PrivateFile,
+             NULL,
+             &OldInfoSize,
+             OldFileInfo
+             );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -1201,7 +1273,9 @@ PosixFileSetInfo (
   // Make full pathname from new filename and rootpath.
   //
   if (NewFileInfo->FileName[0] == '\\') {
-    Size        = AsciiStrLen (PrivateRoot->FilePath) + 1 + StrLen (NewFileInfo->FileName) + 1;
+    Size = AsciiStrLen (PrivateRoot->FilePath) + 1 + StrLen (
+                                                       NewFileInfo->FileName
+                                                       ) + 1;
     NewFileName = malloc (Size);
     if (NewFileName == NULL) {
       goto Done;
@@ -1212,7 +1286,9 @@ PosixFileSetInfo (
     UnicodeFilePtr  = NewFileInfo->FileName + 1;
     *AsciiFilePtr++ = '/';
   } else {
-    Size        = AsciiStrLen (PrivateFile->FileName) + 2 + StrLen (NewFileInfo->FileName) + 1;
+    Size = AsciiStrLen (PrivateFile->FileName) + 2 + StrLen (
+                                                       NewFileInfo->FileName
+                                                       ) + 1;
     NewFileName = malloc (Size);
     if (NewFileName == NULL) {
       goto Done;
@@ -1241,7 +1317,9 @@ PosixFileSetInfo (
   // Is there an attribute change request?
   //
   if (NewFileInfo->Attribute != OldFileInfo->Attribute) {
-    if ((NewFileInfo->Attribute & EFI_FILE_DIRECTORY) != (OldFileInfo->Attribute & EFI_FILE_DIRECTORY)) {
+    if ((NewFileInfo->Attribute & EFI_FILE_DIRECTORY) !=
+        (OldFileInfo->Attribute & EFI_FILE_DIRECTORY))
+    {
       Status = EFI_INVALID_PARAMETER;
       goto Done;
     }
@@ -1268,17 +1346,29 @@ PosixFileSetInfo (
   // Is there a time stamp change request?
   //
   if (!IsZero (&NewFileInfo->CreateTime, sizeof (EFI_TIME)) &&
-      CompareMem (&NewFileInfo->CreateTime, &OldFileInfo->CreateTime, sizeof (EFI_TIME))
+      CompareMem (
+        &NewFileInfo->CreateTime,
+        &OldFileInfo->CreateTime,
+        sizeof (EFI_TIME)
+        )
       )
   {
     TimeChangeFlag = TRUE;
   } else if (!IsZero (&NewFileInfo->LastAccessTime, sizeof (EFI_TIME)) &&
-             CompareMem (&NewFileInfo->LastAccessTime, &OldFileInfo->LastAccessTime, sizeof (EFI_TIME))
+             CompareMem (
+               &NewFileInfo->LastAccessTime,
+               &OldFileInfo->LastAccessTime,
+               sizeof (EFI_TIME)
+               )
              )
   {
     TimeChangeFlag = TRUE;
   } else if (!IsZero (&NewFileInfo->ModificationTime, sizeof (EFI_TIME)) &&
-             CompareMem (&NewFileInfo->ModificationTime, &OldFileInfo->ModificationTime, sizeof (EFI_TIME))
+             CompareMem (
+               &NewFileInfo->ModificationTime,
+               &OldFileInfo->ModificationTime,
+               sizeof (EFI_TIME)
+               )
              )
   {
     TimeChangeFlag = TRUE;
@@ -1312,7 +1402,9 @@ PosixFileSetInfo (
       goto Done;
     }
 
-    for (CharPointer = NewFileName; *CharPointer != 0 && *CharPointer != L'/'; CharPointer++) {
+    for (CharPointer = NewFileName; *CharPointer != 0 && *CharPointer != L'/';
+         CharPointer++)
+    {
     }
 
     if (*CharPointer != 0) {
@@ -1352,7 +1444,9 @@ PosixFileSetInfo (
       goto Done;
     }
 
-    if (PrivateFile->IsOpenedByRead || OldFileInfo->Attribute & EFI_FILE_READ_ONLY) {
+    if (PrivateFile->IsOpenedByRead || OldFileInfo->Attribute &
+        EFI_FILE_READ_ONLY)
+    {
       Status = EFI_ACCESS_DENIED;
       goto Done;
     }
@@ -1521,7 +1615,11 @@ PosixFileSystmeThunkOpen (
 
   Private->Signature = EMU_SIMPLE_FILE_SYSTEM_PRIVATE_SIGNATURE;
   Private->Thunk     = This;
-  CopyMem (&Private->SimpleFileSystem, &gPosixFileSystemProtocol, sizeof (Private->SimpleFileSystem));
+  CopyMem (
+    &Private->SimpleFileSystem,
+    &gPosixFileSystemProtocol,
+    sizeof (Private->SimpleFileSystem)
+    );
   Private->FileHandlesOpen = FALSE;
 
   This->Interface = &Private->SimpleFileSystem;

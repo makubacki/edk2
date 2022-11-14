@@ -67,7 +67,9 @@ EFI_FVB_MEDIA_INFO  mPlatformFvbMediaInfo[] = {
       2,  // Revision
       {
         {
-          FixedPcdGet32 (PcdEmuFlashFvRecoverySize)/FixedPcdGet32 (PcdEmuFirmwareBlockSize),
+          FixedPcdGet32 (PcdEmuFlashFvRecoverySize)/FixedPcdGet32 (
+                                                      PcdEmuFirmwareBlockSize
+                                                      ),
           FixedPcdGet32 (PcdEmuFirmwareBlockSize),
         }
       }
@@ -114,7 +116,9 @@ EFI_FVB_MEDIA_INFO  mPlatformFvbMediaInfo[] = {
           (FixedPcdGet32 (PcdFlashNvStorageVariableSize) + \
            FixedPcdGet32 (PcdFlashNvStorageFtwWorkingSize) + \
            FixedPcdGet32 (PcdFlashNvStorageFtwSpareSize) + \
-           FixedPcdGet32 (PcdEmuFlashNvStorageEventLogSize)) / FixedPcdGet32 (PcdEmuFirmwareBlockSize),
+           FixedPcdGet32 (PcdEmuFlashNvStorageEventLogSize)) / FixedPcdGet32 (
+                                                                 PcdEmuFirmwareBlockSize
+                                                                 ),
           FixedPcdGet32 (PcdEmuFirmwareBlockSize),
         }
       }
@@ -136,7 +140,9 @@ GetFvbInfo (
 {
   UINTN  Index;
 
-  for (Index = 0; Index < sizeof (mPlatformFvbMediaInfo) / sizeof (EFI_FVB_MEDIA_INFO); Index += 1) {
+  for (Index = 0; Index < sizeof (mPlatformFvbMediaInfo) /
+       sizeof (EFI_FVB_MEDIA_INFO); Index += 1)
+  {
     if (mPlatformFvbMediaInfo[Index].FvLength == FvLength) {
       *FvbInfo = &mPlatformFvbMediaInfo[Index].FvbInfo;
       return EFI_SUCCESS;

@@ -101,7 +101,12 @@ WinNtBlockIoOpenDevice (
                         );
 
   if (Private->NtHandle == INVALID_HANDLE_VALUE) {
-    DEBUG ((DEBUG_INFO, "OpenBlock: Could not open %S, %x\n", Private->FileName, GetLastError ()));
+    DEBUG ((
+      DEBUG_INFO,
+      "OpenBlock: Could not open %S, %x\n",
+      Private->FileName,
+      GetLastError ()
+      ));
     Media->MediaPresent = FALSE;
     Status              = EFI_NO_MEDIA;
     goto Done;
@@ -113,7 +118,11 @@ WinNtBlockIoOpenDevice (
   Status = SetFilePointer64 (Private, 0, &FileSize, FILE_END);
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "OpenBlock: Could not get filesize of %s\n", Private->FileName));
+    DEBUG ((
+      DEBUG_ERROR,
+      "OpenBlock: Could not get filesize of %s\n",
+      Private->FileName
+      ));
     Status = EFI_UNSUPPORTED;
     goto Done;
   }
@@ -298,14 +307,25 @@ WinNtBlockIoReadBlocks (
   // Seek to proper position
   //
   DistanceToMove = MultU64x32 (Lba, (UINT32)Private->BlockSize);
-  Status         = SetFilePointer64 (Private, DistanceToMove, &DistanceMoved, FILE_BEGIN);
+  Status         = SetFilePointer64 (
+                     Private,
+                     DistanceToMove,
+                     &DistanceMoved,
+                     FILE_BEGIN
+                     );
 
   if (EFI_ERROR (Status) || (DistanceToMove != DistanceMoved)) {
     DEBUG ((DEBUG_INIT, "ReadBlocks: SetFilePointer failed\n"));
     return WinNtBlockIoError (Private->Media);
   }
 
-  Flag = ReadFile (Private->NtHandle, Buffer, (DWORD)BufferSize, (LPDWORD)&BytesRead, NULL);
+  Flag = ReadFile (
+           Private->NtHandle,
+           Buffer,
+           (DWORD)BufferSize,
+           (LPDWORD)&BytesRead,
+           NULL
+           );
   if (!Flag || (BytesRead != BufferSize)) {
     return WinNtBlockIoError (Private->Media);
   }
@@ -368,14 +388,25 @@ WinNtBlockIoWriteBlocks (
   // Seek to proper position
   //
   DistanceToMove = MultU64x32 (Lba, (UINT32)Private->BlockSize);
-  Status         = SetFilePointer64 (Private, DistanceToMove, &DistanceMoved, FILE_BEGIN);
+  Status         = SetFilePointer64 (
+                     Private,
+                     DistanceToMove,
+                     &DistanceMoved,
+                     FILE_BEGIN
+                     );
 
   if (EFI_ERROR (Status) || (DistanceToMove != DistanceMoved)) {
     DEBUG ((DEBUG_INIT, "WriteBlocks: SetFilePointer failed\n"));
     return WinNtBlockIoError (Private->Media);
   }
 
-  Success = WriteFile (Private->NtHandle, Buffer, (DWORD)BufferSize, (LPDWORD)&BytesWritten, NULL);
+  Success = WriteFile (
+              Private->NtHandle,
+              Buffer,
+              (DWORD)BufferSize,
+              (LPDWORD)&BytesWritten,
+              NULL
+              );
   if (!Success || (BytesWritten != BufferSize)) {
     return WinNtBlockIoError (Private->Media);
   }
@@ -474,11 +505,18 @@ WinNtBlockIoThunkOpen (
 
   Private->Signature = WIN_NT_BLOCK_IO_PRIVATE_SIGNATURE;
   Private->Thunk     = This;
-  CopyMem (&Private->EmuBlockIo, &gEmuBlockIoProtocol, sizeof (gEmuBlockIoProtocol));
+  CopyMem (
+    &Private->EmuBlockIo,
+    &gEmuBlockIoProtocol,
+    sizeof (gEmuBlockIoProtocol)
+    );
   Private->BlockSize = 512;
   Private->NtHandle  = INVALID_HANDLE_VALUE;
 
-  Private->FileName = AllocateCopyPool (StrSize (This->ConfigString), This->ConfigString);
+  Private->FileName = AllocateCopyPool (
+                        StrSize (This->ConfigString),
+                        This->ConfigString
+                        );
   if (Private->FileName == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

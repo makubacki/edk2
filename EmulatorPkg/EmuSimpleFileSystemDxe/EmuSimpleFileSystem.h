@@ -34,7 +34,8 @@ extern EFI_DRIVER_BINDING_PROTOCOL   gEmuSimpleFileSystemDriverBinding;
 extern EFI_COMPONENT_NAME_PROTOCOL   gEmuSimpleFileSystemComponentName;
 extern EFI_COMPONENT_NAME2_PROTOCOL  gEmuSimpleFileSystemComponentName2;
 
-#define EMU_SIMPLE_FILE_SYSTEM_PRIVATE_SIGNATURE  SIGNATURE_32 ('E', 'M', 'f', 's')
+#define EMU_SIMPLE_FILE_SYSTEM_PRIVATE_SIGNATURE  \
+  SIGNATURE_32 ('E', 'M', 'f', 's')
 
 typedef struct {
   UINTN                              Signature;

@@ -118,7 +118,9 @@ PeiServicesLocatePpi (
       return EFI_SUCCESS;
     }
 
-    if ((PpiList->Flags & EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST) == EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST) {
+    if ((PpiList->Flags & EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST) ==
+        EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST)
+    {
       break;
     }
   }

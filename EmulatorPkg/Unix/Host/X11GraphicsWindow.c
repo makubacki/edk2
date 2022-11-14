@@ -61,7 +61,8 @@ typedef struct {
 
   EMU_GRAPHICS_WINDOW_REGISTER_KEY_NOTIFY_CALLBACK    MakeRegisterdKeyCallback;
   EMU_GRAPHICS_WINDOW_REGISTER_KEY_NOTIFY_CALLBACK    BreakRegisterdKeyCallback;
-  VOID                                                *RegisterdKeyCallbackContext;
+  VOID                                                *
+                                                      RegisterdKeyCallbackContext;
 
   int                                                 previous_x;
   int                                                 previous_y;
@@ -228,7 +229,8 @@ X11Size (
   // Set WM hints.
   size_hints.flags      = PSize | PMinSize | PMaxSize;
   size_hints.min_width  = size_hints.max_width = size_hints.base_width = Width;
-  size_hints.min_height = size_hints.max_height = size_hints.base_height = Height;
+  size_hints.min_height = size_hints.max_height = size_hints.base_height =
+    Height;
   XSetWMNormalHints (Drv->display, Drv->win, &size_hints);
 
   XMapWindow (Drv->display, Drv->win);
@@ -261,7 +263,12 @@ handleKeyEvent (
   // [2] and [3] are based on option and command modifiers. The problem we have is command V
   // could be mapped to a crazy Unicode character so the old scheme of returning a string.
   //
-  KeySym = XGetKeyboardMapping (Drv->display, ev->xkey.keycode, 1, &KeySymArraySize);
+  KeySym = XGetKeyboardMapping (
+             Drv->display,
+             ev->xkey.keycode,
+             1,
+             &KeySymArraySize
+             );
 
   KeyData.Key.ScanCode           = 0;
   KeyData.Key.UnicodeChar        = 0;
@@ -522,13 +529,15 @@ handleKeyEvent (
   KeyData.KeyState.KeyToggleState = Drv->KeyState.KeyToggleState;
 
   if (*KeySym < XK_BackSpace) {
-    if (((Drv->KeyState.KeyShiftState & (EFI_LEFT_SHIFT_PRESSED | EFI_RIGHT_SHIFT_PRESSED)) != 0) ||
+    if (((Drv->KeyState.KeyShiftState & (EFI_LEFT_SHIFT_PRESSED |
+                                         EFI_RIGHT_SHIFT_PRESSED)) != 0) ||
         ((Drv->KeyState.KeyToggleState & EFI_CAPS_LOCK_ACTIVE) != 0))
     {
       KeyData.Key.UnicodeChar = (CHAR16)KeySym[KEYSYM_UPPER];
 
       // Per UEFI spec since we converted the Unicode clear the shift bits we pass up
-      KeyData.KeyState.KeyShiftState &= ~(EFI_LEFT_SHIFT_PRESSED | EFI_RIGHT_SHIFT_PRESSED);
+      KeyData.KeyState.KeyShiftState &= ~(EFI_LEFT_SHIFT_PRESSED |
+                                          EFI_RIGHT_SHIFT_PRESSED);
     } else {
       KeyData.Key.UnicodeChar = (CHAR16)KeySym[KEYSYM_LOWER];
     }
@@ -541,11 +550,19 @@ handleKeyEvent (
     Drv->key_wr = (Drv->key_wr + 1) % NBR_KEYS;
     Drv->key_count++;
     if (Drv->MakeRegisterdKeyCallback != NULL) {
-      ReverseGasketUint64Uint64 (Drv->MakeRegisterdKeyCallback, Drv->RegisterdKeyCallbackContext, &KeyData);
+      ReverseGasketUint64Uint64 (
+        Drv->MakeRegisterdKeyCallback,
+        Drv->RegisterdKeyCallbackContext,
+        &KeyData
+        );
     }
   } else {
     if (Drv->BreakRegisterdKeyCallback != NULL) {
-      ReverseGasketUint64Uint64 (Drv->BreakRegisterdKeyCallback, Drv->RegisterdKeyCallbackContext, &KeyData);
+      ReverseGasketUint64Uint64 (
+        Drv->BreakRegisterdKeyCallback,
+        Drv->RegisterdKeyCallbackContext,
+        &KeyData
+        );
     }
   }
 }
@@ -584,7 +601,8 @@ handleMouseDown (
   }
 
   if ( ev->xbutton.button == Button2 ) {
-    Drv->pointer_state_changed     = (Drv->pointer_state.RightButton != Pressed);
+    Drv->pointer_state_changed     = (Drv->pointer_state.RightButton !=
+                                      Pressed);
     Drv->pointer_state.RightButton = Pressed;
   }
 }
@@ -869,11 +887,25 @@ X11Blt (
 
   switch (BltOperation) {
     case EfiUgaVideoToBltBuffer:
-      Blt          = (EFI_UGA_PIXEL *)((UINT8 *)BltBuffer + (Args->DestinationY * Args->Delta) + Args->DestinationX * sizeof (EFI_UGA_PIXEL));
+      Blt          = (EFI_UGA_PIXEL *)((UINT8 *)BltBuffer +
+                                       (Args->DestinationY * Args->Delta) +
+                                       Args->DestinationX *
+                                       sizeof (EFI_UGA_PIXEL));
       Args->Delta -= Args->Width * sizeof (EFI_UGA_PIXEL);
-      for (SrcY = Args->SourceY; SrcY < (Args->Height + Args->SourceY); SrcY++) {
-        for (SrcX = Args->SourceX; SrcX < (Args->Width + Args->SourceX); SrcX++) {
-          *Blt++ = X11ColorToPixel (Private, XGetPixel (Private->image, SrcX, SrcY));
+      for (SrcY = Args->SourceY; SrcY < (Args->Height + Args->SourceY);
+           SrcY++)
+      {
+        for (SrcX = Args->SourceX; SrcX < (Args->Width + Args->SourceX);
+             SrcX++)
+        {
+          *Blt++ = X11ColorToPixel (
+                     Private,
+                     XGetPixel (
+                       Private->image,
+                       SrcX,
+                       SrcY
+                       )
+                     );
         }
 
         Blt = (EFI_UGA_PIXEL *)((UINT8 *)Blt + Args->Delta);
@@ -881,11 +913,25 @@ X11Blt (
 
       break;
     case EfiUgaBltBufferToVideo:
-      Blt          = (EFI_UGA_PIXEL *)((UINT8 *)BltBuffer + (Args->SourceY * Args->Delta) + Args->SourceX * sizeof (EFI_UGA_PIXEL));
+      Blt          = (EFI_UGA_PIXEL *)((UINT8 *)BltBuffer + (Args->SourceY *
+                                                             Args->Delta) +
+                                       Args->SourceX * sizeof (EFI_UGA_PIXEL));
       Args->Delta -= Args->Width * sizeof (EFI_UGA_PIXEL);
-      for (DstY = Args->DestinationY; DstY < (Args->Height + Args->DestinationY); DstY++) {
-        for (DstX = Args->DestinationX; DstX < (Args->Width + Args->DestinationX); DstX++) {
-          XPutPixel (Private->image, DstX, DstY, X11PixelToColor (Private, *Blt));
+      for (DstY = Args->DestinationY; DstY < (Args->Height +
+                                              Args->DestinationY); DstY++)
+      {
+        for (DstX = Args->DestinationX; DstX < (Args->Width +
+                                                Args->DestinationX); DstX++)
+        {
+          XPutPixel (
+            Private->image,
+            DstX,
+            DstY,
+            X11PixelToColor (
+              Private,
+              *Blt
+              )
+            );
           Blt++;
         }
 
@@ -922,8 +968,12 @@ X11Blt (
       break;
     case EfiUgaVideoFill:
       Color = X11PixelToColor (Private, *BltBuffer);
-      for (DstY = Args->DestinationY; DstY < (Args->Height + Args->DestinationY); DstY++) {
-        for (DstX = Args->DestinationX; DstX < (Args->Width + Args->DestinationX); DstX++) {
+      for (DstY = Args->DestinationY; DstY < (Args->Height +
+                                              Args->DestinationY); DstY++)
+      {
+        for (DstX = Args->DestinationX; DstX < (Args->Width +
+                                                Args->DestinationX); DstX++)
+        {
           XPutPixel (Private->image, DstX, DstY, Color);
         }
       }
@@ -975,7 +1025,13 @@ X11Blt (
       XFlush (Private->display);
       break;
     case EfiUgaBltBufferToVideo:
-      Redraw (Private, Args->DestinationX, Args->DestinationY, Args->Width, Args->Height);
+      Redraw (
+        Private,
+        Args->DestinationX,
+        Args->DestinationY,
+        Args->Width,
+        Args->Height
+        );
       break;
     default:
       break;
@@ -1060,7 +1116,13 @@ X11GraphicsWindowOpen (
 
   Drv->display = XOpenDisplay (display_name);
   if (Drv->display == NULL) {
-    fprintf (stderr, "uga: cannot connect to X server %s\n", XDisplayName (display_name));
+    fprintf (
+      stderr,
+      "uga: cannot connect to X server %s\n",
+      XDisplayName (
+        display_name
+        )
+      );
     free (Drv);
     return EFI_DEVICE_ERROR;
   }
@@ -1080,17 +1142,31 @@ X11GraphicsWindowOpen (
                   );
 
   Drv->depth = DefaultDepth (Drv->display, Drv->screen);
-  XDefineCursor (Drv->display, Drv->win, XCreateFontCursor (Drv->display, XC_pirate));
+  XDefineCursor (
+    Drv->display,
+    Drv->win,
+    XCreateFontCursor (
+      Drv->display,
+      XC_pirate
+      )
+    );
 
   Drv->Title = malloc (StrSize (This->ConfigString));
-  UnicodeStrToAsciiStrS (This->ConfigString, Drv->Title, StrSize (This->ConfigString));
+  UnicodeStrToAsciiStrS (
+    This->ConfigString,
+    Drv->Title,
+    StrSize (
+      This->ConfigString
+      )
+    );
   XStoreName (Drv->display, Drv->win, Drv->Title);
 
   //  XAutoRepeatOff (Drv->display);
   XSelectInput (
     Drv->display,
     Drv->win,
-    ExposureMask | KeyPressMask | KeyReleaseMask | PointerMotionMask | ButtonPressMask | ButtonReleaseMask
+    ExposureMask | KeyPressMask | KeyReleaseMask | PointerMotionMask |
+    ButtonPressMask | ButtonReleaseMask
     );
   Drv->gc = DefaultGC (Drv->display, Drv->screen);
 

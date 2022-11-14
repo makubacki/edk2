@@ -9,7 +9,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "WinHost.h"
 
-#define WIN_NT_SIMPLE_FILE_SYSTEM_PRIVATE_SIGNATURE  SIGNATURE_32 ('N', 'T', 'f', 's')
+#define WIN_NT_SIMPLE_FILE_SYSTEM_PRIVATE_SIGNATURE  \
+  SIGNATURE_32 ('N', 'T', 'f', 's')
 
 typedef struct {
   UINTN                              Signature;
@@ -217,7 +218,11 @@ WinNtOpenVolume (
   PrivateFile->IsRootDirectory  = TRUE;
   PrivateFile->IsDirectoryPath  = TRUE;
   PrivateFile->IsOpenedByRead   = TRUE;
-  CopyMem (&PrivateFile->EfiFile, &gWinNtFileProtocol, sizeof (gWinNtFileProtocol));
+  CopyMem (
+    &PrivateFile->EfiFile,
+    &gWinNtFileProtocol,
+    sizeof (gWinNtFileProtocol)
+    );
   PrivateFile->IsValidFindBuf = FALSE;
 
   //
@@ -489,8 +494,10 @@ WinNtFileOpen (
   //
   // Init local variables
   //
-  PrivateFile    = WIN_NT_EFI_FILE_PRIVATE_DATA_FROM_THIS (This);
-  PrivateRoot    = WIN_NT_SIMPLE_FILE_SYSTEM_PRIVATE_DATA_FROM_THIS (PrivateFile->SimpleFileSystem);
+  PrivateFile = WIN_NT_EFI_FILE_PRIVATE_DATA_FROM_THIS (This);
+  PrivateRoot = WIN_NT_SIMPLE_FILE_SYSTEM_PRIVATE_DATA_FROM_THIS (
+                  PrivateFile->SimpleFileSystem
+                  );
   NewPrivateFile = NULL;
 
   //
@@ -513,7 +520,10 @@ WinNtFileOpen (
   // then we trim the leading/trailing blanks and trailing dots
   //
   if ((StrCmp (FileName, L".") != 0) && (StrCmp (FileName, L"..") != 0) &&
-      ((StrLen (FileName) >= 3) ? (StrCmp (&FileName[StrLen (FileName) - 3], L"\\..") != 0) : TRUE))
+      ((StrLen (FileName) >= 3) ? (StrCmp (
+                                     &FileName[StrLen (FileName) - 3],
+                                     L"\\.."
+                                     ) != 0) : TRUE))
   {
     //
     // Trim leading blanks
@@ -580,11 +590,19 @@ WinNtFileOpen (
   }
 
   if (*FileName == L'\\') {
-    StrCpyS (NewPrivateFile->FileName, Size / sizeof (CHAR16), PrivateRoot->FilePath);
+    StrCpyS (
+      NewPrivateFile->FileName,
+      Size / sizeof (CHAR16),
+      PrivateRoot->FilePath
+      );
     StrCatS (NewPrivateFile->FileName, Size / sizeof (CHAR16), L"\\");
     StrCatS (NewPrivateFile->FileName, Size / sizeof (CHAR16), FileName + 1);
   } else {
-    StrCpyS (NewPrivateFile->FileName, Size / sizeof (CHAR16), NewPrivateFile->FilePath);
+    StrCpyS (
+      NewPrivateFile->FileName,
+      Size / sizeof (CHAR16),
+      NewPrivateFile->FilePath
+      );
     if (StrCmp (FileName, L"") != 0) {
       //
       // In case the filename becomes empty, especially after trimming dots and blanks
@@ -752,7 +770,8 @@ WinNtFileOpen (
 
     NewPrivateFile->DirHandle = CreateFile (
                                   TempFileName,
-                                  NewPrivateFile->IsOpenedByRead ? GENERIC_READ : (GENERIC_READ | GENERIC_WRITE),
+                                  NewPrivateFile->IsOpenedByRead ?
+                                  GENERIC_READ : (GENERIC_READ | GENERIC_WRITE),
                                   FILE_SHARE_READ | FILE_SHARE_WRITE,
                                   NULL,
                                   OPEN_EXISTING,
@@ -787,7 +806,10 @@ WinNtFileOpen (
     // Find the first file under it
     //
     StrCatS (TempFileName, Size / sizeof (CHAR16), L"\\*");
-    NewPrivateFile->LHandle = FindFirstFile (TempFileName, &NewPrivateFile->FindBuf);
+    NewPrivateFile->LHandle = FindFirstFile (
+                                TempFileName,
+                                &NewPrivateFile->FindBuf
+                                );
     FreePool (TempFileName);
 
     if (NewPrivateFile->LHandle == INVALID_HANDLE_VALUE) {
@@ -805,7 +827,8 @@ WinNtFileOpen (
                                   GENERIC_READ | GENERIC_WRITE,
                                   FILE_SHARE_READ | FILE_SHARE_WRITE,
                                   NULL,
-                                  (OpenMode & EFI_FILE_MODE_CREATE) ? OPEN_ALWAYS : OPEN_EXISTING,
+                                  (OpenMode & EFI_FILE_MODE_CREATE) ?
+                                  OPEN_ALWAYS : OPEN_EXISTING,
                                   0,
                                   NULL
                                   );
@@ -853,7 +876,12 @@ WinNtFileOpen (
     InfoSize = 0;
     Info     = NULL;
 
-    Status = WinNtFileGetInfo (&NewPrivateFile->EfiFile, &gEfiFileInfoGuid, &InfoSize, Info);
+    Status = WinNtFileGetInfo (
+               &NewPrivateFile->EfiFile,
+               &gEfiFileInfoGuid,
+               &InfoSize,
+               Info
+               );
 
     if (Status != EFI_BUFFER_TOO_SMALL) {
       Status = EFI_DEVICE_ERROR;
@@ -866,7 +894,12 @@ WinNtFileOpen (
       goto Done;
     }
 
-    Status = WinNtFileGetInfo (&NewPrivateFile->EfiFile, &gEfiFileInfoGuid, &InfoSize, Info);
+    Status = WinNtFileGetInfo (
+               &NewPrivateFile->EfiFile,
+               &gEfiFileInfoGuid,
+               &InfoSize,
+               Info
+               );
 
     if (EFI_ERROR (Status)) {
       FreePool (Info);
@@ -875,7 +908,12 @@ WinNtFileOpen (
 
     Info->Attribute = Attributes;
 
-    WinNtFileSetInfo (&NewPrivateFile->EfiFile, &gEfiFileInfoGuid, InfoSize, Info);
+    WinNtFileSetInfo (
+      &NewPrivateFile->EfiFile,
+      &gEfiFileInfoGuid,
+      InfoSize,
+      Info
+      );
     FreePool (Info);
   }
 
@@ -931,7 +969,9 @@ WinNtFileClose (
     PrivateFile->LHandle = INVALID_HANDLE_VALUE;
   }
 
-  if (PrivateFile->IsDirectoryPath && (PrivateFile->DirHandle != INVALID_HANDLE_VALUE)) {
+  if (PrivateFile->IsDirectoryPath && (PrivateFile->DirHandle !=
+                                       INVALID_HANDLE_VALUE))
+  {
     CloseHandle (PrivateFile->DirHandle);
     PrivateFile->DirHandle = INVALID_HANDLE_VALUE;
   }
@@ -1189,9 +1229,24 @@ WinNtFileRead (
     Info->Size = ResultSize;
 
     GetTimeZoneInformation (&TimeZone);
-    WinNtFileTimeToEfiTime (PrivateFile, &TimeZone, &PrivateFile->FindBuf.ftCreationTime, &Info->CreateTime);
-    WinNtFileTimeToEfiTime (PrivateFile, &TimeZone, &PrivateFile->FindBuf.ftLastAccessTime, &Info->LastAccessTime);
-    WinNtFileTimeToEfiTime (PrivateFile, &TimeZone, &PrivateFile->FindBuf.ftLastWriteTime, &Info->ModificationTime);
+    WinNtFileTimeToEfiTime (
+      PrivateFile,
+      &TimeZone,
+      &PrivateFile->FindBuf.ftCreationTime,
+      &Info->CreateTime
+      );
+    WinNtFileTimeToEfiTime (
+      PrivateFile,
+      &TimeZone,
+      &PrivateFile->FindBuf.ftLastAccessTime,
+      &Info->LastAccessTime
+      );
+    WinNtFileTimeToEfiTime (
+      PrivateFile,
+      &TimeZone,
+      &PrivateFile->FindBuf.ftLastWriteTime,
+      &Info->ModificationTime
+      );
 
     Info->FileSize = PrivateFile->FindBuf.nFileSizeLow;
 
@@ -1355,14 +1410,20 @@ WinNtFileSetPossition (
 
     FreePool (FileName);
 
-    Status = (PrivateFile->LHandle == INVALID_HANDLE_VALUE) ? EFI_DEVICE_ERROR : EFI_SUCCESS;
+    Status = (PrivateFile->LHandle == INVALID_HANDLE_VALUE) ? EFI_DEVICE_ERROR :
+             EFI_SUCCESS;
   } else {
     if (Position == (UINT64)-1) {
       PosLow = SetFilePointer (PrivateFile->LHandle, (ULONG)0, NULL, FILE_END);
     } else {
       PosHigh = (UINT32)RShiftU64 (Position, 32);
 
-      PosLow = SetFilePointer (PrivateFile->LHandle, (ULONG)Position, (PLONG)&PosHigh, FILE_BEGIN);
+      PosLow = SetFilePointer (
+                 PrivateFile->LHandle,
+                 (ULONG)Position,
+                 (PLONG)&PosHigh,
+                 FILE_BEGIN
+                 );
     }
 
     Status = (PosLow == 0xFFFFFFFF) ? EFI_DEVICE_ERROR : EFI_SUCCESS;
@@ -1483,16 +1544,32 @@ Returns:
 
     Info->Size = ResultSize;
     GetFileInformationByHandle (
-      PrivateFile->IsDirectoryPath ? PrivateFile->DirHandle : PrivateFile->LHandle,
+      PrivateFile->IsDirectoryPath ? PrivateFile->DirHandle :
+      PrivateFile->LHandle,
       &FileInfo
       );
     Info->FileSize     = FileInfo.nFileSizeLow;
     Info->PhysicalSize = Info->FileSize;
 
     GetTimeZoneInformation (&TimeZone);
-    WinNtFileTimeToEfiTime (PrivateFile, &TimeZone, &FileInfo.ftCreationTime, &Info->CreateTime);
-    WinNtFileTimeToEfiTime (PrivateFile, &TimeZone, &FileInfo.ftLastAccessTime, &Info->LastAccessTime);
-    WinNtFileTimeToEfiTime (PrivateFile, &TimeZone, &FileInfo.ftLastWriteTime, &Info->ModificationTime);
+    WinNtFileTimeToEfiTime (
+      PrivateFile,
+      &TimeZone,
+      &FileInfo.ftCreationTime,
+      &Info->CreateTime
+      );
+    WinNtFileTimeToEfiTime (
+      PrivateFile,
+      &TimeZone,
+      &FileInfo.ftLastAccessTime,
+      &Info->LastAccessTime
+      );
+    WinNtFileTimeToEfiTime (
+      PrivateFile,
+      &TimeZone,
+      &FileInfo.ftLastWriteTime,
+      &Info->ModificationTime
+      );
 
     if (FileInfo.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE) {
       Info->Attribute |= EFI_FILE_ARCHIVE;
@@ -1574,7 +1651,9 @@ WinNtFileGetInfo (
   }
 
   PrivateFile = WIN_NT_EFI_FILE_PRIVATE_DATA_FROM_THIS (This);
-  PrivateRoot = WIN_NT_SIMPLE_FILE_SYSTEM_PRIVATE_DATA_FROM_THIS (PrivateFile->SimpleFileSystem);
+  PrivateRoot = WIN_NT_SIMPLE_FILE_SYSTEM_PRIVATE_DATA_FROM_THIS (
+                  PrivateFile->SimpleFileSystem
+                  );
 
   Status = EFI_UNSUPPORTED;
 
@@ -1583,14 +1662,22 @@ WinNtFileGetInfo (
   }
 
   if (CompareGuid (InformationType, &gEfiFileSystemInfoGuid)) {
-    if (*BufferSize < SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (PrivateRoot->VolumeLabel)) {
-      *BufferSize = SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (PrivateRoot->VolumeLabel);
-      Status      = EFI_BUFFER_TOO_SMALL;
+    if (*BufferSize < SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (
+                                                       PrivateRoot->VolumeLabel
+                                                       ))
+    {
+      *BufferSize = SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (
+                                                     PrivateRoot->VolumeLabel
+                                                     );
+      Status = EFI_BUFFER_TOO_SMALL;
       goto Done;
     }
 
-    FileSystemInfoBuffer           = (EFI_FILE_SYSTEM_INFO *)Buffer;
-    FileSystemInfoBuffer->Size     = SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (PrivateRoot->VolumeLabel);
+    FileSystemInfoBuffer       = (EFI_FILE_SYSTEM_INFO *)Buffer;
+    FileSystemInfoBuffer->Size = SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (
+                                                                  PrivateRoot->
+                                                                    VolumeLabel
+                                                                  );
     FileSystemInfoBuffer->ReadOnly = FALSE;
 
     //
@@ -1616,12 +1703,16 @@ WinNtFileGetInfo (
       DriveName[Index + 2] = 0;
       DriveNameFound       = TRUE;
     } else if ((DriveName[0] == '\\') && (DriveName[1] == '\\')) {
-      for (Index = 2; DriveName[Index] != 0 && DriveName[Index] != '\\'; Index++) {
+      for (Index = 2; DriveName[Index] != 0 && DriveName[Index] != '\\';
+           Index++)
+      {
       }
 
       if (DriveName[Index] == '\\') {
         DriveNameFound = TRUE;
-        for (Index++; DriveName[Index] != 0 && DriveName[Index] != '\\'; Index++) {
+        for (Index++; DriveName[Index] != 0 && DriveName[Index] != '\\';
+             Index++)
+        {
         }
 
         DriveName[Index]     = '\\';
@@ -1648,9 +1739,15 @@ WinNtFileGetInfo (
       // Succeeded
       //
       BytesPerCluster                  = BytesPerSector * SectorsPerCluster;
-      FileSystemInfoBuffer->VolumeSize = MultU64x32 (TotalClusters, BytesPerCluster);
-      FileSystemInfoBuffer->FreeSpace  = MultU64x32 (FreeClusters, BytesPerCluster);
-      FileSystemInfoBuffer->BlockSize  = BytesPerCluster;
+      FileSystemInfoBuffer->VolumeSize = MultU64x32 (
+                                           TotalClusters,
+                                           BytesPerCluster
+                                           );
+      FileSystemInfoBuffer->FreeSpace = MultU64x32 (
+                                          FreeClusters,
+                                          BytesPerCluster
+                                          );
+      FileSystemInfoBuffer->BlockSize = BytesPerCluster;
     } else {
       //
       // try GetDiskFreeSpaceEx then
@@ -1658,8 +1755,12 @@ WinNtFileGetInfo (
       FileSystemInfoBuffer->BlockSize = 0;
       NtStatus                        = GetDiskFreeSpaceEx (
                                           PrivateFile->FilePath,
-                                          (PULARGE_INTEGER)(&FileSystemInfoBuffer->FreeSpace),
-                                          (PULARGE_INTEGER)(&FileSystemInfoBuffer->VolumeSize),
+                                          (PULARGE_INTEGER)(&
+                                                            FileSystemInfoBuffer
+                                                              ->FreeSpace),
+                                          (PULARGE_INTEGER)(&
+                                                            FileSystemInfoBuffer
+                                                              ->VolumeSize),
                                           NULL
                                           );
       if (!NtStatus) {
@@ -1673,8 +1774,10 @@ WinNtFileGetInfo (
       (*BufferSize - SIZE_OF_EFI_FILE_SYSTEM_INFO) / sizeof (CHAR16),
       PrivateRoot->VolumeLabel
       );
-    *BufferSize = SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (PrivateRoot->VolumeLabel);
-    Status      = EFI_SUCCESS;
+    *BufferSize = SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (
+                                                   PrivateRoot->VolumeLabel
+                                                   );
+    Status = EFI_SUCCESS;
   }
 
   if (CompareGuid (InformationType, &gEfiFileSystemVolumeLabelInfoIdGuid)) {
@@ -1754,7 +1857,9 @@ WinNtFileSetInfo (
   // Initialise locals.
   //
   PrivateFile = WIN_NT_EFI_FILE_PRIVATE_DATA_FROM_THIS (This);
-  PrivateRoot = WIN_NT_SIMPLE_FILE_SYSTEM_PRIVATE_DATA_FROM_THIS (PrivateFile->SimpleFileSystem);
+  PrivateRoot = WIN_NT_SIMPLE_FILE_SYSTEM_PRIVATE_DATA_FROM_THIS (
+                  PrivateFile->SimpleFileSystem
+                  );
 
   Status         = EFI_UNSUPPORTED;
   OldFileInfo    = NewFileInfo = NULL;
@@ -1766,13 +1871,21 @@ WinNtFileSetInfo (
   //
   if (CompareGuid (InformationType, &gEfiFileSystemInfoGuid)) {
     NewFileSystemInfo = (EFI_FILE_SYSTEM_INFO *)Buffer;
-    if (BufferSize < SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (NewFileSystemInfo->VolumeLabel)) {
+    if (BufferSize < SIZE_OF_EFI_FILE_SYSTEM_INFO + StrSize (
+                                                      NewFileSystemInfo->
+                                                        VolumeLabel
+                                                      ))
+    {
       Status = EFI_BAD_BUFFER_SIZE;
       goto Done;
     }
 
     FreePool (PrivateRoot->VolumeLabel);
-    PrivateRoot->VolumeLabel = AllocatePool (StrSize (NewFileSystemInfo->VolumeLabel));
+    PrivateRoot->VolumeLabel = AllocatePool (
+                                 StrSize (
+                                   NewFileSystemInfo->VolumeLabel
+                                   )
+                                 );
     if (PrivateRoot->VolumeLabel == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Done;
@@ -1859,7 +1972,11 @@ WinNtFileSetInfo (
     goto Done;
   }
 
-  Status = WinNtSimpleFileSystemFileInfo (PrivateFile, &OldInfoSize, OldFileInfo);
+  Status = WinNtSimpleFileSystemFileInfo (
+             PrivateFile,
+             &OldInfoSize,
+             OldFileInfo
+             );
 
   if (EFI_ERROR (Status)) {
     goto Done;
@@ -1912,7 +2029,9 @@ WinNtFileSetInfo (
   // Is there an attribute change request?
   //
   if (NewFileInfo->Attribute != OldFileInfo->Attribute) {
-    if ((NewFileInfo->Attribute & EFI_FILE_DIRECTORY) != (OldFileInfo->Attribute & EFI_FILE_DIRECTORY)) {
+    if ((NewFileInfo->Attribute & EFI_FILE_DIRECTORY) !=
+        (OldFileInfo->Attribute & EFI_FILE_DIRECTORY))
+    {
       Status = EFI_INVALID_PARAMETER;
       goto Done;
     }
@@ -1939,17 +2058,29 @@ WinNtFileSetInfo (
   // Is there a time stamp change request?
   //
   if (!IsZero (&NewFileInfo->CreateTime, sizeof (EFI_TIME)) &&
-      CompareMem (&NewFileInfo->CreateTime, &OldFileInfo->CreateTime, sizeof (EFI_TIME))
+      CompareMem (
+        &NewFileInfo->CreateTime,
+        &OldFileInfo->CreateTime,
+        sizeof (EFI_TIME)
+        )
       )
   {
     TimeChangeFlag = TRUE;
   } else if (!IsZero (&NewFileInfo->LastAccessTime, sizeof (EFI_TIME)) &&
-             CompareMem (&NewFileInfo->LastAccessTime, &OldFileInfo->LastAccessTime, sizeof (EFI_TIME))
+             CompareMem (
+               &NewFileInfo->LastAccessTime,
+               &OldFileInfo->LastAccessTime,
+               sizeof (EFI_TIME)
+               )
              )
   {
     TimeChangeFlag = TRUE;
   } else if (!IsZero (&NewFileInfo->ModificationTime, sizeof (EFI_TIME)) &&
-             CompareMem (&NewFileInfo->ModificationTime, &OldFileInfo->ModificationTime, sizeof (EFI_TIME))
+             CompareMem (
+               &NewFileInfo->ModificationTime,
+               &OldFileInfo->ModificationTime,
+               sizeof (EFI_TIME)
+               )
              )
   {
     TimeChangeFlag = TRUE;
@@ -1980,7 +2111,9 @@ WinNtFileSetInfo (
       goto Done;
     }
 
-    for (CharPointer = NewFileName; *CharPointer != 0 && *CharPointer != L'/'; CharPointer++) {
+    for (CharPointer = NewFileName; *CharPointer != 0 && *CharPointer != L'/';
+         CharPointer++)
+    {
     }
 
     if (*CharPointer != 0) {
@@ -1997,7 +2130,9 @@ WinNtFileSetInfo (
       }
     }
 
-    if (PrivateFile->IsDirectoryPath && (PrivateFile->DirHandle != INVALID_HANDLE_VALUE)) {
+    if (PrivateFile->IsDirectoryPath && (PrivateFile->DirHandle !=
+                                         INVALID_HANDLE_VALUE))
+    {
       CloseHandle (PrivateFile->DirHandle);
       PrivateFile->DirHandle = INVALID_HANDLE_VALUE;
     }
@@ -2016,7 +2151,11 @@ WinNtFileSetInfo (
         goto Done;
       }
 
-      StrCpyS (PrivateFile->FileName, StrSize (NewFileName) / sizeof (CHAR16), NewFileName);
+      StrCpyS (
+        PrivateFile->FileName,
+        StrSize (NewFileName) / sizeof (CHAR16),
+        NewFileName
+        );
 
       Size         = StrSize (NewFileName);
       Size        += StrSize (L"\\*");
@@ -2027,7 +2166,8 @@ WinNtFileSetInfo (
       if (!PrivateFile->IsDirectoryPath) {
         PrivateFile->LHandle = CreateFile (
                                  TempFileName,
-                                 PrivateFile->IsOpenedByRead ? GENERIC_READ : GENERIC_READ | GENERIC_WRITE,
+                                 PrivateFile->IsOpenedByRead ? GENERIC_READ :
+                                 GENERIC_READ | GENERIC_WRITE,
                                  FILE_SHARE_READ | FILE_SHARE_WRITE,
                                  NULL,
                                  OPEN_EXISTING,
@@ -2047,7 +2187,8 @@ WinNtFileSetInfo (
       } else {
         PrivateFile->DirHandle = CreateFile (
                                    TempFileName,
-                                   PrivateFile->IsOpenedByRead ? GENERIC_READ : GENERIC_READ | GENERIC_WRITE,
+                                   PrivateFile->IsOpenedByRead ? GENERIC_READ :
+                                   GENERIC_READ | GENERIC_WRITE,
                                    FILE_SHARE_READ | FILE_SHARE_WRITE,
                                    NULL,
                                    OPEN_EXISTING,
@@ -2079,7 +2220,8 @@ Reopen:;
       if (!PrivateFile->IsDirectoryPath) {
         PrivateFile->LHandle = CreateFile (
                                  TempFileName,
-                                 PrivateFile->IsOpenedByRead ? GENERIC_READ : GENERIC_READ | GENERIC_WRITE,
+                                 PrivateFile->IsOpenedByRead ? GENERIC_READ :
+                                 GENERIC_READ | GENERIC_WRITE,
                                  FILE_SHARE_READ | FILE_SHARE_WRITE,
                                  NULL,
                                  OPEN_EXISTING,
@@ -2089,7 +2231,8 @@ Reopen:;
       } else {
         PrivateFile->DirHandle = CreateFile (
                                    TempFileName,
-                                   PrivateFile->IsOpenedByRead ? GENERIC_READ : GENERIC_READ | GENERIC_WRITE,
+                                   PrivateFile->IsOpenedByRead ? GENERIC_READ :
+                                   GENERIC_READ | GENERIC_WRITE,
                                    FILE_SHARE_READ | FILE_SHARE_WRITE,
                                    NULL,
                                    OPEN_EXISTING,
@@ -2116,7 +2259,9 @@ Reopen:;
       goto Done;
     }
 
-    if (PrivateFile->IsOpenedByRead || OldFileInfo->Attribute & EFI_FILE_READ_ONLY) {
+    if (PrivateFile->IsOpenedByRead || OldFileInfo->Attribute &
+        EFI_FILE_READ_ONLY)
+    {
       Status = EFI_ACCESS_DENIED;
       goto Done;
     }
@@ -2219,7 +2364,8 @@ Reopen:;
     }
 
     if (!SetFileTime (
-           PrivateFile->IsDirectoryPath ? PrivateFile->DirHandle : PrivateFile->LHandle,
+           PrivateFile->IsDirectoryPath ? PrivateFile->DirHandle :
+           PrivateFile->LHandle,
            &NewCreationFileTime,
            &NewLastAccessFileTime,
            &NewLastWriteFileTime
@@ -2331,7 +2477,8 @@ WinNtFileFlush (
     goto Done;
   }
 
-  Status = FlushFileBuffers (PrivateFile->LHandle) ? EFI_SUCCESS : EFI_DEVICE_ERROR;
+  Status = FlushFileBuffers (PrivateFile->LHandle) ? EFI_SUCCESS :
+           EFI_DEVICE_ERROR;
 
 Done:
   return Status;
@@ -2352,13 +2499,19 @@ WinNtFileSystmeThunkOpen (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Private->FilePath = AllocateCopyPool (StrSize (This->ConfigString), This->ConfigString);
+  Private->FilePath = AllocateCopyPool (
+                        StrSize (This->ConfigString),
+                        This->ConfigString
+                        );
   if (Private->FilePath == NULL) {
     FreePool (Private);
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Private->VolumeLabel = AllocateCopyPool (StrSize (L"EFI_EMULATED"), L"EFI_EMULATED");
+  Private->VolumeLabel = AllocateCopyPool (
+                           StrSize (L"EFI_EMULATED"),
+                           L"EFI_EMULATED"
+                           );
   if (Private->VolumeLabel == NULL) {
     FreePool (Private->FilePath);
     FreePool (Private);
@@ -2367,7 +2520,11 @@ WinNtFileSystmeThunkOpen (
 
   Private->Signature = WIN_NT_SIMPLE_FILE_SYSTEM_PRIVATE_SIGNATURE;
   Private->Thunk     = This;
-  CopyMem (&Private->SimpleFileSystem, &gWinNtFileSystemProtocol, sizeof (Private->SimpleFileSystem));
+  CopyMem (
+    &Private->SimpleFileSystem,
+    &gWinNtFileSystemProtocol,
+    sizeof (Private->SimpleFileSystem)
+    );
 
   This->Interface = &Private->SimpleFileSystem;
   This->Private   = Private;

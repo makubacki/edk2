@@ -31,15 +31,19 @@ EmuSimpleFileSystemComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gEmuSimpleFileSystemComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gEmuSimpleFileSystemComponentName = {
   EmuSimpleFileSystemComponentNameGetDriverName,
   EmuSimpleFileSystemComponentNameGetControllerName,
   "eng"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gEmuSimpleFileSystemComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)EmuSimpleFileSystemComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)EmuSimpleFileSystemComponentNameGetControllerName,
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gEmuSimpleFileSystemComponentName2 = {
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)
+  EmuSimpleFileSystemComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  EmuSimpleFileSystemComponentNameGetControllerName,
   "en"
 };
 

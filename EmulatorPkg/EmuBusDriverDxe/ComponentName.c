@@ -31,7 +31,8 @@ EmuBusDriverComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gEmuBusDriverComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gEmuBusDriverComponentName = {
   EmuBusDriverComponentNameGetDriverName,
   EmuBusDriverComponentNameGetControllerName,
   "eng"
@@ -40,15 +41,18 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gEmuBusDriverComponen
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gEmuBusDriverComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gEmuBusDriverComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)EmuBusDriverComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)EmuBusDriverComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  EmuBusDriverComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mEmuBusDriverNameTable[] = {
-  { "eng", L"Emu Bus Driver" },
-  { NULL,  NULL              }
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mEmuBusDriverNameTable[] = {
+  { "eng", L"Emu Bus Driver"  },
+  { NULL,  NULL               }
 };
 
 /**

@@ -145,7 +145,11 @@ EmuSnpInitialize (
 
   Private = EMU_SNP_PRIVATE_DATA_FROM_SNP_THIS (This);
 
-  Status = Private->Io->Initialize (Private->Io, ExtraRxBufferSize, ExtraTxBufferSize);
+  Status = Private->Io->Initialize (
+                          Private->Io,
+                          ExtraRxBufferSize,
+                          ExtraTxBufferSize
+                          );
   return Status;
 }
 
@@ -310,7 +314,12 @@ EmuSnpStatistics (
 
   Private = EMU_SNP_PRIVATE_DATA_FROM_SNP_THIS (This);
 
-  Status = Private->Io->Statistics (Private->Io, Reset, StatisticsSize, StatisticsTable);
+  Status = Private->Io->Statistics (
+                          Private->Io,
+                          Reset,
+                          StatisticsSize,
+                          StatisticsTable
+                          );
   return Status;
 }
 
@@ -382,7 +391,13 @@ EmuSnpNvdata (
 
   Private = EMU_SNP_PRIVATE_DATA_FROM_SNP_THIS (This);
 
-  Status = Private->Io->NvData (Private->Io, ReadOrWrite, Offset, BufferSize, Buffer);
+  Status = Private->Io->NvData (
+                          Private->Io,
+                          ReadOrWrite,
+                          Offset,
+                          BufferSize,
+                          Buffer
+                          );
   return Status;
 }
 
@@ -726,8 +741,16 @@ EmuSnpDriverBindingStart (
     goto Done;
   }
 
-  CopyMem (&Private->Snp, &gEmuSnpTemplate, sizeof (EFI_SIMPLE_NETWORK_PROTOCOL));
-  CopyMem (&Private->Mode, &gEmuSnpModeTemplate, sizeof (EFI_SIMPLE_NETWORK_MODE));
+  CopyMem (
+    &Private->Snp,
+    &gEmuSnpTemplate,
+    sizeof (EFI_SIMPLE_NETWORK_PROTOCOL)
+    );
+  CopyMem (
+    &Private->Mode,
+    &gEmuSnpModeTemplate,
+    sizeof (EFI_SIMPLE_NETWORK_MODE)
+    );
 
   Private->Signature           = EMU_SNP_PRIVATE_DATA_SIGNATURE;
   Private->IoThunk             = EmuIoThunk;
@@ -752,14 +775,24 @@ EmuSnpDriverBindingStart (
   Node.Header.SubType = MSG_MAC_ADDR_DP;
   Node.IfType         = Private->Mode.IfType;
 
-  SetDevicePathNodeLength ((EFI_DEVICE_PATH_PROTOCOL *)&Node, sizeof (MAC_ADDR_DEVICE_PATH));
+  SetDevicePathNodeLength (
+    (EFI_DEVICE_PATH_PROTOCOL *)&Node,
+    sizeof (MAC_ADDR_DEVICE_PATH)
+    );
 
-  CopyMem (&Node.MacAddress, &Private->Mode.CurrentAddress, sizeof (EFI_MAC_ADDRESS));
+  CopyMem (
+    &Node.MacAddress,
+    &Private->Mode.CurrentAddress,
+    sizeof (EFI_MAC_ADDRESS)
+    );
 
   //
   // Build the device path by appending the MAC node to the ParentDevicePath from the EmuIo handle.
   //
-  Private->DevicePath = AppendDevicePathNode (ParentDevicePath, (EFI_DEVICE_PATH_PROTOCOL *)&Node);
+  Private->DevicePath = AppendDevicePathNode (
+                          ParentDevicePath,
+                          (EFI_DEVICE_PATH_PROTOCOL *)&Node
+                          );
   if ( Private->DevicePath == NULL ) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;

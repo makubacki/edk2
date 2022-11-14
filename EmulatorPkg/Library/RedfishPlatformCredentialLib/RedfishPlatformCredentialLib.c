@@ -60,7 +60,10 @@ GetRedfishCredential (
   UserIdSize   = AsciiStrSize ((CHAR8 *)PcdGetPtr (PcdRedfishServieUserId));
   PasswordSize = AsciiStrSize ((CHAR8 *)PcdGetPtr (PcdRedfishServiePassword));
   if ((UserIdSize == 0) || (PasswordSize == 0)) {
-    DEBUG ((DEBUG_ERROR, "Incorrect string of UserID or Password for REdfish service.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Incorrect string of UserID or Password for REdfish service.\n"
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
@@ -77,7 +80,11 @@ GetRedfishCredential (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CopyMem (*Password, (CHAR8 *)PcdGetPtr (PcdRedfishServiePassword), PasswordSize);
+  CopyMem (
+    *Password,
+    (CHAR8 *)PcdGetPtr (PcdRedfishServiePassword),
+    PasswordSize
+    );
   return EFI_SUCCESS;
 }
 
@@ -116,7 +123,9 @@ LibCredentialGetAuthInfo (
 {
   EFI_STATUS  Status;
 
-  if ((This == NULL) || (AuthMethod == NULL) || (UserId == NULL) || (Password == NULL)) {
+  if ((This == NULL) || (AuthMethod == NULL) || (UserId == NULL) || (Password ==
+                                                                     NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -127,7 +136,11 @@ LibCredentialGetAuthInfo (
   if (mSecureBootDisabled) {
     Status = LibStopRedfishService (This, ServiceStopTypeSecureBootDisabled);
     if (EFI_ERROR (Status) && (Status != EFI_UNSUPPORTED)) {
-      DEBUG ((DEBUG_ERROR, "SecureBoot has been disabled, but failed to stop RedfishService - %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "SecureBoot has been disabled, but failed to stop RedfishService - %r\n",
+        Status
+        ));
       return Status;
     }
   }
@@ -183,14 +196,22 @@ LibStopRedfishService (
       //
       // Check Secure Boot status and lock Redfish service if Secure Boot is disabled.
       //
-      Status = GetVariable2 (EFI_SECURE_BOOT_MODE_NAME, &gEfiGlobalVariableGuid, (VOID **)&SecureBootVar, NULL);
+      Status = GetVariable2 (
+                 EFI_SECURE_BOOT_MODE_NAME,
+                 &gEfiGlobalVariableGuid,
+                 (VOID **)&SecureBootVar,
+                 NULL
+                 );
       if (EFI_ERROR (Status) || (*SecureBootVar != SECURE_BOOT_MODE_ENABLE)) {
         //
         // Secure Boot is disabled
         //
         mSecureBootDisabled = TRUE;
         mStopRedfishService = TRUE;
-        DEBUG ((DEBUG_INFO, "EFI Redfish service is stopped due to SecureBoot is disabled!!\n"));
+        DEBUG ((
+          DEBUG_INFO,
+          "EFI Redfish service is stopped due to SecureBoot is disabled!!\n"
+          ));
       }
     }
   } else if (ServiceStopType == ServiceStopTypeExitBootService) {
@@ -202,11 +223,17 @@ LibStopRedfishService (
       return EFI_UNSUPPORTED;
     } else {
       mStopRedfishService = TRUE;
-      DEBUG ((DEBUG_INFO, "EFI Redfish service is stopped due to Exit Boot Service!!\n"));
+      DEBUG ((
+        DEBUG_INFO,
+        "EFI Redfish service is stopped due to Exit Boot Service!!\n"
+        ));
     }
   } else {
     mStopRedfishService = TRUE;
-    DEBUG ((DEBUG_INFO, "EFI Redfish service is stopped without Redfish service stop type!!\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "EFI Redfish service is stopped without Redfish service stop type!!\n"
+      ));
   }
 
   return EFI_SUCCESS;

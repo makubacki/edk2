@@ -64,9 +64,11 @@ SecConfigStdIn (
     //
     // Disable buffer (line input), echo, mouse, window
     //
-    Mode &= ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT | ENABLE_MOUSE_INPUT | ENABLE_WINDOW_INPUT);
+    Mode &= ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT | ENABLE_MOUSE_INPUT |
+              ENABLE_WINDOW_INPUT);
 
- #if defined (NTDDI_VERSION) && defined (NTDDI_WIN10_TH2) && (NTDDI_VERSION > NTDDI_WIN10_TH2)
+ #if defined (NTDDI_VERSION) && defined (NTDDI_WIN10_TH2) && (NTDDI_VERSION > \
+                                                              NTDDI_WIN10_TH2)
     //
     // Enable virtual terminal input for Win10 above TH2
     //
@@ -76,7 +78,8 @@ SecConfigStdIn (
     Success = SetConsoleMode (GetStdHandle (STD_INPUT_HANDLE), Mode);
   }
 
- #if defined (NTDDI_VERSION) && defined (NTDDI_WIN10_TH2) && (NTDDI_VERSION > NTDDI_WIN10_TH2)
+ #if defined (NTDDI_VERSION) && defined (NTDDI_WIN10_TH2) && (NTDDI_VERSION > \
+                                                              NTDDI_WIN10_TH2)
   //
   // Enable terminal mode for Win10 above TH2
   //
@@ -85,7 +88,8 @@ SecConfigStdIn (
     if (Success) {
       Success = SetConsoleMode (
                   GetStdHandle (STD_OUTPUT_HANDLE),
-                  Mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING | DISABLE_NEWLINE_AUTO_RETURN
+                  Mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING |
+                  DISABLE_NEWLINE_AUTO_RETURN
                   );
     }
   }
@@ -125,7 +129,10 @@ SecPollStdIn (
   DWORD         RecordNum;
 
   do {
-    Success = GetNumberOfConsoleInputEvents (GetStdHandle (STD_INPUT_HANDLE), &RecordNum);
+    Success = GetNumberOfConsoleInputEvents (
+                GetStdHandle (STD_INPUT_HANDLE),
+                &RecordNum
+                );
     if (!Success || (RecordNum == 0)) {
       break;
     }
@@ -177,7 +184,10 @@ SecReadStdIn (
               1,
               &RecordNum
               );
-  ASSERT (Success && (RecordNum == 1) && (Record.EventType == KEY_EVENT) && (Record.Event.KeyEvent.bKeyDown));
+  ASSERT (
+    Success && (RecordNum == 1) && (Record.EventType == KEY_EVENT) &&
+    (Record.Event.KeyEvent.bKeyDown)
+    );
   NumberOfBytes = MIN (Record.Event.KeyEvent.wRepeatCount, NumberOfBytes);
   BytesReturn   = NumberOfBytes;
   while (NumberOfBytes-- != 0) {
@@ -388,7 +398,8 @@ SecSetTimer (
                          0,
                          MMTimerThread,
                          (DWORD_PTR)NULL,
-                         TIME_PERIODIC | TIME_KILL_SYNCHRONOUS | TIME_CALLBACK_FUNCTION
+                         TIME_PERIODIC | TIME_KILL_SYNCHRONOUS |
+                         TIME_CALLBACK_FUNCTION
                          );
   }
 

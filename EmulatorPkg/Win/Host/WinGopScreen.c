@@ -242,7 +242,12 @@ WinNtGopConvertParamToEfiKey (
       break;
   }
 
-  return (WinNtGopConvertParamToEfiKeyShiftState (Private, wParam, lParam, TRUE)) == TRUE ? TRUE : Flag;
+  return (WinNtGopConvertParamToEfiKeyShiftState (
+            Private,
+            wParam,
+            lParam,
+            TRUE
+            )) == TRUE ? TRUE : Flag;
 }
 
 //
@@ -277,7 +282,8 @@ WinNtWndSize (
   VirtualScreenInfo = HeapAlloc (
                         GetProcessHeap (),
                         HEAP_ZERO_MEMORY,
-                        Width * Height * sizeof (RGBQUAD) + sizeof (BITMAPV4HEADER)
+                        Width * Height * sizeof (RGBQUAD) +
+                        sizeof (BITMAPV4HEADER)
                         );
   if (VirtualScreenInfo == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -302,7 +308,12 @@ WinNtWndSize (
   Info.PixelFormat          = PixelBlueGreenRedReserved8BitPerColor;
   Info.PixelsPerScanLine    = Width;
   FrameBufferConfigureSize  = 0;
-  RStatus                   = FrameBufferBltConfigure (VirtualScreenInfo + 1, &Info, NULL, &FrameBufferConfigureSize);
+  RStatus                   = FrameBufferBltConfigure (
+                                VirtualScreenInfo + 1,
+                                &Info,
+                                NULL,
+                                &FrameBufferConfigureSize
+                                );
   ASSERT (RStatus == EFI_BUFFER_TOO_SMALL);
   FrameBufferConfigure = AllocatePool (FrameBufferConfigureSize);
   if (FrameBufferConfigure == NULL) {
@@ -310,7 +321,12 @@ WinNtWndSize (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  RStatus = FrameBufferBltConfigure (VirtualScreenInfo + 1, &Info, FrameBufferConfigure, &FrameBufferConfigureSize);
+  RStatus = FrameBufferBltConfigure (
+              VirtualScreenInfo + 1,
+              &Info,
+              FrameBufferConfigure,
+              &FrameBufferConfigureSize
+              );
   ASSERT_RETURN_ERROR (RStatus);
 
   if (Private->FrameBufferConfigure != NULL) {
@@ -355,7 +371,14 @@ WinNtWndSize (
   //
   // Adjust the window size
   //
-  MoveWindow (Private->WindowHandle, Rect.left, Rect.top, (INT32)Width, (INT32)Height, TRUE);
+  MoveWindow (
+    Private->WindowHandle,
+    Rect.left,
+    Rect.top,
+    (INT32)Width,
+    (INT32)Height,
+    TRUE
+    );
 
   return EFI_SUCCESS;
 }
@@ -616,13 +639,15 @@ WinNtGopThreadWindowProc (
       PosY = GET_Y_LPARAM (lParam);
 
       if (Private->PointerPreviousX != PosX) {
-        Private->PointerState.RelativeMovementX += (PosX - Private->PointerPreviousX);
+        Private->PointerState.RelativeMovementX += (PosX -
+                                                    Private->PointerPreviousX);
         Private->PointerPreviousX                = PosX;
         Private->PointerStateChanged             = TRUE;
       }
 
       if (Private->PointerPreviousY != PosY) {
-        Private->PointerState.RelativeMovementY += (PosY - Private->PointerPreviousY);
+        Private->PointerState.RelativeMovementY += (PosY -
+                                                    Private->PointerPreviousY);
         Private->PointerPreviousY                = PosY;
         Private->PointerStateChanged             = TRUE;
       }

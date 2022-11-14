@@ -40,8 +40,10 @@ EFI_DRIVER_DIAGNOSTICS_PROTOCOL  gEmuBlockIoDriverDiagnostics = {
 //
 // EFI Driver Diagnostics 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_DRIVER_DIAGNOSTICS2_PROTOCOL  gEmuBlockIoDriverDiagnostics2 = {
-  (EFI_DRIVER_DIAGNOSTICS2_RUN_DIAGNOSTICS)EmuBlockIoDriverDiagnosticsRunDiagnostics,
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_DRIVER_DIAGNOSTICS2_PROTOCOL
+  gEmuBlockIoDriverDiagnostics2 = {
+  (EFI_DRIVER_DIAGNOSTICS2_RUN_DIAGNOSTICS)
+  EmuBlockIoDriverDiagnosticsRunDiagnostics,
   "en"
 };
 
@@ -149,16 +151,22 @@ EmuBlockIoDriverDiagnosticsRunDiagnostics (
 
       SupportedLanguages += 3;
     } else {
-      for (Index = 0; SupportedLanguages[Index] != 0 && SupportedLanguages[Index] != ';'; Index++) {
+      for (Index = 0; SupportedLanguages[Index] != 0 &&
+           SupportedLanguages[Index] != ';'; Index++)
+      {
       }
 
-      if ((AsciiStrnCmp (SupportedLanguages, Language, Index) == 0) && (Language[Index] == 0)) {
+      if ((AsciiStrnCmp (SupportedLanguages, Language, Index) == 0) &&
+          (Language[Index] == 0))
+      {
         Found = TRUE;
         break;
       }
 
       SupportedLanguages += Index;
-      for ( ; *SupportedLanguages != 0 && *SupportedLanguages == ';'; SupportedLanguages++) {
+      for ( ; *SupportedLanguages != 0 && *SupportedLanguages == ';';
+            SupportedLanguages++)
+      {
       }
     }
   }
@@ -176,7 +184,11 @@ EmuBlockIoDriverDiagnosticsRunDiagnostics (
     *ErrorType  = &gEfiBlockIoProtocolGuid;
     *BufferSize = 0x60;
     Buffer      = AllocatePool ((UINTN)(*BufferSize));
-    CopyMem (*Buffer, L"Windows Block I/O Driver Diagnostics Failed\n", *BufferSize);
+    CopyMem (
+      *Buffer,
+      L"Windows Block I/O Driver Diagnostics Failed\n",
+      *BufferSize
+      );
     return EFI_DEVICE_ERROR;
   }
 

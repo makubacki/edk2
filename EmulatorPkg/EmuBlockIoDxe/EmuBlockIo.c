@@ -93,7 +93,14 @@ EmuBlockIo2ReadBlocksEx (
 
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
-  Status = Private->Io->ReadBlocks (Private->Io, MediaId, LBA, Token, BufferSize, Buffer);
+  Status = Private->Io->ReadBlocks (
+                          Private->Io,
+                          MediaId,
+                          LBA,
+                          Token,
+                          BufferSize,
+                          Buffer
+                          );
 
   gBS->RestoreTPL (OldTpl);
   return Status;
@@ -149,7 +156,14 @@ EmuBlockIo2WriteBlocksEx (
 
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
-  Status = Private->Io->WriteBlocks (Private->Io, MediaId, LBA, Token, BufferSize, Buffer);
+  Status = Private->Io->WriteBlocks (
+                          Private->Io,
+                          MediaId,
+                          LBA,
+                          Token,
+                          BufferSize,
+                          Buffer
+                          );
 
   gBS->RestoreTPL (OldTpl);
   return Status;
@@ -269,7 +283,14 @@ EmuBlockIoReadBlocks (
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
   Token.Event = NULL;
-  Status      = Private->Io->ReadBlocks (Private->Io, MediaId, Lba, &Token, BufferSize, Buffer);
+  Status      = Private->Io->ReadBlocks (
+                               Private->Io,
+                               MediaId,
+                               Lba,
+                               &Token,
+                               BufferSize,
+                               Buffer
+                               );
 
   gBS->RestoreTPL (OldTpl);
   return Status;
@@ -315,7 +336,14 @@ EmuBlockIoWriteBlocks (
   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
 
   Token.Event = NULL;
-  Status      = Private->Io->WriteBlocks (Private->Io, MediaId, Lba, &Token, BufferSize, Buffer);
+  Status      = Private->Io->WriteBlocks (
+                               Private->Io,
+                               MediaId,
+                               Lba,
+                               &Token,
+                               BufferSize,
+                               Buffer
+                               );
 
   gBS->RestoreTPL (OldTpl);
   return Status;

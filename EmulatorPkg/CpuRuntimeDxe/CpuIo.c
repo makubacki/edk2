@@ -82,7 +82,13 @@ Returns:
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = CpuIoCheckAddressRange (Width, Address, Count, Buffer, IA32_MAX_MEM_ADDRESS);
+  Status = CpuIoCheckAddressRange (
+             Width,
+             Address,
+             Count,
+             Buffer,
+             IA32_MAX_MEM_ADDRESS
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -136,7 +142,13 @@ Returns:
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = CpuIoCheckAddressRange (Width, Address, Count, Buffer, IA32_MAX_MEM_ADDRESS);
+  Status = CpuIoCheckAddressRange (
+             Width,
+             Address,
+             Count,
+             Buffer,
+             IA32_MAX_MEM_ADDRESS
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -195,7 +207,13 @@ Returns:
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = CpuIoCheckAddressRange (Width, Address, Count, UserBuffer, IA32_MAX_IO_ADDRESS);
+  Status = CpuIoCheckAddressRange (
+             Width,
+             Address,
+             Count,
+             UserBuffer,
+             IA32_MAX_IO_ADDRESS
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -258,7 +276,13 @@ Returns:
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = CpuIoCheckAddressRange (Width, Address, Count, UserBuffer, IA32_MAX_IO_ADDRESS);
+  Status = CpuIoCheckAddressRange (
+             Width,
+             Address,
+             Count,
+             UserBuffer,
+             IA32_MAX_IO_ADDRESS
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }

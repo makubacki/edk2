@@ -84,7 +84,9 @@ _ModuleEntryPoint (
   for (Ppi = PpiList, Index = 1; ; Ppi++, Index++) {
     SecReseveredMemorySize += sizeof (EFI_PEI_PPI_DESCRIPTOR);
 
-    if ((Ppi->Flags & EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST) == EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST) {
+    if ((Ppi->Flags & EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST) ==
+        EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST)
+    {
       // Since we are appending, need to clear out previous list terminator.
       Ppi->Flags &= ~EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
       break;
@@ -92,12 +94,17 @@ _ModuleEntryPoint (
   }
 
   // Keep everything on a good alignment
-  SecReseveredMemorySize = ALIGN_VALUE (SecReseveredMemorySize, CPU_STACK_ALIGNMENT);
+  SecReseveredMemorySize = ALIGN_VALUE (
+                             SecReseveredMemorySize,
+                             CPU_STACK_ALIGNMENT
+                             );
 
  #if 0
   // Tell the PEI Core to not use our buffer in temp RAM
-  SecPpiList                        = (EFI_PEI_PPI_DESCRIPTOR *)SecCoreData->PeiTemporaryRamBase;
-  SecCoreData->PeiTemporaryRamBase  = (VOID *)((UINTN)SecCoreData->PeiTemporaryRamBase + SecReseveredMemorySize);
+  SecPpiList =
+    (EFI_PEI_PPI_DESCRIPTOR *)SecCoreData->PeiTemporaryRamBase;
+  SecCoreData->PeiTemporaryRamBase =
+    (VOID *)((UINTN)SecCoreData->PeiTemporaryRamBase + SecReseveredMemorySize);
   SecCoreData->PeiTemporaryRamSize -= SecReseveredMemorySize;
  #else
   //
@@ -110,15 +117,27 @@ _ModuleEntryPoint (
  #endif
   // Copy existing list, and append our entries.
   CopyMem (SecPpiList, PpiList, sizeof (EFI_PEI_PPI_DESCRIPTOR) * Index);
-  CopyMem (&SecPpiList[Index], gPrivateDispatchTable, sizeof (gPrivateDispatchTable));
+  CopyMem (
+    &SecPpiList[Index],
+    gPrivateDispatchTable,
+    sizeof (gPrivateDispatchTable)
+    );
 
   // Find PEI Core and transfer control
   VolumeHandle = (EFI_PEI_FV_HANDLE)(UINTN)SecCoreData->BootFirmwareVolumeBase;
   FileHandle   = NULL;
-  Status       = PeiServicesFfsFindNextFile (EFI_FV_FILETYPE_PEI_CORE, VolumeHandle, &FileHandle);
+  Status       = PeiServicesFfsFindNextFile (
+                   EFI_FV_FILETYPE_PEI_CORE,
+                   VolumeHandle,
+                   &FileHandle
+                   );
   ASSERT_EFI_ERROR (Status);
 
-  Status = PeiServicesFfsFindSectionData (EFI_SECTION_PE32, FileHandle, &PeCoffImage);
+  Status = PeiServicesFfsFindSectionData (
+             EFI_SECTION_PE32,
+             FileHandle,
+             &PeCoffImage
+             );
   ASSERT_EFI_ERROR (Status);
 
   Status = PeCoffLoaderGetEntryPoint (PeCoffImage, (VOID **)&EntryPoint);

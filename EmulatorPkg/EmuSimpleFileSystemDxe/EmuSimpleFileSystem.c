@@ -79,13 +79,22 @@ EmuSimpleFileSystemOpen (
 
   PrivateFile = EMU_EFI_FILE_PRIVATE_DATA_FROM_THIS (This);
 
-  NewPrivateFile = AllocateCopyPool (sizeof (EMU_EFI_FILE_PRIVATE), PrivateFile);
+  NewPrivateFile = AllocateCopyPool (
+                     sizeof (EMU_EFI_FILE_PRIVATE),
+                     PrivateFile
+                     );
   if (NewPrivateFile == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
 
-  Status = PrivateFile->Io->Open (PrivateFile->Io, &NewPrivateFile->Io, FileName, OpenMode, Attributes);
+  Status = PrivateFile->Io->Open (
+                              PrivateFile->Io,
+                              &NewPrivateFile->Io,
+                              FileName,
+                              OpenMode,
+                              Attributes
+                              );
   if (!EFI_ERROR (Status)) {
     *NewHandle = &NewPrivateFile->EfiFile;
   } else {
@@ -370,7 +379,12 @@ EmuSimpleFileSystemGetInfo (
 
   PrivateFile = EMU_EFI_FILE_PRIVATE_DATA_FROM_THIS (This);
 
-  Status = PrivateFile->Io->GetInfo (PrivateFile->Io, InformationType, BufferSize, Buffer);
+  Status = PrivateFile->Io->GetInfo (
+                              PrivateFile->Io,
+                              InformationType,
+                              BufferSize,
+                              Buffer
+                              );
 
   gBS->RestoreTPL (OldTpl);
   return Status;
@@ -409,7 +423,9 @@ EmuSimpleFileSystemSetInfo (
   //
   // Check for invalid parameters.
   //
-  if ((This == NULL) || (InformationType == NULL) || (BufferSize == 0) || (Buffer == NULL)) {
+  if ((This == NULL) || (InformationType == NULL) || (BufferSize == 0) ||
+      (Buffer == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -417,7 +433,12 @@ EmuSimpleFileSystemSetInfo (
 
   PrivateFile = EMU_EFI_FILE_PRIVATE_DATA_FROM_THIS (This);
 
-  Status = PrivateFile->Io->SetInfo (PrivateFile->Io, InformationType, BufferSize, Buffer);
+  Status = PrivateFile->Io->SetInfo (
+                              PrivateFile->Io,
+                              InformationType,
+                              BufferSize,
+                              Buffer
+                              );
 
   gBS->RestoreTPL (OldTpl);
   return Status;
@@ -735,7 +756,8 @@ EmuSimpleFileSystemDriverBindingStart (
   Private->IoThunk   = EmuIoThunk;
   Private->Io        = EmuIoThunk->Interface;
 
-  Private->SimpleFileSystem.Revision   = EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_REVISION;
+  Private->SimpleFileSystem.Revision =
+    EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_REVISION;
   Private->SimpleFileSystem.OpenVolume = EmuSimpleFileSystemOpenVolume;
 
   Private->ControllerNameTable = NULL;

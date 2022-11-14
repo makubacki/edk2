@@ -145,7 +145,8 @@ EmuBlockIoComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED  EFI_COMPONENT_NAME_PROTOCOL  gEmuBlockIoComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED  EFI_COMPONENT_NAME_PROTOCOL
+  gEmuBlockIoComponentName = {
   EmuBlockIoComponentNameGetDriverName,
   EmuBlockIoComponentNameGetControllerName,
   "eng"
@@ -154,15 +155,17 @@ GLOBAL_REMOVE_IF_UNREFERENCED  EFI_COMPONENT_NAME_PROTOCOL  gEmuBlockIoComponent
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gEmuBlockIoComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gEmuBlockIoComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)EmuBlockIoComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)EmuBlockIoComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  EmuBlockIoComponentNameGetControllerName,
   "en"
 };
 
 EFI_UNICODE_STRING_TABLE  mEmuBlockIoDriverNameTable[] = {
-  { "eng;en", L"Emu Block I/O Driver" },
-  { NULL,     NULL                    }
+  { "eng;en", L"Emu Block I/O Driver"     },
+  { NULL,     NULL                        }
 };
 
 /**

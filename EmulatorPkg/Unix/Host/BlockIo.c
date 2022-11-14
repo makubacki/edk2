@@ -89,7 +89,11 @@ EmuBlockIoOpenDevice (
   //
   Private->fd = open (Private->Filename, Private->Mode, 0644);
   if (Private->fd < 0) {
-    printf ("EmuOpenBlock: Could not open %s: %s\n", Private->Filename, strerror (errno));
+    printf (
+      "EmuOpenBlock: Could not open %s: %s\n",
+      Private->Filename,
+      strerror (errno)
+      );
     Private->Media->MediaPresent = FALSE;
     Status                       = EFI_NO_MEDIA;
     goto Done;
@@ -122,7 +126,9 @@ EmuBlockIoOpenDevice (
         Private->Media->BlockSize = BlockSize;
       }
 
-      if (ioctl (Private->fd, DKIOCGETBLOCKCOUNT, &Private->NumberOfBlocks) == 0) {
+      if (ioctl (Private->fd, DKIOCGETBLOCKCOUNT, &Private->NumberOfBlocks) ==
+          0)
+      {
         if ((Private->NumberOfBlocks == 0) && (BlockSize == 0x800)) {
           // A DVD is ~ 4.37 GB so make up a number
           Private->Media->LastBlock = (0x100000000ULL/0x800) - 1;
@@ -131,7 +137,11 @@ EmuBlockIoOpenDevice (
         }
       }
 
-      ioctl (Private->fd, DKIOCGETMAXBLOCKCOUNTWRITE, &Private->Media->OptimalTransferLengthGranularity);
+      ioctl (
+        Private->fd,
+        DKIOCGETMAXBLOCKCOUNTWRITE,
+        &Private->Media->OptimalTransferLengthGranularity
+        );
     }
  #else
     {
@@ -155,9 +165,11 @@ EmuBlockIoOpenDevice (
 
     if (fstatfs (Private->fd, &buf) == 0) {
  #if __APPLE__
-      Private->Media->OptimalTransferLengthGranularity = buf.f_iosize/buf.f_bsize;
+      Private->Media->OptimalTransferLengthGranularity = buf.f_iosize/
+                                                         buf.f_bsize;
  #else
-      Private->Media->OptimalTransferLengthGranularity = buf.f_bsize/buf.f_bsize;
+      Private->Media->OptimalTransferLengthGranularity = buf.f_bsize/
+                                                         buf.f_bsize;
  #endif
     }
   }
@@ -308,7 +320,12 @@ EmuBlockIoReadWriteCommon (
   // Seek to End of File
   //
   DistanceToMove = MultU64x32 (Lba, BlockSize);
-  Status         = SetFilePointer64 (Private, DistanceToMove, &DistanceMoved, SEEK_SET);
+  Status         = SetFilePointer64 (
+                     Private,
+                     DistanceToMove,
+                     &DistanceMoved,
+                     SEEK_SET
+                     );
 
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INIT, "WriteBlocks: SetFilePointer failed\n"));
@@ -367,7 +384,14 @@ EmuBlockIoReadBlocks (
 
   Private = EMU_BLOCK_IO_PRIVATE_DATA_FROM_THIS (This);
 
-  Status = EmuBlockIoReadWriteCommon (Private, MediaId, LBA, BufferSize, Buffer, "UnixReadBlocks");
+  Status = EmuBlockIoReadWriteCommon (
+             Private,
+             MediaId,
+             LBA,
+             BufferSize,
+             Buffer,
+             "UnixReadBlocks"
+             );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -444,7 +468,14 @@ EmuBlockIoWriteBlocks (
 
   Private = EMU_BLOCK_IO_PRIVATE_DATA_FROM_THIS (This);
 
-  Status = EmuBlockIoReadWriteCommon (Private, MediaId, LBA, BufferSize, Buffer, "UnixWriteBlocks");
+  Status = EmuBlockIoReadWriteCommon (
+             Private,
+             MediaId,
+             LBA,
+             BufferSize,
+             Buffer,
+             "UnixWriteBlocks"
+             );
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -611,7 +642,11 @@ EmuBlockIoThunkOpen (
 
   Private->Signature = EMU_BLOCK_IO_PRIVATE_SIGNATURE;
   Private->Thunk     = This;
-  CopyMem (&Private->EmuBlockIo, &gEmuBlockIoProtocol, sizeof (gEmuBlockIoProtocol));
+  CopyMem (
+    &Private->EmuBlockIo,
+    &gEmuBlockIoProtocol,
+    sizeof (gEmuBlockIoProtocol)
+    );
   Private->fd        = -1;
   Private->BlockSize = 512;
 

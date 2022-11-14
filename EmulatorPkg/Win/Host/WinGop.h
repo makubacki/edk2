@@ -91,7 +91,8 @@ typedef struct {
 
   EMU_GRAPHICS_WINDOW_REGISTER_KEY_NOTIFY_CALLBACK    MakeRegisterdKeyCallback;
   EMU_GRAPHICS_WINDOW_REGISTER_KEY_NOTIFY_CALLBACK    BreakRegisterdKeyCallback;
-  VOID                                                *RegisterdKeyCallbackContext;
+  VOID                                                *
+                                                      RegisterdKeyCallbackContext;
 
   EFI_KEY_STATE                                       KeyState;
   BOOLEAN                                             LeftShift;

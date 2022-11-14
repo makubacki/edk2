@@ -146,7 +146,8 @@ EmuSnpDriverComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gEmuSnpDriverComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  gEmuSnpDriverComponentName = {
   EmuSnpDriverComponentNameGetDriverName,
   EmuSnpDriverComponentNameGetControllerName,
   "eng"
@@ -155,13 +156,16 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gEmuSnpDriverComponen
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  gEmuSnpDriverComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  gEmuSnpDriverComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)EmuSnpDriverComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)EmuSnpDriverComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  EmuSnpDriverComponentNameGetControllerName,
   "en"
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mEmuSnpDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mEmuSnpDriverNameTable[] = {
   {
     "eng;en",
     L"Emu SNP Driver"

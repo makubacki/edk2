@@ -126,7 +126,9 @@ main (
     fclose (GdbTempFile);
   }
 
-  printf ("\nEDK II UNIX Host Emulation Environment from http://www.tianocore.org/edk2/\n");
+  printf (
+    "\nEDK II UNIX Host Emulation Environment from http://www.tianocore.org/edk2/\n"
+    );
 
   setbuf (stdout, 0);
   setbuf (stderr, 0);
@@ -145,14 +147,32 @@ main (
   // Emulator Bus Driver Thunks
   //
   AddThunkProtocol (&gX11ThunkIo, (CHAR16 *)PcdGetPtr (PcdEmuGop), TRUE);
-  AddThunkProtocol (&gPosixFileSystemThunkIo, (CHAR16 *)PcdGetPtr (PcdEmuFileSystem), TRUE);
-  AddThunkProtocol (&gBlockIoThunkIo, (CHAR16 *)PcdGetPtr (PcdEmuVirtualDisk), TRUE);
-  AddThunkProtocol (&gSnpThunkIo, (CHAR16 *)PcdGetPtr (PcdEmuNetworkInterface), TRUE);
+  AddThunkProtocol (
+    &gPosixFileSystemThunkIo,
+    (CHAR16 *)PcdGetPtr (
+                PcdEmuFileSystem
+                ),
+    TRUE
+    );
+  AddThunkProtocol (
+    &gBlockIoThunkIo,
+    (CHAR16 *)PcdGetPtr (PcdEmuVirtualDisk),
+    TRUE
+    );
+  AddThunkProtocol (
+    &gSnpThunkIo,
+    (CHAR16 *)PcdGetPtr (PcdEmuNetworkInterface),
+    TRUE
+    );
 
   //
   // Emulator other Thunks
   //
-  AddThunkProtocol (&gPthreadThunkIo, (CHAR16 *)PcdGetPtr (PcdEmuApCount), FALSE);
+  AddThunkProtocol (
+    &gPthreadThunkIo,
+    (CHAR16 *)PcdGetPtr (PcdEmuApCount),
+    FALSE
+    );
 
   // EmuSecLibConstructor ();
 
@@ -162,7 +182,10 @@ main (
   // Allocate space for gSystemMemory Array
   //
   gSystemMemoryCount = CountSeparatorsInString (MemorySizeStr, '!') + 1;
-  gSystemMemory      = AllocateZeroPool (gSystemMemoryCount * sizeof (EMU_SYSTEM_MEMORY));
+  gSystemMemory      = AllocateZeroPool (
+                         gSystemMemoryCount *
+                         sizeof (EMU_SYSTEM_MEMORY)
+                         );
   if (gSystemMemory == NULL) {
     printf ("ERROR : Can not allocate memory for system.  Exiting.\n");
     exit (1);
@@ -204,7 +227,8 @@ main (
     );
 
   for (StackPointer = (UINTN *)(UINTN)InitialStackMemory;
-       StackPointer < (UINTN *)(UINTN)((UINTN)InitialStackMemory + (UINT64)InitialStackMemorySize);
+       StackPointer < (UINTN *)(UINTN)((UINTN)InitialStackMemory +
+                                       (UINT64)InitialStackMemorySize);
        StackPointer++)
   {
     *StackPointer = 0x5AA55AA5;
@@ -224,7 +248,9 @@ main (
        FirmwareVolumesStr[Index2] != 0;
        Index++)
   {
-    for (Index1 = 0; (FirmwareVolumesStr[Index2] != '!') && (FirmwareVolumesStr[Index2] != 0); Index2++) {
+    for (Index1 = 0; (FirmwareVolumesStr[Index2] != '!') &&
+         (FirmwareVolumesStr[Index2] != 0); Index2++)
+    {
       FileName[Index1++] = FirmwareVolumesStr[Index2];
     }
 
@@ -254,11 +280,20 @@ main (
     }
 
     if (EFI_ERROR (Status)) {
-      printf ("ERROR : Can not open Firmware Device File %s (%x).  Exiting.\n", FileName, (unsigned int)Status);
+      printf (
+        "ERROR : Can not open Firmware Device File %s (%x).  Exiting.\n",
+        FileName,
+        (unsigned int)Status
+        );
       exit (1);
     }
 
-    printf ("  FD loaded from %s at 0x%08lx", FileName, (unsigned long)gFdInfo[Index].Address);
+    printf (
+      "  FD loaded from %s at 0x%08lx",
+      FileName,
+      (unsigned
+       long)gFdInfo[Index].Address
+      );
 
     if (SecFile == NULL) {
       //
@@ -272,7 +307,11 @@ main (
                      &FileHandle
                      );
       if (!EFI_ERROR (Status)) {
-        Status = PeiServicesFfsFindSectionData (EFI_SECTION_PE32, FileHandle, &SecFile);
+        Status = PeiServicesFfsFindSectionData (
+                   EFI_SECTION_PE32,
+                   FileHandle,
+                   &SecFile
+                   );
         if (!EFI_ERROR (Status)) {
           PeiIndex = Index;
           printf (" contains SEC Core");
@@ -318,7 +357,12 @@ main (
   //
   // Hand off to SEC
   //
-  SecLoadFromCore ((UINTN)InitialStackMemory, (UINTN)InitialStackMemorySize, (UINTN)gFdInfo[0].Address, SecFile);
+  SecLoadFromCore (
+    (UINTN)InitialStackMemory,
+    (UINTN)InitialStackMemorySize,
+    (UINTN)gFdInfo[0].Address,
+    SecFile
+    );
 
   //
   // If we get here, then the SEC Core returned. This is an error as SEC should
@@ -503,7 +547,11 @@ MapFd0 (
               0
               );
     if (res3 != EmuMagicPage) {
-      printf ("MapFd0(): Could not allocate PeiServicesTablePage @ %lx\n", (long unsigned int)EmuMagicPage);
+      printf (
+        "MapFd0(): Could not allocate PeiServicesTablePage @ %lx\n",
+        (long
+         unsigned int)EmuMagicPage
+        );
       return EFI_DEVICE_ERROR;
     }
   }
@@ -565,13 +613,15 @@ SecLoadFromCore (
   //
   // Reservet space for storing PeiCore's parament in stack.
   //
-  TopOfStack = (VOID *)((UINTN)TopOfStack - sizeof (EFI_SEC_PEI_HAND_OFF) - CPU_STACK_ALIGNMENT);
+  TopOfStack = (VOID *)((UINTN)TopOfStack - sizeof (EFI_SEC_PEI_HAND_OFF) -
+                        CPU_STACK_ALIGNMENT);
   TopOfStack = ALIGN_POINTER (TopOfStack, CPU_STACK_ALIGNMENT);
 
   //
   // Bind this information into the SEC hand-off state
   //
-  SecCoreData                         = (EFI_SEC_PEI_HAND_OFF *)(UINTN)TopOfStack;
+  SecCoreData =
+    (EFI_SEC_PEI_HAND_OFF *)(UINTN)TopOfStack;
   SecCoreData->DataSize               = sizeof (EFI_SEC_PEI_HAND_OFF);
   SecCoreData->BootFirmwareVolumeBase = (VOID *)BootFirmwareVolumeBase;
   SecCoreData->BootFirmwareVolumeSize = PcdGet32 (PcdEmuFirmwareFdSize);
@@ -579,13 +629,17 @@ SecLoadFromCore (
   SecCoreData->TemporaryRamSize       = STACK_SIZE;
   SecCoreData->StackBase              = SecCoreData->TemporaryRamBase;
   SecCoreData->StackSize              = PeiStackSize;
-  SecCoreData->PeiTemporaryRamBase    = (VOID *)((UINTN)SecCoreData->TemporaryRamBase + PeiStackSize);
-  SecCoreData->PeiTemporaryRamSize    = STACK_SIZE - PeiStackSize;
+  SecCoreData->PeiTemporaryRamBase    =
+    (VOID *)((UINTN)SecCoreData->TemporaryRamBase + PeiStackSize);
+  SecCoreData->PeiTemporaryRamSize = STACK_SIZE - PeiStackSize;
 
   //
   // Find the SEC Core Entry Point
   //
-  Status = SecPeCoffGetEntryPoint (PeiCorePe32File, (VOID **)&PeiCoreEntryPoint);
+  Status = SecPeCoffGetEntryPoint (
+             PeiCorePe32File,
+             (VOID **)&PeiCoreEntryPoint
+             );
   if (EFI_ERROR (Status)) {
     return;
   }
@@ -686,7 +740,8 @@ EfiSystemMemoryRange (
   MemoryBase = (EFI_PHYSICAL_ADDRESS)(UINTN)MemoryAddress;
   for (Index = 0; Index < gSystemMemoryCount; Index++) {
     if ((MemoryBase >= gSystemMemory[Index].Memory) &&
-        (MemoryBase < (gSystemMemory[Index].Memory + gSystemMemory[Index].Size)))
+        (MemoryBase < (gSystemMemory[Index].Memory +
+                       gSystemMemory[Index].Size)))
     {
       return TRUE;
     }
@@ -932,12 +987,15 @@ AddHandle (
   // copy the old values to the new location. But it does
   // not zero the new memory area.
   //
-  PreviousSize                     = mImageContextModHandleArraySize * sizeof (IMAGE_CONTEXT_TO_MOD_HANDLE);
+  PreviousSize = mImageContextModHandleArraySize *
+                 sizeof (IMAGE_CONTEXT_TO_MOD_HANDLE);
   mImageContextModHandleArraySize += MAX_IMAGE_CONTEXT_TO_MOD_HANDLE_ARRAY_SIZE;
 
   mImageContextModHandleArray = ReallocatePool (
-                                  (mImageContextModHandleArraySize - 1) * sizeof (IMAGE_CONTEXT_TO_MOD_HANDLE),
-                                  mImageContextModHandleArraySize * sizeof (IMAGE_CONTEXT_TO_MOD_HANDLE),
+                                  (mImageContextModHandleArraySize - 1) *
+                                  sizeof (IMAGE_CONTEXT_TO_MOD_HANDLE),
+                                  mImageContextModHandleArraySize *
+                                  sizeof (IMAGE_CONTEXT_TO_MOD_HANDLE),
                                   mImageContextModHandleArray
                                   );
   if (mImageContextModHandleArray == NULL) {
@@ -945,7 +1003,12 @@ AddHandle (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  memset (mImageContextModHandleArray + PreviousSize, 0, MAX_IMAGE_CONTEXT_TO_MOD_HANDLE_ARRAY_SIZE * sizeof (IMAGE_CONTEXT_TO_MOD_HANDLE));
+  memset (
+    mImageContextModHandleArray + PreviousSize,
+    0,
+    MAX_IMAGE_CONTEXT_TO_MOD_HANDLE_ARRAY_SIZE *
+    sizeof (IMAGE_CONTEXT_TO_MOD_HANDLE)
+    );
 
   return AddHandle (ImageContext, ModHandle);
 }
@@ -1097,7 +1160,11 @@ DlLoadImage (
 
   if (Entry != NULL) {
     ImageContext->EntryPoint = (UINTN)Entry;
-    printf ("Change %s Entrypoint to :0x%08lx\n", ImageContext->PdbPointer, (unsigned long)Entry);
+    printf (
+      "Change %s Entrypoint to :0x%08lx\n",
+      ImageContext->PdbPointer,
+      (unsigned long)Entry
+      );
     return TRUE;
   } else {
     return FALSE;
@@ -1134,12 +1201,17 @@ GdbScriptAddImage (
 {
   PrintLoadAddress (ImageContext);
 
-  if ((ImageContext->PdbPointer != NULL) && !IsPdbFile (ImageContext->PdbPointer)) {
+  if ((ImageContext->PdbPointer != NULL) && !IsPdbFile (
+                                               ImageContext->PdbPointer
+                                               ))
+  {
     FILE  *GdbTempFile;
     if (FeaturePcdGet (PcdEmulatorLazyLoadSymbols)) {
       GdbTempFile = fopen (gGdbWorkingFileName, "a");
       if (GdbTempFile != NULL) {
-        long unsigned int  SymbolsAddr = (long unsigned int)(ImageContext->ImageAddress + ImageContext->SizeOfHeaders);
+        long unsigned int  SymbolsAddr = (long unsigned
+                                          int)(ImageContext->ImageAddress +
+                                               ImageContext->SizeOfHeaders);
         mScriptSymbolChangesCount++;
         fprintf (
           GdbTempFile,
@@ -1150,7 +1222,15 @@ GdbScriptAddImage (
           );
         fclose (GdbTempFile);
         // This is for the lldb breakpoint only
-        SecGdbScriptBreak (ImageContext->PdbPointer, strlen (ImageContext->PdbPointer) + 1, (long unsigned int)(ImageContext->ImageAddress + ImageContext->SizeOfHeaders), 1);
+        SecGdbScriptBreak (
+          ImageContext->PdbPointer,
+          strlen (
+            ImageContext->PdbPointer
+            ) + 1,
+          (long unsigned
+           int)(ImageContext->ImageAddress + ImageContext->SizeOfHeaders),
+          1
+          );
       } else {
         ASSERT (FALSE);
       }
@@ -1161,7 +1241,8 @@ GdbScriptAddImage (
           GdbTempFile,
           "add-symbol-file %s 0x%08lx\n",
           ImageContext->PdbPointer,
-          (long unsigned int)(ImageContext->ImageAddress + ImageContext->SizeOfHeaders)
+          (long unsigned int)(ImageContext->ImageAddress +
+                              ImageContext->SizeOfHeaders)
           );
         fclose (GdbTempFile);
 
@@ -1171,7 +1252,15 @@ GdbScriptAddImage (
         // Also used for the lldb breakpoint script. The lldb breakpoint script does
         // not use the file, it uses the arguments.
         //
-        SecGdbScriptBreak (ImageContext->PdbPointer, strlen (ImageContext->PdbPointer) + 1, (long unsigned int)(ImageContext->ImageAddress + ImageContext->SizeOfHeaders), 1);
+        SecGdbScriptBreak (
+          ImageContext->PdbPointer,
+          strlen (
+            ImageContext->PdbPointer
+            ) + 1,
+          (long unsigned
+           int)(ImageContext->ImageAddress + ImageContext->SizeOfHeaders),
+          1
+          );
       } else {
         ASSERT (FALSE);
       }
@@ -1225,21 +1314,39 @@ GdbScriptRemoveImage (
         ImageContext->PdbPointer
         );
       fclose (GdbTempFile);
-      SecGdbScriptBreak (ImageContext->PdbPointer, strlen (ImageContext->PdbPointer) + 1, 0, 0);
+      SecGdbScriptBreak (
+        ImageContext->PdbPointer,
+        strlen (
+          ImageContext->PdbPointer
+          ) + 1,
+        0,
+        0
+        );
     } else {
       ASSERT (FALSE);
     }
   } else {
     GdbTempFile = fopen (gGdbWorkingFileName, "w");
     if (GdbTempFile != NULL) {
-      fprintf (GdbTempFile, "remove-symbol-file %s\n", ImageContext->PdbPointer);
+      fprintf (
+        GdbTempFile,
+        "remove-symbol-file %s\n",
+        ImageContext->PdbPointer
+        );
       fclose (GdbTempFile);
 
       //
       // Target for gdb breakpoint in a script that uses gGdbWorkingFileName to set a breakpoint.
       // Hey what can you say scripting in gdb is not that great....
       //
-      SecGdbScriptBreak (ImageContext->PdbPointer, strlen (ImageContext->PdbPointer) + 1, 0, 0);
+      SecGdbScriptBreak (
+        ImageContext->PdbPointer,
+        strlen (
+          ImageContext->PdbPointer
+          ) + 1,
+        0,
+        0
+        );
     } else {
       ASSERT (FALSE);
     }

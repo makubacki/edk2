@@ -174,7 +174,11 @@ LogSmbiosData (
   //
   // Locate Smbios protocol.
   //
-  Status = gBS->LocateProtocol (&gEfiSmbiosProtocolGuid, NULL, (VOID **)&Smbios);
+  Status = gBS->LocateProtocol (
+                  &gEfiSmbiosProtocolGuid,
+                  NULL,
+                  (VOID **)&Smbios
+                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -242,7 +246,10 @@ CpuUpdateSmbios (
   // The value of 1234 is fake value for CPU frequency
   //
   mCpuSmbiosType4.CurrentSpeed = 1234;
-  LogSmbiosData ((EFI_SMBIOS_TABLE_HEADER *)&mCpuSmbiosType4, mCpuSmbiosType4Strings);
+  LogSmbiosData (
+    (EFI_SMBIOS_TABLE_HEADER *)&mCpuSmbiosType4,
+    mCpuSmbiosType4Strings
+    );
 }
 
 //

@@ -56,7 +56,8 @@ IsBSP (
     return FALSE;
   }
 
-  return (gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag & PROCESSOR_AS_BSP_BIT) != 0;
+  return (gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag &
+          PROCESSOR_AS_BSP_BIT) != 0;
 }
 
 VOID
@@ -231,7 +232,11 @@ CpuMpServicesGetProcessorInfo (
     return EFI_NOT_FOUND;
   }
 
-  CopyMem (ProcessorInfoBuffer, &gMPSystem.ProcessorData[ProcessorNumber], sizeof (EFI_PROCESSOR_INFORMATION));
+  CopyMem (
+    ProcessorInfoBuffer,
+    &gMPSystem.ProcessorData[ProcessorNumber],
+    sizeof (EFI_PROCESSOR_INFORMATION)
+    );
   return EFI_SUCCESS;
 }
 
@@ -409,7 +414,9 @@ CpuMpServicesStartupAllAps (
 
   for (Number = 0; Number < gMPSystem.NumberOfProcessors; Number++) {
     ProcessorData = &gMPSystem.ProcessorData[Number];
-    if ((ProcessorData->Info.StatusFlag & PROCESSOR_AS_BSP_BIT) == PROCESSOR_AS_BSP_BIT) {
+    if ((ProcessorData->Info.StatusFlag & PROCESSOR_AS_BSP_BIT) ==
+        PROCESSOR_AS_BSP_BIT)
+    {
       // Skip BSP
       continue;
     }
@@ -429,12 +436,20 @@ CpuMpServicesStartupAllAps (
   }
 
   if (FailedCpuList != NULL) {
-    gMPSystem.FailedList = AllocatePool ((gMPSystem.NumberOfProcessors + 1) * sizeof (UINTN));
+    gMPSystem.FailedList = AllocatePool (
+                             (gMPSystem.NumberOfProcessors + 1) *
+                             sizeof (UINTN)
+                             );
     if (gMPSystem.FailedList == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
-    SetMemN (gMPSystem.FailedList, (gMPSystem.NumberOfProcessors + 1) * sizeof (UINTN), END_OF_CPU_LIST);
+    SetMemN (
+      gMPSystem.FailedList,
+      (gMPSystem.NumberOfProcessors + 1) *
+      sizeof (UINTN),
+      END_OF_CPU_LIST
+      );
     gMPSystem.FailedListIndex = 0;
     *FailedCpuList            = gMPSystem.FailedList;
   }
@@ -451,7 +466,9 @@ CpuMpServicesStartupAllAps (
   for (Number = 0; Number < gMPSystem.NumberOfProcessors; Number++) {
     ProcessorData = &gMPSystem.ProcessorData[Number];
 
-    if ((ProcessorData->Info.StatusFlag & PROCESSOR_AS_BSP_BIT) == PROCESSOR_AS_BSP_BIT) {
+    if ((ProcessorData->Info.StatusFlag & PROCESSOR_AS_BSP_BIT) ==
+        PROCESSOR_AS_BSP_BIT)
+    {
       // Skip BSP
       continue;
     }
@@ -482,7 +499,9 @@ CpuMpServicesStartupAllAps (
   if (WaitEvent != NULL) {
     for (Number = 0; Number < gMPSystem.NumberOfProcessors; Number++) {
       ProcessorData = &gMPSystem.ProcessorData[Number];
-      if ((ProcessorData->Info.StatusFlag & PROCESSOR_AS_BSP_BIT) == PROCESSOR_AS_BSP_BIT) {
+      if ((ProcessorData->Info.StatusFlag & PROCESSOR_AS_BSP_BIT) ==
+          PROCESSOR_AS_BSP_BIT)
+      {
         // Skip BSP
         continue;
       }
@@ -520,7 +539,9 @@ CpuMpServicesStartupAllAps (
   while (TRUE) {
     for (Number = 0; Number < gMPSystem.NumberOfProcessors; Number++) {
       ProcessorData = &gMPSystem.ProcessorData[Number];
-      if ((ProcessorData->Info.StatusFlag & PROCESSOR_AS_BSP_BIT) == PROCESSOR_AS_BSP_BIT) {
+      if ((ProcessorData->Info.StatusFlag & PROCESSOR_AS_BSP_BIT) ==
+          PROCESSOR_AS_BSP_BIT)
+      {
         // Skip BSP
         continue;
       }
@@ -544,9 +565,13 @@ CpuMpServicesStartupAllAps (
           if (SingleThread) {
             Status = GetNextBlockedNumber (&NextNumber);
             if (!EFI_ERROR (Status)) {
-              gThread->MutexLock (gMPSystem.ProcessorData[NextNumber].StateLock);
+              gThread->MutexLock (
+                         gMPSystem.ProcessorData[NextNumber].StateLock
+                         );
               gMPSystem.ProcessorData[NextNumber].State = CPU_STATE_READY;
-              gThread->MutexUnlock (gMPSystem.ProcessorData[NextNumber].StateLock);
+              gThread->MutexUnlock (
+                         gMPSystem.ProcessorData[NextNumber].StateLock
+                         );
             }
           }
 
@@ -697,11 +722,15 @@ CpuMpServicesStartupThisAP (
     return EFI_NOT_FOUND;
   }
 
-  if ((gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag & PROCESSOR_AS_BSP_BIT) != 0) {
+  if ((gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag &
+       PROCESSOR_AS_BSP_BIT) != 0)
+  {
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag & PROCESSOR_ENABLED_BIT) == 0) {
+  if ((gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag &
+       PROCESSOR_ENABLED_BIT) == 0)
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -722,7 +751,11 @@ CpuMpServicesStartupThisAP (
   gMPSystem.StartCount  = 1;
   gMPSystem.FinishCount = 0;
 
-  SetApProcedure (&gMPSystem.ProcessorData[ProcessorNumber], Procedure, ProcedureArgument);
+  SetApProcedure (
+    &gMPSystem.ProcessorData[ProcessorNumber],
+    Procedure,
+    ProcedureArgument
+    );
 
   if (WaitEvent != NULL) {
     // Non Blocking
@@ -809,16 +842,22 @@ CpuMpServicesSwitchBSP (
     return EFI_NOT_FOUND;
   }
 
-  if ((gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag & PROCESSOR_ENABLED_BIT) == 0) {
+  if ((gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag &
+       PROCESSOR_ENABLED_BIT) == 0)
+  {
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag & PROCESSOR_AS_BSP_BIT) != 0) {
+  if ((gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag &
+       PROCESSOR_AS_BSP_BIT) != 0)
+  {
     return EFI_INVALID_PARAMETER;
   }
 
   for (Index = 0; Index < gMPSystem.NumberOfProcessors; Index++) {
-    if ((gMPSystem.ProcessorData[Index].Info.StatusFlag & PROCESSOR_AS_BSP_BIT) != 0) {
+    if ((gMPSystem.ProcessorData[Index].Info.StatusFlag &
+         PROCESSOR_AS_BSP_BIT) != 0)
+    {
       break;
     }
   }
@@ -896,7 +935,9 @@ CpuMpServicesEnableDisableAP (
     return EFI_NOT_FOUND;
   }
 
-  if ((gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag & PROCESSOR_AS_BSP_BIT) != 0) {
+  if ((gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag &
+       PROCESSOR_AS_BSP_BIT) != 0)
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -909,22 +950,30 @@ CpuMpServicesEnableDisableAP (
   gThread->MutexUnlock (gMPSystem.ProcessorData[ProcessorNumber].StateLock);
 
   if (EnableAP) {
-    if ((gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag & PROCESSOR_ENABLED_BIT) == 0 ) {
+    if ((gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag &
+         PROCESSOR_ENABLED_BIT) == 0 )
+    {
       gMPSystem.NumberOfEnabledProcessors++;
     }
 
-    gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag |= PROCESSOR_ENABLED_BIT;
+    gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag |=
+      PROCESSOR_ENABLED_BIT;
   } else {
-    if ((gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag & PROCESSOR_ENABLED_BIT) == PROCESSOR_ENABLED_BIT ) {
+    if ((gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag &
+         PROCESSOR_ENABLED_BIT) == PROCESSOR_ENABLED_BIT )
+    {
       gMPSystem.NumberOfEnabledProcessors--;
     }
 
-    gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag &= ~PROCESSOR_ENABLED_BIT;
+    gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag &=
+      ~PROCESSOR_ENABLED_BIT;
   }
 
   if (HealthFlag != NULL) {
-    gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag &= ~PROCESSOR_HEALTH_STATUS_BIT;
-    gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag |= (*HealthFlag & PROCESSOR_HEALTH_STATUS_BIT);
+    gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag &=
+      ~PROCESSOR_HEALTH_STATUS_BIT;
+    gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag |= (*HealthFlag &
+                                                                 PROCESSOR_HEALTH_STATUS_BIT);
   }
 
   return EFI_SUCCESS;
@@ -1015,9 +1064,13 @@ CpuCheckAllAPsStatus (
     gMPSystem.Timeout -= CalculateAndStallInterval (gMPSystem.Timeout);
   }
 
-  for (ProcessorNumber = 0; ProcessorNumber < gMPSystem.NumberOfProcessors; ProcessorNumber++) {
+  for (ProcessorNumber = 0; ProcessorNumber < gMPSystem.NumberOfProcessors;
+       ProcessorNumber++)
+  {
     ProcessorData = &gMPSystem.ProcessorData[ProcessorNumber];
-    if ((ProcessorData->Info.StatusFlag & PROCESSOR_AS_BSP_BIT) == PROCESSOR_AS_BSP_BIT) {
+    if ((ProcessorData->Info.StatusFlag & PROCESSOR_AS_BSP_BIT) ==
+        PROCESSOR_AS_BSP_BIT)
+    {
       // Skip BSP
       continue;
     }
@@ -1051,7 +1104,11 @@ CpuCheckAllAPsStatus (
             NextData->State = CPU_STATE_READY;
             gThread->MutexUnlock (NextData->StateLock);
 
-            SetApProcedure (NextData, gMPSystem.Procedure, gMPSystem.ProcedureArgument);
+            SetApProcedure (
+              NextData,
+              gMPSystem.Procedure,
+              gMPSystem.ProcedureArgument
+              );
           }
         }
 
@@ -1071,9 +1128,13 @@ CpuCheckAllAPsStatus (
     // Timeout
     //
     if (gMPSystem.FailedList != NULL) {
-      for (ProcessorNumber = 0; ProcessorNumber < gMPSystem.NumberOfProcessors; ProcessorNumber++) {
+      for (ProcessorNumber = 0; ProcessorNumber < gMPSystem.NumberOfProcessors;
+           ProcessorNumber++)
+      {
         ProcessorData = &gMPSystem.ProcessorData[ProcessorNumber];
-        if ((ProcessorData->Info.StatusFlag & PROCESSOR_AS_BSP_BIT) == PROCESSOR_AS_BSP_BIT) {
+        if ((ProcessorData->Info.StatusFlag & PROCESSOR_AS_BSP_BIT) ==
+            PROCESSOR_AS_BSP_BIT)
+        {
           // Skip BSP
           continue;
         }
@@ -1094,7 +1155,9 @@ CpuCheckAllAPsStatus (
 
         if (ProcessorState != CPU_STATE_IDLE) {
           // If we are retrying make sure we don't double count
-          for (Cpu = 0, Found = FALSE; Cpu < gMPSystem.NumberOfProcessors; Cpu++) {
+          for (Cpu = 0, Found = FALSE; Cpu < gMPSystem.NumberOfProcessors;
+               Cpu++)
+          {
             if (gMPSystem.FailedList[Cpu] == END_OF_CPU_LIST) {
               break;
             }
@@ -1197,20 +1260,27 @@ FillInProcessorInformation (
   )
 {
   gMPSystem.ProcessorData[ProcessorNumber].Info.ProcessorId = gThread->Self ();
-  gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag  = PROCESSOR_ENABLED_BIT | PROCESSOR_HEALTH_STATUS_BIT;
+  gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag  =
+    PROCESSOR_ENABLED_BIT | PROCESSOR_HEALTH_STATUS_BIT;
   if (BSP) {
-    gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag |= PROCESSOR_AS_BSP_BIT;
+    gMPSystem.ProcessorData[ProcessorNumber].Info.StatusFlag |=
+      PROCESSOR_AS_BSP_BIT;
   }
 
-  gMPSystem.ProcessorData[ProcessorNumber].Info.Location.Package = (UINT32)ProcessorNumber;
-  gMPSystem.ProcessorData[ProcessorNumber].Info.Location.Core    = 0;
-  gMPSystem.ProcessorData[ProcessorNumber].Info.Location.Thread  = 0;
-  gMPSystem.ProcessorData[ProcessorNumber].State                 = BSP ? CPU_STATE_BUSY : CPU_STATE_IDLE;
+  gMPSystem.ProcessorData[ProcessorNumber].Info.Location.Package =
+    (UINT32)ProcessorNumber;
+  gMPSystem.ProcessorData[ProcessorNumber].Info.Location.Core   = 0;
+  gMPSystem.ProcessorData[ProcessorNumber].Info.Location.Thread = 0;
+  gMPSystem.ProcessorData[ProcessorNumber].State                = BSP ?
+                                                                  CPU_STATE_BUSY
+  : CPU_STATE_IDLE;
 
-  gMPSystem.ProcessorData[ProcessorNumber].Procedure     = NULL;
-  gMPSystem.ProcessorData[ProcessorNumber].Parameter     = NULL;
-  gMPSystem.ProcessorData[ProcessorNumber].StateLock     = gThread->MutexInit ();
-  gMPSystem.ProcessorData[ProcessorNumber].ProcedureLock = gThread->MutexInit ();
+  gMPSystem.ProcessorData[ProcessorNumber].Procedure = NULL;
+  gMPSystem.ProcessorData[ProcessorNumber].Parameter = NULL;
+  gMPSystem.ProcessorData[ProcessorNumber].StateLock =
+    gThread->MutexInit ();
+  gMPSystem.ProcessorData[ProcessorNumber].ProcedureLock =
+    gThread->MutexInit ();
 
   return EFI_SUCCESS;
 }
@@ -1283,7 +1353,10 @@ InitializeMpSystemData (
   gMPSystem.NumberOfProcessors        = NumberOfProcessors;
   gMPSystem.NumberOfEnabledProcessors = NumberOfProcessors;
 
-  gMPSystem.ProcessorData = AllocateZeroPool (gMPSystem.NumberOfProcessors * sizeof (PROCESSOR_DATA_BLOCK));
+  gMPSystem.ProcessorData = AllocateZeroPool (
+                              gMPSystem.NumberOfProcessors *
+                              sizeof (PROCESSOR_DATA_BLOCK)
+                              );
   ASSERT (gMPSystem.ProcessorData != NULL);
 
   FillInProcessorInformation (TRUE, 0);
@@ -1298,7 +1371,9 @@ InitializeMpSystemData (
   ASSERT_EFI_ERROR (Status);
 
   for (Index = 0; Index < gMPSystem.NumberOfProcessors; Index++) {
-    if ((gMPSystem.ProcessorData[Index].Info.StatusFlag & PROCESSOR_AS_BSP_BIT) == PROCESSOR_AS_BSP_BIT) {
+    if ((gMPSystem.ProcessorData[Index].Info.StatusFlag &
+         PROCESSOR_AS_BSP_BIT) == PROCESSOR_AS_BSP_BIT)
+    {
       // Skip BSP
       continue;
     }
@@ -1375,7 +1450,12 @@ CpuMpServicesInit (
     return Status;
   }
 
-  Status = EfiCreateEventReadyToBootEx (TPL_CALLBACK, CpuReadToBootFunction, NULL, &gReadToBootEvent);
+  Status = EfiCreateEventReadyToBootEx (
+             TPL_CALLBACK,
+             CpuReadToBootFunction,
+             NULL,
+             &gReadToBootEvent
+             );
   ASSERT_EFI_ERROR (Status);
 
   //

@@ -43,12 +43,18 @@ SetupVariableInit (
     Status = gRT->SetVariable (
                     L"Setup",
                     &gEmuSystemConfigGuid,
-                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                    EFI_VARIABLE_NON_VOLATILE |
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS,
                     sizeof (SystemConfigData),
                     (VOID *)&SystemConfigData
                     );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Failed to save Setup Variable to non-volatile storage, Status = %r\n", Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "Failed to save Setup Variable to non-volatile storage, Status = %r\n",
+        Status
+        ));
     }
   }
 }
@@ -142,9 +148,16 @@ IsBootManagerMenuAppFilePath (
   VOID        *NameGuid;
   EFI_STATUS  Status;
 
-  Status = gBS->LocateDevicePath (&gEfiFirmwareVolume2ProtocolGuid, &DevicePath, &FvHandle);
+  Status = gBS->LocateDevicePath (
+                  &gEfiFirmwareVolume2ProtocolGuid,
+                  &DevicePath,
+                  &FvHandle
+                  );
   if (!EFI_ERROR (Status)) {
-    NameGuid = EfiGetNameGuidFromFwVolDevicePathNode ((CONST MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)DevicePath);
+    NameGuid = EfiGetNameGuidFromFwVolDevicePathNode (
+                 (CONST
+                  MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)DevicePath
+                 );
     if (NameGuid != NULL) {
       return CompareGuid (NameGuid, &mBootMenuFile);
     }
@@ -173,7 +186,10 @@ GetBootManagerMenuAppOption (
 
   OptionNumber = 0;
 
-  BootOptions = EfiBootManagerGetLoadOptions (&BootOptionCount, LoadOptionTypeBoot);
+  BootOptions = EfiBootManagerGetLoadOptions (
+                  &BootOptionCount,
+                  LoadOptionTypeBoot
+                  );
 
   for (Index = 0; Index < BootOptionCount; Index++) {
     if (IsBootManagerMenuAppFilePath (BootOptions[Index].FilePath)) {
@@ -188,7 +204,12 @@ GetBootManagerMenuAppOption (
     //
     // If not found the BootManagerMenuApp, create it.
     //
-    OptionNumber = (UINT16)RegisterBootManagerMenuAppBootOption (&mBootMenuFile, L"UEFI BootManagerMenuApp", (UINTN)-1, FALSE);
+    OptionNumber = (UINT16)RegisterBootManagerMenuAppBootOption (
+                             &mBootMenuFile,
+                             L"UEFI BootManagerMenuApp",
+                             (UINTN)-1,
+                             FALSE
+                             );
   }
 
   return OptionNumber;
@@ -216,15 +237,27 @@ PlatformBootManagerBeforeConsole (
     // Update the console variable with the connect type
     //
     if ((gPlatformConsole[Index].ConnectType & CONSOLE_IN) == CONSOLE_IN) {
-      EfiBootManagerUpdateConsoleVariable (ConIn, gPlatformConsole[Index].DevicePath, NULL);
+      EfiBootManagerUpdateConsoleVariable (
+        ConIn,
+        gPlatformConsole[Index].DevicePath,
+        NULL
+        );
     }
 
     if ((gPlatformConsole[Index].ConnectType & CONSOLE_OUT) == CONSOLE_OUT) {
-      EfiBootManagerUpdateConsoleVariable (ConOut, gPlatformConsole[Index].DevicePath, NULL);
+      EfiBootManagerUpdateConsoleVariable (
+        ConOut,
+        gPlatformConsole[Index].DevicePath,
+        NULL
+        );
     }
 
     if ((gPlatformConsole[Index].ConnectType & STD_ERROR) == STD_ERROR) {
-      EfiBootManagerUpdateConsoleVariable (ErrOut, gPlatformConsole[Index].DevicePath, NULL);
+      EfiBootManagerUpdateConsoleVariable (
+        ErrOut,
+        gPlatformConsole[Index].DevicePath,
+        NULL
+        );
     }
 
     Index++;
@@ -316,7 +349,13 @@ PlatformBdsRegisterStaticBootOptions (
   F2.ScanCode    = SCAN_F2;
   F2.UnicodeChar = CHAR_NULL;
   EfiBootManagerGetBootManagerMenu (&BootOption);
-  EfiBootManagerAddKeyOptionVariable (NULL, (UINT16)BootOption.OptionNumber, 0, &F2, NULL);
+  EfiBootManagerAddKeyOptionVariable (
+    NULL,
+    (UINT16)BootOption.OptionNumber,
+    0,
+    &F2,
+    NULL
+    );
 
   //
   // 3. Boot Device List menu
@@ -326,7 +365,13 @@ PlatformBdsRegisterStaticBootOptions (
   OptionNumber   = GetBootManagerMenuAppOption ();
   EfiBootManagerAddKeyOptionVariable (NULL, (UINT16)OptionNumber, 0, &F7, NULL);
 
-  PrintXY (10, 10, &White, &Black, L"F2    to enter Setup.                              ");
+  PrintXY (
+    10,
+    10,
+    &White,
+    &Black,
+    L"F2    to enter Setup.                              "
+    );
   PrintXY (10, 30, &White, &Black, L"F7    to enter Boot Manager Menu.");
   PrintXY (10, 50, &White, &Black, L"Enter to boot directly.");
 }
@@ -404,7 +449,10 @@ PlatformBootManagerAfterConsole (
       PlatformBdsRegisterStaticBootOptions ();
       PlatformBdsConnectSequence ();
       EfiBootManagerRefreshAllBootOption ();
-      EfiBootManagerSortLoadOptionVariable (LoadOptionTypeBoot, (SORT_COMPARE)CompareBootOption);
+      EfiBootManagerSortLoadOptionVariable (
+        LoadOptionTypeBoot,
+        (SORT_COMPARE)CompareBootOption
+        );
       break;
   }
 }

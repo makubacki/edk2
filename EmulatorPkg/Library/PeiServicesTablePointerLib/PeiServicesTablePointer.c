@@ -89,7 +89,8 @@ PeiServicesTablePointerNotifyCallback (
 }
 
 EFI_PEI_NOTIFY_DESCRIPTOR  mNotifyOnThunkList = {
-  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK |
+   EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
   &gEfiPeiMemoryDiscoveredPpiGuid,
   PeiServicesTablePointerNotifyCallback
 };

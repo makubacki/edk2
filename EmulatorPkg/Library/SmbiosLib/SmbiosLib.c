@@ -45,7 +45,10 @@ SmbiosLibInitializeFromTemplate (
   Status = EFI_SUCCESS;
 
   for (Index = 0; Template[Index].Entry != NULL; Index++) {
-    Status = SmbiosLibCreateEntry (Template[Index].Entry, Template[Index].StringArray);
+    Status = SmbiosLibCreateEntry (
+               Template[Index].Entry,
+               Template[Index].StringArray
+               );
   }
 
   return Status;
@@ -223,7 +226,12 @@ SmbiosLibUpdateUnicodeString (
   UnicodeStrToAsciiStrS (String, Ascii, StrSize (String));
 
   StringIndex = StringNumber;
-  Status      = gSmbios->UpdateString (gSmbios, &SmbiosHandle, &StringIndex, Ascii);
+  Status      = gSmbios->UpdateString (
+                           gSmbios,
+                           &SmbiosHandle,
+                           &StringIndex,
+                           Ascii
+                           );
 
   FreePool (Ascii);
   return Status;

@@ -109,8 +109,15 @@ GetNextThunkProtocol (
     return EFI_NOT_FOUND;
   }
 
-  for (Link = mThunkList.ForwardLink; Link != &mThunkList; Link = Link->ForwardLink) {
-    Private = CR (Link, EMU_IO_THUNK_PROTOCOL_DATA, Link, EMU_IO_THUNK_PROTOCOL_DATA_SIGNATURE);
+  for (Link = mThunkList.ForwardLink; Link != &mThunkList; Link =
+         Link->ForwardLink)
+  {
+    Private = CR (
+                Link,
+                EMU_IO_THUNK_PROTOCOL_DATA,
+                Link,
+                EMU_IO_THUNK_PROTOCOL_DATA_SIGNATURE
+                );
     if (EmuBusDriver & !Private->EmuBusDriver) {
       continue;
     } else if (*Instance == NULL) {
@@ -124,7 +131,12 @@ GetNextThunkProtocol (
         return EFI_NOT_FOUND;
       }
 
-      Private   = CR (Link, EMU_IO_THUNK_PROTOCOL_DATA, Link, EMU_IO_THUNK_PROTOCOL_DATA_SIGNATURE);
+      Private = CR (
+                  Link,
+                  EMU_IO_THUNK_PROTOCOL_DATA,
+                  Link,
+                  EMU_IO_THUNK_PROTOCOL_DATA_SIGNATURE
+                  );
       *Instance = &Private->Data;
       return EFI_SUCCESS;
     }
