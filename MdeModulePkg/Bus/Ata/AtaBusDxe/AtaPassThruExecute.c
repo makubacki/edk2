@@ -340,8 +340,8 @@ IdentifyAtaDevice (
     //
     // This is a hard disk <= 120GB capacity, treat it as normal hard disk
     //
-    Capacity            = ((UINT32)IdentifyData->user_addressable_sectors_hi <<
-                           16) | IdentifyData->user_addressable_sectors_lo;
+    Capacity = ((UINT32)IdentifyData->user_addressable_sectors_hi <<
+                16) | IdentifyData->user_addressable_sectors_lo;
     AtaDevice->Lba48Bit = FALSE;
   }
 
@@ -363,8 +363,8 @@ IdentifyAtaDevice (
     if ((PhyLogicSectorSupport & BIT13) != 0) {
       BlockMedia->LogicalBlocksPerPhysicalBlock = (UINT32)(1 <<
                                                            (
-                                                                PhyLogicSectorSupport
-                                                                & 0x000f));
+                                                            PhyLogicSectorSupport
+                                                            & 0x000f));
       //
       // Check lowest alignment of logical blocks within physical block
       //
@@ -527,7 +527,7 @@ TransferAtaDevice (
   Acb->AtaDeviceHead   = (UINT8)(BIT7 | BIT6 | BIT5 |
                                  (AtaDevice->PortMultiplierPort == 0xFFFF ? 0 :
                                   (AtaDevice->PortMultiplierPort << 4)));
-  Acb->AtaSectorCount  = (UINT8)TransferLength;
+  Acb->AtaSectorCount = (UINT8)TransferLength;
   if (AtaDevice->Lba48Bit) {
     Acb->AtaSectorNumberExp = (UINT8)RShiftU64 (StartLba, 24);
     Acb->AtaCylinderLowExp  = (UINT8)RShiftU64 (StartLba, 32);

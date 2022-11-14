@@ -47,7 +47,7 @@ SetIdtEntry (
     IdtEntry =
       (IA32_IDT_GATE_DESCRIPTOR *)(IdtDescriptor->Base + (3 *
                                                           sizeof (
-                                                                                               IA32_IDT_GATE_DESCRIPTOR)));
+                                                                  IA32_IDT_GATE_DESCRIPTOR)));
     IdtEntry->Bits.OffsetLow  = (UINT16)S3DebugBuffer;
     IdtEntry->Bits.Selector   = (UINT16)AsmReadCs ();
     IdtEntry->Bits.Reserved_0 = 0;

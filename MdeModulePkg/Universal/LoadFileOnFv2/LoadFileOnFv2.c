@@ -35,10 +35,10 @@ typedef struct {
 } LOAD_FILE_ON_FV2_PRIVATE_DATA;
 
 #define LOAD_FILE_ON_FV2_PRIVATE_DATA_FROM_THIS( \
-                                               a)  \
+                                                 a)  \
       CR (a, LOAD_FILE_ON_FV2_PRIVATE_DATA, LoadFile, LOAD_FILE_ON_FV2_PRIVATE_DATA_SIGNATURE)
 #define LOAD_FILE_ON_FV2_PRIVATE_DATA_FROM_LINK( \
-                                               a)  \
+                                                 a)  \
       CR (a, LOAD_FILE_ON_FV2_PRIVATE_DATA, Link, LOAD_FILE_ON_FV2_PRIVATE_DATA_SIGNATURE)
 
 VOID        *mFvRegistration;
@@ -324,7 +324,7 @@ InstallFileLoadProtocol (
     if (!IsInPrivateList (&NameGuid)) {
       Private = (LOAD_FILE_ON_FV2_PRIVATE_DATA *)AllocateCopyPool (
                                                    sizeof (
-                                                                          mLoadFileOnFv2PrivateDataTemplate),
+                                                           mLoadFileOnFv2PrivateDataTemplate),
                                                    &
                                                    mLoadFileOnFv2PrivateDataTemplate
                                                    );

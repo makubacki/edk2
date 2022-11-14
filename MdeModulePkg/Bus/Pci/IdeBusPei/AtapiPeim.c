@@ -79,8 +79,8 @@ AtapiPeimEntry (
 
   AtapiBlkIoDev->PpiDescriptor2.Flags = (EFI_PEI_PPI_DESCRIPTOR_PPI |
                                          EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
-  AtapiBlkIoDev->PpiDescriptor2.Guid  = &gEfiPeiVirtualBlockIo2PpiGuid;
-  AtapiBlkIoDev->PpiDescriptor2.Ppi   = &AtapiBlkIoDev->AtapiBlkIo2;
+  AtapiBlkIoDev->PpiDescriptor2.Guid = &gEfiPeiVirtualBlockIo2PpiGuid;
+  AtapiBlkIoDev->PpiDescriptor2.Ppi  = &AtapiBlkIoDev->AtapiBlkIo2;
 
   DEBUG ((
     DEBUG_INFO,
@@ -2312,7 +2312,7 @@ ReadCapacity (
                                                        &Packet,
                                                        (UINT16 *)(&FormatData),
                                                        sizeof (
-                                                              ATAPI_READ_FORMAT_CAPACITY_DATA),
+                                                               ATAPI_READ_FORMAT_CAPACITY_DATA),
                                                        ATAPITIMEOUT*10
                                                        );
   }

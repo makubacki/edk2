@@ -263,7 +263,7 @@ RuntimeDriverSetVirtualAddressMap (
   //
   if ((DescriptorVersion != EFI_MEMORY_DESCRIPTOR_VERSION) || (DescriptorSize <
                                                                sizeof (
-                                                                                       EFI_MEMORY_DESCRIPTOR)))
+                                                                       EFI_MEMORY_DESCRIPTOR)))
   {
     return EFI_INVALID_PARAMETER;
   }

@@ -480,7 +480,8 @@ BuildPcdDatabase (
 
   SizeOfCallbackFnTable = Database->LocalTokenCount *
                           sizeof (PCD_PPI_CALLBACK) * PcdGet32 (
-                                                        PcdMaxPeiPcdCallBackNumberPerPcdEntry);
+                                                        PcdMaxPeiPcdCallBackNumberPerPcdEntry
+                                                        );
 
   CallbackFnTable = BuildGuidHob (&gEfiCallerIdGuid, SizeOfCallbackFnTable);
 
@@ -1051,8 +1052,8 @@ GetExPcdTokenNumber (
 
   PeiPcdDb = GetPcdDatabase ();
 
-  ExMap     = (DYNAMICEX_MAPPING *)((UINT8 *)PeiPcdDb +
-                                    PeiPcdDb->ExMapTableOffset);
+  ExMap = (DYNAMICEX_MAPPING *)((UINT8 *)PeiPcdDb +
+                                PeiPcdDb->ExMapTableOffset);
   GuidTable = (EFI_GUID *)((UINT8 *)PeiPcdDb + PeiPcdDb->GuidTableOffset);
 
   MatchGuid = ScanGuid (

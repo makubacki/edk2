@@ -244,7 +244,7 @@ CreateRootBridge (
   RootBridge->ConfigBuffer          = AllocatePool (
                                         TypeMax *
                                         sizeof (
-                                                         EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR)
+                                                EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR)
                                         +
                                         sizeof (EFI_ACPI_END_TAG_DESCRIPTOR)
                                         );

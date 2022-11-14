@@ -119,7 +119,7 @@ typedef struct {
 } KEYBOARD_CONSOLE_IN_DEV;
 
 #define KEYBOARD_CONSOLE_IN_DEV_FROM_THIS( \
-                                         a)  \
+                                           a)  \
   CR (a, KEYBOARD_CONSOLE_IN_DEV, ConIn, KEYBOARD_CONSOLE_IN_DEV_SIGNATURE)
 #define TEXT_INPUT_EX_KEYBOARD_CONSOLE_IN_DEV_FROM_THIS(a) \
   CR (a, \

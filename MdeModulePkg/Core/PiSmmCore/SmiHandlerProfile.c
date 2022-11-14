@@ -484,8 +484,8 @@ DumpSmiChildContext (
       ));
     Str = ConvertDevicePathToText (
             (EFI_DEVICE_PATH_PROTOCOL *)(((
-                                                                 SMI_HANDLER_PROFILE_USB_REGISTER_CONTEXT
-                                                                 *)
+                                           SMI_HANDLER_PROFILE_USB_REGISTER_CONTEXT
+                                           *)
                                           Context) + 1),
             TRUE,
             TRUE
@@ -826,9 +826,11 @@ GetSmmImageDatabaseData (
     ImageStruct = (SMM_CORE_IMAGE_DATABASE_STRUCTURE *)((UINTN)ImageStruct +
                                                         ImageStruct->Header.
                                                           Length);
-    Size       += sizeof (SMM_CORE_IMAGE_DATABASE_STRUCTURE) +
-                  GET_OCCUPIED_SIZE (mImageStruct[Index].PdbStringSize,
-                    sizeof (UINT64));
+    Size += sizeof (SMM_CORE_IMAGE_DATABASE_STRUCTURE) +
+            GET_OCCUPIED_SIZE (
+              mImageStruct[Index].PdbStringSize,
+              sizeof (UINT64)
+              );
   }
 
   if (ExpectedSize != Size) {

@@ -355,7 +355,7 @@ FindStringBlock (
         StringTextPtr = (UINT8 *)((UINTN)BlockHdr +
                                   sizeof (EFI_HII_SIBT_STRINGS_SCSU_BLOCK) -
                                   sizeof (UINT8));
-        BlockSize    += StringTextPtr - BlockHdr;
+        BlockSize += StringTextPtr - BlockHdr;
 
         for (Index = 0; Index < StringCount; Index++) {
           BlockSize += AsciiStrSize ((CHAR8 *)StringTextPtr);
@@ -386,7 +386,7 @@ FindStringBlock (
         StringTextPtr = (UINT8 *)((UINTN)BlockHdr +
                                   sizeof (EFI_HII_SIBT_STRINGS_SCSU_FONT_BLOCK)
                                   - sizeof (UINT8));
-        BlockSize    += StringTextPtr - BlockHdr;
+        BlockSize += StringTextPtr - BlockHdr;
 
         for (Index = 0; Index < StringCount; Index++) {
           BlockSize += AsciiStrSize ((CHAR8 *)StringTextPtr);
@@ -516,8 +516,8 @@ FindStringBlock (
         break;
 
       case EFI_HII_SIBT_SKIP1:
-        SkipCount       = (UINT16)(*(UINT8 *)((UINTN)BlockHdr +
-                                              sizeof (EFI_HII_STRING_BLOCK)));
+        SkipCount = (UINT16)(*(UINT8 *)((UINTN)BlockHdr +
+                                        sizeof (EFI_HII_STRING_BLOCK)));
         CurrentStringId = (UINT16)(CurrentStringId + SkipCount);
         BlockSize      +=  sizeof (EFI_HII_SIBT_SKIP1_BLOCK);
         break;
@@ -1486,9 +1486,9 @@ HiiNewString (
     //
     // Fill in the string package header
     //
-    HeaderSize                  = (UINT32)(AsciiStrSize ((CHAR8 *)Language) -
-                                           1 +
-                                           sizeof (EFI_HII_STRING_PACKAGE_HDR));
+    HeaderSize = (UINT32)(AsciiStrSize ((CHAR8 *)Language) -
+                          1 +
+                          sizeof (EFI_HII_STRING_PACKAGE_HDR));
     StringPackage->StringPkgHdr = AllocateZeroPool (HeaderSize);
     if (StringPackage->StringPkgHdr == NULL) {
       FreePool (StringPackage);

@@ -493,8 +493,8 @@ SdtOpenSdtTable (
   AmlHandle->Signature = EFI_AML_ROOT_HANDLE_SIGNATURE;
   AmlHandle->Buffer    = (VOID *)((UINTN)Table->Table +
                                   sizeof (EFI_ACPI_SDT_HEADER));
-  AmlHandle->Size      = Table->Table->Length -
-                         sizeof (EFI_ACPI_SDT_HEADER);
+  AmlHandle->Size = Table->Table->Length -
+                    sizeof (EFI_ACPI_SDT_HEADER);
   AmlHandle->AmlByteEncoding = NULL;
   AmlHandle->Modified        = FALSE;
 

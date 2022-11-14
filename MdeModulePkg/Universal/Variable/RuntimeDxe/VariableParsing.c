@@ -656,8 +656,9 @@ VariableServiceGetNextVariableInternal (
         if ((VariableStoreList[StoreType] != NULL) && (Variable.StartPtr ==
                                                        GetStartPointer (
                                                          VariableStoreList[
-                                                                                                              StoreType
-                                                         ])))
+                                                                           StoreType
+                                                         ]
+                                                         )))
         {
           break;
         }

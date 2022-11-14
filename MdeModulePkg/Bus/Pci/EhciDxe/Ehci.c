@@ -23,19 +23,19 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // to the UEFI protocol's port state (change).
 //
 USB_PORT_STATE_MAP  mUsbPortStateMap[] = {
-  { PORTSC_CONN,    USB_PORT_STAT_CONNECTION        },
-  { PORTSC_ENABLED, USB_PORT_STAT_ENABLE            },
-  { PORTSC_SUSPEND, USB_PORT_STAT_SUSPEND           },
-  { PORTSC_OVERCUR, USB_PORT_STAT_OVERCURRENT       },
-  { PORTSC_RESET,   USB_PORT_STAT_RESET             },
-  { PORTSC_POWER,   USB_PORT_STAT_POWER             },
-  { PORTSC_OWNER,   USB_PORT_STAT_OWNER             }
+  { PORTSC_CONN,    USB_PORT_STAT_CONNECTION  },
+  { PORTSC_ENABLED, USB_PORT_STAT_ENABLE      },
+  { PORTSC_SUSPEND, USB_PORT_STAT_SUSPEND     },
+  { PORTSC_OVERCUR, USB_PORT_STAT_OVERCURRENT },
+  { PORTSC_RESET,   USB_PORT_STAT_RESET       },
+  { PORTSC_POWER,   USB_PORT_STAT_POWER       },
+  { PORTSC_OWNER,   USB_PORT_STAT_OWNER       }
 };
 
 USB_PORT_STATE_MAP  mUsbPortChangeMap[] = {
-  { PORTSC_CONN_CHANGE,    USB_PORT_STAT_C_CONNECTION        },
-  { PORTSC_ENABLE_CHANGE,  USB_PORT_STAT_C_ENABLE            },
-  { PORTSC_OVERCUR_CHANGE, USB_PORT_STAT_C_OVERCURRENT       }
+  { PORTSC_CONN_CHANGE,    USB_PORT_STAT_C_CONNECTION  },
+  { PORTSC_ENABLE_CHANGE,  USB_PORT_STAT_C_ENABLE      },
+  { PORTSC_OVERCUR_CHANGE, USB_PORT_STAT_C_OVERCURRENT }
 };
 
 EFI_DRIVER_BINDING_PROTOCOL
@@ -352,8 +352,8 @@ EhcGetRootHubPortStatus (
     goto ON_EXIT;
   }
 
-  Offset                       = (UINT32)(EHC_PORT_STAT_OFFSET + (4 *
-                                                                  PortNumber));
+  Offset = (UINT32)(EHC_PORT_STAT_OFFSET + (4 *
+                                            PortNumber));
   PortStatus->PortStatus       = 0;
   PortStatus->PortChangeStatus = 0;
 

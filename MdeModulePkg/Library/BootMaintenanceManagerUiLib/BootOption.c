@@ -978,7 +978,7 @@ GetDriverOrder (
                                           (sizeof (BmmConfig->DriverOptionOrder)
                                            /
                                            sizeof (BmmConfig->DriverOptionOrder[
-                                                                                                                                          0
+                                                                                0
                                                    ]))));
        Index++)
   {

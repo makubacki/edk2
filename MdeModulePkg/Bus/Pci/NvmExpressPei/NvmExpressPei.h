@@ -50,7 +50,7 @@ PEI_NVME_CONTROLLER_PRIVATE_DATA;
 
 **/
 #define IS_PCI_NVMHCI( \
-                     _p)  \
+                       _p)  \
   IS_CLASS3 (_p, PCI_CLASS_MASS_STORAGE, PCI_CLASS_MASS_STORAGE_SOLID_STATE, PCI_IF_MASS_STORAGE_SOLID_STATE_ENTERPRISE_NVMHCI)
 
 #include "NvmExpressPeiHci.h"

@@ -849,59 +849,59 @@ InitializeEmmcBlockIoPeim (
           case EmmcPartitionGP1:
             GpSizeMult = (ExtCsd->GpSizeMult[0] | (ExtCsd->GpSizeMult[1] << 8) |
                           (ExtCsd->GpSizeMult[2] << 16));
-            Capacity   = MultU64x32 (
+            Capacity = MultU64x32 (
+                         MultU64x32 (
                            MultU64x32 (
-                             MultU64x32 (
-                               (UINT64)GpSizeMult,
-                               ExtCsd->HcWpGrpSize
-                               ),
-                             ExtCsd->HcEraseGrpSize
+                             (UINT64)GpSizeMult,
+                             ExtCsd->HcWpGrpSize
                              ),
-                           SIZE_512KB
-                           );
+                           ExtCsd->HcEraseGrpSize
+                           ),
+                         SIZE_512KB
+                         );
             break;
           case EmmcPartitionGP2:
             GpSizeMult = (ExtCsd->GpSizeMult[3] | (ExtCsd->GpSizeMult[4] << 8) |
                           (ExtCsd->GpSizeMult[5] << 16));
-            Capacity   = MultU64x32 (
+            Capacity = MultU64x32 (
+                         MultU64x32 (
                            MultU64x32 (
-                             MultU64x32 (
-                               (UINT64)GpSizeMult,
-                               ExtCsd->HcWpGrpSize
-                               ),
-                             ExtCsd->HcEraseGrpSize
+                             (UINT64)GpSizeMult,
+                             ExtCsd->HcWpGrpSize
                              ),
-                           SIZE_512KB
-                           );
+                           ExtCsd->HcEraseGrpSize
+                           ),
+                         SIZE_512KB
+                         );
             break;
           case EmmcPartitionGP3:
             GpSizeMult = (ExtCsd->GpSizeMult[6] | (ExtCsd->GpSizeMult[7] << 8) |
                           (ExtCsd->GpSizeMult[8] << 16));
-            Capacity   = MultU64x32 (
+            Capacity = MultU64x32 (
+                         MultU64x32 (
                            MultU64x32 (
-                             MultU64x32 (
-                               (UINT64)GpSizeMult,
-                               ExtCsd->HcWpGrpSize
-                               ),
-                             ExtCsd->HcEraseGrpSize
+                             (UINT64)GpSizeMult,
+                             ExtCsd->HcWpGrpSize
                              ),
-                           SIZE_512KB
-                           );
+                           ExtCsd->HcEraseGrpSize
+                           ),
+                         SIZE_512KB
+                         );
             break;
           case EmmcPartitionGP4:
             GpSizeMult = (ExtCsd->GpSizeMult[9] | (ExtCsd->GpSizeMult[10] <<
                                                    8) |
                           (ExtCsd->GpSizeMult[11] << 16));
-            Capacity   = MultU64x32 (
+            Capacity = MultU64x32 (
+                         MultU64x32 (
                            MultU64x32 (
-                             MultU64x32 (
-                               (UINT64)GpSizeMult,
-                               ExtCsd->HcWpGrpSize
-                               ),
-                             ExtCsd->HcEraseGrpSize
+                             (UINT64)GpSizeMult,
+                             ExtCsd->HcWpGrpSize
                              ),
-                           SIZE_512KB
-                           );
+                           ExtCsd->HcEraseGrpSize
+                           ),
+                         SIZE_512KB
+                         );
             break;
           default:
             ASSERT (FALSE);

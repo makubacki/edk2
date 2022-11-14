@@ -852,9 +852,9 @@ MergeMemoryMapForProtectionPolicy (
       MemoryBlockLength = (UINT64)(EFI_PAGES_TO_SIZE (
                                      (UINTN)MemoryMapEntry->NumberOfPages
                                      ));
-      Attributes        = GetPermissionAttributeForMemoryType (
-                            MemoryMapEntry->Type
-                            );
+      Attributes = GetPermissionAttributeForMemoryType (
+                     MemoryMapEntry->Type
+                     );
 
       if (((UINTN)NextMemoryMapEntry < (UINTN)MemoryMapEnd) &&
           (Attributes == GetPermissionAttributeForMemoryType (

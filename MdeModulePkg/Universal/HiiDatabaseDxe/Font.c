@@ -979,8 +979,8 @@ FindGlyphBlock (
       case EFI_HII_GIBT_SKIP1:
         CharCurrent = (UINT16)(CharCurrent + (UINT16)(*(BlockPtr +
                                                         sizeof (
-                                                                          EFI_HII_GLYPH_BLOCK))));
-        BlockPtr   += sizeof (EFI_HII_GIBT_SKIP1_BLOCK);
+                                                                EFI_HII_GLYPH_BLOCK))));
+        BlockPtr += sizeof (EFI_HII_GIBT_SKIP1_BLOCK);
         break;
       case EFI_HII_GIBT_SKIP2:
         CopyMem (
@@ -2171,12 +2171,12 @@ HiiStringToImage (
         //
         // Don't draw the last char on this row. And, don't draw the second last char (AdvanceX - Width - OffsetX).
         //
-        LineWidth                       -= (Cell[Index].Width +
-                                            Cell[Index].OffsetX);
-        LineWidth                       -= (Cell[Index - 1].AdvanceX -
-                                            Cell[Index - 1].Width - Cell[Index -
-                                                                         1].
-                                              OffsetX);
+        LineWidth -= (Cell[Index].Width +
+                      Cell[Index].OffsetX);
+        LineWidth -= (Cell[Index - 1].AdvanceX -
+                      Cell[Index - 1].Width - Cell[Index -
+                                                   1].
+                        OffsetX);
         RowInfo[RowIndex].EndIndex       = Index - 1;
         RowInfo[RowIndex].LineWidth      = LineWidth;
         RowInfo[RowIndex].LineHeight     = LineHeight;
@@ -2261,11 +2261,11 @@ HiiStringToImage (
             //
             // Don't draw the last char on this row. And, don't draw the second last char (AdvanceX - Width - OffsetX).
             //
-            LineWidth                  -= (Cell[Index1].Width +
-                                           Cell[Index1].OffsetX);
-            LineWidth                  -= (Cell[Index1 - 1].AdvanceX -
-                                           Cell[Index1 - 1].Width -
-                                           Cell[Index1 - 1].OffsetX);
+            LineWidth -= (Cell[Index1].Width +
+                          Cell[Index1].OffsetX);
+            LineWidth -= (Cell[Index1 - 1].AdvanceX -
+                          Cell[Index1 - 1].Width -
+                          Cell[Index1 - 1].OffsetX);
             RowInfo[RowIndex].EndIndex  = Index1 - 1;
             RowInfo[RowIndex].LineWidth = LineWidth;
           } else {

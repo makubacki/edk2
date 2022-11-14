@@ -812,12 +812,14 @@ EbcDebugRegisterExceptionCallback (
   }
 
   if ((mDebugExceptionCallback[ExceptionType] == NULL) && (ExceptionCallback ==
-                                                           NULL)) {
+                                                           NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
   if ((mDebugExceptionCallback[ExceptionType] != NULL) && (ExceptionCallback !=
-                                                           NULL)) {
+                                                           NULL))
+  {
     return EFI_ALREADY_STARTED;
   }
 
@@ -1183,7 +1185,8 @@ EbcUnloadImage (
   ReturnEBCStackByHandle (ImageHandle);
   PrevImageList = NULL;
   for (ImageList = mEbcImageList; ImageList != NULL; ImageList =
-         ImageList->Next) {
+         ImageList->Next)
+  {
     if (ImageList->ImageHandle == ImageHandle) {
       break;
     }
@@ -1260,8 +1263,10 @@ EbcAddImageThunk (
   // It so far so good, then flush the instruction cache
   //
   if (mEbcICacheFlush != NULL) {
-    Status = mEbcICacheFlush ((EFI_PHYSICAL_ADDRESS)(UINTN)ThunkBuffer,
-               ThunkSize);
+    Status = mEbcICacheFlush (
+               (EFI_PHYSICAL_ADDRESS)(UINTN)ThunkBuffer,
+               ThunkSize
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -1272,7 +1277,8 @@ EbcAddImageThunk (
   // created a image list element for this image handle.
   //
   for (ImageList = mEbcImageList; ImageList != NULL; ImageList =
-         ImageList->Next) {
+         ImageList->Next)
+  {
     if (ImageList->ImageHandle == ImageHandle) {
       break;
     }
@@ -1530,8 +1536,12 @@ InitEbcVmTestProtocol (
   // Publish the protocol
   //
   Handle = NULL;
-  Status = gBS->InstallProtocolInterface (&Handle, &gEfiEbcVmTestProtocolGuid,
-                  EFI_NATIVE_INTERFACE, EbcVmTestProtocol);
+  Status = gBS->InstallProtocolInterface (
+                  &Handle,
+                  &gEfiEbcVmTestProtocolGuid,
+                  EFI_NATIVE_INTERFACE,
+                  EbcVmTestProtocol
+                  );
   if (EFI_ERROR (Status)) {
     FreePool (EbcVmTestProtocol);
   }

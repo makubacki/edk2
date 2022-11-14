@@ -90,7 +90,7 @@ typedef struct {
 #pragma pack()
 
 #define UHC_FROM_USB2_HC_PROTO( \
-                              This)  \
+                                This)  \
   CR(This, USB_HC_DEV, Usb2Hc, USB_HC_DEV_SIGNATURE)
 
 //

@@ -754,9 +754,10 @@ S3BootScriptGetBootTimeEntryAddAddress (
   }
 
   // Here we do not count the reserved memory for runtime script table.
-  PageNumber  = (UINT16)(mS3BootScriptTablePtr->TableMemoryPageNumber -
-                         PcdGet16 (
-                           PcdS3BootScriptRuntimeTableReservePageNumber));
+  PageNumber = (UINT16)(mS3BootScriptTablePtr->TableMemoryPageNumber -
+                        PcdGet16 (
+                          PcdS3BootScriptRuntimeTableReservePageNumber
+                          ));
   TableLength =  mS3BootScriptTablePtr->TableLength;
   if (EFI_PAGES_TO_SIZE ((UINTN)PageNumber) < (TableLength + EntryLength +
                                                sizeof (EFI_BOOT_SCRIPT_TERMINATE)))
@@ -790,7 +791,8 @@ S3BootScriptGetBootTimeEntryAddAddress (
       (UINT8 *)(UINTN)NewS3TableBase;
     mS3BootScriptTablePtr->TableMemoryPageNumber =  (UINT16)(2 + PageNumber +
                                                              PcdGet16 (
-                                                               PcdS3BootScriptRuntimeTableReservePageNumber));
+                                                               PcdS3BootScriptRuntimeTableReservePageNumber
+                                                               ));
   }
 
   //
@@ -2162,9 +2164,9 @@ S3BootScriptSaveIoPoll (
   //
   // Build script data
   //
-  ScriptIoPoll.OpCode  = EFI_BOOT_SCRIPT_IO_POLL_OPCODE;
-  ScriptIoPoll.Length  = (UINT8)(sizeof (EFI_BOOT_SCRIPT_IO_POLL) +
-                                 (WidthInByte * 2));
+  ScriptIoPoll.OpCode = EFI_BOOT_SCRIPT_IO_POLL_OPCODE;
+  ScriptIoPoll.Length = (UINT8)(sizeof (EFI_BOOT_SCRIPT_IO_POLL) +
+                                (WidthInByte * 2));
   ScriptIoPoll.Width   = Width;
   ScriptIoPoll.Address = Address;
   ScriptIoPoll.Delay   = Delay;
@@ -2241,9 +2243,9 @@ S3BootScriptSavePciPoll (
   //
   // Build script data
   //
-  ScriptPciPoll.OpCode  = EFI_BOOT_SCRIPT_PCI_CONFIG_POLL_OPCODE;
-  ScriptPciPoll.Length  = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_POLL) +
-                                  (WidthInByte * 2));
+  ScriptPciPoll.OpCode = EFI_BOOT_SCRIPT_PCI_CONFIG_POLL_OPCODE;
+  ScriptPciPoll.Length = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG_POLL) +
+                                 (WidthInByte * 2));
   ScriptPciPoll.Width   = Width;
   ScriptPciPoll.Address = Address;
   ScriptPciPoll.Delay   = Delay;
@@ -2323,9 +2325,9 @@ S3BootScriptSavePci2Poll (
   //
   // Build script data
   //
-  ScriptPci2Poll.OpCode  = EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL_OPCODE;
-  ScriptPci2Poll.Length  = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL) +
-                                   (WidthInByte * 2));
+  ScriptPci2Poll.OpCode = EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL_OPCODE;
+  ScriptPci2Poll.Length = (UINT8)(sizeof (EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL) +
+                                  (WidthInByte * 2));
   ScriptPci2Poll.Width   = Width;
   ScriptPci2Poll.Segment = Segment;
   ScriptPci2Poll.Address = Address;

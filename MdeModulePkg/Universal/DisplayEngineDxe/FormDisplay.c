@@ -1882,7 +1882,8 @@ IsHighLightMenuOption (
     {
       if ((gHighligthMenuInfo.HLTIndex == 0) || (gHighligthMenuInfo.HLTIndex ==
                                                  GetIndexInfoForOpcode (
-                                                   MenuOption->ThisTag->OpCode)))
+                                                   MenuOption->ThisTag->OpCode
+                                                   )))
       {
         return (BOOLEAN)(MenuOption->Sequence ==
                          gHighligthMenuInfo.HLTSequence);
@@ -1985,7 +1986,8 @@ IsTopOfScreeMenuOption (
   {
     if ((gHighligthMenuInfo.TOSIndex == 0) || (gHighligthMenuInfo.TOSIndex ==
                                                GetIndexInfoForOpcode (
-                                                 MenuOption->ThisTag->OpCode)))
+                                                 MenuOption->ThisTag->OpCode
+                                                 )))
     {
       return TRUE;
     } else {
@@ -2958,8 +2960,8 @@ DisplayOneMenu (
     Col =  OptionLineNum < PromptLineNum ? MenuOption->OptCol : BeginCol;
     Row = (OptionLineNum < PromptLineNum ? OptionLineNum : PromptLineNum) +
           MenuOption->Row;
-    Width  = (UINT16)(OptionLineNum < PromptLineNum ? gOptionBlockWidth :
-                      PromptWidth + AdjustValue + SkipWidth);
+    Width = (UINT16)(OptionLineNum < PromptLineNum ? gOptionBlockWidth :
+                     PromptWidth + AdjustValue + SkipWidth);
     MaxRow = (OptionLineNum < PromptLineNum ? PromptLineNum : OptionLineNum) +
              MenuOption->Row - 1;
 

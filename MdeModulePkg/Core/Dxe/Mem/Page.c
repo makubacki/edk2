@@ -50,38 +50,38 @@ BOOLEAN  mMemoryTypeInformationInitialized = FALSE;
 
 EFI_MEMORY_TYPE_STATISTICS  mMemoryTypeStatistics[EfiMaxMemoryType + 1] = {
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,
-    FALSE                 },                                       // EfiReservedMemoryType
+    FALSE },                                                       // EfiReservedMemoryType
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
-    FALSE                 },                                       // EfiLoaderCode
+    FALSE },                                                       // EfiLoaderCode
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
-    FALSE                 },                                       // EfiLoaderData
+    FALSE },                                                       // EfiLoaderData
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
-    FALSE                 },                                       // EfiBootServicesCode
+    FALSE },                                                       // EfiBootServicesCode
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
-    FALSE                 },                                       // EfiBootServicesData
+    FALSE },                                                       // EfiBootServicesData
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,
-    TRUE                  },                                       // EfiRuntimeServicesCode
+    TRUE },                                                        // EfiRuntimeServicesCode
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,
-    TRUE                  },                                       // EfiRuntimeServicesData
+    TRUE },                                                        // EfiRuntimeServicesData
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
-    FALSE                 },                                       // EfiConventionalMemory
+    FALSE },                                                       // EfiConventionalMemory
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
-    FALSE                 },                                       // EfiUnusableMemory
+    FALSE },                                                       // EfiUnusableMemory
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,
-    FALSE                 },                                       // EfiACPIReclaimMemory
+    FALSE },                                                       // EfiACPIReclaimMemory
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,
-    FALSE                 },                                       // EfiACPIMemoryNVS
+    FALSE },                                                       // EfiACPIMemoryNVS
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
-    FALSE                 },                                       // EfiMemoryMappedIO
+    FALSE },                                                       // EfiMemoryMappedIO
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
-    FALSE                 },                                       // EfiMemoryMappedIOPortSpace
+    FALSE },                                                       // EfiMemoryMappedIOPortSpace
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,
-    TRUE                  },                                       // EfiPalCode
+    TRUE },                                                        // EfiPalCode
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE,
-    FALSE                 },                                       // EfiPersistentMemory
+    FALSE },                                                       // EfiPersistentMemory
   { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, TRUE,
-    FALSE                 },                                       // EfiUnacceptedMemoryType
-  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE, FALSE                 } // EfiMaxMemoryType
+    FALSE },                                                       // EfiUnacceptedMemoryType
+  { 0, MAX_ALLOC_ADDRESS, 0, 0, EfiMaxMemoryType, FALSE, FALSE }   // EfiMaxMemoryType
 };
 
 EFI_PHYSICAL_ADDRESS  mDefaultMaximumAddress = MAX_ALLOC_ADDRESS;
@@ -89,39 +89,39 @@ EFI_PHYSICAL_ADDRESS  mDefaultBaseAddress    = MAX_ALLOC_ADDRESS;
 
 EFI_MEMORY_TYPE_INFORMATION  gMemoryTypeInformation[EfiMaxMemoryType + 1] = {
   { EfiReservedMemoryType,
-    0                                                                                 },
+    0 },
   { EfiLoaderCode,
-    0                                                                                                      },
+    0 },
   { EfiLoaderData,
-    0                                                                                                                          },
+    0 },
   { EfiBootServicesCode,
-    0                                                                                                                                              },
+    0 },
   { EfiBootServicesData,
-    0                                                                                                                                                                  },
+    0 },
   { EfiRuntimeServicesCode,
-    0                                                                                                                                                                                      },
+    0 },
   { EfiRuntimeServicesData,
-    0                                                                                                                                                                                                          },
+    0 },
   { EfiConventionalMemory,
-    0                                                                                                                                                                                                                              },
+    0 },
   { EfiUnusableMemory,
-    0                                                                                                                                                                                                                                                  },
+    0 },
   { EfiACPIReclaimMemory,
-    0                                                                                                                                                                                                                                                                      },
+    0 },
   { EfiACPIMemoryNVS,
-    0                                                                                                                                                                                                                                                                                          },
+    0 },
   { EfiMemoryMappedIO,
-    0                                                                                                                                                                                                                                                                                                              },
+    0 },
   { EfiMemoryMappedIOPortSpace,
-    0                                                                                                                                                                                                                                                                                                                                  },
+    0 },
   { EfiPalCode,
-    0                                                                                                                                                                                                                                                                                                                                                },
+    0 },
   { EfiPersistentMemory,
-    0                                                                                                                                                                                                                                                                                                                                                              },
+    0 },
   { EFI_GCD_MEMORY_TYPE_UNACCEPTED,
-    0                                                                                                                                                                                                                                                                                                                                                                            },
+    0 },
   { EfiMaxMemoryType,
-    0                                                                                                                                                                                                                                                                                                                                                                            }
+    0 }
 };
 //
 // Only used when load module at fixed address feature is enabled. True means the memory is alreay successfully allocated

@@ -58,14 +58,14 @@ typedef int WRes;
 #define MY__FACILITY_WIN32  7
 #define MY__FACILITY__WRes  MY__FACILITY_WIN32
 #define MY_SRes_HRESULT_FROM_WRes( \
-                                 x)  \
+                                   x)  \
   ((HRESULT)(x) <= 0 ? ((HRESULT)(x)) : ((HRESULT) (((x) & 0x0000FFFF) | (MY__FACILITY__WRes << 16) | 0x80000000)))
 
 #endif
 
 #ifndef RINOK
 #define RINOK( \
-             x)  \
+               x)  \
   { int __result__ = (x); if (__result__ != 0) return __result__; }
 #endif
 

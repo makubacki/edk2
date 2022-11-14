@@ -76,13 +76,13 @@ HookPageFaultHandler (
                                                   ) + IdtEntry->Bits.OffsetLow +
                                                 (IdtEntry->Bits.OffsetHigh <<
                                                  16));
-  IdtEntry->Bits.OffsetLow    = (UINT16)PageFaultHandlerHookAddress;
-  IdtEntry->Bits.Selector     = (UINT16)AsmReadCs ();
-  IdtEntry->Bits.Reserved_0   = 0;
-  IdtEntry->Bits.GateType     = IA32_IDT_GATE_TYPE_INTERRUPT_32;
-  IdtEntry->Bits.OffsetHigh   = (UINT16)(PageFaultHandlerHookAddress >> 16);
-  IdtEntry->Bits.OffsetUpper  = (UINT32)(PageFaultHandlerHookAddress >> 32);
-  IdtEntry->Bits.Reserved_1   = 0;
+  IdtEntry->Bits.OffsetLow   = (UINT16)PageFaultHandlerHookAddress;
+  IdtEntry->Bits.Selector    = (UINT16)AsmReadCs ();
+  IdtEntry->Bits.Reserved_0  = 0;
+  IdtEntry->Bits.GateType    = IA32_IDT_GATE_TYPE_INTERRUPT_32;
+  IdtEntry->Bits.OffsetHigh  = (UINT16)(PageFaultHandlerHookAddress >> 16);
+  IdtEntry->Bits.OffsetUpper = (UINT32)(PageFaultHandlerHookAddress >> 32);
+  IdtEntry->Bits.Reserved_1  = 0;
 
   if (mPage1GSupport) {
     mPageFaultBuffer = (UINTN)(AsmReadCr3 () & mPhyMask) + EFI_PAGES_TO_SIZE (
@@ -177,7 +177,7 @@ SetIdtEntry (
     IdtEntry =
       (IA32_IDT_GATE_DESCRIPTOR *)(IdtDescriptor->Base + (3 *
                                                           sizeof (
-                                                                                                IA32_IDT_GATE_DESCRIPTOR)));
+                                                                  IA32_IDT_GATE_DESCRIPTOR)));
     IdtEntry->Bits.OffsetLow   = (UINT16)S3DebugBuffer;
     IdtEntry->Bits.Selector    = (UINT16)AsmReadCs ();
     IdtEntry->Bits.Reserved_0  = 0;
@@ -197,7 +197,7 @@ SetIdtEntry (
   if (!IsLongModeWakingVector (AcpiS3Context)) {
     IdtEntry = (IA32_IDT_GATE_DESCRIPTOR *)(IdtDescriptor->Base + (14 *
                                                                    sizeof (
-                                                                               IA32_IDT_GATE_DESCRIPTOR)));
+                                                                           IA32_IDT_GATE_DESCRIPTOR)));
     HookPageFaultHandler (IdtEntry);
   }
 }
@@ -274,7 +274,7 @@ PageFaultHandler (
 
   PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask &
                                 mPhyMask);
-  PTIndex   = BitFieldRead64 (PFAddress, 30, 38);
+  PTIndex = BitFieldRead64 (PFAddress, 30, 38);
   // PDPTE
   if (mPage1GSupport) {
     PageTable[PTIndex] = ((PFAddress | mAddressEncMask) & ~((1ull << 30) - 1)) |
@@ -286,7 +286,7 @@ PageFaultHandler (
 
     PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask &
                                   mPhyMask);
-    PTIndex   = BitFieldRead64 (PFAddress, 21, 29);
+    PTIndex = BitFieldRead64 (PFAddress, 21, 29);
     // PD
     PageTable[PTIndex] = ((PFAddress | mAddressEncMask) & ~((1ull << 21) - 1)) |
                          IA32_PG_P | IA32_PG_RW | IA32_PG_PS;

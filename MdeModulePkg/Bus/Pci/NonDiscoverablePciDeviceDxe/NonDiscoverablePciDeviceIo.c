@@ -1549,8 +1549,8 @@ PciIoAttributes (
     case EfiPciIoAttributeOperationEnable:
       Attributes |= Dev->Attributes;
     case EfiPciIoAttributeOperationSet:
-      Enable          = ((~Dev->Attributes & Attributes) &
-                         EFI_PCI_DEVICE_ENABLE) != 0;
+      Enable = ((~Dev->Attributes & Attributes) &
+                EFI_PCI_DEVICE_ENABLE) != 0;
       Dev->Attributes = Attributes;
       break;
 
@@ -1710,9 +1710,9 @@ STATIC CONST EFI_PCI_IO_PROTOCOL  PciIoTemplate =
 {
   PciIoPollMem,
   PciIoPollIo,
-  { PciIoMemRead,             PciIoMemWrite                   },
-  { PciIoIoRead,              PciIoIoWrite                    },
-  { PciIoPciRead,             PciIoPciWrite                   },
+  { PciIoMemRead,             PciIoMemWrite    },
+  { PciIoIoRead,              PciIoIoWrite     },
+  { PciIoPciRead,             PciIoPciWrite    },
   PciIoCopyMem,
   CoherentPciIoMap,
   CoherentPciIoUnmap,

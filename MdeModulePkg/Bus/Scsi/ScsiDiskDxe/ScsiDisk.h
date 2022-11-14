@@ -99,20 +99,20 @@ typedef struct {
 } SCSI_DISK_DEV;
 
 #define SCSI_DISK_DEV_FROM_BLKIO( \
-                                a)     \
+                                  a)     \
       CR (a, SCSI_DISK_DEV, BlkIo, SCSI_DISK_DEV_SIGNATURE)
 #define SCSI_DISK_DEV_FROM_BLKIO2( \
-                                 a)    \
+                                   a)    \
       CR (a, SCSI_DISK_DEV, BlkIo2, SCSI_DISK_DEV_SIGNATURE)
 #define SCSI_DISK_DEV_FROM_ERASEBLK( \
-                                   a)  \
+                                     a)  \
       CR (a, SCSI_DISK_DEV, EraseBlock, SCSI_DISK_DEV_SIGNATURE)
 #define SCSI_DISK_DEV_FROM_STORSEC( \
-                                  a)   \
+                                    a)   \
       CR (a, SCSI_DISK_DEV, StorageSecurity, SCSI_DISK_DEV_SIGNATURE)
 
 #define SCSI_DISK_DEV_FROM_DISKINFO( \
-                                   a)  \
+                                     a)  \
   CR (a, SCSI_DISK_DEV, DiskInfo, SCSI_DISK_DEV_SIGNATURE)
 
 //

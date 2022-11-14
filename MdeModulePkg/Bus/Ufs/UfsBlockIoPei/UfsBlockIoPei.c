@@ -672,16 +672,18 @@ UfsBlockIoPeimGetMediaInfo (
                                        (UINT64)Capacity16.LastLba7,
                                        56
                                        ) | LShiftU64 (
-                                             (UINT64)Capacity16.LastLba6, 48) |
+                                             (UINT64)Capacity16.LastLba6,
+                                             48
+                                             ) |
                                      LShiftU64 (
                                        (
-                                                                                        UINT64)
+                                        UINT64)
                                        Capacity16.LastLba5,
                                        40
                                        )
                                      | LShiftU64 (
                                          (
-                                                                                                                                  UINT64)
+                                          UINT64)
                                          Capacity16.LastLba4,
                                          32
                                          );

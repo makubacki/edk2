@@ -1057,8 +1057,8 @@ GetFvUsedSize (
 
   ExtHeaderOffset = ReadUnaligned16 (&FvHeader->ExtHeaderOffset);
   if (ExtHeaderOffset != 0) {
-    ExtHeader    = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FvHeader +
-                                                      ExtHeaderOffset);
+    ExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FvHeader +
+                                                   ExtHeaderOffset);
     ExtEntryList = (EFI_FIRMWARE_VOLUME_EXT_ENTRY *)(ExtHeader + 1);
     while ((UINTN)ExtEntryList < ((UINTN)ExtHeader + ReadUnaligned32 (
                                                        &ExtHeader->ExtHeaderSize

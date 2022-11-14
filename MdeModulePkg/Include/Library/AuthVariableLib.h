@@ -19,7 +19,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
                        sizeof (EFI_CERT_BLOCK_RSA_2048_SHA256))
 
 #define AUTHINFO2_SIZE( \
-                      VarAuth2)  \
+                        VarAuth2)  \
   ((OFFSET_OF (EFI_VARIABLE_AUTHENTICATION_2, AuthInfo)) +                                \
                                   (UINTN) ((EFI_VARIABLE_AUTHENTICATION_2 *) (VarAuth2))->AuthInfo.Hdr.dwLength)
 

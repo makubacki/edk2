@@ -30,7 +30,7 @@ typedef struct {
 } PCI_HOST_BRIDGE_INSTANCE;
 
 #define PCI_HOST_BRIDGE_FROM_THIS( \
-                                 a)  \
+                                   a)  \
   CR (a, PCI_HOST_BRIDGE_INSTANCE, ResAlloc, PCI_HOST_BRIDGE_SIGNATURE)
 
 //

@@ -77,11 +77,11 @@ typedef struct {
 } MACHINE_TYPE_INFO;
 
 GLOBAL_REMOVE_IF_UNREFERENCED MACHINE_TYPE_INFO  mMachineTypeInfo[] = {
-  { EFI_IMAGE_MACHINE_IA32,           L"IA32"                          },
-  { EFI_IMAGE_MACHINE_IA64,           L"IA64"                          },
-  { EFI_IMAGE_MACHINE_X64,            L"X64"                           },
-  { EFI_IMAGE_MACHINE_ARMTHUMB_MIXED, L"ARM"                           },
-  { EFI_IMAGE_MACHINE_AARCH64,        L"AARCH64"                       }
+  { EFI_IMAGE_MACHINE_IA32,           L"IA32"    },
+  { EFI_IMAGE_MACHINE_IA64,           L"IA64"    },
+  { EFI_IMAGE_MACHINE_X64,            L"X64"     },
+  { EFI_IMAGE_MACHINE_ARMTHUMB_MIXED, L"ARM"     },
+  { EFI_IMAGE_MACHINE_AARCH64,        L"AARCH64" }
 };
 
 UINT16  mDxeCoreImageMachineType = 0;
@@ -230,11 +230,11 @@ CoreInitializeImageServices (
   //
   Image = &mCorePrivateImage;
 
-  Image->EntryPoint       = (EFI_IMAGE_ENTRY_POINT)(UINTN)DxeCoreEntryPoint;
-  Image->ImageBasePage    = DxeCoreImageBaseAddress;
-  Image->NumberOfPages    = (UINTN)(EFI_SIZE_TO_PAGES (
-                                      (UINTN)(DxeCoreImageLength)
-                                      ));
+  Image->EntryPoint    = (EFI_IMAGE_ENTRY_POINT)(UINTN)DxeCoreEntryPoint;
+  Image->ImageBasePage = DxeCoreImageBaseAddress;
+  Image->NumberOfPages = (UINTN)(EFI_SIZE_TO_PAGES (
+                                   (UINTN)(DxeCoreImageLength)
+                                   ));
   Image->Tpl              = gEfiCurrentTpl;
   Image->Info.SystemTable = gDxeCoreST;
   Image->Info.ImageBase   = (VOID *)(UINTN)DxeCoreImageBaseAddress;

@@ -1364,9 +1364,9 @@ CapsuleDataCoalesce (
   //
   // Take the top of memory for the capsule. UINT64 align up.
   //
-  DestPtr          = FreeMemBase + FreeMemSize - CapsuleSize;
-  DestPtr          = (UINT8 *)(((UINTN)DestPtr + sizeof (UINT64) - 1) &
-                               ~(sizeof (UINT64) - 1));
+  DestPtr = FreeMemBase + FreeMemSize - CapsuleSize;
+  DestPtr = (UINT8 *)(((UINTN)DestPtr + sizeof (UINT64) - 1) &
+                      ~(sizeof (UINT64) - 1));
   FreeMemBase      = (UINT8 *)BlockList + DescriptorsSize;
   FreeMemSize      = (UINTN)DestPtr - (UINTN)FreeMemBase;
   NewCapsuleBase   = (VOID *)DestPtr;

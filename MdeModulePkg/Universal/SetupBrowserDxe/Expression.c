@@ -1860,7 +1860,7 @@ IfrMid (
       Result->BufferLen = (UINT16)((BufferLen - Base) < Length ? (BufferLen -
                                                                   Base) :
                                    Length);
-      Result->Buffer    = AllocateZeroPool (Result->BufferLen);
+      Result->Buffer = AllocateZeroPool (Result->BufferLen);
       ASSERT (Result->Buffer != NULL);
       CopyMem (Result->Buffer, &Buffer[Base], Result->BufferLen);
     }
@@ -2417,7 +2417,7 @@ CheckUserPrivilege (
     while (RemainSize >= sizeof (EFI_USER_INFO_ACCESS_CONTROL)) {
       if ((RemainSize < AccessControl->Size) || (AccessControl->Size <
                                                  sizeof (
-                                                                              EFI_USER_INFO_ACCESS_CONTROL)))
+                                                         EFI_USER_INFO_ACCESS_CONTROL)))
       {
         break;
       }

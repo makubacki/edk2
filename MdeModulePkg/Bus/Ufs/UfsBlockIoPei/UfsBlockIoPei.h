@@ -136,13 +136,13 @@ typedef struct _UFS_PEIM_HC_PRIVATE_DATA {
 #define IS_ALIGNED(addr, size)  (((UINTN) (addr) & (size - 1)) == 0)
 
 #define GET_UFS_PEIM_HC_PRIVATE_DATA_FROM_THIS( \
-                                              a)         \
+                                                a)         \
       CR (a, UFS_PEIM_HC_PRIVATE_DATA, BlkIoPpi, UFS_PEIM_HC_SIG)
 #define GET_UFS_PEIM_HC_PRIVATE_DATA_FROM_THIS2( \
-                                               a)        \
+                                                 a)        \
       CR (a, UFS_PEIM_HC_PRIVATE_DATA, BlkIo2Ppi, UFS_PEIM_HC_SIG)
 #define GET_UFS_PEIM_HC_PRIVATE_DATA_FROM_THIS_NOTIFY( \
-                                                     a)  \
+                                                       a)  \
       CR (a, UFS_PEIM_HC_PRIVATE_DATA, EndOfPeiNotifyList, UFS_PEIM_HC_SIG)
 
 #define UFS_SCSI_OP_LENGTH_SIX      0x6

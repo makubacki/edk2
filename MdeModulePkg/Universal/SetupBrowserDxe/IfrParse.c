@@ -70,15 +70,15 @@ CreateStatement (
 
     Statement->Expression = (FORM_EXPRESSION_LIST *)AllocatePool (
                                                       (UINTN)(sizeof (
-                                                                     FORM_EXPRESSION_LIST)
+                                                                      FORM_EXPRESSION_LIST)
                                                               + ((
-                                                                                               ConditionalExprCount
-                                                                                               -
-                                                                                               1)
+                                                                  ConditionalExprCount
+                                                                  -
+                                                                  1)
                                                                  *
                                                                  sizeof (
-                                                                                                     FORM_EXPRESSION
-                                                                                                     *)))
+                                                                         FORM_EXPRESSION
+                                                                         *)))
                                                       );
     ASSERT (Statement->Expression != NULL);
     Statement->Expression->Count     = (UINTN)ConditionalExprCount;
@@ -1888,8 +1888,8 @@ ParseOpCodes (
                                               sizeof (FORM_EXPRESSION_LIST) +
                                               ((ConditionalExprCount -1) *
                                                sizeof (
-                                                                                                                  FORM_EXPRESSION
-                                                                                                                  *)))
+                                                       FORM_EXPRESSION
+                                                       *)))
                                       );
           ASSERT (CurrentForm->SuppressExpression != NULL);
           CurrentForm->SuppressExpression->Count =
@@ -1992,8 +1992,8 @@ ParseOpCodes (
                                               sizeof (FORM_EXPRESSION_LIST) +
                                               ((ConditionalExprCount -1) *
                                                sizeof (
-                                                                                                                  FORM_EXPRESSION
-                                                                                                                  *)))
+                                                       FORM_EXPRESSION
+                                                       *)))
                                       );
           ASSERT (CurrentForm->SuppressExpression != NULL);
           CurrentForm->SuppressExpression->Count =
@@ -2575,11 +2575,11 @@ ParseOpCodes (
                                                                       EFI_IFR_DEFAULT,
                                                                       Value
                                                                       ));
-          CurrentDefault->Value.Buffer    = AllocateCopyPool (
-                                              CurrentDefault->Value.BufferLen,
-                                              &((EFI_IFR_DEFAULT *)OpCodeData)->
-                                                Value
-                                              );
+          CurrentDefault->Value.Buffer = AllocateCopyPool (
+                                           CurrentDefault->Value.BufferLen,
+                                           &((EFI_IFR_DEFAULT *)OpCodeData)->
+                                             Value
+                                           );
           ASSERT (CurrentDefault->Value.Buffer != NULL);
         } else {
           CopyMem (
@@ -2638,11 +2638,11 @@ ParseOpCodes (
                                                                       EFI_IFR_ONE_OF_OPTION,
                                                                       Value
                                                                       ));
-          CurrentDefault->Value.Buffer    = AllocateCopyPool (
-                                              CurrentDefault->Value.BufferLen,
-                                              &((EFI_IFR_ONE_OF_OPTION *)
-                                                OpCodeData)->Value
-                                              );
+          CurrentDefault->Value.Buffer = AllocateCopyPool (
+                                           CurrentDefault->Value.BufferLen,
+                                           &((EFI_IFR_ONE_OF_OPTION *)
+                                             OpCodeData)->Value
+                                           );
           ASSERT (CurrentDefault->Value.Buffer != NULL);
 
           //
@@ -2693,8 +2693,8 @@ ParseOpCodes (
                                               sizeof (FORM_EXPRESSION_LIST) +
                                               ((ConditionalExprCount -1) *
                                                sizeof (
-                                                                                                                    FORM_EXPRESSION
-                                                                                                                    *)))
+                                                       FORM_EXPRESSION
+                                                       *)))
                                       );
           ASSERT (CurrentOption->SuppressExpression != NULL);
           CurrentOption->SuppressExpression->Count =

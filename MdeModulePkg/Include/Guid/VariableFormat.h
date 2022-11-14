@@ -39,7 +39,7 @@ extern EFI_GUID  gEfiAuthenticatedVariableGuid;
 ///
 #define HEADER_ALIGNMENT  4
 #define HEADER_ALIGN( \
-                    Header)  \
+                      Header)  \
   (((UINTN) (Header) + HEADER_ALIGNMENT - 1) & (~(HEADER_ALIGNMENT - 1)))
 
 ///

@@ -44,12 +44,12 @@ EFI_GUID  gUdfDevPathGuid = EFI_UDF_DEVICE_PATH_GUID;
 UDF_DEVICE_PATH  gUdfDevicePath = {
   {
     { MEDIA_DEVICE_PATH,                 MEDIA_VENDOR_DP,
-          { sizeof (VENDOR_DEVICE_PATH),       0 }
+        { sizeof (VENDOR_DEVICE_PATH),       0 }
     },
     EFI_UDF_DEVICE_PATH_GUID
   },
   { END_DEVICE_PATH_TYPE,              END_ENTIRE_DEVICE_PATH_SUBTYPE,
-          { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0 }
+        { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0 }
   }
 };
 

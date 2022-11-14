@@ -89,8 +89,8 @@ CdExpressPeimEntry (
 
   PrivateData->PpiDescriptor.Flags = (EFI_PEI_PPI_DESCRIPTOR_PPI |
                                       EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
-  PrivateData->PpiDescriptor.Guid  = &gEfiPeiDeviceRecoveryModulePpiGuid;
-  PrivateData->PpiDescriptor.Ppi   = &PrivateData->DeviceRecoveryPpi;
+  PrivateData->PpiDescriptor.Guid = &gEfiPeiDeviceRecoveryModulePpiGuid;
+  PrivateData->PpiDescriptor.Ppi  = &PrivateData->DeviceRecoveryPpi;
 
   Status = PeiServicesInstallPpi (&PrivateData->PpiDescriptor);
   if (EFI_ERROR (Status)) {
@@ -442,7 +442,7 @@ FindRecoveryCapsules (
 
     RoorDirRecord = (PEI_CD_EXPRESS_DIR_FILE_RECORD *)(Buffer +
                                                        PEI_CD_EXPRESS_ROOT_DIR_RECORD_OFFSET);
-    RootDirLBA    = RoorDirRecord->LocationOfExtent[0];
+    RootDirLBA = RoorDirRecord->LocationOfExtent[0];
 
     Status = RetrieveCapsuleFileFromRoot (
                PrivateData,

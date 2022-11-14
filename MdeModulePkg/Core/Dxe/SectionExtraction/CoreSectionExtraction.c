@@ -759,21 +759,21 @@ CreateChildNode (
       CompressionHeader = (EFI_COMPRESSION_SECTION *)SectionHeader;
 
       if (IS_SECTION2 (CompressionHeader)) {
-        CompressionSource     = (VOID *)((UINT8 *)CompressionHeader +
-                                         sizeof (EFI_COMPRESSION_SECTION2));
+        CompressionSource = (VOID *)((UINT8 *)CompressionHeader +
+                                     sizeof (EFI_COMPRESSION_SECTION2));
         CompressionSourceSize = (UINT32)(SECTION2_SIZE (CompressionHeader) -
                                          sizeof (EFI_COMPRESSION_SECTION2));
-        UncompressedLength    =
+        UncompressedLength =
           ((EFI_COMPRESSION_SECTION2 *)CompressionHeader)->UncompressedLength;
         CompressionType =
           ((EFI_COMPRESSION_SECTION2 *)CompressionHeader)->CompressionType;
       } else {
-        CompressionSource     = (VOID *)((UINT8 *)CompressionHeader +
-                                         sizeof (EFI_COMPRESSION_SECTION));
+        CompressionSource = (VOID *)((UINT8 *)CompressionHeader +
+                                     sizeof (EFI_COMPRESSION_SECTION));
         CompressionSourceSize = (UINT32)(SECTION_SIZE (CompressionHeader) -
                                          sizeof (EFI_COMPRESSION_SECTION));
-        UncompressedLength    = CompressionHeader->UncompressedLength;
-        CompressionType       = CompressionHeader->CompressionType;
+        UncompressedLength = CompressionHeader->UncompressedLength;
+        CompressionType    = CompressionHeader->CompressionType;
       }
 
       //

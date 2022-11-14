@@ -138,13 +138,13 @@ typedef struct {
 #define RESET_STATE_ESC_R_ESC_R  0x02
 
 #define TERMINAL_CON_IN_DEV_FROM_THIS( \
-                                     a)     \
+                                       a)     \
       CR (a, TERMINAL_DEV, SimpleInput, TERMINAL_DEV_SIGNATURE)
 #define TERMINAL_CON_OUT_DEV_FROM_THIS( \
-                                      a)    \
+                                        a)    \
       CR (a, TERMINAL_DEV, SimpleTextOutput, TERMINAL_DEV_SIGNATURE)
 #define TERMINAL_CON_IN_EX_DEV_FROM_THIS( \
-                                        a)  \
+                                          a)  \
       CR (a, TERMINAL_DEV, SimpleInputEx, TERMINAL_DEV_SIGNATURE)
 
 typedef union {

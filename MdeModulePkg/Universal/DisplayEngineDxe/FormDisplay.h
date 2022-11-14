@@ -276,10 +276,10 @@ typedef struct {
 } UI_MENU_OPTION;
 
 #define MENU_OPTION_FROM_LINK( \
-                             a)  \
+                               a)  \
   CR (a, UI_MENU_OPTION, Link, UI_MENU_OPTION_SIGNATURE)
 
-#define USER_SELECTABLE_OPTION_OK_WIDTH        StrLen (gOkOption)
+#define USER_SELECTABLE_OPTION_OK_WIDTH  StrLen (gOkOption)
 #define USER_SELECTABLE_OPTION_OK_CAL_WIDTH      \
                                                (StrLen (gOkOption) + StrLen (gCancelOption))
 #define USER_SELECTABLE_OPTION_YES_NO_WIDTH      \
@@ -337,7 +337,7 @@ typedef struct {
 } USER_SELECTABLE_OPTION;
 
 #define SELECTABLE_OPTION_FROM_LINK( \
-                                   a)  \
+                                     a)  \
   CR (a, USER_SELECTABLE_OPTION, Link, USER_SELECTABLE_OPTION_SIGNATURE)
 
 /**

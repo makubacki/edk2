@@ -25,8 +25,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #define STRING_SIZE              \
                                                (FPDT_STRING_EVENT_RECORD_NAME_LENGTH * sizeof (CHAR8))
-#define FIRMWARE_RECORD_BUFFER                 0x1000
-#define CACHE_HANDLE_GUID_COUNT                0x100
+#define FIRMWARE_RECORD_BUFFER   0x1000
+#define CACHE_HANDLE_GUID_COUNT  0x100
 
 SMM_BOOT_PERFORMANCE_TABLE  *mSmmBootPerformanceTable = NULL;
 

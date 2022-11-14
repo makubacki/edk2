@@ -1762,7 +1762,7 @@ PciIovParseVfBar (
         //
         PciIoDevice->VfPciBar[BarIndex].Length = MultU64x32 (
                                                    PciIoDevice->VfPciBar[
-                                                                                  BarIndex
+                                                                         BarIndex
                                                    ].Length,
                                                    PciIoDevice->InitialVFs
                                                    );
@@ -1837,8 +1837,10 @@ PciIovParseVfBar (
                                                          );
 
         PciIoDevice->VfPciBar[BarIndex].Length =
-          PciIoDevice->VfPciBar[BarIndex].Length | LShiftU64 ((UINT64)Value,
-                                                     32);
+          PciIoDevice->VfPciBar[BarIndex].Length | LShiftU64 (
+                                                     (UINT64)Value,
+                                                     32
+                                                     );
         PciIoDevice->VfPciBar[BarIndex].Length =
           (~(PciIoDevice->VfPciBar[BarIndex].Length)) + 1;
         PciIoDevice->VfPciBar[BarIndex].Alignment =
@@ -1849,7 +1851,7 @@ PciIovParseVfBar (
         //
         PciIoDevice->VfPciBar[BarIndex].Length = MultU64x32 (
                                                    PciIoDevice->VfPciBar[
-                                                                                  BarIndex
+                                                                         BarIndex
                                                    ].Length,
                                                    PciIoDevice->InitialVFs
                                                    );
@@ -1964,9 +1966,9 @@ PciParseBar (
       //
       // It is a IO16 bar
       //
-      PciIoDevice->PciBar[BarIndex].BarType   = PciBarTypeIo16;
-      PciIoDevice->PciBar[BarIndex].Length    = 0x0000FFFF & ((~(Value &
-                                                                 Mask)) + 1);
+      PciIoDevice->PciBar[BarIndex].BarType = PciBarTypeIo16;
+      PciIoDevice->PciBar[BarIndex].Length  = 0x0000FFFF & ((~(Value &
+                                                               Mask)) + 1);
       PciIoDevice->PciBar[BarIndex].Alignment =
         PciIoDevice->PciBar[BarIndex].Length - 1;
     }
@@ -2672,13 +2674,13 @@ CreatePciIoDevice (
       Offset = PciIoDevice->ResizableBarOffset +
                sizeof (PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER)
                + sizeof (
-                        PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_CAPABILITY),
+                         PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_CAPABILITY),
       PciIo->Pci.Read (
                    PciIo,
                    EfiPciIoWidthUint8,
                    Offset,
                    sizeof (
-                          PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_CONTROL),
+                           PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_CONTROL),
                    &ResizableBarControl
                    );
       PciIoDevice->ResizableBarNumber =

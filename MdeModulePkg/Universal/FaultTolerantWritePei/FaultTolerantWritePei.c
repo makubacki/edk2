@@ -134,7 +134,8 @@ FtwGetLastWriteRecord (
     *FtwWriteRecord = (EFI_FAULT_TOLERANT_WRITE_RECORD *)((UINTN)FtwRecord -
                                                           FTW_RECORD_SIZE (
                                                             FtwWriteHeader->
-                                                              PrivateDataSize));
+                                                              PrivateDataSize
+                                                            ));
     return EFI_SUCCESS;
   }
 
@@ -173,7 +174,7 @@ IsValidWorkSpace (
 
   if (WorkingHeader->WriteQueueSize != (WorkingLength -
                                         sizeof (
-                                                               EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER)))
+                                                EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER)))
   {
     DEBUG ((
       DEBUG_ERROR,
@@ -355,8 +356,8 @@ PeimFaultTolerantWriteInitialize (
       //
       FtwLastWrite.TargetAddress = WorkSpaceAddress - (WorkSpaceInSpareArea -
                                                        SpareAreaAddress);
-      FtwLastWrite.SpareAddress  = SpareAreaAddress;
-      FtwLastWrite.Length        = SpareAreaLength;
+      FtwLastWrite.SpareAddress = SpareAreaAddress;
+      FtwLastWrite.Length       = SpareAreaLength;
       DEBUG ((
         DEBUG_INFO,
         "FtwPei last write data: TargetAddress - 0x%x SpareAddress - 0x%x Length - 0x%x\n",

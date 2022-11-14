@@ -92,7 +92,7 @@ GetFpdtRecordPtr (
       FpdtRecordPtr->RecordHeader =
         (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)(PeiFirmwarePerformance +
                                                         sizeof (
-                                                                                                                    FPDT_PEI_EXT_PERF_HEADER)
+                                                                FPDT_PEI_EXT_PERF_HEADER)
                                                         +
                                                         (*
                                                          PeiPerformanceLogHeader)
@@ -127,7 +127,7 @@ GetFpdtRecordPtr (
       FpdtRecordPtr->RecordHeader =
         (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)(PeiFirmwarePerformance +
                                                         sizeof (
-                                                                                                                    FPDT_PEI_EXT_PERF_HEADER));
+                                                                FPDT_PEI_EXT_PERF_HEADER));
     }
   }
 

@@ -565,7 +565,8 @@ UfsCreateScsiCommandDesc (
   PrdtBase    = (UTP_TR_PRD *)(CommandDesc + ROUNDUP8 (
                                                sizeof (UTP_COMMAND_UPIU)
                                                ) + ROUNDUP8 (
-                                                     sizeof (UTP_RESPONSE_UPIU)));
+                                                     sizeof (UTP_RESPONSE_UPIU)
+                                                     ));
 
   UfsInitCommandUpiu (
     CommandUpiu,
@@ -676,13 +677,14 @@ UfsCreateDMCommandDesc (
   {
     TotalLen = ROUNDUP8 (sizeof (UTP_QUERY_REQ_UPIU)) + ROUNDUP8 (
                                                           sizeof (
-                                                                         UTP_QUERY_RESP_UPIU)
+                                                                  UTP_QUERY_RESP_UPIU)
                                                           ) + ROUNDUP8 (
-                                                                DataSize);
+                                                                DataSize
+                                                                );
   } else {
     TotalLen = ROUNDUP8 (sizeof (UTP_QUERY_REQ_UPIU)) + ROUNDUP8 (
                                                           sizeof (
-                                                                         UTP_QUERY_RESP_UPIU)
+                                                                  UTP_QUERY_RESP_UPIU)
                                                           );
   }
 
@@ -1004,8 +1006,8 @@ UfsSendDmRequestRetry (
   //
   CmdDescBase = (UINT8 *)(UINTN)(LShiftU64 ((UINT64)Trd->UcdBaU, 32) |
                                  LShiftU64 ((UINT64)Trd->UcdBa, 7));
-  QueryResp   = (UTP_QUERY_RESP_UPIU *)(CmdDescBase + Trd->RuO *
-                                        sizeof (UINT32));
+  QueryResp = (UTP_QUERY_RESP_UPIU *)(CmdDescBase + Trd->RuO *
+                                      sizeof (UINT32));
   CmdDescSize = Trd->RuO * sizeof (UINT32) + Trd->RuL * sizeof (UINT32);
 
   //
@@ -1382,8 +1384,8 @@ UfsExecScsiCmds (
   //
   // Get sense data if exists
   //
-  Response     = (UTP_RESPONSE_UPIU *)(CmdDescBase + Trd->RuO *
-                                       sizeof (UINT32));
+  Response = (UTP_RESPONSE_UPIU *)(CmdDescBase + Trd->RuO *
+                                   sizeof (UINT32));
   SenseDataLen = Response->SenseDataLen;
   SwapLittleEndianToBigEndian ((UINT8 *)&SenseDataLen, sizeof (UINT16));
 

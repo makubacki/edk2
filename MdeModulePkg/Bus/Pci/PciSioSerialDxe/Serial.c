@@ -66,7 +66,7 @@ SERIAL_DEV  gSerialDevTemplate = {
         (UINT8)((sizeof (UART_DEVICE_PATH)) >> 8)
       }
     },
-    0,                                     0, 0, 0, 0
+    0,                                     0,0, 0, 0
   },                                            // UartDevicePath
   0,                                            // BaseAddress
   FALSE,                                        // MmioAccess
@@ -1128,12 +1128,12 @@ SerialControllerDriverStart (
           if (!EFI_ERROR (Status)) {
             Supports &= (UINT64)(EFI_PCI_IO_ATTRIBUTE_IO |
                                  EFI_PCI_IO_ATTRIBUTE_MEMORY);
-            Status    = ParentIo.PciIo->Attributes (
-                                          ParentIo.PciIo,
-                                          EfiPciIoAttributeOperationEnable,
-                                          Supports,
-                                          NULL
-                                          );
+            Status = ParentIo.PciIo->Attributes (
+                                       ParentIo.PciIo,
+                                       EfiPciIoAttributeOperationEnable,
+                                       Supports,
+                                       NULL
+                                       );
           }
         }
       } else {

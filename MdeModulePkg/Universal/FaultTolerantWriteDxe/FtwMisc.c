@@ -911,7 +911,8 @@ FtwGetLastWriteRecord (
     *FtwWriteRecord = (EFI_FAULT_TOLERANT_WRITE_RECORD *)((UINTN)FtwRecord -
                                                           FTW_RECORD_SIZE (
                                                             FtwWriteHeader->
-                                                              PrivateDataSize));
+                                                              PrivateDataSize
+                                                            ));
     return EFI_SUCCESS;
   }
 
@@ -1366,10 +1367,10 @@ InitFtwProtocol (
   //
   WorkSpaceLbaOffset = FtwDevice->FtwWorkSpaceLba -
                        FtwDevice->FtwWorkBlockLba;
-  FtwDevice->FtwWorkSpaceLbaInSpare  = (EFI_LBA)(((UINTN)WorkSpaceLbaOffset *
-                                                  FtwDevice->WorkBlockSize +
-                                                  FtwDevice->FtwWorkSpaceBase) /
-                                                 FtwDevice->SpareBlockSize);
+  FtwDevice->FtwWorkSpaceLbaInSpare = (EFI_LBA)(((UINTN)WorkSpaceLbaOffset *
+                                                 FtwDevice->WorkBlockSize +
+                                                 FtwDevice->FtwWorkSpaceBase) /
+                                                FtwDevice->SpareBlockSize);
   FtwDevice->FtwWorkSpaceBaseInSpare = ((UINTN)WorkSpaceLbaOffset *
                                         FtwDevice->WorkBlockSize +
                                         FtwDevice->FtwWorkSpaceBase) %

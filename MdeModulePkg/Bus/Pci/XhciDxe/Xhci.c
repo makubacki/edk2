@@ -13,10 +13,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // to the UEFI protocol's port state (change).
 //
 USB_PORT_STATE_MAP  mUsbPortStateMap[] = {
-  { XHC_PORTSC_CCS,   USB_PORT_STAT_CONNECTION              },
-  { XHC_PORTSC_PED,   USB_PORT_STAT_ENABLE                  },
-  { XHC_PORTSC_OCA,   USB_PORT_STAT_OVERCURRENT             },
-  { XHC_PORTSC_RESET, USB_PORT_STAT_RESET                   }
+  { XHC_PORTSC_CCS,   USB_PORT_STAT_CONNECTION  },
+  { XHC_PORTSC_PED,   USB_PORT_STAT_ENABLE      },
+  { XHC_PORTSC_OCA,   USB_PORT_STAT_OVERCURRENT },
+  { XHC_PORTSC_RESET, USB_PORT_STAT_RESET       }
 };
 
 USB_PORT_STATE_MAP  mUsbPortChangeMap[] = {
@@ -34,10 +34,10 @@ USB_CLEAR_PORT_MAP  mUsbClearPortChangeMap[] = {
 };
 
 USB_PORT_STATE_MAP  mUsbHubPortStateMap[] = {
-  { XHC_HUB_PORTSC_CCS,   USB_PORT_STAT_CONNECTION              },
-  { XHC_HUB_PORTSC_PED,   USB_PORT_STAT_ENABLE                  },
-  { XHC_HUB_PORTSC_OCA,   USB_PORT_STAT_OVERCURRENT             },
-  { XHC_HUB_PORTSC_RESET, USB_PORT_STAT_RESET                   }
+  { XHC_HUB_PORTSC_CCS,   USB_PORT_STAT_CONNECTION  },
+  { XHC_HUB_PORTSC_PED,   USB_PORT_STAT_ENABLE      },
+  { XHC_HUB_PORTSC_OCA,   USB_PORT_STAT_OVERCURRENT },
+  { XHC_HUB_PORTSC_RESET, USB_PORT_STAT_RESET       }
 };
 
 USB_PORT_STATE_MAP  mUsbHubPortChangeMap[] = {
@@ -48,11 +48,11 @@ USB_PORT_STATE_MAP  mUsbHubPortChangeMap[] = {
 };
 
 USB_CLEAR_PORT_MAP  mUsbHubClearPortChangeMap[] = {
-  { XHC_HUB_PORTSC_CSC,  EfiUsbPortConnectChange           },
-  { XHC_HUB_PORTSC_PEC,  EfiUsbPortEnableChange            },
-  { XHC_HUB_PORTSC_OCC,  EfiUsbPortOverCurrentChange       },
-  { XHC_HUB_PORTSC_PRC,  EfiUsbPortResetChange             },
-  { XHC_HUB_PORTSC_BHRC, Usb3PortBHPortResetChange         }
+  { XHC_HUB_PORTSC_CSC,  EfiUsbPortConnectChange     },
+  { XHC_HUB_PORTSC_PEC,  EfiUsbPortEnableChange      },
+  { XHC_HUB_PORTSC_OCC,  EfiUsbPortOverCurrentChange },
+  { XHC_HUB_PORTSC_PRC,  EfiUsbPortResetChange       },
+  { XHC_HUB_PORTSC_BHRC, Usb3PortBHPortResetChange   }
 };
 
 EFI_DRIVER_BINDING_PROTOCOL  gXhciDriverBinding = {
@@ -401,8 +401,8 @@ XhcGetRootHubPortStatus (
     goto ON_EXIT;
   }
 
-  Offset                       = (UINT32)(XHC_PORTSC_OFFSET + (0x10 *
-                                                               PortNumber));
+  Offset = (UINT32)(XHC_PORTSC_OFFSET + (0x10 *
+                                         PortNumber));
   PortStatus->PortStatus       = 0;
   PortStatus->PortChangeStatus = 0;
 
@@ -1070,14 +1070,14 @@ XhcControlTransfer (
     DescriptorType = (UINT8)(Request->Value >> 8);
     if ((DescriptorType == USB_DESC_TYPE_DEVICE) && (  (*DataLength ==
                                                         sizeof (
-                                                                              EFI_USB_DEVICE_DESCRIPTOR))
+                                                                EFI_USB_DEVICE_DESCRIPTOR))
                                                     || (  (DeviceSpeed ==
                                                            EFI_USB_SPEED_FULL)
                                                        && (
-                                                                                                *
-                                                                                                DataLength
-                                                                                                ==
-                                                                                                8))))
+                                                           *
+                                                           DataLength
+                                                           ==
+                                                           8))))
     {
       ASSERT (Data != NULL);
       //
@@ -1122,7 +1122,7 @@ XhcControlTransfer (
         Xhc->UsbDevContext[SlotId].ActiveAlternateSetting = AllocateZeroPool (
                                                               Xhc->UsbDevContext
                                                               [SlotId].ConfDesc[
-                                                                                                                 Index
+                                                                                Index
                                                               ]->NumInterfaces *
                                                               sizeof (UINT8)
                                                               );

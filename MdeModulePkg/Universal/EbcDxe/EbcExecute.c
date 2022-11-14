@@ -3343,7 +3343,8 @@ ExecuteCMP (
       Op2 = (INT64)(UINT64)((UINT32)VmReadMem32 (
                                       VmPtr,
                                       (UINTN)(VmPtr->Gpr[OPERAND2_REGNUM (
-                                                           Operands)] + Index16)
+                                                           Operands
+                                                           )] + Index16)
                                       ));
     }
   } else {

@@ -33,7 +33,7 @@ typedef struct {
 } UFS_HC_PEI_PRIVATE_DATA;
 
 #define UFS_HC_PEI_PRIVATE_DATA_FROM_THIS( \
-                                         a)  \
+                                           a)  \
   CR (a, UFS_HC_PEI_PRIVATE_DATA, UfsHostControllerPpi, UFS_HC_PEI_SIGNATURE)
 
 /**

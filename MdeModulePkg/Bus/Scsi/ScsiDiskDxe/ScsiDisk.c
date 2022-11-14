@@ -315,7 +315,7 @@ ScsiDiskDriverBindingStart (
   ScsiDiskDevice->SenseDataNumber = 6;
   ScsiDiskDevice->SenseData       = (EFI_SCSI_SENSE_DATA *)AllocateZeroPool (
                                                              sizeof (
-                                                                    EFI_SCSI_SENSE_DATA)
+                                                                     EFI_SCSI_SENSE_DATA)
                                                              * ScsiDiskDevice->
                                                                SenseDataNumber
                                                              );
@@ -411,7 +411,7 @@ ScsiDiskDriverBindingStart (
         CopyMem (
           VendorStr,
           &ScsiDiskDevice->InquiryData.Reserved_5_95[
-                                                    VENDOR_IDENTIFICATION_OFFSET
+                                                     VENDOR_IDENTIFICATION_OFFSET
           ],
           VENDOR_IDENTIFICATION_LENGTH
           );
@@ -421,7 +421,7 @@ ScsiDiskDriverBindingStart (
         CopyMem (
           ProductStr,
           &ScsiDiskDevice->InquiryData.Reserved_5_95[
-                                                    PRODUCT_IDENTIFICATION_OFFSET
+                                                     PRODUCT_IDENTIFICATION_OFFSET
           ],
           PRODUCT_IDENTIFICATION_LENGTH
           );
@@ -1643,12 +1643,12 @@ ScsiDiskUnmap (
   *((UINT16 *)UnmapParamList + 1) = SwapBytes16 (
                                       UnmapParamListLen -
                                       sizeof (
-                                                                            EFI_SCSI_DISK_UNMAP_PARAM_LIST_HEADER)
+                                              EFI_SCSI_DISK_UNMAP_PARAM_LIST_HEADER)
                                       );
 
   BlkDespPtr = (EFI_SCSI_DISK_UNMAP_BLOCK_DESP *)((UINT8 *)UnmapParamList +
                                                   sizeof (
-                                                                                   EFI_SCSI_DISK_UNMAP_PARAM_LIST_HEADER));
+                                                          EFI_SCSI_DISK_UNMAP_PARAM_LIST_HEADER));
   while (Blocks > 0) {
     if (Blocks > MaxLbaCnt) {
       *(UINT64 *)(&BlkDespPtr->Lba)      = SwapBytes64 (Lba);
@@ -2926,8 +2926,8 @@ ScsiDiskTestUnitReady (
   UINT8       Index;
   UINT8       MaxRetry;
 
-  SenseDataLength    = (UINT8)(ScsiDiskDevice->SenseDataNumber *
-                               sizeof (EFI_SCSI_SENSE_DATA));
+  SenseDataLength = (UINT8)(ScsiDiskDevice->SenseDataNumber *
+                            sizeof (EFI_SCSI_SENSE_DATA));
   *NumberOfSenseKeys = 0;
 
   //
@@ -4387,18 +4387,18 @@ BackOff:
   Action          = ACTION_NO_ACTION;
   SenseDataLength = (UINT8)(ScsiDiskDevice->SenseDataNumber *
                             sizeof (EFI_SCSI_SENSE_DATA));
-  ReturnStatus    = ScsiRead10Command (
-                      ScsiDiskDevice->ScsiIo,
-                      Timeout,
-                      ScsiDiskDevice->SenseData,
-                      &SenseDataLength,
-                      &HostAdapterStatus,
-                      &TargetStatus,
-                      DataBuffer,
-                      DataLength,
-                      StartLba,
-                      SectorCount
-                      );
+  ReturnStatus = ScsiRead10Command (
+                   ScsiDiskDevice->ScsiIo,
+                   Timeout,
+                   ScsiDiskDevice->SenseData,
+                   &SenseDataLength,
+                   &HostAdapterStatus,
+                   &TargetStatus,
+                   DataBuffer,
+                   DataLength,
+                   StartLba,
+                   SectorCount
+                   );
 
   if ((ReturnStatus == EFI_NOT_READY) || (ReturnStatus ==
                                           EFI_BAD_BUFFER_SIZE))
@@ -4524,18 +4524,18 @@ BackOff:
   Action          = ACTION_NO_ACTION;
   SenseDataLength = (UINT8)(ScsiDiskDevice->SenseDataNumber *
                             sizeof (EFI_SCSI_SENSE_DATA));
-  ReturnStatus    = ScsiWrite10Command (
-                      ScsiDiskDevice->ScsiIo,
-                      Timeout,
-                      ScsiDiskDevice->SenseData,
-                      &SenseDataLength,
-                      &HostAdapterStatus,
-                      &TargetStatus,
-                      DataBuffer,
-                      DataLength,
-                      StartLba,
-                      SectorCount
-                      );
+  ReturnStatus = ScsiWrite10Command (
+                   ScsiDiskDevice->ScsiIo,
+                   Timeout,
+                   ScsiDiskDevice->SenseData,
+                   &SenseDataLength,
+                   &HostAdapterStatus,
+                   &TargetStatus,
+                   DataBuffer,
+                   DataLength,
+                   StartLba,
+                   SectorCount
+                   );
   if ((ReturnStatus == EFI_NOT_READY) || (ReturnStatus ==
                                           EFI_BAD_BUFFER_SIZE))
   {
@@ -4659,18 +4659,18 @@ BackOff:
   Action          = ACTION_NO_ACTION;
   SenseDataLength = (UINT8)(ScsiDiskDevice->SenseDataNumber *
                             sizeof (EFI_SCSI_SENSE_DATA));
-  ReturnStatus    = ScsiRead16Command (
-                      ScsiDiskDevice->ScsiIo,
-                      Timeout,
-                      ScsiDiskDevice->SenseData,
-                      &SenseDataLength,
-                      &HostAdapterStatus,
-                      &TargetStatus,
-                      DataBuffer,
-                      DataLength,
-                      StartLba,
-                      SectorCount
-                      );
+  ReturnStatus = ScsiRead16Command (
+                   ScsiDiskDevice->ScsiIo,
+                   Timeout,
+                   ScsiDiskDevice->SenseData,
+                   &SenseDataLength,
+                   &HostAdapterStatus,
+                   &TargetStatus,
+                   DataBuffer,
+                   DataLength,
+                   StartLba,
+                   SectorCount
+                   );
   if ((ReturnStatus == EFI_NOT_READY) || (ReturnStatus ==
                                           EFI_BAD_BUFFER_SIZE))
   {
@@ -4795,18 +4795,18 @@ BackOff:
   Action          = ACTION_NO_ACTION;
   SenseDataLength = (UINT8)(ScsiDiskDevice->SenseDataNumber *
                             sizeof (EFI_SCSI_SENSE_DATA));
-  ReturnStatus    = ScsiWrite16Command (
-                      ScsiDiskDevice->ScsiIo,
-                      Timeout,
-                      ScsiDiskDevice->SenseData,
-                      &SenseDataLength,
-                      &HostAdapterStatus,
-                      &TargetStatus,
-                      DataBuffer,
-                      DataLength,
-                      StartLba,
-                      SectorCount
-                      );
+  ReturnStatus = ScsiWrite16Command (
+                   ScsiDiskDevice->ScsiIo,
+                   Timeout,
+                   ScsiDiskDevice->SenseData,
+                   &SenseDataLength,
+                   &HostAdapterStatus,
+                   &TargetStatus,
+                   DataBuffer,
+                   DataLength,
+                   StartLba,
+                   SectorCount
+                   );
   if ((ReturnStatus == EFI_NOT_READY) || (ReturnStatus ==
                                           EFI_BAD_BUFFER_SIZE))
   {

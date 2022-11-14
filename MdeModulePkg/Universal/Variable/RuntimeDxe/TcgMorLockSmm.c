@@ -29,9 +29,9 @@ typedef struct {
 
 VARIABLE_TYPE  mMorVariableType[] = {
   { MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
-    &gEfiMemoryOverwriteControlDataGuid            },
+    &gEfiMemoryOverwriteControlDataGuid },
   { MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME,
-    &gEfiMemoryOverwriteRequestControlLockGuid      },
+    &gEfiMemoryOverwriteRequestControlLockGuid },
 };
 
 BOOLEAN  mMorPassThru = FALSE;
@@ -72,7 +72,8 @@ IsAnyMorVariable (
   UINTN  Index;
 
   for (Index = 0; Index < sizeof (mMorVariableType)/
-       sizeof (mMorVariableType[0]); Index++) {
+       sizeof (mMorVariableType[0]); Index++)
+  {
     if ((StrCmp (VariableName, mMorVariableType[Index].VariableName) == 0) &&
         (CompareGuid (VendorGuid, mMorVariableType[Index].VendorGuid)))
     {
@@ -531,8 +532,13 @@ MorLockInitAtEndOfDxe (
   }
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - Failed to lock variable %s! %r\n", __FUNCTION__,
-      MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Failed to lock variable %s! %r\n",
+      __FUNCTION__,
+      MEMORY_OVERWRITE_REQUEST_VARIABLE_NAME,
+      Status
+      ));
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -570,8 +576,13 @@ MorLockInitAtEndOfDxe (
   }
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - Failed to lock variable %s! %r\n", __FUNCTION__,
-      MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Failed to lock variable %s! %r\n",
+      __FUNCTION__,
+      MEMORY_OVERWRITE_REQUEST_CONTROL_LOCK_NAME,
+      Status
+      ));
     ASSERT_EFI_ERROR (Status);
   }
 

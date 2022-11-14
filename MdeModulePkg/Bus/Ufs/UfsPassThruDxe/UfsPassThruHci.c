@@ -710,13 +710,14 @@ UfsCreateDMCommandDesc (
 
     TotalLen = ROUNDUP8 (sizeof (UTP_QUERY_REQ_UPIU)) + ROUNDUP8 (
                                                           sizeof (
-                                                                         UTP_QUERY_RESP_UPIU)
+                                                                  UTP_QUERY_RESP_UPIU)
                                                           ) + ROUNDUP8 (
-                                                                DataSize);
+                                                                DataSize
+                                                                );
   } else {
     TotalLen = ROUNDUP8 (sizeof (UTP_QUERY_REQ_UPIU)) + ROUNDUP8 (
                                                           sizeof (
-                                                                         UTP_QUERY_RESP_UPIU)
+                                                                  UTP_QUERY_RESP_UPIU)
                                                           );
   }
 
@@ -1678,10 +1679,11 @@ UfsPrepareDataTransferBuffer (
   //
   PrdtBase = (UTP_TR_PRD *)((UINT8 *)TransReq->CmdDescHost + ROUNDUP8 (
                                                                sizeof (
-                                                                              UTP_COMMAND_UPIU)
+                                                                       UTP_COMMAND_UPIU)
                                                                ) + ROUNDUP8 (
                                                                      sizeof (
-                                                                                                                     UTP_RESPONSE_UPIU)));
+                                                                             UTP_RESPONSE_UPIU)
+                                                                     ));
   ASSERT (PrdtBase != NULL);
   UfsInitUtpPrdt (PrdtBase, (VOID *)(UINTN)DataBufPhyAddr, DataLen);
 

@@ -69,10 +69,10 @@ typedef struct {
 } PARTITION_ACCESS_TASK;
 
 #define PARTITION_DEVICE_FROM_BLOCK_IO_THIS( \
-                                           a)   \
+                                             a)   \
       CR (a, PARTITION_PRIVATE_DATA, BlockIo, PARTITION_PRIVATE_DATA_SIGNATURE)
 #define PARTITION_DEVICE_FROM_BLOCK_IO2_THIS( \
-                                            a)  \
+                                              a)  \
       CR (a, PARTITION_PRIVATE_DATA, BlockIo2, PARTITION_PRIVATE_DATA_SIGNATURE)
 
 //

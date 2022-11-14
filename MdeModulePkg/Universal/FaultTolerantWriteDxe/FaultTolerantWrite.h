@@ -87,7 +87,7 @@ typedef struct {
 } EFI_FTW_DEVICE;
 
 #define FTW_CONTEXT_FROM_THIS( \
-                             a)  \
+                               a)  \
   CR (a, EFI_FTW_DEVICE, FtwInstance, FTW_DEVICE_SIGNATURE)
 
 //

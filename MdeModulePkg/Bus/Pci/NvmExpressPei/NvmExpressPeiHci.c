@@ -746,7 +746,7 @@ NvmeControllerInit (
   if (Private->ControllerData == NULL) {
     Private->ControllerData = (NVME_ADMIN_CONTROLLER_DATA *)AllocateZeroPool (
                                                               sizeof (
-                                                                                     NVME_ADMIN_CONTROLLER_DATA)
+                                                                      NVME_ADMIN_CONTROLLER_DATA)
                                                               );
     if (Private->ControllerData == NULL) {
       return EFI_OUT_OF_RESOURCES;

@@ -915,7 +915,8 @@ SerialSetAttributes (
              (EFI_DEVICE_PATH_PROTOCOL *)(
                                           (UINT8 *)SerialDevice->DevicePath +
                                           GetDevicePathSize (
-                                            SerialDevice->ParentDevicePath) -
+                                            SerialDevice->ParentDevicePath
+                                            ) -
                                           END_DEVICE_PATH_LENGTH
                                           ),
              NULL,

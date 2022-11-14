@@ -882,7 +882,7 @@ GetPdbPath (
     OptionalHdr32  = (VOID *)&NtHdr->Pe32.OptionalHeader;
     DirectoryEntry =
       (EFI_IMAGE_DATA_DIRECTORY *)&(OptionalHdr32->DataDirectory[
-                                                                               EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                                                 EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
                                     ]);
   } else if (NtHdr->Pe32Plus.OptionalHeader.Magic ==
              EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC)
@@ -890,7 +890,7 @@ GetPdbPath (
     OptionalHdr64  = (VOID *)&NtHdr->Pe32Plus.OptionalHeader;
     DirectoryEntry =
       (EFI_IMAGE_DATA_DIRECTORY *)&(OptionalHdr64->DataDirectory[
-                                                                               EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
+                                                                 EFI_IMAGE_DIRECTORY_ENTRY_DEBUG
                                     ]);
   } else {
     return NULL;
@@ -914,7 +914,7 @@ GetPdbPath (
       (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)(DirectoryEntry->VirtualAddress +
                                           (UINTN)ImageBase + DirCount *
                                           sizeof (
-                                                                                                                           EFI_IMAGE_DEBUG_DIRECTORY_ENTRY));
+                                                  EFI_IMAGE_DEBUG_DIRECTORY_ENTRY));
     if (DebugEntry->Type == EFI_IMAGE_DEBUG_TYPE_CODEVIEW) {
       //
       // Match DebugEntry, only CODEVIEW_SIGNATURE_NB10 and CODEVIEW_SIGNATURE_RSDS are supported.

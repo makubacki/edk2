@@ -91,7 +91,7 @@ PartitionValidMbr (
     for (Index2 = Index1 + 1; Index2 < MAX_MBR_PARTITIONS; Index2++) {
       if ((Mbr->Partition[Index2].OSIndicator == 0x00) || (UNPACK_UINT32 (
                                                              Mbr->Partition[
-                                                                                        Index2
+                                                                            Index2
                                                              ].SizeInLBA
                                                              ) == 0))
       {

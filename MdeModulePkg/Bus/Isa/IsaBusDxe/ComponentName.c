@@ -14,8 +14,8 @@
 //
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mIsaBusDriverNameTable[] = {
-  { "eng;en", L"PI ISA BUS Driver"     },
-  { NULL,     NULL                     }
+  { "eng;en", L"PI ISA BUS Driver" },
+  { NULL,     NULL                 }
 };
 
 //

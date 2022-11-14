@@ -1057,8 +1057,8 @@ BdsEntry (
   //
   BootManagerMenuStatus = EfiBootManagerGetBootManagerMenu (&BootManagerMenu);
 
-  BootFwUi         = (BOOLEAN)((OsIndication &
-                                EFI_OS_INDICATIONS_BOOT_TO_FW_UI) != 0);
+  BootFwUi = (BOOLEAN)((OsIndication &
+                        EFI_OS_INDICATIONS_BOOT_TO_FW_UI) != 0);
   PlatformRecovery = (BOOLEAN)((OsIndication &
                                 EFI_OS_INDICATIONS_START_PLATFORM_RECOVERY) !=
                                0);
@@ -1068,15 +1068,15 @@ BdsEntry (
   if (BootFwUi || PlatformRecovery) {
     OsIndication &= ~((UINT64)(EFI_OS_INDICATIONS_BOOT_TO_FW_UI |
                                EFI_OS_INDICATIONS_START_PLATFORM_RECOVERY));
-    Status        = gRT->SetVariable (
-                           EFI_OS_INDICATIONS_VARIABLE_NAME,
-                           &gEfiGlobalVariableGuid,
-                           EFI_VARIABLE_BOOTSERVICE_ACCESS |
-                           EFI_VARIABLE_RUNTIME_ACCESS |
-                           EFI_VARIABLE_NON_VOLATILE,
-                           sizeof (UINT64),
-                           &OsIndication
-                           );
+    Status = gRT->SetVariable (
+                    EFI_OS_INDICATIONS_VARIABLE_NAME,
+                    &gEfiGlobalVariableGuid,
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                    EFI_VARIABLE_RUNTIME_ACCESS |
+                    EFI_VARIABLE_NON_VOLATILE,
+                    sizeof (UINT64),
+                    &OsIndication
+                    );
     //
     // Changing the content without increasing its size with current variable implementation shouldn't fail.
     //

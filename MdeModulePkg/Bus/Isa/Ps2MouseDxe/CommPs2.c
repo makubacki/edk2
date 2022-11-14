@@ -298,8 +298,10 @@ PS2MouseSetScaling (
   //
   // Send auxiliary command to set mouse scaling data
   //
-  return Out8042AuxCommand (Scaling == Scaling1 ? SETSF1_CMD : SETSF2_CMD,
-           FALSE);
+  return Out8042AuxCommand (
+           Scaling == Scaling1 ? SETSF1_CMD : SETSF2_CMD,
+           FALSE
+           );
 }
 
 /**

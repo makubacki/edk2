@@ -538,7 +538,7 @@ BgrtReadyToBootEventNotify (
                                 AcpiTableProtocol,
                                 &mBootGraphicsResourceTableTemplate,
                                 sizeof (
-                                       EFI_ACPI_5_0_BOOT_GRAPHICS_RESOURCE_TABLE),
+                                        EFI_ACPI_5_0_BOOT_GRAPHICS_RESOURCE_TABLE),
                                 &mBootGraphicsResourceTableKey
                                 );
   if (EFI_ERROR (Status)) {

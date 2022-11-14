@@ -962,8 +962,8 @@ CreateTransferRing (
   // To form a ring (or circular queue) a Link TRB may be inserted at the end of a ring to
   // point to the first TRB in the ring.
   //
-  EndTrb       = (LINK_TRB *)((UINTN)Buf + sizeof (TRB_TEMPLATE) * (TrbNum -
-                                                                    1));
+  EndTrb = (LINK_TRB *)((UINTN)Buf + sizeof (TRB_TEMPLATE) * (TrbNum -
+                                                              1));
   EndTrb->Type = TRB_TYPE_LINK;
   PhyAddr      = UsbHcGetPciAddrForHostAddr (
                    Xhc->MemPool,
@@ -1130,12 +1130,12 @@ IsTransferRingTrb (
     // recircle it to the head of the ring.
     //
     if (CheckedTrb->Type == TRB_TYPE_LINK) {
-      LinkTrb    = (LINK_TRB *)CheckedTrb;
-      PhyAddr    = (EFI_PHYSICAL_ADDRESS)(LinkTrb->PtrLo | LShiftU64 (
-                                                             (UINT64)LinkTrb->
-                                                               PtrHi,
-                                                             32
-                                                             ));
+      LinkTrb = (LINK_TRB *)CheckedTrb;
+      PhyAddr = (EFI_PHYSICAL_ADDRESS)(LinkTrb->PtrLo | LShiftU64 (
+                                                          (UINT64)LinkTrb->
+                                                            PtrHi,
+                                                          32
+                                                          ));
       CheckedTrb = (TRB_TEMPLATE *)(UINTN)UsbHcGetHostAddrForPciAddr (
                                             Xhc->MemPool,
                                             (VOID *)(UINTN)PhyAddr,
@@ -1259,11 +1259,11 @@ XhcCheckUrbResult (
                                                             TRBPtrHi,
                                                           32
                                                           ));
-    TRBPtr  = (TRB_TEMPLATE *)(UINTN)UsbHcGetHostAddrForPciAddr (
-                                       Xhc->MemPool,
-                                       (VOID *)(UINTN)PhyAddr,
-                                       sizeof (TRB_TEMPLATE)
-                                       );
+    TRBPtr = (TRB_TEMPLATE *)(UINTN)UsbHcGetHostAddrForPciAddr (
+                                      Xhc->MemPool,
+                                      (VOID *)(UINTN)PhyAddr,
+                                      sizeof (TRB_TEMPLATE)
+                                      );
 
     //
     // Update the status of URB including the pending URB, the URB that is currently checked,
@@ -1921,13 +1921,13 @@ XhcPollPortStatusChange (
       RouteChart.Route.RouteString = ParentRouteChart.Route.RouteString | (15 <<
                                                                            (4 *
                                                                             (
-                                                                                      ParentRouteChart
-                                                                                        .
-                                                                                        Route
-                                                                                        .
-                                                                                        TierNum
-                                                                                      -
-                                                                                      1)));
+                                                                             ParentRouteChart
+                                                                               .
+                                                                               Route
+                                                                               .
+                                                                               TierNum
+                                                                             -
+                                                                             1)));
     }
 
     RouteChart.Route.RootPortNum = ParentRouteChart.Route.RootPortNum;
@@ -2903,7 +2903,7 @@ XhcDisableSlotCmd (
       RingSeg =
         ((TRANSFER_RING *)(UINTN)Xhc->UsbDevContext[SlotId].EndpointTransferRing
          [
-                   Index
+          Index
          ])->RingSeg0;
       if (RingSeg != NULL) {
         UsbHcFreeMem (
@@ -3041,7 +3041,7 @@ XhcDisableSlotCmd64 (
       RingSeg =
         ((TRANSFER_RING *)(UINTN)Xhc->UsbDevContext[SlotId].EndpointTransferRing
          [
-                   Index
+          Index
          ])->RingSeg0;
       if (RingSeg != NULL) {
         UsbHcFreeMem (

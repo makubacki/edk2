@@ -222,9 +222,9 @@ GetCapsuleImageTypeId (
   ImageHeader =
     (EFI_FIRMWARE_MANAGEMENT_CAPSULE_IMAGE_HEADER *)((UINT8 *)FmpCapsuleHeader +
                                                      ItemOffsetList[
-                                                                                                           FmpCapsuleHeader
-                                                                                                             ->
-                                                                                                             EmbeddedDriverCount
+                                                                    FmpCapsuleHeader
+                                                                      ->
+                                                                      EmbeddedDriverCount
                                                      ]);
   return &ImageHeader->UpdateImageTypeId;
 }

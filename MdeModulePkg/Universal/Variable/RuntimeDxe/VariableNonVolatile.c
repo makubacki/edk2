@@ -234,7 +234,7 @@ InitRealNonVolatileVariableStore (
         //
         BackUpOffset = (UINT32)(FtwLastWriteData->TargetAddress -
                                 NvStorageBase);
-        BackUpSize   = NvStorageSize - BackUpOffset;
+        BackUpSize = NvStorageSize - BackUpOffset;
         DEBUG ((
           DEBUG_INFO,
           "Variable: High partial NV storage from offset: %x is backed up in spare block: 0x%x\n",
@@ -269,8 +269,8 @@ InitRealNonVolatileVariableStore (
     return EFI_VOLUME_CORRUPTED;
   }
 
-  VariableStore       = (VARIABLE_STORE_HEADER *)((UINTN)FvHeader +
-                                                  FvHeader->HeaderLength);
+  VariableStore = (VARIABLE_STORE_HEADER *)((UINTN)FvHeader +
+                                            FvHeader->HeaderLength);
   VariableStoreLength = NvStorageSize - FvHeader->HeaderLength;
   ASSERT (sizeof (VARIABLE_STORE_HEADER) <= VariableStoreLength);
   ASSERT (VariableStore->Size == VariableStoreLength);
@@ -407,7 +407,8 @@ InitNonVolatileVariableStore (
   mVariableModuleGlobal->MaxAuthVariableSize = ((PcdGet32 (
                                                    PcdMaxAuthVariableSize
                                                    ) != 0) ? PcdGet32 (
-                                                               PcdMaxAuthVariableSize)
+                                                               PcdMaxAuthVariableSize
+                                                               )
   :
                                                 mVariableModuleGlobal->
                                                   MaxVariableSize);

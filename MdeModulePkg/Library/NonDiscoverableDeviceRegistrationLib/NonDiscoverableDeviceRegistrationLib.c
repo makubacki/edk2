@@ -152,14 +152,14 @@ RegisterNonDiscoverableMmioDevice (
     Base = VA_ARG (Args, UINTN);
     Size = VA_ARG (Args, UINTN);
 
-    Desc->Desc                  = ACPI_ADDRESS_SPACE_DESCRIPTOR;
-    Desc->Len                   = sizeof *Desc - 3;
-    Desc->AddrRangeMin          = Base;
-    Desc->AddrLen               = Size;
-    Desc->AddrRangeMax          = Base + Size - 1;
-    Desc->ResType               = ACPI_ADDRESS_SPACE_TYPE_MEM;
-    Desc->AddrSpaceGranularity  = ((EFI_PHYSICAL_ADDRESS)Base + Size >
-                                   SIZE_4GB) ? 64 : 32;
+    Desc->Desc                 = ACPI_ADDRESS_SPACE_DESCRIPTOR;
+    Desc->Len                  = sizeof *Desc - 3;
+    Desc->AddrRangeMin         = Base;
+    Desc->AddrLen              = Size;
+    Desc->AddrRangeMax         = Base + Size - 1;
+    Desc->ResType              = ACPI_ADDRESS_SPACE_TYPE_MEM;
+    Desc->AddrSpaceGranularity = ((EFI_PHYSICAL_ADDRESS)Base + Size >
+                                  SIZE_4GB) ? 64 : 32;
     Desc->AddrTranslationOffset = 0;
   }
 

@@ -17,19 +17,19 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // bit maps.
 //
 USB_CHANGE_FEATURE_MAP  mHubFeatureMap[] = {
-  { USB_PORT_STAT_C_CONNECTION,  EfiUsbPortConnectChange           },
-  { USB_PORT_STAT_C_ENABLE,      EfiUsbPortEnableChange            },
-  { USB_PORT_STAT_C_SUSPEND,     EfiUsbPortSuspendChange           },
-  { USB_PORT_STAT_C_OVERCURRENT, EfiUsbPortOverCurrentChange       },
-  { USB_PORT_STAT_C_RESET,       EfiUsbPortResetChange             }
+  { USB_PORT_STAT_C_CONNECTION,  EfiUsbPortConnectChange     },
+  { USB_PORT_STAT_C_ENABLE,      EfiUsbPortEnableChange      },
+  { USB_PORT_STAT_C_SUSPEND,     EfiUsbPortSuspendChange     },
+  { USB_PORT_STAT_C_OVERCURRENT, EfiUsbPortOverCurrentChange },
+  { USB_PORT_STAT_C_RESET,       EfiUsbPortResetChange       }
 };
 
 USB_CHANGE_FEATURE_MAP  mRootHubFeatureMap[] = {
-  { USB_PORT_STAT_C_CONNECTION,  EfiUsbPortConnectChange           },
-  { USB_PORT_STAT_C_ENABLE,      EfiUsbPortEnableChange            },
-  { USB_PORT_STAT_C_SUSPEND,     EfiUsbPortSuspendChange           },
-  { USB_PORT_STAT_C_OVERCURRENT, EfiUsbPortOverCurrentChange       },
-  { USB_PORT_STAT_C_RESET,       EfiUsbPortResetChange             },
+  { USB_PORT_STAT_C_CONNECTION,  EfiUsbPortConnectChange     },
+  { USB_PORT_STAT_C_ENABLE,      EfiUsbPortEnableChange      },
+  { USB_PORT_STAT_C_SUSPEND,     EfiUsbPortSuspendChange     },
+  { USB_PORT_STAT_C_OVERCURRENT, EfiUsbPortOverCurrentChange },
+  { USB_PORT_STAT_C_RESET,       EfiUsbPortResetChange       },
 };
 
 //

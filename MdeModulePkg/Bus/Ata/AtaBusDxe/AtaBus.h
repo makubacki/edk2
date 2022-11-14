@@ -157,22 +157,22 @@ typedef struct {
 } ATA_BUS_ASYN_TASK;
 
 #define ATA_DEVICE_FROM_BLOCK_IO( \
-                                a)          \
+                                  a)          \
       CR (a, ATA_DEVICE, BlockIo, ATA_DEVICE_SIGNATURE)
 #define ATA_DEVICE_FROM_BLOCK_IO2( \
-                                 a)         \
+                                   a)         \
       CR (a, ATA_DEVICE, BlockIo2, ATA_DEVICE_SIGNATURE)
 #define ATA_DEVICE_FROM_DISK_INFO( \
-                                 a)         \
+                                   a)         \
       CR (a, ATA_DEVICE, DiskInfo, ATA_DEVICE_SIGNATURE)
 #define ATA_DEVICE_FROM_STORAGE_SECURITY( \
-                                        a)  \
+                                          a)  \
       CR (a, ATA_DEVICE, StorageSecurity, ATA_DEVICE_SIGNATURE)
 #define ATA_ASYN_SUB_TASK_FROM_ENTRY( \
-                                    a)      \
+                                      a)      \
       CR (a, ATA_BUS_ASYN_SUB_TASK, TaskEntry, ATA_SUB_TASK_SIGNATURE)
 #define ATA_ASYN_TASK_FROM_ENTRY( \
-                                a)          \
+                                  a)          \
       CR (a, ATA_BUS_ASYN_TASK, TaskEntry, ATA_TASK_SIGNATURE)
 
 //

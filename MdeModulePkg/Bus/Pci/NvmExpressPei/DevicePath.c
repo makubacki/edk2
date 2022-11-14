@@ -216,7 +216,7 @@ NvmeBuildDevicePath (
   DevicePathWalker = (EFI_DEVICE_PATH_PROTOCOL *)((UINT8 *)DevicePathWalker +
                                                   (Private->DevicePathLength -
                                                    sizeof (
-                                                                                      EFI_DEVICE_PATH_PROTOCOL)));
+                                                           EFI_DEVICE_PATH_PROTOCOL)));
   CopyMem (
     DevicePathWalker,
     &mNvmeDevicePathNodeTemplate,
@@ -232,7 +232,7 @@ NvmeBuildDevicePath (
   //
   DevicePathWalker = (EFI_DEVICE_PATH_PROTOCOL *)((UINT8 *)DevicePathWalker +
                                                   sizeof (
-                                                         NVME_NAMESPACE_DEVICE_PATH));
+                                                          NVME_NAMESPACE_DEVICE_PATH));
   CopyMem (
     DevicePathWalker,
     &mNvmeEndDevicePathNodeTemplate,

@@ -544,13 +544,13 @@ BmRepairAllControllers (
         if (!EFI_ERROR (Status) && !ConfigurationRequired) {
           Status = DriverHealthInfo[Index].DriverHealth->GetHealthStatus (
                                                            DriverHealthInfo[
-                                                                           Index
+                                                                            Index
                                                            ].DriverHealth,
                                                            DriverHealthInfo[
-                                                                           Index
+                                                                            Index
                                                            ].ControllerHandle,
                                                            DriverHealthInfo[
-                                                                           Index
+                                                                            Index
                                                            ].ChildHandle,
                                                            &HealthStatus,
                                                            NULL,

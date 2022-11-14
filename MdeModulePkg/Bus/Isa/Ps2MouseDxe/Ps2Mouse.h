@@ -95,7 +95,7 @@ typedef struct {
 } PS2_MOUSE_DEV;
 
 #define PS2_MOUSE_DEV_FROM_THIS( \
-                               a)  \
+                                 a)  \
   CR (a, PS2_MOUSE_DEV, SimplePointerProtocol, PS2_MOUSE_DEV_SIGNATURE)
 
 //

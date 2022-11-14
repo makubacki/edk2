@@ -701,8 +701,8 @@ DumpSmiChildContext (
       );
     Str = ConvertDevicePathToText (
             (EFI_DEVICE_PATH_PROTOCOL *)(((
-                                                                 SMI_HANDLER_PROFILE_USB_REGISTER_CONTEXT
-                                                                 *)
+                                           SMI_HANDLER_PROFILE_USB_REGISTER_CONTEXT
+                                           *)
                                           Context) + 1),
             TRUE,
             TRUE

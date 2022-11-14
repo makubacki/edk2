@@ -82,7 +82,7 @@ EnumerateNvmeDevNamespace (
 
   NamespaceData = (NVME_ADMIN_NAMESPACE_DATA *)AllocateZeroPool (
                                                  sizeof (
-                                                                        NVME_ADMIN_NAMESPACE_DATA)
+                                                         NVME_ADMIN_NAMESPACE_DATA)
                                                  );
   if (NamespaceData == NULL) {
     return EFI_OUT_OF_RESOURCES;

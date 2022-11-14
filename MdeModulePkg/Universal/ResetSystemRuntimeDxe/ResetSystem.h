@@ -40,7 +40,7 @@ typedef struct {
 } RESET_NOTIFY_ENTRY;
 #define RESET_NOTIFY_ENTRY_SIGNATURE  SIGNATURE_32('r', 's', 't', 'n')
 #define RESET_NOTIFY_ENTRY_FROM_LINK( \
-                                    a)  \
+                                      a)  \
   CR (a, RESET_NOTIFY_ENTRY, Link, RESET_NOTIFY_ENTRY_SIGNATURE)
 
 typedef struct {

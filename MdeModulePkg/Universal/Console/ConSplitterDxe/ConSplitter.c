@@ -834,7 +834,7 @@ ConSplitterTextOutConstructor (
     //
     if ((ConOutPrivate->GraphicsOutput.Mode = AllocateZeroPool (
                                                 sizeof (
-                                                                       EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE)
+                                                        EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE)
                                                 )) == NULL)
     {
       return EFI_OUT_OF_RESOURCES;
@@ -842,7 +842,7 @@ ConSplitterTextOutConstructor (
 
     if ((ConOutPrivate->GraphicsOutput.Mode->Info = AllocateZeroPool (
                                                       sizeof (
-                                                                             EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
+                                                              EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
                                                       )) == NULL)
     {
       return EFI_OUT_OF_RESOURCES;
@@ -854,7 +854,7 @@ ConSplitterTextOutConstructor (
     //
     if ((ConOutPrivate->GraphicsOutputModeBuffer = AllocateZeroPool (
                                                      sizeof (
-                                                                            EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
+                                                             EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
                                                      )) == NULL)
     {
       return EFI_OUT_OF_RESOURCES;

@@ -215,7 +215,7 @@ AhciBuildDevicePath (
   DevicePathWalker = (EFI_DEVICE_PATH_PROTOCOL *)((UINT8 *)DevicePathWalker +
                                                   (Private->DevicePathLength -
                                                    sizeof (
-                                                                                      EFI_DEVICE_PATH_PROTOCOL)));
+                                                           EFI_DEVICE_PATH_PROTOCOL)));
   CopyMem (
     DevicePathWalker,
     &mAhciSataDevicePathNodeTemplate,

@@ -82,11 +82,11 @@ typedef struct _USB2_HC_DEV USB2_HC_DEV;
 
 #define EFI_LIST_CONTAINER(Entry, Type, Field)  BASE_CR(Entry, Type, Field)
 
-#define EHC_LOW_32BIT(Addr64)        ((UINT32)(((UINTN)(Addr64)) & 0XFFFFFFFF))
+#define EHC_LOW_32BIT(Addr64)  ((UINT32)(((UINTN)(Addr64)) & 0XFFFFFFFF))
 #define EHC_HIGH_32BIT( \
-                      Addr64)     \
+                        Addr64)     \
                                      ((UINT32)(RShiftU64((UINTN)(Addr64), 32) & 0XFFFFFFFF))
-#define EHC_BIT_IS_SET(Data, Bit)    ((BOOLEAN)(((Data) & (Bit)) == (Bit)))
+#define EHC_BIT_IS_SET(Data, Bit)  ((BOOLEAN)(((Data) & (Bit)) == (Bit)))
 
 #define EHC_REG_BIT_IS_SET(Ehc, Offset, Bit) \
           (EHC_BIT_IS_SET(EhcReadOpReg ((Ehc), (Offset)), (Bit)))

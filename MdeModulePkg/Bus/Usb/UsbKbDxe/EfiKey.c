@@ -1171,7 +1171,7 @@ USBKeyboardRegisterKeyNotify (
   //
   NewNotify = (KEYBOARD_CONSOLE_IN_EX_NOTIFY *)AllocateZeroPool (
                                                  sizeof (
-                                                                        KEYBOARD_CONSOLE_IN_EX_NOTIFY)
+                                                         KEYBOARD_CONSOLE_IN_EX_NOTIFY)
                                                  );
   if (NewNotify == NULL) {
     return EFI_OUT_OF_RESOURCES;

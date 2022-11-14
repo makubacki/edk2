@@ -39,7 +39,7 @@ typedef struct _EMMC_PEIM_MEM_POOL {
 #define EMMC_PEIM_MEM_DEFAULT_PAGES  16
 
 #define EMMC_PEIM_MEM_ROUND( \
-                           Len)  \
+                             Len)  \
   (((Len) + EMMC_PEIM_MEM_UNIT_MASK) & (~EMMC_PEIM_MEM_UNIT_MASK))
 
 //

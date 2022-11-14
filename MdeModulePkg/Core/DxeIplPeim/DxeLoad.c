@@ -753,21 +753,21 @@ Decompress (
   }
 
   if (IS_SECTION2 (CompressionSection)) {
-    CompressionSource     = (VOID *)((UINT8 *)CompressionSection +
-                                     sizeof (EFI_COMPRESSION_SECTION2));
+    CompressionSource = (VOID *)((UINT8 *)CompressionSection +
+                                 sizeof (EFI_COMPRESSION_SECTION2));
     CompressionSourceSize = (UINT32)(SECTION2_SIZE (CompressionSection) -
                                      sizeof (EFI_COMPRESSION_SECTION2));
-    UncompressedLength    =
+    UncompressedLength =
       ((EFI_COMPRESSION_SECTION2 *)CompressionSection)->UncompressedLength;
     CompressionType =
       ((EFI_COMPRESSION_SECTION2 *)CompressionSection)->CompressionType;
   } else {
-    CompressionSource     = (VOID *)((UINT8 *)CompressionSection +
-                                     sizeof (EFI_COMPRESSION_SECTION));
+    CompressionSource = (VOID *)((UINT8 *)CompressionSection +
+                                 sizeof (EFI_COMPRESSION_SECTION));
     CompressionSourceSize = (UINT32)(SECTION_SIZE (CompressionSection) -
                                      sizeof (EFI_COMPRESSION_SECTION));
-    UncompressedLength    = CompressionSection->UncompressedLength;
-    CompressionType       = CompressionSection->CompressionType;
+    UncompressedLength = CompressionSection->UncompressedLength;
+    CompressionType    = CompressionSection->CompressionType;
   }
 
   //

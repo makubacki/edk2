@@ -3660,7 +3660,7 @@ HiiCreateOneOfOptionOpCode (
   OpCode.Option = StringId;
   OpCode.Flags  = (UINT8)(Flags & (EFI_IFR_OPTION_DEFAULT |
                                    EFI_IFR_OPTION_DEFAULT_MFG));
-  OpCode.Type   = Type;
+  OpCode.Type = Type;
   CopyMem (&OpCode.Value, &Value, mHiiDefaultTypeToWidth[Type]);
 
   return InternalHiiCreateOpCode (
@@ -4699,8 +4699,8 @@ InternalHiiUpdateFormPackageData (
   BufferPos           = (UINT8 *)(TempPackage + 1);
 
   CopyMem (&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
-  IfrOpHdr   = (EFI_IFR_OP_HEADER *)((UINT8 *)Package +
-                                     sizeof (EFI_HII_PACKAGE_HEADER));
+  IfrOpHdr = (EFI_IFR_OP_HEADER *)((UINT8 *)Package +
+                                   sizeof (EFI_HII_PACKAGE_HEADER));
   Offset     = sizeof (EFI_HII_PACKAGE_HEADER);
   GetFormSet = (BOOLEAN)((FormSetGuid == NULL) ? TRUE : FALSE);
   GetForm    = FALSE;
@@ -4751,9 +4751,9 @@ InternalHiiUpdateFormPackageData (
         // Remove the original data when End OpCode buffer exist.
         //
         if (OpCodeBufferEnd != NULL) {
-          Offset        += IfrOpHdr->Length;
-          IfrOpHdr       = (EFI_IFR_OP_HEADER *)((UINT8 *)(IfrOpHdr) +
-                                                 IfrOpHdr->Length);
+          Offset  += IfrOpHdr->Length;
+          IfrOpHdr = (EFI_IFR_OP_HEADER *)((UINT8 *)(IfrOpHdr) +
+                                           IfrOpHdr->Length);
           UpdateIfrOpHdr = (EFI_IFR_OP_HEADER *)OpCodeBufferEnd->Buffer;
           while (Offset < PackageHeader.Length) {
             //

@@ -88,15 +88,15 @@ HookPageFaultHandler (
                                                       IdtEntry->Bits.OffsetLow +
                                                       (IdtEntry->Bits.OffsetHigh
                                                        << 16));
-  IdtEntry->Bits.OffsetLow          = (UINT16)PageFaultHandlerHookAddress;
-  IdtEntry->Bits.Selector           = (UINT16)AsmReadCs ();
-  IdtEntry->Bits.Reserved_0         = 0;
-  IdtEntry->Bits.GateType           = IA32_IDT_GATE_TYPE_INTERRUPT_32;
-  IdtEntry->Bits.OffsetHigh         = (UINT16)(PageFaultHandlerHookAddress >>
-                                               16);
-  IdtEntry->Bits.OffsetUpper        = (UINT32)(PageFaultHandlerHookAddress >>
-                                               32);
-  IdtEntry->Bits.Reserved_1         = 0;
+  IdtEntry->Bits.OffsetLow  = (UINT16)PageFaultHandlerHookAddress;
+  IdtEntry->Bits.Selector   = (UINT16)AsmReadCs ();
+  IdtEntry->Bits.Reserved_0 = 0;
+  IdtEntry->Bits.GateType   = IA32_IDT_GATE_TYPE_INTERRUPT_32;
+  IdtEntry->Bits.OffsetHigh = (UINT16)(PageFaultHandlerHookAddress >>
+                                       16);
+  IdtEntry->Bits.OffsetUpper = (UINT32)(PageFaultHandlerHookAddress >>
+                                        32);
+  IdtEntry->Bits.Reserved_1 = 0;
 
   if (PageFaultContext->Page1GSupport) {
     PageFaultContext->PageFaultBuffer = (UINTN)(AsmReadCr3 () &
@@ -191,8 +191,8 @@ PageFaultHandler (
   //
   PageFaultContext = (PAGE_FAULT_CONTEXT *)(UINTN)(Idtr.Base -
                                                    sizeof (PAGE_FAULT_CONTEXT));
-  PhyMask          = PageFaultContext->PhyMask;
-  AddressEncMask   = PageFaultContext->AddressEncMask;
+  PhyMask        = PageFaultContext->PhyMask;
+  AddressEncMask = PageFaultContext->AddressEncMask;
 
   PFAddress = AsmReadCr2 ();
   DEBUG ((
@@ -228,7 +228,7 @@ PageFaultHandler (
 
     PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~AddressEncMask &
                                   PhyMask);
-    PTIndex   = BitFieldRead64 (PFAddress, 21, 29);
+    PTIndex = BitFieldRead64 (PFAddress, 21, 29);
     // PD
     PageTable[PTIndex] = ((PFAddress | AddressEncMask) & ~((1ull << 21) - 1)) |
                          IA32_PG_P | IA32_PG_RW | IA32_PG_PS;
@@ -294,7 +294,7 @@ _ModuleEntryPoint (
   IdtEntry =
     (IA32_IDT_GATE_DESCRIPTOR *)(X64Idtr.Base + (14 *
                                                  sizeof (
-                                                                                                               IA32_IDT_GATE_DESCRIPTOR)));
+                                                         IA32_IDT_GATE_DESCRIPTOR)));
   HookPageFaultHandler (IdtEntry, &(PageFaultIdtTable.PageFaultContext));
 
   //

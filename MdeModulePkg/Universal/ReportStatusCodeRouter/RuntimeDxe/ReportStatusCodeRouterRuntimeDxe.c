@@ -69,7 +69,7 @@ RscHandlerNotification (
 
     Address += (OFFSET_OF (RSC_DATA_ENTRY, Data) + RscData->Data.HeaderSize +
                 RscData->Data.Size);
-    Address  = ALIGN_VARIABLE (Address);
+    Address = ALIGN_VARIABLE (Address);
   }
 
   CallbackEntry->EndPointer = CallbackEntry->StatusCodeDataBuffer;
@@ -124,7 +124,8 @@ Register (
                                                     ); Link = GetNextNode (
                                                                 &
                                                                 mCallbackListHead,
-                                                                Link))
+                                                                Link
+                                                                ))
   {
     CallbackEntry = CR (
                       Link,
@@ -208,7 +209,8 @@ Unregister (
                                                     ); Link = GetNextNode (
                                                                 &
                                                                 mCallbackListHead,
-                                                                Link))
+                                                                Link
+                                                                ))
   {
     CallbackEntry = CR (
                       Link,
@@ -412,7 +414,8 @@ VirtualAddressChangeCallBack (
                                                     ); Link = GetNextNode (
                                                                 &
                                                                 mCallbackListHead,
-                                                                Link))
+                                                                Link
+                                                                ))
   {
     CallbackEntry = CR (
                       Link,

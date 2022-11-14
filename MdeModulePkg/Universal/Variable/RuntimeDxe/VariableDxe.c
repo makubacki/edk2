@@ -248,31 +248,49 @@ VariableClassAddressChangeEvent (
   UINTN  Index;
 
   if (mVariableModuleGlobal->FvbInstance != NULL) {
-    EfiConvertPointer (0x0,
-      (VOID **)&mVariableModuleGlobal->FvbInstance->GetBlockSize);
-    EfiConvertPointer (0x0,
-      (VOID **)&mVariableModuleGlobal->FvbInstance->GetPhysicalAddress);
-    EfiConvertPointer (0x0,
-      (VOID **)&mVariableModuleGlobal->FvbInstance->GetAttributes);
-    EfiConvertPointer (0x0,
-      (VOID **)&mVariableModuleGlobal->FvbInstance->SetAttributes);
+    EfiConvertPointer (
+      0x0,
+      (VOID **)&mVariableModuleGlobal->FvbInstance->GetBlockSize
+      );
+    EfiConvertPointer (
+      0x0,
+      (VOID **)&mVariableModuleGlobal->FvbInstance->GetPhysicalAddress
+      );
+    EfiConvertPointer (
+      0x0,
+      (VOID **)&mVariableModuleGlobal->FvbInstance->GetAttributes
+      );
+    EfiConvertPointer (
+      0x0,
+      (VOID **)&mVariableModuleGlobal->FvbInstance->SetAttributes
+      );
     EfiConvertPointer (0x0, (VOID **)&mVariableModuleGlobal->FvbInstance->Read);
-    EfiConvertPointer (0x0,
-      (VOID **)&mVariableModuleGlobal->FvbInstance->Write);
-    EfiConvertPointer (0x0,
-      (VOID **)&mVariableModuleGlobal->FvbInstance->EraseBlocks);
+    EfiConvertPointer (
+      0x0,
+      (VOID **)&mVariableModuleGlobal->FvbInstance->Write
+      );
+    EfiConvertPointer (
+      0x0,
+      (VOID **)&mVariableModuleGlobal->FvbInstance->EraseBlocks
+      );
     EfiConvertPointer (0x0, (VOID **)&mVariableModuleGlobal->FvbInstance);
   }
 
   EfiConvertPointer (0x0, (VOID **)&mVariableModuleGlobal->PlatformLangCodes);
   EfiConvertPointer (0x0, (VOID **)&mVariableModuleGlobal->LangCodes);
   EfiConvertPointer (0x0, (VOID **)&mVariableModuleGlobal->PlatformLang);
-  EfiConvertPointer (0x0,
-    (VOID **)&mVariableModuleGlobal->VariableGlobal.NonVolatileVariableBase);
-  EfiConvertPointer (0x0,
-    (VOID **)&mVariableModuleGlobal->VariableGlobal.VolatileVariableBase);
-  EfiConvertPointer (0x0,
-    (VOID **)&mVariableModuleGlobal->VariableGlobal.HobVariableBase);
+  EfiConvertPointer (
+    0x0,
+    (VOID **)&mVariableModuleGlobal->VariableGlobal.NonVolatileVariableBase
+    );
+  EfiConvertPointer (
+    0x0,
+    (VOID **)&mVariableModuleGlobal->VariableGlobal.VolatileVariableBase
+    );
+  EfiConvertPointer (
+    0x0,
+    (VOID **)&mVariableModuleGlobal->VariableGlobal.HobVariableBase
+    );
   EfiConvertPointer (0x0, (VOID **)&mVariableModuleGlobal);
   EfiConvertPointer (0x0, (VOID **)&mNvVariableCache);
   EfiConvertPointer (0x0, (VOID **)&mNvFvHeaderCache);
@@ -320,7 +338,8 @@ OnReadyToBoot (
     //
     mEndOfDxe               = TRUE;
     mVarCheckAddressPointer = VarCheckLibInitializeAtEndOfDxe (
-                                &mVarCheckAddressPointerCount);
+                                &mVarCheckAddressPointerCount
+                                );
     //
     // The initialization for variable quota.
     //
@@ -330,8 +349,10 @@ OnReadyToBoot (
   ReclaimForOS ();
   if (FeaturePcdGet (PcdVariableCollectStatistics)) {
     if (mVariableModuleGlobal->VariableGlobal.AuthFormat) {
-      gBS->InstallConfigurationTable (&gEfiAuthenticatedVariableGuid,
-             gVariableInfo);
+      gBS->InstallConfigurationTable (
+             &gEfiAuthenticatedVariableGuid,
+             gVariableInfo
+             );
     } else {
       gBS->InstallConfigurationTable (&gEfiVariableGuid, gVariableInfo);
     }
@@ -364,7 +385,8 @@ OnEndOfDxe (
   ASSERT_EFI_ERROR (Status);
   mEndOfDxe               = TRUE;
   mVarCheckAddressPointer = VarCheckLibInitializeAtEndOfDxe (
-                              &mVarCheckAddressPointerCount);
+                              &mVarCheckAddressPointerCount
+                              );
   //
   // The initialization for variable quota.
   //
@@ -389,8 +411,11 @@ VariableWriteServiceInitializeDxe (
 
   Status = VariableWriteServiceInitialize ();
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR,
-      "Variable write service initialization failed. Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Variable write service initialization failed. Status = %r\n",
+      Status
+      ));
   }
 
   //
@@ -449,8 +474,10 @@ FtwNotificationEvent (
     return;
   }
 
-  Status = GetVariableFlashNvStorageInfo (&NvStorageVariableBase,
-             &NvStorageVariableSize64);
+  Status = GetVariableFlashNvStorageInfo (
+             &NvStorageVariableBase,
+             &NvStorageVariableSize64
+             );
   ASSERT_EFI_ERROR (Status);
 
   Status = SafeUint64ToUint32 (NvStorageVariableSize64, &NvStorageVariableSize);
@@ -490,8 +517,10 @@ FtwNotificationEvent (
 
   Status = gDS->GetMemorySpaceDescriptor (BaseAddress, &GcdDescriptor);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN,
-      "Variable driver failed to get flash memory attribute.\n"));
+    DEBUG ((
+      DEBUG_WARN,
+      "Variable driver failed to get flash memory attribute.\n"
+      ));
   } else {
     if ((GcdDescriptor.Attributes & EFI_MEMORY_RUNTIME) == 0) {
       Status = gDS->SetMemorySpaceAttributes (
@@ -500,8 +529,10 @@ FtwNotificationEvent (
                       GcdDescriptor.Attributes | EFI_MEMORY_RUNTIME
                       );
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_WARN,
-          "Variable driver failed to add EFI_MEMORY_RUNTIME attribute to Flash.\n"));
+        DEBUG ((
+          DEBUG_WARN,
+          "Variable driver failed to add EFI_MEMORY_RUNTIME attribute to Flash.\n"
+          ));
       }
     }
   }

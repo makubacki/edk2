@@ -631,8 +631,8 @@ FindVariableData (
   VARIABLE_HEADER  *VariableHeader;
   VARIABLE_HEADER  *VariableEnd;
 
-  VariableEnd    = (VARIABLE_HEADER *)((UINT8 *)VariableStorage +
-                                       VariableStorage->Size);
+  VariableEnd = (VARIABLE_HEADER *)((UINT8 *)VariableStorage +
+                                    VariableStorage->Size);
   VariableHeader = (VARIABLE_HEADER *)(VariableStorage + 1);
   VariableHeader = (VARIABLE_HEADER *)HEADER_ALIGN (VariableHeader);
   while (VariableHeader < VariableEnd) {
@@ -722,12 +722,12 @@ FindQuestionDefaultSetting (
     //
     // The first section data includes NV storage default setting.
     //
-    DataHeader      = (PCD_DEFAULT_DATA *)(DataBuffer +
-                                           sizeof (
-                                                               PCD_NV_STORE_DEFAULT_BUFFER_HEADER));
-    NvStoreBuffer   = (VARIABLE_STORE_HEADER *)((UINT8 *)DataHeader +
-                                                sizeof (DataHeader->DataSize) +
-                                                DataHeader->HeaderSize);
+    DataHeader = (PCD_DEFAULT_DATA *)(DataBuffer +
+                                      sizeof (
+                                              PCD_NV_STORE_DEFAULT_BUFFER_HEADER));
+    NvStoreBuffer = (VARIABLE_STORE_HEADER *)((UINT8 *)DataHeader +
+                                              sizeof (DataHeader->DataSize) +
+                                              DataHeader->HeaderSize);
     VariableStorage = AllocatePool (NvStoreBuffer->Size);
     ASSERT (VariableStorage != NULL);
     CopyMem (VariableStorage, NvStoreBuffer, NvStoreBuffer->Size);
@@ -966,7 +966,7 @@ UpdateDefaultSettingInFormPackage (
                                                IfrEfiVarStore->Header.Length +
                                                AsciiStrSize (
                                                  (
-                                                                         CHAR8 *)
+                                                  CHAR8 *)
                                                  IfrEfiVarStore->Name
                                                  )
                                                );
@@ -1625,7 +1625,7 @@ InsertStringPackage (
   //
   StringPackage = (HII_STRING_PACKAGE_INSTANCE *)AllocateZeroPool (
                                                    sizeof (
-                                                                          HII_STRING_PACKAGE_INSTANCE)
+                                                           HII_STRING_PACKAGE_INSTANCE)
                                                    );
   if (StringPackage == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -2397,7 +2397,7 @@ InsertImagePackage (
   //
   ImagePackage = (HII_IMAGE_PACKAGE_INSTANCE *)AllocateZeroPool (
                                                  sizeof (
-                                                                        HII_IMAGE_PACKAGE_INSTANCE)
+                                                         HII_IMAGE_PACKAGE_INSTANCE)
                                                  );
   if (ImagePackage == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -2421,8 +2421,8 @@ InsertImagePackage (
   PaletteSize                = 0;
   ImagePackage->PaletteBlock = NULL;
   if (PaletteInfoOffset != 0) {
-    PaletteHdr  = (EFI_HII_IMAGE_PALETTE_INFO_HEADER *)((UINT8 *)PackageHdr +
-                                                        PaletteInfoOffset);
+    PaletteHdr = (EFI_HII_IMAGE_PALETTE_INFO_HEADER *)((UINT8 *)PackageHdr +
+                                                       PaletteInfoOffset);
     PaletteSize = sizeof (EFI_HII_IMAGE_PALETTE_INFO_HEADER);
     PaletteInfo = (EFI_HII_IMAGE_PALETTE_INFO *)((UINT8 *)PaletteHdr +
                                                  PaletteSize);

@@ -437,8 +437,8 @@ FvCheck (
     FwVolExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)(FvDevice->CachedFv +
                                                         FwVolHeader->
                                                           ExtHeaderOffset);
-    FfsHeader      = (EFI_FFS_FILE_HEADER *)((UINT8 *)FwVolExtHeader +
-                                             FwVolExtHeader->ExtHeaderSize);
+    FfsHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FwVolExtHeader +
+                                        FwVolExtHeader->ExtHeaderSize);
   } else {
     FfsHeader = (EFI_FFS_FILE_HEADER *)(FvDevice->CachedFv +
                                         FwVolHeader->HeaderLength);
@@ -450,7 +450,7 @@ FvCheck (
                                                              (UINTN)((UINTN)
                                                                      TopFvAddress
                                                                      - sizeof (
-                                                                                                                      EFI_FFS_FILE_HEADER))))
+                                                                               EFI_FFS_FILE_HEADER))))
   {
     if (FileCached) {
       CoreFreePool (CacheFfsHeader);
@@ -512,7 +512,8 @@ FvCheck (
         WholeFileSize = IS_FFS_FILE2 (CacheFfsHeader) ? FFS_FILE2_SIZE (
                                                           CacheFfsHeader
                                                           ) : FFS_FILE_SIZE (
-                                                                CacheFfsHeader);
+                                                                CacheFfsHeader
+                                                                );
         CacheFfsHeader = AllocateCopyPool (WholeFileSize, CacheFfsHeader);
         if (CacheFfsHeader == NULL) {
           Status = EFI_OUT_OF_RESOURCES;

@@ -285,7 +285,7 @@ PciIoPollMem (
   Status = PciIoDevice->PciRootBridgeIo->PollMem (
                                            PciIoDevice->PciRootBridgeIo,
                                            (
-                                           EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                            EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
                                            Width,
                                            Offset,
                                            Mask,
@@ -402,7 +402,7 @@ PciIoPollIo (
   Status = PciIoDevice->PciRootBridgeIo->PollIo (
                                            PciIoDevice->PciRootBridgeIo,
                                            (
-                                           EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                            EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
                                            Width,
                                            Offset,
                                            Mask,
@@ -491,7 +491,7 @@ PciIoMemRead (
   Status = PciIoDevice->PciRootBridgeIo->Mem.Read (
                                                PciIoDevice->PciRootBridgeIo,
                                                (
-                                               EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                                EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
                                                Width,
                                                Offset,
                                                Count,
@@ -578,7 +578,7 @@ PciIoMemWrite (
   Status = PciIoDevice->PciRootBridgeIo->Mem.Write (
                                                PciIoDevice->PciRootBridgeIo,
                                                (
-                                               EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                                EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
                                                Width,
                                                Offset,
                                                Count,
@@ -665,7 +665,7 @@ PciIoIoRead (
   Status = PciIoDevice->PciRootBridgeIo->Io.Read (
                                               PciIoDevice->PciRootBridgeIo,
                                               (
-                                              EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                               EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
                                               Width,
                                               Offset,
                                               Count,
@@ -752,7 +752,7 @@ PciIoIoWrite (
   Status = PciIoDevice->PciRootBridgeIo->Io.Write (
                                               PciIoDevice->PciRootBridgeIo,
                                               (
-                                              EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                               EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
                                               Width,
                                               Offset,
                                               Count,
@@ -823,7 +823,7 @@ PciIoConfigRead (
   Status = PciIoDevice->PciRootBridgeIo->Pci.Read (
                                                PciIoDevice->PciRootBridgeIo,
                                                (
-                                               EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                                EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
                                                Width,
                                                Address,
                                                Count,
@@ -894,7 +894,7 @@ PciIoConfigWrite (
   Status = PciIoDevice->PciRootBridgeIo->Pci.Write (
                                                PciIoDevice->PciRootBridgeIo,
                                                (
-                                               EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                                EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
                                                Width,
                                                Address,
                                                Count,
@@ -1014,7 +1014,7 @@ PciIoCopyMem (
   Status = PciIoDevice->PciRootBridgeIo->CopyMem (
                                            PciIoDevice->PciRootBridgeIo,
                                            (
-                                           EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
+                                            EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH)
                                            Width,
                                            DestOffset,
                                            SrcOffset,

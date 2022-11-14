@@ -211,7 +211,7 @@ NvmeRead (
       Blocks -= MaxTransferBlocks;
       Buffer  = (VOID *)(UINTN)((UINT64)(UINTN)Buffer + MaxTransferBlocks *
                                 BlockSize);
-      Lba    += MaxTransferBlocks;
+      Lba += MaxTransferBlocks;
     } else {
       Status = ReadSectors (Device, (UINT64)(UINTN)Buffer, Lba, (UINT32)Blocks);
       Blocks = 0;
@@ -307,7 +307,7 @@ NvmeWrite (
       Blocks -= MaxTransferBlocks;
       Buffer  = (VOID *)(UINTN)((UINT64)(UINTN)Buffer + MaxTransferBlocks *
                                 BlockSize);
-      Lba    += MaxTransferBlocks;
+      Lba += MaxTransferBlocks;
     } else {
       Status = WriteSectors (
                  Device,
@@ -804,7 +804,7 @@ NvmeAsyncRead (
       Blocks -= MaxTransferBlocks;
       Buffer  = (VOID *)(UINTN)((UINT64)(UINTN)Buffer + MaxTransferBlocks *
                                 BlockSize);
-      Lba    += MaxTransferBlocks;
+      Lba += MaxTransferBlocks;
     } else {
       Status = AsyncReadSectors (
                  Device,
@@ -937,7 +937,7 @@ NvmeAsyncWrite (
       Blocks -= MaxTransferBlocks;
       Buffer  = (VOID *)(UINTN)((UINT64)(UINTN)Buffer + MaxTransferBlocks *
                                 BlockSize);
-      Lba    += MaxTransferBlocks;
+      Lba += MaxTransferBlocks;
     } else {
       Status = AsyncWriteSectors (
                  Device,

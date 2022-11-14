@@ -13,8 +13,8 @@
 //
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mAtaAtapiPassThruDriverNameTable[] = {
-  { "eng;en", L"AtaAtapiPassThru Driver"     },
-  { NULL,     NULL                           }
+  { "eng;en", L"AtaAtapiPassThru Driver" },
+  { NULL,     NULL                       }
 };
 
 //
@@ -22,14 +22,14 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
 //
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mAtaAtapiPassThruIdeControllerNameTable[] = {
-  { "eng;en", L"IDE Controller"     },
-  { NULL,     NULL                  }
+  { "eng;en", L"IDE Controller" },
+  { NULL,     NULL              }
 };
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mAtaAtapiPassThruAhciControllerNameTable[] = {
-  { "eng;en", L"AHCI Controller"     },
-  { NULL,     NULL                   }
+  { "eng;en", L"AHCI Controller" },
+  { NULL,     NULL               }
 };
 
 //

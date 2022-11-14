@@ -27,10 +27,10 @@ EFI_UNICODE_COLLATION_PROTOCOL  *mUnicodeCollation = NULL;
 //
 #define GUID_STRING_SIZE  (37 * sizeof (CHAR16))
 
-#define FVFS_VOLUME_LABEL_PREFIX      L"Firmware Volume: "
+#define FVFS_VOLUME_LABEL_PREFIX  L"Firmware Volume: "
 #define FVFS_VOLUME_LABEL_SIZE      \
                                       (sizeof (FVFS_VOLUME_LABEL_PREFIX) + GUID_STRING_SIZE - sizeof (CHAR16))
-#define FVFS_FALLBACK_VOLUME_LABEL    L"Firmware Volume"
+#define FVFS_FALLBACK_VOLUME_LABEL  L"Firmware Volume"
 
 //
 // Template for EFI_SIMPLE_FILE_SYSTEM_PROTOCOL data structure.

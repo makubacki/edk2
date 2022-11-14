@@ -244,8 +244,8 @@ UpdateVariableStore (
                           );
           return Status;
         } else {
-          Size   = (UINT32)(LinearOffset + PtrBlockMapEntry->Length -
-                            CurrWritePtr);
+          Size = (UINT32)(LinearOffset + PtrBlockMapEntry->Length -
+                          CurrWritePtr);
           Status = Fvb->Write (
                           Fvb,
                           LbaNumber,
@@ -742,7 +742,7 @@ Reclaim (
                                            UpdatingInDeletedTransition) &&
         (Variable->State ==
          (
-                                        VAR_IN_DELETED_TRANSITION & VAR_ADDED)))
+          VAR_IN_DELETED_TRANSITION & VAR_ADDED)))
     {
       //
       // Buffer has cached all ADDED variable.
@@ -856,7 +856,8 @@ Reclaim (
                             ((UINTN)CurrPtr -
                              (UINTN)
                              GetStartPointer (
-                               (VARIABLE_STORE_HEADER *)ValidBuffer)));
+                               (VARIABLE_STORE_HEADER *)ValidBuffer
+                               )));
       UpdatingPtrTrack->InDeletedTransitionPtr = NULL;
     }
 
@@ -911,9 +912,9 @@ Reclaim (
       mVariableModuleGlobal->CommonUserVariableTotalSize = 0;
       Variable                                           = GetStartPointer (
                                                              (
-                                                                            VARIABLE_STORE_HEADER
-                                                                            *)(
-                                                                                                     UINTN)
+                                                              VARIABLE_STORE_HEADER
+                                                              *)(
+                                                                 UINTN)
                                                              VariableBase
                                                              );
       while (IsValidVariableHeader (
@@ -2671,7 +2672,8 @@ UpdateVariable (
                               mVariableModuleGlobal->
                                 NonVolatileLastVariableOffset + OFFSET_OF (
                                                                   VARIABLE_HEADER,
-                                                                  State),
+                                                                  State
+                                                                  ),
                               sizeof (UINT8),
                               &NextVariable->State
                               );
@@ -2710,7 +2712,8 @@ UpdateVariable (
                               mVariableModuleGlobal->
                                 NonVolatileLastVariableOffset + OFFSET_OF (
                                                                   VARIABLE_HEADER,
-                                                                  State),
+                                                                  State
+                                                                  ),
                               sizeof (UINT8),
                               &NextVariable->State
                               );
@@ -4388,7 +4391,8 @@ ConvertNormalVarStorageToAuthVarStorage (
       AuthStartPtr = (AUTHENTICATED_VARIABLE_HEADER *)(NextPtr +
                                                        AuthStartPtr->DataSize +
                                                        GET_PAD_SIZE (
-                                                         AuthStartPtr->DataSize));
+                                                         AuthStartPtr->DataSize
+                                                         ));
     }
 
     StartPtr = GetNextVariablePtr (

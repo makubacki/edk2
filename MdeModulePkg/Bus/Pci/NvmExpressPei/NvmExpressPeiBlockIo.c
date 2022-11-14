@@ -273,8 +273,8 @@ NvmeBlockIoPeimGetMediaInfo (
   MediaInfo->MediaPresent = TRUE;
   MediaInfo->LastBlock    = (UINTN)Private->NamespaceInfo[DeviceIndex-
                                                           1].Media.LastBlock;
-  MediaInfo->BlockSize    = Private->NamespaceInfo[DeviceIndex-
-                                                   1].Media.BlockSize;
+  MediaInfo->BlockSize = Private->NamespaceInfo[DeviceIndex-
+                                                1].Media.BlockSize;
 
   return EFI_SUCCESS;
 }

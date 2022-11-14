@@ -193,7 +193,7 @@ VarCheckPolicyLibMmiHandler (
       IsEnabledParams =
         (VAR_CHECK_POLICY_COMM_IS_ENABLED_PARAMS *)((UINT8 *)CommBuffer +
                                                     sizeof (
-                                                                                                           VAR_CHECK_POLICY_COMM_HEADER));
+                                                            VAR_CHECK_POLICY_COMM_HEADER));
       IsEnabledParams->State    = IsVariablePolicyEnabled ();
       PolicyCommmHeader->Result = EFI_SUCCESS;
       break;
@@ -218,7 +218,7 @@ VarCheckPolicyLibMmiHandler (
       // Time to compare its internal size.
       PolicyEntry = (VARIABLE_POLICY_ENTRY *)((UINT8 *)InternalCommBuffer +
                                               sizeof (
-                                                                                   VAR_CHECK_POLICY_COMM_HEADER));
+                                                      VAR_CHECK_POLICY_COMM_HEADER));
       if ((PolicyEntry->Version != VARIABLE_POLICY_ENTRY_REVISION) ||
           (PolicyEntry->Size < sizeof (VARIABLE_POLICY_ENTRY)) ||
           EFI_ERROR (

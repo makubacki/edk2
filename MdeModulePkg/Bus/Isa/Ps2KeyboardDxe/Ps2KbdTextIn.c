@@ -623,7 +623,7 @@ KeyboardRegisterKeyNotify (
   //
   NewNotify = (KEYBOARD_CONSOLE_IN_EX_NOTIFY *)AllocateZeroPool (
                                                  sizeof (
-                                                                        KEYBOARD_CONSOLE_IN_EX_NOTIFY)
+                                                         KEYBOARD_CONSOLE_IN_EX_NOTIFY)
                                                  );
   if (NewNotify == NULL) {
     Status = EFI_OUT_OF_RESOURCES;

@@ -114,7 +114,7 @@ typedef struct _EFI_SATA_CONTROLLER_PRIVATE_DATA {
 } EFI_SATA_CONTROLLER_PRIVATE_DATA;
 
 #define SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS( \
-                                              a)  \
+                                                a)  \
   CR(a, EFI_SATA_CONTROLLER_PRIVATE_DATA, IdeInit, SATA_CONTROLLER_SIGNATURE)
 
 //

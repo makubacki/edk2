@@ -49,7 +49,7 @@ typedef struct _PCI_BAR        PCI_BAR;
 #define EFI_PCI_RID(Bus, Device, \
                     Function)  \
                                    (((UINT32)Bus << 8) + ((UINT32)Device << 3) + (UINT32)Function)
-#define EFI_PCI_BUS_OF_RID(RID)    ((UINT32)RID >> 8)
+#define EFI_PCI_BUS_OF_RID(RID)  ((UINT32)RID >> 8)
 
 #define     EFI_PCI_IOV_POLICY_ARI    0x0001
 #define     EFI_PCI_IOV_POLICY_SRIOV  0x0002
@@ -302,12 +302,12 @@ struct _PCI_IO_DEVICE {
 // Global Variables
 //
 extern EFI_INCOMPATIBLE_PCI_DEVICE_SUPPORT_PROTOCOL  *
-                                       gIncompatiblePciDeviceSupport;
-extern EFI_DRIVER_BINDING_PROTOCOL     gPciBusDriverBinding;
-extern EFI_COMPONENT_NAME_PROTOCOL     gPciBusComponentName;
-extern EFI_COMPONENT_NAME2_PROTOCOL    gPciBusComponentName2;
-extern BOOLEAN                         gFullEnumeration;
-extern UINTN                           gPciHostBridgeNumber;
+                                     gIncompatiblePciDeviceSupport;
+extern EFI_DRIVER_BINDING_PROTOCOL   gPciBusDriverBinding;
+extern EFI_COMPONENT_NAME_PROTOCOL   gPciBusComponentName;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gPciBusComponentName2;
+extern BOOLEAN                       gFullEnumeration;
+extern UINTN                         gPciHostBridgeNumber;
 extern EFI_HANDLE
                                   gPciHostBrigeHandles[PCI_MAX_HOST_BRIDGE_NUM];
 extern UINT64                     gAllOne;
@@ -327,7 +327,7 @@ extern BOOLEAN                    mReserveVgaAliases;
 
 **/
 #define IS_PCI_GFX( \
-                  _p)  \
+                    _p)  \
   IS_CLASS2 (_p, PCI_CLASS_DISPLAY, PCI_CLASS_DISPLAY_OTHER)
 
 /**

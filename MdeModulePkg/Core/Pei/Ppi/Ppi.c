@@ -450,10 +450,10 @@ DumpPpiList (
       (
        !(
          ((EFI_PHYSICAL_ADDRESS)(UINTN)PrivateData->PpiData.PpiList.PpiPtrs[
-                                                                           Index
+                                                                            Index
           ].Raw >= PrivateData->PhysicalMemoryBegin) &&
          (((EFI_PHYSICAL_ADDRESS)((UINTN)PrivateData->PpiData.PpiList.PpiPtrs[
-                                                                             Index
+                                                                              Index
                                   ].Raw) + sizeof (EFI_PEI_PPI_DESCRIPTOR)) <
           PrivateData->FreePhysicalMemoryTop)
          )

@@ -119,11 +119,11 @@ ShadowPeiCore (
   //
   Status = PrivateData->Fv[PeiCoreFvIndex].FvPpi->FindFileByType (
                                                     PrivateData->Fv[
-                                                                   PeiCoreFvIndex
+                                                                    PeiCoreFvIndex
                                                     ].FvPpi,
                                                     EFI_FV_FILETYPE_PEI_CORE,
                                                     PrivateData->Fv[
-                                                                   PeiCoreFvIndex
+                                                                    PeiCoreFvIndex
                                                     ].FvHandle,
                                                     &PeiCoreFileHandle
                                                     );
@@ -401,7 +401,8 @@ PeiCore (
         //
         OldCoreData->PeiCodeMemoryRangeUsageBitMap = AllocateZeroPool (
                                                        ((PcdGet32 (
-                                                           PcdLoadFixAddressPeiCodePageNumber)
+                                                           PcdLoadFixAddressPeiCodePageNumber
+                                                           )
                                                          >>6) + 1)*
                                                        sizeof (UINT64)
                                                        );

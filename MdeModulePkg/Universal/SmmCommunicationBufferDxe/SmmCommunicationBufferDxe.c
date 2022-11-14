@@ -58,7 +58,7 @@ SmmCommunicationBufferEntryPoint (
   //
   PiSmmCommunicationRegionTable = AllocateReservedPool (
                                     sizeof (
-                                                               EDKII_PI_SMM_COMMUNICATION_REGION_TABLE)
+                                            EDKII_PI_SMM_COMMUNICATION_REGION_TABLE)
                                     + DescriptorSize
                                     );
   ASSERT (PiSmmCommunicationRegionTable != NULL);

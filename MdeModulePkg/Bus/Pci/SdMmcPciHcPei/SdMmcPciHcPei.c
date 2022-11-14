@@ -109,10 +109,13 @@ InitializeSdMmcHcPeim (
   }
 
   Private = (SD_MMC_HC_PEI_PRIVATE_DATA *)AllocateZeroPool (
-                                            sizeof (SD_MMC_HC_PEI_PRIVATE_DATA));
+                                            sizeof (SD_MMC_HC_PEI_PRIVATE_DATA)
+                                            );
   if (Private == NULL) {
-    DEBUG ((DEBUG_ERROR,
-      "Failed to allocate memory for SD_MMC_HC_PEI_PRIVATE_DATA! \n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed to allocate memory for SD_MMC_HC_PEI_PRIVATE_DATA! \n"
+      ));
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -134,25 +137,51 @@ InitializeSdMmcHcPeim (
           //
           // Get the SD/MMC Pci host controller's Slot Info.
           //
-          SlotInfo = PciRead8 (PCI_LIB_ADDRESS (Bus, Device, Function,
-                                 SD_MMC_HC_PEI_SLOT_OFFSET));
+          SlotInfo = PciRead8 (
+                       PCI_LIB_ADDRESS (
+                         Bus,
+                         Device,
+                         Function,
+                         SD_MMC_HC_PEI_SLOT_OFFSET
+                         )
+                       );
           FirstBar = (*(SD_MMC_HC_PEI_SLOT_INFO *)&SlotInfo).FirstBar;
           SlotNum  = (*(SD_MMC_HC_PEI_SLOT_INFO *)&SlotInfo).SlotNum + 1;
           ASSERT ((FirstBar + SlotNum) < MAX_SD_MMC_SLOTS);
 
           for (Index = 0, Slot = FirstBar; Slot < (FirstBar + SlotNum); Index++,
-               Slot++) {
+               Slot++)
+          {
             //
             // Get the SD/MMC Pci host controller's MMIO region size.
             //
-            PciAnd16 (PCI_LIB_ADDRESS (Bus, Device, Function,
-                        PCI_COMMAND_OFFSET),
+            PciAnd16 (
+              PCI_LIB_ADDRESS (
+                Bus,
+                Device,
+                Function,
+                PCI_COMMAND_OFFSET
+                ),
               (UINT16) ~(EFI_PCI_COMMAND_BUS_MASTER |
-                         EFI_PCI_COMMAND_MEMORY_SPACE));
-            PciWrite32 (PCI_LIB_ADDRESS (Bus, Device, Function,
-                          PCI_BASE_ADDRESSREG_OFFSET + 4 * Slot), 0xFFFFFFFF);
-            Size = PciRead32 (PCI_LIB_ADDRESS (Bus, Device, Function,
-                                PCI_BASE_ADDRESSREG_OFFSET + 4 * Slot));
+                         EFI_PCI_COMMAND_MEMORY_SPACE)
+              );
+            PciWrite32 (
+              PCI_LIB_ADDRESS (
+                Bus,
+                Device,
+                Function,
+                PCI_BASE_ADDRESSREG_OFFSET + 4 * Slot
+                ),
+              0xFFFFFFFF
+              );
+            Size = PciRead32 (
+                     PCI_LIB_ADDRESS (
+                       Bus,
+                       Device,
+                       Function,
+                       PCI_BASE_ADDRESSREG_OFFSET + 4 * Slot
+                       )
+                     );
 
             switch (Size & 0x07) {
               case 0x0:
@@ -166,10 +195,23 @@ InitializeSdMmcHcPeim (
                 // Memory space: anywhere in 64 bit address space
                 //
                 MmioSize = Size & 0xFFFFFFF0;
-                PciWrite32 (PCI_LIB_ADDRESS (Bus, Device, Function,
-                              PCI_BASE_ADDRESSREG_OFFSET + 4), 0xFFFFFFFF);
-                Size = PciRead32 (PCI_LIB_ADDRESS (Bus, Device, Function,
-                                    PCI_BASE_ADDRESSREG_OFFSET + 4));
+                PciWrite32 (
+                  PCI_LIB_ADDRESS (
+                    Bus,
+                    Device,
+                    Function,
+                    PCI_BASE_ADDRESSREG_OFFSET + 4
+                    ),
+                  0xFFFFFFFF
+                  );
+                Size = PciRead32 (
+                         PCI_LIB_ADDRESS (
+                           Bus,
+                           Device,
+                           Function,
+                           PCI_BASE_ADDRESSREG_OFFSET + 4
+                           )
+                         );
                 //
                 // Fix the length to support some spefic 64 bit BAR
                 //
@@ -182,8 +224,15 @@ InitializeSdMmcHcPeim (
                 //
                 // Clean the high 32bits of this 64bit BAR to 0 as we only allow a 32bit BAR.
                 //
-                PciWrite32 (PCI_LIB_ADDRESS (Bus, Device, Function,
-                              PCI_BASE_ADDRESSREG_OFFSET + 4 * Slot + 4), 0);
+                PciWrite32 (
+                  PCI_LIB_ADDRESS (
+                    Bus,
+                    Device,
+                    Function,
+                    PCI_BASE_ADDRESSREG_OFFSET + 4 * Slot + 4
+                    ),
+                  0
+                  );
                 break;
               default:
                 //
@@ -197,11 +246,25 @@ InitializeSdMmcHcPeim (
             // Assign resource to the SdMmc Pci host controller's MMIO BAR.
             // Enable the SdMmc Pci host controller by setting BME and MSE bits of PCI_CMD register.
             //
-            PciWrite32 (PCI_LIB_ADDRESS (Bus, Device, Function,
-                          PCI_BASE_ADDRESSREG_OFFSET + 4 * Slot), BarAddr);
-            PciOr16 (PCI_LIB_ADDRESS (Bus, Device, Function,
-                       PCI_COMMAND_OFFSET), (EFI_PCI_COMMAND_BUS_MASTER |
-                                             EFI_PCI_COMMAND_MEMORY_SPACE));
+            PciWrite32 (
+              PCI_LIB_ADDRESS (
+                Bus,
+                Device,
+                Function,
+                PCI_BASE_ADDRESSREG_OFFSET + 4 * Slot
+                ),
+              BarAddr
+              );
+            PciOr16 (
+              PCI_LIB_ADDRESS (
+                Bus,
+                Device,
+                Function,
+                PCI_COMMAND_OFFSET
+                ),
+              (EFI_PCI_COMMAND_BUS_MASTER |
+               EFI_PCI_COMMAND_MEMORY_SPACE)
+              );
             //
             // Record the allocated Mmio base address.
             //

@@ -750,9 +750,12 @@ SetNewRecord (
       }
 
       TempRecord.PhysicalStart = ImageRecordCodeSection->CodeSegmentBase +
-                                 EfiPagesToSize (EfiSizeToPages (
-                                                   ImageRecordCodeSection->
-                                                     CodeSegmentSize));
+                                 EfiPagesToSize (
+                                   EfiSizeToPages (
+                                     ImageRecordCodeSection->
+                                       CodeSegmentSize
+                                     )
+                                   );
       TempRecord.NumberOfPages = EfiSizeToPages (
                                    PhysicalEnd -
                                    TempRecord.PhysicalStart

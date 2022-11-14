@@ -1430,21 +1430,21 @@ BmIsLoadOptionPeHeaderValid (
         //
         Subsystem = OptionalHeader->Subsystem;
         if (  (Type == LoadOptionTypeMax) ||
-            ((Type == LoadOptionTypeDriver) && (Subsystem ==
-                                                EFI_IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER))
+              ((Type == LoadOptionTypeDriver) && (Subsystem ==
+                                                  EFI_IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER))
            ||
-            ((Type == LoadOptionTypeDriver) && (Subsystem ==
-                                                EFI_IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER))
+              ((Type == LoadOptionTypeDriver) && (Subsystem ==
+                                                  EFI_IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER))
            ||
-            ((Type == LoadOptionTypeSysPrep) && (Subsystem ==
-                                                 EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION))
+              ((Type == LoadOptionTypeSysPrep) && (Subsystem ==
+                                                   EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION))
            ||
-            ((Type == LoadOptionTypeBoot) && (Subsystem ==
-                                              EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION))
+              ((Type == LoadOptionTypeBoot) && (Subsystem ==
+                                                EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION))
            ||
-            ((Type == LoadOptionTypePlatformRecovery) && (Subsystem ==
-                                                          EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION))
-            )
+              ((Type == LoadOptionTypePlatformRecovery) && (Subsystem ==
+                                                            EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION))
+              )
         {
           return TRUE;
         }

@@ -35,7 +35,7 @@ typedef struct {
 // Containment record for ACPI Notify linked list.
 //
 #define EFI_ACPI_NOTIFY_LIST_FROM_LINK( \
-                                      _link)  \
+                                        _link)  \
   CR (_link, EFI_ACPI_NOTIFY_LIST, Link, EFI_ACPI_NOTIFY_LIST_SIGNATURE)
 
 typedef struct _AML_BYTE_ENCODING  AML_BYTE_ENCODING;
@@ -74,7 +74,7 @@ struct _EFI_AML_NODE_LIST {
 // Containment record for AML Node linked list.
 //
 #define EFI_AML_NODE_LIST_FROM_LINK( \
-                                   _link)  \
+                                     _link)  \
   CR (_link, EFI_AML_NODE_LIST, Link, EFI_AML_NODE_LIST_SIGNATURE)
 
 //

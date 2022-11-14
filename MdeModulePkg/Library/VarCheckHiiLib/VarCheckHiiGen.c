@@ -22,7 +22,7 @@ typedef struct {
 } VAR_CHECK_HII_VARIABLE_NODE;
 
 #define VAR_CHECK_HII_VARIABLE_FROM_LINK( \
-                                        a)  \
+                                          a)  \
   CR (a, VAR_CHECK_HII_VARIABLE_NODE, Link, VAR_CHECK_HII_VARIABLE_NODE_SIGNATURE)
 
 CHAR16  *mVarName       = NULL;
@@ -32,19 +32,19 @@ UINTN   mMaxVarNameSize = 0;
 GLOBAL_REMOVE_IF_UNREFERENCED VAR_CHECK_HII_OPCODE_STRING
   mIfrOpCodeStringTable[] = {
   { EFI_IFR_VARSTORE_OP,
-    "EFI_IFR_VARSTORE_OP"                                         },
+    "EFI_IFR_VARSTORE_OP" },
   { EFI_IFR_VARSTORE_EFI_OP,
-    "EFI_IFR_VARSTORE_EFI_OP"                                             },
+    "EFI_IFR_VARSTORE_EFI_OP" },
   { EFI_IFR_ONE_OF_OP,
-    "EFI_IFR_ONE_OF_OP"                                                         },
+    "EFI_IFR_ONE_OF_OP" },
   { EFI_IFR_CHECKBOX_OP,
-    "EFI_IFR_CHECKBOX_OP"                                                             },
+    "EFI_IFR_CHECKBOX_OP" },
   { EFI_IFR_NUMERIC_OP,
-    "EFI_IFR_NUMERIC_OP"                                                               },
+    "EFI_IFR_NUMERIC_OP" },
   { EFI_IFR_ORDERED_LIST_OP,
-    "EFI_IFR_ORDERED_LIST_OP"                                                           },
+    "EFI_IFR_ORDERED_LIST_OP" },
   { EFI_IFR_ONE_OF_OPTION_OP,
-    "EFI_IFR_ONE_OF_OPTION_OP"                                                          },
+    "EFI_IFR_ONE_OF_OPTION_OP" },
 };
 
 /**
@@ -74,31 +74,31 @@ IfrOpCodeToStr (
 GLOBAL_REMOVE_IF_UNREFERENCED VAR_CHECK_HII_PACKAGE_TYPE_STRING
   mPackageTypeStringTable[] = {
   { EFI_HII_PACKAGE_TYPE_ALL,
-    "EFI_HII_PACKAGE_TYPE_ALL"                                      },
+    "EFI_HII_PACKAGE_TYPE_ALL" },
   { EFI_HII_PACKAGE_TYPE_GUID,
-    "EFI_HII_PACKAGE_TYPE_GUID"                                                    },
+    "EFI_HII_PACKAGE_TYPE_GUID" },
   { EFI_HII_PACKAGE_FORMS,
-    "EFI_HII_PACKAGE_FORMS"                                                                                                                                                                        },
+    "EFI_HII_PACKAGE_FORMS" },
   { EFI_HII_PACKAGE_STRINGS,
-    "EFI_HII_PACKAGE_STRINGS"                                                                                                                                                                                    },
+    "EFI_HII_PACKAGE_STRINGS" },
   { EFI_HII_PACKAGE_FONTS,
-    "EFI_HII_PACKAGE_FONTS"                                                                                                                                                                                                    },
+    "EFI_HII_PACKAGE_FONTS" },
   { EFI_HII_PACKAGE_IMAGES,
-    "EFI_HII_PACKAGE_IMAGES"                                                                                                                                                                                                                 },
+    "EFI_HII_PACKAGE_IMAGES" },
   { EFI_HII_PACKAGE_SIMPLE_FONTS,
-    "EFI_HII_PACKAGE_SIMPLE_FONTS"                                                                                                                                                                                                                         },
+    "EFI_HII_PACKAGE_SIMPLE_FONTS" },
   { EFI_HII_PACKAGE_DEVICE_PATH,
-    "EFI_HII_PACKAGE_DEVICE_PATH"                                                                                                                                                                                                                                        },
+    "EFI_HII_PACKAGE_DEVICE_PATH" },
   { EFI_HII_PACKAGE_KEYBOARD_LAYOUT,
-    "EFI_HII_PACKAGE_KEYBOARD_LAYOUT"                                                                                                                                                                                                                                                  },
+    "EFI_HII_PACKAGE_KEYBOARD_LAYOUT" },
   { EFI_HII_PACKAGE_ANIMATIONS,
-    "EFI_HII_PACKAGE_ANIMATIONS"                                                                                                                                                                                                                                                                     },
+    "EFI_HII_PACKAGE_ANIMATIONS" },
   { EFI_HII_PACKAGE_END,
-    "EFI_HII_PACKAGE_END"                                                                                                                                                                                                                                                                              },
+    "EFI_HII_PACKAGE_END" },
   { EFI_HII_PACKAGE_TYPE_SYSTEM_BEGIN,
-    "EFI_HII_PACKAGE_TYPE_SYSTEM_BEGIN"                                                                                                                                                                                                                                                                  },
+    "EFI_HII_PACKAGE_TYPE_SYSTEM_BEGIN" },
   { EFI_HII_PACKAGE_TYPE_SYSTEM_END,
-    "EFI_HII_PACKAGE_TYPE_SYSTEM_END"                                                                                                                                                                                                                                                                    },
+    "EFI_HII_PACKAGE_TYPE_SYSTEM_END" },
 };
 
 /**
@@ -545,7 +545,7 @@ DumpHiiPackage (
 
                 IfrOpCodeHeader = (EFI_IFR_OP_HEADER *)((UINTN)IfrOpCodeHeader +
                                                         IfrOpCodeHeader->Length);
-                Scope           = 1;
+                Scope = 1;
                 while (Scope != 0) {
                   switch (IfrOpCodeHeader->OpCode) {
                     case EFI_IFR_ONE_OF_OPTION_OP:
@@ -1406,9 +1406,9 @@ ParseHiiQuestionNumeric (
     Width = (UINT8)(1 << (IfrNumeric->Flags & EFI_IFR_NUMERIC_SIZE));
   }
 
-  Numeric->OpCode        = EFI_IFR_NUMERIC_OP;
-  Numeric->Length        = (UINT8)(sizeof (VAR_CHECK_HII_QUESTION_NUMERIC) + 2 *
-                                   Width);
+  Numeric->OpCode = EFI_IFR_NUMERIC_OP;
+  Numeric->Length = (UINT8)(sizeof (VAR_CHECK_HII_QUESTION_NUMERIC) + 2 *
+                            Width);
   Numeric->VarOffset     = IfrNumeric->Question.VarStoreInfo.VarOffset;
   Numeric->BitFieldStore = StoredInBitField;
   if (StoredInBitField) {

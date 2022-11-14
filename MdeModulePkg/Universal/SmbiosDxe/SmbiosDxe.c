@@ -150,8 +150,8 @@ SMBIOS_TABLE_3_0_ENTRY_POINT  Smbios30EntryPointStructureData = {
 };
 
 IS_SMBIOS_TABLE_VALID_ENTRY  mIsSmbiosTableValid[] = {
-  { &gUniversalPayloadSmbios3TableGuid, IsValidSmbios30Table    },
-  { &gUniversalPayloadSmbiosTableGuid,  IsValidSmbios20Table    }
+  { &gUniversalPayloadSmbios3TableGuid, IsValidSmbios30Table },
+  { &gUniversalPayloadSmbiosTableGuid,  IsValidSmbios20Table }
 };
 
 /**
@@ -1115,9 +1115,9 @@ GetNextSmbiosRecord (
     return EFI_NOT_FOUND;
   }
 
-  SmbiosEntry         = SMBIOS_ENTRY_FROM_LINK (Link);
-  SmbiosTableHeader   = (EFI_SMBIOS_TABLE_HEADER *)(SmbiosEntry->RecordHeader +
-                                                    1);
+  SmbiosEntry       = SMBIOS_ENTRY_FROM_LINK (Link);
+  SmbiosTableHeader = (EFI_SMBIOS_TABLE_HEADER *)(SmbiosEntry->RecordHeader +
+                                                  1);
   *Record             = SmbiosTableHeader;
   *CurrentSmbiosEntry = SmbiosEntry;
   return EFI_SUCCESS;
@@ -1171,7 +1171,8 @@ SmbiosCreateTable (
                                                            PcdSmbiosVersion
                                                            ) >> 4) & 0xf0) |
                                                 (UINT8)(PcdGet16 (
-                                                          PcdSmbiosVersion) &
+                                                          PcdSmbiosVersion
+                                                          ) &
                                                         0x0f);
     PhysicalAddress = 0xffffffff;
     Status          = gBS->AllocatePages (
@@ -1179,7 +1180,7 @@ SmbiosCreateTable (
                              EfiRuntimeServicesData,
                              EFI_SIZE_TO_PAGES (
                                sizeof (
-                                                       SMBIOS_TABLE_ENTRY_POINT)
+                                       SMBIOS_TABLE_ENTRY_POINT)
                                ),
                              &PhysicalAddress
                              );
@@ -1419,7 +1420,7 @@ SmbiosCreate64BitTable (
                                                     EfiRuntimeServicesData,
                                                     EFI_SIZE_TO_PAGES (
                                                       sizeof (
-                                                                                    SMBIOS_TABLE_3_0_ENTRY_POINT)
+                                                              SMBIOS_TABLE_3_0_ENTRY_POINT)
                                                       ),
                                                     &PhysicalAddress
                                                     );

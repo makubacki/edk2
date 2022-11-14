@@ -87,7 +87,7 @@ typedef struct {
 } I2C_DEVICE_CONTEXT;
 
 #define I2C_DEVICE_CONTEXT_FROM_PROTOCOL( \
-                                        a)  \
+                                          a)  \
   CR (a, I2C_DEVICE_CONTEXT, I2cIo, I2C_DEVICE_SIGNATURE)
 
 //
@@ -132,7 +132,7 @@ typedef struct {
 } I2C_REQUEST;
 
 #define I2C_REQUEST_FROM_ENTRY( \
-                              a)  \
+                                a)  \
   CR (a, I2C_REQUEST, Link, I2C_REQUEST_SIGNATURE);
 
 //
@@ -193,7 +193,7 @@ typedef struct {
 } I2C_HOST_CONTEXT;
 
 #define I2C_HOST_CONTEXT_FROM_PROTOCOL( \
-                                      a)  \
+                                        a)  \
   CR (a, I2C_HOST_CONTEXT, I2cHost, I2C_HOST_SIGNATURE)
 
 //

@@ -98,7 +98,7 @@ typedef struct {
 } EFI_FAULT_TOLERANT_WRITE_RECORD;
 
 #define FTW_RECORD_SIZE( \
-                       PrivateDataSize)  \
+                         PrivateDataSize)  \
   (sizeof (EFI_FAULT_TOLERANT_WRITE_RECORD) + (UINTN) PrivateDataSize)
 
 #define FTW_RECORD_TOTAL_SIZE(NumberOfWrites, PrivateDataSize) \

@@ -561,7 +561,7 @@ ProduceFVBProtocolOnBuffer (
     //
     FvbDev->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)AllocateCopyPool (
                                                        sizeof (
-                                                                              FV_MEMMAP_DEVICE_PATH),
+                                                               FV_MEMMAP_DEVICE_PATH),
                                                        &
                                                        mFvMemmapDevicePathTemplate
                                                        );
@@ -580,7 +580,7 @@ ProduceFVBProtocolOnBuffer (
     //
     FvbDev->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)AllocateCopyPool (
                                                        sizeof (
-                                                                              FV_PIWG_DEVICE_PATH),
+                                                               FV_PIWG_DEVICE_PATH),
                                                        &
                                                        mFvPIWGDevicePathTemplate
                                                        );

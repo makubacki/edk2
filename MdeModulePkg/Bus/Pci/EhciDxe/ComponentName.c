@@ -31,8 +31,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mEhciDriverNameTable[] =
 {
-  { "eng;en", L"Usb Ehci Driver"     },
-  { NULL,     NULL                   }
+  { "eng;en", L"Usb Ehci Driver" },
+  { NULL,     NULL               }
 };
 
 /**

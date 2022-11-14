@@ -113,8 +113,8 @@ PciHostBridgeResourceConflict (
     ASSERT (Descriptor->Desc == ACPI_END_TAG_DESCRIPTOR);
     Descriptor = (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR *)(
                                                        (
-                                                       EFI_ACPI_END_TAG_DESCRIPTOR
-                                                       *)Descriptor + 1
+                                                        EFI_ACPI_END_TAG_DESCRIPTOR
+                                                        *)Descriptor + 1
                                                        );
   }
 }

@@ -63,7 +63,8 @@ Register (
                                                     ); Link = GetNextNode (
                                                                 &
                                                                 mCallbackListHead,
-                                                                Link))
+                                                                Link
+                                                                ))
   {
     CallbackEntry = CR (
                       Link,
@@ -81,7 +82,7 @@ Register (
 
   CallbackEntry = (MM_RSC_HANDLER_CALLBACK_ENTRY *)AllocatePool (
                                                      sizeof (
-                                                                        MM_RSC_HANDLER_CALLBACK_ENTRY)
+                                                             MM_RSC_HANDLER_CALLBACK_ENTRY)
                                                      );
   ASSERT (CallbackEntry != NULL);
 
@@ -125,7 +126,8 @@ Unregister (
                                                     ); Link = GetNextNode (
                                                                 &
                                                                 mCallbackListHead,
-                                                                Link))
+                                                                Link
+                                                                ))
   {
     CallbackEntry = CR (
                       Link,

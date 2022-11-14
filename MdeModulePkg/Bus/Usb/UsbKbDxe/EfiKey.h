@@ -90,7 +90,7 @@ typedef struct {
 } USB_NS_KEY;
 
 #define USB_NS_KEY_FORM_FROM_LINK( \
-                                 a)  \
+                                   a)  \
   CR (a, USB_NS_KEY, Link, USB_NS_KEY_SIGNATURE)
 
 ///

@@ -1628,7 +1628,7 @@ GetVariablePayloadSize (
   CopyGuid (&SmmCommunicateHeader->HeaderGuid, &gEfiSmmVariableProtocolGuid);
   SmmCommunicateHeader->MessageLength = SMM_VARIABLE_COMMUNICATE_HEADER_SIZE +
                                         sizeof (
-                                                                                      SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE);
+                                                SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE);
 
   SmmVariableFunctionHeader =
     (SMM_VARIABLE_COMMUNICATE_HEADER *)SmmCommunicateHeader->Data;
@@ -1720,7 +1720,7 @@ GetRuntimeCacheInfo (
   CopyGuid (&SmmCommunicateHeader->HeaderGuid, &gEfiSmmVariableProtocolGuid);
   SmmCommunicateHeader->MessageLength = SMM_VARIABLE_COMMUNICATE_HEADER_SIZE +
                                         sizeof (
-                                                                                      SMM_VARIABLE_COMMUNICATE_GET_RUNTIME_CACHE_INFO);
+                                                SMM_VARIABLE_COMMUNICATE_GET_RUNTIME_CACHE_INFO);
 
   SmmVariableFunctionHeader =
     (SMM_VARIABLE_COMMUNICATE_HEADER *)SmmCommunicateHeader->Data;
@@ -1811,7 +1811,7 @@ SendRuntimeVariableCacheContextToSmm (
   CopyGuid (&SmmCommunicateHeader->HeaderGuid, &gEfiSmmVariableProtocolGuid);
   SmmCommunicateHeader->MessageLength = SMM_VARIABLE_COMMUNICATE_HEADER_SIZE +
                                         sizeof (
-                                                                                      SMM_VARIABLE_COMMUNICATE_RUNTIME_VARIABLE_CACHE_CONTEXT);
+                                                SMM_VARIABLE_COMMUNICATE_RUNTIME_VARIABLE_CACHE_CONTEXT);
 
   SmmVariableFunctionHeader =
     (SMM_VARIABLE_COMMUNICATE_HEADER *)SmmCommunicateHeader->Data;

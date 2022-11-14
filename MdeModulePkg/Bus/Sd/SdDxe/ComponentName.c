@@ -13,8 +13,8 @@
 //
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mSdDxeDriverNameTable[] = {
-  { "eng;en", L"Edkii Sd Memory Card Device Driver"     },
-  { NULL,     NULL                                      }
+  { "eng;en", L"Edkii Sd Memory Card Device Driver" },
+  { NULL,     NULL                                  }
 };
 
 //
@@ -22,8 +22,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
 //
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mSdDxeControllerNameTable[] = {
-  { "eng;en", L"Edkii Sd Host Controller"     },
-  { NULL,     NULL                            }
+  { "eng;en", L"Edkii Sd Host Controller" },
+  { NULL,     NULL                        }
 };
 
 //

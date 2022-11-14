@@ -194,8 +194,8 @@ BmGetDescriptionFromDiskInfo (
       Description[Length++] = L' ';
 
       for (Index = 0; Index + 1 < SerialNumberLength; Index += 2) {
-        Description[Length + Index]     = (CHAR16)IdentifyData.SerialNo[Index +
-                                                                        1];
+        Description[Length + Index] = (CHAR16)IdentifyData.SerialNo[Index +
+                                                                    1];
         Description[Length + Index + 1] = (CHAR16)IdentifyData.SerialNo[Index];
       }
 

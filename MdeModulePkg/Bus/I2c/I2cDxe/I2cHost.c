@@ -24,8 +24,8 @@ EFI_DRIVER_BINDING_PROTOCOL  gI2cHostDriverBinding = {
 //
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mI2cHostDriverNameTable[] = {
-  { "eng;en", L"I2c Host Driver"     },
-  { NULL,     NULL                   }
+  { "eng;en", L"I2c Host Driver" },
+  { NULL,     NULL               }
 };
 
 //

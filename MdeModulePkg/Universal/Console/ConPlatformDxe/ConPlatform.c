@@ -750,8 +750,11 @@ IsGopSibling (
         ((DevicePathType (NodeRight) == HARDWARE_DEVICE_PATH) &&
          (DevicePathSubType (NodeRight) == HW_CONTROLLER_DP) &&
          (DevicePathType (NextDevicePathNode (NodeRight)) ==
-          ACPI_DEVICE_PATH) && (DevicePathSubType (NextDevicePathNode (
-                                                     NodeRight)) ==
+          ACPI_DEVICE_PATH) && (DevicePathSubType (
+                                  NextDevicePathNode (
+                                    NodeRight
+                                    )
+                                  ) ==
                                 ACPI_ADR_DP)))
     {
       break;

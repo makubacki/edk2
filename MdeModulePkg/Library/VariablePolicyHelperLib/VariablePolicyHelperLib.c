@@ -259,9 +259,9 @@ CreateVarStateVariablePolicy (
 
   CopyPolicy = (VARIABLE_LOCK_ON_VAR_STATE_POLICY *)((UINT8 *)EntPtr +
                                                      sizeof (
-                                                                              VARIABLE_POLICY_ENTRY));
-  CopyName   = (CHAR16 *)((UINT8 *)CopyPolicy +
-                          sizeof (VARIABLE_LOCK_ON_VAR_STATE_POLICY));
+                                                             VARIABLE_POLICY_ENTRY));
+  CopyName = (CHAR16 *)((UINT8 *)CopyPolicy +
+                        sizeof (VARIABLE_LOCK_ON_VAR_STATE_POLICY));
   CopyGuid (&CopyPolicy->Namespace, VarStateNamespace);
   CopyPolicy->Value = VarStateValue;
   CopyMem (CopyName, VarStateName, VarStateNameSize);

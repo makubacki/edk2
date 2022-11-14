@@ -224,7 +224,8 @@ S3AllocatePageTablesBuffer (
     S3NvsPageTableAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateMemoryBelow4G (
                                                            EfiReservedMemoryType,
                                                            EFI_PAGES_TO_SIZE (
-                                                             TotalPageTableSize)
+                                                             TotalPageTableSize
+                                                             )
                                                            );
     ASSERT (S3NvsPageTableAddress != 0);
     return S3NvsPageTableAddress;
@@ -291,10 +292,10 @@ AcpiS3ContextSaveOnEndOfDxe (
               sizeof (IA32_IDT_GATE_DESCRIPTOR) * 0x100 +
               sizeof (IA32_DESCRIPTOR)
               );
-  Idtr                       = (IA32_DESCRIPTOR *)(IdtGate + 0x100);
-  Idtr->Base                 = (UINTN)IdtGate;
-  Idtr->Limit                = (UINT16)(sizeof (IA32_IDT_GATE_DESCRIPTOR) *
-                                        0x100 - 1);
+  Idtr        = (IA32_DESCRIPTOR *)(IdtGate + 0x100);
+  Idtr->Base  = (UINTN)IdtGate;
+  Idtr->Limit = (UINT16)(sizeof (IA32_IDT_GATE_DESCRIPTOR) *
+                         0x100 - 1);
   AcpiS3Context->IdtrProfile = (EFI_PHYSICAL_ADDRESS)(UINTN)Idtr;
 
   Status = SaveLockBox (

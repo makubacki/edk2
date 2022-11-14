@@ -28,7 +28,7 @@ typedef struct {
 } ISA_BUS_PRIVATE_DATA;
 #define ISA_BUS_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('_', 'i', 's', 'b')
 #define ISA_BUS_PRIVATE_DATA_FROM_THIS( \
-                                      a)  \
+                                        a)  \
   CR (a, ISA_BUS_PRIVATE_DATA, ServiceBinding, ISA_BUS_PRIVATE_DATA_SIGNATURE)
 
 typedef struct {

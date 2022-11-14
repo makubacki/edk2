@@ -152,7 +152,7 @@ EdbSetAllBreakpoint (
   {
     CopyMem (
       (VOID *)(UINTN)DebuggerPrivate->DebuggerBreakpointContext[
-                                                               EFI_DEBUGGER_BREAKPOINT_MAX
+                                                                EFI_DEBUGGER_BREAKPOINT_MAX
       ].BreakpointAddress,
       &DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX].
         OldInstruction,
@@ -256,7 +256,7 @@ EdbCheckBreakpoint (
         &DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX],
         &DebuggerPrivate->DebuggerBreakpointContext[Index],
         sizeof (DebuggerPrivate->DebuggerBreakpointContext[
-                                                          EFI_DEBUGGER_BREAKPOINT_MAX
+                                                           EFI_DEBUGGER_BREAKPOINT_MAX
                 ])
         );
       DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX].
@@ -271,7 +271,7 @@ EdbCheckBreakpoint (
       ZeroMem (
         &DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX],
         sizeof (DebuggerPrivate->DebuggerBreakpointContext[
-                                                          EFI_DEBUGGER_BREAKPOINT_MAX
+                                                           EFI_DEBUGGER_BREAKPOINT_MAX
                 ])
         );
     }

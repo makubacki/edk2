@@ -407,9 +407,10 @@ InitializeDisplayStatement (
   // Get the highlight statement for current form.
   //
   if (  ((gCurrentSelection->QuestionId != 0) && (Statement->QuestionId ==
-                                                gCurrentSelection->QuestionId))
+                                                  gCurrentSelection->QuestionId))
      ||
-      ((mCurFakeQestId != 0) && (Statement->FakeQuestionId == mCurFakeQestId)))
+        ((mCurFakeQestId != 0) && (Statement->FakeQuestionId ==
+                                   mCurFakeQestId)))
   {
     gDisplayFormData.HighLightedStatement = DisplayStatement;
   }

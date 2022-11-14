@@ -155,8 +155,8 @@ EbcInterpret (
 
   VmContext.StackTop = (UINT8 *)VmContext.StackPool +
                        (STACK_REMAIN_SIZE);
-  VmContext.Gpr[0]          = (UINT64)((UINT8 *)VmContext.StackPool +
-                                       STACK_POOL_SIZE);
+  VmContext.Gpr[0] = (UINT64)((UINT8 *)VmContext.StackPool +
+                              STACK_POOL_SIZE);
   VmContext.HighStackBottom = (UINTN)VmContext.Gpr[0];
   VmContext.Gpr[0]         -= sizeof (UINTN);
 
@@ -296,8 +296,8 @@ ExecuteEbcImageEntryPoint (
 
   VmContext.StackTop = (UINT8 *)VmContext.StackPool +
                        (STACK_REMAIN_SIZE);
-  VmContext.Gpr[0]          = (UINT64)((UINT8 *)VmContext.StackPool +
-                                       STACK_POOL_SIZE);
+  VmContext.Gpr[0] = (UINT64)((UINT8 *)VmContext.StackPool +
+                              STACK_POOL_SIZE);
   VmContext.HighStackBottom = (UINTN)VmContext.Gpr[0];
   VmContext.Gpr[0]         -= sizeof (UINTN);
 

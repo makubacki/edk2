@@ -70,7 +70,7 @@ typedef struct {
 } DISPLAY_QUESTION_OPTION;
 
 #define DISPLAY_QUESTION_OPTION_FROM_LINK( \
-                                         a)  \
+                                           a)  \
   CR (a, DISPLAY_QUESTION_OPTION, Link, DISPLAY_QUESTION_OPTION_SIGNATURE)
 
 typedef struct _FORM_DISPLAY_ENGINE_STATEMENT  FORM_DISPLAY_ENGINE_STATEMENT;
@@ -203,7 +203,7 @@ struct _FORM_DISPLAY_ENGINE_STATEMENT {
 };
 
 #define FORM_DISPLAY_ENGINE_STATEMENT_FROM_LINK( \
-                                               a)  \
+                                                 a)  \
   CR (a, FORM_DISPLAY_ENGINE_STATEMENT, DisplayLink, FORM_DISPLAY_ENGINE_STATEMENT_SIGNATURE)
 
 #define BROWSER_HOT_KEY_SIGNATURE  SIGNATURE_32 ('B', 'H', 'K', 'S')
@@ -225,7 +225,7 @@ typedef struct {
 } BROWSER_HOT_KEY;
 
 #define BROWSER_HOT_KEY_FROM_LINK( \
-                                 a)  \
+                                   a)  \
   CR (a, BROWSER_HOT_KEY, Link, BROWSER_HOT_KEY_SIGNATURE)
 
 #define FORM_DISPLAY_ENGINE_FORM_SIGNATURE  SIGNATURE_32 ('F', 'F', 'R', 'M')
@@ -302,7 +302,7 @@ struct _FORM_DISPLAY_ENGINE_FORM {
 };
 
 #define FORM_DISPLAY_ENGINE_FORM_FROM_LINK( \
-                                          a)  \
+                                            a)  \
   CR (a, FORM_DISPLAY_ENGINE_FORM, Link, FORM_DISPLAY_ENGINE_FORM_SIGNATURE)
 
 typedef struct {

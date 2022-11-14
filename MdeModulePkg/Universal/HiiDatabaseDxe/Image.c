@@ -160,8 +160,8 @@ GetImageIdOrAddress (
       case EFI_HII_IIBT_IMAGE_JPEG:
         Length = OFFSET_OF (EFI_HII_IIBT_JPEG_BLOCK, Data) + ReadUnaligned32 (
                                                                (VOID *)&((
-                                                                                        EFI_HII_IIBT_JPEG_BLOCK
-                                                                                        *)
+                                                                          EFI_HII_IIBT_JPEG_BLOCK
+                                                                          *)
                                                                          CurrentImageBlock)
                                                                  ->Size
                                                                );
@@ -171,8 +171,8 @@ GetImageIdOrAddress (
       case EFI_HII_IIBT_IMAGE_PNG:
         Length = OFFSET_OF (EFI_HII_IIBT_PNG_BLOCK, Data) + ReadUnaligned32 (
                                                               (VOID *)&((
-                                                                                       EFI_HII_IIBT_PNG_BLOCK
-                                                                                       *)
+                                                                         EFI_HII_IIBT_PNG_BLOCK
+                                                                         *)
                                                                         CurrentImageBlock)
                                                                 ->Size
                                                               );
@@ -813,7 +813,7 @@ HiiNewImage (
     //
     ImagePackage = (HII_IMAGE_PACKAGE_INSTANCE *)AllocateZeroPool (
                                                    sizeof (
-                                                                          HII_IMAGE_PACKAGE_INSTANCE)
+                                                           HII_IMAGE_PACKAGE_INSTANCE)
                                                    );
     if (ImagePackage == NULL) {
       EfiReleaseLock (&mHiiDatabaseLock);
@@ -893,8 +893,8 @@ HiiNewImage (
   //
   // Append the block end
   //
-  ImageBlocks            = (EFI_HII_IMAGE_BLOCK *)((UINT8 *)ImageBlocks +
-                                                   NewBlockSize);
+  ImageBlocks = (EFI_HII_IMAGE_BLOCK *)((UINT8 *)ImageBlocks +
+                                        NewBlockSize);
   ImageBlocks->BlockType = EFI_HII_IIBT_END;
 
   //

@@ -77,11 +77,11 @@ typedef struct {
 } PCI_ROOT_BRIDGE_INSTANCE;
 
 #define ROOT_BRIDGE_FROM_THIS( \
-                             a)  \
+                               a)  \
   CR (a, PCI_ROOT_BRIDGE_INSTANCE, RootBridgeIo, PCI_ROOT_BRIDGE_SIGNATURE)
 
 #define ROOT_BRIDGE_FROM_LINK( \
-                             a)  \
+                               a)  \
   CR (a, PCI_ROOT_BRIDGE_INSTANCE, Link, PCI_ROOT_BRIDGE_SIGNATURE)
 
 /**

@@ -836,10 +836,10 @@ OnMouseInterruptComplete (
 
   UsbMouseDevice->StateChanged = TRUE;
 
-  UsbMouseDevice->State.LeftButton         = (BOOLEAN)((*(UINT8 *)Data &
-                                                        BIT0) != 0);
-  UsbMouseDevice->State.RightButton        = (BOOLEAN)((*(UINT8 *)Data &
-                                                        BIT1) != 0);
+  UsbMouseDevice->State.LeftButton = (BOOLEAN)((*(UINT8 *)Data &
+                                                BIT0) != 0);
+  UsbMouseDevice->State.RightButton = (BOOLEAN)((*(UINT8 *)Data &
+                                                 BIT1) != 0);
   UsbMouseDevice->State.RelativeMovementX += *((INT8 *)Data + 1);
   UsbMouseDevice->State.RelativeMovementY += *((INT8 *)Data + 2);
 

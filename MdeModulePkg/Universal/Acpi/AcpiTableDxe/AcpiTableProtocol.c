@@ -134,12 +134,12 @@ PublishTables (
   // Add FADT as the first entry
   //
   if ((Version & EFI_ACPI_TABLE_VERSION_1_0B) != 0) {
-    CurrentRsdtEntry  = (UINT32 *)((UINT8 *)AcpiTableInstance->Rsdt1 +
-                                   sizeof (EFI_ACPI_DESCRIPTION_HEADER));
+    CurrentRsdtEntry = (UINT32 *)((UINT8 *)AcpiTableInstance->Rsdt1 +
+                                  sizeof (EFI_ACPI_DESCRIPTION_HEADER));
     *CurrentRsdtEntry = (UINT32)(UINTN)AcpiTableInstance->Fadt1;
 
-    CurrentRsdtEntry  = (UINT32 *)((UINT8 *)AcpiTableInstance->Rsdt3 +
-                                   sizeof (EFI_ACPI_DESCRIPTION_HEADER));
+    CurrentRsdtEntry = (UINT32 *)((UINT8 *)AcpiTableInstance->Rsdt3 +
+                                  sizeof (EFI_ACPI_DESCRIPTION_HEADER));
     *CurrentRsdtEntry = (UINT32)(UINTN)AcpiTableInstance->Fadt3;
   }
 
@@ -417,8 +417,8 @@ ReallocateAcpiTableBuffer (
   if ((PcdGet32 (PcdAcpiExposedTableVersions) & EFI_ACPI_TABLE_VERSION_1_0B) !=
       0)
   {
-    Pointer                 += (sizeof (EFI_ACPI_DESCRIPTION_HEADER) +
-                                NewMaxTableNumber * sizeof (UINT32));
+    Pointer += (sizeof (EFI_ACPI_DESCRIPTION_HEADER) +
+                NewMaxTableNumber * sizeof (UINT32));
     AcpiTableInstance->Rsdt3 = (EFI_ACPI_DESCRIPTION_HEADER *)Pointer;
     Pointer                 += (sizeof (EFI_ACPI_DESCRIPTION_HEADER) +
                                 NewMaxTableNumber * sizeof (UINT32));
@@ -2261,8 +2261,8 @@ AcpiTableAcpiTableConstructor (
   if ((PcdGet32 (PcdAcpiExposedTableVersions) & EFI_ACPI_TABLE_VERSION_1_0B) !=
       0)
   {
-    Pointer                 += (sizeof (EFI_ACPI_DESCRIPTION_HEADER) +
-                                EFI_ACPI_MAX_NUM_TABLES * sizeof (UINT32));
+    Pointer += (sizeof (EFI_ACPI_DESCRIPTION_HEADER) +
+                EFI_ACPI_MAX_NUM_TABLES * sizeof (UINT32));
     AcpiTableInstance->Rsdt3 = (EFI_ACPI_DESCRIPTION_HEADER *)Pointer;
     Pointer                 += (sizeof (EFI_ACPI_DESCRIPTION_HEADER) +
                                 EFI_ACPI_MAX_NUM_TABLES * sizeof (UINT32));

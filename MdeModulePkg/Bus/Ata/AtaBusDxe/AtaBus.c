@@ -70,22 +70,22 @@ ATA_DEVICE  gAtaDeviceTemplate = {
     AtaStorageSecurityReceiveData,
     AtaStorageSecuritySendData
   },
-  NULL,                                                                   // AtaBusDriverData
-  0,                                                                      // Port
-  0,                                                                      // PortMultiplierPort
-  { 0,                                                                 }, // Packet
+  NULL,                                       // AtaBusDriverData
+  0,                                          // Port
+  0,                                          // PortMultiplierPort
+  { 0,                                     }, // Packet
   {
     { 0 },
-  },                                                                      // Acb
-  NULL,                                                                   // Asb
-  FALSE,                                                                  // UdmaValid
-  FALSE,                                                                  // Lba48Bit
-  NULL,                                                                   // IdentifyData
-  NULL,                                                                   // ControllerNameTable
-  { L'\0',                                                             }, // ModelName
-  { NULL,                            NULL                              }, // AtaTaskList
-  { NULL,                            NULL                              }, // AtaSubTaskList
-  FALSE                                                                   // Abort
+  },                                          // Acb
+  NULL,                                       // Asb
+  FALSE,                                      // UdmaValid
+  FALSE,                                      // Lba48Bit
+  NULL,                                       // IdentifyData
+  NULL,                                       // ControllerNameTable
+  { L'\0',                                 }, // ModelName
+  { NULL,                            NULL  }, // AtaTaskList
+  { NULL,                            NULL  }, // AtaSubTaskList
+  FALSE                                       // Abort
 };
 
 /**

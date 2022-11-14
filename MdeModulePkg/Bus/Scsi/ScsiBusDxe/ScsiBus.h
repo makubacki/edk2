@@ -78,7 +78,7 @@ typedef struct _SCSI_BUS_DEVICE {
 } SCSI_BUS_DEVICE;
 
 #define SCSI_BUS_CONTROLLER_DEVICE_FROM_THIS( \
-                                            a)  \
+                                              a)  \
   CR (a, SCSI_BUS_DEVICE, BusIdentify, SCSI_BUS_DEVICE_SIGNATURE)
 
 typedef struct {
@@ -98,7 +98,7 @@ typedef struct {
 } SCSI_IO_DEV;
 
 #define SCSI_IO_DEV_FROM_THIS( \
-                             a)  \
+                               a)  \
   CR (a, SCSI_IO_DEV, ScsiIo, SCSI_IO_DEV_SIGNATURE)
 
 //

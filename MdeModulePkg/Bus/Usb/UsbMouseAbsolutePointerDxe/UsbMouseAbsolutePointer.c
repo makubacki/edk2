@@ -440,7 +440,8 @@ USBMouseAbsolutePointerDriverBindingStop (
 
   UsbMouseAbsolutePointerDevice =
     USB_MOUSE_ABSOLUTE_POINTER_DEV_FROM_MOUSE_PROTOCOL (
-      AbsolutePointerProtocol);
+      AbsolutePointerProtocol
+      );
 
   UsbIo = UsbMouseAbsolutePointerDevice->UsbIo;
 

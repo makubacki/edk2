@@ -30,9 +30,9 @@ SETUP_DRIVER_PRIVATE_DATA  mPrivateData = {
     IsBrowserDataModified,
     ExecuteAction,
     { NULL,
-      NULL                                                                          },
+      NULL },
     { NULL,
-      NULL                                                                          },
+      NULL },
     IsResetRequired
   }
 };

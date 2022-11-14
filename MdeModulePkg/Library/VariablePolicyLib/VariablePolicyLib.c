@@ -50,10 +50,10 @@ STATIC  UINT32  mCurrentTableCount = 0;
 // NOTE: DO NOT USE THESE MACROS on any structure that has not been validated.
 //       Current table data has already been sanitized.
 #define GET_NEXT_POLICY( \
-                       CurPolicy)  \
+                         CurPolicy)  \
       (VARIABLE_POLICY_ENTRY*)((UINT8*)CurPolicy + CurPolicy->Size)
 #define GET_POLICY_NAME( \
-                       CurPolicy)  \
+                         CurPolicy)  \
       (CHAR16*)((UINTN)CurPolicy + CurPolicy->OffsetToName)
 
 #define MATCH_PRIORITY_EXACT  0

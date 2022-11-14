@@ -101,10 +101,10 @@ typedef struct {
 } ATAPI_BLK_IO_DEV;
 
 #define PEI_RECOVERY_ATAPI_FROM_BLKIO_THIS( \
-                                          a)   \
+                                            a)   \
       CR (a, ATAPI_BLK_IO_DEV, AtapiBlkIo, ATAPI_BLK_IO_DEV_SIGNATURE)
 #define PEI_RECOVERY_ATAPI_FROM_BLKIO2_THIS( \
-                                           a)  \
+                                             a)  \
       CR (a, ATAPI_BLK_IO_DEV, AtapiBlkIo2, ATAPI_BLK_IO_DEV_SIGNATURE)
 
 #define STALL_1_MILLI_SECOND  1000  // stall 1 ms

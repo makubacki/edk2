@@ -569,7 +569,7 @@ RestoreLockBox (
   UINT8                               CommBuffer[sizeof (EFI_GUID) +
                                                  sizeof (UINT64) +
                                                  sizeof (
-                                                                                              EFI_SMM_LOCK_BOX_PARAMETER_RESTORE)
+                                                         EFI_SMM_LOCK_BOX_PARAMETER_RESTORE)
   ];
   UINTN   CommSize;
   UINT64  MessageLength;
@@ -738,9 +738,9 @@ RestoreAllLockBoxInPlace (
                               LockBoxParameterRestoreAllInPlace;
   EFI_SMM_COMMUNICATE_HEADER  *CommHeader;
   UINT8                       CommBuffer[sizeof (EFI_GUID)
-                                             + sizeof (UINT64) +
-                                             sizeof (
-                                                                                                           EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE)
+                                           + sizeof (UINT64) +
+                                           sizeof (
+                                                   EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE)
   ];
   UINTN   CommSize;
   UINT64  MessageLength;
@@ -809,7 +809,7 @@ RestoreAllLockBoxInPlace (
                                                                        MessageLength
                                                                        ) +
                                                                      sizeof (
-                                                                                                                                                                      UINT64)
+                                                                             UINT64)
       ];
   } else {
     LockBoxParameterRestoreAllInPlace =
@@ -818,7 +818,7 @@ RestoreAllLockBoxInPlace (
                                                                        MessageLength
                                                                        ) +
                                                                      sizeof (
-                                                                                                                                                                      UINTN)
+                                                                             UINTN)
       ];
   }
 

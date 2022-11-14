@@ -1573,7 +1573,7 @@ DriverCallback (
                                                            |
                                                            EFI_VARIABLE_BOOTSERVICE_ACCESS,
                                                            sizeof (
-                                                                  DRIVER_SAMPLE_CONFIGURATION),
+                                                                   DRIVER_SAMPLE_CONFIGURATION),
                                                            &PrivateData->
                                                              Configuration
                                                            );

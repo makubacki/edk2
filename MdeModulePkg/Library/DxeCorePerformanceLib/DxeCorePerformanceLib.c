@@ -25,8 +25,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
                                            (OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data) + sizeof(SMM_BOOT_RECORD_COMMUNICATE))
 #define STRING_SIZE                \
                                            (FPDT_STRING_EVENT_RECORD_NAME_LENGTH * sizeof (CHAR8))
-#define FIRMWARE_RECORD_BUFFER             0x10000
-#define CACHE_HANDLE_GUID_COUNT            0x800
+#define FIRMWARE_RECORD_BUFFER   0x10000
+#define CACHE_HANDLE_GUID_COUNT  0x800
 
 BOOT_PERFORMANCE_TABLE  *mAcpiBootPerformanceTable    = NULL;
 BOOT_PERFORMANCE_TABLE  mBootPerformanceTableTemplate = {
@@ -1203,9 +1203,9 @@ InsertFpdtRecord (
           } else {
             CachedFpdtRecordPtr.RecordHeader =
               (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)(
-                                                                                              mPerformancePointer
-                                                                                              +
-                                                                                              mCachedLength);
+                                                              mPerformancePointer
+                                                              +
+                                                              mCachedLength);
           }
 
           CopyMem (
@@ -1265,9 +1265,9 @@ InsertFpdtRecord (
           } else {
             CachedFpdtRecordPtr.RecordHeader =
               (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)(
-                                                                                              mPerformancePointer
-                                                                                              +
-                                                                                              mCachedLength);
+                                                              mPerformancePointer
+                                                              +
+                                                              mCachedLength);
           }
 
           CopyMem (

@@ -76,7 +76,7 @@ typedef struct {
 } FORM_ENTRY_INFO;
 
 #define FORM_ENTRY_INFO_FROM_LINK( \
-                                 a)  \
+                                   a)  \
   CR (a, FORM_ENTRY_INFO, Link, FORM_ENTRY_INFO_SIGNATURE)
 
 #define FORM_QUESTION_ATTRIBUTE_OVERRIDE_SIGNATURE  \
@@ -94,7 +94,7 @@ typedef struct {
 } QUESTION_ATTRIBUTE_OVERRIDE;
 
 #define FORM_QUESTION_ATTRIBUTE_OVERRIDE_FROM_LINK( \
-                                                  a)  \
+                                                    a)  \
   CR (a, QUESTION_ATTRIBUTE_OVERRIDE, Link, FORM_QUESTION_ATTRIBUTE_OVERRIDE_SIGNATURE)
 
 struct _EDKII_FORM_BROWSER_EXTENSION2_PROTOCOL {

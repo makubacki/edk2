@@ -82,7 +82,7 @@ extern UINT8  BootMaintenanceManagerBin[];
 //
 #define BMM_CALLBACK_DATA_SIGNATURE  SIGNATURE_32 ('C', 'b', 'c', 'k')
 #define BMM_CALLBACK_DATA_FROM_THIS( \
-                                   a)  \
+                                     a)  \
   CR (a, BMM_CALLBACK_DATA, BmmConfigAccess, BMM_CALLBACK_DATA_SIGNATURE)
 
 //
@@ -152,7 +152,7 @@ typedef enum _TYPE_OF_TERMINAL {
 // defined below
 //
 #define VAR_OFFSET( \
-                  Field)  \
+                    Field)  \
   ((UINT16) ((UINTN) &(((BMM_FAKE_NV_DATA *) 0)->Field)))
 
 //

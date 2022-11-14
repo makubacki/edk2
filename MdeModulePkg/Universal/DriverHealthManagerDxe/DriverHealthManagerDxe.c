@@ -643,8 +643,8 @@ DriverHealthManagerGetFormsetId (
           //
           NumberOfClassGuid = (UINT8)(((EFI_IFR_FORM_SET *)OpCodeData)->Flags &
                                       0x3);
-          ClassGuid         = (EFI_GUID *)(OpCodeData +
-                                           sizeof (EFI_IFR_FORM_SET));
+          ClassGuid = (EFI_GUID *)(OpCodeData +
+                                   sizeof (EFI_IFR_FORM_SET));
           for (Index = 0; Index < NumberOfClassGuid; Index++) {
             if (CompareGuid (
                   &gEfiHiiDriverHealthFormsetGuid,
@@ -926,10 +926,10 @@ DriverHealthManagerUpdateForm (
       {
         TmpString = HiiGetString (
                       mDriverHealthManagerHealthInfo[Index].MessageList[
-                                                                       MessageIndex
+                                                                        MessageIndex
                       ].HiiHandle,
                       mDriverHealthManagerHealthInfo[Index].MessageList[
-                                                                       MessageIndex
+                                                                        MessageIndex
                       ].StringId,
                       NULL
                       );
@@ -951,7 +951,7 @@ DriverHealthManagerUpdateForm (
         Status = mDriverHealthManagerDatabase->GetPackageListHandle (
                                                  mDriverHealthManagerDatabase,
                                                  mDriverHealthManagerHealthInfo[
-                                                                               Index
+                                                                                Index
                                                  ].HiiHandle,
                                                  &DriverHandle
                                                  );
@@ -1064,8 +1064,8 @@ DriverHealthManagerCleanDynamicString (
   PackageHeader = (EFI_HII_PACKAGE_HEADER *)(HiiPackageList + 1);
   CopyMem (PackageHeader, STRING_ARRAY_NAME + sizeof (UINT32), FixedStringSize);
 
-  PackageHeader         = (EFI_HII_PACKAGE_HEADER *)((UINT8 *)PackageHeader +
-                                                     PackageHeader->Length);
+  PackageHeader = (EFI_HII_PACKAGE_HEADER *)((UINT8 *)PackageHeader +
+                                             PackageHeader->Length);
   PackageHeader->Type   = EFI_HII_PACKAGE_END;
   PackageHeader->Length = sizeof (EFI_HII_PACKAGE_HEADER);
 

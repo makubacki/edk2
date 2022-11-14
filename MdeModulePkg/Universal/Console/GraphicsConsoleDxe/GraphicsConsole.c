@@ -40,15 +40,15 @@ GRAPHICS_CONSOLE_DEV  mGraphicsConsoleDevTemplate = {
 };
 
 GRAPHICS_CONSOLE_MODE_DATA  mGraphicsConsoleModeData[] = {
-  { 100, 31         }, //  800 x 600
-  { 128, 40         }, // 1024 x 768
-  { 160, 42         }, // 1280 x 800
-  { 240, 56         }, // 1920 x 1080
+  { 100, 31 },         //  800 x 600
+  { 128, 40 },         // 1024 x 768
+  { 160, 42 },         // 1280 x 800
+  { 240, 56 },         // 1920 x 1080
   //
   // New modes can be added here.
   // The last entry is specific for full screen mode.
   //
-  { 0,   0          }
+  { 0,   0  }
 };
 
 EFI_HII_DATABASE_PROTOCOL  *mHiiDatabase;
@@ -87,8 +87,8 @@ EFI_GRAPHICS_OUTPUT_BLT_PIXEL  mGraphicsEfiColors[16] = {
 EFI_NARROW_GLYPH  mCursorGlyph = {
   0x0000,
   0x00,
-  { 0x00,0x00, 0x00, 0x00,  0x00, 0x00,  0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00,0x00, 0x00, 0x00,  0xFF, 0xFF,  0xFF }
+  { 0x00,0x00,  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00,0x00,  0x00, 0x00, 0xFF, 0xFF, 0xFF }
 };
 
 CHAR16  SpaceStr[] = { NARROW_CHAR, ' ', 0 };
@@ -284,8 +284,10 @@ InitializeGraphicsConsoleTextMode (
   // and does not include the invalid modes which exceed the max column and row.
   // Reserve 2 modes for 80x25, 80x50 of graphics console.
   //
-  NewModeBuffer = AllocateZeroPool (sizeof (GRAPHICS_CONSOLE_MODE_DATA) *
-                    (Count + 2));
+  NewModeBuffer = AllocateZeroPool (
+                    sizeof (GRAPHICS_CONSOLE_MODE_DATA) *
+                    (Count + 2)
+                    );
   ASSERT (NewModeBuffer != NULL);
 
   //
@@ -301,9 +303,9 @@ InitializeGraphicsConsoleTextMode (
   NewModeBuffer[ValidCount].DeltaX        = (HorizontalResolution -
                                              (NewModeBuffer[ValidCount].Columns
                                               * EFI_GLYPH_WIDTH)) >> 1;
-  NewModeBuffer[ValidCount].DeltaY        = (VerticalResolution -
-                                             (NewModeBuffer[ValidCount].Rows *
-                                              EFI_GLYPH_HEIGHT)) >> 1;
+  NewModeBuffer[ValidCount].DeltaY = (VerticalResolution -
+                                      (NewModeBuffer[ValidCount].Rows *
+                                       EFI_GLYPH_HEIGHT)) >> 1;
   ValidCount++;
 
   if ((MaxColumns >= 80) && (MaxRows >= 50)) {
@@ -357,9 +359,9 @@ InitializeGraphicsConsoleTextMode (
                                                  (NewModeBuffer[ValidCount].
                                                     Columns *
                                                   EFI_GLYPH_WIDTH)) >> 1;
-      NewModeBuffer[ValidCount].DeltaY        = (VerticalResolution -
-                                                 (NewModeBuffer[ValidCount].Rows
-                                                  * EFI_GLYPH_HEIGHT)) >> 1;
+      NewModeBuffer[ValidCount].DeltaY = (VerticalResolution -
+                                          (NewModeBuffer[ValidCount].Rows
+                                           * EFI_GLYPH_HEIGHT)) >> 1;
       ValidCount++;
     }
   }
@@ -540,13 +542,16 @@ GraphicsConsoleControllerDriverStart (
     }
 
     if (EFI_ERROR (Status) || (ModeNumber !=
-                               Private->GraphicsOutput->Mode->Mode)) {
+                               Private->GraphicsOutput->Mode->Mode))
+    {
       //
       // Current graphics mode is not set or is not set to the mode which we have found,
       // set the new graphic mode.
       //
-      Status = Private->GraphicsOutput->SetMode (Private->GraphicsOutput,
-                                          ModeNumber);
+      Status = Private->GraphicsOutput->SetMode (
+                                          Private->GraphicsOutput,
+                                          ModeNumber
+                                          );
       if (EFI_ERROR (Status)) {
         //
         // The mode set operation failed
@@ -593,8 +598,12 @@ GraphicsConsoleControllerDriverStart (
     }
   }
 
-  DEBUG ((DEBUG_INFO, "GraphicsConsole video resolution %d x %d\n",
-    HorizontalResolution, VerticalResolution));
+  DEBUG ((
+    DEBUG_INFO,
+    "GraphicsConsole video resolution %d x %d\n",
+    HorizontalResolution,
+    VerticalResolution
+    ));
 
   //
   // Initialize the mode which GraphicsConsole supports.
@@ -876,14 +885,20 @@ EfiLocateHiiProtocol (
 {
   EFI_STATUS  Status;
 
-  Status = gBS->LocateProtocol (&gEfiHiiDatabaseProtocolGuid, NULL,
-                  (VOID **)&mHiiDatabase);
+  Status = gBS->LocateProtocol (
+                  &gEfiHiiDatabaseProtocolGuid,
+                  NULL,
+                  (VOID **)&mHiiDatabase
+                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = gBS->LocateProtocol (&gEfiHiiFontProtocolGuid, NULL,
-                  (VOID **)&mHiiFont);
+  Status = gBS->LocateProtocol (
+                  &gEfiHiiFontProtocolGuid,
+                  NULL,
+                  (VOID **)&mHiiFont
+                  );
   return Status;
 }
 
@@ -923,8 +938,14 @@ GraphicsConsoleConOutReset (
     return Status;
   }
 
-  Status = This->SetAttribute (This, EFI_TEXT_ATTR (This->Mode->Attribute &
-                                       0x0F, EFI_BACKGROUND_BLACK));
+  Status = This->SetAttribute (
+                   This,
+                   EFI_TEXT_ATTR (
+                     This->Mode->Attribute &
+                     0x0F,
+                     EFI_BACKGROUND_BLACK
+                     )
+                   );
   return Status;
 }
 
@@ -1146,7 +1167,8 @@ GraphicsConsoleConOutOutputString (
       // Count is used to determine how many characters are used regardless of their attributes
       //
       for (Count = 0, Index = 0; (This->Mode->CursorColumn + Index) < MaxColumn;
-           Count++, Index++) {
+           Count++, Index++)
+      {
         if ((WString[Count] == CHAR_NULL) ||
             (WString[Count] == CHAR_BACKSPACE) ||
             (WString[Count] == CHAR_LINEFEED) ||
@@ -1404,8 +1426,10 @@ GraphicsConsoleConOutSetMode (
   //
   // Attempt to allocate a line buffer for the requested mode number
   //
-  NewLineBuffer = AllocatePool (sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL) *
-                    ModeData->Columns * EFI_GLYPH_WIDTH * EFI_GLYPH_HEIGHT);
+  NewLineBuffer = AllocatePool (
+                    sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL) *
+                    ModeData->Columns * EFI_GLYPH_WIDTH * EFI_GLYPH_HEIGHT
+                    );
 
   if (NewLineBuffer == NULL) {
     //
@@ -1426,8 +1450,10 @@ GraphicsConsoleConOutSetMode (
       //
       // Either no graphics mode is currently set, or it is set to the wrong resolution, so set the new graphics mode
       //
-      Status = GraphicsOutput->SetMode (GraphicsOutput,
-                                 ModeData->GopModeNumber);
+      Status = GraphicsOutput->SetMode (
+                                 GraphicsOutput,
+                                 ModeData->GopModeNumber
+                                 );
       if (EFI_ERROR (Status)) {
         //
         // The mode set operation failed
@@ -1463,7 +1489,8 @@ GraphicsConsoleConOutSetMode (
                         &RefreshRate
                         );
     if (EFI_ERROR (Status) || (HorizontalResolution != ModeData->GopWidth) ||
-        (VerticalResolution != ModeData->GopHeight)) {
+        (VerticalResolution != ModeData->GopHeight))
+    {
       //
       // Either no graphics mode is currently set, or it is set to the wrong resolution, so set the new graphics mode
       //
@@ -1700,7 +1727,8 @@ GraphicsConsoleConOutSetCursorPosition (
   }
 
   if ((This->Mode->CursorColumn == (INT32)Column) && (This->Mode->CursorRow ==
-                                                      (INT32)Row)) {
+                                                      (INT32)Row))
+  {
     Status = EFI_SUCCESS;
     goto Done;
   }
@@ -1837,7 +1865,8 @@ DrawUnicodeWeightAtCursorN (
   *(String + Count) = L'\0';
 
   FontInfo = (EFI_FONT_DISPLAY_INFO *)AllocateZeroPool (
-                                        sizeof (EFI_FONT_DISPLAY_INFO));
+                                        sizeof (EFI_FONT_DISPLAY_INFO)
+                                        );
   if (FontInfo == NULL) {
     FreePool (Blt);
     FreePool (String);
@@ -1879,8 +1908,10 @@ DrawUnicodeWeightAtCursorN (
 
     UgaDraw = Private->UgaDraw;
 
-    Blt->Image.Bitmap = AllocateZeroPool (Blt->Width * Blt->Height *
-                          sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+    Blt->Image.Bitmap = AllocateZeroPool (
+                          Blt->Width * Blt->Height *
+                          sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
+                          );
     if (Blt->Image.Bitmap == NULL) {
       FreePool (Blt);
       FreePool (String);

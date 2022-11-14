@@ -129,7 +129,8 @@ RegisterResetNotify (
                                   ResetFilter->Guid,
                                   sizeof (RESET_FILTER_LIST) +
                                   sizeof (EFI_RESET_SYSTEM) * PcdGet32 (
-                                                                PcdMaximumPeiResetNotifies)
+                                                                PcdMaximumPeiResetNotifies
+                                                                )
                                   );
     if (List == NULL) {
       return EFI_OUT_OF_RESOURCES;

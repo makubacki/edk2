@@ -180,9 +180,9 @@ PcdSetNvStoreDefaultIdCallBack (
     //
     // The first section data includes NV storage default setting.
     //
-    NvStoreBuffer   = (VARIABLE_STORE_HEADER *)((UINT8 *)DataHeader +
-                                                sizeof (DataHeader->DataSize) +
-                                                DataHeader->HeaderSize);
+    NvStoreBuffer = (VARIABLE_STORE_HEADER *)((UINT8 *)DataHeader +
+                                              sizeof (DataHeader->DataSize) +
+                                              DataHeader->HeaderSize);
     VarStoreHobData = (UINT8 *)BuildGuidHob (
                                  &NvStoreBuffer->Signature,
                                  NvStoreBuffer->Size
@@ -1647,7 +1647,7 @@ PeiPcdGetNextTokenSpace (
 
   ExMapTable = (DYNAMICEX_MAPPING *)((UINT8 *)PeiPcdDb +
                                      PeiPcdDb->ExMapTableOffset);
-  GuidTable  = (EFI_GUID *)((UINT8 *)PeiPcdDb + PeiPcdDb->GuidTableOffset);
+  GuidTable = (EFI_GUID *)((UINT8 *)PeiPcdDb + PeiPcdDb->GuidTableOffset);
 
   if (*Guid == NULL) {
     //

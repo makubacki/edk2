@@ -309,9 +309,9 @@ RecordFmpCapsuleStatusVariable (
   gRT->GetTime (&CapsuleResultVariableHeader->CapsuleProcessed, NULL);
   CapsuleResultVariableHeader->CapsuleStatus = CapsuleStatus;
 
-  CapsuleResultVariableFmp                   = (VOID *)(CapsuleResultVariable +
-                                                        sizeof (
-                                                                                       EFI_CAPSULE_RESULT_VARIABLE_HEADER));
+  CapsuleResultVariableFmp = (VOID *)(CapsuleResultVariable +
+                                      sizeof (
+                                              EFI_CAPSULE_RESULT_VARIABLE_HEADER));
   CapsuleResultVariableFmp->Version          = 0x1;
   CapsuleResultVariableFmp->PayloadIndex     = (UINT8)PayloadIndex;
   CapsuleResultVariableFmp->UpdateImageIndex = ImageHeader->UpdateImageIndex;

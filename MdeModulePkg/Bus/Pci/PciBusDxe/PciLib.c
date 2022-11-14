@@ -1110,8 +1110,8 @@ PciAllocateBusNumber (
           return EFI_OUT_OF_RESOURCES;
         }
 
-        NextNumber       = (UINT8)(NextNumber + (BusNumberRanges->AddrRangeMin -
-                                                 (MaxNumberInRange + 1)));
+        NextNumber = (UINT8)(NextNumber + (BusNumberRanges->AddrRangeMin -
+                                           (MaxNumberInRange + 1)));
         MaxNumberInRange = BusNumberRanges->AddrRangeMin +
                            BusNumberRanges->AddrLen - 1;
       }
@@ -1943,9 +1943,9 @@ PciProgramResizableBar (
                                     EfiPciIoWidthUint8,
                                     PciIoDevice->ResizableBarOffset +
                                     sizeof (
-                                                                             PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER),
+                                            PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER),
                                     sizeof (
-                                           PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_ENTRY)
+                                            PCI_EXPRESS_EXTENDED_CAPABILITIES_RESIZABLE_BAR_ENTRY)
                                     * ResizableBarNumber,
                                     (VOID *)(&Entries)
                                     );

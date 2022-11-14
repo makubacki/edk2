@@ -26,12 +26,12 @@ typedef struct {
 } VARIABLE_TYPE;
 
 VARIABLE_TYPE  mVariableType[] = {
-  { EFI_SECURE_BOOT_MODE_NAME,    &gEfiGlobalVariableGuid               },
-  { EFI_PLATFORM_KEY_NAME,        &gEfiGlobalVariableGuid               },
-  { EFI_KEY_EXCHANGE_KEY_NAME,    &gEfiGlobalVariableGuid               },
-  { EFI_IMAGE_SECURITY_DATABASE,  &gEfiImageSecurityDatabaseGuid        },
-  { EFI_IMAGE_SECURITY_DATABASE1, &gEfiImageSecurityDatabaseGuid        },
-  { EFI_IMAGE_SECURITY_DATABASE2, &gEfiImageSecurityDatabaseGuid        },
+  { EFI_SECURE_BOOT_MODE_NAME,    &gEfiGlobalVariableGuid        },
+  { EFI_PLATFORM_KEY_NAME,        &gEfiGlobalVariableGuid        },
+  { EFI_KEY_EXCHANGE_KEY_NAME,    &gEfiGlobalVariableGuid        },
+  { EFI_IMAGE_SECURITY_DATABASE,  &gEfiImageSecurityDatabaseGuid },
+  { EFI_IMAGE_SECURITY_DATABASE1, &gEfiImageSecurityDatabaseGuid },
+  { EFI_IMAGE_SECURITY_DATABASE2, &gEfiImageSecurityDatabaseGuid },
 };
 
 //

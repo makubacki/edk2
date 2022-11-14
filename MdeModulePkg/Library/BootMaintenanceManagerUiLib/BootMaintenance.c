@@ -1427,8 +1427,8 @@ BootMaintCallback (
       } else if ((QuestionId >= TERMINAL_OPTION_OFFSET) && (QuestionId <
                                                             CONSOLE_OPTION_OFFSET))
       {
-        Index                    = (UINT16)(QuestionId -
-                                            TERMINAL_OPTION_OFFSET);
+        Index = (UINT16)(QuestionId -
+                         TERMINAL_OPTION_OFFSET);
         Private->CurrentTerminal = Index;
 
         CleanUpPage (FORM_CON_COM_SETUP_ID, Private);

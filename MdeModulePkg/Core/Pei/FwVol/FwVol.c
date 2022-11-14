@@ -325,8 +325,8 @@ FindFileEx (
       FwVolExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FwVolHeader +
                                                           FwVolHeader->
                                                             ExtHeaderOffset);
-      FfsFileHeader  = (EFI_FFS_FILE_HEADER *)((UINT8 *)FwVolExtHeader +
-                                               FwVolExtHeader->ExtHeaderSize);
+      FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FwVolExtHeader +
+                                              FwVolExtHeader->ExtHeaderSize);
     } else {
       FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FwVolHeader +
                                               FwVolHeader->HeaderLength);
@@ -1535,8 +1535,8 @@ GetFvUsedSize (
 
   ExtHeaderOffset = ReadUnaligned16 (&FvHeader->ExtHeaderOffset);
   if (ExtHeaderOffset != 0) {
-    ExtHeader    = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FvHeader +
-                                                      ExtHeaderOffset);
+    ExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FvHeader +
+                                                   ExtHeaderOffset);
     ExtEntryList = (EFI_FIRMWARE_VOLUME_EXT_ENTRY *)(ExtHeader + 1);
     while ((UINTN)ExtEntryList < ((UINTN)ExtHeader + ReadUnaligned32 (
                                                        &ExtHeader->ExtHeaderSize
@@ -2339,12 +2339,12 @@ PeiFfsFvPpiFindSectionByType2 (
       return EFI_NOT_FOUND;
     }
 
-    Section  = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)FfsFileHeader +
-                                             sizeof (EFI_FFS_FILE_HEADER2));
+    Section = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)FfsFileHeader +
+                                            sizeof (EFI_FFS_FILE_HEADER2));
     FileSize = FFS_FILE2_SIZE (FfsFileHeader) - sizeof (EFI_FFS_FILE_HEADER2);
   } else {
-    Section  = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)FfsFileHeader +
-                                             sizeof (EFI_FFS_FILE_HEADER));
+    Section = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)FfsFileHeader +
+                                            sizeof (EFI_FFS_FILE_HEADER));
     FileSize = FFS_FILE_SIZE (FfsFileHeader) - sizeof (EFI_FFS_FILE_HEADER);
   }
 

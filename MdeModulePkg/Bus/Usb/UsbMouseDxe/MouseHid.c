@@ -267,10 +267,10 @@ ParseMouseReportDescriptor (
 
   UsbMouse->NumberOfButtons = (UINT8)(UsbMouse->PrivateData.ButtonMaxIndex -
                                       UsbMouse->PrivateData.ButtonMinIndex + 1);
-  UsbMouse->XLogicMax       = 127;
-  UsbMouse->YLogicMax       = 127;
-  UsbMouse->XLogicMin       = -127;
-  UsbMouse->YLogicMin       = -127;
+  UsbMouse->XLogicMax = 127;
+  UsbMouse->YLogicMax = 127;
+  UsbMouse->XLogicMin = -127;
+  UsbMouse->YLogicMin = -127;
 
   return EFI_SUCCESS;
 }

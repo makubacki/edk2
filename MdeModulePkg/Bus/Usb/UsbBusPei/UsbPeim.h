@@ -66,7 +66,7 @@ typedef struct {
 } PEI_USB_DEVICE;
 
 #define PEI_USB_DEVICE_FROM_THIS( \
-                                a)  \
+                                  a)  \
   CR (a, PEI_USB_DEVICE, UsbIoPpi, PEI_USB_DEVICE_SIGNATURE)
 
 #define USB_BIT_IS_SET(Data, Bit)  ((BOOLEAN)(((Data) & (Bit)) == (Bit)))

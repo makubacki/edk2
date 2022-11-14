@@ -1740,8 +1740,8 @@ ProgramUpstreamBridgeForRom (
         Base  = (UINT16)gAllOne;
         Limit = (UINT16)gAllZero;
       } else {
-        Base  = (UINT16)((UINT32)Parent->PciBar[PPB_MEM32_RANGE].BaseAddress >>
-                         16);
+        Base = (UINT16)((UINT32)Parent->PciBar[PPB_MEM32_RANGE].BaseAddress >>
+                        16);
         Limit = (UINT16)((UINT32)(Parent->PciBar[PPB_MEM32_RANGE].BaseAddress
                                   + Parent->PciBar[PPB_MEM32_RANGE].Length -
                                   1) >> 16);

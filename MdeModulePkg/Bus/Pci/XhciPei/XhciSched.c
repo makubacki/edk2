@@ -740,11 +740,11 @@ XhcPeiCheckUrbResult (
                                                             TRBPtrHi,
                                                           32
                                                           ));
-    TRBPtr  = (TRB_TEMPLATE *)(UINTN)UsbHcGetHostAddrForPciAddr (
-                                       Xhc->MemPool,
-                                       (VOID *)(UINTN)PhyAddr,
-                                       sizeof (TRB_TEMPLATE)
-                                       );
+    TRBPtr = (TRB_TEMPLATE *)(UINTN)UsbHcGetHostAddrForPciAddr (
+                                      Xhc->MemPool,
+                                      (VOID *)(UINTN)PhyAddr,
+                                      sizeof (TRB_TEMPLATE)
+                                      );
 
     //
     // Update the status of Urb according to the finished event regardless of whether
@@ -1005,13 +1005,13 @@ XhcPeiPollPortStatusChange (
       RouteChart.Route.RouteString = ParentRouteChart.Route.RouteString | (15 <<
                                                                            (4 *
                                                                             (
-                                                                                      ParentRouteChart
-                                                                                        .
-                                                                                        Route
-                                                                                        .
-                                                                                        TierNum
-                                                                                      -
-                                                                                      1)));
+                                                                             ParentRouteChart
+                                                                               .
+                                                                               Route
+                                                                               .
+                                                                               TierNum
+                                                                             -
+                                                                             1)));
     }
 
     RouteChart.Route.RootPortNum = ParentRouteChart.Route.RootPortNum;
@@ -1773,7 +1773,7 @@ XhcPeiDisableSlotCmd (
       RingSeg =
         ((TRANSFER_RING *)(UINTN)Xhc->UsbDevContext[SlotId].EndpointTransferRing
          [
-                   Index
+          Index
          ])->RingSeg0;
       if (RingSeg != NULL) {
         UsbHcFreeMem (
@@ -1915,7 +1915,7 @@ XhcPeiDisableSlotCmd64 (
       RingSeg =
         ((TRANSFER_RING *)(UINTN)Xhc->UsbDevContext[SlotId].EndpointTransferRing
          [
-                   Index
+          Index
          ])->RingSeg0;
       if (RingSeg != NULL) {
         UsbHcFreeMem (
@@ -2078,9 +2078,9 @@ XhcPeiSetConfigCmd (
               Xhc,
               TR_RING_TRB_NUMBER,
               (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[
-                                                                                                                               Dci
-                                                                                                                               -
-                                                                                                                               1
+                                                                               Dci
+                                                                               -
+                                                                               1
               ]
               );
           }
@@ -2165,9 +2165,9 @@ XhcPeiSetConfigCmd (
               Xhc,
               TR_RING_TRB_NUMBER,
               (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[
-                                                                                                                               Dci
-                                                                                                                               -
-                                                                                                                               1
+                                                                               Dci
+                                                                               -
+                                                                               1
               ]
               );
           }
@@ -2353,9 +2353,9 @@ XhcPeiSetConfigCmd64 (
               Xhc,
               TR_RING_TRB_NUMBER,
               (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[
-                                                                                                                               Dci
-                                                                                                                               -
-                                                                                                                               1
+                                                                               Dci
+                                                                               -
+                                                                               1
               ]
               );
           }
@@ -2440,9 +2440,9 @@ XhcPeiSetConfigCmd64 (
               Xhc,
               TR_RING_TRB_NUMBER,
               (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[
-                                                                                                                               Dci
-                                                                                                                               -
-                                                                                                                               1
+                                                                               Dci
+                                                                               -
+                                                                               1
               ]
               );
           }
@@ -3312,8 +3312,8 @@ XhcPeiCreateTransferRing (
   // To form a ring (or circular queue) a Link TRB may be inserted at the end of a ring to
   // point to the first TRB in the ring.
   //
-  EndTrb       = (LINK_TRB *)((UINTN)Buf + sizeof (TRB_TEMPLATE) * (TrbNum -
-                                                                    1));
+  EndTrb = (LINK_TRB *)((UINTN)Buf + sizeof (TRB_TEMPLATE) * (TrbNum -
+                                                              1));
   EndTrb->Type = TRB_TYPE_LINK;
   PhyAddr      = UsbHcGetPciAddrForHostAddr (
                    Xhc->MemPool,

@@ -433,7 +433,7 @@ FrameBufferBltLibVideoToBltBuffer (
     if (Configure->PixelFormat == PixelBlueGreenRedReserved8BitPerColor) {
       Destination = (UINT8 *)BltBuffer + (DstY * Delta) + (DestinationX *
                                                            sizeof (
-                                                                                 EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+                                                                   EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
     } else {
       Destination = Configure->LineBuffer;
     }
@@ -446,9 +446,9 @@ FrameBufferBltLibVideoToBltBuffer (
               ((UINT8 *)BltBuffer + (DstY * Delta) +
                (DestinationX + IndexX) *
                sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
-        Uint32         = *(UINT32 *)(Configure->LineBuffer + (IndexX *
-                                                              Configure->
-                                                                BytesPerPixel));
+        Uint32 = *(UINT32 *)(Configure->LineBuffer + (IndexX *
+                                                      Configure->
+                                                        BytesPerPixel));
         *(UINT32 *)Blt =
           (UINT32)(
                    (((Uint32 & Configure->PixelMasks.RedMask) >>
@@ -551,11 +551,11 @@ FrameBufferBltLibBufferToVideo (
                                             (SrcY * Delta) +
                                             ((SourceX + IndexX) *
                                              sizeof (
-                                                                         EFI_GRAPHICS_OUTPUT_BLT_PIXEL))
+                                                     EFI_GRAPHICS_OUTPUT_BLT_PIXEL))
                                             );
         Uint32
-                                                                        = *(
-                      UINT32 *)Blt;
+          = *(
+              UINT32 *)Blt;
         *(UINT32 *)(Configure->LineBuffer + (IndexX *
                                              Configure->BytesPerPixel)) =
           (UINT32)(

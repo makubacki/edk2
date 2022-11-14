@@ -80,8 +80,8 @@ GrowDepexStack (
   //
   mDepexEvaluationStackPointer = NewStack + (mDepexEvaluationStackPointer -
                                              mDepexEvaluationStack);
-  mDepexEvaluationStack        = NewStack;
-  mDepexEvaluationStackEnd     = NewStack + Size;
+  mDepexEvaluationStack    = NewStack;
+  mDepexEvaluationStackEnd = NewStack + Size;
 
   return EFI_SUCCESS;
 }

@@ -93,7 +93,7 @@ typedef struct {
 } FILE_EXPLORER_CALLBACK_DATA;
 
 #define FILE_EXPLORER_PRIVATE_FROM_THIS( \
-                                       a)  \
+                                         a)  \
   CR (a, FILE_EXPLORER_CALLBACK_DATA, FeConfigAccess, FILE_EXPLORER_CALLBACK_DATA_SIGNATURE)
 
 extern UINT8  FileExplorerVfrBin[];

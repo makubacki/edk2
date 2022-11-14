@@ -39,7 +39,7 @@ typedef struct _UFS_PEIM_MEM_POOL {
 #define UFS_PEIM_MEM_DEFAULT_PAGES  16
 
 #define UFS_PEIM_MEM_ROUND( \
-                          Len)  \
+                            Len)  \
   (((Len) + UFS_PEIM_MEM_UNIT_MASK) & (~UFS_PEIM_MEM_UNIT_MASK))
 
 //

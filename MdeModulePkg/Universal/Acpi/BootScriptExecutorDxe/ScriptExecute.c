@@ -259,7 +259,7 @@ RegisterMemoryProfileImage (
   UINT8                              TempBuffer[sizeof (
                                                         MEDIA_FW_VOL_FILEPATH_DEVICE_PATH)
                                                 + sizeof (
-                                                                                                    EFI_DEVICE_PATH_PROTOCOL)
+                                                          EFI_DEVICE_PATH_PROTOCOL)
   ];
 
   if ((PcdGet8 (PcdMemoryProfilePropertyMask) & BIT0) != 0) {

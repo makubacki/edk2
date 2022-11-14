@@ -96,13 +96,13 @@ typedef struct {
 
 #define RAM_DISK_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('R', 'D', 'S', 'K')
 #define RAM_DISK_PRIVATE_FROM_BLKIO( \
-                                   a)   \
+                                     a)   \
       CR (a, RAM_DISK_PRIVATE_DATA, BlockIo, RAM_DISK_PRIVATE_DATA_SIGNATURE)
 #define RAM_DISK_PRIVATE_FROM_BLKIO2( \
-                                    a)  \
+                                      a)  \
       CR (a, RAM_DISK_PRIVATE_DATA, BlockIo2, RAM_DISK_PRIVATE_DATA_SIGNATURE)
 #define RAM_DISK_PRIVATE_FROM_THIS( \
-                                  a)    \
+                                    a)    \
       CR (a, RAM_DISK_PRIVATE_DATA, ThisInstance, RAM_DISK_PRIVATE_DATA_SIGNATURE)
 
 ///
@@ -135,7 +135,7 @@ extern RAM_DISK_CONFIG_PRIVATE_DATA  mRamDiskConfigPrivateDataTemplate;
 #define RAM_DISK_CONFIG_PRIVATE_DATA_SIGNATURE  \
   SIGNATURE_32 ('R', 'C', 'F', 'G')
 #define RAM_DISK_CONFIG_PRIVATE_FROM_THIS( \
-                                         a)  \
+                                           a)  \
   CR (a, RAM_DISK_CONFIG_PRIVATE_DATA, ConfigAccess, RAM_DISK_CONFIG_PRIVATE_DATA_SIGNATURE)
 
 /**

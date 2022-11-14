@@ -120,7 +120,7 @@ typedef struct {
 } NAME_VALUE_NODE;
 
 #define NAME_VALUE_NODE_FROM_LINK( \
-                                 a)  \
+                                   a)  \
   CR (a, NAME_VALUE_NODE, Link, NAME_VALUE_NODE_SIGNATURE)
 
 #define BROWSER_STORAGE_SIGNATURE  SIGNATURE_32 ('B', 'S', 'T', 'G')
@@ -151,7 +151,7 @@ typedef struct {
 } BROWSER_STORAGE;
 
 #define BROWSER_STORAGE_FROM_LINK( \
-                                 a)  \
+                                   a)  \
   CR (a, BROWSER_STORAGE, Link, BROWSER_STORAGE_SIGNATURE)
 
 #define FORMSET_STORAGE_SIGNATURE  SIGNATURE_32 ('F', 'S', 'T', 'G')
@@ -178,10 +178,10 @@ typedef struct {
 } FORMSET_STORAGE;
 
 #define FORMSET_STORAGE_FROM_LINK( \
-                                 a)            \
+                                   a)            \
       CR (a, FORMSET_STORAGE, Link, FORMSET_STORAGE_SIGNATURE)
 #define FORMSET_STORAGE_FROM_SAVE_FAIL_LINK( \
-                                           a)  \
+                                             a)  \
       CR (a, FORMSET_STORAGE, SaveFailLink, FORMSET_STORAGE_SIGNATURE)
 
 typedef union {
@@ -221,7 +221,7 @@ typedef struct {
 } EXPRESSION_OPCODE;
 
 #define EXPRESSION_OPCODE_FROM_LINK( \
-                                   a)  \
+                                     a)  \
   CR (a, EXPRESSION_OPCODE, Link, EXPRESSION_OPCODE_SIGNATURE)
 
 #define FORM_EXPRESSION_SIGNATURE  SIGNATURE_32 ('F', 'E', 'X', 'P')
@@ -244,7 +244,7 @@ typedef struct {
 } FORM_EXPRESSION;
 
 #define FORM_EXPRESSION_FROM_LINK( \
-                                 a)  \
+                                   a)  \
   CR (a, FORM_EXPRESSION, Link, FORM_EXPRESSION_SIGNATURE)
 
 #define FORM_EXPRESSION_LIST_SIGNATURE  SIGNATURE_32 ('F', 'E', 'X', 'R')
@@ -268,7 +268,7 @@ typedef struct {
 } QUESTION_DEFAULT;
 
 #define QUESTION_DEFAULT_FROM_LINK( \
-                                  a)  \
+                                    a)  \
   CR (a, QUESTION_DEFAULT, Link, QUESTION_DEFAULT_SIGNATURE)
 
 #define QUESTION_OPTION_SIGNATURE  SIGNATURE_32 ('Q', 'O', 'P', 'T')
@@ -288,7 +288,7 @@ typedef struct {
 } QUESTION_OPTION;
 
 #define QUESTION_OPTION_FROM_LINK( \
-                                 a)  \
+                                   a)  \
   CR (a, QUESTION_OPTION, Link, QUESTION_OPTION_SIGNATURE)
 
 typedef enum {
@@ -387,7 +387,7 @@ struct _FORM_BROWSER_STATEMENT {
 };
 
 #define FORM_BROWSER_STATEMENT_FROM_LINK( \
-                                        a)  \
+                                          a)  \
   CR (a, FORM_BROWSER_STATEMENT, Link, FORM_BROWSER_STATEMENT_SIGNATURE)
 
 #define FORM_BROWSER_CONFIG_REQUEST_SIGNATURE  SIGNATURE_32 ('F', 'C', 'R', 'S')
@@ -407,10 +407,10 @@ typedef struct {
   BROWSER_STORAGE    *Storage;
 } FORM_BROWSER_CONFIG_REQUEST;
 #define FORM_BROWSER_CONFIG_REQUEST_FROM_LINK( \
-                                             a)            \
+                                               a)            \
       CR (a, FORM_BROWSER_CONFIG_REQUEST, Link, FORM_BROWSER_CONFIG_REQUEST_SIGNATURE)
 #define FORM_BROWSER_CONFIG_REQUEST_FROM_SAVE_FAIL_LINK( \
-                                                       a)  \
+                                                         a)  \
       CR (a, FORM_BROWSER_CONFIG_REQUEST, SaveFailLink, FORM_BROWSER_CONFIG_REQUEST_SIGNATURE)
 
 #define FORM_BROWSER_FORM_SIGNATURE  SIGNATURE_32 ('F', 'F', 'R', 'M')
@@ -438,7 +438,7 @@ typedef struct {
 } FORM_BROWSER_FORM;
 
 #define FORM_BROWSER_FORM_FROM_LINK( \
-                                   a)  \
+                                     a)  \
   CR (a, FORM_BROWSER_FORM, Link, FORM_BROWSER_FORM_SIGNATURE)
 
 #define FORMSET_DEFAULTSTORE_SIGNATURE  SIGNATURE_32 ('F', 'D', 'F', 'S')
@@ -452,7 +452,7 @@ typedef struct {
 } FORMSET_DEFAULTSTORE;
 
 #define FORMSET_DEFAULTSTORE_FROM_LINK( \
-                                      a)  \
+                                        a)  \
   CR (a, FORMSET_DEFAULTSTORE, Link, FORMSET_DEFAULTSTORE_SIGNATURE)
 
 #define FORM_BROWSER_FORMSET_SIGNATURE  SIGNATURE_32 ('F', 'B', 'F', 'S')
@@ -494,11 +494,11 @@ typedef struct {
   LIST_ENTRY                        ExpressionListHead;      // List of Expressions (FORM_EXPRESSION)
 } FORM_BROWSER_FORMSET;
 #define FORM_BROWSER_FORMSET_FROM_LINK( \
-                                      a)  \
+                                        a)  \
   CR (a, FORM_BROWSER_FORMSET, Link, FORM_BROWSER_FORMSET_SIGNATURE)
 
 #define FORM_BROWSER_FORMSET_FROM_SAVE_FAIL_LINK( \
-                                                a)  \
+                                                  a)  \
   CR (a, FORM_BROWSER_FORMSET, SaveFailLink, FORM_BROWSER_FORMSET_SIGNATURE)
 
 typedef struct {
@@ -507,7 +507,7 @@ typedef struct {
 } FORM_BROWSER_REFRESH_EVENT_NODE;
 
 #define FORM_BROWSER_REFRESH_EVENT_FROM_LINK( \
-                                            a)  \
+                                              a)  \
   BASE_CR (a, FORM_BROWSER_REFRESH_EVENT_NODE, Link)
 
 typedef struct {
@@ -576,7 +576,7 @@ typedef struct {
 } BROWSER_CONTEXT;
 
 #define BROWSER_CONTEXT_FROM_LINK( \
-                                 a)  \
+                                   a)  \
   CR (a, BROWSER_CONTEXT, Link, BROWSER_CONTEXT_SIGNATURE)
 
 //

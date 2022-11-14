@@ -30,7 +30,7 @@ MemoryStatusCodeInitializeWorker (
   mMmMemoryStatusCodeTable =
     (RUNTIME_MEMORY_STATUSCODE_HEADER *)AllocateZeroPool (
                                           sizeof (
-                                                                                          RUNTIME_MEMORY_STATUSCODE_HEADER)
+                                                  RUNTIME_MEMORY_STATUSCODE_HEADER)
                                           + PcdGet16 (
                                               PcdStatusCodeMemorySize
                                               )

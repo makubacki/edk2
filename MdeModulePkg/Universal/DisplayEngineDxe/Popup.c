@@ -194,13 +194,13 @@ AddUserSelectableOptions (
       //
       OptionCol = StartCol + (ColDimension -
                               USER_SELECTABLE_OPTION_OK_CAL_WIDTH) / 3;
-      Status    = AddOneSelectableOption (
-                    PopupType,
-                    EfiHiiPopupSelectionOk,
-                    gOkOption,
-                    OptionCol,
-                    OptionRow
-                    );
+      Status = AddOneSelectableOption (
+                 PopupType,
+                 EfiHiiPopupSelectionOk,
+                 gOkOption,
+                 OptionCol,
+                 OptionRow
+                 );
       OptionCol = EndCol - (ColDimension -
                             USER_SELECTABLE_OPTION_OK_CAL_WIDTH) / 3 -
                   (GetStringWidth (gCancelOption) -
@@ -220,13 +220,13 @@ AddUserSelectableOptions (
       //
       OptionCol = StartCol + (ColDimension -
                               USER_SELECTABLE_OPTION_YES_NO_WIDTH) / 3;
-      Status    = AddOneSelectableOption (
-                    PopupType,
-                    EfiHiiPopupSelectionYes,
-                    gYesOption,
-                    OptionCol,
-                    OptionRow
-                    );
+      Status = AddOneSelectableOption (
+                 PopupType,
+                 EfiHiiPopupSelectionYes,
+                 gYesOption,
+                 OptionCol,
+                 OptionRow
+                 );
       OptionCol = EndCol - (ColDimension -
                             USER_SELECTABLE_OPTION_YES_NO_WIDTH) / 3 -
                   (GetStringWidth (gNoOption)- 2) /
@@ -245,22 +245,22 @@ AddUserSelectableOptions (
       //
       OptionCol = StartCol + (ColDimension -
                               USER_SELECTABLE_OPTION_YES_NO_CAL_WIDTH) / 4;
-      Status    = AddOneSelectableOption (
-                    PopupType,
-                    EfiHiiPopupSelectionYes,
-                    gYesOption,
-                    OptionCol,
-                    OptionRow
-                    );
+      Status = AddOneSelectableOption (
+                 PopupType,
+                 EfiHiiPopupSelectionYes,
+                 gYesOption,
+                 OptionCol,
+                 OptionRow
+                 );
       OptionCol = StartCol + (ColDimension - (GetStringWidth (gNoOption) -2) /
                               2) / 2;
-      Status    = AddOneSelectableOption (
-                    PopupType,
-                    EfiHiiPopupSelectionNo,
-                    gNoOption,
-                    OptionCol,
-                    OptionRow
-                    );
+      Status = AddOneSelectableOption (
+                 PopupType,
+                 EfiHiiPopupSelectionNo,
+                 gNoOption,
+                 OptionCol,
+                 OptionRow
+                 );
       OptionCol = EndCol - (ColDimension -
                             USER_SELECTABLE_OPTION_YES_NO_CAL_WIDTH) / 4 -
                   (GetStringWidth (
@@ -616,8 +616,8 @@ CalculatePopupPosition (
   ScreenForPopup->LeftColumn  = (Columns -2 * POPUP_BORDER - gMaxRowWidth) / 2;
   ScreenForPopup->RightColumn = ScreenForPopup->LeftColumn + gMaxRowWidth + 2 *
                                 POPUP_BORDER - 1;
-  ScreenForPopup->TopRow    = (Rows - 1 - POPUP_FOOTER_HEIGHT -
-                               POPUP_HEADER_HEIGHT - gMesStrLineNum) / 2;
+  ScreenForPopup->TopRow = (Rows - 1 - POPUP_FOOTER_HEIGHT -
+                            POPUP_HEADER_HEIGHT - gMesStrLineNum) / 2;
   ScreenForPopup->BottomRow = ScreenForPopup->TopRow + gMesStrLineNum +
                               POPUP_FOOTER_HEIGHT + POPUP_HEADER_HEIGHT - 1;
 }

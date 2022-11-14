@@ -883,7 +883,7 @@ GetStringIdFromString (
         StringTextPtr = (UINT8 *)((UINTN)BlockHdr +
                                   sizeof (EFI_HII_SIBT_STRINGS_SCSU_BLOCK) -
                                   sizeof (UINT8));
-        BlockSize    += StringTextPtr - BlockHdr;
+        BlockSize += StringTextPtr - BlockHdr;
 
         for (Index = 0; Index < StringCount; Index++) {
           BlockSize += AsciiStrSize ((CHAR8 *)StringTextPtr);
@@ -908,7 +908,7 @@ GetStringIdFromString (
         StringTextPtr = (UINT8 *)((UINTN)BlockHdr +
                                   sizeof (EFI_HII_SIBT_STRINGS_SCSU_FONT_BLOCK)
                                   - sizeof (UINT8));
-        BlockSize    += StringTextPtr - BlockHdr;
+        BlockSize += StringTextPtr - BlockHdr;
 
         for (Index = 0; Index < StringCount; Index++) {
           BlockSize += AsciiStrSize ((CHAR8 *)StringTextPtr);
@@ -1049,8 +1049,8 @@ GetStringIdFromString (
         break;
 
       case EFI_HII_SIBT_SKIP1:
-        SkipCount       = (UINT16)(*(UINT8 *)((UINTN)BlockHdr +
-                                              sizeof (EFI_HII_STRING_BLOCK)));
+        SkipCount = (UINT16)(*(UINT8 *)((UINTN)BlockHdr +
+                                        sizeof (EFI_HII_STRING_BLOCK)));
         CurrentStringId = (UINT16)(CurrentStringId + SkipCount);
         BlockSize      +=  sizeof (EFI_HII_SIBT_SKIP1_BLOCK);
         break;
@@ -1226,7 +1226,7 @@ GetNextStringId (
         StringTextPtr = (UINT8 *)((UINTN)BlockHdr +
                                   sizeof (EFI_HII_SIBT_STRINGS_SCSU_BLOCK) -
                                   sizeof (UINT8));
-        BlockSize    += StringTextPtr - BlockHdr;
+        BlockSize += StringTextPtr - BlockHdr;
 
         for (Index = 0; Index < StringCount; Index++) {
           if (FindString) {
@@ -1263,7 +1263,7 @@ GetNextStringId (
         StringTextPtr = (UINT8 *)((UINTN)BlockHdr +
                                   sizeof (EFI_HII_SIBT_STRINGS_SCSU_FONT_BLOCK)
                                   - sizeof (UINT8));
-        BlockSize    += StringTextPtr - BlockHdr;
+        BlockSize += StringTextPtr - BlockHdr;
 
         for (Index = 0; Index < StringCount; Index++) {
           if (FindString) {
@@ -1394,8 +1394,8 @@ GetNextStringId (
         break;
 
       case EFI_HII_SIBT_SKIP1:
-        SkipCount       = (UINT16)(*(UINT8 *)((UINTN)BlockHdr +
-                                              sizeof (EFI_HII_STRING_BLOCK)));
+        SkipCount = (UINT16)(*(UINT8 *)((UINTN)BlockHdr +
+                                        sizeof (EFI_HII_STRING_BLOCK)));
         CurrentStringId = (UINT16)(CurrentStringId + SkipCount);
         BlockSize      +=  sizeof (EFI_HII_SIBT_SKIP1_BLOCK);
         break;
@@ -2614,7 +2614,7 @@ GetStringIdFromDatabase (
         if ((DevicePathPkg = Record->PackageList->DevicePathPkg) != NULL) {
           DestDevicePath = (EFI_DEVICE_PATH_PROTOCOL *)(DevicePathPkg +
                                                         sizeof (
-                                                                               EFI_HII_PACKAGE_HEADER));
+                                                                EFI_HII_PACKAGE_HEADER));
           DevicePathSize = GetDevicePathSize (
                              (EFI_DEVICE_PATH_PROTOCOL *)DestDevicePath
                              );

@@ -341,7 +341,8 @@ PeiLoadFixAddressHook (
   //
   TotalReservedMemorySize = MINIMUM_INITIAL_MEMORY_SIZE + EFI_PAGES_TO_SIZE (
                                                             PcdGet32 (
-                                                              PcdLoadFixAddressRuntimeCodePageNumber)
+                                                              PcdLoadFixAddressRuntimeCodePageNumber
+                                                              )
                                                             );
   TotalReservedMemorySize += EFI_PAGES_TO_SIZE (
                                PcdGet32 (
@@ -1064,14 +1065,14 @@ PeiCheckAndSwitchStack (
         SecCoreData = (CONST
                        EFI_SEC_PEI_HAND_OFF *)((UINTN)(VOID *)SecCoreData +
                                                StackOffset);
-        Private     = (PEI_CORE_INSTANCE *)((UINTN)(VOID *)Private +
-                                            StackOffset);
+        Private = (PEI_CORE_INSTANCE *)((UINTN)(VOID *)Private +
+                                        StackOffset);
       } else {
         SecCoreData = (CONST
                        EFI_SEC_PEI_HAND_OFF *)((UINTN)(VOID *)SecCoreData -
                                                StackOffset);
-        Private     = (PEI_CORE_INSTANCE *)((UINTN)(VOID *)Private -
-                                            StackOffset);
+        Private = (PEI_CORE_INSTANCE *)((UINTN)(VOID *)Private -
+                                        StackOffset);
       }
 
       //
@@ -1296,7 +1297,7 @@ MigratePeim (
 
     Pe32Data = (VOID *)((UINTN)ImageAddress - (UINTN)MigratedFileHandle +
                         (UINTN)FileHandle);
-    Status   = LoadAndRelocatePeCoffImageInPlace (Pe32Data, ImageAddress);
+    Status = LoadAndRelocatePeCoffImageInPlace (Pe32Data, ImageAddress);
     ASSERT_EFI_ERROR (Status);
   }
 

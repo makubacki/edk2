@@ -436,7 +436,7 @@ BuildDriverInfo (
   DriverInfo->Header.Signature = MEMORY_PROFILE_DRIVER_INFO_SIGNATURE;
   DriverInfo->Header.Length    = (UINT16)(sizeof (MEMORY_PROFILE_DRIVER_INFO) +
                                           PdbOccupiedSize);
-  DriverInfo->Header.Revision  = MEMORY_PROFILE_DRIVER_INFO_REVISION;
+  DriverInfo->Header.Revision = MEMORY_PROFILE_DRIVER_INFO_REVISION;
   if (FileName != NULL) {
     CopyMem (&DriverInfo->FileName, FileName, sizeof (EFI_GUID));
   }
@@ -507,7 +507,7 @@ RegisterImageToDxe (
   UINT8                              TempBuffer[sizeof (
                                                         MEDIA_FW_VOL_FILEPATH_DEVICE_PATH)
                                                 + sizeof (
-                                                                                                    EFI_DEVICE_PATH_PROTOCOL)
+                                                          EFI_DEVICE_PATH_PROTOCOL)
   ];
 
   if (IS_UEFI_MEMORY_PROFILE_ENABLED) {
@@ -553,7 +553,7 @@ UnregisterImageFromDxe (
   UINT8                              TempBuffer[sizeof (
                                                         MEDIA_FW_VOL_FILEPATH_DEVICE_PATH)
                                                 + sizeof (
-                                                                                                    EFI_DEVICE_PATH_PROTOCOL)
+                                                          EFI_DEVICE_PATH_PROTOCOL)
   ];
 
   if (IS_UEFI_MEMORY_PROFILE_ENABLED) {
@@ -1249,13 +1249,13 @@ SmmCoreUpdateProfileAllocate (
   AllocInfo->Header.Signature = MEMORY_PROFILE_ALLOC_INFO_SIGNATURE;
   AllocInfo->Header.Length    = (UINT16)(sizeof (MEMORY_PROFILE_ALLOC_INFO) +
                                          ActionStringOccupiedSize);
-  AllocInfo->Header.Revision  = MEMORY_PROFILE_ALLOC_INFO_REVISION;
-  AllocInfo->CallerAddress    = CallerAddress;
-  AllocInfo->SequenceId       = ContextData->Context.SequenceCount;
-  AllocInfo->Action           = Action;
-  AllocInfo->MemoryType       = MemoryType;
-  AllocInfo->Buffer           = (PHYSICAL_ADDRESS)(UINTN)Buffer;
-  AllocInfo->Size             = Size;
+  AllocInfo->Header.Revision = MEMORY_PROFILE_ALLOC_INFO_REVISION;
+  AllocInfo->CallerAddress   = CallerAddress;
+  AllocInfo->SequenceId      = ContextData->Context.SequenceCount;
+  AllocInfo->Action          = Action;
+  AllocInfo->MemoryType      = MemoryType;
+  AllocInfo->Buffer          = (PHYSICAL_ADDRESS)(UINTN)Buffer;
+  AllocInfo->Size            = Size;
   if (ActionString != NULL) {
     AllocInfo->ActionStringOffset = (UINT16)sizeof (MEMORY_PROFILE_ALLOC_INFO);
     AllocInfoData->ActionString   = (CHAR8 *)(AllocInfoData + 1);
@@ -2915,47 +2915,47 @@ typedef struct {
 
 GLOBAL_REMOVE_IF_UNREFERENCED ACTION_STRING  mExtActionString[] = {
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_PAGES,
-    "Lib:AllocatePages"                                      },
+    "Lib:AllocatePages" },
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RUNTIME_PAGES,
-    "Lib:AllocateRuntimePages"                                                      },
+    "Lib:AllocateRuntimePages" },
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RESERVED_PAGES,
-    "Lib:AllocateReservedPages"                                                                           },
+    "Lib:AllocateReservedPages" },
   { MEMORY_PROFILE_ACTION_LIB_FREE_PAGES,
-    "Lib:FreePages"                                                                                                             },
+    "Lib:FreePages" },
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_ALIGNED_PAGES,
-    "Lib:AllocateAlignedPages"                                                                                                                        },
+    "Lib:AllocateAlignedPages" },
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_ALIGNED_RUNTIME_PAGES,
-    "Lib:AllocateAlignedRuntimePages"                                                                                                                                       },
+    "Lib:AllocateAlignedRuntimePages" },
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_ALIGNED_RESERVED_PAGES,
-    "Lib:AllocateAlignedReservedPages"                                                                                                                                                            },
+    "Lib:AllocateAlignedReservedPages" },
   { MEMORY_PROFILE_ACTION_LIB_FREE_ALIGNED_PAGES,
-    "Lib:FreeAlignedPages"                                                                                                                                                                                              },
+    "Lib:FreeAlignedPages" },
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_POOL,
-    "Lib:AllocatePool"                                                                                                                                                                                                                        },
+    "Lib:AllocatePool" },
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RUNTIME_POOL,
-    "Lib:AllocateRuntimePool"                                                                                                                                                                                                                                       },
+    "Lib:AllocateRuntimePool" },
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RESERVED_POOL,
-    "Lib:AllocateReservedPool"                                                                                                                                                                                                                                                            },
+    "Lib:AllocateReservedPool" },
   { MEMORY_PROFILE_ACTION_LIB_FREE_POOL,
-    "Lib:FreePool"                                                                                                                                                                                                                                                                                        },
+    "Lib:FreePool" },
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_ZERO_POOL,
-    "Lib:AllocateZeroPool"                                                                                                                                                                                                                                                                                                },
+    "Lib:AllocateZeroPool" },
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RUNTIME_ZERO_POOL,
-    "Lib:AllocateRuntimeZeroPool"                                                                                                                                                                                                                                                                                                         },
+    "Lib:AllocateRuntimeZeroPool" },
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RESERVED_ZERO_POOL,
-    "Lib:AllocateReservedZeroPool"                                                                                                                                                                                                                                                                                                                        },
+    "Lib:AllocateReservedZeroPool" },
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_COPY_POOL,
-    "Lib:AllocateCopyPool"                                                                                                                                                                                                                                                                                                                                                },
+    "Lib:AllocateCopyPool" },
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RUNTIME_COPY_POOL,
-    "Lib:AllocateRuntimeCopyPool"                                                                                                                                                                                                                                                                                                                                                         },
+    "Lib:AllocateRuntimeCopyPool" },
   { MEMORY_PROFILE_ACTION_LIB_ALLOCATE_RESERVED_COPY_POOL,
-    "Lib:AllocateReservedCopyPool"                                                                                                                                                                                                                                                                                                                                                                        },
+    "Lib:AllocateReservedCopyPool" },
   { MEMORY_PROFILE_ACTION_LIB_REALLOCATE_POOL,
-    "Lib:ReallocatePool"                                                                                                                                                                                                                                                                                                                                                                                          },
+    "Lib:ReallocatePool" },
   { MEMORY_PROFILE_ACTION_LIB_REALLOCATE_RUNTIME_POOL,
-    "Lib:ReallocateRuntimePool"                                                                                                                                                                                                                                                                                                                                                                                          },
+    "Lib:ReallocateRuntimePool" },
   { MEMORY_PROFILE_ACTION_LIB_REALLOCATE_RESERVED_POOL,
-    "Lib:ReallocateReservedPool"                                                                                                                                                                                                                                                                                                                                                                                         },
+    "Lib:ReallocateReservedPool" },
 };
 
 typedef struct {
@@ -3062,30 +3062,54 @@ DumpSmramProfile (
   DEBUG ((DEBUG_INFO, "======= SmramProfile begin =======\n"));
   DEBUG ((DEBUG_INFO, "MEMORY_PROFILE_CONTEXT\n"));
 
-  DEBUG ((DEBUG_INFO, "  CurrentTotalUsage     - 0x%016lx\n",
-    Context->CurrentTotalUsage));
-  DEBUG ((DEBUG_INFO, "  PeakTotalUsage        - 0x%016lx\n",
-    Context->PeakTotalUsage));
+  DEBUG ((
+    DEBUG_INFO,
+    "  CurrentTotalUsage     - 0x%016lx\n",
+    Context->CurrentTotalUsage
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  PeakTotalUsage        - 0x%016lx\n",
+    Context->PeakTotalUsage
+    ));
   for (TypeIndex = 0; TypeIndex < sizeof (Context->CurrentTotalUsageByType) /
-       sizeof (Context->CurrentTotalUsageByType[0]); TypeIndex++) {
+       sizeof (Context->CurrentTotalUsageByType[0]); TypeIndex++)
+  {
     if ((Context->CurrentTotalUsageByType[TypeIndex] != 0) ||
         (Context->PeakTotalUsageByType[TypeIndex] != 0))
     {
-      DEBUG ((DEBUG_INFO, "  CurrentTotalUsage[0x%02x]  - 0x%016lx (%a)\n",
-        TypeIndex, Context->CurrentTotalUsageByType[TypeIndex],
-        ProfileMemoryTypeToStr (TypeIndex)));
-      DEBUG ((DEBUG_INFO, "  PeakTotalUsage[0x%02x]     - 0x%016lx (%a)\n",
-        TypeIndex, Context->PeakTotalUsageByType[TypeIndex],
-        ProfileMemoryTypeToStr (TypeIndex)));
+      DEBUG ((
+        DEBUG_INFO,
+        "  CurrentTotalUsage[0x%02x]  - 0x%016lx (%a)\n",
+        TypeIndex,
+        Context->CurrentTotalUsageByType[TypeIndex],
+        ProfileMemoryTypeToStr (TypeIndex)
+        ));
+      DEBUG ((
+        DEBUG_INFO,
+        "  PeakTotalUsage[0x%02x]     - 0x%016lx (%a)\n",
+        TypeIndex,
+        Context->PeakTotalUsageByType[TypeIndex],
+        ProfileMemoryTypeToStr (TypeIndex)
+        ));
     }
   }
 
-  DEBUG ((DEBUG_INFO, "  TotalImageSize        - 0x%016lx\n",
-    Context->TotalImageSize));
-  DEBUG ((DEBUG_INFO, "  ImageCount            - 0x%08x\n",
-    Context->ImageCount));
-  DEBUG ((DEBUG_INFO, "  SequenceCount         - 0x%08x\n",
-    Context->SequenceCount));
+  DEBUG ((
+    DEBUG_INFO,
+    "  TotalImageSize        - 0x%016lx\n",
+    Context->TotalImageSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  ImageCount            - 0x%08x\n",
+    Context->ImageCount
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "  SequenceCount         - 0x%08x\n",
+    Context->SequenceCount
+    ));
 
   SmramDriverInfoList = ContextData->DriverInfoList;
   for (DriverLink = SmramDriverInfoList->ForwardLink, DriverIndex = 0;
@@ -3100,38 +3124,74 @@ DumpSmramProfile (
                        );
     DriverInfo = &DriverInfoData->DriverInfo;
     DEBUG ((DEBUG_INFO, "  MEMORY_PROFILE_DRIVER_INFO (0x%x)\n", DriverIndex));
-    DEBUG ((DEBUG_INFO, "    FileName            - %g\n",
-      &DriverInfo->FileName));
-    DEBUG ((DEBUG_INFO, "    ImageBase           - 0x%016lx\n",
-      DriverInfo->ImageBase));
-    DEBUG ((DEBUG_INFO, "    ImageSize           - 0x%016lx\n",
-      DriverInfo->ImageSize));
-    DEBUG ((DEBUG_INFO, "    EntryPoint          - 0x%016lx\n",
-      DriverInfo->EntryPoint));
-    DEBUG ((DEBUG_INFO, "    ImageSubsystem      - 0x%04x\n",
-      DriverInfo->ImageSubsystem));
-    DEBUG ((DEBUG_INFO, "    FileType            - 0x%02x\n",
-      DriverInfo->FileType));
-    DEBUG ((DEBUG_INFO, "    CurrentUsage        - 0x%016lx\n",
-      DriverInfo->CurrentUsage));
-    DEBUG ((DEBUG_INFO, "    PeakUsage           - 0x%016lx\n",
-      DriverInfo->PeakUsage));
+    DEBUG ((
+      DEBUG_INFO,
+      "    FileName            - %g\n",
+      &DriverInfo->FileName
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "    ImageBase           - 0x%016lx\n",
+      DriverInfo->ImageBase
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "    ImageSize           - 0x%016lx\n",
+      DriverInfo->ImageSize
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "    EntryPoint          - 0x%016lx\n",
+      DriverInfo->EntryPoint
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "    ImageSubsystem      - 0x%04x\n",
+      DriverInfo->ImageSubsystem
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "    FileType            - 0x%02x\n",
+      DriverInfo->FileType
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "    CurrentUsage        - 0x%016lx\n",
+      DriverInfo->CurrentUsage
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "    PeakUsage           - 0x%016lx\n",
+      DriverInfo->PeakUsage
+      ));
     for (TypeIndex = 0; TypeIndex < sizeof (DriverInfo->CurrentUsageByType) /
-         sizeof (DriverInfo->CurrentUsageByType[0]); TypeIndex++) {
+         sizeof (DriverInfo->CurrentUsageByType[0]); TypeIndex++)
+    {
       if ((DriverInfo->CurrentUsageByType[TypeIndex] != 0) ||
           (DriverInfo->PeakUsageByType[TypeIndex] != 0))
       {
-        DEBUG ((DEBUG_INFO, "    CurrentUsage[0x%02x]     - 0x%016lx (%a)\n",
-          TypeIndex, DriverInfo->CurrentUsageByType[TypeIndex],
-          ProfileMemoryTypeToStr (TypeIndex)));
-        DEBUG ((DEBUG_INFO, "    PeakUsage[0x%02x]        - 0x%016lx (%a)\n",
-          TypeIndex, DriverInfo->PeakUsageByType[TypeIndex],
-          ProfileMemoryTypeToStr (TypeIndex)));
+        DEBUG ((
+          DEBUG_INFO,
+          "    CurrentUsage[0x%02x]     - 0x%016lx (%a)\n",
+          TypeIndex,
+          DriverInfo->CurrentUsageByType[TypeIndex],
+          ProfileMemoryTypeToStr (TypeIndex)
+          ));
+        DEBUG ((
+          DEBUG_INFO,
+          "    PeakUsage[0x%02x]        - 0x%016lx (%a)\n",
+          TypeIndex,
+          DriverInfo->PeakUsageByType[TypeIndex],
+          ProfileMemoryTypeToStr (TypeIndex)
+          ));
       }
     }
 
-    DEBUG ((DEBUG_INFO, "    AllocRecordCount    - 0x%08x\n",
-      DriverInfo->AllocRecordCount));
+    DEBUG ((
+      DEBUG_INFO,
+      "    AllocRecordCount    - 0x%08x\n",
+      DriverInfo->AllocRecordCount
+      ));
 
     AllocInfoList = DriverInfoData->AllocInfoList;
     for (AllocLink = AllocInfoList->ForwardLink, AllocIndex = 0;
@@ -3145,33 +3205,64 @@ DumpSmramProfile (
                         MEMORY_PROFILE_ALLOC_INFO_SIGNATURE
                         );
       AllocInfo = &AllocInfoData->AllocInfo;
-      DEBUG ((DEBUG_INFO, "    MEMORY_PROFILE_ALLOC_INFO (0x%x)\n",
-        AllocIndex));
-      DEBUG ((DEBUG_INFO, "      CallerAddress  - 0x%016lx (Offset: 0x%08x)\n",
-        AllocInfo->CallerAddress, AllocInfo->CallerAddress -
-        DriverInfo->ImageBase));
-      DEBUG ((DEBUG_INFO, "      SequenceId     - 0x%08x\n",
-        AllocInfo->SequenceId));
+      DEBUG ((
+        DEBUG_INFO,
+        "    MEMORY_PROFILE_ALLOC_INFO (0x%x)\n",
+        AllocIndex
+        ));
+      DEBUG ((
+        DEBUG_INFO,
+        "      CallerAddress  - 0x%016lx (Offset: 0x%08x)\n",
+        AllocInfo->CallerAddress,
+        AllocInfo->CallerAddress -
+        DriverInfo->ImageBase
+        ));
+      DEBUG ((
+        DEBUG_INFO,
+        "      SequenceId     - 0x%08x\n",
+        AllocInfo->SequenceId
+        ));
       if ((AllocInfo->Action & MEMORY_PROFILE_ACTION_USER_DEFINED_MASK) != 0) {
         if (AllocInfoData->ActionString != NULL) {
-          DEBUG ((DEBUG_INFO, "      Action         - 0x%08x (%a)\n",
-            AllocInfo->Action, AllocInfoData->ActionString));
+          DEBUG ((
+            DEBUG_INFO,
+            "      Action         - 0x%08x (%a)\n",
+            AllocInfo->Action,
+            AllocInfoData->ActionString
+            ));
         } else {
-          DEBUG ((DEBUG_INFO,
+          DEBUG ((
+            DEBUG_INFO,
             "      Action         - 0x%08x (UserDefined-0x%08x)\n",
-            AllocInfo->Action, AllocInfo->Action));
+            AllocInfo->Action,
+            AllocInfo->Action
+            ));
         }
       } else {
-        DEBUG ((DEBUG_INFO, "      Action         - 0x%08x (%a)\n",
-          AllocInfo->Action, ProfileActionToStr (AllocInfo->Action)));
+        DEBUG ((
+          DEBUG_INFO,
+          "      Action         - 0x%08x (%a)\n",
+          AllocInfo->Action,
+          ProfileActionToStr (AllocInfo->Action)
+          ));
       }
 
-      DEBUG ((DEBUG_INFO, "      MemoryType     - 0x%08x (%a)\n",
-        AllocInfo->MemoryType, ProfileMemoryTypeToStr (AllocInfo->MemoryType)));
-      DEBUG ((DEBUG_INFO, "      Buffer         - 0x%016lx\n",
-        AllocInfo->Buffer));
-      DEBUG ((DEBUG_INFO, "      Size           - 0x%016lx\n",
-        AllocInfo->Size));
+      DEBUG ((
+        DEBUG_INFO,
+        "      MemoryType     - 0x%08x (%a)\n",
+        AllocInfo->MemoryType,
+        ProfileMemoryTypeToStr (AllocInfo->MemoryType)
+        ));
+      DEBUG ((
+        DEBUG_INFO,
+        "      Buffer         - 0x%016lx\n",
+        AllocInfo->Buffer
+        ));
+      DEBUG ((
+        DEBUG_INFO,
+        "      Size           - 0x%016lx\n",
+        AllocInfo->Size
+        ));
     }
   }
 

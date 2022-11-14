@@ -23,15 +23,15 @@
   if (range < kTopValue) { range <<= 8; code = (code << 8) | (*buf++); }
 
 #define IF_BIT_0( \
-                p)             \
+                  p)             \
                                   ttt = *(p); NORMALIZE; bound = (range >> kNumBitModelTotalBits) * (UInt32)ttt; if (code < bound)
 #define UPDATE_0( \
-                p)             \
+                  p)             \
                                   range = bound; *(p) = (CLzmaProb)(ttt + ((kBitModelTotal - ttt) >> kNumMoveBits));
 #define UPDATE_1( \
-                p)             \
+                  p)             \
                                   range -= bound; code -= bound; *(p) = (CLzmaProb)(ttt - (ttt >> kNumMoveBits));
-#define GET_BIT2(p, i, A0, A1)    IF_BIT_0(p)\
+#define GET_BIT2(p, i, A0, A1)  IF_BIT_0(p)  \
   { UPDATE_0(p); i = (i + i); A0; } else \
   { UPDATE_1(p); i = (i + i) + 1; A1; }
 
@@ -75,7 +75,7 @@
   if (range < kTopValue) { if (buf >= bufLimit) return DUMMY_ERROR; range <<= 8; code = (code << 8) | (*buf++); }
 
 #define IF_BIT_0_CHECK( \
-                      p)  \
+                        p)  \
   ttt = *(p); NORMALIZE_CHECK; bound = (range >> kNumBitModelTotalBits) * (UInt32)ttt; if (code < bound)
 #define UPDATE_0_CHECK  range = bound;
 #define UPDATE_1_CHECK  range -= bound; code -= bound;
@@ -119,7 +119,7 @@
 #define kNumAlignBits    4
 #define kAlignTableSize  (1 << kNumAlignBits)
 
-#define kMatchMinLen        2
+#define kMatchMinLen  2
 #define kMatchSpecLenStart  \
                             (kMatchMinLen + kLenNumLowSymbols * 2 + kLenNumHighSymbols)
 
@@ -166,7 +166,7 @@
 #define LZMA_LIT_SIZE  0x300
 
 #define LzmaProps_GetNumProbs( \
-                             p)  \
+                               p)  \
   (NUM_BASE_PROBS + ((UInt32)LZMA_LIT_SIZE << ((p)->lc + (p)->lp)))
 
 #define CALC_POS_STATE(processedPos, pbMask)  (((processedPos) & (pbMask)) << 4)
@@ -299,7 +299,7 @@ LZMA_DECODE_REAL (
       } else {
         unsigned  matchByte = dic[dicPos - rep0 + (dicPos < rep0 ? dicBufSize :
                                                    0)];
-        unsigned  offs      = 0x100;
+        unsigned  offs = 0x100;
         state -= (state < 10) ? 3 : 6;
         symbol = 1;
  #ifdef _LZMA_SIZE_OPT
@@ -608,7 +608,7 @@ LzmaDec_WriteRem (
   }
 }
 
-#define kRange0        0xFFFFFFFF
+#define kRange0  0xFFFFFFFF
 #define kBound0      \
                        ((kRange0 >> kNumBitModelTotalBits) << (kNumBitModelTotalBits - 1))
 #define kBadRepCode  \

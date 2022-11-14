@@ -32,14 +32,14 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mNvmExpressDriverNameTable[] = {
-  { "eng;en", L"NVM Express Driver"     },
-  { NULL,     NULL                      }
+  { "eng;en", L"NVM Express Driver" },
+  { NULL,     NULL                  }
 };
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mNvmExpressControllerNameTable[] = {
-  { "eng;en", L"NVM Express Controller"     },
-  { NULL,     NULL                          }
+  { "eng;en", L"NVM Express Controller" },
+  { NULL,     NULL                      }
 };
 
 /**

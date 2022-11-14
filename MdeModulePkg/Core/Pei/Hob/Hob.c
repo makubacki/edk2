@@ -119,8 +119,8 @@ PeiCreateHob (
   ((EFI_HOB_GENERIC_HEADER *)*Hob)->HobLength = Length;
   ((EFI_HOB_GENERIC_HEADER *)*Hob)->Reserved  = 0;
 
-  HobEnd                      = (EFI_HOB_GENERIC_HEADER *)((UINTN)*Hob +
-                                                           Length);
+  HobEnd = (EFI_HOB_GENERIC_HEADER *)((UINTN)*Hob +
+                                      Length);
   HandOffHob->EfiEndOfHobList = (EFI_PHYSICAL_ADDRESS)(UINTN)HobEnd;
 
   HobEnd->HobType   = EFI_HOB_TYPE_END_OF_HOB_LIST;
@@ -210,8 +210,8 @@ PeiInstallSecHobData (
   Hob.Raw = (UINT8 *)(UINTN)HandOffHob->EfiEndOfHobList;
   CopyMem (Hob.Raw, HobStart.Raw, SecHobListLength);
 
-  HobEnd                      = (EFI_HOB_GENERIC_HEADER *)((UINTN)Hob.Raw +
-                                                           SecHobListLength);
+  HobEnd = (EFI_HOB_GENERIC_HEADER *)((UINTN)Hob.Raw +
+                                      SecHobListLength);
   HandOffHob->EfiEndOfHobList = (EFI_PHYSICAL_ADDRESS)(UINTN)HobEnd;
 
   HobEnd->HobType   = EFI_HOB_TYPE_END_OF_HOB_LIST;

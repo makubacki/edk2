@@ -23,7 +23,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #define EFI_CALLBACK_INFO_SIGNATURE  SIGNATURE_32 ('C', 'l', 'b', 'k')
 #define EFI_CALLBACK_INFO_FROM_THIS( \
-                                   a)  \
+                                     a)  \
   CR (a, EFI_CALLBACK_INFO, ConfigAccess, EFI_CALLBACK_INFO_SIGNATURE)
 
 typedef struct {

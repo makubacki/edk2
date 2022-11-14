@@ -815,10 +815,10 @@ InitOverridesMapping (
       // Check buffer overflow.
       //
       if (  (OverrideItem->ControllerDevicePath == NULL) || (VariableIndex <
-                                                           (UINT8 *)
-                                                           ControllerDevicePath)
+                                                             (UINT8 *)
+                                                             ControllerDevicePath)
          ||
-          (VariableIndex > (UINT8 *)VariableBuffer + BufferSize))
+            (VariableIndex > (UINT8 *)VariableBuffer + BufferSize))
       {
         Corrupted = TRUE;
         break;
@@ -954,8 +954,8 @@ GetOneItemNeededSize (
     //
     // Align the driver image device path
     //
-    NeededSize        += ((sizeof (UINT32) - DevicePathSize) &
-                          (sizeof (UINT32) - 1));
+    NeededSize += ((sizeof (UINT32) - DevicePathSize) &
+                   (sizeof (UINT32) - 1));
     ImageInfoListIndex = GetNextNode (
                            &OverrideItem->DriverInfoList,
                            ImageInfoListIndex
@@ -1204,8 +1204,8 @@ SaveOverridesMapping (
         //
         // Align the VariableIndex since the driver image device path may not be aligned
         //
-        VariableIndex     += ((sizeof (UINT32) - ((UINTN)(VariableIndex))) &
-                              (sizeof (UINT32) - 1));
+        VariableIndex += ((sizeof (UINT32) - ((UINTN)(VariableIndex))) &
+                          (sizeof (UINT32) - 1));
         ImageInfoListIndex = GetNextNode (
                                &OverrideItem->DriverInfoList,
                                ImageInfoListIndex

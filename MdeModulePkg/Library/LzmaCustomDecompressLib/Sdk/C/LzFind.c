@@ -590,7 +590,7 @@ Hc_GetMatchesSpec (
       ptrdiff_t  diff;
       curMatch = son[_cyclicBufferPos - delta + ((delta > _cyclicBufferPos) ?
                                                  _cyclicBufferSize : 0)];
-      diff     = (ptrdiff_t)0 - delta;
+      diff = (ptrdiff_t)0 - delta;
       if (cur[maxLen] == cur[maxLen + diff]) {
         const Byte  *c = cur;
         while (*c == c[diff]) {
@@ -644,8 +644,8 @@ GetMatchesSpec1 (
     }
 
     {
-      CLzRef  *pair     = son + ((size_t)(_cyclicBufferPos - delta + ((delta >
-                                                                       _cyclicBufferPos)
+      CLzRef  *pair = son + ((size_t)(_cyclicBufferPos - delta + ((delta >
+                                                                   _cyclicBufferPos)
       ? _cyclicBufferSize : 0)) << 1);
       const Byte  *pb   = cur - delta;
       unsigned    len   = (len0 < len1 ? len0 : len1);
@@ -710,8 +710,8 @@ SkipMatchesSpec (
     }
 
     {
-      CLzRef  *pair   = son + ((size_t)(_cyclicBufferPos - delta + ((delta >
-                                                                     _cyclicBufferPos)
+      CLzRef  *pair = son + ((size_t)(_cyclicBufferPos - delta + ((delta >
+                                                                   _cyclicBufferPos)
       ? _cyclicBufferSize : 0)) << 1);
       const Byte  *pb = cur - delta;
       unsigned    len = (len0 < len1 ? len0 : len1);
@@ -770,7 +770,7 @@ MatchFinder_MovePos (
 #define SKIP_HEADER(minLen)         GET_MATCHES_HEADER2(minLen, continue)
 
 #define MF_PARAMS( \
-                 p)  \
+                   p)  \
   p->pos, p->buffer, p->son, p->cyclicBufferPos, p->cyclicBufferSize, p->cutValue
 
 #define GET_MATCHES_FOOTER(offset, maxLen) \

@@ -305,10 +305,10 @@ typedef struct {
 } PEI_BOT_DEVICE;
 
 #define PEI_BOT_DEVICE_FROM_THIS( \
-                                a)   \
+                                  a)   \
       CR (a, PEI_BOT_DEVICE, BlkIoPpi, PEI_BOT_DEVICE_SIGNATURE)
 #define PEI_BOT_DEVICE2_FROM_THIS( \
-                                 a)  \
+                                   a)  \
       CR (a, PEI_BOT_DEVICE, BlkIo2Ppi, PEI_BOT_DEVICE_SIGNATURE)
 
 /**

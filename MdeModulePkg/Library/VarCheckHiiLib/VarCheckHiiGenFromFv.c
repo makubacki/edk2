@@ -30,7 +30,7 @@ typedef struct {
 LIST_ENTRY  mVfrDriverList = INITIALIZE_LIST_HEAD_VARIABLE (mVfrDriverList);
 
 #define VAR_CHECK_VFR_DRIVER_INFO_FROM_LINK( \
-                                           a)  \
+                                             a)  \
   CR (a, VAR_CHECK_VFR_DRIVER_INFO, Link, VAR_CHECK_VFR_DRIVER_INFO_SIGNATURE)
 
 #define MAX_MATCH_GUID_NUM  100

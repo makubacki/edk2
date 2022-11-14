@@ -109,7 +109,7 @@ SmmInstallConfigurationTable (
       //
       mSmmSystemTableAllocateSize += (CONFIG_TABLE_SIZE_INCREASED *
                                       sizeof (EFI_CONFIGURATION_TABLE));
-      ConfigurationTable           = AllocatePool (mSmmSystemTableAllocateSize);
+      ConfigurationTable = AllocatePool (mSmmSystemTableAllocateSize);
       if (ConfigurationTable == NULL) {
         //
         // If a new table could not be allocated, then return an error.

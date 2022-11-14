@@ -2093,8 +2093,8 @@ RelocateCapsuleToRam (
 
   FileNameCapsule->CapsuleImageSize = (UINT32)(sizeof (EFI_CAPSULE_HEADER) +
                                                TotalStringSize);
-  FileNameCapsule->Flags            = CAPSULE_FLAGS_PERSIST_ACROSS_RESET;
-  FileNameCapsule->HeaderSize       = sizeof (EFI_CAPSULE_HEADER);
+  FileNameCapsule->Flags      = CAPSULE_FLAGS_PERSIST_ACROSS_RESET;
+  FileNameCapsule->HeaderSize = sizeof (EFI_CAPSULE_HEADER);
   CopyGuid (&(FileNameCapsule->CapsuleGuid), &gEdkiiCapsuleOnDiskNameGuid);
 
   StringBuf = (UINT8 *)FileNameCapsule + FileNameCapsule->HeaderSize;

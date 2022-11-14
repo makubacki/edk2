@@ -81,20 +81,20 @@ BOOLEAN  mAcpiS3Enable = FALSE;
 // Table of SMI Handlers that are registered by the SMM Core when it is initialized
 //
 SMM_CORE_SMI_HANDLERS  mSmmCoreSmiHandlers[] = {
-  { SmmDriverDispatchHandler,   &gEfiEventDxeDispatchGuid,               NULL,
-    TRUE  },
-  { SmmReadyToLockHandler,      &gEfiDxeSmmReadyToLockProtocolGuid,      NULL,
-    TRUE                                 },
-  { SmmLegacyBootHandler,       &gEfiEventLegacyBootGuid,                NULL,
-    FALSE                                                                   },
-  { SmmExitBootServicesHandler, &gEfiEventExitBootServicesGuid,          NULL,
-    FALSE                                                                                                      },
-  { SmmReadyToBootHandler,      &gEfiEventReadyToBootGuid,               NULL,
-    FALSE                                                                                                                                         },
-  { SmmEndOfDxeHandler,         &gEfiEndOfDxeEventGroupGuid,             NULL,
-    TRUE                                                                                                                                                                             },
-  { NULL,                       NULL,                                    NULL,
-    FALSE                                                                                                                                                                            }
+  { SmmDriverDispatchHandler,   &gEfiEventDxeDispatchGuid,          NULL,
+    TRUE },
+  { SmmReadyToLockHandler,      &gEfiDxeSmmReadyToLockProtocolGuid, NULL,
+    TRUE },
+  { SmmLegacyBootHandler,       &gEfiEventLegacyBootGuid,           NULL,
+    FALSE },
+  { SmmExitBootServicesHandler, &gEfiEventExitBootServicesGuid,     NULL,
+    FALSE },
+  { SmmReadyToBootHandler,      &gEfiEventReadyToBootGuid,          NULL,
+    FALSE },
+  { SmmEndOfDxeHandler,         &gEfiEndOfDxeEventGroupGuid,        NULL,
+    TRUE },
+  { NULL,                       NULL,                               NULL,
+    FALSE }
 };
 
 //
@@ -102,11 +102,11 @@ SMM_CORE_SMI_HANDLERS  mSmmCoreSmiHandlers[] = {
 //
 SMM_CORE_SMI_HANDLERS  mSmmCoreS3SmiHandlers[] = {
   { SmmS3SmmInitDoneHandler, &gEdkiiS3SmmInitDoneGuid, NULL,
-    FALSE                                                                                                                                             },
+    FALSE },
   { SmmEndOfS3ResumeHandler, &gEdkiiEndOfS3ResumeGuid, NULL,
-    FALSE                                                                                                                                                                  },
+    FALSE },
   { NULL,                    NULL,                     NULL,
-    FALSE                                                                                                                                                                  }
+    FALSE }
 };
 
 UINTN                 mFullSmramRangeCount;
@@ -196,8 +196,11 @@ SmmLegacyBootHandler (
   // It is legacy boot, unregister ExitBootService SMI handler.
   //
   for (Index = 0; mSmmCoreSmiHandlers[Index].HandlerType != NULL; Index++) {
-    if (CompareGuid (mSmmCoreSmiHandlers[Index].HandlerType,
-          &gEfiEventExitBootServicesGuid)) {
+    if (CompareGuid (
+          mSmmCoreSmiHandlers[Index].HandlerType,
+          &gEfiEventExitBootServicesGuid
+          ))
+    {
       SmiHandlerUnRegister (mSmmCoreSmiHandlers[Index].DispatchHandle);
       break;
     }
@@ -250,8 +253,11 @@ SmmExitBootServicesHandler (
   // It is UEFI boot, unregister LegacyBoot SMI handler.
   //
   for (Index = 0; mSmmCoreSmiHandlers[Index].HandlerType != NULL; Index++) {
-    if (CompareGuid (mSmmCoreSmiHandlers[Index].HandlerType,
-          &gEfiEventLegacyBootGuid)) {
+    if (CompareGuid (
+          mSmmCoreSmiHandlers[Index].HandlerType,
+          &gEfiEventLegacyBootGuid
+          ))
+    {
       SmiHandlerUnRegister (mSmmCoreSmiHandlers[Index].DispatchHandle);
       break;
     }
@@ -729,13 +735,21 @@ SmmEntryPoint (
       //
       // Check for over or underflows
       //
-      IsOverUnderflow = EFI_ERROR (SafeUintnSub (BufferSize, OFFSET_OF (
-                                                               EFI_SMM_COMMUNICATE_HEADER,
-                                                               Data),
-                                     &BufferSize));
+      IsOverUnderflow = EFI_ERROR (
+                          SafeUintnSub (
+                            BufferSize,
+                            OFFSET_OF (
+                              EFI_SMM_COMMUNICATE_HEADER,
+                              Data
+                              ),
+                            &BufferSize
+                            )
+                          );
 
-      if (!SmmIsBufferOutsideSmmValid ((UINTN)CommunicationBuffer,
-             BufferSize) ||
+      if (!SmmIsBufferOutsideSmmValid (
+             (UINTN)CommunicationBuffer,
+             BufferSize
+             ) ||
           IsOverlapped || IsOverUnderflow)
       {
         //
@@ -761,7 +775,8 @@ SmmEntryPoint (
         //
         gSmmCorePrivate->BufferSize = BufferSize + OFFSET_OF (
                                                      EFI_SMM_COMMUNICATE_HEADER,
-                                                     Data);
+                                                     Data
+                                                     );
         gSmmCorePrivate->CommunicationBuffer = NULL;
         gSmmCorePrivate->ReturnStatus        = (Status == EFI_SUCCESS) ?
                                                EFI_SUCCESS : EFI_NOT_FOUND;
@@ -804,9 +819,11 @@ SmmCoreInstallLoadedImage (
   //
   // Allocate a Loaded Image Protocol in EfiBootServicesData
   //
-  Status = gBS->AllocatePool (EfiBootServicesData,
+  Status = gBS->AllocatePool (
+                  EfiBootServicesData,
                   sizeof (EFI_LOADED_IMAGE_PROTOCOL),
-                  (VOID **)&mSmmCoreLoadedImage);
+                  (VOID **)&mSmmCoreLoadedImage
+                  );
   ASSERT_EFI_ERROR (Status);
 
   ZeroMem (mSmmCoreLoadedImage, sizeof (EFI_LOADED_IMAGE_PROTOCOL));
@@ -839,8 +856,11 @@ SmmCoreInstallLoadedImage (
   //
   // Allocate a Loaded Image Protocol in SMM
   //
-  Status = SmmAllocatePool (EfiRuntimeServicesData,
-             sizeof (EFI_SMM_DRIVER_ENTRY), (VOID **)&mSmmCoreDriverEntry);
+  Status = SmmAllocatePool (
+             EfiRuntimeServicesData,
+             sizeof (EFI_SMM_DRIVER_ENTRY),
+             (VOID **)&mSmmCoreDriverEntry
+             );
   ASSERT_EFI_ERROR (Status);
 
   ZeroMem (mSmmCoreDriverEntry, sizeof (EFI_SMM_DRIVER_ENTRY));
@@ -866,7 +886,8 @@ SmmCoreInstallLoadedImage (
   mSmmCoreDriverEntry->ImageBuffer     = gSmmCorePrivate->PiSmmCoreImageBase;
   mSmmCoreDriverEntry->NumberOfPage    = EFI_SIZE_TO_PAGES (
                                            (UINTN)gSmmCorePrivate->
-                                             PiSmmCoreImageSize);
+                                             PiSmmCoreImageSize
+                                           );
 
   //
   // Create a new image handle in the SMM handle database for the SMM Driver
@@ -931,11 +952,16 @@ SmmMain (
   // Copy FullSmramRanges to SMRAM
   //
   mFullSmramRangeCount = gSmmCorePrivate->SmramRangeCount;
-  mFullSmramRanges     = AllocatePool (mFullSmramRangeCount *
-                           sizeof (EFI_SMRAM_DESCRIPTOR));
+  mFullSmramRanges     = AllocatePool (
+                           mFullSmramRangeCount *
+                           sizeof (EFI_SMRAM_DESCRIPTOR)
+                           );
   ASSERT (mFullSmramRanges != NULL);
-  CopyMem (mFullSmramRanges, gSmmCorePrivate->SmramRanges,
-    mFullSmramRangeCount * sizeof (EFI_SMRAM_DESCRIPTOR));
+  CopyMem (
+    mFullSmramRanges,
+    gSmmCorePrivate->SmramRanges,
+    mFullSmramRangeCount * sizeof (EFI_SMRAM_DESCRIPTOR)
+    );
 
   //
   // Register all SMI Handlers required by the SMM Core

@@ -112,9 +112,9 @@ TERMINAL_DEV  mTerminalDevTemplate = {
 };
 
 TERMINAL_CONSOLE_MODE_DATA  mTerminalConsoleModeData[] = {
-  { 80,  25    },
-  { 80,  50    },
-  { 100, 31    },
+  { 80,  25 },
+  { 80,  50 },
+  { 100, 31 },
   //
   // New modes can be added here.
   //
@@ -812,7 +812,8 @@ TerminalDriverBindingStart (
                                                               SimpleTextOutput,
                                                               EFI_TEXT_ATTR (
                                                                 EFI_LIGHTGRAY,
-                                                                EFI_BLACK)
+                                                                EFI_BLACK
+                                                                )
                                                               );
   if (!EFI_ERROR (Status)) {
     Status = SimpleTextOutput->Reset (SimpleTextOutput, FALSE);

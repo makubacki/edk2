@@ -203,8 +203,8 @@ UhcPeimEntry (
 
     UhcDev->PpiDescriptor.Flags = (EFI_PEI_PPI_DESCRIPTOR_PPI |
                                    EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST);
-    UhcDev->PpiDescriptor.Guid  = &gPeiUsbHostControllerPpiGuid;
-    UhcDev->PpiDescriptor.Ppi   = &UhcDev->UsbHostControllerPpi;
+    UhcDev->PpiDescriptor.Guid = &gPeiUsbHostControllerPpiGuid;
+    UhcDev->PpiDescriptor.Ppi  = &UhcDev->UsbHostControllerPpi;
 
     Status = PeiServicesInstallPpi (&UhcDev->PpiDescriptor);
     if (EFI_ERROR (Status)) {

@@ -39,7 +39,7 @@ typedef struct _SD_PEIM_MEM_POOL {
 #define SD_PEIM_MEM_DEFAULT_PAGES  16
 
 #define SD_PEIM_MEM_ROUND( \
-                         Len)  \
+                           Len)  \
   (((Len) + SD_PEIM_MEM_UNIT_MASK) & (~SD_PEIM_MEM_UNIT_MASK))
 
 //

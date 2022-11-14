@@ -838,20 +838,20 @@ NvmeControllerInit (
                                                    EFI_PAGE_SIZE);
   Private->CqBufferPciAddr[0] = (NVME_CQ *)(UINTN)(Private->BufferPciAddr + 1 *
                                                    EFI_PAGE_SIZE);
-  Private->SqBuffer[1]        = (NVME_SQ *)(UINTN)(Private->Buffer + 2 *
-                                                   EFI_PAGE_SIZE);
+  Private->SqBuffer[1] = (NVME_SQ *)(UINTN)(Private->Buffer + 2 *
+                                            EFI_PAGE_SIZE);
   Private->SqBufferPciAddr[1] = (NVME_SQ *)(UINTN)(Private->BufferPciAddr + 2 *
                                                    EFI_PAGE_SIZE);
-  Private->CqBuffer[1]        = (NVME_CQ *)(UINTN)(Private->Buffer + 3 *
-                                                   EFI_PAGE_SIZE);
+  Private->CqBuffer[1] = (NVME_CQ *)(UINTN)(Private->Buffer + 3 *
+                                            EFI_PAGE_SIZE);
   Private->CqBufferPciAddr[1] = (NVME_CQ *)(UINTN)(Private->BufferPciAddr + 3 *
                                                    EFI_PAGE_SIZE);
-  Private->SqBuffer[2]        = (NVME_SQ *)(UINTN)(Private->Buffer + 4 *
-                                                   EFI_PAGE_SIZE);
+  Private->SqBuffer[2] = (NVME_SQ *)(UINTN)(Private->Buffer + 4 *
+                                            EFI_PAGE_SIZE);
   Private->SqBufferPciAddr[2] = (NVME_SQ *)(UINTN)(Private->BufferPciAddr + 4 *
                                                    EFI_PAGE_SIZE);
-  Private->CqBuffer[2]        = (NVME_CQ *)(UINTN)(Private->Buffer + 5 *
-                                                   EFI_PAGE_SIZE);
+  Private->CqBuffer[2] = (NVME_CQ *)(UINTN)(Private->Buffer + 5 *
+                                            EFI_PAGE_SIZE);
   Private->CqBufferPciAddr[2] = (NVME_CQ *)(UINTN)(Private->BufferPciAddr + 5 *
                                                    EFI_PAGE_SIZE);
 
@@ -939,7 +939,7 @@ NvmeControllerInit (
   if (Private->ControllerData == NULL) {
     Private->ControllerData = (NVME_ADMIN_CONTROLLER_DATA *)AllocateZeroPool (
                                                               sizeof (
-                                                                                     NVME_ADMIN_CONTROLLER_DATA)
+                                                                      NVME_ADMIN_CONTROLLER_DATA)
                                                               );
 
     if (Private->ControllerData == NULL) {

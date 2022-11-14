@@ -222,9 +222,9 @@ InternalFreePoolByIndex (
 
   SmmPoolType = UefiMemoryTypeToSmmPoolType (FreePoolHdr->Header.Type);
 
-  PoolIndex                     = (UINTN)(HighBitSet32 (
-                                            (UINT32)FreePoolHdr->Header.Size
-                                            ) - MIN_POOL_SHIFT);
+  PoolIndex = (UINTN)(HighBitSet32 (
+                        (UINT32)FreePoolHdr->Header.Size
+                        ) - MIN_POOL_SHIFT);
   FreePoolHdr->Header.Signature = 0;
   FreePoolHdr->Header.Available = TRUE;
   FreePoolHdr->Header.Type      = 0;

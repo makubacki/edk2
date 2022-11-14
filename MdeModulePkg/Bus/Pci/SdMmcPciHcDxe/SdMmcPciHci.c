@@ -1979,8 +1979,8 @@ BuildAdmaDescTable (
                                                            );
         }
 
-        Trb->Adma64V3Desc[Index].LowerLength  = (UINT16)(Remaining &
-                                                         MAX_UINT16);
+        Trb->Adma64V3Desc[Index].LowerLength = (UINT16)(Remaining &
+                                                        MAX_UINT16);
         Trb->Adma64V3Desc[Index].LowerAddress = (UINT32)Address;
         Trb->Adma64V3Desc[Index].UpperAddress = (UINT32)RShiftU64 (Address, 32);
         break;
@@ -2006,8 +2006,8 @@ BuildAdmaDescTable (
                                                            );
         }
 
-        Trb->Adma64V4Desc[Index].LowerLength  = (UINT16)(Remaining &
-                                                         MAX_UINT16);
+        Trb->Adma64V4Desc[Index].LowerLength = (UINT16)(Remaining &
+                                                        MAX_UINT16);
         Trb->Adma64V4Desc[Index].LowerAddress = (UINT32)Address;
         Trb->Adma64V4Desc[Index].UpperAddress = (UINT32)RShiftU64 (Address, 32);
         break;

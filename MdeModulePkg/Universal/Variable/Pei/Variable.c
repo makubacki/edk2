@@ -814,7 +814,8 @@ GetVariableHeader (
 
     if (((UINTN)Variable < (UINTN)TargetAddress) && (((UINTN)Variable +
                                                       GetVariableHeaderSize (
-                                                        StoreInfo->AuthFlag)) >
+                                                        StoreInfo->AuthFlag
+                                                        )) >
                                                      (UINTN)TargetAddress))
     {
       //
@@ -828,7 +829,8 @@ GetVariableHeader (
         *VariableHeader = (VARIABLE_HEADER *)BuildGuidHob (
                                                &gEfiCallerIdGuid,
                                                GetVariableHeaderSize (
-                                                 StoreInfo->AuthFlag)
+                                                 StoreInfo->AuthFlag
+                                                 )
                                                );
         PartialHeaderSize = (UINTN)TargetAddress - (UINTN)Variable;
         //
@@ -1327,7 +1329,8 @@ PeiGetNextVariableName (
       for (Type = (VARIABLE_STORE_TYPE)0; Type < VariableStoreTypeMax; Type++) {
         if ((VariableStoreHeader[Type] != NULL) && (Variable.StartPtr ==
                                                     GetStartPointer (
-                                                      VariableStoreHeader[Type])))
+                                                      VariableStoreHeader[Type]
+                                                      )))
         {
           break;
         }

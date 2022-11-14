@@ -13,8 +13,8 @@
 //
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mAtaBusDriverNameTable[] = {
-  { "eng;en", L"ATA Bus Driver"     },
-  { NULL,     NULL                  }
+  { "eng;en", L"ATA Bus Driver" },
+  { NULL,     NULL              }
 };
 
 //
@@ -22,8 +22,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
 //
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mAtaBusControllerNameTable[] = {
-  { "eng;en", L"ATA Controller"     },
-  { NULL,     NULL                  }
+  { "eng;en", L"ATA Controller" },
+  { NULL,     NULL              }
 };
 
 //

@@ -434,7 +434,7 @@ BuildDriverInfo (
   DriverInfo->Header.Signature = MEMORY_PROFILE_DRIVER_INFO_SIGNATURE;
   DriverInfo->Header.Length    = (UINT16)(sizeof (MEMORY_PROFILE_DRIVER_INFO) +
                                           PdbOccupiedSize);
-  DriverInfo->Header.Revision  = MEMORY_PROFILE_DRIVER_INFO_REVISION;
+  DriverInfo->Header.Revision = MEMORY_PROFILE_DRIVER_INFO_REVISION;
   if (FileName != NULL) {
     CopyMem (&DriverInfo->FileName, FileName, sizeof (EFI_GUID));
   }
@@ -1119,13 +1119,13 @@ CoreUpdateProfileAllocate (
   AllocInfo->Header.Signature = MEMORY_PROFILE_ALLOC_INFO_SIGNATURE;
   AllocInfo->Header.Length    = (UINT16)(sizeof (MEMORY_PROFILE_ALLOC_INFO) +
                                          ActionStringOccupiedSize);
-  AllocInfo->Header.Revision  = MEMORY_PROFILE_ALLOC_INFO_REVISION;
-  AllocInfo->CallerAddress    = CallerAddress;
-  AllocInfo->SequenceId       = ContextData->Context.SequenceCount;
-  AllocInfo->Action           = Action;
-  AllocInfo->MemoryType       = MemoryType;
-  AllocInfo->Buffer           = (PHYSICAL_ADDRESS)(UINTN)Buffer;
-  AllocInfo->Size             = Size;
+  AllocInfo->Header.Revision = MEMORY_PROFILE_ALLOC_INFO_REVISION;
+  AllocInfo->CallerAddress   = CallerAddress;
+  AllocInfo->SequenceId      = ContextData->Context.SequenceCount;
+  AllocInfo->Action          = Action;
+  AllocInfo->MemoryType      = MemoryType;
+  AllocInfo->Buffer          = (PHYSICAL_ADDRESS)(UINTN)Buffer;
+  AllocInfo->Size            = Size;
   if (ActionString != NULL) {
     AllocInfo->ActionStringOffset = (UINT16)sizeof (MEMORY_PROFILE_ALLOC_INFO);
     AllocInfoData->ActionString   = (CHAR8 *)(AllocInfoData + 1);

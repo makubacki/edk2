@@ -91,7 +91,7 @@ LockBoxGetSmmCommBuffer (
                             MAX (
                               sizeof (EFI_SMM_LOCK_BOX_PARAMETER_RESTORE),
                               sizeof (
-                                     EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE)
+                                      EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE)
                               )
                             )
                           )
@@ -163,7 +163,7 @@ SaveLockBox (
   UINT8                            TempCommBuffer[sizeof (EFI_GUID) +
                                                   sizeof (UINTN) +
                                                   sizeof (
-                                                                                              EFI_SMM_LOCK_BOX_PARAMETER_SAVE)
+                                                          EFI_SMM_LOCK_BOX_PARAMETER_SAVE)
   ];
   UINT8  *CommBuffer;
   UINTN  CommSize;
@@ -259,7 +259,7 @@ SetLockBoxAttributes (
   UINT8                                      TempCommBuffer[sizeof (EFI_GUID) +
                                                             sizeof (UINTN) +
                                                             sizeof (
-                                                                                                        EFI_SMM_LOCK_BOX_PARAMETER_SET_ATTRIBUTES)
+                                                                    EFI_SMM_LOCK_BOX_PARAMETER_SET_ATTRIBUTES)
   ];
   UINT8  *CommBuffer;
   UINTN  CommSize;
@@ -371,7 +371,7 @@ UpdateLockBox (
   UINT8                              TempCommBuffer[sizeof (EFI_GUID) +
                                                     sizeof (UINTN) +
                                                     sizeof (
-                                                                                                EFI_SMM_LOCK_BOX_PARAMETER_UPDATE)
+                                                            EFI_SMM_LOCK_BOX_PARAMETER_UPDATE)
   ];
   UINT8  *CommBuffer;
   UINTN  CommSize;
@@ -475,7 +475,7 @@ RestoreLockBox (
   UINT8                               TempCommBuffer[sizeof (EFI_GUID) +
                                                      sizeof (UINTN) +
                                                      sizeof (
-                                                                                                 EFI_SMM_LOCK_BOX_PARAMETER_RESTORE)
+                                                             EFI_SMM_LOCK_BOX_PARAMETER_RESTORE)
   ];
   UINT8  *CommBuffer;
   UINTN  CommSize;
@@ -576,10 +576,10 @@ RestoreAllLockBoxInPlace (
                               LockBoxParameterRestoreAllInPlace;
   EFI_SMM_COMMUNICATE_HEADER  *CommHeader;
   UINT8                       TempCommBuffer[sizeof (
-                                                         EFI_GUID) +
-                                                 sizeof (UINTN) +
-                                                 sizeof (
-                                                                                                                EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE)
+                                                       EFI_GUID) +
+                                               sizeof (UINTN) +
+                                               sizeof (
+                                                       EFI_SMM_LOCK_BOX_PARAMETER_RESTORE_ALL_IN_PLACE)
   ];
   UINT8  *CommBuffer;
   UINTN  CommSize;

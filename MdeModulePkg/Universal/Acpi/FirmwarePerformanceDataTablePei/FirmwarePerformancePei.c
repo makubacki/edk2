@@ -206,9 +206,9 @@ FpdtStatusCodeListenerPei (
   //
   FirmwarePerformanceTablePtr = (BootPerformanceTable +
                                  sizeof (BOOT_PERFORMANCE_TABLE));
-  GuidHob                     = GetFirstGuidHob (
-                                  &gEdkiiFpdtExtendedFirmwarePerformanceGuid
-                                  );
+  GuidHob = GetFirstGuidHob (
+              &gEdkiiFpdtExtendedFirmwarePerformanceGuid
+              );
   while (GuidHob != NULL) {
     FirmwarePerformanceData = GET_GUID_HOB_DATA (GuidHob);
     PeiPerformanceLogHeader =

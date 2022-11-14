@@ -196,8 +196,8 @@ IsNestedFmpCapsule (
   //
   NestedCapsuleHeader = (EFI_CAPSULE_HEADER *)((UINT8 *)CapsuleHeader +
                                                CapsuleHeader->HeaderSize);
-  NestedCapsuleSize   = (UINTN)CapsuleHeader + CapsuleHeader->CapsuleImageSize-
-                        (UINTN)NestedCapsuleHeader;
+  NestedCapsuleSize = (UINTN)CapsuleHeader + CapsuleHeader->CapsuleImageSize-
+                      (UINTN)NestedCapsuleHeader;
   if (NestedCapsuleSize < sizeof (EFI_CAPSULE_HEADER)) {
     return FALSE;
   }

@@ -108,7 +108,7 @@ typedef struct {
 } DRIVER_SAMPLE_PRIVATE_DATA;
 
 #define DRIVER_SAMPLE_PRIVATE_FROM_THIS( \
-                                       a)  \
+                                         a)  \
   CR (a, DRIVER_SAMPLE_PRIVATE_DATA, ConfigAccess, DRIVER_SAMPLE_PRIVATE_SIGNATURE)
 
 #pragma pack(1)

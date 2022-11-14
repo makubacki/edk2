@@ -158,8 +158,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mUsbBusDriverNameTable[] = {
-  { "eng;en", L"Usb Bus Driver"     },
-  { NULL,     NULL                  }
+  { "eng;en", L"Usb Bus Driver" },
+  { NULL,     NULL              }
 };
 
 /**

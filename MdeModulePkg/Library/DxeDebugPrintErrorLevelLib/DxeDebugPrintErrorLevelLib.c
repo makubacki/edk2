@@ -304,9 +304,9 @@ SetDebugPrintErrorLevel (
                                                           &
                                                           gEfiGenericVariableGuid,
                                                           (
-                                                          EFI_VARIABLE_NON_VOLATILE
-                                                          |
-                                                          EFI_VARIABLE_BOOTSERVICE_ACCESS),
+                                                           EFI_VARIABLE_NON_VOLATILE
+                                                           |
+                                                           EFI_VARIABLE_BOOTSERVICE_ACCESS),
                                                           Size,
                                                           &GlobalErrorLevel
                                                           );

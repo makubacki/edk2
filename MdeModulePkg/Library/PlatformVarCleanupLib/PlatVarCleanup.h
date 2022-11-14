@@ -58,7 +58,7 @@ typedef struct {
 } USER_VARIABLE_NODE;
 
 #define USER_VARIABLE_FROM_LINK( \
-                               a)  \
+                                 a)  \
   CR (a, USER_VARIABLE_NODE, Link, USER_VARIABLE_NODE_SIGNATURE)
 
 #define USER_VARIABLE_NAME_NODE_SIGNATURE  SIGNATURE_32 ('U', 'V', 'N', 'N')
@@ -77,7 +77,7 @@ typedef struct {
 } USER_VARIABLE_NAME_NODE;
 
 #define USER_VARIABLE_NAME_FROM_LINK( \
-                                    a)  \
+                                      a)  \
   CR (a, USER_VARIABLE_NAME_NODE, Link, USER_VARIABLE_NAME_NODE_SIGNATURE)
 
 #pragma pack(1)
@@ -103,7 +103,7 @@ typedef struct {
 } VARIABLE_CLEANUP_HII_PRIVATE_DATA;
 
 #define VARIABLE_CLEANUP_HII_PRIVATE_FROM_THIS( \
-                                              a)  \
+                                                a)  \
   CR (a, VARIABLE_CLEANUP_HII_PRIVATE_DATA, ConfigAccess, VARIABLE_CLEANUP_HII_PRIVATE_SIGNATURE)
 
 #endif

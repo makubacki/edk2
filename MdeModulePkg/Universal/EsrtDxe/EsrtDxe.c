@@ -636,9 +636,9 @@ EsrtReadyToBootEventNotify (
 
   EsrtTable->FwResourceVersion =
     EFI_SYSTEM_RESOURCE_TABLE_FIRMWARE_RESOURCE_VERSION;
-  EsrtTable->FwResourceCount    = (UINT32)((NonFmpRepositorySize +
-                                            FmpRepositorySize) /
-                                           sizeof (EFI_SYSTEM_RESOURCE_ENTRY));
+  EsrtTable->FwResourceCount = (UINT32)((NonFmpRepositorySize +
+                                         FmpRepositorySize) /
+                                        sizeof (EFI_SYSTEM_RESOURCE_ENTRY));
   EsrtTable->FwResourceCountMax = PcdGet32 (PcdMaxNonFmpEsrtCacheNum) +
                                   PcdGet32 (PcdMaxFmpEsrtCacheNum);
 
