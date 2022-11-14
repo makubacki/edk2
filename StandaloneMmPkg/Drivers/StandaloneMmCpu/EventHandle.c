@@ -159,8 +159,9 @@ PiMmStandaloneArmTfCpuDriverEntry (
   }
 
   // Find out the size of the buffer passed
-  NsCommBufferSize = ((EFI_MM_COMMUNICATE_HEADER *)NsCommBufferAddr)->MessageLength +
-                     sizeof (EFI_MM_COMMUNICATE_HEADER);
+  NsCommBufferSize =
+    ((EFI_MM_COMMUNICATE_HEADER *)NsCommBufferAddr)->MessageLength +
+    sizeof (EFI_MM_COMMUNICATE_HEADER);
 
   GuidedEventContext = NULL;
   // Now that the secure world can see the normal world buffer, allocate
@@ -178,7 +179,11 @@ PiMmStandaloneArmTfCpuDriverEntry (
 
   // X1 contains the VA of the normal world memory accessible from
   // S-EL0
-  CopyMem (GuidedEventContext, (CONST VOID *)NsCommBufferAddr, NsCommBufferSize);
+  CopyMem (
+    GuidedEventContext,
+    (CONST VOID *)NsCommBufferAddr,
+    NsCommBufferSize
+    );
 
   // Stash the pointer to the allocated Event Context for this CPU
   PerCpuGuidedEventContext[CpuNumber] = GuidedEventContext;
@@ -186,7 +191,8 @@ PiMmStandaloneArmTfCpuDriverEntry (
   ZeroMem (&MmEntryPointContext, sizeof (EFI_MM_ENTRY_CONTEXT));
 
   MmEntryPointContext.CurrentlyExecutingCpu = CpuNumber;
-  MmEntryPointContext.NumberOfCpus          = mMpInformationHobData->NumberOfProcessors;
+  MmEntryPointContext.NumberOfCpus          =
+    mMpInformationHobData->NumberOfProcessors;
 
   // Populate the MM system table with MP and state information
   mMmst->CurrentlyExecutingCpu = CpuNumber;
@@ -203,7 +209,11 @@ PiMmStandaloneArmTfCpuDriverEntry (
 
   // Free the memory allocation done earlier and reset the per-cpu context
   ASSERT (GuidedEventContext);
-  CopyMem ((VOID *)NsCommBufferAddr, (CONST VOID *)GuidedEventContext, NsCommBufferSize);
+  CopyMem (
+    (VOID *)NsCommBufferAddr,
+    (CONST VOID *)GuidedEventContext,
+    NsCommBufferSize
+    );
 
   Status = mMmst->MmFreePool ((VOID *)GuidedEventContext);
   if (Status != EFI_SUCCESS) {

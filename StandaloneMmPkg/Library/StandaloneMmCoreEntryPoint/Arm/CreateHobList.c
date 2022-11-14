@@ -74,7 +74,8 @@ CreateHobListFromBootInfo (
                (VOID *)(UINTN)PayloadBootInfo->SpMemBase,
                (UINTN)PayloadBootInfo->SpMemLimit - PayloadBootInfo->SpMemBase,
                (VOID *)(UINTN)PayloadBootInfo->SpHeapBase,
-               (VOID *)(UINTN)(PayloadBootInfo->SpHeapBase + PayloadBootInfo->SpHeapSize)
+               (VOID *)(UINTN)(PayloadBootInfo->SpHeapBase +
+                               PayloadBootInfo->SpHeapSize)
                );
 
   // Check that the Hoblist starts at the bottom of the Heap
@@ -114,14 +115,17 @@ CreateHobListFromBootInfo (
   // privileged firmware
   MpInformationHobData->NumberOfProcessors        = PayloadBootInfo->NumCpus;
   MpInformationHobData->NumberOfEnabledProcessors = PayloadBootInfo->NumCpus;
-  ProcInfoBuffer                                  = MpInformationHobData->ProcessorInfoBuffer;
-  CpuInfo                                         = PayloadBootInfo->CpuInfo;
+  ProcInfoBuffer                                  =
+    MpInformationHobData->ProcessorInfoBuffer;
+  CpuInfo = PayloadBootInfo->CpuInfo;
 
   for (Index = 0; Index < PayloadBootInfo->NumCpus; Index++) {
     ProcInfoBuffer[Index].ProcessorId      = CpuInfo[Index].Mpidr;
-    ProcInfoBuffer[Index].Location.Package = GET_CLUSTER_ID (CpuInfo[Index].Mpidr);
-    ProcInfoBuffer[Index].Location.Core    = GET_CORE_ID (CpuInfo[Index].Mpidr);
-    ProcInfoBuffer[Index].Location.Thread  = GET_CORE_ID (CpuInfo[Index].Mpidr);
+    ProcInfoBuffer[Index].Location.Package = GET_CLUSTER_ID (
+                                               CpuInfo[Index].Mpidr
+                                               );
+    ProcInfoBuffer[Index].Location.Core   = GET_CORE_ID (CpuInfo[Index].Mpidr);
+    ProcInfoBuffer[Index].Location.Thread = GET_CORE_ID (CpuInfo[Index].Mpidr);
 
     Flags = PROCESSOR_ENABLED_BIT | PROCESSOR_HEALTH_STATUS_BIT;
     if (CpuInfo[Index].Flags & CPU_INFO_FLAG_PRIMARY_CPU) {
@@ -134,7 +138,8 @@ CreateHobListFromBootInfo (
   // Create a Guided HOB to tell the ARM TF CPU driver the location and length
   // of the communication buffer shared with the Normal world.
   NsCommBufMmramRange = (EFI_MMRAM_DESCRIPTOR *)BuildGuidHob (
-                                                  &gEfiStandaloneMmNonSecureBufferGuid,
+                                                  &
+                                                  gEfiStandaloneMmNonSecureBufferGuid,
                                                   sizeof (EFI_MMRAM_DESCRIPTOR)
                                                   );
   NsCommBufMmramRange->PhysicalStart = PayloadBootInfo->SpNsCommBufBase;
@@ -145,8 +150,10 @@ CreateHobListFromBootInfo (
   // Create a Guided HOB to enable the ARM TF CPU driver to share its entry
   // point and populate it with the address of the shared buffer
   CpuDriverEntryPointDesc = (ARM_TF_CPU_DRIVER_EP_DESCRIPTOR *)BuildGuidHob (
-                                                                 &gEfiArmTfCpuDriverEpDescriptorGuid,
-                                                                 sizeof (ARM_TF_CPU_DRIVER_EP_DESCRIPTOR)
+                                                                 &
+                                                                 gEfiArmTfCpuDriverEpDescriptorGuid,
+                                                                 sizeof (
+                                                                        ARM_TF_CPU_DRIVER_EP_DESCRIPTOR)
                                                                  );
 
   *CpuDriverEntryPoint                         = NULL;
@@ -154,7 +161,8 @@ CreateHobListFromBootInfo (
 
   // Find the size of the GUIDed HOB with SRAM ranges
   BufferSize  = sizeof (EFI_MMRAM_HOB_DESCRIPTOR_BLOCK);
-  BufferSize += PayloadBootInfo->NumSpMemRegions * sizeof (EFI_MMRAM_DESCRIPTOR);
+  BufferSize += PayloadBootInfo->NumSpMemRegions *
+                sizeof (EFI_MMRAM_DESCRIPTOR);
 
   // Create a GUIDed HOB with SRAM ranges
   MmramRangesHob = BuildGuidHob (&gEfiMmPeiMmramMemoryReserveGuid, BufferSize);
@@ -186,20 +194,23 @@ CreateHobListFromBootInfo (
   // Base and size of memory allocated for stacks for all cpus
   MmramRanges[3].PhysicalStart = PayloadBootInfo->SpStackBase;
   MmramRanges[3].CpuStart      = PayloadBootInfo->SpStackBase;
-  MmramRanges[3].PhysicalSize  = PayloadBootInfo->SpPcpuStackSize * PayloadBootInfo->NumCpus;
-  MmramRanges[3].RegionState   = EFI_CACHEABLE | EFI_ALLOCATED;
+  MmramRanges[3].PhysicalSize  = PayloadBootInfo->SpPcpuStackSize *
+                                 PayloadBootInfo->NumCpus;
+  MmramRanges[3].RegionState = EFI_CACHEABLE | EFI_ALLOCATED;
 
   // Base and size of heap memory shared by all cpus
   MmramRanges[4].PhysicalStart = (EFI_PHYSICAL_ADDRESS)(UINTN)HobStart;
   MmramRanges[4].CpuStart      = (EFI_PHYSICAL_ADDRESS)(UINTN)HobStart;
-  MmramRanges[4].PhysicalSize  = HobStart->EfiFreeMemoryBottom - (EFI_PHYSICAL_ADDRESS)(UINTN)HobStart;
-  MmramRanges[4].RegionState   = EFI_CACHEABLE | EFI_ALLOCATED;
+  MmramRanges[4].PhysicalSize  = HobStart->EfiFreeMemoryBottom -
+                                 (EFI_PHYSICAL_ADDRESS)(UINTN)HobStart;
+  MmramRanges[4].RegionState = EFI_CACHEABLE | EFI_ALLOCATED;
 
   // Base and size of heap memory shared by all cpus
   MmramRanges[5].PhysicalStart = HobStart->EfiFreeMemoryBottom;
   MmramRanges[5].CpuStart      = HobStart->EfiFreeMemoryBottom;
-  MmramRanges[5].PhysicalSize  = HobStart->EfiFreeMemoryTop - HobStart->EfiFreeMemoryBottom;
-  MmramRanges[5].RegionState   = EFI_CACHEABLE;
+  MmramRanges[5].PhysicalSize  = HobStart->EfiFreeMemoryTop -
+                                 HobStart->EfiFreeMemoryBottom;
+  MmramRanges[5].RegionState = EFI_CACHEABLE;
 
   return HobStart;
 }

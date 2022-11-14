@@ -42,12 +42,14 @@ CreateHob (
     return NULL;
   }
 
-  Hob                                        = (VOID *)(UINTN)HandOffHob->EfiEndOfHobList;
+  Hob =
+    (VOID *)(UINTN)HandOffHob->EfiEndOfHobList;
   ((EFI_HOB_GENERIC_HEADER *)Hob)->HobType   = HobType;
   ((EFI_HOB_GENERIC_HEADER *)Hob)->HobLength = HobLength;
   ((EFI_HOB_GENERIC_HEADER *)Hob)->Reserved  = 0;
 
-  HobEnd                      = (EFI_HOB_GENERIC_HEADER *)((UINTN)Hob + HobLength);
+  HobEnd                      = (EFI_HOB_GENERIC_HEADER *)((UINTN)Hob +
+                                                           HobLength);
   HandOffHob->EfiEndOfHobList = (EFI_PHYSICAL_ADDRESS)(UINTN)HobEnd;
 
   HobEnd->HobType   = EFI_HOB_TYPE_END_OF_HOB_LIST;
@@ -88,7 +90,10 @@ BuildModuleHob (
     ((ModuleLength & (EFI_PAGE_SIZE - 1)) == 0)
     );
 
-  Hob = CreateHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, sizeof (EFI_HOB_MEMORY_ALLOCATION_MODULE));
+  Hob = CreateHob (
+          EFI_HOB_TYPE_MEMORY_ALLOCATION,
+          sizeof (EFI_HOB_MEMORY_ALLOCATION_MODULE)
+          );
 
   CopyGuid (&(Hob->MemoryAllocationHeader.Name), &gEfiHobMemoryAllocModuleGuid);
   Hob->MemoryAllocationHeader.MemoryBaseAddress = MemoryAllocationModule;
@@ -98,7 +103,10 @@ BuildModuleHob (
   //
   // Zero the reserved space to match HOB spec
   //
-  ZeroMem (Hob->MemoryAllocationHeader.Reserved, sizeof (Hob->MemoryAllocationHeader.Reserved));
+  ZeroMem (
+    Hob->MemoryAllocationHeader.Reserved,
+    sizeof (Hob->MemoryAllocationHeader.Reserved)
+    );
 
   CopyGuid (&Hob->ModuleName, ModuleName);
   Hob->EntryPoint = EntryPoint;
@@ -127,7 +135,10 @@ BuildResourceDescriptorHob (
 {
   EFI_HOB_RESOURCE_DESCRIPTOR  *Hob;
 
-  Hob = CreateHob (EFI_HOB_TYPE_RESOURCE_DESCRIPTOR, sizeof (EFI_HOB_RESOURCE_DESCRIPTOR));
+  Hob = CreateHob (
+          EFI_HOB_TYPE_RESOURCE_DESCRIPTOR,
+          sizeof (EFI_HOB_RESOURCE_DESCRIPTOR)
+          );
   ASSERT (Hob != NULL);
 
   Hob->ResourceType      = ResourceType;
@@ -166,7 +177,10 @@ BuildGuidHob (
   //
   ASSERT (DataLength <= (0xffff - sizeof (EFI_HOB_GUID_TYPE)));
 
-  Hob = CreateHob (EFI_HOB_TYPE_GUID_EXTENSION, (UINT16)(sizeof (EFI_HOB_GUID_TYPE) + DataLength));
+  Hob = CreateHob (
+          EFI_HOB_TYPE_GUID_EXTENSION,
+          (UINT16)(sizeof (EFI_HOB_GUID_TYPE) + DataLength)
+          );
   CopyGuid (&Hob->Name, Guid);
   return Hob + 1;
 }
@@ -318,7 +332,10 @@ BuildMemoryAllocationHob (
     ((Length & (EFI_PAGE_SIZE - 1)) == 0)
     );
 
-  Hob = CreateHob (EFI_HOB_TYPE_MEMORY_ALLOCATION, sizeof (EFI_HOB_MEMORY_ALLOCATION));
+  Hob = CreateHob (
+          EFI_HOB_TYPE_MEMORY_ALLOCATION,
+          sizeof (EFI_HOB_MEMORY_ALLOCATION)
+          );
 
   ZeroMem (&(Hob->AllocDescriptor.Name), sizeof (EFI_GUID));
   Hob->AllocDescriptor.MemoryBaseAddress = BaseAddress;
@@ -327,5 +344,8 @@ BuildMemoryAllocationHob (
   //
   // Zero the reserved space to match HOB spec
   //
-  ZeroMem (Hob->AllocDescriptor.Reserved, sizeof (Hob->AllocDescriptor.Reserved));
+  ZeroMem (
+    Hob->AllocDescriptor.Reserved,
+    sizeof (Hob->AllocDescriptor.Reserved)
+    );
 }

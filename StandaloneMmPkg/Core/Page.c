@@ -47,7 +47,9 @@ InternalAllocPagesOnOneNode (
   Bottom = Top - NumberOfPages;
 
   if (Top < Pages->NumberOfPages) {
-    Node                = (FREE_PAGE_LIST *)((UINTN)Pages + EFI_PAGES_TO_SIZE (Top));
+    Node                = (FREE_PAGE_LIST *)((UINTN)Pages + EFI_PAGES_TO_SIZE (
+                                                              Top
+                                                              ));
     Node->NumberOfPages = Pages->NumberOfPages - Top;
     InsertHeadList (&Pages->Link, &Node->Link);
   }
@@ -81,7 +83,9 @@ InternalAllocMaxAddress (
   LIST_ENTRY      *Node;
   FREE_PAGE_LIST  *Pages;
 
-  for (Node = FreePageList->BackLink; Node != FreePageList; Node = Node->BackLink) {
+  for (Node = FreePageList->BackLink; Node != FreePageList; Node =
+         Node->BackLink)
+  {
     Pages = BASE_CR (Node, FREE_PAGE_LIST, Link);
     if ((Pages->NumberOfPages >= NumberOfPages) &&
         ((UINTN)Pages + EFI_PAGES_TO_SIZE (NumberOfPages) - 1 <= MaxAddress))
@@ -119,10 +123,14 @@ InternalAllocAddress (
   }
 
   EndAddress = Address + EFI_PAGES_TO_SIZE (NumberOfPages);
-  for (Node = FreePageList->BackLink; Node != FreePageList; Node = Node->BackLink) {
+  for (Node = FreePageList->BackLink; Node != FreePageList; Node =
+         Node->BackLink)
+  {
     Pages = BASE_CR (Node, FREE_PAGE_LIST, Link);
     if ((UINTN)Pages <= Address) {
-      if ((UINTN)Pages + EFI_PAGES_TO_SIZE (Pages->NumberOfPages) < EndAddress) {
+      if ((UINTN)Pages + EFI_PAGES_TO_SIZE (Pages->NumberOfPages) <
+          EndAddress)
+      {
         break;
       }
 
@@ -378,7 +386,9 @@ MmAddMemoryRegion (
   //
   // Do not add memory regions that is already allocated, needs testing, or needs ECC initialization
   //
-  if ((Attributes & (EFI_ALLOCATED | EFI_NEEDS_TESTING | EFI_NEEDS_ECC_INITIALIZATION)) != 0) {
+  if ((Attributes & (EFI_ALLOCATED | EFI_NEEDS_TESTING |
+                     EFI_NEEDS_ECC_INITIALIZATION)) != 0)
+  {
     return;
   }
 

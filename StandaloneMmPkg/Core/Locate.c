@@ -107,7 +107,12 @@ MmGetNextLocateByRegisterNotify (
     //
     Link = ProtNotify->Position->ForwardLink;
     if (Link != &ProtNotify->Protocol->Protocols) {
-      Prot       = CR (Link, PROTOCOL_INTERFACE, ByProtocol, PROTOCOL_INTERFACE_SIGNATURE);
+      Prot = CR (
+               Link,
+               PROTOCOL_INTERFACE,
+               ByProtocol,
+               PROTOCOL_INTERFACE_SIGNATURE
+               );
       Handle     = Prot->Handle;
       *Interface = Prot->Interface;
     }
@@ -157,7 +162,12 @@ MmGetNextLocateByProtocol (
     //
     // Get the handle
     //
-    Prot       = CR (Link, PROTOCOL_INTERFACE, ByProtocol, PROTOCOL_INTERFACE_SIGNATURE);
+    Prot = CR (
+             Link,
+             PROTOCOL_INTERFACE,
+             ByProtocol,
+             PROTOCOL_INTERFACE_SIGNATURE
+             );
     Handle     = Prot->Handle;
     *Interface = Prot->Interface;
 

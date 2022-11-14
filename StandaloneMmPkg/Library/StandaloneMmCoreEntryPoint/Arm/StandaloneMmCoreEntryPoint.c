@@ -77,20 +77,64 @@ GetAndPrintBootinformation (
     return NULL;
   }
 
-  DEBUG ((DEBUG_INFO, "NumSpMemRegions - 0x%x\n", PayloadBootInfo->NumSpMemRegions));
+  DEBUG ((
+    DEBUG_INFO,
+    "NumSpMemRegions - 0x%x\n",
+    PayloadBootInfo->NumSpMemRegions
+    ));
   DEBUG ((DEBUG_INFO, "SpMemBase       - 0x%lx\n", PayloadBootInfo->SpMemBase));
-  DEBUG ((DEBUG_INFO, "SpMemLimit      - 0x%lx\n", PayloadBootInfo->SpMemLimit));
-  DEBUG ((DEBUG_INFO, "SpImageBase     - 0x%lx\n", PayloadBootInfo->SpImageBase));
-  DEBUG ((DEBUG_INFO, "SpStackBase     - 0x%lx\n", PayloadBootInfo->SpStackBase));
-  DEBUG ((DEBUG_INFO, "SpHeapBase      - 0x%lx\n", PayloadBootInfo->SpHeapBase));
-  DEBUG ((DEBUG_INFO, "SpNsCommBufBase - 0x%lx\n", PayloadBootInfo->SpNsCommBufBase));
-  DEBUG ((DEBUG_INFO, "SpSharedBufBase - 0x%lx\n", PayloadBootInfo->SpSharedBufBase));
+  DEBUG ((
+    DEBUG_INFO,
+    "SpMemLimit      - 0x%lx\n",
+    PayloadBootInfo->SpMemLimit
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SpImageBase     - 0x%lx\n",
+    PayloadBootInfo->SpImageBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SpStackBase     - 0x%lx\n",
+    PayloadBootInfo->SpStackBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SpHeapBase      - 0x%lx\n",
+    PayloadBootInfo->SpHeapBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SpNsCommBufBase - 0x%lx\n",
+    PayloadBootInfo->SpNsCommBufBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SpSharedBufBase - 0x%lx\n",
+    PayloadBootInfo->SpSharedBufBase
+    ));
 
-  DEBUG ((DEBUG_INFO, "SpImageSize     - 0x%x\n", PayloadBootInfo->SpImageSize));
-  DEBUG ((DEBUG_INFO, "SpPcpuStackSize - 0x%x\n", PayloadBootInfo->SpPcpuStackSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "SpImageSize     - 0x%x\n",
+    PayloadBootInfo->SpImageSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SpPcpuStackSize - 0x%x\n",
+    PayloadBootInfo->SpPcpuStackSize
+    ));
   DEBUG ((DEBUG_INFO, "SpHeapSize      - 0x%x\n", PayloadBootInfo->SpHeapSize));
-  DEBUG ((DEBUG_INFO, "SpNsCommBufSize - 0x%x\n", PayloadBootInfo->SpNsCommBufSize));
-  DEBUG ((DEBUG_INFO, "SpSharedBufSize - 0x%x\n", PayloadBootInfo->SpSharedBufSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "SpNsCommBufSize - 0x%x\n",
+    PayloadBootInfo->SpNsCommBufSize
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "SpSharedBufSize - 0x%x\n",
+    PayloadBootInfo->SpSharedBufSize
+    ));
 
   DEBUG ((DEBUG_INFO, "NumCpus         - 0x%x\n", PayloadBootInfo->NumCpus));
   DEBUG ((DEBUG_INFO, "CpuInfo         - 0x%p\n", PayloadBootInfo->CpuInfo));
@@ -103,9 +147,21 @@ GetAndPrintBootinformation (
   }
 
   for (Index = 0; Index < PayloadBootInfo->NumCpus; Index++) {
-    DEBUG ((DEBUG_INFO, "Mpidr           - 0x%lx\n", PayloadCpuInfo[Index].Mpidr));
-    DEBUG ((DEBUG_INFO, "LinearId        - 0x%x\n", PayloadCpuInfo[Index].LinearId));
-    DEBUG ((DEBUG_INFO, "Flags           - 0x%x\n", PayloadCpuInfo[Index].Flags));
+    DEBUG ((
+      DEBUG_INFO,
+      "Mpidr           - 0x%lx\n",
+      PayloadCpuInfo[Index].Mpidr
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "LinearId        - 0x%x\n",
+      PayloadCpuInfo[Index].LinearId
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "Flags           - 0x%x\n",
+      PayloadCpuInfo[Index].Flags
+      ));
   }
 
   return PayloadBootInfo;
@@ -244,7 +300,8 @@ GetSpmVersion (
     return EFI_UNSUPPORTED;
   }
 
-  CalleeSpmMajorVer = ((SpmVersion & SPM_MAJOR_VER_MASK) >> SPM_MAJOR_VER_SHIFT);
+  CalleeSpmMajorVer = ((SpmVersion & SPM_MAJOR_VER_MASK) >>
+                       SPM_MAJOR_VER_SHIFT);
   CalleeSpmMinorVer = ((SpmVersion & SPM_MINOR_VER_MASK) >> 0);
 
   // Different major revision values indicate possibly incompatible functions.
@@ -416,7 +473,11 @@ _ModuleEntryPoint (
   //
   ProcessModuleEntryPointList (HobStart);
 
-  DEBUG ((DEBUG_INFO, "Shared Cpu Driver EP %p\n", (VOID *)CpuDriverEntryPoint));
+  DEBUG ((
+    DEBUG_INFO,
+    "Shared Cpu Driver EP %p\n",
+    (VOID *)CpuDriverEntryPoint
+    ));
 
 finish:
   if (Status == RETURN_UNSUPPORTED) {

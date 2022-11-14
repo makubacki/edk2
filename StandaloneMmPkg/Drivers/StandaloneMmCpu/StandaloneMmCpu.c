@@ -136,7 +136,11 @@ StandaloneMmCpuInitialize (
   // communication buffer that has been reserved by S-EL1/EL3
   ConfigurationTable = mMmst->MmConfigurationTable;
   for (Index = 0; Index < mMmst->NumberOfTableEntries; Index++) {
-    if (CompareGuid (&gEfiHobListGuid, &(ConfigurationTable[Index].VendorGuid))) {
+    if (CompareGuid (
+          &gEfiHobListGuid,
+          &(ConfigurationTable[Index].VendorGuid)
+          ))
+    {
       break;
     }
   }
@@ -158,7 +162,11 @@ StandaloneMmCpuInitialize (
              (VOID **)&CpuDriverEntryPointDesc
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "ArmTfCpuDriverEpDesc HOB data extraction failed - 0x%x\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ArmTfCpuDriverEpDesc HOB data extraction failed - 0x%x\n",
+      Status
+      ));
     return Status;
   }
 
@@ -169,7 +177,8 @@ StandaloneMmCpuInitialize (
     (UINTN)CpuDriverEntryPointDesc->ArmTfCpuDriverEpPtr,
     (UINTN)PiMmStandaloneArmTfCpuDriverEntry
     ));
-  *(CpuDriverEntryPointDesc->ArmTfCpuDriverEpPtr) = PiMmStandaloneArmTfCpuDriverEntry;
+  *(CpuDriverEntryPointDesc->ArmTfCpuDriverEpPtr) =
+    PiMmStandaloneArmTfCpuDriverEntry;
 
   // Find the descriptor that contains the whereabouts of the buffer for
   // communication with the Normal world.
@@ -179,15 +188,32 @@ StandaloneMmCpuInitialize (
              (VOID **)&NsCommBufMmramRange
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "NsCommBufMmramRange HOB data extraction failed - 0x%x\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "NsCommBufMmramRange HOB data extraction failed - 0x%x\n",
+      Status
+      ));
     return Status;
   }
 
-  DEBUG ((DEBUG_INFO, "mNsCommBuffer.PhysicalStart - 0x%lx\n", (UINTN)NsCommBufMmramRange->PhysicalStart));
-  DEBUG ((DEBUG_INFO, "mNsCommBuffer.PhysicalSize - 0x%lx\n", (UINTN)NsCommBufMmramRange->PhysicalSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "mNsCommBuffer.PhysicalStart - 0x%lx\n",
+    (UINTN)NsCommBufMmramRange->PhysicalStart
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "mNsCommBuffer.PhysicalSize - 0x%lx\n",
+    (UINTN)NsCommBufMmramRange->PhysicalSize
+    ));
 
   CopyMem (&mNsCommBuffer, NsCommBufMmramRange, sizeof (EFI_MMRAM_DESCRIPTOR));
-  DEBUG ((DEBUG_INFO, "mNsCommBuffer: 0x%016lx - 0x%lx\n", mNsCommBuffer.CpuStart, mNsCommBuffer.PhysicalSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "mNsCommBuffer: 0x%016lx - 0x%lx\n",
+    mNsCommBuffer.CpuStart,
+    mNsCommBuffer.PhysicalSize
+    ));
 
   Status = GetGuidedHobData (
              HobStart,
@@ -195,7 +221,11 @@ StandaloneMmCpuInitialize (
              (VOID **)&MmramRangesHob
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "MmramRangesHob data extraction failed - 0x%x\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MmramRangesHob data extraction failed - 0x%x\n",
+      Status
+      ));
     return Status;
   }
 
@@ -218,7 +248,11 @@ StandaloneMmCpuInitialize (
              (VOID **)&MpInformationHobData
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "MpInformationHob extraction failed - 0x%x\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MpInformationHob extraction failed - 0x%x\n",
+      Status
+      ));
     return Status;
   }
 
@@ -236,7 +270,11 @@ StandaloneMmCpuInitialize (
                     (VOID **)&mMpInformationHobData
                     );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "mMpInformationHobData mem alloc failed - 0x%x\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "mMpInformationHobData mem alloc failed - 0x%x\n",
+      Status
+      ));
     return Status;
   }
 
@@ -272,7 +310,11 @@ StandaloneMmCpuInitialize (
                     (VOID **)&PerCpuGuidedEventContext
                     );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "PerCpuGuidedEventContext mem alloc failed - 0x%x\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "PerCpuGuidedEventContext mem alloc failed - 0x%x\n",
+      Status
+      ));
     return Status;
   }
 

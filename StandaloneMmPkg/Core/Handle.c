@@ -13,8 +13,10 @@
 // mProtocolDatabase     - A list of all protocols in the system.  (simple list for now)
 // gHandleList           - A list of all the handles in the system
 //
-LIST_ENTRY  mProtocolDatabase = INITIALIZE_LIST_HEAD_VARIABLE (mProtocolDatabase);
-LIST_ENTRY  gHandleList       = INITIALIZE_LIST_HEAD_VARIABLE (gHandleList);
+LIST_ENTRY  mProtocolDatabase = INITIALIZE_LIST_HEAD_VARIABLE (
+                                  mProtocolDatabase
+                                  );
+LIST_ENTRY  gHandleList = INITIALIZE_LIST_HEAD_VARIABLE (gHandleList);
 
 /**
   Check whether a handle is a valid EFI_HANDLE
@@ -140,7 +142,9 @@ MmFindProtocolInterface (
     //
     // Look at each protocol interface for any matches
     //
-    for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
+    for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols;
+         Link = Link->ForwardLink)
+    {
       //
       // If this protocol interface matches, remove it
       //
@@ -235,14 +239,23 @@ MmInstallProtocolInterfaceNotify (
   //
   // Print debug message
   //
-  DEBUG ((DEBUG_LOAD | DEBUG_INFO, "MmInstallProtocolInterface: %g %p\n", Protocol, Interface));
+  DEBUG ((
+    DEBUG_LOAD | DEBUG_INFO,
+    "MmInstallProtocolInterface: %g %p\n",
+    Protocol,
+    Interface
+    ));
 
   Status = EFI_OUT_OF_RESOURCES;
   Prot   = NULL;
   Handle = NULL;
 
   if (*UserHandle != NULL) {
-    Status = MmHandleProtocol (*UserHandle, Protocol, (VOID **)&ExistingInterface);
+    Status = MmHandleProtocol (
+               *UserHandle,
+               Protocol,
+               (VOID **)&ExistingInterface
+               );
     if (!EFI_ERROR (Status)) {
       return EFI_INVALID_PARAMETER;
     }
@@ -458,8 +471,15 @@ MmGetProtocolInterface (
   //
   // Look at each protocol interface for a match
   //
-  for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
-    Prot      = CR (Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
+  for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link =
+         Link->ForwardLink)
+  {
+    Prot = CR (
+             Link,
+             PROTOCOL_INTERFACE,
+             Link,
+             PROTOCOL_INTERFACE_SIGNATURE
+             );
     ProtEntry = Prot->Protocol;
     if (CompareGuid (&ProtEntry->ProtocolID, Protocol)) {
       return Prot;

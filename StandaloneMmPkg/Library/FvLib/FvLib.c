@@ -67,7 +67,8 @@ CalculateHeaderChecksum (
 
   Sum  = 0;
   ptr  = (UINT8 *)FileHeader;
-  Size = IS_FFS_FILE2 (FileHeader) ? sizeof (EFI_FFS_FILE_HEADER2) : sizeof (EFI_FFS_FILE_HEADER);
+  Size = IS_FFS_FILE2 (FileHeader) ? sizeof (EFI_FFS_FILE_HEADER2) :
+         sizeof (EFI_FFS_FILE_HEADER);
 
   for (Index = 0; Index < Size - 3; Index += 4) {
     Sum = (UINT8)(Sum + ptr[Index]);
@@ -139,7 +140,8 @@ FfsFindNextFile (
   if (*FileHeader == NULL) {
     if (FwVolHeader->ExtHeaderOffset != 0) {
       FvExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *)((UINT8 *)FwVolHeader +
-                                                       FwVolHeader->ExtHeaderOffset);
+                                                       FwVolHeader->
+                                                         ExtHeaderOffset);
 
       FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FvExtHeader +
                                               FvExtHeader->ExtHeaderSize);
@@ -162,7 +164,8 @@ FfsFindNextFile (
     FileLength = IS_FFS_FILE2 (*FileHeader) ?
                  FFS_FILE2_SIZE (*FileHeader) : FFS_FILE_SIZE (*FileHeader);
     FileOccupiedSize = GET_OCCUPIED_SIZE (FileLength, 8);
-    FfsFileHeader    = (EFI_FFS_FILE_HEADER *)((UINT8 *)*FileHeader + FileOccupiedSize);
+    FfsFileHeader    = (EFI_FFS_FILE_HEADER *)((UINT8 *)*FileHeader +
+                                               FileOccupiedSize);
   }
 
   FileOffset = (UINT32)((UINT8 *)FfsFileHeader - (UINT8 *)FwVolHeader);
@@ -177,10 +180,12 @@ FfsFindNextFile (
       case EFI_FILE_HEADER_INVALID:
         if (IS_FFS_FILE2 (FfsFileHeader)) {
           FileOffset   += sizeof (EFI_FFS_FILE_HEADER2);
-          FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + sizeof (EFI_FFS_FILE_HEADER2));
+          FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                  sizeof (EFI_FFS_FILE_HEADER2));
         } else {
           FileOffset   += sizeof (EFI_FFS_FILE_HEADER);
-          FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + sizeof (EFI_FFS_FILE_HEADER));
+          FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                  sizeof (EFI_FFS_FILE_HEADER));
         }
 
         break;
@@ -189,17 +194,22 @@ FfsFindNextFile (
       case EFI_FILE_MARKED_FOR_UPDATE:
         if (CalculateHeaderChecksum (FfsFileHeader) == 0) {
           FileLength = IS_FFS_FILE2 (FfsFileHeader) ?
-                       FFS_FILE2_SIZE (FfsFileHeader) : FFS_FILE_SIZE (FfsFileHeader);
+                       FFS_FILE2_SIZE (FfsFileHeader) : FFS_FILE_SIZE (
+                                                          FfsFileHeader
+                                                          );
           FileOccupiedSize = GET_OCCUPIED_SIZE (FileLength, 8);
 
-          if ((SearchType == FfsFileHeader->Type) || (SearchType == EFI_FV_FILETYPE_ALL)) {
+          if ((SearchType == FfsFileHeader->Type) || (SearchType ==
+                                                      EFI_FV_FILETYPE_ALL))
+          {
             *FileHeader = FfsFileHeader;
 
             return EFI_SUCCESS;
           }
 
           FileOffset   += FileOccupiedSize;
-          FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + FileOccupiedSize);
+          FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                  FileOccupiedSize);
         } else {
           return EFI_NOT_FOUND;
         }
@@ -208,10 +218,13 @@ FfsFindNextFile (
 
       case EFI_FILE_DELETED:
         FileLength = IS_FFS_FILE2 (FfsFileHeader) ?
-                     FFS_FILE2_SIZE (FfsFileHeader) : FFS_FILE_SIZE (FfsFileHeader);
+                     FFS_FILE2_SIZE (FfsFileHeader) : FFS_FILE_SIZE (
+                                                        FfsFileHeader
+                                                        );
         FileOccupiedSize = GET_OCCUPIED_SIZE (FileLength, 8);
         FileOffset      += FileOccupiedSize;
-        FfsFileHeader    = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + FileOccupiedSize);
+        FfsFileHeader    = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                   FileOccupiedSize);
         break;
 
       default:
@@ -264,7 +277,9 @@ FindFfsSectionInSections (
 
     Section = (EFI_COMMON_SECTION_HEADER *)(UINTN)CurrentAddress;
 
-    Size = IS_SECTION2 (Section) ? SECTION2_SIZE (Section) : SECTION_SIZE (Section);
+    Size = IS_SECTION2 (Section) ? SECTION2_SIZE (Section) : SECTION_SIZE (
+                                                               Section
+                                                               );
     if (Size < sizeof (*Section)) {
       return EFI_VOLUME_CORRUPTED;
     }
@@ -318,7 +333,8 @@ FfsFindSection (
   // FileSize is adjusted to FileOccupiedSize as it is 8 byte aligned.
   //
   if (IS_FFS_FILE2 (FfsFileHeader)) {
-    Section  = (EFI_COMMON_SECTION_HEADER *)((EFI_FFS_FILE_HEADER2 *)FfsFileHeader + 1);
+    Section =
+      (EFI_COMMON_SECTION_HEADER *)((EFI_FFS_FILE_HEADER2 *)FfsFileHeader + 1);
     FileSize = FFS_FILE2_SIZE (FfsFileHeader) - sizeof (EFI_FFS_FILE_HEADER2);
   } else {
     Section  = (EFI_COMMON_SECTION_HEADER *)(FfsFileHeader + 1);
@@ -367,7 +383,8 @@ FfsFindSectionData (
   // FileSize is adjusted to FileOccupiedSize as it is 8 byte aligned.
   //
   if (IS_FFS_FILE2 (FfsFileHeader)) {
-    Section  = (EFI_COMMON_SECTION_HEADER *)((EFI_FFS_FILE_HEADER2 *)FfsFileHeader + 1);
+    Section =
+      (EFI_COMMON_SECTION_HEADER *)((EFI_FFS_FILE_HEADER2 *)FfsFileHeader + 1);
     FileSize = FFS_FILE2_SIZE (FfsFileHeader) - sizeof (EFI_FFS_FILE_HEADER2);
   } else {
     Section  = (EFI_COMMON_SECTION_HEADER *)(FfsFileHeader + 1);
@@ -394,11 +411,13 @@ FfsFindSectionData (
     // SectionLength is adjusted it is 4 byte aligned.
     // Go to the next section
     //
-    SectionLength = IS_SECTION2 (Section) ? SECTION2_SIZE (Section) : SECTION_SIZE (Section);
+    SectionLength = IS_SECTION2 (Section) ? SECTION2_SIZE (Section) :
+                    SECTION_SIZE (Section);
     SectionLength = GET_OCCUPIED_SIZE (SectionLength, 4);
 
     ParsedLength += SectionLength;
-    Section       = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)Section + SectionLength);
+    Section       = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)Section +
+                                                  SectionLength);
   }
 
   return EFI_NOT_FOUND;

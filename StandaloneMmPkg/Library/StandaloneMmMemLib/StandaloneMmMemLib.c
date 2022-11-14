@@ -81,7 +81,8 @@ MmIsBufferOutsideMmValid (
   //
   if ((Length > mMmMemLibInternalMaximumSupportAddress) ||
       (Buffer > mMmMemLibInternalMaximumSupportAddress) ||
-      ((Length != 0) && (Buffer > (mMmMemLibInternalMaximumSupportAddress - (Length - 1)))))
+      ((Length != 0) && (Buffer > (mMmMemLibInternalMaximumSupportAddress -
+                                   (Length - 1)))))
   {
     //
     // Overflow happen
@@ -98,7 +99,8 @@ MmIsBufferOutsideMmValid (
 
   for (Index = 0; Index < mMmMemLibInternalMmramCount; Index++) {
     if (((Buffer >= mMmMemLibInternalMmramRanges[Index].CpuStart) &&
-         (Buffer < mMmMemLibInternalMmramRanges[Index].CpuStart + mMmMemLibInternalMmramRanges[Index].PhysicalSize)) ||
+         (Buffer < mMmMemLibInternalMmramRanges[Index].CpuStart +
+          mMmMemLibInternalMmramRanges[Index].PhysicalSize)) ||
         ((mMmMemLibInternalMmramRanges[Index].CpuStart >= Buffer) &&
          (mMmMemLibInternalMmramRanges[Index].CpuStart < Buffer + Length)))
     {
@@ -146,8 +148,17 @@ MmCopyMemToMmram (
   IN UINTN       Length
   )
 {
-  if (!MmIsBufferOutsideMmValid ((EFI_PHYSICAL_ADDRESS)(UINTN)SourceBuffer, Length)) {
-    DEBUG ((DEBUG_ERROR, "MmCopyMemToMmram: Security Violation: Source (0x%x), Length (0x%x)\n", SourceBuffer, Length));
+  if (!MmIsBufferOutsideMmValid (
+         (EFI_PHYSICAL_ADDRESS)(UINTN)SourceBuffer,
+         Length
+         ))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "MmCopyMemToMmram: Security Violation: Source (0x%x), Length (0x%x)\n",
+      SourceBuffer,
+      Length
+      ));
     return EFI_SECURITY_VIOLATION;
   }
 
@@ -180,7 +191,11 @@ MmCopyMemFromMmram (
   IN UINTN       Length
   )
 {
-  if (!MmIsBufferOutsideMmValid ((EFI_PHYSICAL_ADDRESS)(UINTN)DestinationBuffer, Length)) {
+  if (!MmIsBufferOutsideMmValid (
+         (EFI_PHYSICAL_ADDRESS)(UINTN)DestinationBuffer,
+         Length
+         ))
+  {
     DEBUG ((
       DEBUG_ERROR,
       "MmCopyMemFromMmram: Security Violation: Destination (0x%x), Length (0x%x)\n",
@@ -220,7 +235,11 @@ MmCopyMem (
   IN UINTN       Length
   )
 {
-  if (!MmIsBufferOutsideMmValid ((EFI_PHYSICAL_ADDRESS)(UINTN)DestinationBuffer, Length)) {
+  if (!MmIsBufferOutsideMmValid (
+         (EFI_PHYSICAL_ADDRESS)(UINTN)DestinationBuffer,
+         Length
+         ))
+  {
     DEBUG ((
       DEBUG_ERROR,
       "MmCopyMem: Security Violation: Destination (0x%x), Length (0x%x)\n",
@@ -230,8 +249,17 @@ MmCopyMem (
     return EFI_SECURITY_VIOLATION;
   }
 
-  if (!MmIsBufferOutsideMmValid ((EFI_PHYSICAL_ADDRESS)(UINTN)SourceBuffer, Length)) {
-    DEBUG ((DEBUG_ERROR, "MmCopyMem: Security Violation: Source (0x%x), Length (0x%x)\n", SourceBuffer, Length));
+  if (!MmIsBufferOutsideMmValid (
+         (EFI_PHYSICAL_ADDRESS)(UINTN)SourceBuffer,
+         Length
+         ))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "MmCopyMem: Security Violation: Source (0x%x), Length (0x%x)\n",
+      SourceBuffer,
+      Length
+      ));
     return EFI_SECURITY_VIOLATION;
   }
 
@@ -264,7 +292,12 @@ MmSetMem (
   )
 {
   if (!MmIsBufferOutsideMmValid ((EFI_PHYSICAL_ADDRESS)(UINTN)Buffer, Length)) {
-    DEBUG ((DEBUG_ERROR, "MmSetMem: Security Violation: Source (0x%x), Length (0x%x)\n", Buffer, Length));
+    DEBUG ((
+      DEBUG_ERROR,
+      "MmSetMem: Security Violation: Source (0x%x), Length (0x%x)\n",
+      Buffer,
+      Length
+      ));
     return EFI_SECURITY_VIOLATION;
   }
 

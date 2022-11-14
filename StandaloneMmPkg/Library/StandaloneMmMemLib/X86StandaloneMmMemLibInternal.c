@@ -70,8 +70,13 @@ MmMemLibInternalCalculateMaximumSupportAddress (
   //
   // Save the maximum support address in one global variable
   //
-  mMmMemLibInternalMaximumSupportAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)(LShiftU64 (1, PhysicalAddressBits) - 1);
-  DEBUG ((DEBUG_INFO, "mMmMemLibInternalMaximumSupportAddress = 0x%lx\n", mMmMemLibInternalMaximumSupportAddress));
+  mMmMemLibInternalMaximumSupportAddress =
+    (EFI_PHYSICAL_ADDRESS)(UINTN)(LShiftU64 (1, PhysicalAddressBits) - 1);
+  DEBUG ((
+    DEBUG_INFO,
+    "mMmMemLibInternalMaximumSupportAddress = 0x%lx\n",
+    mMmMemLibInternalMaximumSupportAddress
+    ));
 }
 
 /**
@@ -109,7 +114,9 @@ MmMemLibInternalPopulateMmramRanges (
     }
 
     MmramRangesHobData = GET_GUID_HOB_DATA (MmramRangesHob);
-    if ((MmramRangesHobData == NULL) || (MmramRangesHobData->Descriptor == NULL)) {
+    if ((MmramRangesHobData == NULL) || (MmramRangesHobData->Descriptor ==
+                                         NULL))
+    {
       return EFI_UNSUPPORTED;
     }
 
@@ -127,10 +134,14 @@ MmMemLibInternalPopulateMmramRanges (
     }
 
     mMmMemLibInternalMmramCount = (UINTN)MmCorePrivateData->MmramRangeCount;
-    MmramDescriptors            = (EFI_MMRAM_DESCRIPTOR *)(UINTN)MmCorePrivateData->MmramRanges;
+    MmramDescriptors            =
+      (EFI_MMRAM_DESCRIPTOR *)(UINTN)MmCorePrivateData->MmramRanges;
   }
 
-  mMmMemLibInternalMmramRanges = AllocatePool (mMmMemLibInternalMmramCount * sizeof (EFI_MMRAM_DESCRIPTOR));
+  mMmMemLibInternalMmramRanges = AllocatePool (
+                                   mMmMemLibInternalMmramCount *
+                                   sizeof (EFI_MMRAM_DESCRIPTOR)
+                                   );
   if (mMmMemLibInternalMmramRanges) {
     CopyMem (
       mMmMemLibInternalMmramRanges,

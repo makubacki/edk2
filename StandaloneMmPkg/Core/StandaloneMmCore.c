@@ -84,11 +84,16 @@ EFI_MM_SYSTEM_TABLE  gMmCoreMmst = {
 // Table of MMI Handlers that are registered by the MM Core when it is initialized
 //
 MM_CORE_MMI_HANDLERS  mMmCoreMmiHandlers[] = {
-  { MmReadyToLockHandler,     &gEfiDxeMmReadyToLockProtocolGuid, NULL, TRUE  },
-  { MmEndOfDxeHandler,        &gEfiEndOfDxeEventGroupGuid,       NULL, FALSE },
-  { MmExitBootServiceHandler, &gEfiEventExitBootServicesGuid,    NULL, FALSE },
-  { MmReadyToBootHandler,     &gEfiEventReadyToBootGuid,         NULL, FALSE },
-  { NULL,                     NULL,                              NULL, FALSE },
+  { MmReadyToLockHandler,     &gEfiDxeMmReadyToLockProtocolGuid,     NULL,
+    TRUE                               },
+  { MmEndOfDxeHandler,        &gEfiEndOfDxeEventGroupGuid,           NULL,
+    FALSE                                                                },
+  { MmExitBootServiceHandler, &gEfiEventExitBootServicesGuid,        NULL,
+    FALSE                                                                                                 },
+  { MmReadyToBootHandler,     &gEfiEventReadyToBootGuid,             NULL,
+    FALSE                                                                                                                                  },
+  { NULL,                     NULL,                                  NULL,
+    FALSE                                                                                                                                  },
 };
 
 EFI_SYSTEM_TABLE      *mEfiSystemTable;
@@ -346,7 +351,11 @@ MmEntryPoint (
   //
   // Update MMST using the context
   //
-  CopyMem (&gMmCoreMmst.MmStartupThisAp, MmEntryContext, sizeof (EFI_MM_ENTRY_CONTEXT));
+  CopyMem (
+    &gMmCoreMmst.MmStartupThisAp,
+    MmEntryContext,
+    sizeof (EFI_MM_ENTRY_CONTEXT)
+    );
 
   //
   // Call platform hook before Mm Dispatch
@@ -370,14 +379,19 @@ MmEntryPoint (
     //
     // Synchronous MMI for MM Core or request from Communicate protocol
     //
-    if (!MmIsBufferOutsideMmValid ((UINTN)gMmCorePrivate->CommunicationBuffer, gMmCorePrivate->BufferSize)) {
+    if (!MmIsBufferOutsideMmValid (
+           (UINTN)gMmCorePrivate->CommunicationBuffer,
+           gMmCorePrivate->BufferSize
+           ))
+    {
       //
       // If CommunicationBuffer is not in valid address scope, return EFI_INVALID_PARAMETER
       //
       gMmCorePrivate->CommunicationBuffer = 0;
       gMmCorePrivate->ReturnStatus        = EFI_INVALID_PARAMETER;
     } else {
-      CommunicateHeader           = (EFI_MM_COMMUNICATE_HEADER *)(UINTN)gMmCorePrivate->CommunicationBuffer;
+      CommunicateHeader =
+        (EFI_MM_COMMUNICATE_HEADER *)(UINTN)gMmCorePrivate->CommunicationBuffer;
       gMmCorePrivate->BufferSize -= OFFSET_OF (EFI_MM_COMMUNICATE_HEADER, Data);
       Status                      = MmiManage (
                                       &CommunicateHeader->HeaderGuid,
@@ -389,9 +403,13 @@ MmEntryPoint (
       // Update CommunicationBuffer, BufferSize and ReturnStatus
       // Communicate service finished, reset the pointer to CommBuffer to NULL
       //
-      gMmCorePrivate->BufferSize         += OFFSET_OF (EFI_MM_COMMUNICATE_HEADER, Data);
+      gMmCorePrivate->BufferSize += OFFSET_OF (
+                                      EFI_MM_COMMUNICATE_HEADER,
+                                      Data
+                                      );
       gMmCorePrivate->CommunicationBuffer = 0;
-      gMmCorePrivate->ReturnStatus        = (Status == EFI_SUCCESS) ? EFI_SUCCESS : EFI_NOT_FOUND;
+      gMmCorePrivate->ReturnStatus        = (Status == EFI_SUCCESS) ?
+                                            EFI_SUCCESS : EFI_NOT_FOUND;
     }
   }
 
@@ -432,14 +450,23 @@ MmConfigurationMmNotify (
   EFI_STATUS                     Status;
   EFI_MM_CONFIGURATION_PROTOCOL  *MmConfiguration;
 
-  DEBUG ((DEBUG_INFO, "MmConfigurationMmNotify(%g) - %x\n", Protocol, Interface));
+  DEBUG ((
+    DEBUG_INFO,
+    "MmConfigurationMmNotify(%g) - %x\n",
+    Protocol,
+    Interface
+    ));
 
   MmConfiguration = Interface;
 
   //
   // Register the MM Entry Point provided by the MM Core with the MM COnfiguration protocol
   //
-  Status = MmConfiguration->RegisterMmEntry (MmConfiguration, (EFI_MM_ENTRY_POINT)(UINTN)gMmCorePrivate->MmEntryPoint);
+  Status = MmConfiguration->RegisterMmEntry (
+                              MmConfiguration,
+                              (EFI_MM_ENTRY_POINT)(UINTN)gMmCorePrivate->
+                                MmEntryPoint
+                              );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -451,7 +478,11 @@ MmConfigurationMmNotify (
   //
   // Print debug message showing MM Core entry point address.
   //
-  DEBUG ((DEBUG_INFO, "MM Core registered MM Entry Point address %p\n", (VOID *)(UINTN)gMmCorePrivate->MmEntryPoint));
+  DEBUG ((
+    DEBUG_INFO,
+    "MM Core registered MM Entry Point address %p\n",
+    (VOID *)(UINTN)gMmCorePrivate->MmEntryPoint
+    ));
   return EFI_SUCCESS;
 }
 
@@ -528,7 +559,10 @@ StandaloneMmMain (
     // Allocate and zero memory for a MM_CORE_PRIVATE_DATA table and then
     // initialise it
     //
-    gMmCorePrivate = (MM_CORE_PRIVATE_DATA *)AllocateRuntimePages (EFI_SIZE_TO_PAGES (sizeof (MM_CORE_PRIVATE_DATA)));
+    gMmCorePrivate = (MM_CORE_PRIVATE_DATA *)AllocateRuntimePages (
+                                               EFI_SIZE_TO_PAGES (
+                                                 sizeof (MM_CORE_PRIVATE_DATA))
+                                               );
     SetMem ((VOID *)(UINTN)gMmCorePrivate, sizeof (MM_CORE_PRIVATE_DATA), 0);
     gMmCorePrivate->Signature              = MM_CORE_PRIVATE_DATA_SIGNATURE;
     gMmCorePrivate->MmEntryPointRegistered = FALSE;
@@ -538,7 +572,10 @@ StandaloneMmMain (
     //
     // Extract the MMRAM ranges from the MMRAM descriptor HOB
     //
-    MmramRangesHob = GetNextGuidHob (&gEfiMmPeiMmramMemoryReserveGuid, HobStart);
+    MmramRangesHob = GetNextGuidHob (
+                       &gEfiMmPeiMmramMemoryReserveGuid,
+                       HobStart
+                       );
     if (MmramRangesHob == NULL) {
       return EFI_UNSUPPORTED;
     }
@@ -556,7 +593,10 @@ StandaloneMmMain (
     //
     gMmCorePrivate->MmramRangeCount = (UINT64)MmramRangeCount;
     gMmCorePrivate->MmramRanges     =
-      (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (MmramRangeCount * sizeof (EFI_MMRAM_DESCRIPTOR));
+      (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (
+                                     MmramRangeCount *
+                                     sizeof (EFI_MMRAM_DESCRIPTOR)
+                                     );
     ASSERT (gMmCorePrivate->MmramRanges != 0);
     CopyMem (
       (VOID *)(UINTN)gMmCorePrivate->MmramRanges,
@@ -564,9 +604,10 @@ StandaloneMmMain (
       MmramRangeCount * sizeof (EFI_MMRAM_DESCRIPTOR)
       );
   } else {
-    DataInHob       = GET_GUID_HOB_DATA (GuidHob);
-    gMmCorePrivate  = (MM_CORE_PRIVATE_DATA *)(UINTN)DataInHob->Address;
-    MmramRanges     = (EFI_MMRAM_DESCRIPTOR *)(UINTN)gMmCorePrivate->MmramRanges;
+    DataInHob      = GET_GUID_HOB_DATA (GuidHob);
+    gMmCorePrivate = (MM_CORE_PRIVATE_DATA *)(UINTN)DataInHob->Address;
+    MmramRanges    =
+      (EFI_MMRAM_DESCRIPTOR *)(UINTN)gMmCorePrivate->MmramRanges;
     MmramRangeCount = (UINTN)gMmCorePrivate->MmramRangeCount;
   }
 
@@ -589,10 +630,18 @@ StandaloneMmMain (
   //
   mMmramRangeCount = MmramRangeCount;
   DEBUG ((DEBUG_INFO, "mMmramRangeCount - 0x%x\n", mMmramRangeCount));
-  mMmramRanges = AllocatePool (mMmramRangeCount * sizeof (EFI_MMRAM_DESCRIPTOR));
+  mMmramRanges = AllocatePool (
+                   mMmramRangeCount *
+                   sizeof (EFI_MMRAM_DESCRIPTOR)
+                   );
   DEBUG ((DEBUG_INFO, "mMmramRanges - 0x%x\n", mMmramRanges));
   ASSERT (mMmramRanges != NULL);
-  CopyMem (mMmramRanges, (VOID *)(UINTN)MmramRanges, mMmramRangeCount * sizeof (EFI_MMRAM_DESCRIPTOR));
+  CopyMem (
+    mMmramRanges,
+    (VOID *)(UINTN)MmramRanges,
+    mMmramRangeCount *
+    sizeof (EFI_MMRAM_DESCRIPTOR)
+    );
 
   //
   // Get Boot Firmware Volume address from the BFV Hob
@@ -623,14 +672,22 @@ StandaloneMmMain (
   DEBUG ((DEBUG_INFO, "MmHobStart - 0x%x\n", MmHobStart));
   ASSERT (MmHobStart != NULL);
   CopyMem (MmHobStart, HobStart, HobSize);
-  Status = MmInstallConfigurationTable (&gMmCoreMmst, &gEfiHobListGuid, MmHobStart, HobSize);
+  Status = MmInstallConfigurationTable (
+             &gMmCoreMmst,
+             &gEfiHobListGuid,
+             MmHobStart,
+             HobSize
+             );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Register notification for EFI_MM_CONFIGURATION_PROTOCOL registration and
   // use it to register the MM Foundation entrypoint
   //
-  DEBUG ((DEBUG_INFO, "MmRegisterProtocolNotify - MmConfigurationMmProtocol\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "MmRegisterProtocolNotify - MmConfigurationMmProtocol\n"
+    ));
   Status = MmRegisterProtocolNotify (
              &gEfiMmConfigurationProtocolGuid,
              MmConfigurationMmNotify,
@@ -641,9 +698,15 @@ StandaloneMmMain (
   //
   // Dispatch standalone BFV
   //
-  DEBUG ((DEBUG_INFO, "Mm Dispatch StandaloneBfvAddress - 0x%08x\n", gMmCorePrivate->StandaloneBfvAddress));
+  DEBUG ((
+    DEBUG_INFO,
+    "Mm Dispatch StandaloneBfvAddress - 0x%08x\n",
+    gMmCorePrivate->StandaloneBfvAddress
+    ));
   if (gMmCorePrivate->StandaloneBfvAddress != 0) {
-    MmCoreFfsFindMmDriver ((EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)gMmCorePrivate->StandaloneBfvAddress);
+    MmCoreFfsFindMmDriver (
+      (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)gMmCorePrivate->StandaloneBfvAddress
+      );
     MmDispatcher ();
   }
 
@@ -656,7 +719,12 @@ StandaloneMmMain (
                mMmCoreMmiHandlers[Index].HandlerType,
                &mMmCoreMmiHandlers[Index].DispatchHandle
                );
-    DEBUG ((DEBUG_INFO, "MmiHandlerRegister - GUID %g - Status %d\n", mMmCoreMmiHandlers[Index].HandlerType, Status));
+    DEBUG ((
+      DEBUG_INFO,
+      "MmiHandlerRegister - GUID %g - Status %d\n",
+      mMmCoreMmiHandlers[Index].HandlerType,
+      Status
+      ));
   }
 
   DEBUG ((DEBUG_INFO, "MmMain Done!\n"));

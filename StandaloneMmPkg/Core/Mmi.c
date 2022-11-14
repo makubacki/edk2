@@ -36,8 +36,10 @@ typedef struct {
   MMI_ENTRY                     *MmiEntry;
 } MMI_HANDLER;
 
-LIST_ENTRY  mRootMmiHandlerList = INITIALIZE_LIST_HEAD_VARIABLE (mRootMmiHandlerList);
-LIST_ENTRY  mMmiEntryList       = INITIALIZE_LIST_HEAD_VARIABLE (mMmiEntryList);
+LIST_ENTRY  mRootMmiHandlerList = INITIALIZE_LIST_HEAD_VARIABLE (
+                                    mRootMmiHandlerList
+                                    );
+LIST_ENTRY  mMmiEntryList = INITIALIZE_LIST_HEAD_VARIABLE (mMmiEntryList);
 
 /**
   Finds the MMI entry for the requested handler type.

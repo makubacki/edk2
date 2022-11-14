@@ -201,9 +201,19 @@ LocateStandaloneMmCorePeCoffData (
     return Status;
   }
 
-  Status = FfsFindSectionData (EFI_SECTION_PE32, FileHeader, TeData, TeDataSize);
+  Status = FfsFindSectionData (
+             EFI_SECTION_PE32,
+             FileHeader,
+             TeData,
+             TeDataSize
+             );
   if (EFI_ERROR (Status)) {
-    Status = FfsFindSectionData (EFI_SECTION_TE, FileHeader, TeData, TeDataSize);
+    Status = FfsFindSectionData (
+               EFI_SECTION_TE,
+               FileHeader,
+               TeData,
+               TeDataSize
+               );
     if (EFI_ERROR (Status)) {
       DEBUG ((
         DEBUG_ERROR,
@@ -323,7 +333,8 @@ GetPeCoffSectionInformation (
   } else {
     *SectionHeaderOffset = (UINTN)(sizeof (EFI_TE_IMAGE_HEADER));
     *NumberOfSections    = Hdr.Te->NumberOfSections;
-    *ImageBase          -= (UINT32)Hdr.Te->StrippedSize - sizeof (EFI_TE_IMAGE_HEADER);
+    *ImageBase          -= (UINT32)Hdr.Te->StrippedSize -
+                           sizeof (EFI_TE_IMAGE_HEADER);
   }
 
   return RETURN_SUCCESS;
@@ -368,7 +379,11 @@ GetStandaloneMmCorePeCoffSections (
              NumberOfSections
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Unable to locate Standalone MM Core PE-COFF Section information - %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Unable to locate Standalone MM Core PE-COFF Section information - %r\n",
+      Status
+      ));
     return Status;
   }
 

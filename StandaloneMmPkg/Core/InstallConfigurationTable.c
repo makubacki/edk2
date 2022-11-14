@@ -85,7 +85,8 @@ MmInstallConfigurationTable (
     CopyMem (
       &(ConfigurationTable[Index]),
       &(ConfigurationTable[Index + 1]),
-      (gMmCoreMmst.NumberOfTableEntries - Index) * sizeof (EFI_CONFIGURATION_TABLE)
+      (gMmCoreMmst.NumberOfTableEntries - Index) *
+      sizeof (EFI_CONFIGURATION_TABLE)
       );
   } else {
     //
@@ -101,11 +102,14 @@ MmInstallConfigurationTable (
     //
     // Assume that Index == gMmCoreMmst.NumberOfTableEntries
     //
-    if ((Index * sizeof (EFI_CONFIGURATION_TABLE)) >= mMmSystemTableAllocateSize) {
+    if ((Index * sizeof (EFI_CONFIGURATION_TABLE)) >=
+        mMmSystemTableAllocateSize)
+    {
       //
       // Allocate a table with one additional entry.
       //
-      mMmSystemTableAllocateSize += (CONFIG_TABLE_SIZE_INCREASED * sizeof (EFI_CONFIGURATION_TABLE));
+      mMmSystemTableAllocateSize += (CONFIG_TABLE_SIZE_INCREASED *
+                                     sizeof (EFI_CONFIGURATION_TABLE));
       ConfigurationTable          = AllocatePool (mMmSystemTableAllocateSize);
       if (ConfigurationTable == NULL) {
         //

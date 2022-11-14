@@ -79,7 +79,8 @@ GrowDepexStack (
   //
   // Make the Stack pointer point to the old data in the new stack
   //
-  mDepexEvaluationStackPointer = NewStack + (mDepexEvaluationStackPointer - mDepexEvaluationStack);
+  mDepexEvaluationStackPointer = NewStack + (mDepexEvaluationStackPointer -
+                                             mDepexEvaluationStack);
   mDepexEvaluationStack        = NewStack;
   mDepexEvaluationStackEnd     = NewStack + Size;
 
@@ -188,7 +189,11 @@ MmIsSchedulable (
     return FALSE;
   }
 
-  DEBUG ((DEBUG_DISPATCH, "Evaluate MM DEPEX for FFS(%g)\n", &DriverEntry->FileName));
+  DEBUG ((
+    DEBUG_DISPATCH,
+    "Evaluate MM DEPEX for FFS(%g)\n",
+    &DriverEntry->FileName
+    ));
 
   if (DriverEntry->Depex == NULL) {
     //
@@ -213,8 +218,13 @@ MmIsSchedulable (
     // Check to see if we are attempting to fetch dependency expression instructions
     // past the end of the dependency expression.
     //
-    if (((UINTN)Iterator - (UINTN)DriverEntry->Depex) >= DriverEntry->DepexSize) {
-      DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Attempt to fetch past end of depex)\n"));
+    if (((UINTN)Iterator - (UINTN)DriverEntry->Depex) >=
+        DriverEntry->DepexSize)
+    {
+      DEBUG ((
+        DEBUG_DISPATCH,
+        "  RESULT = FALSE (Attempt to fetch past end of depex)\n"
+        ));
       return FALSE;
     }
 
@@ -230,7 +240,10 @@ MmIsSchedulable (
         // If the code flow arrives at this point, there was a BEFORE or AFTER
         // that were not the first opcodes.
         //
-        DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected BEFORE or AFTER opcode)\n"));
+        DEBUG ((
+          DEBUG_DISPATCH,
+          "  RESULT = FALSE (Unexpected BEFORE or AFTER opcode)\n"
+          ));
         ASSERT (FALSE);
 
       case EFI_DEP_PUSH:
@@ -245,7 +258,11 @@ MmIsSchedulable (
           //
           // For MM Driver, it may depend on uefi protocols
           //
-          Status = mEfiSystemTable->BootServices->LocateProtocol (&DriverGuid, NULL, &Interface);
+          Status = mEfiSystemTable->BootServices->LocateProtocol (
+                                                    &DriverGuid,
+                                                    NULL,
+                                                    &Interface
+                                                    );
         }
 
         if (EFI_ERROR (Status)) {
@@ -353,7 +370,12 @@ MmIsSchedulable (
           return FALSE;
         }
 
-        DEBUG ((DEBUG_DISPATCH, "  RESULT = %a\n", Operator ? "TRUE" : "FALSE"));
+        DEBUG ((
+          DEBUG_DISPATCH,
+          "  RESULT = %a\n",
+          Operator ? "TRUE" :
+          "FALSE"
+          ));
         return Operator;
 
       case EFI_DEP_REPLACE_TRUE:

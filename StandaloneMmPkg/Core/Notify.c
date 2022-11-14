@@ -25,9 +25,15 @@ MmNotifyProtocol (
   LIST_ENTRY       *Link;
 
   ProtEntry = Prot->Protocol;
-  for (Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link = Link->ForwardLink) {
+  for (Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link =
+         Link->ForwardLink)
+  {
     ProtNotify = CR (Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
-    ProtNotify->Function (&ProtEntry->ProtocolID, Prot->Interface, Prot->Handle);
+    ProtNotify->Function (
+                  &ProtEntry->ProtocolID,
+                  Prot->Interface,
+                  Prot->Handle
+                  );
   }
 }
 
@@ -60,7 +66,9 @@ MmRemoveInterfaceFromProtocol (
     //
     // If there's a protocol notify location pointing to this entry, back it up one
     //
-    for (Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link = Link->ForwardLink) {
+    for (Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify;
+         Link = Link->ForwardLink)
+    {
       ProtNotify = CR (Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
 
       if (ProtNotify->Position == &Prot->ByProtocol) {
@@ -123,7 +131,13 @@ MmRegisterProtocolNotify (
         //
         // Compare the notification record
         //
-        if (ProtNotify == (CR (Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE))) {
+        if (ProtNotify == (CR (
+                             Link,
+                             PROTOCOL_NOTIFY,
+                             Link,
+                             PROTOCOL_NOTIFY_SIGNATURE
+                             )))
+        {
           //
           // If Registration is an existing registration, then unhook it
           //

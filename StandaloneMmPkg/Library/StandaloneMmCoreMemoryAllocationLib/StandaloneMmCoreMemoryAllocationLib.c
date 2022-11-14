@@ -45,7 +45,12 @@ InternalAllocatePages (
     return NULL;
   }
 
-  Status = gMmst->MmAllocatePages (AllocateAnyPages, MemoryType, Pages, &Memory);
+  Status = gMmst->MmAllocatePages (
+                    AllocateAnyPages,
+                    MemoryType,
+                    Pages,
+                    &Memory
+                    );
   if (EFI_ERROR (Status)) {
     return NULL;
   }
@@ -202,7 +207,12 @@ InternalAllocateAlignedPages (
     //
     ASSERT (RealPages > Pages);
 
-    Status = gMmst->MmAllocatePages (AllocateAnyPages, MemoryType, RealPages, &Memory);
+    Status = gMmst->MmAllocatePages (
+                      AllocateAnyPages,
+                      MemoryType,
+                      RealPages,
+                      &Memory
+                      );
     if (EFI_ERROR (Status)) {
       return NULL;
     }
@@ -217,7 +227,9 @@ InternalAllocateAlignedPages (
       ASSERT_EFI_ERROR (Status);
     }
 
-    Memory         = (EFI_PHYSICAL_ADDRESS)(AlignedMemory + EFI_PAGES_TO_SIZE (Pages));
+    Memory         = (EFI_PHYSICAL_ADDRESS)(AlignedMemory + EFI_PAGES_TO_SIZE (
+                                                              Pages
+                                                              ));
     UnalignedPages = RealPages - Pages - UnalignedPages;
     if (UnalignedPages > 0) {
       //
@@ -230,7 +242,12 @@ InternalAllocateAlignedPages (
     //
     // Do not over-allocate pages in this case.
     //
-    Status = gMmst->MmAllocatePages (AllocateAnyPages, MemoryType, Pages, &Memory);
+    Status = gMmst->MmAllocatePages (
+                      AllocateAnyPages,
+                      MemoryType,
+                      Pages,
+                      &Memory
+                      );
     if (EFI_ERROR (Status)) {
       return NULL;
     }
@@ -266,7 +283,11 @@ AllocateAlignedPages (
   IN UINTN  Alignment
   )
 {
-  return InternalAllocateAlignedPages (EfiRuntimeServicesData, Pages, Alignment);
+  return InternalAllocateAlignedPages (
+           EfiRuntimeServicesData,
+           Pages,
+           Alignment
+           );
 }
 
 /**
@@ -294,7 +315,11 @@ AllocateAlignedRuntimePages (
   IN UINTN  Alignment
   )
 {
-  return InternalAllocateAlignedPages (EfiRuntimeServicesData, Pages, Alignment);
+  return InternalAllocateAlignedPages (
+           EfiRuntimeServicesData,
+           Pages,
+           Alignment
+           );
 }
 
 /**
@@ -608,7 +633,11 @@ AllocateCopyPool (
   IN CONST VOID  *Buffer
   )
 {
-  return InternalAllocateCopyPool (EfiRuntimeServicesData, AllocationSize, Buffer);
+  return InternalAllocateCopyPool (
+           EfiRuntimeServicesData,
+           AllocationSize,
+           Buffer
+           );
 }
 
 /**
@@ -635,7 +664,11 @@ AllocateRuntimeCopyPool (
   IN CONST VOID  *Buffer
   )
 {
-  return InternalAllocateCopyPool (EfiRuntimeServicesData, AllocationSize, Buffer);
+  return InternalAllocateCopyPool (
+           EfiRuntimeServicesData,
+           AllocationSize,
+           Buffer
+           );
 }
 
 /**
@@ -735,7 +768,12 @@ ReallocatePool (
   IN VOID   *OldBuffer  OPTIONAL
   )
 {
-  return InternalReallocatePool (EfiRuntimeServicesData, OldSize, NewSize, OldBuffer);
+  return InternalReallocatePool (
+           EfiRuntimeServicesData,
+           OldSize,
+           NewSize,
+           OldBuffer
+           );
 }
 
 /**
@@ -767,7 +805,12 @@ ReallocateRuntimePool (
   IN VOID   *OldBuffer  OPTIONAL
   )
 {
-  return InternalReallocatePool (EfiRuntimeServicesData, OldSize, NewSize, OldBuffer);
+  return InternalReallocatePool (
+           EfiRuntimeServicesData,
+           OldSize,
+           NewSize,
+           OldBuffer
+           );
 }
 
 /**
@@ -855,7 +898,11 @@ MemoryAllocationLibConstructor (
   EFI_HOB_GUID_TYPE               *MmramRangesHob;
 
   HobStart = GetHobList ();
-  DEBUG ((DEBUG_INFO, "StandaloneMmCoreMemoryAllocationLibConstructor - 0x%x\n", HobStart));
+  DEBUG ((
+    DEBUG_INFO,
+    "StandaloneMmCoreMemoryAllocationLibConstructor - 0x%x\n",
+    HobStart
+    ));
 
   //
   // Extract MM Core Private context from the Hob. If absent search for
@@ -863,7 +910,10 @@ MemoryAllocationLibConstructor (
   //
   GuidHob = GetNextGuidHob (&gMmCoreDataHobGuid, HobStart);
   if (GuidHob == NULL) {
-    MmramRangesHob = GetNextGuidHob (&gEfiMmPeiMmramMemoryReserveGuid, HobStart);
+    MmramRangesHob = GetNextGuidHob (
+                       &gEfiMmPeiMmramMemoryReserveGuid,
+                       HobStart
+                       );
     if (MmramRangesHob == NULL) {
       return EFI_UNSUPPORTED;
     }
@@ -908,7 +958,10 @@ MemoryAllocationLibConstructor (
   // Initialize memory service using free MMRAM
   //
   DEBUG ((DEBUG_INFO, "MmInitializeMemoryServices\n"));
-  MmInitializeMemoryServices ((UINTN)MmramRangeCount, (VOID *)(UINTN)MmramRanges);
+  MmInitializeMemoryServices (
+    (UINTN)MmramRangeCount,
+    (VOID *)(UINTN)MmramRanges
+    );
 
   // Initialize MM Services Table
   gMmst = MmSystemTable;

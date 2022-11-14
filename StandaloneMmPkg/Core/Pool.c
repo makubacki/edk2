@@ -14,7 +14,8 @@ LIST_ENTRY  mMmPoolLists[MAX_POOL_INDEX];
 // To cache the MMRAM base since when Loading modules At fixed address feature is enabled,
 // all module is assigned an offset relative the MMRAM base in build time.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED  EFI_PHYSICAL_ADDRESS  gLoadModuleAtFixAddressMmramBase = 0;
+GLOBAL_REMOVE_IF_UNREFERENCED  EFI_PHYSICAL_ADDRESS
+  gLoadModuleAtFixAddressMmramBase = 0;
 
 /**
   Called to initialize the memory service.
@@ -101,7 +102,11 @@ InternalAllocPoolByIndex (
 
     Hdr = (FREE_POOL_HEADER *)(UINTN)Address;
   } else if (!IsListEmpty (&mMmPoolLists[PoolIndex])) {
-    Hdr = BASE_CR (GetFirstNode (&mMmPoolLists[PoolIndex]), FREE_POOL_HEADER, Link);
+    Hdr = BASE_CR (
+            GetFirstNode (&mMmPoolLists[PoolIndex]),
+            FREE_POOL_HEADER,
+            Link
+            );
     RemoveEntryList (&Hdr->Link);
   } else {
     Status = InternalAllocPoolByIndex (PoolIndex + 1, &Hdr);
@@ -141,7 +146,9 @@ InternalFreePoolByIndex (
   ASSERT (((UINTN)FreePoolHdr & (FreePoolHdr->Header.Size - 1)) == 0);
   ASSERT (FreePoolHdr->Header.Size >= MIN_POOL_SIZE);
 
-  PoolIndex                     = (UINTN)(HighBitSet32 ((UINT32)FreePoolHdr->Header.Size) - MIN_POOL_SHIFT);
+  PoolIndex                     = (UINTN)(HighBitSet32 (
+                                            (UINT32)FreePoolHdr->Header.Size
+                                            ) - MIN_POOL_SHIFT);
   FreePoolHdr->Header.Available = TRUE;
   ASSERT (PoolIndex < MAX_POOL_INDEX);
   InsertHeadList (&mMmPoolLists[PoolIndex], &FreePoolHdr->Link);
@@ -184,7 +191,12 @@ MmInternalAllocatePool (
   Size += sizeof (*PoolHdr);
   if (Size > MAX_POOL_SIZE) {
     Size   = EFI_SIZE_TO_PAGES (Size);
-    Status = MmInternalAllocatePages (AllocateAnyPages, PoolType, Size, &Address);
+    Status = MmInternalAllocatePages (
+               AllocateAnyPages,
+               PoolType,
+               Size,
+               &Address
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
