@@ -902,7 +902,7 @@ PiCpuSmmEntry (
   //
   gSmmCpuPrivate->ProcessorInfo = (EFI_PROCESSOR_INFORMATION *)AllocatePool (
                                                                  sizeof (
-                                                                                    EFI_PROCESSOR_INFORMATION)
+                                                                         EFI_PROCESSOR_INFORMATION)
                                                                  *
                                                                  mMaxNumberOfCpus
                                                                  );
@@ -1345,14 +1345,14 @@ FindSmramInfo (
         *SmrrBase = (UINT32)mSmmCpuSmramRanges[Index].CpuStart;
         *SmrrSize = (UINT32)(*SmrrSize +
                              mSmmCpuSmramRanges[Index].PhysicalSize);
-        Found     = TRUE;
+        Found = TRUE;
       } else if (((*SmrrBase + *SmrrSize) ==
                   mSmmCpuSmramRanges[Index].CpuStart) &&
                  (mSmmCpuSmramRanges[Index].PhysicalSize > 0))
       {
         *SmrrSize = (UINT32)(*SmrrSize +
                              mSmmCpuSmramRanges[Index].PhysicalSize);
-        Found     = TRUE;
+        Found = TRUE;
       }
     }
   } while (Found);

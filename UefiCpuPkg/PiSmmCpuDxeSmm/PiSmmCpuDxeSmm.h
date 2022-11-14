@@ -219,7 +219,7 @@ typedef struct {
 } PROCEDURE_TOKEN;
 
 #define PROCEDURE_TOKEN_FROM_LINK( \
-                                 a)  \
+                                   a)  \
   CR (a, PROCEDURE_TOKEN, Link, PROCEDURE_TOKEN_SIGNATURE)
 
 #define TOKEN_BUFFER_SIGNATURE  SIGNATURE_32 ('T', 'K', 'B', 'S')
@@ -232,7 +232,7 @@ typedef struct {
 } TOKEN_BUFFER;
 
 #define TOKEN_BUFFER_FROM_LINK( \
-                              a)  \
+                                a)  \
   CR (a, TOKEN_BUFFER, Link, TOKEN_BUFFER_SIGNATURE)
 
 //

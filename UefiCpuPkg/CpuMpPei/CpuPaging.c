@@ -54,15 +54,15 @@ typedef struct {
 
 PAGE_ATTRIBUTE_TABLE  mPageAttributeTable[] = {
   { PageNone, 0,          0,                           0,
-    0                            },
+    0 },
   { Page4K,   SIZE_4KB,   PAGING_4K_ADDRESS_MASK_64,   12,
-    9                                                      },
+    9 },
   { Page2M,   SIZE_2MB,   PAGING_2M_ADDRESS_MASK_64,   21,
-    9                                                                               },
+    9 },
   { Page1G,   SIZE_1GB,   PAGING_1G_ADDRESS_MASK_64,   30,
-    9                                                                                                        },
+    9 },
   { Page512G, SIZE_512GB, PAGING_512G_ADDRESS_MASK_64, 39,
-    9                                                                                                        },
+    9 },
 };
 
 EFI_PEI_NOTIFY_DESCRIPTOR  mPostMemNotifyList[] = {

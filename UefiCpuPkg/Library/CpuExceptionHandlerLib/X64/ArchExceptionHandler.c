@@ -218,8 +218,8 @@ ArchSetupExceptionStack (
                   );
   TssDesc = (IA32_TSS_DESCRIPTOR *)((UINTN)NewGdtTable +
                                     Gdtr.Limit + 1);
-  Tss     = (IA32_TASK_STATE_SEGMENT *)((UINTN)TssDesc +
-                                        CPU_TSS_DESC_SIZE);
+  Tss = (IA32_TASK_STATE_SEGMENT *)((UINTN)TssDesc +
+                                    CPU_TSS_DESC_SIZE);
 
   CopyMem (NewGdtTable, (VOID *)Gdtr.Base, Gdtr.Limit + 1);
   Gdtr.Base  = (UINTN)NewGdtTable;

@@ -80,7 +80,8 @@ AdjustCpuContextHandler (
   // For now, olny GP and PF are tested in fault exception.
   //
   if ((ExceptionType == EXCEPT_IA32_PAGE_FAULT) || (ExceptionType ==
-                                                    EXCEPT_IA32_GP_FAULT)) {
+                                                    EXCEPT_IA32_GP_FAULT))
+  {
     AdjustRipForFaultHandler (ExceptionType, SystemContext);
   }
 }
@@ -105,18 +106,30 @@ CompareCpuContext (
   UT_ASSERT_EQUAL (mActualContextInHandler.Ecx, mExpectedContextInHandler.Ecx);
   UT_ASSERT_EQUAL (mActualContextInHandler.Eax, mExpectedContextInHandler.Eax);
 
-  UT_ASSERT_EQUAL (mActualContextAfterException.Edi,
-    mExpectedContextAfterException.Edi);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Esi,
-    mExpectedContextAfterException.Esi);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Ebx,
-    mExpectedContextAfterException.Ebx);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Edx,
-    mExpectedContextAfterException.Edx);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Ecx,
-    mExpectedContextAfterException.Ecx);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Eax,
-    mExpectedContextAfterException.Eax);
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.Edi,
+    mExpectedContextAfterException.Edi
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.Esi,
+    mExpectedContextAfterException.Esi
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.Ebx,
+    mExpectedContextAfterException.Ebx
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.Edx,
+    mExpectedContextAfterException.Edx
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.Ecx,
+    mExpectedContextAfterException.Ecx
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.Eax,
+    mExpectedContextAfterException.Eax
+    );
   return UNIT_TEST_PASSED;
 }
 

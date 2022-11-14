@@ -969,7 +969,7 @@ Gen4GPageTable (
     //
     High2MBoundary = (mSmmStackArrayEnd - mSmmStackSize - mSmmShadowStackSize +
                       EFI_PAGE_SIZE * 2) & ~(SIZE_2MB-1);
-    PagesNeeded    = ((High2MBoundary - Low2MBoundary) / SIZE_2MB) + 1;
+    PagesNeeded = ((High2MBoundary - Low2MBoundary) / SIZE_2MB) + 1;
   }
 
   //
@@ -1049,8 +1049,8 @@ Gen4GPageTable (
     Pte = (UINT64 *)(UINTN)(Pdpte[0] & ~mAddressEncMask & ~(EFI_PAGE_SIZE - 1));
     if ((Pte[0] & IA32_PG_PS) == 0) {
       // 4K-page entries are already mapped. Just hide the first one anyway.
-      Pte     = (UINT64 *)(UINTN)(Pte[0] & ~mAddressEncMask & ~(EFI_PAGE_SIZE -
-                                                                1));
+      Pte = (UINT64 *)(UINTN)(Pte[0] & ~mAddressEncMask & ~(EFI_PAGE_SIZE -
+                                                            1));
       Pte[0] &= ~(UINT64)IA32_PG_P; // Hide page 0
     } else {
       // Create 4K-page entries
@@ -2054,7 +2054,8 @@ InitializeMpServiceData (
                        gSmmCpuPrivate->SmmCoreEntryContext.NumberOfCpus;
   mSmmMpSyncData = (SMM_DISPATCHER_MP_SYNC_DATA *)AllocatePages (
                                                     EFI_SIZE_TO_PAGES (
-                                                      mSmmMpSyncDataSize)
+                                                      mSmmMpSyncDataSize
+                                                      )
                                                     );
   ASSERT (mSmmMpSyncData != NULL);
   mCpuSmmSyncMode = (SMM_CPU_SYNC_MODE)PcdGet8 (PcdCpuSmmSyncMode);

@@ -707,8 +707,8 @@ ReclaimPages (
         continue;
       }
 
-      Pdpt        = (UINT64 *)(UINTN)(Pml4[Pml4Index] & ~mAddressEncMask &
-                                      gPhyMask);
+      Pdpt = (UINT64 *)(UINTN)(Pml4[Pml4Index] & ~mAddressEncMask &
+                               gPhyMask);
       PML4EIgnore = FALSE;
       for (PdptIndex = 0; PdptIndex < EFI_PAGE_SIZE / sizeof (*Pdpt);
            PdptIndex++)
@@ -862,9 +862,9 @@ ReclaimPages (
       //
       // If 4 KByte Page Table is released, check the PDPT entry
       //
-      Pml4          = (UINT64 *)(UINTN)(Pml5[MinPml5] & gPhyMask);
-      Pdpt          = (UINT64 *)(UINTN)(Pml4[MinPml4] & ~mAddressEncMask &
-                                        gPhyMask);
+      Pml4 = (UINT64 *)(UINTN)(Pml5[MinPml5] & gPhyMask);
+      Pdpt = (UINT64 *)(UINTN)(Pml4[MinPml4] & ~mAddressEncMask &
+                               gPhyMask);
       SubEntriesNum = GetSubEntriesNum (Pdpt + MinPdpt);
       if ((SubEntriesNum == 0) &&
           ((MinPdpt != PFAddressPdptIndex) || (MinPml4 != PFAddressPml4Index) ||
@@ -1179,10 +1179,10 @@ SmiPFHandler (
       (PFAddress < (mCpuHotPlugData.SmrrBase + mCpuHotPlugData.SmrrSize)))
   {
     DumpCpuContext (InterruptType, SystemContext);
-    CpuIndex                    = GetCpuIndex ();
-    GuardPageAddress            = (mSmmStackArrayBase + EFI_PAGE_SIZE +
-                                   CpuIndex * (mSmmStackSize +
-                                               mSmmShadowStackSize));
+    CpuIndex         = GetCpuIndex ();
+    GuardPageAddress = (mSmmStackArrayBase + EFI_PAGE_SIZE +
+                        CpuIndex * (mSmmStackSize +
+                                    mSmmShadowStackSize));
     ShadowStackGuardPageAddress = (mSmmStackArrayBase + mSmmStackSize +
                                    EFI_PAGE_SIZE + CpuIndex * (mSmmStackSize +
                                                                mSmmShadowStackSize));

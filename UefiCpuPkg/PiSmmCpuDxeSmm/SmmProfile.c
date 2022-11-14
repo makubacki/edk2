@@ -998,15 +998,15 @@ InitSmmProfileInternal (
   ASSERT (mPFEntryCount != NULL);
   mLastPFEntryValue = (UINT64 (*)[MAX_PF_ENTRY_COUNT])AllocateZeroPool (
                                                         sizeof (
-                                                               mLastPFEntryValue
-                                                               [0]) *
+                                                                mLastPFEntryValue
+                                                                [0]) *
                                                         mMaxNumberOfCpus
                                                         );
   ASSERT (mLastPFEntryValue != NULL);
   mLastPFEntryPointer = (UINT64 *(*)[MAX_PF_ENTRY_COUNT])AllocateZeroPool (
                                                            sizeof (
-                                                                  mLastPFEntryPointer
-                                                                  [0]) *
+                                                                   mLastPFEntryPointer
+                                                                   [0]) *
                                                            mMaxNumberOfCpus
                                                            );
   ASSERT (mLastPFEntryPointer != NULL);
@@ -1042,10 +1042,10 @@ InitSmmProfileInternal (
   mSmmProfileBase->MaxDataEntries = (UINT64)((mSmmProfileSize -
                                               sizeof (SMM_PROFILE_HEADER)) /
                                              sizeof (SMM_PROFILE_ENTRY));
-  mSmmProfileBase->MaxDataSize    = MultU64x64 (
-                                      mSmmProfileBase->MaxDataEntries,
-                                      sizeof (SMM_PROFILE_ENTRY)
-                                      );
+  mSmmProfileBase->MaxDataSize = MultU64x64 (
+                                   mSmmProfileBase->MaxDataEntries,
+                                   sizeof (SMM_PROFILE_ENTRY)
+                                   );
   mSmmProfileBase->CurDataEntries = 0;
   mSmmProfileBase->CurDataSize    = 0;
   mSmmProfileBase->TsegStart      = mCpuHotPlugData.SmrrBase;
@@ -1077,11 +1077,11 @@ InitSmmProfileInternal (
                            PEBS_RECORD_NUMBER - sizeof (MSR_DS_AREA_STRUCT)) /
                           sizeof (BRANCH_TRACE_RECORD);
     for (Index = 0; Index < mMaxNumberOfCpus; Index++) {
-      mMsrDsArea[Index]     = (MSR_DS_AREA_STRUCT *)((UINTN)mMsrDsAreaBase +
-                                                     MsrDsAreaSizePerCpu *
-                                                     Index);
-      mMsrBTSRecord[Index]  = (BRANCH_TRACE_RECORD *)((UINTN)mMsrDsArea[Index] +
-                                                      sizeof (MSR_DS_AREA_STRUCT));
+      mMsrDsArea[Index] = (MSR_DS_AREA_STRUCT *)((UINTN)mMsrDsAreaBase +
+                                                 MsrDsAreaSizePerCpu *
+                                                 Index);
+      mMsrBTSRecord[Index] = (BRANCH_TRACE_RECORD *)((UINTN)mMsrDsArea[Index] +
+                                                     sizeof (MSR_DS_AREA_STRUCT));
       mMsrPEBSRecord[Index] = (PEBS_RECORD *)((UINTN)mMsrDsArea[Index] +
                                               MsrDsAreaSizePerCpu -
                                               sizeof (PEBS_RECORD) *

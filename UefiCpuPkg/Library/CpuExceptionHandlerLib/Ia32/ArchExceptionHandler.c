@@ -205,10 +205,10 @@ ArchSetupExceptionStack (
                   StackTop,
                   sizeof (IA32_TSS_DESCRIPTOR)
                   );
-  TssDesc     = (IA32_TSS_DESCRIPTOR *)((UINTN)NewGdtTable +
-                                        Gdtr.Limit + 1);
-  Tss         = (IA32_TASK_STATE_SEGMENT *)((UINTN)TssDesc +
-                                            CPU_TSS_DESC_SIZE);
+  TssDesc = (IA32_TSS_DESCRIPTOR *)((UINTN)NewGdtTable +
+                                    Gdtr.Limit + 1);
+  Tss = (IA32_TASK_STATE_SEGMENT *)((UINTN)TssDesc +
+                                    CPU_TSS_DESC_SIZE);
   TssDescBase = TssDesc;
 
   CopyMem (NewGdtTable, (VOID *)Gdtr.Base, Gdtr.Limit + 1);

@@ -94,8 +94,8 @@ InitGdt (
     //
     // Fixup TSS descriptors
     //
-    TssBase                      = (UINTN)(GdtTssTables + GdtTableStepSize *
-                                           Index + gcSmiGdtr.Limit + 1);
+    TssBase = (UINTN)(GdtTssTables + GdtTableStepSize *
+                      Index + gcSmiGdtr.Limit + 1);
     GdtDescriptor                = (IA32_SEGMENT_DESCRIPTOR *)(TssBase) - 2;
     GdtDescriptor->Bits.BaseLow  = (UINT16)(UINTN)TssBase;
     GdtDescriptor->Bits.BaseMid  = (UINT8)((UINTN)TssBase >> 16);
@@ -247,16 +247,16 @@ InitShadowStack (
     // Please refer to UefiCpuPkg/Library/CpuExceptionHandlerLib/X64 for the full stack frame at runtime.
     // According to SDM (ver. 075 June 2021), shadow stack should be 32 bytes aligned.
     //
-    InterruptSsp                   = (UINT32)(((UINTN)ShadowStack +
-                                               EFI_PAGES_TO_SIZE (1) -
-                                               (sizeof (UINT64) * 4)) & ~0x1f);
+    InterruptSsp = (UINT32)(((UINTN)ShadowStack +
+                             EFI_PAGES_TO_SIZE (1) -
+                             (sizeof (UINT64) * 4)) & ~0x1f);
     *(UINT64 *)(UINTN)InterruptSsp = (InterruptSsp - sizeof (UINT64) * 4) | 0x2;
     mCetInterruptSsp               = InterruptSsp - sizeof (UINT64);
 
     mCetInterruptSspTable = (UINT32)(UINTN)(mSmmInterruptSspTables +
                                             sizeof (UINT64) * 8 * CpuIndex);
-    InterruptSspTable     = (UINT64 *)(UINTN)mCetInterruptSspTable;
-    InterruptSspTable[1]  = mCetInterruptSsp;
+    InterruptSspTable    = (UINT64 *)(UINTN)mCetInterruptSspTable;
+    InterruptSspTable[1] = mCetInterruptSsp;
     PatchInstructionX86 (mPatchCetInterruptSsp, mCetInterruptSsp, 4);
     PatchInstructionX86 (mPatchCetInterruptSspTable, mCetInterruptSspTable, 4);
     DEBUG ((DEBUG_INFO, "mCetInterruptSsp - 0x%x\n", mCetInterruptSsp));

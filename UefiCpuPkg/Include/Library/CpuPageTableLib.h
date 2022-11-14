@@ -33,10 +33,10 @@ typedef union {
 
 #define IA32_MAP_ATTRIBUTE_PAGE_TABLE_BASE_ADDRESS_MASK  0xFFFFFFFFFF000ull
 #define IA32_MAP_ATTRIBUTE_PAGE_TABLE_BASE_ADDRESS( \
-                                                  pa)  \
+                                                    pa)  \
       ((pa)->Uint64 & IA32_MAP_ATTRIBUTE_PAGE_TABLE_BASE_ADDRESS_MASK)
 #define IA32_MAP_ATTRIBUTE_ATTRIBUTES( \
-                                     pa)               \
+                                       pa)               \
       ((pa)->Uint64 & ~IA32_MAP_ATTRIBUTE_PAGE_TABLE_BASE_ADDRESS_MASK)
 
 //

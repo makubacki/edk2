@@ -616,8 +616,8 @@ InitializeApData (
   //
   // AP_STACK_DATA is stored at the top of AP Stack
   //
-  ApStackData         = (AP_STACK_DATA *)((UINTN)ApTopOfStack -
-                                          sizeof (AP_STACK_DATA));
+  ApStackData = (AP_STACK_DATA *)((UINTN)ApTopOfStack -
+                                  sizeof (AP_STACK_DATA));
   ApStackData->MpData = CpuMpData;
 
   CpuMpData->CpuData[ProcessorNumber].Waiting    = FALSE;
@@ -698,7 +698,7 @@ ApWakeupFunction (
                      CpuMpData->CpuApStackSize;
       ApStackData = (AP_STACK_DATA *)((UINTN)ApTopOfStack -
                                       sizeof (AP_STACK_DATA));
-      BistData    = (UINT32)ApStackData->Bist;
+      BistData = (UINT32)ApStackData->Bist;
 
       //
       // CpuMpData->CpuData[0].VolatileRegisters is initialized based on BSP environment,
@@ -1951,8 +1951,8 @@ MpInitLibInitialize (
   //      CPU_INFO_IN_HOB (N)
   //    +--------------------+
   //
-  MonitorBuffer    = (UINT8 *)(Buffer + ApStackSize *
-                               MaxLogicalProcessorNumber);
+  MonitorBuffer = (UINT8 *)(Buffer + ApStackSize *
+                            MaxLogicalProcessorNumber);
   BackupBufferAddr = (UINTN)MonitorBuffer + MonitorFilterSize *
                      MaxLogicalProcessorNumber;
   ApIdtBase = ALIGN_VALUE (
@@ -1960,9 +1960,9 @@ MpInitLibInitialize (
                 ApResetVectorSizeBelow1Mb,
                 8
                 );
-  CpuMpData                   = (CPU_MP_DATA *)(ApIdtBase +
-                                                VolatileRegisters.Idtr.Limit +
-                                                1);
+  CpuMpData = (CPU_MP_DATA *)(ApIdtBase +
+                              VolatileRegisters.Idtr.Limit +
+                              1);
   CpuMpData->Buffer           = Buffer;
   CpuMpData->CpuApStackSize   = ApStackSize;
   CpuMpData->BackupBuffer     = BackupBufferAddr;

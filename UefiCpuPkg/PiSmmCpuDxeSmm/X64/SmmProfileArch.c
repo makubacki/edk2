@@ -187,12 +187,12 @@ RestorePageTableAbove4G (
       // PML4E
       PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask &
                                     PHYSICAL_ADDRESS_MASK);
-      PTIndex   = BitFieldRead64 (PFAddress, 30, 38);
+      PTIndex = BitFieldRead64 (PFAddress, 30, 38);
       if ((PageTable[PTIndex] & IA32_PG_P) != 0) {
         // PDPTE
         PageTable = (UINT64 *)(UINTN)(PageTable[PTIndex] & ~mAddressEncMask &
                                       PHYSICAL_ADDRESS_MASK);
-        PTIndex   = BitFieldRead64 (PFAddress, 21, 29);
+        PTIndex = BitFieldRead64 (PFAddress, 21, 29);
         // PD
         if ((PageTable[PTIndex] & IA32_PG_PS) != 0) {
           //

@@ -251,13 +251,13 @@ UnitTestMtrrLibAsmWriteMsr64 (
                                               1)))
   {
     if (MsrIndex % 2 == 0) {
-      Index                                = (MsrIndex -
-                                              MSR_IA32_MTRR_PHYSBASE0) >> 1;
+      Index = (MsrIndex -
+               MSR_IA32_MTRR_PHYSBASE0) >> 1;
       mVariableMtrrsPhysBase[Index].Uint64 = Value;
       return Value;
     } else {
-      Index                                = (MsrIndex -
-                                              MSR_IA32_MTRR_PHYSMASK0) >> 1;
+      Index = (MsrIndex -
+               MSR_IA32_MTRR_PHYSMASK0) >> 1;
       mVariableMtrrsPhysMask[Index].Uint64 = Value;
       return Value;
     }

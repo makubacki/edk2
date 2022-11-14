@@ -39,7 +39,7 @@
 
 #define PAGE_ATTRIBUTE_BITS             \
                                               (IA32_PG_D | IA32_PG_A | IA32_PG_U | IA32_PG_RW | IA32_PG_P)
-#define PAGE_ATTRIBUTE_BITS_POST_SPLIT        (IA32_PG_RW | IA32_PG_P)
+#define PAGE_ATTRIBUTE_BITS_POST_SPLIT  (IA32_PG_RW | IA32_PG_P)
 
 //
 // Bits 1, 2, 5, 6 are reserved in the IA32 PAE PDPTE

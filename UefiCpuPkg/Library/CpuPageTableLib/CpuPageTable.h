@@ -60,7 +60,7 @@ typedef union {
 } IA32_PAGE_NON_LEAF_ENTRY;
 
 #define IA32_PNLE_PAGE_TABLE_BASE_ADDRESS( \
-                                         pa)  \
+                                           pa)  \
   ((pa)->Uint64 & IA32_PE_BASE_ADDRESS_MASK_40)
 
 ///
@@ -109,7 +109,7 @@ typedef union {
   UINT64    Uint64;
 } IA32_PAGE_LEAF_ENTRY_BIG_PAGESIZE;
 #define IA32_PLEB_PAGE_TABLE_BASE_ADDRESS( \
-                                         pa)  \
+                                           pa)  \
   ((pa)->Uint64 & IA32_PE_BASE_ADDRESS_MASK_39)
 
 ///
@@ -147,7 +147,7 @@ typedef union {
   UINT64    Uint64;
 } IA32_PTE_4K;
 #define IA32_PTE4K_PAGE_TABLE_BASE_ADDRESS( \
-                                          pa)  \
+                                            pa)  \
   ((pa)->Uint64 & IA32_PE_BASE_ADDRESS_MASK_40)
 
 ///

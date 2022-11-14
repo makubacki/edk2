@@ -358,9 +358,9 @@ RepublishSecPpis (
     Status = ((EFI_SEC_PLATFORM_INFORMATION_PPI *)PeiPpi)->PlatformInformation (
                                                              GetPeiServicesTablePointer (),
                                                              &(
-                                                              SecPlatformInformationContextHob
-                                                                ->Context.
-                                                                StructureSize),
+                                                               SecPlatformInformationContextHob
+                                                                 ->Context.
+                                                                 StructureSize),
                                                              SecPlatformInformationContextHob
                                                                ->Context.
                                                                PlatformInformationRecord

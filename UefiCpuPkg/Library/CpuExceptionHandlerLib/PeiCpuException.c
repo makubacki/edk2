@@ -189,7 +189,7 @@ InitializeCpuExceptionHandlers (
   ExceptionHandlerData->ReservedVectors          = ReservedVectors;
   ExceptionHandlerData->ExternalInterruptHandler = AllocateZeroPool (
                                                      sizeof (
-                                                                            EFI_CPU_INTERRUPT_HANDLER)
+                                                             EFI_CPU_INTERRUPT_HANDLER)
                                                      * ExceptionHandlerData->
                                                        IdtEntryCount
                                                      );

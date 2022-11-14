@@ -1286,7 +1286,7 @@ GetAcpiCpuData (
 
   mAcpiCpuData.GdtrProfile = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (
                                                             sizeof (
-                                                                               IA32_DESCRIPTOR)
+                                                                    IA32_DESCRIPTOR)
                                                             );
   ASSERT (mAcpiCpuData.GdtrProfile != 0);
 
@@ -1298,7 +1298,7 @@ GetAcpiCpuData (
 
   mAcpiCpuData.IdtrProfile = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePool (
                                                             sizeof (
-                                                                               IA32_DESCRIPTOR)
+                                                                    IA32_DESCRIPTOR)
                                                             );
   ASSERT (mAcpiCpuData.IdtrProfile != 0);
 

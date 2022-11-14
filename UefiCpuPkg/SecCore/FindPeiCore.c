@@ -115,11 +115,11 @@ FindImageBase (
           if (IS_SECTION2 (Section)) {
             *CoreImageBase = (PHYSICAL_ADDRESS)(UINTN)((UINT8 *)Section +
                                                        sizeof (
-                                                                                 EFI_COMMON_SECTION_HEADER2));
+                                                               EFI_COMMON_SECTION_HEADER2));
           } else {
             *CoreImageBase = (PHYSICAL_ADDRESS)(UINTN)((UINT8 *)Section +
                                                        sizeof (
-                                                                                 EFI_COMMON_SECTION_HEADER));
+                                                               EFI_COMMON_SECTION_HEADER));
           }
         }
 

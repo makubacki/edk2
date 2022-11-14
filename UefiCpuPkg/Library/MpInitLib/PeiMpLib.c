@@ -117,7 +117,7 @@ GetCpuMpData (
                      );
     ApStackData = (AP_STACK_DATA *)((UINTN)ApTopOfStack-
                                     sizeof (AP_STACK_DATA));
-    CpuMpData   = (CPU_MP_DATA *)ApStackData->MpData;
+    CpuMpData = (CPU_MP_DATA *)ApStackData->MpData;
   }
 
   return CpuMpData;
@@ -756,7 +756,7 @@ PlatformShadowMicrocode (
   CpuCount       = CpuMpData->CpuCount;
   MicrocodeCpuId = (EDKII_PEI_MICROCODE_CPU_ID *)AllocateZeroPool (
                                                    sizeof (
-                                                                          EDKII_PEI_MICROCODE_CPU_ID)
+                                                           EDKII_PEI_MICROCODE_CPU_ID)
                                                    * CpuCount
                                                    );
   if (MicrocodeCpuId == NULL) {

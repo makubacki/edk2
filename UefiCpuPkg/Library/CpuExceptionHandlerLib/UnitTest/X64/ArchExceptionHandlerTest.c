@@ -98,7 +98,8 @@ AdjustCpuContextHandler (
   // For now, olny GP and PF are tested in fault exception.
   //
   if ((ExceptionType == EXCEPT_IA32_PAGE_FAULT) || (ExceptionType ==
-                                                    EXCEPT_IA32_GP_FAULT)) {
+                                                    EXCEPT_IA32_GP_FAULT))
+  {
     AdjustRipForFaultHandler (ExceptionType, SystemContext);
   }
 }
@@ -131,34 +132,62 @@ CompareCpuContext (
   UT_ASSERT_EQUAL (mActualContextInHandler.R14, mExpectedContextInHandler.R14);
   UT_ASSERT_EQUAL (mActualContextInHandler.R15, mExpectedContextInHandler.R15);
 
-  UT_ASSERT_EQUAL (mActualContextAfterException.Rdi,
-    mExpectedContextAfterException.Rdi);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Rsi,
-    mExpectedContextAfterException.Rsi);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Rbx,
-    mExpectedContextAfterException.Rbx);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Rdx,
-    mExpectedContextAfterException.Rdx);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Rcx,
-    mExpectedContextAfterException.Rcx);
-  UT_ASSERT_EQUAL (mActualContextAfterException.Rax,
-    mExpectedContextAfterException.Rax);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R8,
-    mExpectedContextAfterException.R8);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R9,
-    mExpectedContextAfterException.R9);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R10,
-    mExpectedContextAfterException.R10);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R11,
-    mExpectedContextAfterException.R11);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R12,
-    mExpectedContextAfterException.R12);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R13,
-    mExpectedContextAfterException.R13);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R14,
-    mExpectedContextAfterException.R14);
-  UT_ASSERT_EQUAL (mActualContextAfterException.R15,
-    mExpectedContextAfterException.R15);
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.Rdi,
+    mExpectedContextAfterException.Rdi
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.Rsi,
+    mExpectedContextAfterException.Rsi
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.Rbx,
+    mExpectedContextAfterException.Rbx
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.Rdx,
+    mExpectedContextAfterException.Rdx
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.Rcx,
+    mExpectedContextAfterException.Rcx
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.Rax,
+    mExpectedContextAfterException.Rax
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.R8,
+    mExpectedContextAfterException.R8
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.R9,
+    mExpectedContextAfterException.R9
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.R10,
+    mExpectedContextAfterException.R10
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.R11,
+    mExpectedContextAfterException.R11
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.R12,
+    mExpectedContextAfterException.R12
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.R13,
+    mExpectedContextAfterException.R13
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.R14,
+    mExpectedContextAfterException.R14
+    );
+  UT_ASSERT_EQUAL (
+    mActualContextAfterException.R15,
+    mExpectedContextAfterException.R15
+    );
   return UNIT_TEST_PASSED;
 }
 

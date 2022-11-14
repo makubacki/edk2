@@ -37,231 +37,231 @@ typedef struct {
 ///
 CPUID_CACHE_INFO_DESCRIPTION  mCpuidCacheInfoDescription[] = {
   { 0x00, "General",
-    "Null descriptor, this byte contains no information"                                                                                                                                         },
+    "Null descriptor, this byte contains no information" },
   { 0x01, "TLB",
-    "Instruction TLB: 4 KByte pages, 4-way set associative, 32 entries"                                                                                                                                },
+    "Instruction TLB: 4 KByte pages, 4-way set associative, 32 entries" },
   { 0x02, "TLB",
-    "Instruction TLB: 4 MByte pages, fully associative, 2 entries"                                                                                                                                          },
+    "Instruction TLB: 4 MByte pages, fully associative, 2 entries" },
   { 0x03, "TLB",
-    "Data TLB: 4 KByte pages, 4-way set associative, 64 entries"                                                                                                                                                 },
+    "Data TLB: 4 KByte pages, 4-way set associative, 64 entries" },
   { 0x04, "TLB",
-    "Data TLB: 4 MByte pages, 4-way set associative, 8 entries"                                                                                                                                                       },
+    "Data TLB: 4 MByte pages, 4-way set associative, 8 entries" },
   { 0x05, "TLB",
-    "Data TLB1: 4 MByte pages, 4-way set associative, 32 entries"                                                                                                                                                          },
+    "Data TLB1: 4 MByte pages, 4-way set associative, 32 entries" },
   { 0x06, "Cache",
-    "1st-level instruction cache: 8 KBytes, 4-way set associative, 32 byte line size"                                                                                                                                           },
+    "1st-level instruction cache: 8 KBytes, 4-way set associative, 32 byte line size" },
   { 0x08, "Cache",
-    "1st-level instruction cache: 16 KBytes, 4-way set associative, 32 byte line size"                                                                                                                                               },
+    "1st-level instruction cache: 16 KBytes, 4-way set associative, 32 byte line size" },
   { 0x09, "Cache",
-    "1st-level instruction cache: 32KBytes, 4-way set associative, 64 byte line size"                                                                                                                                                     },
+    "1st-level instruction cache: 32KBytes, 4-way set associative, 64 byte line size" },
   { 0x0A, "Cache",
-    "1st-level data cache: 8 KBytes, 2-way set associative, 32 byte line size"                                                                                                                                                                 },
+    "1st-level data cache: 8 KBytes, 2-way set associative, 32 byte line size" },
   { 0x0B, "TLB",
-    "Instruction TLB: 4 MByte pages, 4-way set associative, 4 entries"                                                                                                                                                                              },
+    "Instruction TLB: 4 MByte pages, 4-way set associative, 4 entries" },
   { 0x0C, "Cache",
-    "1st-level data cache: 16 KBytes, 4-way set associative, 32 byte line size"                                                                                                                                                                          },
+    "1st-level data cache: 16 KBytes, 4-way set associative, 32 byte line size" },
   { 0x0D, "Cache",
-    "1st-level data cache: 16 KBytes, 4-way set associative, 64 byte line size"                                                                                                                                                                               },
+    "1st-level data cache: 16 KBytes, 4-way set associative, 64 byte line size" },
   { 0x0E, "Cache",
-    "1st-level data cache: 24 KBytes, 6-way set associative, 64 byte line size"                                                                                                                                                                                    },
+    "1st-level data cache: 24 KBytes, 6-way set associative, 64 byte line size" },
   { 0x1D, "Cache",
-    "2nd-level cache: 128 KBytes, 2-way set associative, 64 byte line size"                                                                                                                                                                                             },
+    "2nd-level cache: 128 KBytes, 2-way set associative, 64 byte line size" },
   { 0x21, "Cache",
-    "2nd-level cache: 256 KBytes, 8-way set associative, 64 byte line size"                                                                                                                                                                                                  },
+    "2nd-level cache: 256 KBytes, 8-way set associative, 64 byte line size" },
   { 0x22, "Cache",
-    "3rd-level cache: 512 KBytes, 4-way set associative, 64 byte line size, 2 lines per sector"                                                                                                                                                                                   },
+    "3rd-level cache: 512 KBytes, 4-way set associative, 64 byte line size, 2 lines per sector" },
   { 0x23, "Cache",
-    "3rd-level cache: 1 MBytes, 8-way set associative, 64 byte line size, 2 lines per sector"                                                                                                                                                                                          },
+    "3rd-level cache: 1 MBytes, 8-way set associative, 64 byte line size, 2 lines per sector" },
   { 0x24, "Cache",
-    "2nd-level cache: 1 MBytes, 16-way set associative, 64 byte line size"                                                                                                                                                                                                                  },
+    "2nd-level cache: 1 MBytes, 16-way set associative, 64 byte line size" },
   { 0x25, "Cache",
-    "3rd-level cache: 2 MBytes, 8-way set associative, 64 byte line size, 2 lines per sector"                                                                                                                                                                                                    },
+    "3rd-level cache: 2 MBytes, 8-way set associative, 64 byte line size, 2 lines per sector" },
   { 0x29, "Cache",
-    "3rd-level cache: 4 MBytes, 8-way set associative, 64 byte line size, 2 lines per sector"                                                                                                                                                                                                         },
+    "3rd-level cache: 4 MBytes, 8-way set associative, 64 byte line size, 2 lines per sector" },
   { 0x2C, "Cache",
-    "1st-level data cache: 32 KBytes, 8-way set associative, 64 byte line size"                                                                                                                                                                                                                            },
+    "1st-level data cache: 32 KBytes, 8-way set associative, 64 byte line size" },
   { 0x30, "Cache",
-    "1st-level instruction cache: 32 KBytes, 8-way set associative, 64 byte line size"                                                                                                                                                                                                                          },
+    "1st-level instruction cache: 32 KBytes, 8-way set associative, 64 byte line size" },
   { 0x40, "Cache",
-    "No 2nd-level cache or, if processor contains a valid 2nd-level cache, no 3rd-level cache"                                                                                                                                                                                                                       },
+    "No 2nd-level cache or, if processor contains a valid 2nd-level cache, no 3rd-level cache" },
   { 0x41, "Cache",
-    "2nd-level cache: 128 KBytes, 4-way set associative, 32 byte line size"                                                                                                                                                                                                                                               },
+    "2nd-level cache: 128 KBytes, 4-way set associative, 32 byte line size" },
   { 0x42, "Cache",
-    "2nd-level cache: 256 KBytes, 4-way set associative, 32 byte line size"                                                                                                                                                                                                                                                    },
+    "2nd-level cache: 256 KBytes, 4-way set associative, 32 byte line size" },
   { 0x43, "Cache",
-    "2nd-level cache: 512 KBytes, 4-way set associative, 32 byte line size"                                                                                                                                                                                                                                                         },
+    "2nd-level cache: 512 KBytes, 4-way set associative, 32 byte line size" },
   { 0x44, "Cache",
-    "2nd-level cache: 1 MByte, 4-way set associative, 32 byte line size"                                                                                                                                                                                                                                                                 },
+    "2nd-level cache: 1 MByte, 4-way set associative, 32 byte line size" },
   { 0x45, "Cache",
-    "2nd-level cache: 2 MByte, 4-way set associative, 32 byte line size"                                                                                                                                                                                                                                                                      },
+    "2nd-level cache: 2 MByte, 4-way set associative, 32 byte line size" },
   { 0x46, "Cache",
-    "3rd-level cache: 4 MByte, 4-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                           },
+    "3rd-level cache: 4 MByte, 4-way set associative, 64 byte line size" },
   { 0x47, "Cache",
-    "3rd-level cache: 8 MByte, 8-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                },
+    "3rd-level cache: 8 MByte, 8-way set associative, 64 byte line size" },
   { 0x48, "Cache",
-    "2nd-level cache: 3MByte, 12-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                     },
+    "2nd-level cache: 3MByte, 12-way set associative, 64 byte line size" },
   { 0x49, "Cache",
-    "3rd-level cache: 4MB, 16-way set associative, 64-byte line size (Intel Xeon processor MP, Family 0FH, Model 06H). 2nd-level cache: 4 MByte, 16-way set associative, 64 byte line size"                                                                                                                                                                       },
+    "3rd-level cache: 4MB, 16-way set associative, 64-byte line size (Intel Xeon processor MP, Family 0FH, Model 06H). 2nd-level cache: 4 MByte, 16-way set associative, 64 byte line size" },
   { 0x4A, "Cache",
-    "3rd-level cache: 6MByte, 12-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                               },
+    "3rd-level cache: 6MByte, 12-way set associative, 64 byte line size" },
   { 0x4B, "Cache",
-    "3rd-level cache: 8MByte, 16-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                    },
+    "3rd-level cache: 8MByte, 16-way set associative, 64 byte line size" },
   { 0x4C, "Cache",
-    "3rd-level cache: 12MByte, 12-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                        },
+    "3rd-level cache: 12MByte, 12-way set associative, 64 byte line size" },
   { 0x4D, "Cache",
-    "3rd-level cache: 16MByte, 16-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                             },
+    "3rd-level cache: 16MByte, 16-way set associative, 64 byte line size" },
   { 0x4E, "Cache",
-    "2nd-level cache: 6MByte, 24-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                   },
+    "2nd-level cache: 6MByte, 24-way set associative, 64 byte line size" },
   { 0x4F, "TLB",
-    "Instruction TLB: 4 KByte pages, 32 entries"                                                                                                                                                                                                                                                                                                                                                },
+    "Instruction TLB: 4 KByte pages, 32 entries" },
   { 0x50, "TLB",
-    "Instruction TLB: 4 KByte and 2-MByte or 4-MByte pages, 64 entries"                                                                                                                                                                                                                                                                                                                              },
+    "Instruction TLB: 4 KByte and 2-MByte or 4-MByte pages, 64 entries" },
   { 0x51, "TLB",
-    "Instruction TLB: 4 KByte and 2-MByte or 4-MByte pages, 128 entries"                                                                                                                                                                                                                                                                                                                                  },
+    "Instruction TLB: 4 KByte and 2-MByte or 4-MByte pages, 128 entries" },
   { 0x52, "TLB",
-    "Instruction TLB: 4 KByte and 2-MByte or 4-MByte pages, 256 entries"                                                                                                                                                                                                                                                                                                                                       },
+    "Instruction TLB: 4 KByte and 2-MByte or 4-MByte pages, 256 entries" },
   { 0x55, "TLB",
-    "Instruction TLB: 2-MByte or 4-MByte pages, fully associative, 7 entries"                                                                                                                                                                                                                                                                                                                                       },
+    "Instruction TLB: 2-MByte or 4-MByte pages, fully associative, 7 entries" },
   { 0x56, "TLB",
-    "Data TLB0: 4 MByte pages, 4-way set associative, 16 entries"                                                                                                                                                                                                                                                                                                                                                        },
+    "Data TLB0: 4 MByte pages, 4-way set associative, 16 entries" },
   { 0x57, "TLB",
-    "Data TLB0: 4 KByte pages, 4-way associative, 16 entries"                                                                                                                                                                                                                                                                                                                                                                 },
+    "Data TLB0: 4 KByte pages, 4-way associative, 16 entries" },
   { 0x59, "TLB",
-    "Data TLB0: 4 KByte pages, fully associative, 16 entries"                                                                                                                                                                                                                                                                                                                                                                      },
+    "Data TLB0: 4 KByte pages, fully associative, 16 entries" },
   { 0x5A, "TLB",
-    "Data TLB0: 2 MByte or 4 MByte pages, 4-way set associative, 32 entries"                                                                                                                                                                                                                                                                                                                                                            },
+    "Data TLB0: 2 MByte or 4 MByte pages, 4-way set associative, 32 entries" },
   { 0x5B, "TLB",
-    "Data TLB: 4 KByte and 4 MByte pages, 64 entries"                                                                                                                                                                                                                                                                                                                                                                                        },
+    "Data TLB: 4 KByte and 4 MByte pages, 64 entries" },
   { 0x5C, "TLB",
-    "Data TLB: 4 KByte and 4 MByte pages,128 entries"                                                                                                                                                                                                                                                                                                                                                                                             },
+    "Data TLB: 4 KByte and 4 MByte pages,128 entries" },
   { 0x5D, "TLB",
-    "Data TLB: 4 KByte and 4 MByte pages,256 entries"                                                                                                                                                                                                                                                                                                                                                                                                  },
+    "Data TLB: 4 KByte and 4 MByte pages,256 entries" },
   { 0x60, "Cache",
-    "1st-level data cache: 16 KByte, 8-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                              },
+    "1st-level data cache: 16 KByte, 8-way set associative, 64 byte line size" },
   { 0x61, "TLB",
-    "Instruction TLB: 4 KByte pages, fully associative, 48 entries"                                                                                                                                                                                                                                                                                                                                                                                              },
+    "Instruction TLB: 4 KByte pages, fully associative, 48 entries" },
   { 0x63, "TLB",
-    "Data TLB: 2 MByte or 4 MByte pages, 4-way set associative, 32 entries and a separate array with 1 GByte pages, 4-way set associative, 4 entries"                                                                                                                                                                                                                                                                                                                 },
+    "Data TLB: 2 MByte or 4 MByte pages, 4-way set associative, 32 entries and a separate array with 1 GByte pages, 4-way set associative, 4 entries" },
   { 0x64, "TLB",
-    "Data TLB: 4 KByte pages, 4-way set associative, 512 entries"                                                                                                                                                                                                                                                                                                                                                                                                          },
+    "Data TLB: 4 KByte pages, 4-way set associative, 512 entries" },
   { 0x66, "Cache",
-    "1st-level data cache: 8 KByte, 4-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                   },
+    "1st-level data cache: 8 KByte, 4-way set associative, 64 byte line size" },
   { 0x67, "Cache",
-    "1st-level data cache: 16 KByte, 4-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                       },
+    "1st-level data cache: 16 KByte, 4-way set associative, 64 byte line size" },
   { 0x68, "Cache",
-    "1st-level data cache: 32 KByte, 4-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                            },
+    "1st-level data cache: 32 KByte, 4-way set associative, 64 byte line size" },
   { 0x6A, "Cache",
-    "uTLB: 4 KByte pages, 8-way set associative, 64 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+    "uTLB: 4 KByte pages, 8-way set associative, 64 entries" },
   { 0x6B, "Cache",
-    "DTLB: 4 KByte pages, 8-way set associative, 256 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+    "DTLB: 4 KByte pages, 8-way set associative, 256 entries" },
   { 0x6C, "Cache",
-    "DTLB: 2M/4M pages, 8-way set associative, 128 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+    "DTLB: 2M/4M pages, 8-way set associative, 128 entries" },
   { 0x6D, "Cache",
-    "DTLB: 1 GByte pages, fully associative, 16 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    "DTLB: 1 GByte pages, fully associative, 16 entries" },
   { 0x70, "Cache",
-    "Trace cache: 12 K-uop, 8-way set associative"                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+    "Trace cache: 12 K-uop, 8-way set associative" },
   { 0x71, "Cache",
-    "Trace cache: 16 K-uop, 8-way set associative"                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    "Trace cache: 16 K-uop, 8-way set associative" },
   { 0x72, "Cache",
-    "Trace cache: 32 K-uop, 8-way set associative"                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+    "Trace cache: 32 K-uop, 8-way set associative" },
   { 0x76, "TLB",
-    "Instruction TLB: 2M/4M pages, fully associative, 8 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    "Instruction TLB: 2M/4M pages, fully associative, 8 entries" },
   { 0x78, "Cache",
-    "2nd-level cache: 1 MByte, 4-way set associative, 64byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+    "2nd-level cache: 1 MByte, 4-way set associative, 64byte line size" },
   { 0x79, "Cache",
-    "2nd-level cache: 128 KByte, 8-way set associative, 64 byte line size, 2 lines per sector"                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+    "2nd-level cache: 128 KByte, 8-way set associative, 64 byte line size, 2 lines per sector" },
   { 0x7A, "Cache",
-    "2nd-level cache: 256 KByte, 8-way set associative, 64 byte line size, 2 lines per sector"                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+    "2nd-level cache: 256 KByte, 8-way set associative, 64 byte line size, 2 lines per sector" },
   { 0x7B, "Cache",
-    "2nd-level cache: 512 KByte, 8-way set associative, 64 byte line size, 2 lines per sector"                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+    "2nd-level cache: 512 KByte, 8-way set associative, 64 byte line size, 2 lines per sector" },
   { 0x7C, "Cache",
-    "2nd-level cache: 1 MByte, 8-way set associative, 64 byte line size, 2 lines per sector"                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+    "2nd-level cache: 1 MByte, 8-way set associative, 64 byte line size, 2 lines per sector" },
   { 0x7D, "Cache",
-    "2nd-level cache: 2 MByte, 8-way set associative, 64byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+    "2nd-level cache: 2 MByte, 8-way set associative, 64byte line size" },
   { 0x7F, "Cache",
-    "2nd-level cache: 512 KByte, 2-way set associative, 64-byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+    "2nd-level cache: 512 KByte, 2-way set associative, 64-byte line size" },
   { 0x80, "Cache",
-    "2nd-level cache: 512 KByte, 8-way set associative, 64-byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+    "2nd-level cache: 512 KByte, 8-way set associative, 64-byte line size" },
   { 0x82, "Cache",
-    "2nd-level cache: 256 KByte, 8-way set associative, 32 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+    "2nd-level cache: 256 KByte, 8-way set associative, 32 byte line size" },
   { 0x83, "Cache",
-    "2nd-level cache: 512 KByte, 8-way set associative, 32 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    "2nd-level cache: 512 KByte, 8-way set associative, 32 byte line size" },
   { 0x84, "Cache",
-    "2nd-level cache: 1 MByte, 8-way set associative, 32 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+    "2nd-level cache: 1 MByte, 8-way set associative, 32 byte line size" },
   { 0x85, "Cache",
-    "2nd-level cache: 2 MByte, 8-way set associative, 32 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    "2nd-level cache: 2 MByte, 8-way set associative, 32 byte line size" },
   { 0x86, "Cache",
-    "2nd-level cache: 512 KByte, 4-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+    "2nd-level cache: 512 KByte, 4-way set associative, 64 byte line size" },
   { 0x87, "Cache",
-    "2nd-level cache: 1 MByte, 8-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+    "2nd-level cache: 1 MByte, 8-way set associative, 64 byte line size" },
   { 0xA0, "DTLB",
-    "DTLB: 4k pages, fully associative, 32 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    "DTLB: 4k pages, fully associative, 32 entries" },
   { 0xB0, "TLB",
-    "Instruction TLB: 4 KByte pages, 4-way set associative, 128 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    "Instruction TLB: 4 KByte pages, 4-way set associative, 128 entries" },
   { 0xB1, "TLB",
-    "Instruction TLB: 2M pages, 4-way, 8 entries or 4M pages, 4-way, 4 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+    "Instruction TLB: 2M pages, 4-way, 8 entries or 4M pages, 4-way, 4 entries" },
   { 0xB2, "TLB",
-    "Instruction TLB: 4KByte pages, 4-way set associative, 64 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    "Instruction TLB: 4KByte pages, 4-way set associative, 64 entries" },
   { 0xB3, "TLB",
-    "Data TLB: 4 KByte pages, 4-way set associative, 128 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+    "Data TLB: 4 KByte pages, 4-way set associative, 128 entries" },
   { 0xB4, "TLB",
-    "Data TLB1: 4 KByte pages, 4-way associative, 256 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+    "Data TLB1: 4 KByte pages, 4-way associative, 256 entries" },
   { 0xB5, "TLB",
-    "Instruction TLB: 4KByte pages, 8-way set associative, 64 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+    "Instruction TLB: 4KByte pages, 8-way set associative, 64 entries" },
   { 0xB6, "TLB",
-    "Instruction TLB: 4KByte pages, 8-way set associative, 128 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+    "Instruction TLB: 4KByte pages, 8-way set associative, 128 entries" },
   { 0xBA, "TLB",
-    "Data TLB1: 4 KByte pages, 4-way associative, 64 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+    "Data TLB1: 4 KByte pages, 4-way associative, 64 entries" },
   { 0xC0, "TLB",
-    "Data TLB: 4 KByte and 4 MByte pages, 4-way associative, 8 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    "Data TLB: 4 KByte and 4 MByte pages, 4-way associative, 8 entries" },
   { 0xC1, "STLB",
-    "Shared 2nd-Level TLB: 4 KByte/2MByte pages, 8-way associative, 1024 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
+    "Shared 2nd-Level TLB: 4 KByte/2MByte pages, 8-way associative, 1024 entries" },
   { 0xC2, "DTLB",
-    "DTLB: 4 KByte/2 MByte pages, 4-way associative, 16 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+    "DTLB: 4 KByte/2 MByte pages, 4-way associative, 16 entries" },
   { 0xC3, "STLB",
-    "Shared 2nd-Level TLB: 4 KByte /2 MByte pages, 6-way associative, 1536 entries. Also 1GBbyte pages, 4-way, 16 entries."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    "Shared 2nd-Level TLB: 4 KByte /2 MByte pages, 6-way associative, 1536 entries. Also 1GBbyte pages, 4-way, 16 entries." },
   { 0xC4, "DTLB",
-    "DTLB: 2M/4M Byte pages, 4-way associative, 32 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+    "DTLB: 2M/4M Byte pages, 4-way associative, 32 entries" },
   { 0xCA, "STLB",
-    "Shared 2nd-Level TLB: 4 KByte pages, 4-way associative, 512 entries"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+    "Shared 2nd-Level TLB: 4 KByte pages, 4-way associative, 512 entries" },
   { 0xD0, "Cache",
-    "3rd-level cache: 512 KByte, 4-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+    "3rd-level cache: 512 KByte, 4-way set associative, 64 byte line size" },
   { 0xD1, "Cache",
-    "3rd-level cache: 1 MByte, 4-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    "3rd-level cache: 1 MByte, 4-way set associative, 64 byte line size" },
   { 0xD2, "Cache",
-    "3rd-level cache: 2 MByte, 4-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+    "3rd-level cache: 2 MByte, 4-way set associative, 64 byte line size" },
   { 0xD6, "Cache",
-    "3rd-level cache: 1 MByte, 8-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+    "3rd-level cache: 1 MByte, 8-way set associative, 64 byte line size" },
   { 0xD7, "Cache",
-    "3rd-level cache: 2 MByte, 8-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+    "3rd-level cache: 2 MByte, 8-way set associative, 64 byte line size" },
   { 0xD8, "Cache",
-    "3rd-level cache: 4 MByte, 8-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    "3rd-level cache: 4 MByte, 8-way set associative, 64 byte line size" },
   { 0xDC, "Cache",
-    "3rd-level cache: 1.5 MByte, 12-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    "3rd-level cache: 1.5 MByte, 12-way set associative, 64 byte line size" },
   { 0xDD, "Cache",
-    "3rd-level cache: 3 MByte, 12-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+    "3rd-level cache: 3 MByte, 12-way set associative, 64 byte line size" },
   { 0xDE, "Cache",
-    "3rd-level cache: 6 MByte, 12-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+    "3rd-level cache: 6 MByte, 12-way set associative, 64 byte line size" },
   { 0xE2, "Cache",
-    "3rd-level cache: 2 MByte, 16-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+    "3rd-level cache: 2 MByte, 16-way set associative, 64 byte line size" },
   { 0xE3, "Cache",
-    "3rd-level cache: 4 MByte, 16-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+    "3rd-level cache: 4 MByte, 16-way set associative, 64 byte line size" },
   { 0xE4, "Cache",
-    "3rd-level cache: 8 MByte, 16-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+    "3rd-level cache: 8 MByte, 16-way set associative, 64 byte line size" },
   { 0xEA, "Cache",
-    "3rd-level cache: 12MByte, 24-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    "3rd-level cache: 12MByte, 24-way set associative, 64 byte line size" },
   { 0xEB, "Cache",
-    "3rd-level cache: 18MByte, 24-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+    "3rd-level cache: 18MByte, 24-way set associative, 64 byte line size" },
   { 0xEC, "Cache",
-    "3rd-level cache: 24MByte, 24-way set associative, 64 byte line size"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+    "3rd-level cache: 24MByte, 24-way set associative, 64 byte line size" },
   { 0xF0, "Prefetch",
-    "64-Byte prefetching"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+    "64-Byte prefetching" },
   { 0xF1, "Prefetch",
-    "128-Byte prefetching"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+    "128-Byte prefetching" },
   { 0xFE, "General",
-    "CPUID leaf 2 does not report TLB descriptor information; use CPUID leaf 18H to query TLB and other address translation parameters."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    "CPUID leaf 2 does not report TLB descriptor information; use CPUID leaf 18H to query TLB and other address translation parameters." },
   { 0xFF, "General",
-    "CPUID leaf 2 does not report cache descriptor information, use CPUID leaf 4 to query cache parameters"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               }
+    "CPUID leaf 2 does not report cache descriptor information, use CPUID leaf 4 to query cache parameters" }
 };
 
 ///
@@ -323,12 +323,22 @@ CpuidVersionInfo (
     return;
   }
 
-  AsmCpuid (CPUID_VERSION_INFO, &Eax.Uint32, &Ebx.Uint32, &Ecx.Uint32,
-    &Edx.Uint32);
+  AsmCpuid (
+    CPUID_VERSION_INFO,
+    &Eax.Uint32,
+    &Ebx.Uint32,
+    &Ecx.Uint32,
+    &Edx.Uint32
+    );
 
   Print (L"CPUID_VERSION_INFO (Leaf %08x)\n", CPUID_VERSION_INFO);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx.Uint32,
-    Ecx.Uint32, Edx.Uint32);
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx.Uint32,
+    Ecx.Uint32,
+    Edx.Uint32
+    );
 
   DisplayFamily = Eax.Bits.FamilyId;
   if (Eax.Bits.FamilyId == 0x0F) {
@@ -340,8 +350,12 @@ CpuidVersionInfo (
     DisplayModel |= (Eax.Bits.ExtendedModelId << 4);
   }
 
-  Print (L"  Family = %x  Model = %x  Stepping = %x\n", DisplayFamily,
-    DisplayModel, Eax.Bits.SteppingId);
+  Print (
+    L"  Family = %x  Model = %x  Stepping = %x\n",
+    DisplayFamily,
+    DisplayModel,
+    Eax.Bits.SteppingId
+    );
 
   PRINT_BIT_FIELD (Eax, SteppingId);
   PRINT_BIT_FIELD (Eax, Model);
@@ -435,7 +449,8 @@ LookupCacheDescription (
                    sizeof (mCpuidCacheInfoDescription[0]);
   for (Descriptor = 0; Descriptor < NumDescriptors; Descriptor++) {
     if (CacheDescriptor ==
-        mCpuidCacheInfoDescription[Descriptor].CacheDescriptor) {
+        mCpuidCacheInfoDescription[Descriptor].CacheDescriptor)
+    {
       return &mCpuidCacheInfoDescription[Descriptor];
     }
   }
@@ -463,12 +478,22 @@ CpuidCacheInfo (
     return;
   }
 
-  AsmCpuid (CPUID_CACHE_INFO, &Eax.Uint32, &Ebx.Uint32, &Ecx.Uint32,
-    &Edx.Uint32);
+  AsmCpuid (
+    CPUID_CACHE_INFO,
+    &Eax.Uint32,
+    &Ebx.Uint32,
+    &Ecx.Uint32,
+    &Edx.Uint32
+    );
 
   Print (L"CPUID_CACHE_INFO (Leaf %08x)\n", CPUID_CACHE_INFO);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx.Uint32,
-    Ecx.Uint32, Edx.Uint32);
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx.Uint32,
+    Ecx.Uint32,
+    Edx.Uint32
+    );
   if (Eax.Bits.NotValid == 0) {
     //
     // Process Eax.CacheDescriptor[1..3].  Ignore Eax.CacheDescriptor[0]
@@ -594,10 +619,18 @@ CpuidCacheParams (
       &Edx.Uint32
       );
     if (Eax.Bits.CacheType != CPUID_CACHE_PARAMS_CACHE_TYPE_NULL) {
-      Print (L"CPUID_CACHE_PARAMS (Leaf %08x, Sub-Leaf %08x)\n",
-        CPUID_CACHE_PARAMS, CacheLevel);
-      Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32,
-        Ebx.Uint32, Ecx, Edx.Uint32);
+      Print (
+        L"CPUID_CACHE_PARAMS (Leaf %08x, Sub-Leaf %08x)\n",
+        CPUID_CACHE_PARAMS,
+        CacheLevel
+        );
+      Print (
+        L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+        Eax.Uint32,
+        Ebx.Uint32,
+        Ecx,
+        Edx.Uint32
+        );
       PRINT_BIT_FIELD (Eax, CacheType);
       PRINT_BIT_FIELD (Eax, CacheLevel);
       PRINT_BIT_FIELD (Eax, SelfInitializingCache);
@@ -635,12 +668,22 @@ CpuidMonitorMwait (
     return;
   }
 
-  AsmCpuid (CPUID_MONITOR_MWAIT, &Eax.Uint32, &Ebx.Uint32, &Ecx.Uint32,
-    &Edx.Uint32);
+  AsmCpuid (
+    CPUID_MONITOR_MWAIT,
+    &Eax.Uint32,
+    &Ebx.Uint32,
+    &Ecx.Uint32,
+    &Edx.Uint32
+    );
 
   Print (L"CPUID_MONITOR_MWAIT (Leaf %08x)\n", CPUID_MONITOR_MWAIT);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx.Uint32,
-    Ecx.Uint32, Edx.Uint32);
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx.Uint32,
+    Ecx.Uint32,
+    Edx.Uint32
+    );
 
   PRINT_BIT_FIELD (Eax, SmallestMonitorLineSize);
   PRINT_BIT_FIELD (Ebx, LargestMonitorLineSize);
@@ -673,13 +716,25 @@ CpuidThermalPowerManagement (
     return;
   }
 
-  AsmCpuid (CPUID_THERMAL_POWER_MANAGEMENT, &Eax.Uint32, &Ebx.Uint32,
-    &Ecx.Uint32, NULL);
+  AsmCpuid (
+    CPUID_THERMAL_POWER_MANAGEMENT,
+    &Eax.Uint32,
+    &Ebx.Uint32,
+    &Ecx.Uint32,
+    NULL
+    );
 
-  Print (L"CPUID_THERMAL_POWER_MANAGEMENT (Leaf %08x)\n",
-    CPUID_THERMAL_POWER_MANAGEMENT);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx.Uint32,
-    Ecx.Uint32, 0);
+  Print (
+    L"CPUID_THERMAL_POWER_MANAGEMENT (Leaf %08x)\n",
+    CPUID_THERMAL_POWER_MANAGEMENT
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx.Uint32,
+    Ecx.Uint32,
+    0
+    );
 
   PRINT_BIT_FIELD (Eax, DigitalTemperatureSensor);
   PRINT_BIT_FIELD (Eax, TurboBoostTechnology);
@@ -743,9 +798,16 @@ CpuidStructuredExtendedFeatureFlags (
     if ((Ebx.Uint32 != 0) || (Ecx.Uint32 != 0) || (Edx.Uint32 != 0)) {
       Print (
         L"CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS (Leaf %08x, Sub-Leaf %08x)\n",
-        CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS, SubLeaf);
-      Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax, Ebx.Uint32,
-        Ecx.Uint32, Edx.Uint32);
+        CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS,
+        SubLeaf
+        );
+      Print (
+        L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+        Eax,
+        Ebx.Uint32,
+        Ecx.Uint32,
+        Edx.Uint32
+        );
       PRINT_BIT_FIELD (Ebx, FSGSBASE);
       PRINT_BIT_FIELD (Ebx, IA32_TSC_ADJUST);
       PRINT_BIT_FIELD (Ebx, SGX);
@@ -815,8 +877,10 @@ CpuidDirectCacheAccessInfo (
   }
 
   AsmCpuid (CPUID_DIRECT_CACHE_ACCESS_INFO, &Eax, NULL, NULL, NULL);
-  Print (L"CPUID_DIRECT_CACHE_ACCESS_INFO (Leaf %08x)\n",
-    CPUID_DIRECT_CACHE_ACCESS_INFO);
+  Print (
+    L"CPUID_DIRECT_CACHE_ACCESS_INFO (Leaf %08x)\n",
+    CPUID_DIRECT_CACHE_ACCESS_INFO
+    );
   Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax, 0, 0, 0);
 }
 
@@ -837,12 +901,24 @@ CpuidArchitecturalPerformanceMonitoring (
     return;
   }
 
-  AsmCpuid (CPUID_ARCHITECTURAL_PERFORMANCE_MONITORING, &Eax.Uint32,
-    &Ebx.Uint32, NULL, &Edx.Uint32);
-  Print (L"CPUID_ARCHITECTURAL_PERFORMANCE_MONITORING (Leaf %08x)\n",
-    CPUID_ARCHITECTURAL_PERFORMANCE_MONITORING);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx.Uint32,
-    0, Edx.Uint32);
+  AsmCpuid (
+    CPUID_ARCHITECTURAL_PERFORMANCE_MONITORING,
+    &Eax.Uint32,
+    &Ebx.Uint32,
+    NULL,
+    &Edx.Uint32
+    );
+  Print (
+    L"CPUID_ARCHITECTURAL_PERFORMANCE_MONITORING (Leaf %08x)\n",
+    CPUID_ARCHITECTURAL_PERFORMANCE_MONITORING
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx.Uint32,
+    0,
+    Edx.Uint32
+    );
   PRINT_BIT_FIELD (Eax, ArchPerfMonVerID);
   PRINT_BIT_FIELD (Eax, PerformanceMonitorCounters);
   PRINT_BIT_FIELD (Eax, PerformanceMonitorCounterWidth);
@@ -907,8 +983,13 @@ CpuidExtendedTopology (
       LeafFunction,
       LevelNumber
       );
-    Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32,
-      Ebx.Uint32, Ecx.Uint32, Edx);
+    Print (
+      L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+      Eax.Uint32,
+      Ebx.Uint32,
+      Ecx.Uint32,
+      Edx
+      );
     PRINT_BIT_FIELD (Eax, ApicIdShift);
     PRINT_BIT_FIELD (Ebx, LogicalProcessors);
     PRINT_BIT_FIELD (Ecx, LevelNumber);
@@ -939,10 +1020,18 @@ CpuidExtendedStateSubLeaf (
     &Ecx.Uint32,
     &Edx
     );
-  Print (L"CPUID_EXTENDED_STATE (Leaf %08x, Sub-Leaf %08x)\n",
-    CPUID_EXTENDED_STATE, CPUID_EXTENDED_STATE_SUB_LEAF);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx,
-    Ecx.Uint32, Edx);
+  Print (
+    L"CPUID_EXTENDED_STATE (Leaf %08x, Sub-Leaf %08x)\n",
+    CPUID_EXTENDED_STATE,
+    CPUID_EXTENDED_STATE_SUB_LEAF
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx,
+    Ecx.Uint32,
+    Edx
+    );
   PRINT_BIT_FIELD (Eax, XSAVEOPT);
   PRINT_BIT_FIELD (Eax, XSAVEC);
   PRINT_BIT_FIELD (Eax, XGETBV);
@@ -980,10 +1069,18 @@ CpuidExtendedStateSizeOffset (
       &Edx
       );
     if (Edx != 0) {
-      Print (L"CPUID_EXTENDED_STATE (Leaf %08x, Sub-Leaf %08x)\n",
-        CPUID_EXTENDED_STATE, SubLeaf);
-      Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax, Ebx,
-        Ecx.Uint32, Edx);
+      Print (
+        L"CPUID_EXTENDED_STATE (Leaf %08x, Sub-Leaf %08x)\n",
+        CPUID_EXTENDED_STATE,
+        SubLeaf
+        );
+      Print (
+        L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+        Eax,
+        Ebx,
+        Ecx.Uint32,
+        Edx
+        );
       PRINT_VALUE (Eax, FeatureSaveStateSize);
       PRINT_VALUE (Ebx, FeatureSaveStateOffset);
       PRINT_BIT_FIELD (Ecx, XSS);
@@ -1018,10 +1115,18 @@ CpuidExtendedStateMainLeaf (
     &Ecx,
     &Edx
     );
-  Print (L"CPUID_EXTENDED_STATE (Leaf %08x, Sub-Leaf %08x)\n",
-    CPUID_EXTENDED_STATE, CPUID_EXTENDED_STATE_MAIN_LEAF);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx, Ecx,
-    Edx);
+  Print (
+    L"CPUID_EXTENDED_STATE (Leaf %08x, Sub-Leaf %08x)\n",
+    CPUID_EXTENDED_STATE,
+    CPUID_EXTENDED_STATE_MAIN_LEAF
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx,
+    Ecx,
+    Edx
+    );
   PRINT_BIT_FIELD (Eax, x87);
   PRINT_BIT_FIELD (Eax, SSE);
   PRINT_BIT_FIELD (Eax, AVX);
@@ -1062,9 +1167,11 @@ CpuidIntelRdtMonitoringEnumerationSubLeaf (
     NULL,
     &Edx.Uint32
     );
-  Print (L"CPUID_INTEL_RDT_MONITORING (Leaf %08x, Sub-Leaf %08x)\n",
+  Print (
+    L"CPUID_INTEL_RDT_MONITORING (Leaf %08x, Sub-Leaf %08x)\n",
     CPUID_INTEL_RDT_MONITORING,
-    CPUID_INTEL_RDT_MONITORING_ENUMERATION_SUB_LEAF);
+    CPUID_INTEL_RDT_MONITORING_ENUMERATION_SUB_LEAF
+    );
   Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", 0, Ebx, 0, Edx.Uint32);
   PRINT_VALUE (Ebx, Maximum_RMID_Range);
   PRINT_BIT_FIELD (Edx, L3CacheRDT_M);
@@ -1095,10 +1202,18 @@ CpuidIntelRdtMonitoringL3CacheCapabilitySubLeaf (
     &Ecx,
     &Edx.Uint32
     );
-  Print (L"CPUID_INTEL_RDT_MONITORING (Leaf %08x, Sub-Leaf %08x)\n",
-    CPUID_INTEL_RDT_MONITORING, CPUID_INTEL_RDT_MONITORING_L3_CACHE_SUB_LEAF);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", 0, Ebx, Ecx,
-    Edx.Uint32);
+  Print (
+    L"CPUID_INTEL_RDT_MONITORING (Leaf %08x, Sub-Leaf %08x)\n",
+    CPUID_INTEL_RDT_MONITORING,
+    CPUID_INTEL_RDT_MONITORING_L3_CACHE_SUB_LEAF
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    0,
+    Ebx,
+    Ecx,
+    Edx.Uint32
+    );
   PRINT_VALUE (Ebx, OccupancyConversionFactor);
   PRINT_VALUE (Ecx, Maximum_RMID_Range);
   PRINT_BIT_FIELD (Edx, L3CacheOccupancyMonitoring);
@@ -1129,11 +1244,18 @@ CpuidIntelRdtAllocationMemoryBandwidthSubLeaf (
     &Ecx.Uint32,
     &Edx.Uint32
     );
-  Print (L"CPUID_INTEL_RDT_ALLOCATION (Leaf %08x, Sub-Leaf %08x)\n",
+  Print (
+    L"CPUID_INTEL_RDT_ALLOCATION (Leaf %08x, Sub-Leaf %08x)\n",
     CPUID_INTEL_RDT_ALLOCATION,
-    CPUID_INTEL_RDT_ALLOCATION_MEMORY_BANDWIDTH_SUB_LEAF);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx,
-    Ecx.Uint32, Edx.Uint32);
+    CPUID_INTEL_RDT_ALLOCATION_MEMORY_BANDWIDTH_SUB_LEAF
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx,
+    Ecx.Uint32,
+    Edx.Uint32
+    );
   PRINT_BIT_FIELD (Eax, MaximumMBAThrottling);
   PRINT_VALUE (Ebx, AllocationUnitBitMap);
   PRINT_BIT_FIELD (Ecx, Liner);
@@ -1163,10 +1285,18 @@ CpuidIntelRdtAllocationL3CacheSubLeaf (
     &Ecx.Uint32,
     &Edx.Uint32
     );
-  Print (L"CPUID_INTEL_RDT_ALLOCATION (Leaf %08x, Sub-Leaf %08x)\n",
-    CPUID_INTEL_RDT_ALLOCATION, CPUID_INTEL_RDT_ALLOCATION_L3_CACHE_SUB_LEAF);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx,
-    Ecx.Uint32, Edx.Uint32);
+  Print (
+    L"CPUID_INTEL_RDT_ALLOCATION (Leaf %08x, Sub-Leaf %08x)\n",
+    CPUID_INTEL_RDT_ALLOCATION,
+    CPUID_INTEL_RDT_ALLOCATION_L3_CACHE_SUB_LEAF
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx,
+    Ecx.Uint32,
+    Edx.Uint32
+    );
   PRINT_BIT_FIELD (Eax, CapacityLength);
   PRINT_VALUE (Ebx, AllocationUnitBitMap);
   PRINT_BIT_FIELD (Ecx, CodeDataPrioritization);
@@ -1195,10 +1325,18 @@ CpuidIntelRdtAllocationL2CacheSubLeaf (
     NULL,
     &Edx.Uint32
     );
-  Print (L"CPUID_INTEL_RDT_ALLOCATION (Leaf %08x, Sub-Leaf %08x)\n",
-    CPUID_INTEL_RDT_ALLOCATION, CPUID_INTEL_RDT_ALLOCATION_L2_CACHE_SUB_LEAF);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx, 0,
-    Edx.Uint32);
+  Print (
+    L"CPUID_INTEL_RDT_ALLOCATION (Leaf %08x, Sub-Leaf %08x)\n",
+    CPUID_INTEL_RDT_ALLOCATION,
+    CPUID_INTEL_RDT_ALLOCATION_L2_CACHE_SUB_LEAF
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx,
+    0,
+    Edx.Uint32
+    );
   PRINT_BIT_FIELD (Eax, CapacityLength);
   PRINT_VALUE (Ebx, AllocationUnitBitMap);
   PRINT_BIT_FIELD (Edx, HighestCosNumber);
@@ -1227,9 +1365,11 @@ CpuidIntelRdtAllocationMainLeaf (
     NULL,
     NULL
     );
-  Print (L"CPUID_INTEL_RDT_ALLOCATION (Leaf %08x, Sub-Leaf %08x)\n",
+  Print (
+    L"CPUID_INTEL_RDT_ALLOCATION (Leaf %08x, Sub-Leaf %08x)\n",
     CPUID_INTEL_RDT_ALLOCATION,
-    CPUID_INTEL_RDT_ALLOCATION_ENUMERATION_SUB_LEAF);
+    CPUID_INTEL_RDT_ALLOCATION_ENUMERATION_SUB_LEAF
+    );
   Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", 0, Ebx.Uint32, 0, 0);
   PRINT_BIT_FIELD (Ebx, L3CacheAllocation);
   PRINT_BIT_FIELD (Ebx, L2CacheAllocation);
@@ -1260,10 +1400,18 @@ CpuidEnumerationOfIntelSgxCapabilities0SubLeaf (
     NULL,
     &Edx.Uint32
     );
-  Print (L"CPUID_INTEL_SGX (Leaf %08x, Sub-Leaf %08x)\n", CPUID_INTEL_SGX,
-    CPUID_INTEL_SGX_CAPABILITIES_0_SUB_LEAF);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx, 0,
-    Edx.Uint32);
+  Print (
+    L"CPUID_INTEL_SGX (Leaf %08x, Sub-Leaf %08x)\n",
+    CPUID_INTEL_SGX,
+    CPUID_INTEL_SGX_CAPABILITIES_0_SUB_LEAF
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx,
+    0,
+    Edx.Uint32
+    );
   PRINT_BIT_FIELD (Eax, SGX1);
   PRINT_BIT_FIELD (Eax, SGX2);
   PRINT_BIT_FIELD (Eax, ENCLV);
@@ -1294,8 +1442,11 @@ CpuidEnumerationOfIntelSgxCapabilities1SubLeaf (
     &Ecx,
     &Edx
     );
-  Print (L"CPUID_INTEL_SGX (Leaf %08x, Sub-Leaf %08x)\n", CPUID_INTEL_SGX,
-    CPUID_INTEL_SGX_CAPABILITIES_1_SUB_LEAF);
+  Print (
+    L"CPUID_INTEL_SGX (Leaf %08x, Sub-Leaf %08x)\n",
+    CPUID_INTEL_SGX,
+    CPUID_INTEL_SGX_CAPABILITIES_1_SUB_LEAF
+    );
   Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax, Ebx, Ecx, Edx);
 }
 
@@ -1325,10 +1476,18 @@ CpuidEnumerationOfIntelSgxResourcesSubLeaf (
       &Edx.Uint32
       );
     if (Eax.Bits.SubLeafType == 0x1) {
-      Print (L"CPUID_INTEL_SGX (Leaf %08x, Sub-Leaf %08x)\n", CPUID_INTEL_SGX,
-        SubLeaf);
-      Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32,
-        Ebx.Uint32, Ecx.Uint32, Edx.Uint32);
+      Print (
+        L"CPUID_INTEL_SGX (Leaf %08x, Sub-Leaf %08x)\n",
+        CPUID_INTEL_SGX,
+        SubLeaf
+        );
+      Print (
+        L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+        Eax.Uint32,
+        Ebx.Uint32,
+        Ecx.Uint32,
+        Edx.Uint32
+        );
       PRINT_BIT_FIELD (Eax, SubLeafType);
       PRINT_BIT_FIELD (Eax, LowAddressOfEpcSection);
       PRINT_BIT_FIELD (Ebx, HighAddressOfEpcSection);
@@ -1393,7 +1552,8 @@ CpuidIntelProcessorTraceSubLeaf (
   CPUID_INTEL_PROCESSOR_TRACE_SUB_LEAF_EBX  Ebx;
 
   for (SubLeaf = CPUID_INTEL_PROCESSOR_TRACE_SUB_LEAF; SubLeaf <=
-       MaximumSubLeaf; SubLeaf++) {
+       MaximumSubLeaf; SubLeaf++)
+  {
     AsmCpuidEx (
       CPUID_INTEL_PROCESSOR_TRACE,
       SubLeaf,
@@ -1402,10 +1562,18 @@ CpuidIntelProcessorTraceSubLeaf (
       NULL,
       NULL
       );
-    Print (L"CPUID_INTEL_PROCESSOR_TRACE (Leaf %08x, Sub-Leaf %08x)\n",
-      CPUID_INTEL_PROCESSOR_TRACE, SubLeaf);
-    Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32,
-      Ebx.Uint32, 0, 0);
+    Print (
+      L"CPUID_INTEL_PROCESSOR_TRACE (Leaf %08x, Sub-Leaf %08x)\n",
+      CPUID_INTEL_PROCESSOR_TRACE,
+      SubLeaf
+      );
+    Print (
+      L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+      Eax.Uint32,
+      Ebx.Uint32,
+      0,
+      0
+      );
     PRINT_BIT_FIELD (Eax, ConfigurableAddressRanges);
     PRINT_BIT_FIELD (Eax, MtcPeriodEncodings);
     PRINT_BIT_FIELD (Ebx, CycleThresholdEncodings);
@@ -1438,10 +1606,18 @@ CpuidIntelProcessorTraceMainLeaf (
     &Ecx.Uint32,
     NULL
     );
-  Print (L"CPUID_INTEL_PROCESSOR_TRACE (Leaf %08x, Sub-Leaf %08x)\n",
-    CPUID_INTEL_PROCESSOR_TRACE, CPUID_INTEL_PROCESSOR_TRACE_MAIN_LEAF);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax, Ebx.Uint32,
-    Ecx.Uint32, 0);
+  Print (
+    L"CPUID_INTEL_PROCESSOR_TRACE (Leaf %08x, Sub-Leaf %08x)\n",
+    CPUID_INTEL_PROCESSOR_TRACE,
+    CPUID_INTEL_PROCESSOR_TRACE_MAIN_LEAF
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax,
+    Ebx.Uint32,
+    Ecx.Uint32,
+    0
+    );
   PRINT_VALUE (Eax, MaximumSubLeaf);
   PRINT_BIT_FIELD (Ebx, Cr3Filter);
   PRINT_BIT_FIELD (Ebx, ConfigurablePsb);
@@ -1497,11 +1673,21 @@ CpuidProcessorFrequency (
     return;
   }
 
-  AsmCpuid (CPUID_PROCESSOR_FREQUENCY, &Eax.Uint32, &Ebx.Uint32, &Ecx.Uint32,
-    NULL);
+  AsmCpuid (
+    CPUID_PROCESSOR_FREQUENCY,
+    &Eax.Uint32,
+    &Ebx.Uint32,
+    &Ecx.Uint32,
+    NULL
+    );
   Print (L"CPUID_PROCESSOR_FREQUENCY (Leaf %08x)\n", CPUID_PROCESSOR_FREQUENCY);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx.Uint32,
-    Ecx.Uint32, 0);
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx.Uint32,
+    Ecx.Uint32,
+    0
+    );
   PRINT_BIT_FIELD (Eax, ProcessorBaseFrequency);
   PRINT_BIT_FIELD (Ebx, MaximumFrequency);
   PRINT_BIT_FIELD (Ecx, BusFrequency);
@@ -1536,10 +1722,18 @@ CpuidSocVendorBrandString (
     &Ecx.Uint32,
     &Edx.Uint32
     );
-  Print (L"CPUID_SOC_VENDOR (Leaf %08x, Sub-Leaf %08x)\n", CPUID_SOC_VENDOR,
-    CPUID_SOC_VENDOR_BRAND_STRING1);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx.Uint32,
-    Ecx.Uint32, Edx.Uint32);
+  Print (
+    L"CPUID_SOC_VENDOR (Leaf %08x, Sub-Leaf %08x)\n",
+    CPUID_SOC_VENDOR,
+    CPUID_SOC_VENDOR_BRAND_STRING1
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx.Uint32,
+    Ecx.Uint32,
+    Edx.Uint32
+    );
   BrandString[0] = Eax.Uint32;
   BrandString[1] = Ebx.Uint32;
   BrandString[2] = Ecx.Uint32;
@@ -1553,10 +1747,18 @@ CpuidSocVendorBrandString (
     &Ecx.Uint32,
     &Edx.Uint32
     );
-  Print (L"CPUID_SOC_VENDOR (Leaf %08x, Sub-Leaf %08x)\n", CPUID_SOC_VENDOR,
-    CPUID_SOC_VENDOR_BRAND_STRING2);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx.Uint32,
-    Ecx.Uint32, Edx.Uint32);
+  Print (
+    L"CPUID_SOC_VENDOR (Leaf %08x, Sub-Leaf %08x)\n",
+    CPUID_SOC_VENDOR,
+    CPUID_SOC_VENDOR_BRAND_STRING2
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx.Uint32,
+    Ecx.Uint32,
+    Edx.Uint32
+    );
   BrandString[4] = Eax.Uint32;
   BrandString[5] = Ebx.Uint32;
   BrandString[6] = Ecx.Uint32;
@@ -1570,10 +1772,18 @@ CpuidSocVendorBrandString (
     &Ecx.Uint32,
     &Edx.Uint32
     );
-  Print (L"CPUID_SOC_VENDOR (Leaf %08x, Sub-Leaf %08x)\n", CPUID_SOC_VENDOR,
-    CPUID_SOC_VENDOR_BRAND_STRING3);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, Ebx.Uint32,
-    Ecx.Uint32, Edx.Uint32);
+  Print (
+    L"CPUID_SOC_VENDOR (Leaf %08x, Sub-Leaf %08x)\n",
+    CPUID_SOC_VENDOR,
+    CPUID_SOC_VENDOR_BRAND_STRING3
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax.Uint32,
+    Ebx.Uint32,
+    Ecx.Uint32,
+    Edx.Uint32
+    );
   BrandString[8]  = Eax.Uint32;
   BrandString[9]  = Ebx.Uint32;
   BrandString[10] = Ecx.Uint32;
@@ -1610,10 +1820,18 @@ CpuidSocVendor (
     &Ecx,
     &Edx
     );
-  Print (L"CPUID_SOC_VENDOR (Leaf %08x, Sub-Leaf %08x)\n", CPUID_SOC_VENDOR,
-    CPUID_SOC_VENDOR_MAIN_LEAF);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax, Ebx.Uint32, Ecx,
-    Edx);
+  Print (
+    L"CPUID_SOC_VENDOR (Leaf %08x, Sub-Leaf %08x)\n",
+    CPUID_SOC_VENDOR,
+    CPUID_SOC_VENDOR_MAIN_LEAF
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax,
+    Ebx.Uint32,
+    Ecx,
+    Edx
+    );
   if (Eax < 3) {
     Print (L"  Not Supported\n");
     return;
@@ -1642,7 +1860,8 @@ CpuidDeterministicAddressTranslationParameters (
   CPUID_DETERMINISTIC_ADDRESS_TRANSLATION_PARAMETERS_EDX  Edx;
 
   if (CPUID_DETERMINISTIC_ADDRESS_TRANSLATION_PARAMETERS >
-      gMaximumBasicFunction) {
+      gMaximumBasicFunction)
+  {
     return;
   }
 
@@ -1657,9 +1876,15 @@ CpuidDeterministicAddressTranslationParameters (
   Print (
     L"CPUID_DETERMINISTIC_ADDRESS_TRANSLATION_PARAMETERS (Leaf %08x, Sub-Leaf %08x)\n",
     CPUID_DETERMINISTIC_ADDRESS_TRANSLATION_PARAMETERS,
-    CPUID_DETERMINISTIC_ADDRESS_TRANSLATION_PARAMETERS_MAIN_LEAF);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax, Ebx.Uint32, Ecx,
-    Edx.Uint32);
+    CPUID_DETERMINISTIC_ADDRESS_TRANSLATION_PARAMETERS_MAIN_LEAF
+    );
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax,
+    Ebx.Uint32,
+    Ecx,
+    Edx.Uint32
+    );
 
   PRINT_VALUE (Eax, MaxID_Index);
   PRINT_BIT_FIELD (Ebx, Page4K);
@@ -1715,8 +1940,13 @@ CpuidExtendedCpuSig (
 
   AsmCpuid (CPUID_EXTENDED_CPU_SIG, &Eax, NULL, &Ecx.Uint32, &Edx.Uint32);
   Print (L"CPUID_EXTENDED_CPU_SIG (Leaf %08x)\n", CPUID_EXTENDED_CPU_SIG);
-  Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax, 0, Ecx.Uint32,
-    Edx.Uint32);
+  Print (
+    L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+    Eax,
+    0,
+    Ecx.Uint32,
+    Edx.Uint32
+    );
   PRINT_BIT_FIELD (Ecx, LAHF_SAHF);
   PRINT_BIT_FIELD (Ecx, LZCNT);
   PRINT_BIT_FIELD (Ecx, PREFETCHW);
@@ -1749,11 +1979,21 @@ CpuidProcessorBrandString (
   UINT32  BrandString[3 * 4 + 1];
 
   if (CPUID_BRAND_STRING1 <= gMaximumExtendedFunction) {
-    AsmCpuid (CPUID_BRAND_STRING1, &Eax.Uint32, &Ebx.Uint32, &Ecx.Uint32,
-      &Edx.Uint32);
+    AsmCpuid (
+      CPUID_BRAND_STRING1,
+      &Eax.Uint32,
+      &Ebx.Uint32,
+      &Ecx.Uint32,
+      &Edx.Uint32
+      );
     Print (L"CPUID_BRAND_STRING1 (Leaf %08x)\n", CPUID_BRAND_STRING1);
-    Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32,
-      Ebx.Uint32, Ecx.Uint32, Edx.Uint32);
+    Print (
+      L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+      Eax.Uint32,
+      Ebx.Uint32,
+      Ecx.Uint32,
+      Edx.Uint32
+      );
     BrandString[0] = Eax.Uint32;
     BrandString[1] = Ebx.Uint32;
     BrandString[2] = Ecx.Uint32;
@@ -1761,11 +2001,21 @@ CpuidProcessorBrandString (
   }
 
   if (CPUID_BRAND_STRING2 <= gMaximumExtendedFunction) {
-    AsmCpuid (CPUID_BRAND_STRING2, &Eax.Uint32, &Ebx.Uint32, &Ecx.Uint32,
-      &Edx.Uint32);
+    AsmCpuid (
+      CPUID_BRAND_STRING2,
+      &Eax.Uint32,
+      &Ebx.Uint32,
+      &Ecx.Uint32,
+      &Edx.Uint32
+      );
     Print (L"CPUID_BRAND_STRING2 (Leaf %08x)\n", CPUID_BRAND_STRING2);
-    Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32,
-      Ebx.Uint32, Ecx.Uint32, Edx.Uint32);
+    Print (
+      L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+      Eax.Uint32,
+      Ebx.Uint32,
+      Ecx.Uint32,
+      Edx.Uint32
+      );
     BrandString[4] = Eax.Uint32;
     BrandString[5] = Ebx.Uint32;
     BrandString[6] = Ecx.Uint32;
@@ -1773,11 +2023,21 @@ CpuidProcessorBrandString (
   }
 
   if (CPUID_BRAND_STRING3 <= gMaximumExtendedFunction) {
-    AsmCpuid (CPUID_BRAND_STRING3, &Eax.Uint32, &Ebx.Uint32, &Ecx.Uint32,
-      &Edx.Uint32);
+    AsmCpuid (
+      CPUID_BRAND_STRING3,
+      &Eax.Uint32,
+      &Ebx.Uint32,
+      &Ecx.Uint32,
+      &Edx.Uint32
+      );
     Print (L"CPUID_BRAND_STRING3 (Leaf %08x)\n", CPUID_BRAND_STRING3);
-    Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32,
-      Ebx.Uint32, Ecx.Uint32, Edx.Uint32);
+    Print (
+      L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n",
+      Eax.Uint32,
+      Ebx.Uint32,
+      Ecx.Uint32,
+      Edx.Uint32
+      );
     BrandString[8]  = Eax.Uint32;
     BrandString[9]  = Ebx.Uint32;
     BrandString[10] = Ecx.Uint32;
@@ -1828,8 +2088,10 @@ CpuidExtendedTimeStampCounter (
   }
 
   AsmCpuid (CPUID_EXTENDED_TIME_STAMP_COUNTER, NULL, NULL, NULL, &Edx.Uint32);
-  Print (L"CPUID_EXTENDED_TIME_STAMP_COUNTER (Leaf %08x)\n",
-    CPUID_EXTENDED_TIME_STAMP_COUNTER);
+  Print (
+    L"CPUID_EXTENDED_TIME_STAMP_COUNTER (Leaf %08x)\n",
+    CPUID_EXTENDED_TIME_STAMP_COUNTER
+    );
   Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", 0, 0, 0, Edx.Uint32);
   PRINT_BIT_FIELD (Edx, InvariantTsc);
 }
@@ -1850,8 +2112,10 @@ CpuidVirPhyAddressSize (
   }
 
   AsmCpuid (CPUID_VIR_PHY_ADDRESS_SIZE, &Eax.Uint32, NULL, NULL, NULL);
-  Print (L"CPUID_VIR_PHY_ADDRESS_SIZE (Leaf %08x)\n",
-    CPUID_VIR_PHY_ADDRESS_SIZE);
+  Print (
+    L"CPUID_VIR_PHY_ADDRESS_SIZE (Leaf %08x)\n",
+    CPUID_VIR_PHY_ADDRESS_SIZE
+    );
   Print (L"  EAX:%08x  EBX:%08x  ECX:%08x  EDX:%08x\n", Eax.Uint32, 0, 0, 0);
   PRINT_BIT_FIELD (Eax, PhysicalAddressBits);
   PRINT_BIT_FIELD (Eax, LinearAddressBits);

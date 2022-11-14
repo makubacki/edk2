@@ -80,8 +80,8 @@ InitGdt (
 
     GdtTssTableSize = (gcSmiGdtr.Limit + 1 + TSS_SIZE + EXCEPTION_TSS_SIZE +
                        7) & ~7;                                                       // 8 bytes aligned
-    mGdtBufferSize  = GdtTssTableSize *
-                      gSmmCpuPrivate->SmmCoreEntryContext.NumberOfCpus;
+    mGdtBufferSize = GdtTssTableSize *
+                     gSmmCpuPrivate->SmmCoreEntryContext.NumberOfCpus;
     //
     // IA32 Stack Guard need use task switch to switch stack that need
     // write GDT and TSS, so AllocateCodePages() could not be used here
@@ -104,8 +104,8 @@ InitGdt (
       //
       // Fixup TSS descriptors
       //
-      TssBase                      = (UINTN)(GdtTssTables + GdtTableStepSize *
-                                             Index + gcSmiGdtr.Limit + 1);
+      TssBase = (UINTN)(GdtTssTables + GdtTableStepSize *
+                        Index + gcSmiGdtr.Limit + 1);
       GdtDescriptor                = (IA32_SEGMENT_DESCRIPTOR *)(TssBase) - 2;
       GdtDescriptor->Bits.BaseLow  = (UINT16)TssBase;
       GdtDescriptor->Bits.BaseMid  = (UINT8)(TssBase >> 16);

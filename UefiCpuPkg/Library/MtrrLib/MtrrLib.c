@@ -622,7 +622,7 @@ MtrrGetMemoryAttributeInVariableMtrrWorker (
       VariableMtrr[Index].Msr         = (UINT32)Index;
       VariableMtrr[Index].BaseAddress = (VariableSettings->Mtrr[Index].Base &
                                          MtrrValidAddressMask);
-      VariableMtrr[Index].Length      =
+      VariableMtrr[Index].Length =
         ((~(VariableSettings->Mtrr[Index].Mask & MtrrValidAddressMask)) &
          MtrrValidBitsMask) + 1;
       VariableMtrr[Index].Type  = (VariableSettings->Mtrr[Index].Base & 0x0ff);
@@ -673,7 +673,7 @@ MtrrLibGetRawVariableRanges (
     {
       VariableMtrr[Index].BaseAddress = (VariableSettings->Mtrr[Index].Base &
                                          MtrrValidAddressMask);
-      VariableMtrr[Index].Length      =
+      VariableMtrr[Index].Length =
         ((~(VariableSettings->Mtrr[Index].Mask & MtrrValidAddressMask)) &
          MtrrValidBitsMask) + 1;
       VariableMtrr[Index].Type =
@@ -3053,7 +3053,8 @@ MtrrDebugPrintAllMtrrsWorker (
   MTRR_MEMORY_RANGE  Ranges[
                             ARRAY_SIZE (mMtrrLibFixedMtrrTable) *
                             sizeof (UINT64) + 2 * ARRAY_SIZE (
-                                                    Mtrrs->Variables.Mtrr) + 1
+                                                    Mtrrs->Variables.Mtrr
+                                                    ) + 1
   ];
   MTRR_MEMORY_RANGE  RawVariableRanges[ARRAY_SIZE (Mtrrs->Variables.Mtrr)];
 

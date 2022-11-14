@@ -275,16 +275,16 @@ SmmCpuFeaturesInstallSmiHandler (
     &gcStmPsd,
     sizeof (gcStmPsd)
     );
-  Psd             = (TXT_PROCESSOR_SMM_DESCRIPTOR *)(VOID *)((UINTN)SmBase +
-                                                             TXT_SMM_PSD_OFFSET);
+  Psd = (TXT_PROCESSOR_SMM_DESCRIPTOR *)(VOID *)((UINTN)SmBase +
+                                                 TXT_SMM_PSD_OFFSET);
   Psd->SmmGdtPtr  = GdtBase;
   Psd->SmmGdtSize = (UINT32)GdtSize;
 
   //
   // Initialize values in template before copy
   //
-  gStmSmiStack             = (UINT32)((UINTN)SmiStack + StackSize -
-                                      sizeof (UINTN));
+  gStmSmiStack = (UINT32)((UINTN)SmiStack + StackSize -
+                          sizeof (UINTN));
   gStmSmiCr3               = Cr3;
   gStmSmbase               = SmBase;
   gStmSmiHandlerIdtr.Base  = IdtBase;
@@ -345,11 +345,16 @@ SmmCpuFeaturesInstallSmiHandler (
   Psd->StmProtectionExceptionHandler.SpeRsp = (UINT64)(UINTN)AllocatePages (
                                                                EFI_SIZE_TO_PAGES (
                                                                  PcdGet32 (
-                                                                   PcdCpuSmmStmExceptionStackSize))
+                                                                   PcdCpuSmmStmExceptionStackSize
+                                                                   )
+                                                                 )
                                                                );
   Psd->StmProtectionExceptionHandler.SpeRsp += EFI_PAGES_TO_SIZE (
-                                                 EFI_SIZE_TO_PAGES (PcdGet32 (
-                                                                      PcdCpuSmmStmExceptionStackSize))
+                                                 EFI_SIZE_TO_PAGES (
+                                                   PcdGet32 (
+                                                     PcdCpuSmmStmExceptionStackSize
+                                                     )
+                                                   )
                                                  );
 
   Psd->BiosHwResourceRequirementsPtr = (UINT64)(UINTN)GetStmResource ();

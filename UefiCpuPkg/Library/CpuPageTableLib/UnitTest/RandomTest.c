@@ -367,15 +367,19 @@ GenerateSingleRandomMapEntry (
                                                  ) & AlignedTable[Random32 (
                                                                     0,
                                                                     ARRAY_SIZE (
-                                                                      AlignedTable)
+                                                                      AlignedTable
+                                                                      )
                                                                     -1
                                                                     )];
   } else {
     MapEntrys->Maps[MapsIndex].LinearAddress = Random64 (0, MaxAddress) &
-                                               AlignedTable[Random32 (0,
+                                               AlignedTable[Random32 (
+                                                              0,
                                                               ARRAY_SIZE (
-                                                                AlignedTable) -
-                                                              1)];
+                                                                AlignedTable
+                                                                ) -
+                                                              1
+                                                              )];
   }
 
   //
@@ -390,9 +394,13 @@ GenerateSingleRandomMapEntry (
                                           10 * (UINT64)SIZE_1GB
                                           )
                                         ) &
-                                      AlignedTable[Random32 (0, ARRAY_SIZE (
-                                                                  AlignedTable)
-                                                     -1)];
+                                      AlignedTable[Random32 (
+                                                     0,
+                                                     ARRAY_SIZE (
+                                                       AlignedTable
+                                                       )
+                                                     -1
+                                                     )];
 
   if ((MapsIndex != 0)  && (RandomBoolean ())) {
     MapEntrys->Maps[MapsIndex].Attribute.Uint64 = MapEntrys->Maps[Random32 (
@@ -431,7 +439,7 @@ GenerateSingleRandomMapEntry (
     MapEntrys->Maps[MapsIndex].Attribute.Bits.PageTableBaseAddress = (Random64 (
                                                                         0,
                                                                         (((
-                                                                                     UINT64)
+                                                                           UINT64)
                                                                           1)<<
                                                                          52) - 1
                                                                         ) &
@@ -497,8 +505,8 @@ CompareEntrysforOnePoint (
                                                   (Map[Index].LinearAddress +
                                                    Map[Index].Length)))
     {
-      AttributeInMap.Uint64                    = (Map[Index].Attribute.Uint64 &
-                                                  mSupportedBit.Uint64);
+      AttributeInMap.Uint64 = (Map[Index].Attribute.Uint64 &
+                               mSupportedBit.Uint64);
       AttributeInMap.Bits.PageTableBaseAddress = ((Address -
                                                    Map[Index].LinearAddress) >>
                                                   12) +
@@ -533,10 +541,10 @@ CompareEntrysforOnePoint (
   for (Index = MapEntrys->InitCount; Index < MapEntrys->Count; Index++) {
     if ((Address >= MapEntrys->Maps[Index].LinearAddress) && (Address <
                                                               (MapEntrys->Maps[
-                                                                                        Index
+                                                                               Index
                                                                ].LinearAddress +
                                                                MapEntrys->Maps[
-                                                                                                                               Index
+                                                                               Index
                                                                ].Length)))
     {
       if (AttributeInMapEntrys.Bits.Present == 0) {

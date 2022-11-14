@@ -1410,7 +1410,7 @@ GetProcessorLocationByApicId (
                            MaxLogicProcessorsPerPackage /
                            MaxCoresPerPackage - 1
                            ) + 1);
-    CoreBits   = (UINTN)(HighBitSet32 (MaxCoresPerPackage - 1) + 1);
+    CoreBits = (UINTN)(HighBitSet32 (MaxCoresPerPackage - 1) + 1);
   }
 
   if (Thread != NULL) {
