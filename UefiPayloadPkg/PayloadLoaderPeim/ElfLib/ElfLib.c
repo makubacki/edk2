@@ -149,7 +149,8 @@ CalculateElfFileSize (
     FileSize2 = Elf32Hdr->e_shoff + Elf32Hdr->e_shentsize * Elf32Hdr->e_shnum;
   } else if (ElfCt->EiClass == ELFCLASS64) {
     Elf64Hdr  = (Elf64_Ehdr *)ElfCt->FileBase;
-    FileSize2 = ((UINTN)Elf64Hdr->e_shoff + (UINTN)(Elf64Hdr->e_shentsize * Elf64Hdr->e_shnum));
+    FileSize2 = ((UINTN)Elf64Hdr->e_shoff + (UINTN)(Elf64Hdr->e_shentsize *
+                                                    Elf64Hdr->e_shnum));
   }
 
   *FileSize = MAX (FileSize1, FileSize2);
@@ -263,7 +264,10 @@ ParseElfImage (
       return (ElfCt->ParseStatus = EFI_UNSUPPORTED);
     }
 
-    Elf32Shdr = (Elf32_Shdr *)GetElf32SectionByIndex (ElfCt->FileBase, Elf32Hdr->e_shstrndx);
+    Elf32Shdr = (Elf32_Shdr *)GetElf32SectionByIndex (
+                                ElfCt->FileBase,
+                                Elf32Hdr->e_shstrndx
+                                );
     if (Elf32Shdr == NULL) {
       return (ElfCt->ParseStatus = EFI_UNSUPPORTED);
     }
@@ -279,7 +283,10 @@ ParseElfImage (
       return (ElfCt->ParseStatus = EFI_UNSUPPORTED);
     }
 
-    Elf64Shdr = (Elf64_Shdr *)GetElf64SectionByIndex (ElfCt->FileBase, Elf64Hdr->e_shstrndx);
+    Elf64Shdr = (Elf64_Shdr *)GetElf64SectionByIndex (
+                                ElfCt->FileBase,
+                                Elf64Hdr->e_shstrndx
+                                );
     if (Elf64Shdr == NULL) {
       return (ElfCt->ParseStatus = EFI_UNSUPPORTED);
     }
@@ -298,7 +305,12 @@ ParseElfImage (
   Base                  = MAX_UINT32;
   ElfCt->ReloadRequired = FALSE;
   for (Index = 0; Index < ElfCt->PhNum; Index++) {
-    Status = GetElfSegmentInfo (ElfCt->FileBase, ElfCt->EiClass, Index, &SegInfo);
+    Status = GetElfSegmentInfo (
+               ElfCt->FileBase,
+               ElfCt->EiClass,
+               Index,
+               &SegInfo
+               );
     ASSERT_EFI_ERROR (Status);
 
     if (SegInfo.PtType != PT_LOAD) {
@@ -316,7 +328,9 @@ ParseElfImage (
       Base = SegInfo.MemAddr & ~(EFI_PAGE_SIZE - 1);
     }
 
-    if (End < ALIGN_VALUE (SegInfo.MemAddr + SegInfo.MemLen, EFI_PAGE_SIZE) - 1) {
+    if (End < ALIGN_VALUE (SegInfo.MemAddr + SegInfo.MemLen, EFI_PAGE_SIZE) -
+        1)
+    {
       End = ALIGN_VALUE (SegInfo.MemAddr + SegInfo.MemLen, EFI_PAGE_SIZE) - 1;
     }
   }

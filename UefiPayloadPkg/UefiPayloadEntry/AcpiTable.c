@@ -25,22 +25,39 @@ ParseAcpiInfo (
   OUT  ACPI_BOARD_INFO  *AcpiBoardInfo
   )
 {
-  EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER                                           *Rsdp;
-  EFI_ACPI_DESCRIPTION_HEADER                                                            *Rsdt;
-  UINT32                                                                                 *Entry32;
-  UINTN                                                                                  Entry32Num;
-  EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE                                              *Fadt;
-  EFI_ACPI_DESCRIPTION_HEADER                                                            *Xsdt;
-  UINT64                                                                                 *Entry64;
-  UINTN                                                                                  Entry64Num;
-  UINTN                                                                                  Idx;
-  UINT32                                                                                 *Signature;
-  EFI_ACPI_MEMORY_MAPPED_CONFIGURATION_BASE_ADDRESS_TABLE_HEADER                         *MmCfgHdr;
-  EFI_ACPI_MEMORY_MAPPED_ENHANCED_CONFIGURATION_SPACE_BASE_ADDRESS_ALLOCATION_STRUCTURE  *MmCfgBase;
+  EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER
+  *Rsdp;
+  EFI_ACPI_DESCRIPTION_HEADER
+  *Rsdt;
+  UINT32
+  *Entry32;
+  UINTN
+    Entry32Num;
+  EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE
+  *Fadt;
+  EFI_ACPI_DESCRIPTION_HEADER
+  *Xsdt;
+  UINT64
+  *Entry64;
+  UINTN
+    Entry64Num;
+  UINTN
+    Idx;
+  UINT32
+  *Signature;
+  EFI_ACPI_MEMORY_MAPPED_CONFIGURATION_BASE_ADDRESS_TABLE_HEADER
+  *MmCfgHdr;
+  EFI_ACPI_MEMORY_MAPPED_ENHANCED_CONFIGURATION_SPACE_BASE_ADDRESS_ALLOCATION_STRUCTURE
+  *MmCfgBase;
 
   Rsdp = (EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)(UINTN)AcpiTableBase;
   DEBUG ((DEBUG_INFO, "Rsdp at 0x%p\n", Rsdp));
-  DEBUG ((DEBUG_INFO, "Rsdt at 0x%x, Xsdt at 0x%lx\n", Rsdp->RsdtAddress, Rsdp->XsdtAddress));
+  DEBUG ((
+    DEBUG_INFO,
+    "Rsdt at 0x%x, Xsdt at 0x%lx\n",
+    Rsdp->RsdtAddress,
+    Rsdp->XsdtAddress
+    ));
 
   //
   // Search Rsdt First
@@ -58,8 +75,12 @@ ParseAcpiInfo (
         DEBUG ((DEBUG_INFO, "Found Fadt in Rsdt\n"));
       }
 
-      if (*Signature == EFI_ACPI_5_0_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE) {
-        MmCfgHdr = (EFI_ACPI_MEMORY_MAPPED_CONFIGURATION_BASE_ADDRESS_TABLE_HEADER *)Signature;
+      if (*Signature ==
+          EFI_ACPI_5_0_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE)
+      {
+        MmCfgHdr =
+          (EFI_ACPI_MEMORY_MAPPED_CONFIGURATION_BASE_ADDRESS_TABLE_HEADER *)
+          Signature;
         DEBUG ((DEBUG_INFO, "Found MM config address in Rsdt\n"));
       }
 
@@ -83,8 +104,12 @@ ParseAcpiInfo (
         DEBUG ((DEBUG_INFO, "Found Fadt in Xsdt\n"));
       }
 
-      if (*Signature == EFI_ACPI_5_0_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE) {
-        MmCfgHdr = (EFI_ACPI_MEMORY_MAPPED_CONFIGURATION_BASE_ADDRESS_TABLE_HEADER *)Signature;
+      if (*Signature ==
+          EFI_ACPI_5_0_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE)
+      {
+        MmCfgHdr =
+          (EFI_ACPI_MEMORY_MAPPED_CONFIGURATION_BASE_ADDRESS_TABLE_HEADER *)
+          Signature;
         DEBUG ((DEBUG_INFO, "Found MM config address in Xsdt\n"));
       }
 
@@ -108,9 +133,14 @@ Done:
   AcpiBoardInfo->PmGpeEnBase     = Fadt->Gpe0Blk + Fadt->Gpe0BlkLen / 2;
 
   if (MmCfgHdr != NULL) {
-    MmCfgBase                      = (EFI_ACPI_MEMORY_MAPPED_ENHANCED_CONFIGURATION_SPACE_BASE_ADDRESS_ALLOCATION_STRUCTURE *)((UINT8 *)MmCfgHdr + sizeof (*MmCfgHdr));
+    MmCfgBase =
+      (
+                                     EFI_ACPI_MEMORY_MAPPED_ENHANCED_CONFIGURATION_SPACE_BASE_ADDRESS_ALLOCATION_STRUCTURE
+                                     *)((UINT8 *)MmCfgHdr + sizeof (*MmCfgHdr));
     AcpiBoardInfo->PcieBaseAddress = MmCfgBase->BaseAddress;
-    AcpiBoardInfo->PcieBaseSize    = (MmCfgBase->EndBusNumber + 1 - MmCfgBase->StartBusNumber) * 4096 * 32 * 8;
+    AcpiBoardInfo->PcieBaseSize    = (MmCfgBase->EndBusNumber + 1 -
+                                      MmCfgBase->StartBusNumber) * 4096 * 32 *
+                                     8;
   } else {
     AcpiBoardInfo->PcieBaseAddress = 0;
     AcpiBoardInfo->PcieBaseSize    = 0;
@@ -195,7 +225,10 @@ BuildHobFromAcpi (
   Status           = ParseAcpiInfo (AcpiTableBase, &AcpiBoardInfo);
   ASSERT_EFI_ERROR (Status);
   if (!EFI_ERROR (Status)) {
-    NewAcpiBoardInfo = BuildGuidHob (&gUefiAcpiBoardInfoGuid, sizeof (ACPI_BOARD_INFO));
+    NewAcpiBoardInfo = BuildGuidHob (
+                         &gUefiAcpiBoardInfoGuid,
+                         sizeof (ACPI_BOARD_INFO)
+                         );
     ASSERT (NewAcpiBoardInfo != NULL);
     CopyMem (NewAcpiBoardInfo, &AcpiBoardInfo, sizeof (ACPI_BOARD_INFO));
     DEBUG ((DEBUG_INFO, "Create acpi board info guid hob\n"));

@@ -43,11 +43,17 @@ SaveSmmInfoForS3 (
   PLD_TO_BL_SMM_INFO         *PldSmmInfo;
   UINTN                      Index;
 
-  PldSmmInfo                          = (PLD_TO_BL_SMM_INFO *)(UINTN)mPldS3Hob.CommBuffer.PhysicalStart;
-  PldSmmInfo->Header.Header.HobLength = (UINT16)(sizeof (PLD_TO_BL_SMM_INFO) + gSmst->NumberOfCpus * sizeof (CPU_SMMBASE));
+  PldSmmInfo =
+    (PLD_TO_BL_SMM_INFO *)(UINTN)mPldS3Hob.CommBuffer.PhysicalStart;
+  PldSmmInfo->Header.Header.HobLength = (UINT16)(sizeof (PLD_TO_BL_SMM_INFO) +
+                                                 gSmst->NumberOfCpus *
+                                                 sizeof (CPU_SMMBASE));
   for (Index = 0; Index < mSmramHob->NumberOfSmmReservedRegions; Index++) {
-    if ((mPldS3Hob.CommBuffer.PhysicalStart >= mSmramHob->Descriptor[Index].PhysicalStart) &&
-        (mPldS3Hob.CommBuffer.PhysicalStart <  mSmramHob->Descriptor[Index].PhysicalStart + mSmramHob->Descriptor[Index].PhysicalSize))
+    if ((mPldS3Hob.CommBuffer.PhysicalStart >=
+         mSmramHob->Descriptor[Index].PhysicalStart) &&
+        (mPldS3Hob.CommBuffer.PhysicalStart <
+         mSmramHob->Descriptor[Index].PhysicalStart +
+         mSmramHob->Descriptor[Index].PhysicalSize))
     {
       break;
     }
@@ -61,12 +67,22 @@ SaveSmmInfoForS3 (
   // Make sure the dedicated region for SMM info communication whose attribute is "allocated" (i.e., excluded from SMM memory service)
   //
   if ((mSmramHob->Descriptor[Index].RegionState & EFI_ALLOCATED) == 0) {
-    DEBUG ((DEBUG_ERROR, "SMM communication region not set to EFI_ALLOCATED\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SMM communication region not set to EFI_ALLOCATED\n"
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
-  if (((UINTN)PldSmmInfo + PldSmmInfo->Header.Header.HobLength) > (mSmramHob->Descriptor[Index].PhysicalStart + mSmramHob->Descriptor[Index].PhysicalSize)) {
-    DEBUG ((DEBUG_ERROR, "SMM communication buffer (0x%x) is too small.\n", (UINTN)PldSmmInfo + PldSmmInfo->Header.Header.HobLength));
+  if (((UINTN)PldSmmInfo + PldSmmInfo->Header.Header.HobLength) >
+      (mSmramHob->Descriptor[Index].PhysicalStart +
+       mSmramHob->Descriptor[Index].PhysicalSize))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "SMM communication buffer (0x%x) is too small.\n",
+      (UINTN)PldSmmInfo + PldSmmInfo->Header.Header.HobLength
+      ));
     return EFI_BUFFER_TOO_SMALL;
   }
 
@@ -77,7 +93,11 @@ SaveSmmInfoForS3 (
   //
   // Save APIC ID and SMM base
   //
-  Status = gBS->LocateProtocol (&gEfiMpServiceProtocolGuid, NULL, (VOID **)&MpService);
+  Status = gBS->LocateProtocol (
+                  &gEfiMpServiceProtocolGuid,
+                  NULL,
+                  (VOID **)&MpService
+                  );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -91,8 +111,15 @@ SaveSmmInfoForS3 (
     }
 
     SmmBaseInfo->ApicId  = (UINT32)(UINTN)ProcessorInfo.ProcessorId;
-    SmmBaseInfo->SmmBase = (UINT32)(UINTN)gSmst->CpuSaveState[Index] - SMRAM_SAVE_STATE_MAP_OFFSET;
-    DEBUG ((DEBUG_INFO, "CPU%d ID:%02X Base: %08X\n", Index, SmmBaseInfo->ApicId, SmmBaseInfo->SmmBase));
+    SmmBaseInfo->SmmBase = (UINT32)(UINTN)gSmst->CpuSaveState[Index] -
+                           SMRAM_SAVE_STATE_MAP_OFFSET;
+    DEBUG ((
+      DEBUG_INFO,
+      "CPU%d ID:%02X Base: %08X\n",
+      Index,
+      SmmBaseInfo->ApicId,
+      SmmBaseInfo->SmmBase
+      ));
     SmmBaseInfo++;
   }
 
@@ -154,9 +181,16 @@ LockSmiGlobalEn (
   {
     DEBUG ((DEBUG_ERROR, "LockSmiGlobalEn ....is locked\n"));
 
-    MmioOr32 ((UINT32)SmiLockReg->Address.Address, 1 << SmiLockReg->Address.RegisterBitOffset);
+    MmioOr32 (
+      (UINT32)SmiLockReg->Address.Address,
+      1 <<
+      SmiLockReg->Address.RegisterBitOffset
+      );
   } else {
-    DEBUG ((DEBUG_ERROR, "Unexpected SMM SMI lock register, need enhancement here.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Unexpected SMM SMI lock register, need enhancement here.\n"
+      ));
   }
 }
 
@@ -197,8 +231,14 @@ SetSmrr (
   )
 {
   if (ProcedureArgument != NULL) {
-    AsmWriteMsr64 (MSR_IA32_SMRR_PHYSBASE, ((SMRR_BASE_MASK *)ProcedureArgument)->Base);
-    AsmWriteMsr64 (MSR_IA32_SMRR_PHYSMASK, ((SMRR_BASE_MASK *)ProcedureArgument)->Mask);
+    AsmWriteMsr64 (
+      MSR_IA32_SMRR_PHYSBASE,
+      ((SMRR_BASE_MASK *)ProcedureArgument)->Base
+      );
+    AsmWriteMsr64 (
+      MSR_IA32_SMRR_PHYSMASK,
+      ((SMRR_BASE_MASK *)ProcedureArgument)->Mask
+      );
   }
 }
 
@@ -217,17 +257,28 @@ SetSmrrOnS3 (
   UINT32          SmmBase;
   UINT32          SmmSize;
 
-  if ((AsmReadMsr64 (MSR_IA32_SMRR_PHYSBASE) != 0) && ((AsmReadMsr64 (MSR_IA32_SMRR_PHYSMASK) & BIT11) != 0)) {
+  if ((AsmReadMsr64 (MSR_IA32_SMRR_PHYSBASE) != 0) && ((AsmReadMsr64 (
+                                                          MSR_IA32_SMRR_PHYSMASK
+                                                          ) & BIT11) != 0))
+  {
     return;
   }
 
   SmmBase = (UINT32)(UINTN)mSmramHob->Descriptor[0].PhysicalStart;
   SmmSize = (UINT32)(UINTN)mSmramHob->Descriptor[0].PhysicalSize;
-  if ((mSmramHob->NumberOfSmmReservedRegions > 2) || (mSmramHob->NumberOfSmmReservedRegions == 0)) {
-    DEBUG ((DEBUG_ERROR, "%d SMM ranges are not supported.\n", mSmramHob->NumberOfSmmReservedRegions));
+  if ((mSmramHob->NumberOfSmmReservedRegions > 2) ||
+      (mSmramHob->NumberOfSmmReservedRegions == 0))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "%d SMM ranges are not supported.\n",
+      mSmramHob->NumberOfSmmReservedRegions
+      ));
     return;
   } else if (mSmramHob->NumberOfSmmReservedRegions == 2) {
-    if ((mSmramHob->Descriptor[1].PhysicalStart + mSmramHob->Descriptor[1].PhysicalSize) == SmmBase) {
+    if ((mSmramHob->Descriptor[1].PhysicalStart +
+         mSmramHob->Descriptor[1].PhysicalSize) == SmmBase)
+    {
       SmmBase = (UINT32)(UINTN)mSmramHob->Descriptor[1].PhysicalStart;
     } else if (mSmramHob->Descriptor[1].PhysicalStart != (SmmBase + SmmSize)) {
       DEBUG ((DEBUG_ERROR, "Two SMM regions are not continous.\n"));
@@ -246,7 +297,9 @@ SetSmrrOnS3 (
   // SMRR size must be of length 2^n
   // SMRR base alignment cannot be less than SMRR length
   //
-  if ((SmmSize != GetPowerOfTwo32 (SmmSize)) || ((SmmBase & ~(SmmSize - 1)) != SmmBase)) {
+  if ((SmmSize != GetPowerOfTwo32 (SmmSize)) || ((SmmBase & ~(SmmSize - 1)) !=
+                                                 SmmBase))
+  {
     DEBUG ((DEBUG_ERROR, " Invalid SMM range.\n"));
     return;
   }
@@ -270,7 +323,12 @@ SetSmrrOnS3 (
     if (Index != gSmst->CurrentlyExecutingCpu) {
       Status = gSmst->SmmStartupThisAp (SetSmrr, Index, (VOID *)&Arguments);
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "Programming SMRR on AP# %d status: %r\n", Index, Status));
+        DEBUG ((
+          DEBUG_ERROR,
+          "Programming SMRR on AP# %d status: %r\n",
+          Index,
+          Status
+          ));
       }
     }
   }
@@ -406,13 +464,22 @@ BlSupportSmm (
   //
   // Get the Sw dispatch protocol and register SMI handler.
   //
-  Status = gSmst->SmmLocateProtocol (&gEfiSmmSwDispatch2ProtocolGuid, NULL, (VOID **)&SwDispatch);
+  Status = gSmst->SmmLocateProtocol (
+                    &gEfiSmmSwDispatch2ProtocolGuid,
+                    NULL,
+                    (VOID **)&SwDispatch
+                    );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   SwContext.SwSmiInputValue = (UINTN)-1;
-  Status                    = SwDispatch->Register (SwDispatch, BlSwSmiHandler, &SwContext, &SwHandle);
+  Status                    = SwDispatch->Register (
+                                            SwDispatch,
+                                            BlSwSmiHandler,
+                                            &SwContext,
+                                            &SwHandle
+                                            );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Registering S3 smi handler failed: %r\n", Status));
     return Status;

@@ -55,18 +55,26 @@ InstallFvbProtocol (
     //
     // FV does not contains extension header, then produce MEMMAP_DEVICE_PATH
     //
-    TempPtr               = AllocateRuntimeCopyPool (sizeof (FV_MEMMAP_DEVICE_PATH), &mFvMemmapDevicePathTemplate);
+    TempPtr = AllocateRuntimeCopyPool (
+                sizeof (FV_MEMMAP_DEVICE_PATH),
+                &mFvMemmapDevicePathTemplate
+                );
     FvbDevice->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)TempPtr;
     if (FvbDevice->DevicePath == NULL) {
       ASSERT (FALSE);
       return EFI_OUT_OF_RESOURCES;
     }
 
-    FvDevicePath                                = (FV_MEMMAP_DEVICE_PATH *)FvbDevice->DevicePath;
+    FvDevicePath =
+      (FV_MEMMAP_DEVICE_PATH *)FvbDevice->DevicePath;
     FvDevicePath->MemMapDevPath.StartingAddress = FwhInstance->FvBase;
-    FvDevicePath->MemMapDevPath.EndingAddress   = FwhInstance->FvBase + FwVolHeader->FvLength - 1;
+    FvDevicePath->MemMapDevPath.EndingAddress   = FwhInstance->FvBase +
+                                                  FwVolHeader->FvLength - 1;
   } else {
-    TempPtr               = AllocateRuntimeCopyPool (sizeof (FV_PIWG_DEVICE_PATH), &mFvPIWGDevicePathTemplate);
+    TempPtr = AllocateRuntimeCopyPool (
+                sizeof (FV_PIWG_DEVICE_PATH),
+                &mFvPIWGDevicePathTemplate
+                );
     FvbDevice->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *)TempPtr;
     if (FvbDevice->DevicePath == NULL) {
       ASSERT (FALSE);

@@ -140,7 +140,8 @@ SerialPortInitialize (
 
   GuidHob = GetFirstGuidHob (&gUniversalPayloadSerialPortInfoGuid);
   while (GuidHob != NULL) {
-    SerialPortInfo     = (UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO *)GET_GUID_HOB_DATA (GuidHob);
+    SerialPortInfo =
+      (UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO *)GET_GUID_HOB_DATA (GuidHob);
     SerialRegisterBase = SerialPortInfo->RegisterBase;
     MmioEnable         = SerialPortInfo->UseMmio;
     BaudRate           = SerialPortInfo->BaudRate;
@@ -167,16 +168,54 @@ SerialPortInitialize (
     // See if the serial port is already initialized
     //
     Initialized = TRUE;
-    if ((SerialPortReadRegister (SerialRegisterBase, R_UART_LCR, MmioEnable, RegisterStride) & 0x3F) != (PcdGet8 (PcdSerialLineControl) & 0x3F)) {
+    if ((SerialPortReadRegister (
+           SerialRegisterBase,
+           R_UART_LCR,
+           MmioEnable,
+           RegisterStride
+           ) & 0x3F) != (PcdGet8 (PcdSerialLineControl) & 0x3F))
+    {
       Initialized = FALSE;
     }
 
-    Value = (UINT8)(SerialPortReadRegister (SerialRegisterBase, R_UART_LCR, MmioEnable, RegisterStride) | B_UART_LCR_DLAB);
-    SerialPortWriteRegister (SerialRegisterBase, R_UART_LCR, Value, MmioEnable, RegisterStride);
-    CurrentDivisor  =  SerialPortReadRegister (SerialRegisterBase, R_UART_BAUD_HIGH, MmioEnable, RegisterStride) << 8;
-    CurrentDivisor |= (UINT32)SerialPortReadRegister (SerialRegisterBase, R_UART_BAUD_LOW, MmioEnable, RegisterStride);
-    Value           = (UINT8)(SerialPortReadRegister (SerialRegisterBase, R_UART_LCR, MmioEnable, RegisterStride) & ~B_UART_LCR_DLAB);
-    SerialPortWriteRegister (SerialRegisterBase, R_UART_LCR, Value, MmioEnable, RegisterStride);
+    Value = (UINT8)(SerialPortReadRegister (
+                      SerialRegisterBase,
+                      R_UART_LCR,
+                      MmioEnable,
+                      RegisterStride
+                      ) | B_UART_LCR_DLAB);
+    SerialPortWriteRegister (
+      SerialRegisterBase,
+      R_UART_LCR,
+      Value,
+      MmioEnable,
+      RegisterStride
+      );
+    CurrentDivisor =  SerialPortReadRegister (
+                        SerialRegisterBase,
+                        R_UART_BAUD_HIGH,
+                        MmioEnable,
+                        RegisterStride
+                        ) << 8;
+    CurrentDivisor |= (UINT32)SerialPortReadRegister (
+                                SerialRegisterBase,
+                                R_UART_BAUD_LOW,
+                                MmioEnable,
+                                RegisterStride
+                                );
+    Value = (UINT8)(SerialPortReadRegister (
+                      SerialRegisterBase,
+                      R_UART_LCR,
+                      MmioEnable,
+                      RegisterStride
+                      ) & ~B_UART_LCR_DLAB);
+    SerialPortWriteRegister (
+      SerialRegisterBase,
+      R_UART_LCR,
+      Value,
+      MmioEnable,
+      RegisterStride
+      );
     if (CurrentDivisor != Divisor) {
       Initialized = FALSE;
     }
@@ -190,32 +229,84 @@ SerialPortInitialize (
     //
     // Configure baud rate
     //
-    SerialPortWriteRegister (SerialRegisterBase, R_UART_LCR, B_UART_LCR_DLAB, MmioEnable, RegisterStride);
-    SerialPortWriteRegister (SerialRegisterBase, R_UART_BAUD_HIGH, (UINT8)(Divisor >> 8), MmioEnable, RegisterStride);
-    SerialPortWriteRegister (SerialRegisterBase, R_UART_BAUD_LOW, (UINT8)(Divisor & 0xff), MmioEnable, RegisterStride);
+    SerialPortWriteRegister (
+      SerialRegisterBase,
+      R_UART_LCR,
+      B_UART_LCR_DLAB,
+      MmioEnable,
+      RegisterStride
+      );
+    SerialPortWriteRegister (
+      SerialRegisterBase,
+      R_UART_BAUD_HIGH,
+      (UINT8)(Divisor >> 8),
+      MmioEnable,
+      RegisterStride
+      );
+    SerialPortWriteRegister (
+      SerialRegisterBase,
+      R_UART_BAUD_LOW,
+      (UINT8)(Divisor & 0xff),
+      MmioEnable,
+      RegisterStride
+      );
 
     //
     // Clear DLAB and configure Data Bits, Parity, and Stop Bits.
     // Strip reserved bits from PcdSerialLineControl
     //
-    SerialPortWriteRegister (SerialRegisterBase, R_UART_LCR, (UINT8)(PcdGet8 (PcdSerialLineControl) & 0x3F), MmioEnable, RegisterStride);
+    SerialPortWriteRegister (
+      SerialRegisterBase,
+      R_UART_LCR,
+      (UINT8)(PcdGet8 (
+                PcdSerialLineControl
+                ) & 0x3F),
+      MmioEnable,
+      RegisterStride
+      );
 
     //
     // Enable and reset FIFOs
     // Strip reserved bits from PcdSerialFifoControl
     //
-    SerialPortWriteRegister (SerialRegisterBase, R_UART_FCR, 0x00, MmioEnable, RegisterStride);
-    SerialPortWriteRegister (SerialRegisterBase, R_UART_FCR, (UINT8)(PcdGet8 (PcdSerialFifoControl) & (B_UART_FCR_FIFOE | B_UART_FCR_FIFO64)), MmioEnable, RegisterStride);
+    SerialPortWriteRegister (
+      SerialRegisterBase,
+      R_UART_FCR,
+      0x00,
+      MmioEnable,
+      RegisterStride
+      );
+    SerialPortWriteRegister (
+      SerialRegisterBase,
+      R_UART_FCR,
+      (UINT8)(PcdGet8 (
+                PcdSerialFifoControl
+                ) & (B_UART_FCR_FIFOE | B_UART_FCR_FIFO64)),
+      MmioEnable,
+      RegisterStride
+      );
 
     //
     // Set FIFO Polled Mode by clearing IER after setting FCR
     //
-    SerialPortWriteRegister (SerialRegisterBase, R_UART_IER, 0x00, MmioEnable, RegisterStride);
+    SerialPortWriteRegister (
+      SerialRegisterBase,
+      R_UART_IER,
+      0x00,
+      MmioEnable,
+      RegisterStride
+      );
 
     //
     // Put Modem Control Register(MCR) into its reset state of 0x00.
     //
-    SerialPortWriteRegister (SerialRegisterBase, R_UART_MCR, 0x00, MmioEnable, RegisterStride);
+    SerialPortWriteRegister (
+      SerialRegisterBase,
+      R_UART_MCR,
+      0x00,
+      MmioEnable,
+      RegisterStride
+      );
 
     GuidHob = GET_NEXT_HOB (GuidHob);
     GuidHob = GetNextGuidHob (&gUniversalPayloadSerialPortInfoGuid, GuidHob);
@@ -293,11 +384,19 @@ SerialPortWrite (
       //
       // Fill the entire Tx FIFO
       //
-      for (Index = 0; Index < FifoSize && BytesLeft != 0; Index++, BytesLeft--, DataBuffer++) {
+      for (Index = 0; Index < FifoSize && BytesLeft != 0; Index++, BytesLeft--,
+           DataBuffer++)
+      {
         //
         // Write byte to the transmit buffer.
         //
-        SerialPortWriteRegister (BaseAddress, R_UART_TXBUF, *DataBuffer, UseMmio, Stride);
+        SerialPortWriteRegister (
+          BaseAddress,
+          R_UART_TXBUF,
+          *DataBuffer,
+          UseMmio,
+          Stride
+          );
       }
 
       MicroSecondDelay (20);
@@ -354,18 +453,36 @@ SerialPortRead (
     DataBuffer = Buffer;
     BytesLeft  = NumberOfBytes;
 
-    Mcr = (UINT8)(SerialPortReadRegister (BaseAddress, R_UART_MCR, UseMmio, Stride) & ~B_UART_MCR_RTS);
+    Mcr = (UINT8)(SerialPortReadRegister (
+                    BaseAddress,
+                    R_UART_MCR,
+                    UseMmio,
+                    Stride
+                    ) & ~B_UART_MCR_RTS);
 
     for (Result = 0; BytesLeft-- != 0; Result++, DataBuffer++) {
       //
       // Wait for the serial port to have some data.
       //
-      while ((SerialPortReadRegister (BaseAddress, R_UART_LSR, UseMmio, Stride) & B_UART_LSR_RXRDY) == 0) {
+      while ((SerialPortReadRegister (
+                BaseAddress,
+                R_UART_LSR,
+                UseMmio,
+                Stride
+                ) & B_UART_LSR_RXRDY) == 0)
+      {
         if (PcdGetBool (PcdSerialUseHardwareFlowControl)) {
           //
           // Set RTS to let the peer send some data
           //
-          SerialPortWriteRegister (BaseAddress, R_UART_MCR, (UINT8)(Mcr | B_UART_MCR_RTS), UseMmio, Stride);
+          SerialPortWriteRegister (
+            BaseAddress,
+            R_UART_MCR,
+            (UINT8)(Mcr |
+                    B_UART_MCR_RTS),
+            UseMmio,
+            Stride
+            );
         }
       }
 
@@ -379,7 +496,12 @@ SerialPortRead (
       //
       // Read byte from the receive buffer.
       //
-      *DataBuffer = SerialPortReadRegister (BaseAddress, R_UART_RXBUF, UseMmio, Stride);
+      *DataBuffer = SerialPortReadRegister (
+                      BaseAddress,
+                      R_UART_RXBUF,
+                      UseMmio,
+                      Stride
+                      );
     }
 
     Count++;
@@ -428,12 +550,25 @@ SerialPortPoll (
     //
     // Read the serial port status
     //
-    if ((SerialPortReadRegister (BaseAddress, R_UART_LSR, UseMmio, Stride) & B_UART_LSR_RXRDY) != 0) {
+    if ((SerialPortReadRegister (BaseAddress, R_UART_LSR, UseMmio, Stride) &
+         B_UART_LSR_RXRDY) != 0)
+    {
       if (PcdGetBool (PcdSerialUseHardwareFlowControl)) {
         //
         // Clear RTS to prevent peer from sending data
         //
-        SerialPortWriteRegister (BaseAddress, R_UART_MCR, (UINT8)(SerialPortReadRegister (BaseAddress, R_UART_MCR, UseMmio, Stride) & ~B_UART_MCR_RTS), UseMmio, Stride);
+        SerialPortWriteRegister (
+          BaseAddress,
+          R_UART_MCR,
+          (UINT8)(SerialPortReadRegister (
+                    BaseAddress,
+                    R_UART_MCR,
+                    UseMmio,
+                    Stride
+                    ) & ~B_UART_MCR_RTS),
+          UseMmio,
+          Stride
+          );
       }
 
       Status = TRUE;
@@ -443,7 +578,18 @@ SerialPortPoll (
       //
       // Set RTS to let the peer send some data
       //
-      SerialPortWriteRegister (BaseAddress, R_UART_MCR, (UINT8)(SerialPortReadRegister (BaseAddress, R_UART_MCR, UseMmio, Stride) | B_UART_MCR_RTS), UseMmio, Stride);
+      SerialPortWriteRegister (
+        BaseAddress,
+        R_UART_MCR,
+        (UINT8)(SerialPortReadRegister (
+                  BaseAddress,
+                  R_UART_MCR,
+                  UseMmio,
+                  Stride
+                  ) | B_UART_MCR_RTS),
+        UseMmio,
+        Stride
+        );
     }
 
     Count++;
@@ -486,7 +632,8 @@ SerialPortSetControl (
     //
     // First determine the parameter is invalid.
     //
-    if ((Control & (~(EFI_SERIAL_REQUEST_TO_SEND | EFI_SERIAL_DATA_TERMINAL_READY |
+    if ((Control & (~(EFI_SERIAL_REQUEST_TO_SEND |
+                      EFI_SERIAL_DATA_TERMINAL_READY |
                       EFI_SERIAL_HARDWARE_FLOW_CONTROL_ENABLE))) != 0)
     {
       Count++;
@@ -499,7 +646,9 @@ SerialPortSetControl (
     Mcr  = SerialPortReadRegister (BaseAddress, R_UART_MCR, UseMmio, Stride);
     Mcr &= (~(B_UART_MCR_DTRC | B_UART_MCR_RTS));
 
-    if ((Control & EFI_SERIAL_DATA_TERMINAL_READY) == EFI_SERIAL_DATA_TERMINAL_READY) {
+    if ((Control & EFI_SERIAL_DATA_TERMINAL_READY) ==
+        EFI_SERIAL_DATA_TERMINAL_READY)
+    {
       Mcr |= B_UART_MCR_DTRC;
     }
 
@@ -595,7 +744,9 @@ SerialPortGetControl (
     //
     Lsr = SerialPortReadRegister (BaseAddress, R_UART_LSR, UseMmio, Stride);
 
-    if ((Lsr & (B_UART_LSR_TEMT | B_UART_LSR_TXRDY)) == (B_UART_LSR_TEMT | B_UART_LSR_TXRDY)) {
+    if ((Lsr & (B_UART_LSR_TEMT | B_UART_LSR_TXRDY)) == (B_UART_LSR_TEMT |
+                                                         B_UART_LSR_TXRDY))
+    {
       *Control |= EFI_SERIAL_OUTPUT_BUFFER_EMPTY;
     }
 
@@ -791,23 +942,51 @@ SerialPortSetAttributes (
     //    Ref_Clk_Rate / Baud_Rate / 16
     //
     Divisor = PcdGet32 (PcdSerialClockRate) / (SerialBaudRate * 16);
-    if ((PcdGet32 (PcdSerialClockRate) % (SerialBaudRate * 16)) >= SerialBaudRate * 8) {
+    if ((PcdGet32 (PcdSerialClockRate) % (SerialBaudRate * 16)) >=
+        SerialBaudRate * 8)
+    {
       Divisor++;
     }
 
     //
     // Configure baud rate
     //
-    SerialPortWriteRegister (BaseAddress, R_UART_LCR, B_UART_LCR_DLAB, UseMmio, Stride);
-    SerialPortWriteRegister (BaseAddress, R_UART_BAUD_HIGH, (UINT8)(Divisor >> 8), UseMmio, Stride);
-    SerialPortWriteRegister (BaseAddress, R_UART_BAUD_LOW, (UINT8)(Divisor & 0xff), UseMmio, Stride);
+    SerialPortWriteRegister (
+      BaseAddress,
+      R_UART_LCR,
+      B_UART_LCR_DLAB,
+      UseMmio,
+      Stride
+      );
+    SerialPortWriteRegister (
+      BaseAddress,
+      R_UART_BAUD_HIGH,
+      (UINT8)(Divisor >>
+              8),
+      UseMmio,
+      Stride
+      );
+    SerialPortWriteRegister (
+      BaseAddress,
+      R_UART_BAUD_LOW,
+      (UINT8)(Divisor &
+              0xff),
+      UseMmio,
+      Stride
+      );
 
     //
     // Clear DLAB and configure Data Bits, Parity, and Stop Bits.
     // Strip reserved bits from line control value
     //
     Lcr = (UINT8)((LcrParity << 3) | (LcrStop << 2) | LcrData);
-    SerialPortWriteRegister (BaseAddress, R_UART_LCR, (UINT8)(Lcr & 0x3F), UseMmio, Stride);
+    SerialPortWriteRegister (
+      BaseAddress,
+      R_UART_LCR,
+      (UINT8)(Lcr & 0x3F),
+      UseMmio,
+      Stride
+      );
     Count++;
   }
 

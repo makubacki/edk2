@@ -105,7 +105,9 @@ PcatPciRootBridgeParseBars (
   UINT64                    Limit;
   PCI_ROOT_BRIDGE_APERTURE  *MemAperture;
 
-  for (Offset = BarOffsetBase; Offset < BarOffsetEnd; Offset += sizeof (UINT32)) {
+  for (Offset = BarOffsetBase; Offset < BarOffsetEnd; Offset +=
+         sizeof (UINT32))
+  {
     PcatPciRootBridgeBarExisted (
       PCI_LIB_ADDRESS (Bus, Device, Function, Offset),
       &OriginalValue,
@@ -566,20 +568,56 @@ RetrieveRootBridgeInfoFromHob (
   // Create all root bridges with PciRootBridgeInfoHob
   //
   for (Index = 0; Index < PciRootBridgeInfo->Count; Index++) {
-    PciRootBridges[Index].Segment               = PciRootBridgeInfo->RootBridge[Index].Segment;
-    PciRootBridges[Index].Supports              = PciRootBridgeInfo->RootBridge[Index].Supports;
-    PciRootBridges[Index].Attributes            = PciRootBridgeInfo->RootBridge[Index].Attributes;
-    PciRootBridges[Index].DmaAbove4G            = PciRootBridgeInfo->RootBridge[Index].DmaAbove4G;
-    PciRootBridges[Index].NoExtendedConfigSpace = PciRootBridgeInfo->RootBridge[Index].NoExtendedConfigSpace;
-    PciRootBridges[Index].ResourceAssigned      = PciRootBridgeInfo->ResourceAssigned;
-    PciRootBridges[Index].AllocationAttributes  = PciRootBridgeInfo->RootBridge[Index].AllocationAttributes;
-    PciRootBridges[Index].DevicePath            = CreateRootBridgeDevicePath (PciRootBridgeInfo->RootBridge[Index].HID, PciRootBridgeInfo->RootBridge[Index].UID);
-    CopyMem (&PciRootBridges[Index].Bus, &PciRootBridgeInfo->RootBridge[Index].Bus, sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE_APERTURE));
-    CopyMem (&PciRootBridges[Index].Io, &PciRootBridgeInfo->RootBridge[Index].Io, sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE_APERTURE));
-    CopyMem (&PciRootBridges[Index].Mem, &PciRootBridgeInfo->RootBridge[Index].Mem, sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE_APERTURE));
-    CopyMem (&PciRootBridges[Index].MemAbove4G, &PciRootBridgeInfo->RootBridge[Index].MemAbove4G, sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE_APERTURE));
-    CopyMem (&PciRootBridges[Index].PMem, &PciRootBridgeInfo->RootBridge[Index].PMem, sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE_APERTURE));
-    CopyMem (&PciRootBridges[Index].PMemAbove4G, &PciRootBridgeInfo->RootBridge[Index].PMemAbove4G, sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE_APERTURE));
+    PciRootBridges[Index].Segment =
+      PciRootBridgeInfo->RootBridge[Index].Segment;
+    PciRootBridges[Index].Supports =
+      PciRootBridgeInfo->RootBridge[Index].Supports;
+    PciRootBridges[Index].Attributes =
+      PciRootBridgeInfo->RootBridge[Index].Attributes;
+    PciRootBridges[Index].DmaAbove4G =
+      PciRootBridgeInfo->RootBridge[Index].DmaAbove4G;
+    PciRootBridges[Index].NoExtendedConfigSpace =
+      PciRootBridgeInfo->RootBridge[Index].NoExtendedConfigSpace;
+    PciRootBridges[Index].ResourceAssigned =
+      PciRootBridgeInfo->ResourceAssigned;
+    PciRootBridges[Index].AllocationAttributes =
+      PciRootBridgeInfo->RootBridge[Index].AllocationAttributes;
+    PciRootBridges[Index].DevicePath = CreateRootBridgeDevicePath (
+                                         PciRootBridgeInfo->RootBridge[Index].
+                                           HID,
+                                         PciRootBridgeInfo->RootBridge[Index].
+                                           UID
+                                         );
+    CopyMem (
+      &PciRootBridges[Index].Bus,
+      &PciRootBridgeInfo->RootBridge[Index].Bus,
+      sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE_APERTURE)
+      );
+    CopyMem (
+      &PciRootBridges[Index].Io,
+      &PciRootBridgeInfo->RootBridge[Index].Io,
+      sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE_APERTURE)
+      );
+    CopyMem (
+      &PciRootBridges[Index].Mem,
+      &PciRootBridgeInfo->RootBridge[Index].Mem,
+      sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE_APERTURE)
+      );
+    CopyMem (
+      &PciRootBridges[Index].MemAbove4G,
+      &PciRootBridgeInfo->RootBridge[Index].MemAbove4G,
+      sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE_APERTURE)
+      );
+    CopyMem (
+      &PciRootBridges[Index].PMem,
+      &PciRootBridgeInfo->RootBridge[Index].PMem,
+      sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE_APERTURE)
+      );
+    CopyMem (
+      &PciRootBridges[Index].PMemAbove4G,
+      &PciRootBridgeInfo->RootBridge[Index].PMemAbove4G,
+      sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE_APERTURE)
+      );
   }
 
   *NumberOfRootBridges = PciRootBridgeInfo->Count;
@@ -590,7 +628,10 @@ RetrieveRootBridgeInfoFromHob (
   if (PciRootBridgeInfo->ResourceAssigned) {
     PcdSetBoolS (PcdPciDisableBusEnumeration, TRUE);
   } else {
-    DEBUG ((DEBUG_INFO, "There is root bridge whose ResourceAssigned is FALSE\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "There is root bridge whose ResourceAssigned is FALSE\n"
+      ));
     PcdSetBoolS (PcdPciDisableBusEnumeration, FALSE);
   }
 

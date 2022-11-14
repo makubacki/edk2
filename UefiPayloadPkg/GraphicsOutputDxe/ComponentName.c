@@ -17,7 +17,8 @@ extern EFI_COMPONENT_NAME2_PROTOCOL  mGraphicsOutputComponentName2;
 // Driver name table for GraphicsOutput module.
 // It is shared by the implementation of ComponentName & ComponentName2 Protocol.
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE  mGraphicsOutputDriverNameTable[] = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
+  mGraphicsOutputDriverNameTable[] = {
   {
     "eng;en",
     L"Generic Graphics Output Driver"
@@ -168,7 +169,8 @@ GraphicsOutputComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  mGraphicsOutputComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL
+  mGraphicsOutputComponentName = {
   GraphicsOutputComponentNameGetDriverName,
   GraphicsOutputComponentNameGetControllerName,
   "eng"
@@ -177,8 +179,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  mGraphicsOutputCompon
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL  mGraphicsOutputComponentName2 = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
+  mGraphicsOutputComponentName2 = {
   (EFI_COMPONENT_NAME2_GET_DRIVER_NAME)GraphicsOutputComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)GraphicsOutputComponentNameGetControllerName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME)
+  GraphicsOutputComponentNameGetControllerName,
   "en"
 };

@@ -69,9 +69,20 @@ FixUpPcdDatabase (
   }
 
   PeiDatabase = (PEI_PCD_DATABASE *)GET_GUID_HOB_DATA (GuidHob);
-  DEBUG ((DEBUG_INFO, "Find the Pei PCD data base, the total local token number is %d\n", PeiDatabase->LocalTokenCount));
+  DEBUG ((
+    DEBUG_INFO,
+    "Find the Pei PCD data base, the total local token number is %d\n",
+    PeiDatabase->LocalTokenCount
+    ));
 
-  Status = FvFindFileByTypeGuid (DxeFv, EFI_FV_FILETYPE_DRIVER, PcdGetPtr (PcdPcdDriverFile), &FileHeader);
+  Status = FvFindFileByTypeGuid (
+             DxeFv,
+             EFI_FV_FILETYPE_DRIVER,
+             PcdGetPtr (
+               PcdPcdDriverFile
+               ),
+             &FileHeader
+             );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     return Status;
@@ -84,7 +95,8 @@ FixUpPcdDatabase (
   }
 
   UplDatabase = (PEI_PCD_DATABASE *)PcdRawData;
-  ExMapTable  = (DYNAMICEX_MAPPING *)(UINTN)((UINTN)PcdRawData + UplDatabase->ExMapTableOffset);
+  ExMapTable  = (DYNAMICEX_MAPPING *)(UINTN)((UINTN)PcdRawData +
+                                             UplDatabase->ExMapTableOffset);
 
   for (Index = 0; Index < UplDatabase->ExTokenCount; Index++) {
     ExMapTable[Index].TokenNumber += PeiDatabase->LocalTokenCount;
@@ -113,7 +125,12 @@ AddNewHob (
   NewHob.Header = CreateHob (Hob->Header->HobType, Hob->Header->HobLength);
 
   if (NewHob.Header != NULL) {
-    CopyMem (NewHob.Header + 1, Hob->Header + 1, Hob->Header->HobLength - sizeof (EFI_HOB_GENERIC_HEADER));
+    CopyMem (
+      NewHob.Header + 1,
+      Hob->Header + 1,
+      Hob->Header->HobLength -
+      sizeof (EFI_HOB_GENERIC_HEADER)
+      );
   }
 }
 
@@ -136,7 +153,9 @@ FindResourceDescriptorByRange (
   EFI_PEI_HOB_POINTERS         Hob;
   EFI_HOB_RESOURCE_DESCRIPTOR  *ResourceHob;
 
-  for (Hob.Raw = (UINT8 *)HobList; !END_OF_HOB_LIST (Hob); Hob.Raw = GET_NEXT_HOB (Hob)) {
+  for (Hob.Raw = (UINT8 *)HobList; !END_OF_HOB_LIST (Hob); Hob.Raw =
+         GET_NEXT_HOB (Hob))
+  {
     //
     // Skip all HOBs except Resource Descriptor HOBs
     //
@@ -152,7 +171,9 @@ FindResourceDescriptorByRange (
       continue;
     }
 
-    if ((ResourceHob->ResourceAttribute & MEMORY_ATTRIBUTE_MASK) != TESTED_MEMORY_ATTRIBUTES) {
+    if ((ResourceHob->ResourceAttribute & MEMORY_ATTRIBUTE_MASK) !=
+        TESTED_MEMORY_ATTRIBUTES)
+    {
       continue;
     }
 
@@ -195,7 +216,9 @@ FindAnotherHighestBelow4GResourceDescriptor (
 
   ReturnResourceHob = NULL;
 
-  for (Hob.Raw = (UINT8 *)HobList; !END_OF_HOB_LIST (Hob); Hob.Raw = GET_NEXT_HOB (Hob)) {
+  for (Hob.Raw = (UINT8 *)HobList; !END_OF_HOB_LIST (Hob); Hob.Raw =
+         GET_NEXT_HOB (Hob))
+  {
     //
     // Skip all HOBs except Resource Descriptor HOBs
     //
@@ -211,7 +234,9 @@ FindAnotherHighestBelow4GResourceDescriptor (
       continue;
     }
 
-    if ((ResourceHob->ResourceAttribute & MEMORY_ATTRIBUTE_MASK) != TESTED_MEMORY_ATTRIBUTES) {
+    if ((ResourceHob->ResourceAttribute & MEMORY_ATTRIBUTE_MASK) !=
+        TESTED_MEMORY_ATTRIBUTES)
+    {
       continue;
     }
 
@@ -272,7 +297,11 @@ IsHobNeed (
   }
 
   if (Hob.Header->HobType == EFI_HOB_TYPE_MEMORY_ALLOCATION) {
-    if (CompareGuid (&Hob.MemoryAllocationModule->MemoryAllocationHeader.Name, &gEfiHobMemoryAllocModuleGuid)) {
+    if (CompareGuid (
+          &Hob.MemoryAllocationModule->MemoryAllocationHeader.Name,
+          &gEfiHobMemoryAllocModuleGuid
+          ))
+    {
       return FALSE;
     }
   }
@@ -315,29 +344,52 @@ BuildHobs (
   MinimalNeededSize = FixedPcdGet32 (PcdSystemMemoryUefiRegionSize);
 
   ASSERT (Hob.Raw != NULL);
-  ASSERT ((UINTN)Hob.HandoffInformationTable->EfiFreeMemoryTop == Hob.HandoffInformationTable->EfiFreeMemoryTop);
-  ASSERT ((UINTN)Hob.HandoffInformationTable->EfiMemoryTop == Hob.HandoffInformationTable->EfiMemoryTop);
-  ASSERT ((UINTN)Hob.HandoffInformationTable->EfiFreeMemoryBottom == Hob.HandoffInformationTable->EfiFreeMemoryBottom);
-  ASSERT ((UINTN)Hob.HandoffInformationTable->EfiMemoryBottom == Hob.HandoffInformationTable->EfiMemoryBottom);
+  ASSERT (
+    (UINTN)Hob.HandoffInformationTable->EfiFreeMemoryTop ==
+    Hob.HandoffInformationTable->EfiFreeMemoryTop
+    );
+  ASSERT (
+    (UINTN)Hob.HandoffInformationTable->EfiMemoryTop ==
+    Hob.HandoffInformationTable->EfiMemoryTop
+    );
+  ASSERT (
+    (UINTN)Hob.HandoffInformationTable->EfiFreeMemoryBottom ==
+    Hob.HandoffInformationTable->EfiFreeMemoryBottom
+    );
+  ASSERT (
+    (UINTN)Hob.HandoffInformationTable->EfiMemoryBottom ==
+    Hob.HandoffInformationTable->EfiMemoryBottom
+    );
 
   //
   // Try to find Resource Descriptor HOB that contains Hob range EfiMemoryBottom..EfiMemoryTop
   //
-  PhitResourceHob = FindResourceDescriptorByRange (Hob.Raw, Hob.HandoffInformationTable->EfiMemoryBottom, Hob.HandoffInformationTable->EfiMemoryTop);
+  PhitResourceHob = FindResourceDescriptorByRange (
+                      Hob.Raw,
+                      Hob.HandoffInformationTable->EfiMemoryBottom,
+                      Hob.HandoffInformationTable->EfiMemoryTop
+                      );
   if (PhitResourceHob == NULL) {
     //
     // Boot loader's Phit Hob is not in an available Resource Descriptor, find another Resource Descriptor for new Phit Hob
     //
-    ResourceHob = FindAnotherHighestBelow4GResourceDescriptor (Hob.Raw, MinimalNeededSize, NULL);
+    ResourceHob = FindAnotherHighestBelow4GResourceDescriptor (
+                    Hob.Raw,
+                    MinimalNeededSize,
+                    NULL
+                    );
     if (ResourceHob == NULL) {
       return EFI_NOT_FOUND;
     }
 
-    MemoryBottom     = ResourceHob->PhysicalStart + ResourceHob->ResourceLength - MinimalNeededSize;
+    MemoryBottom = ResourceHob->PhysicalStart +
+                   ResourceHob->ResourceLength - MinimalNeededSize;
     FreeMemoryBottom = MemoryBottom;
     FreeMemoryTop    = ResourceHob->PhysicalStart + ResourceHob->ResourceLength;
     MemoryTop        = FreeMemoryTop;
-  } else if (PhitResourceHob->PhysicalStart + PhitResourceHob->ResourceLength - Hob.HandoffInformationTable->EfiMemoryTop >= MinimalNeededSize) {
+  } else if (PhitResourceHob->PhysicalStart + PhitResourceHob->ResourceLength -
+             Hob.HandoffInformationTable->EfiMemoryTop >= MinimalNeededSize)
+  {
     //
     // New availiable Memory range in new hob is right above memory top in old hob.
     //
@@ -345,11 +397,14 @@ BuildHobs (
     FreeMemoryBottom = Hob.HandoffInformationTable->EfiMemoryTop;
     FreeMemoryTop    = FreeMemoryBottom + MinimalNeededSize;
     MemoryTop        = FreeMemoryTop;
-  } else if (Hob.HandoffInformationTable->EfiMemoryBottom - PhitResourceHob->PhysicalStart >= MinimalNeededSize) {
+  } else if (Hob.HandoffInformationTable->EfiMemoryBottom -
+             PhitResourceHob->PhysicalStart >= MinimalNeededSize)
+  {
     //
     // New availiable Memory range in new hob is right below memory bottom in old hob.
     //
-    MemoryBottom     = Hob.HandoffInformationTable->EfiMemoryBottom - MinimalNeededSize;
+    MemoryBottom = Hob.HandoffInformationTable->EfiMemoryBottom -
+                   MinimalNeededSize;
     FreeMemoryBottom = MemoryBottom;
     FreeMemoryTop    = Hob.HandoffInformationTable->EfiMemoryBottom;
     MemoryTop        = Hob.HandoffInformationTable->EfiMemoryTop;
@@ -358,18 +413,28 @@ BuildHobs (
     // In the Resource Descriptor HOB contains boot loader Hob, there is no enough free memory size for payload hob
     // Find another Resource Descriptor Hob
     //
-    ResourceHob = FindAnotherHighestBelow4GResourceDescriptor (Hob.Raw, MinimalNeededSize, PhitResourceHob);
+    ResourceHob = FindAnotherHighestBelow4GResourceDescriptor (
+                    Hob.Raw,
+                    MinimalNeededSize,
+                    PhitResourceHob
+                    );
     if (ResourceHob == NULL) {
       return EFI_NOT_FOUND;
     }
 
-    MemoryBottom     = ResourceHob->PhysicalStart + ResourceHob->ResourceLength - MinimalNeededSize;
+    MemoryBottom = ResourceHob->PhysicalStart +
+                   ResourceHob->ResourceLength - MinimalNeededSize;
     FreeMemoryBottom = MemoryBottom;
     FreeMemoryTop    = ResourceHob->PhysicalStart + ResourceHob->ResourceLength;
     MemoryTop        = FreeMemoryTop;
   }
 
-  HobInfo           = HobConstructor ((VOID *)(UINTN)MemoryBottom, (VOID *)(UINTN)MemoryTop, (VOID *)(UINTN)FreeMemoryBottom, (VOID *)(UINTN)FreeMemoryTop);
+  HobInfo = HobConstructor (
+              (VOID *)(UINTN)MemoryBottom,
+              (VOID *)(UINTN)MemoryTop,
+              (VOID *)(UINTN)FreeMemoryBottom,
+              (VOID *)(UINTN)FreeMemoryTop
+              );
   HobInfo->BootMode = Hob.HandoffInformationTable->BootMode;
   //
   // From now on, mHobList will point to the new Hob range.
@@ -473,7 +538,9 @@ _ModuleEntryPoint (
   IoWrite8 (LEGACY_8259_MASK_REGISTER_MASTER, 0xFF);
   IoWrite8 (LEGACY_8259_MASK_REGISTER_SLAVE, 0xFF);
 
-  Hob.HandoffInformationTable = (EFI_HOB_HANDOFF_INFO_TABLE *)GetFirstHob (EFI_HOB_TYPE_HANDOFF);
+  Hob.HandoffInformationTable = (EFI_HOB_HANDOFF_INFO_TABLE *)GetFirstHob (
+                                                                EFI_HOB_TYPE_HANDOFF
+                                                                );
   HandOffToDxeCore (DxeCoreEntryPoint, Hob);
 
   // Should not get here

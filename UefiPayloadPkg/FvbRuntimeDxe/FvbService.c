@@ -106,7 +106,8 @@ GetFvbInstance (
   while ( Instance > 0 ) {
     FwhRecord = (EFI_FW_VOL_INSTANCE *)((UINTN)((UINT8 *)FwhRecord) +
                                         FwhRecord->VolumeHeader.HeaderLength +
-                                        (sizeof (EFI_FW_VOL_INSTANCE) - sizeof (EFI_FIRMWARE_VOLUME_HEADER)));
+                                        (sizeof (EFI_FW_VOL_INSTANCE) -
+                                         sizeof (EFI_FIRMWARE_VOLUME_HEADER)));
     Instance--;
   }
 
@@ -297,7 +298,11 @@ FvbReadBlock (
     Status    = EFI_BAD_BUFFER_SIZE;
   }
 
-  ReadStatus = LibFvbFlashDeviceRead (LbaAddress + BlockOffset, NumBytes, Buffer);
+  ReadStatus = LibFvbFlashDeviceRead (
+                 LbaAddress + BlockOffset,
+                 NumBytes,
+                 Buffer
+                 );
   if (EFI_ERROR (ReadStatus)) {
     return ReadStatus;
   }
@@ -383,7 +388,10 @@ FvbWriteBlock (
   Status = LibFvbFlashDeviceWrite (LbaAddress + BlockOffset, NumBytes, Buffer);
 
   LibFvbFlashDeviceBlockLock (LbaAddress, LbaLength, TRUE);
-  WriteBackInvalidateDataCacheRange ((VOID *)(LbaAddress + BlockOffset), *NumBytes);
+  WriteBackInvalidateDataCacheRange (
+    (VOID *)(LbaAddress + BlockOffset),
+    *NumBytes
+    );
   return Status;
 }
 
@@ -507,7 +515,9 @@ FvbSetVolumeAttributes (
   //
   // Some attributes of FV is read only can *not* be set
   //
-  if ((OldAttributes & UnchangedAttributes) ^ (*Attributes & UnchangedAttributes)) {
+  if ((OldAttributes & UnchangedAttributes) ^ (*Attributes &
+                                               UnchangedAttributes))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -629,7 +639,13 @@ FvbProtocolGetBlockSize (
   EFI_FW_VOL_BLOCK_DEVICE  *FvbDevice;
 
   FvbDevice = FVB_DEVICE_FROM_THIS (This);
-  return FvbGetLbaAddress (FvbDevice->Instance, Lba, NULL, BlockSize, NumOfBlocks);
+  return FvbGetLbaAddress (
+           FvbDevice->Instance,
+           Lba,
+           NULL,
+           BlockSize,
+           NumOfBlocks
+           );
 }
 
 /**
@@ -811,7 +827,13 @@ FvbProtocolWrite (
   EFI_STATUS               Status;
 
   FvbDevice = FVB_DEVICE_FROM_THIS (This);
-  Status    = FvbWriteBlock (FvbDevice->Instance, Lba, Offset, NumBytes, Buffer);
+  Status    = FvbWriteBlock (
+                FvbDevice->Instance,
+                Lba,
+                Offset,
+                NumBytes,
+                Buffer
+                );
   DEBUG ((
     DEBUG_VERBOSE,
     "FvbWrite: Lba: 0x%lx Offset: 0x%x NumBytes: 0x%x, Buffer: 0x%x Status:%r\n",
@@ -900,12 +922,26 @@ IsFvHeaderValid (
 
   FwVolHeader = (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)FvBase;
   if (FvBase == PcdGet32 (PcdFlashNvStorageVariableBase)) {
-    if (CompareMem (&FwVolHeader->FileSystemGuid, &gEfiSystemNvDataFvGuid, sizeof (EFI_GUID)) != 0 ) {
-      DEBUG ((DEBUG_INFO, "  --FileSystemGuid not match: %g\n", &FwVolHeader->FileSystemGuid));
+    if (CompareMem (
+          &FwVolHeader->FileSystemGuid,
+          &gEfiSystemNvDataFvGuid,
+          sizeof (EFI_GUID)
+          ) != 0 )
+    {
+      DEBUG ((
+        DEBUG_INFO,
+        "  --FileSystemGuid not match: %g\n",
+        &FwVolHeader->FileSystemGuid
+        ));
       return FALSE;
     }
   } else {
-    if (CompareMem (&FwVolHeader->FileSystemGuid, &gEfiFirmwareFileSystem2Guid, sizeof (EFI_GUID)) != 0 ) {
+    if (CompareMem (
+          &FwVolHeader->FileSystemGuid,
+          &gEfiFirmwareFileSystem2Guid,
+          sizeof (EFI_GUID)
+          ) != 0 )
+    {
       DEBUG ((DEBUG_INFO, "  --not expected guid.\n"));
       return FALSE;
     }
@@ -916,8 +952,18 @@ IsFvHeaderValid (
       (FwVolHeader->FvLength == ((UINTN)-1))       ||
       ((FwVolHeader->HeaderLength & 0x01) != 0))
   {
-    DEBUG ((DEBUG_INFO, "  -- >Revision = 0x%x, Signature = 0x%x\n", FwVolHeader->Revision, FwVolHeader->Signature));
-    DEBUG ((DEBUG_INFO, "  -- >FvLength = 0x%lx, HeaderLength = 0x%x\n", FwVolHeader->FvLength, FwVolHeader->HeaderLength));
+    DEBUG ((
+      DEBUG_INFO,
+      "  -- >Revision = 0x%x, Signature = 0x%x\n",
+      FwVolHeader->Revision,
+      FwVolHeader->Signature
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "  -- >FvLength = 0x%lx, HeaderLength = 0x%x\n",
+      FwVolHeader->FvLength,
+      FwVolHeader->HeaderLength
+      ));
     return FALSE;
   }
 
@@ -960,23 +1006,36 @@ GetInitialVariableData (
     return EFI_INVALID_PARAMETER;
   }
 
-  Status = GetSectionFromAnyFv (PcdGetPtr (PcdNvsDataFile), EFI_SECTION_RAW, 0, &ImageData, &ImageSize);
+  Status = GetSectionFromAnyFv (
+             PcdGetPtr (PcdNvsDataFile),
+             EFI_SECTION_RAW,
+             0,
+             &ImageData,
+             &ImageSize
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
   FvHeader      = (EFI_FIRMWARE_VOLUME_HEADER *)ImageData;
-  VariableStore = (VARIABLE_STORE_HEADER *)((UINT8 *)ImageData + FvHeader->HeaderLength);
+  VariableStore = (VARIABLE_STORE_HEADER *)((UINT8 *)ImageData +
+                                            FvHeader->HeaderLength);
   VarEndAddr    = (UINTN)VariableStore + VariableStore->Size;
-  Variable      = (AUTHENTICATED_VARIABLE_HEADER *)HEADER_ALIGN (VariableStore + 1);
-  *VarData      = (VOID *)Variable;
+  Variable      = (AUTHENTICATED_VARIABLE_HEADER *)HEADER_ALIGN (
+                                                     VariableStore +
+                                                     1
+                                                     );
+  *VarData = (VOID *)Variable;
   while (((UINTN)Variable < VarEndAddr)) {
     if (Variable->StartId != VARIABLE_DATA) {
       break;
     }
 
-    VariableSize = sizeof (AUTHENTICATED_VARIABLE_HEADER) + Variable->DataSize + Variable->NameSize;
-    Variable     = (AUTHENTICATED_VARIABLE_HEADER *)HEADER_ALIGN ((UINTN)Variable + VariableSize);
+    VariableSize = sizeof (AUTHENTICATED_VARIABLE_HEADER) + Variable->DataSize +
+                   Variable->NameSize;
+    Variable = (AUTHENTICATED_VARIABLE_HEADER *)HEADER_ALIGN (
+                                                  (UINTN)Variable + VariableSize
+                                                  );
   }
 
   *VarSize = (UINTN)Variable - HEADER_ALIGN (VariableStore + 1);
@@ -1019,11 +1078,22 @@ FvbInitialize (
     //
     //  Write back a healthy FV header
     //
-    DEBUG ((DEBUG_ERROR, "Fvb: Writing back a healthy FV header: 0x%lx\n", BaseAddress));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Fvb: Writing back a healthy FV header: 0x%lx\n",
+      BaseAddress
+      ));
     FvHeader = GetFvHeaderTemplate ();
-    LibFvbFlashDeviceBlockLock ((UINTN)BaseAddress, FvHeader->BlockMap->Length, FALSE);
+    LibFvbFlashDeviceBlockLock (
+      (UINTN)BaseAddress,
+      FvHeader->BlockMap->Length,
+      FALSE
+      );
 
-    Status = LibFvbFlashDeviceBlockErase ((UINTN)BaseAddress, FvHeader->BlockMap->Length);
+    Status = LibFvbFlashDeviceBlockErase (
+               (UINTN)BaseAddress,
+               FvHeader->BlockMap->Length
+               );
     ASSERT_EFI_ERROR (Status);
 
     Length     = FvHeader->HeaderLength;
@@ -1035,12 +1105,17 @@ FvbInitialize (
     //
     // Write back variable store header
     //
-    VariableStore.Size   = PcdGet32 (PcdFlashNvStorageVariableSize) - FvHeader->HeaderLength;
+    VariableStore.Size = PcdGet32 (PcdFlashNvStorageVariableSize) -
+                         FvHeader->HeaderLength;
     VariableStore.Format = VARIABLE_STORE_FORMATTED;
     VariableStore.State  = VARIABLE_STORE_HEALTHY;
     CopyGuid (&VariableStore.Signature, &gEfiAuthenticatedVariableGuid);
     BufferSize = sizeof (VARIABLE_STORE_HEADER);
-    Status     = LibFvbFlashDeviceWrite (WriteAddr, &BufferSize, (UINT8 *)&VariableStore);
+    Status     = LibFvbFlashDeviceWrite (
+                   WriteAddr,
+                   &BufferSize,
+                   (UINT8 *)&VariableStore
+                   );
     WriteAddr += BufferSize;
     ASSERT_EFI_ERROR (Status);
 
@@ -1053,14 +1128,22 @@ FvbInitialize (
       ASSERT_EFI_ERROR (Status);
     }
 
-    LibFvbFlashDeviceBlockLock ((UINTN)BaseAddress, FvHeader->BlockMap->Length, TRUE);
-    WriteBackInvalidateDataCacheRange ((VOID *)(UINTN)BaseAddress, FvHeader->BlockMap->Length);
+    LibFvbFlashDeviceBlockLock (
+      (UINTN)BaseAddress,
+      FvHeader->BlockMap->Length,
+      TRUE
+      );
+    WriteBackInvalidateDataCacheRange (
+      (VOID *)(UINTN)BaseAddress,
+      FvHeader->BlockMap->Length
+      );
   }
 
   //
   // Create a new FW volume instance for NVS variable
   //
-  BufferSize    = FvHeader->HeaderLength + sizeof (EFI_FW_VOL_INSTANCE) - sizeof (EFI_FIRMWARE_VOLUME_HEADER);
+  BufferSize = FvHeader->HeaderLength + sizeof (EFI_FW_VOL_INSTANCE) -
+               sizeof (EFI_FIRMWARE_VOLUME_HEADER);
   FwVolInstance = (EFI_FW_VOL_INSTANCE *)AllocateRuntimeZeroPool (BufferSize);
   if (FwVolInstance == NULL) {
     return EFI_OUT_OF_RESOURCES;

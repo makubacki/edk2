@@ -93,14 +93,21 @@ InitVariableStore (
   //
   // NvStorageBase needs to be 4KB aligned, NvStorageSize needs to be 8KB * n
   //
-  if (((NvStorageBase & (SIZE_4KB - 1)) != 0) || ((NvStorageSize & (SIZE_8KB - 1)) != 0)) {
+  if (((NvStorageBase & (SIZE_4KB - 1)) != 0) || ((NvStorageSize & (SIZE_8KB -
+                                                                    1)) != 0))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
   FtwSpareSize   = NvStorageSize / 2;
   FtwWorkingSize = 0x2000;
   NvVariableSize = NvStorageSize / 2 - FtwWorkingSize;
-  DEBUG ((DEBUG_INFO, "NvStorageBase:0x%x, NvStorageSize:0x%x\n", NvStorageBase, NvStorageSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "NvStorageBase:0x%x, NvStorageSize:0x%x\n",
+    NvStorageBase,
+    NvStorageSize
+    ));
 
   if (NvVariableSize >= 0x80000000) {
     return EFI_INVALID_PARAMETER;
@@ -115,12 +122,20 @@ InitVariableStore (
 
   Status = PcdSet32S (PcdFlashNvStorageFtwWorkingSize, FtwWorkingSize);
   ASSERT_EFI_ERROR (Status);
-  Status = PcdSet32S (PcdFlashNvStorageFtwWorkingBase, NvStorageBase + NvVariableSize);
+  Status = PcdSet32S (
+             PcdFlashNvStorageFtwWorkingBase,
+             NvStorageBase +
+             NvVariableSize
+             );
   ASSERT_EFI_ERROR (Status);
 
   Status = PcdSet32S (PcdFlashNvStorageFtwSpareSize, FtwSpareSize);
   ASSERT_EFI_ERROR (Status);
-  Status = PcdSet32S (PcdFlashNvStorageFtwSpareBase, NvStorageBase + FtwSpareSize);
+  Status = PcdSet32S (
+             PcdFlashNvStorageFtwSpareBase,
+             NvStorageBase +
+             FtwSpareSize
+             );
   ASSERT_EFI_ERROR (Status);
 
   return EFI_SUCCESS;
@@ -140,12 +155,17 @@ GetFvHeaderTemplate (
   EFI_FIRMWARE_VOLUME_HEADER  *FvHeader;
   UINTN                       FvSize;
 
-  FvSize                          = PcdGet32 (PcdFlashNvStorageFtwSpareSize) * 2;
+  FvSize = PcdGet32 (PcdFlashNvStorageFtwSpareSize) *
+           2;
   FvHeader                        = &mFvbMediaInfo.FvInfo;
   FvHeader->FvLength              = FvSize;
-  FvHeader->BlockMap[0].NumBlocks = (UINT32)(FvSize / FvHeader->BlockMap[0].Length);
+  FvHeader->BlockMap[0].NumBlocks = (UINT32)(FvSize /
+                                             FvHeader->BlockMap[0].Length);
   FvHeader->Checksum              = 0;
-  FvHeader->Checksum              = CalculateCheckSum16 ((UINT16 *)FvHeader, FvHeader->HeaderLength);
+  FvHeader->Checksum              = CalculateCheckSum16 (
+                                      (UINT16 *)FvHeader,
+                                      FvHeader->HeaderLength
+                                      );
 
   return FvHeader;
 }

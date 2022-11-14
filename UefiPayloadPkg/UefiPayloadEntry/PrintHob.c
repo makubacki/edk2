@@ -94,7 +94,9 @@ PrintHex (
   StartAddr = DataStart;
   for (Index1 = 0; Index1 * ROW_LIMITER < DataSize; Index1++) {
     DEBUG ((DEBUG_VERBOSE, "   0x%04p:", (DataStart - StartAddr)));
-    for (Index2 = 0; (Index2 < ROW_LIMITER) && (Index1 * ROW_LIMITER + Index2 < DataSize); Index2++) {
+    for (Index2 = 0; (Index2 < ROW_LIMITER) && (Index1 * ROW_LIMITER + Index2 <
+                                                DataSize); Index2++)
+    {
       DEBUG ((DEBUG_VERBOSE, " %02x", *DataStart));
       DataStart++;
     }
@@ -122,12 +124,36 @@ PrintHandOffHob (
 
   Hob.Raw = (UINT8 *)HobStart;
   ASSERT (HobLength >= sizeof (*Hob.HandoffInformationTable));
-  DEBUG ((DEBUG_INFO, "   BootMode            = 0x%x\n", Hob.HandoffInformationTable->BootMode));
-  DEBUG ((DEBUG_INFO, "   EfiMemoryTop        = 0x%lx\n", Hob.HandoffInformationTable->EfiMemoryTop));
-  DEBUG ((DEBUG_INFO, "   EfiMemoryBottom     = 0x%lx\n", Hob.HandoffInformationTable->EfiMemoryBottom));
-  DEBUG ((DEBUG_INFO, "   EfiFreeMemoryTop    = 0x%lx\n", Hob.HandoffInformationTable->EfiFreeMemoryTop));
-  DEBUG ((DEBUG_INFO, "   EfiFreeMemoryBottom = 0x%lx\n", Hob.HandoffInformationTable->EfiFreeMemoryBottom));
-  DEBUG ((DEBUG_INFO, "   EfiEndOfHobList     = 0x%lx\n", Hob.HandoffInformationTable->EfiEndOfHobList));
+  DEBUG ((
+    DEBUG_INFO,
+    "   BootMode            = 0x%x\n",
+    Hob.HandoffInformationTable->BootMode
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   EfiMemoryTop        = 0x%lx\n",
+    Hob.HandoffInformationTable->EfiMemoryTop
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   EfiMemoryBottom     = 0x%lx\n",
+    Hob.HandoffInformationTable->EfiMemoryBottom
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   EfiFreeMemoryTop    = 0x%lx\n",
+    Hob.HandoffInformationTable->EfiFreeMemoryTop
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   EfiFreeMemoryBottom = 0x%lx\n",
+    Hob.HandoffInformationTable->EfiFreeMemoryBottom
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   EfiEndOfHobList     = 0x%lx\n",
+    Hob.HandoffInformationTable->EfiEndOfHobList
+    ));
   return EFI_SUCCESS;
 }
 
@@ -147,25 +173,69 @@ PrintMemoryAllocationHob (
 
   Hob.Raw = (UINT8 *)HobStart;
 
-  if (CompareGuid (&Hob.MemoryAllocation->AllocDescriptor.Name, &gEfiHobMemoryAllocStackGuid)) {
+  if (CompareGuid (
+        &Hob.MemoryAllocation->AllocDescriptor.Name,
+        &gEfiHobMemoryAllocStackGuid
+        ))
+  {
     ASSERT (HobLength >= sizeof (*Hob.MemoryAllocationStack));
-    DEBUG ((DEBUG_INFO, "   Type              = EFI_HOB_MEMORY_ALLOCATION_STACK\n"));
-  } else if (CompareGuid (&Hob.MemoryAllocation->AllocDescriptor.Name, &gEfiHobMemoryAllocBspStoreGuid)) {
+    DEBUG ((
+      DEBUG_INFO,
+      "   Type              = EFI_HOB_MEMORY_ALLOCATION_STACK\n"
+      ));
+  } else if (CompareGuid (
+               &Hob.MemoryAllocation->AllocDescriptor.Name,
+               &gEfiHobMemoryAllocBspStoreGuid
+               ))
+  {
     ASSERT (HobLength >= sizeof (*Hob.MemoryAllocationBspStore));
-    DEBUG ((DEBUG_INFO, "   Type              = EFI_HOB_MEMORY_ALLOCATION_BSP_STORE\n"));
-  } else if (CompareGuid (&Hob.MemoryAllocation->AllocDescriptor.Name, &gEfiHobMemoryAllocModuleGuid)) {
+    DEBUG ((
+      DEBUG_INFO,
+      "   Type              = EFI_HOB_MEMORY_ALLOCATION_BSP_STORE\n"
+      ));
+  } else if (CompareGuid (
+               &Hob.MemoryAllocation->AllocDescriptor.Name,
+               &gEfiHobMemoryAllocModuleGuid
+               ))
+  {
     ASSERT (HobLength >= sizeof (*Hob.MemoryAllocationModule));
-    DEBUG ((DEBUG_INFO, "   Type              = EFI_HOB_MEMORY_ALLOCATION_MODULE\n"));
-    DEBUG ((DEBUG_INFO, "   Module Name       = %g\n", Hob.MemoryAllocationModule->ModuleName));
-    DEBUG ((DEBUG_INFO, "   Physical Address  = 0x%lx\n", Hob.MemoryAllocationModule->EntryPoint));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Type              = EFI_HOB_MEMORY_ALLOCATION_MODULE\n"
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Module Name       = %g\n",
+      Hob.MemoryAllocationModule->ModuleName
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Physical Address  = 0x%lx\n",
+      Hob.MemoryAllocationModule->EntryPoint
+      ));
   } else {
     ASSERT (HobLength >= sizeof (*Hob.MemoryAllocation));
-    DEBUG ((DEBUG_INFO, "   Type              = EFI_HOB_TYPE_MEMORY_ALLOCATION\n"));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Type              = EFI_HOB_TYPE_MEMORY_ALLOCATION\n"
+      ));
   }
 
-  DEBUG ((DEBUG_INFO, "   MemoryBaseAddress = 0x%lx\n", Hob.MemoryAllocationStack->AllocDescriptor.MemoryBaseAddress));
-  DEBUG ((DEBUG_INFO, "   MemoryLength      = 0x%lx\n", Hob.MemoryAllocationStack->AllocDescriptor.MemoryLength));
-  DEBUG ((DEBUG_INFO, "   MemoryType        = %a \n", mMemoryTypeStr[Hob.MemoryAllocationStack->AllocDescriptor.MemoryType]));
+  DEBUG ((
+    DEBUG_INFO,
+    "   MemoryBaseAddress = 0x%lx\n",
+    Hob.MemoryAllocationStack->AllocDescriptor.MemoryBaseAddress
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   MemoryLength      = 0x%lx\n",
+    Hob.MemoryAllocationStack->AllocDescriptor.MemoryLength
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   MemoryType        = %a \n",
+    mMemoryTypeStr[Hob.MemoryAllocationStack->AllocDescriptor.MemoryType]
+    ));
   return EFI_SUCCESS;
 }
 
@@ -186,14 +256,34 @@ PrintResourceDiscriptorHob (
   Hob.Raw = (UINT8 *)HobStart;
   ASSERT (HobLength >= sizeof (*Hob.ResourceDescriptor));
 
-  DEBUG ((DEBUG_INFO, "   ResourceType      = %a\n", mResource_Type_List[Hob.ResourceDescriptor->ResourceType]));
+  DEBUG ((
+    DEBUG_INFO,
+    "   ResourceType      = %a\n",
+    mResource_Type_List[Hob.ResourceDescriptor->ResourceType]
+    ));
   if (!IsZeroGuid (&Hob.ResourceDescriptor->Owner)) {
-    DEBUG ((DEBUG_INFO, " Owner             = %g\n", Hob.ResourceDescriptor->Owner));
+    DEBUG ((
+      DEBUG_INFO,
+      " Owner             = %g\n",
+      Hob.ResourceDescriptor->Owner
+      ));
   }
 
-  DEBUG ((DEBUG_INFO, "   ResourceAttribute = 0x%x\n", Hob.ResourceDescriptor->ResourceAttribute));
-  DEBUG ((DEBUG_INFO, "   PhysicalStart     = 0x%lx\n", Hob.ResourceDescriptor->PhysicalStart));
-  DEBUG ((DEBUG_INFO, "   ResourceLength    = 0x%lx\n", Hob.ResourceDescriptor->ResourceLength));
+  DEBUG ((
+    DEBUG_INFO,
+    "   ResourceAttribute = 0x%x\n",
+    Hob.ResourceDescriptor->ResourceAttribute
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   PhysicalStart     = 0x%lx\n",
+    Hob.ResourceDescriptor->PhysicalStart
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   ResourceLength    = 0x%lx\n",
+    Hob.ResourceDescriptor->ResourceLength
+    ));
   return EFI_SUCCESS;
 }
 
@@ -236,14 +326,32 @@ PrintSerialGuidHob (
 {
   UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO  *SerialPortInfo;
 
-  SerialPortInfo = (UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO *)GET_GUID_HOB_DATA (HobRaw);
+  SerialPortInfo = (UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO *)GET_GUID_HOB_DATA (
+                                                           HobRaw
+                                                           );
   ASSERT (HobLength >= SerialPortInfo->Header.Length);
-  DEBUG ((DEBUG_INFO, "   Revision       = 0x%x\n", SerialPortInfo->Header.Revision));
-  DEBUG ((DEBUG_INFO, "   Length         = 0x%x\n", SerialPortInfo->Header.Length));
+  DEBUG ((
+    DEBUG_INFO,
+    "   Revision       = 0x%x\n",
+    SerialPortInfo->Header.Revision
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   Length         = 0x%x\n",
+    SerialPortInfo->Header.Length
+    ));
   DEBUG ((DEBUG_INFO, "   UseMmio        = 0x%x\n", SerialPortInfo->UseMmio));
-  DEBUG ((DEBUG_INFO, "   RegisterStride = 0x%x\n", SerialPortInfo->RegisterStride));
+  DEBUG ((
+    DEBUG_INFO,
+    "   RegisterStride = 0x%x\n",
+    SerialPortInfo->RegisterStride
+    ));
   DEBUG ((DEBUG_INFO, "   BaudRate       = %d\n", SerialPortInfo->BaudRate));
-  DEBUG ((DEBUG_INFO, "   RegisterBase   = 0x%lx\n", SerialPortInfo->RegisterBase));
+  DEBUG ((
+    DEBUG_INFO,
+    "   RegisterBase   = 0x%lx\n",
+    SerialPortInfo->RegisterBase
+    ));
   return EFI_SUCCESS;
 }
 
@@ -263,9 +371,21 @@ PrintSmbios3GuidHob (
 
   SmBiosTable = (UNIVERSAL_PAYLOAD_SMBIOS_TABLE *)GET_GUID_HOB_DATA (HobRaw);
   ASSERT (HobLength >= SmBiosTable->Header.Length);
-  DEBUG ((DEBUG_INFO, "   Revision         = 0x%x\n", SmBiosTable->Header.Revision));
-  DEBUG ((DEBUG_INFO, "   Length           = 0x%x\n", SmBiosTable->Header.Length));
-  DEBUG ((DEBUG_INFO, "   SmBiosEntryPoint = 0x%lx\n", (UINT64)SmBiosTable->SmBiosEntryPoint));
+  DEBUG ((
+    DEBUG_INFO,
+    "   Revision         = 0x%x\n",
+    SmBiosTable->Header.Revision
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   Length           = 0x%x\n",
+    SmBiosTable->Header.Length
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   SmBiosEntryPoint = 0x%lx\n",
+    (UINT64)SmBiosTable->SmBiosEntryPoint
+    ));
   return EFI_SUCCESS;
 }
 
@@ -286,9 +406,21 @@ PrintSmbiosTablGuidHob (
 
   SmBiosTable = (UNIVERSAL_PAYLOAD_SMBIOS_TABLE *)GET_GUID_HOB_DATA (HobRaw);
   ASSERT (HobLength >= SmBiosTable->Header.Length);
-  DEBUG ((DEBUG_INFO, "   Revision         = 0x%x\n", SmBiosTable->Header.Revision));
-  DEBUG ((DEBUG_INFO, "   Length           = 0x%x\n", SmBiosTable->Header.Length));
-  DEBUG ((DEBUG_INFO, "   SmBiosEntryPoint = 0x%lx\n", (UINT64)SmBiosTable->SmBiosEntryPoint));
+  DEBUG ((
+    DEBUG_INFO,
+    "   Revision         = 0x%x\n",
+    SmBiosTable->Header.Revision
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   Length           = 0x%x\n",
+    SmBiosTable->Header.Length
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   SmBiosEntryPoint = 0x%lx\n",
+    (UINT64)SmBiosTable->SmBiosEntryPoint
+    ));
   return EFI_SUCCESS;
 }
 
@@ -313,12 +445,36 @@ PrintAcpiBoardInfoGuidHob (
   DEBUG ((DEBUG_INFO, "   Reserved0       = 0x%x\n", AcpBoardInfo->Reserved0));
   DEBUG ((DEBUG_INFO, "   ResetValue      = 0x%x\n", AcpBoardInfo->ResetValue));
   DEBUG ((DEBUG_INFO, "   PmEvtBase       = 0x%lx\n", AcpBoardInfo->PmEvtBase));
-  DEBUG ((DEBUG_INFO, "   PmGpeEnBase     = 0x%lx\n", AcpBoardInfo->PmGpeEnBase));
-  DEBUG ((DEBUG_INFO, "   PmCtrlRegBase   = 0x%lx\n", AcpBoardInfo->PmCtrlRegBase));
-  DEBUG ((DEBUG_INFO, "   PmTimerRegBase  = 0x%lx\n", AcpBoardInfo->PmTimerRegBase));
-  DEBUG ((DEBUG_INFO, "   ResetRegAddress = 0x%lx\n", AcpBoardInfo->ResetRegAddress));
-  DEBUG ((DEBUG_INFO, "   PcieBaseAddress = 0x%lx\n", AcpBoardInfo->PcieBaseAddress));
-  DEBUG ((DEBUG_INFO, "   PcieBaseSize    = 0x%lx\n", AcpBoardInfo->PcieBaseSize));
+  DEBUG ((
+    DEBUG_INFO,
+    "   PmGpeEnBase     = 0x%lx\n",
+    AcpBoardInfo->PmGpeEnBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   PmCtrlRegBase   = 0x%lx\n",
+    AcpBoardInfo->PmCtrlRegBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   PmTimerRegBase  = 0x%lx\n",
+    AcpBoardInfo->PmTimerRegBase
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   ResetRegAddress = 0x%lx\n",
+    AcpBoardInfo->ResetRegAddress
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   PcieBaseAddress = 0x%lx\n",
+    AcpBoardInfo->PcieBaseAddress
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   PcieBaseSize    = 0x%lx\n",
+    AcpBoardInfo->PcieBaseSize
+    ));
   return EFI_SUCCESS;
 }
 
@@ -340,40 +496,151 @@ PrintPciRootBridgeInfoGuidHob (
   UINTN                               Length;
 
   Index          = 0;
-  PciRootBridges = (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES *)GET_GUID_HOB_DATA (HobRaw);
-  Length         = sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES) + PciRootBridges->Count * sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE);
+  PciRootBridges = (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES *)GET_GUID_HOB_DATA (
+                                                           HobRaw
+                                                           );
+  Length = sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES) +
+           PciRootBridges->Count * sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE);
   ASSERT (HobLength >= Length);
-  DEBUG ((DEBUG_INFO, "   Revision         = 0x%x\n", PciRootBridges->Header.Revision));
-  DEBUG ((DEBUG_INFO, "   Length           = 0x%x\n", PciRootBridges->Header.Length));
+  DEBUG ((
+    DEBUG_INFO,
+    "   Revision         = 0x%x\n",
+    PciRootBridges->Header.Revision
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   Length           = 0x%x\n",
+    PciRootBridges->Header.Length
+    ));
   DEBUG ((DEBUG_INFO, "   Count            = 0x%x\n", PciRootBridges->Count));
-  DEBUG ((DEBUG_INFO, "   ResourceAssigned = %a\n", (PciRootBridges->ResourceAssigned ? "True" : "False")));
+  DEBUG ((
+    DEBUG_INFO,
+    "   ResourceAssigned = %a\n",
+    (PciRootBridges->ResourceAssigned ? "True" : "False")
+    ));
 
   while (Index < PciRootBridges->Count) {
     DEBUG ((DEBUG_INFO, "   Root Bridge Index[%d]:\n", Index));
-    DEBUG ((DEBUG_INFO, "   Segment                 = 0x%x\n", PciRootBridges->RootBridge[Index].Segment));
-    DEBUG ((DEBUG_INFO, "   Supports                = 0x%lx\n", PciRootBridges->RootBridge[Index].Supports));
-    DEBUG ((DEBUG_INFO, "   Attributes              = 0x%lx\n", PciRootBridges->RootBridge[Index].Attributes));
-    DEBUG ((DEBUG_INFO, "   DmaAbove4G              = 0x%x\n", PciRootBridges->RootBridge[Index].DmaAbove4G));
-    DEBUG ((DEBUG_INFO, "   NoExtendedConfigSpace   = 0x%x\n", PciRootBridges->RootBridge[Index].NoExtendedConfigSpace));
-    DEBUG ((DEBUG_INFO, "   AllocationAttributes    = 0x%lx\n", PciRootBridges->RootBridge[Index].AllocationAttributes));
-    DEBUG ((DEBUG_INFO, "   Bus.Base                = 0x%lx\n", PciRootBridges->RootBridge[Index].Bus.Base));
-    DEBUG ((DEBUG_INFO, "   Bus.Limit               = 0x%lx\n", PciRootBridges->RootBridge[Index].Bus.Limit));
-    DEBUG ((DEBUG_INFO, "   Bus.Translation         = 0x%lx\n", PciRootBridges->RootBridge[Index].Bus.Translation));
-    DEBUG ((DEBUG_INFO, "   Io.Base                 = 0x%lx\n", PciRootBridges->RootBridge[Index].Io.Base));
-    DEBUG ((DEBUG_INFO, "   Io.Limit                = 0x%lx\n", PciRootBridges->RootBridge[Index].Io.Limit));
-    DEBUG ((DEBUG_INFO, "   Io.Translation          = 0x%lx\n", PciRootBridges->RootBridge[Index].Io.Translation));
-    DEBUG ((DEBUG_INFO, "   Mem.Base                = 0x%lx\n", PciRootBridges->RootBridge[Index].Mem.Base));
-    DEBUG ((DEBUG_INFO, "   Mem.Limit               = 0x%lx\n", PciRootBridges->RootBridge[Index].Mem.Limit));
-    DEBUG ((DEBUG_INFO, "   Mem.Translation         = 0x%lx\n", PciRootBridges->RootBridge[Index].Mem.Translation));
-    DEBUG ((DEBUG_INFO, "   MemAbove4G.Base         = 0x%lx\n", PciRootBridges->RootBridge[Index].MemAbove4G.Base));
-    DEBUG ((DEBUG_INFO, "   MemAbove4G.Limit        = 0x%lx\n", PciRootBridges->RootBridge[Index].MemAbove4G.Limit));
-    DEBUG ((DEBUG_INFO, "   MemAbove4G.Translation  = 0x%lx\n", PciRootBridges->RootBridge[Index].MemAbove4G.Translation));
-    DEBUG ((DEBUG_INFO, "   PMem.Base               = 0x%lx\n", PciRootBridges->RootBridge[Index].PMem.Base));
-    DEBUG ((DEBUG_INFO, "   PMem.Limit              = 0x%lx\n", PciRootBridges->RootBridge[Index].PMem.Limit));
-    DEBUG ((DEBUG_INFO, "   PMem.Translation        = 0x%lx\n", PciRootBridges->RootBridge[Index].PMem.Translation));
-    DEBUG ((DEBUG_INFO, "   PMemAbove4G.Base        = 0x%lx\n", PciRootBridges->RootBridge[Index].PMemAbove4G.Base));
-    DEBUG ((DEBUG_INFO, "   PMemAbove4G.Limit       = 0x%lx\n", PciRootBridges->RootBridge[Index].PMemAbove4G.Limit));
-    DEBUG ((DEBUG_INFO, "   PMemAbove4G.Translation = 0x%lx\n", PciRootBridges->RootBridge[Index].PMemAbove4G.Translation));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Segment                 = 0x%x\n",
+      PciRootBridges->RootBridge[Index].Segment
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Supports                = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].Supports
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Attributes              = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].Attributes
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   DmaAbove4G              = 0x%x\n",
+      PciRootBridges->RootBridge[Index].DmaAbove4G
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   NoExtendedConfigSpace   = 0x%x\n",
+      PciRootBridges->RootBridge[Index].NoExtendedConfigSpace
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   AllocationAttributes    = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].AllocationAttributes
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Bus.Base                = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].Bus.Base
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Bus.Limit               = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].Bus.Limit
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Bus.Translation         = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].Bus.Translation
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Io.Base                 = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].Io.Base
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Io.Limit                = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].Io.Limit
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Io.Translation          = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].Io.Translation
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Mem.Base                = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].Mem.Base
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Mem.Limit               = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].Mem.Limit
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Mem.Translation         = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].Mem.Translation
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   MemAbove4G.Base         = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].MemAbove4G.Base
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   MemAbove4G.Limit        = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].MemAbove4G.Limit
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   MemAbove4G.Translation  = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].MemAbove4G.Translation
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   PMem.Base               = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].PMem.Base
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   PMem.Limit              = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].PMem.Limit
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   PMem.Translation        = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].PMem.Translation
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   PMemAbove4G.Base        = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].PMemAbove4G.Base
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   PMemAbove4G.Limit       = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].PMemAbove4G.Limit
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   PMemAbove4G.Translation = 0x%lx\n",
+      PciRootBridges->RootBridge[Index].PMemAbove4G.Translation
+      ));
     Index += 1;
   }
 
@@ -399,16 +666,32 @@ PrintExtraDataGuidHob (
 
   Index     = 0;
   ExtraData = (UNIVERSAL_PAYLOAD_EXTRA_DATA *)GET_GUID_HOB_DATA (HobRaw);
-  Length    = sizeof (UNIVERSAL_PAYLOAD_EXTRA_DATA) + ExtraData->Count * sizeof (UNIVERSAL_PAYLOAD_EXTRA_DATA_ENTRY);
+  Length    = sizeof (UNIVERSAL_PAYLOAD_EXTRA_DATA) + ExtraData->Count *
+              sizeof (UNIVERSAL_PAYLOAD_EXTRA_DATA_ENTRY);
   ASSERT (HobLength >= Length);
   DEBUG ((DEBUG_INFO, "   Revision  = 0x%x\n", ExtraData->Header.Revision));
   DEBUG ((DEBUG_INFO, "   Length    = 0x%x\n", ExtraData->Header.Length));
   DEBUG ((DEBUG_INFO, "   Count     = 0x%x\n", ExtraData->Count));
 
   while (Index < ExtraData->Count) {
-    DEBUG ((DEBUG_INFO, "   Id[%d]     = %a\n", Index, ExtraData->Entry[Index].Identifier));
-    DEBUG ((DEBUG_INFO, "   Base[%d]   = 0x%lx\n", Index, ExtraData->Entry[Index].Base));
-    DEBUG ((DEBUG_INFO, "   Size[%d]   = 0x%lx\n", Index, ExtraData->Entry[Index].Size));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Id[%d]     = %a\n",
+      Index,
+      ExtraData->Entry[Index].Identifier
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Base[%d]   = 0x%lx\n",
+      Index,
+      ExtraData->Entry[Index].Base
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "   Size[%d]   = 0x%lx\n",
+      Index,
+      ExtraData->Entry[Index].Size
+      ));
     Index += 1;
   }
 
@@ -433,7 +716,11 @@ PrintMemoryTypeInfoGuidHob (
   MemoryTypeInfo = (EFI_MEMORY_TYPE_INFORMATION *)GET_GUID_HOB_DATA (HobRaw);
   ASSERT (HobLength >= sizeof (*MemoryTypeInfo));
   DEBUG ((DEBUG_INFO, "   Type            = 0x%x\n", MemoryTypeInfo->Type));
-  DEBUG ((DEBUG_INFO, "   NumberOfPages   = 0x%x\n", MemoryTypeInfo->NumberOfPages));
+  DEBUG ((
+    DEBUG_INFO,
+    "   NumberOfPages   = 0x%x\n",
+    MemoryTypeInfo->NumberOfPages
+    ));
   return EFI_SUCCESS;
 }
 
@@ -451,10 +738,19 @@ PrintBootManagerMenuGuidHob (
 {
   UNIVERSAL_PAYLOAD_BOOT_MANAGER_MENU  *BootManagerMenuFile;
 
-  BootManagerMenuFile = (UNIVERSAL_PAYLOAD_BOOT_MANAGER_MENU *)GET_GUID_HOB_DATA (HobRaw);
+  BootManagerMenuFile =
+    (UNIVERSAL_PAYLOAD_BOOT_MANAGER_MENU *)GET_GUID_HOB_DATA (HobRaw);
   ASSERT (HobLength >= sizeof (*BootManagerMenuFile));
-  DEBUG ((DEBUG_INFO, "   Revision  = 0x%x\n", BootManagerMenuFile->Header.Revision));
-  DEBUG ((DEBUG_INFO, "   Length    = 0x%x\n", BootManagerMenuFile->Header.Length));
+  DEBUG ((
+    DEBUG_INFO,
+    "   Revision  = 0x%x\n",
+    BootManagerMenuFile->Header.Revision
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   Length    = 0x%x\n",
+    BootManagerMenuFile->Header.Length
+    ));
   DEBUG ((DEBUG_INFO, "   FileName  = %g\n", &BootManagerMenuFile->FileName));
   return EFI_SUCCESS;
 }
@@ -464,15 +760,24 @@ PrintBootManagerMenuGuidHob (
 // This table can be easily extented.
 //
 GUID_HOB_PRINT_HANDLE  GuidHobPrintHandleTable[] = {
-  { &gUniversalPayloadAcpiTableGuid,         PrintAcpiGuidHob,              "gUniversalPayloadAcpiTableGuid(ACPI table Guid)"             },
-  { &gUniversalPayloadSerialPortInfoGuid,    PrintSerialGuidHob,            "gUniversalPayloadSerialPortInfoGuid(Serial Port Info)"       },
-  { &gUniversalPayloadSmbios3TableGuid,      PrintSmbios3GuidHob,           "gUniversalPayloadSmbios3TableGuid(SmBios Guid)"              },
-  { &gUniversalPayloadSmbiosTableGuid,       PrintSmbiosTablGuidHob,        "gUniversalPayloadSmbiosTableGuid(SmBios Guid)"               },
-  { &gUefiAcpiBoardInfoGuid,                 PrintAcpiBoardInfoGuidHob,     "gUefiAcpiBoardInfoGuid(Acpi Guid)"                           },
-  { &gUniversalPayloadPciRootBridgeInfoGuid, PrintPciRootBridgeInfoGuidHob, "gUniversalPayloadPciRootBridgeInfoGuid(Pci Guid)"            },
-  { &gEfiMemoryTypeInformationGuid,          PrintMemoryTypeInfoGuidHob,    "gEfiMemoryTypeInformationGuid(Memory Type Information Guid)" },
-  { &gUniversalPayloadExtraDataGuid,         PrintExtraDataGuidHob,         "gUniversalPayloadExtraDataGuid(PayLoad Extra Data Guid)"     },
-  { &gEdkiiBootManagerMenuFileGuid,          PrintBootManagerMenuGuidHob,   "gEdkiiBootManagerMenuFileGuid(Boot Manager Menu File Guid)"  }
+  { &gUniversalPayloadAcpiTableGuid,         PrintAcpiGuidHob,
+    "gUniversalPayloadAcpiTableGuid(ACPI table Guid)"                          },
+  { &gUniversalPayloadSerialPortInfoGuid,    PrintSerialGuidHob,
+    "gUniversalPayloadSerialPortInfoGuid(Serial Port Info)"                                           },
+  { &gUniversalPayloadSmbios3TableGuid,      PrintSmbios3GuidHob,
+    "gUniversalPayloadSmbios3TableGuid(SmBios Guid)"                                                                      },
+  { &gUniversalPayloadSmbiosTableGuid,       PrintSmbiosTablGuidHob,
+    "gUniversalPayloadSmbiosTableGuid(SmBios Guid)"                                                                                           },
+  { &gUefiAcpiBoardInfoGuid,                 PrintAcpiBoardInfoGuidHob,
+    "gUefiAcpiBoardInfoGuid(Acpi Guid)"                                                                                                                           },
+  { &gUniversalPayloadPciRootBridgeInfoGuid, PrintPciRootBridgeInfoGuidHob,
+    "gUniversalPayloadPciRootBridgeInfoGuid(Pci Guid)"                                                                                                                                },
+  { &gEfiMemoryTypeInformationGuid,          PrintMemoryTypeInfoGuidHob,
+    "gEfiMemoryTypeInformationGuid(Memory Type Information Guid)"                                                                                                                                         },
+  { &gUniversalPayloadExtraDataGuid,         PrintExtraDataGuidHob,
+    "gUniversalPayloadExtraDataGuid(PayLoad Extra Data Guid)"                                                                                                                                                           },
+  { &gEdkiiBootManagerMenuFileGuid,          PrintBootManagerMenuGuidHob,
+    "gEdkiiBootManagerMenuFileGuid(Boot Manager Menu File Guid)"                                                                                                                                                        }
 };
 
 /**
@@ -496,8 +801,15 @@ PrintGuidHob (
 
   for (Index = 0; Index < ARRAY_SIZE (GuidHobPrintHandleTable); Index++) {
     if (CompareGuid (&Hob.Guid->Name, GuidHobPrintHandleTable[Index].Guid)) {
-      DEBUG ((DEBUG_INFO, "   Guid   = %a\n", GuidHobPrintHandleTable[Index].GuidName));
-      Status = GuidHobPrintHandleTable[Index].PrintHandler (Hob.Raw, GET_GUID_HOB_DATA_SIZE (Hob.Raw));
+      DEBUG ((
+        DEBUG_INFO,
+        "   Guid   = %a\n",
+        GuidHobPrintHandleTable[Index].GuidName
+        ));
+      Status = GuidHobPrintHandleTable[Index].PrintHandler (
+                                                Hob.Raw,
+                                                GET_GUID_HOB_DATA_SIZE (Hob.Raw)
+                                                );
       return Status;
     }
   }
@@ -524,7 +836,11 @@ PrintFvHob (
   Hob.Raw = (UINT8 *)HobStart;
   ASSERT (HobLength >= sizeof (*Hob.FirmwareVolume));
 
-  DEBUG ((DEBUG_INFO, "   BaseAddress = 0x%lx\n", Hob.FirmwareVolume->BaseAddress));
+  DEBUG ((
+    DEBUG_INFO,
+    "   BaseAddress = 0x%lx\n",
+    Hob.FirmwareVolume->BaseAddress
+    ));
   DEBUG ((DEBUG_INFO, "   Length      = 0x%lx\n", Hob.FirmwareVolume->Length));
   return EFI_SUCCESS;
 }
@@ -546,8 +862,16 @@ PrintCpuHob (
   Hob.Raw = (UINT8 *)HobStart;
   ASSERT (HobLength >= sizeof (*Hob.Cpu));
 
-  DEBUG ((DEBUG_INFO, "   SizeOfMemorySpace = 0x%lx\n", Hob.Cpu->SizeOfMemorySpace));
-  DEBUG ((DEBUG_INFO, "   SizeOfIoSpace     = 0x%lx\n", Hob.Cpu->SizeOfIoSpace));
+  DEBUG ((
+    DEBUG_INFO,
+    "   SizeOfMemorySpace = 0x%lx\n",
+    Hob.Cpu->SizeOfMemorySpace
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   SizeOfIoSpace     = 0x%lx\n",
+    Hob.Cpu->SizeOfIoSpace
+    ));
   return EFI_SUCCESS;
 }
 
@@ -583,7 +907,11 @@ PrintFv2Hob (
   Hob.Raw = (UINT8 *)HobStart;
   ASSERT (HobLength >= sizeof (*Hob.FirmwareVolume2));
 
-  DEBUG ((DEBUG_INFO, "   BaseAddress = 0x%lx\n", Hob.FirmwareVolume2->BaseAddress));
+  DEBUG ((
+    DEBUG_INFO,
+    "   BaseAddress = 0x%lx\n",
+    Hob.FirmwareVolume2->BaseAddress
+    ));
   DEBUG ((DEBUG_INFO, "   Length      = 0x%lx\n", Hob.FirmwareVolume2->Length));
   DEBUG ((DEBUG_INFO, "   FvName      = %g\n", &Hob.FirmwareVolume2->FvName));
   DEBUG ((DEBUG_INFO, "   FileName    = %g\n", &Hob.FirmwareVolume2->FileName));
@@ -629,12 +957,36 @@ PrintFv3Hob (
   Hob.Raw = (UINT8 *)HobStart;
   ASSERT (HobLength >= sizeof (*Hob.FirmwareVolume3));
 
-  DEBUG ((DEBUG_INFO, "   BaseAddress          = 0x%lx\n", Hob.FirmwareVolume3->BaseAddress));
-  DEBUG ((DEBUG_INFO, "   Length               = 0x%lx\n", Hob.FirmwareVolume3->Length));
-  DEBUG ((DEBUG_INFO, "   AuthenticationStatus = 0x%x\n", Hob.FirmwareVolume3->AuthenticationStatus));
-  DEBUG ((DEBUG_INFO, "   ExtractedFv          = %a\n", (Hob.FirmwareVolume3->ExtractedFv ? "True" : "False")));
-  DEBUG ((DEBUG_INFO, "   FVName               = %g\n", &Hob.FirmwareVolume3->FvName));
-  DEBUG ((DEBUG_INFO, "   FileName             = %g\n", &Hob.FirmwareVolume3->FileName));
+  DEBUG ((
+    DEBUG_INFO,
+    "   BaseAddress          = 0x%lx\n",
+    Hob.FirmwareVolume3->BaseAddress
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   Length               = 0x%lx\n",
+    Hob.FirmwareVolume3->Length
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   AuthenticationStatus = 0x%x\n",
+    Hob.FirmwareVolume3->AuthenticationStatus
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   ExtractedFv          = %a\n",
+    (Hob.FirmwareVolume3->ExtractedFv ? "True" : "False")
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   FVName               = %g\n",
+    &Hob.FirmwareVolume3->FvName
+    ));
+  DEBUG ((
+    DEBUG_INFO,
+    "   FileName             = %g\n",
+    &Hob.FirmwareVolume3->FileName
+    ));
   return EFI_SUCCESS;
 }
 
@@ -642,16 +994,26 @@ PrintFv3Hob (
 // Mappint table from Hob type to Hob print function.
 //
 HOB_PRINT_HANDLER_TABLE  mHobHandles[] = {
-  { EFI_HOB_TYPE_HANDOFF,             "EFI_HOB_TYPE_HANDOFF",             PrintHandOffHob            },
-  { EFI_HOB_TYPE_MEMORY_ALLOCATION,   "EFI_HOB_TYPE_MEMORY_ALLOCATION",   PrintMemoryAllocationHob   },
-  { EFI_HOB_TYPE_RESOURCE_DESCRIPTOR, "EFI_HOB_TYPE_RESOURCE_DESCRIPTOR", PrintResourceDiscriptorHob },
-  { EFI_HOB_TYPE_GUID_EXTENSION,      "EFI_HOB_TYPE_GUID_EXTENSION",      PrintGuidHob               },
-  { EFI_HOB_TYPE_FV,                  "EFI_HOB_TYPE_FV",                  PrintFvHob                 },
-  { EFI_HOB_TYPE_CPU,                 "EFI_HOB_TYPE_CPU",                 PrintCpuHob                },
-  { EFI_HOB_TYPE_MEMORY_POOL,         "EFI_HOB_TYPE_MEMORY_POOL",         PrintMemoryPoolHob         },
-  { EFI_HOB_TYPE_FV2,                 "EFI_HOB_TYPE_FV2",                 PrintFv2Hob                },
-  { EFI_HOB_TYPE_UEFI_CAPSULE,        "EFI_HOB_TYPE_UEFI_CAPSULE",        PrintCapsuleHob            },
-  { EFI_HOB_TYPE_FV3,                 "EFI_HOB_TYPE_FV3",                 PrintFv3Hob                }
+  { EFI_HOB_TYPE_HANDOFF,             "EFI_HOB_TYPE_HANDOFF",
+    PrintHandOffHob                                                                                                                                                                                      },
+  { EFI_HOB_TYPE_MEMORY_ALLOCATION,   "EFI_HOB_TYPE_MEMORY_ALLOCATION",
+    PrintMemoryAllocationHob                                                                                                                                                                                               },
+  { EFI_HOB_TYPE_RESOURCE_DESCRIPTOR, "EFI_HOB_TYPE_RESOURCE_DESCRIPTOR",
+    PrintResourceDiscriptorHob                                                                                                                                                                                                              },
+  { EFI_HOB_TYPE_GUID_EXTENSION,      "EFI_HOB_TYPE_GUID_EXTENSION",
+    PrintGuidHob                                                                                                                                                                                                                                             },
+  { EFI_HOB_TYPE_FV,                  "EFI_HOB_TYPE_FV",
+    PrintFvHob                                                                                                                                                                                                                                                               },
+  { EFI_HOB_TYPE_CPU,                 "EFI_HOB_TYPE_CPU",
+    PrintCpuHob                                                                                                                                                                                                                                                                              },
+  { EFI_HOB_TYPE_MEMORY_POOL,         "EFI_HOB_TYPE_MEMORY_POOL",
+    PrintMemoryPoolHob                                                                                                                                                                                                                                                                                       },
+  { EFI_HOB_TYPE_FV2,                 "EFI_HOB_TYPE_FV2",
+    PrintFv2Hob                                                                                                                                                                                                                                                                                                              },
+  { EFI_HOB_TYPE_UEFI_CAPSULE,        "EFI_HOB_TYPE_UEFI_CAPSULE",
+    PrintCapsuleHob                                                                                                                                                                                                                                                                                                                          },
+  { EFI_HOB_TYPE_FV3,                 "EFI_HOB_TYPE_FV3",
+    PrintFv3Hob                                                                                                                                                                                                                                                                                                                              }
 };
 
 /**
@@ -680,14 +1042,19 @@ PrintHob (
   while (!END_OF_HOB_LIST (Hob)) {
     for (Index = 0; Index < ARRAY_SIZE (mHobHandles); Index++) {
       if (Hob.Header->HobType == mHobHandles[Index].Type) {
-        DEBUG ((DEBUG_INFO, "HOB[%d]: Type = %a, Offset = 0x%p, Length = 0x%x\n", Count, mHobHandles[Index].Name, (Hob.Raw - (UINT8 *)HobStart), Hob.Header->HobLength));
+        DEBUG ((DEBUG_INFO,
+          "HOB[%d]: Type = %a, Offset = 0x%p, Length = 0x%x\n", Count,
+          mHobHandles[Index].Name, (Hob.Raw - (UINT8 *)HobStart),
+          Hob.Header->HobLength));
         mHobHandles[Index].PrintHandler (Hob.Raw, Hob.Header->HobLength);
         break;
       }
     }
 
     if (Index == ARRAY_SIZE (mHobHandles)) {
-      DEBUG ((DEBUG_INFO, "HOB[%d]: Type = %d, Offset = 0x%p, Length = 0x%x\n", Count, Hob.Header->HobType, (Hob.Raw - (UINT8 *)HobStart), Hob.Header->HobLength));
+      DEBUG ((DEBUG_INFO, "HOB[%d]: Type = %d, Offset = 0x%p, Length = 0x%x\n",
+        Count, Hob.Header->HobType, (Hob.Raw - (UINT8 *)HobStart),
+        Hob.Header->HobLength));
       DEBUG ((DEBUG_INFO, "   Unkown Hob type\n"));
       PrintHex (Hob.Raw, Hob.Header->HobLength);
     }
@@ -696,5 +1063,6 @@ PrintHob (
     Hob.Raw = GET_NEXT_HOB (Hob);
   }
 
-  DEBUG ((DEBUG_INFO, "There are totally %d Hobs, the End Hob address is %p\n", Count, Hob.Raw));
+  DEBUG ((DEBUG_INFO, "There are totally %d Hobs, the End Hob address is %p\n",
+    Count, Hob.Raw));
 }

@@ -35,7 +35,8 @@ GetParameterBase (
 {
   EFI_HOB_HANDOFF_INFO_TABLE  *HandoffTable;
 
-  HandoffTable = (EFI_HOB_HANDOFF_INFO_TABLE *)(UINTN)GET_BOOTLOADER_PARAMETER ();
+  HandoffTable =
+    (EFI_HOB_HANDOFF_INFO_TABLE *)(UINTN)GET_BOOTLOADER_PARAMETER ();
   if ((HandoffTable->Header.HobType == EFI_HOB_TYPE_HANDOFF) &&
       (HandoffTable->Header.HobLength == sizeof (EFI_HOB_HANDOFF_INFO_TABLE)) &&
       (HandoffTable->Header.Reserved == 0))
@@ -96,7 +97,9 @@ ParseMemoryInfo (
   MEMORY_MAP_INFO  *MemoryMapInfo;
   UINTN            Idx;
 
-  MemoryMapInfo = (MEMORY_MAP_INFO *)GetGuidHobDataFromSbl (&gLoaderMemoryMapInfoGuid);
+  MemoryMapInfo = (MEMORY_MAP_INFO *)GetGuidHobDataFromSbl (
+                                       &gLoaderMemoryMapInfoGuid
+                                       );
   if (MemoryMapInfo == NULL) {
     ASSERT (FALSE);
     return RETURN_NOT_FOUND;
@@ -126,7 +129,10 @@ ParseSmbiosTable (
 {
   UNIVERSAL_PAYLOAD_SMBIOS_TABLE  *TableInfo;
 
-  TableInfo = (UNIVERSAL_PAYLOAD_SMBIOS_TABLE *)GetGuidHobDataFromSbl (&gUniversalPayloadSmbiosTableGuid);
+  TableInfo = (UNIVERSAL_PAYLOAD_SMBIOS_TABLE *)GetGuidHobDataFromSbl (
+                                                  &
+                                                  gUniversalPayloadSmbiosTableGuid
+                                                  );
   if (TableInfo == NULL) {
     ASSERT (FALSE);
     return RETURN_NOT_FOUND;
@@ -154,7 +160,9 @@ ParseAcpiTableInfo (
 {
   UNIVERSAL_PAYLOAD_ACPI_TABLE  *TableInfo;
 
-  TableInfo = (UNIVERSAL_PAYLOAD_ACPI_TABLE *)GetGuidHobDataFromSbl (&gUniversalPayloadAcpiTableGuid);
+  TableInfo = (UNIVERSAL_PAYLOAD_ACPI_TABLE *)GetGuidHobDataFromSbl (
+                                                &gUniversalPayloadAcpiTableGuid
+                                                );
   if (TableInfo == NULL) {
     ASSERT (FALSE);
     return RETURN_NOT_FOUND;
@@ -182,7 +190,9 @@ ParseSerialInfo (
 {
   SERIAL_PORT_INFO  *BlSerialInfo;
 
-  BlSerialInfo = (SERIAL_PORT_INFO *)GetGuidHobDataFromSbl (&gUefiSerialPortInfoGuid);
+  BlSerialInfo = (SERIAL_PORT_INFO *)GetGuidHobDataFromSbl (
+                                       &gUefiSerialPortInfoGuid
+                                       );
   if (BlSerialInfo == NULL) {
     ASSERT (FALSE);
     return RETURN_NOT_FOUND;
@@ -210,7 +220,9 @@ ParseGfxInfo (
 {
   EFI_PEI_GRAPHICS_INFO_HOB  *BlGfxInfo;
 
-  BlGfxInfo = (EFI_PEI_GRAPHICS_INFO_HOB *)GetGuidHobDataFromSbl (&gEfiGraphicsInfoHobGuid);
+  BlGfxInfo = (EFI_PEI_GRAPHICS_INFO_HOB *)GetGuidHobDataFromSbl (
+                                             &gEfiGraphicsInfoHobGuid
+                                             );
   if (BlGfxInfo == NULL) {
     return RETURN_NOT_FOUND;
   }
@@ -237,12 +249,19 @@ ParseGfxDeviceInfo (
 {
   EFI_PEI_GRAPHICS_DEVICE_INFO_HOB  *BlGfxDeviceInfo;
 
-  BlGfxDeviceInfo = (EFI_PEI_GRAPHICS_DEVICE_INFO_HOB *)GetGuidHobDataFromSbl (&gEfiGraphicsDeviceInfoHobGuid);
+  BlGfxDeviceInfo = (EFI_PEI_GRAPHICS_DEVICE_INFO_HOB *)GetGuidHobDataFromSbl (
+                                                          &
+                                                          gEfiGraphicsDeviceInfoHobGuid
+                                                          );
   if (BlGfxDeviceInfo == NULL) {
     return RETURN_NOT_FOUND;
   }
 
-  CopyMem (GfxDeviceInfo, BlGfxDeviceInfo, sizeof (EFI_PEI_GRAPHICS_DEVICE_INFO_HOB));
+  CopyMem (
+    GfxDeviceInfo,
+    BlGfxDeviceInfo,
+    sizeof (EFI_PEI_GRAPHICS_DEVICE_INFO_HOB)
+    );
 
   return RETURN_SUCCESS;
 }
@@ -266,9 +285,11 @@ ParseMiscInfo (
   UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES  *PldRootBridgesHob;
 
   Status           = RETURN_NOT_FOUND;
-  BlRootBridgesHob = (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES *)GetGuidHobDataFromSbl (
-                                                             &gUniversalPayloadPciRootBridgeInfoGuid
-                                                             );
+  BlRootBridgesHob =
+    (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES *)GetGuidHobDataFromSbl (
+                                            &
+                                            gUniversalPayloadPciRootBridgeInfoGuid
+                                            );
   if (BlRootBridgesHob != NULL) {
     //
     // Migrate bootloader root bridge info hob from bootloader to payload.
@@ -279,7 +300,11 @@ ParseMiscInfo (
                           );
     ASSERT (PldRootBridgesHob != NULL);
     if (PldRootBridgesHob != NULL) {
-      CopyMem (PldRootBridgesHob, BlRootBridgesHob, BlRootBridgesHob->Header.Length);
+      CopyMem (
+        PldRootBridgesHob,
+        BlRootBridgesHob,
+        BlRootBridgesHob->Header.Length
+        );
       DEBUG ((DEBUG_INFO, "Create PCI root bridge info guid hob\n"));
       Status = RETURN_SUCCESS;
     } else {

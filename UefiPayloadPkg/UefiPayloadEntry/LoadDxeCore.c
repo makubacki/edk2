@@ -31,7 +31,9 @@ AllocateCodePages (
   // find the HOB we just created, and change the type to EfiBootServicesCode
   Hob.Raw = GetFirstHob (EFI_HOB_TYPE_MEMORY_ALLOCATION);
   while (Hob.Raw != NULL) {
-    if (Hob.MemoryAllocation->AllocDescriptor.MemoryBaseAddress == (UINTN)Alloc) {
+    if (Hob.MemoryAllocation->AllocDescriptor.MemoryBaseAddress ==
+        (UINTN)Alloc)
+    {
       Hob.MemoryAllocation->AllocDescriptor.MemoryType = EfiBootServicesCode;
       return Alloc;
     }
@@ -82,7 +84,11 @@ LoadPeCoffImage (
   //
   // Allocate Memory for the image
   //
-  Buffer = AllocateCodePages (EFI_SIZE_TO_PAGES ((UINT32)ImageContext.ImageSize));
+  Buffer = AllocateCodePages (
+             EFI_SIZE_TO_PAGES (
+               (UINT32)ImageContext.ImageSize
+               )
+             );
   if (Buffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -222,9 +228,11 @@ FileFindSection (
   while (Index < FileSize) {
     if (Section->Type == SectionType) {
       if (IS_SECTION2 (Section)) {
-        *SectionData = (VOID *)((UINT8 *)Section + sizeof (EFI_COMMON_SECTION_HEADER2));
+        *SectionData = (VOID *)((UINT8 *)Section +
+                                sizeof (EFI_COMMON_SECTION_HEADER2));
       } else {
-        *SectionData = (VOID *)((UINT8 *)Section + sizeof (EFI_COMMON_SECTION_HEADER));
+        *SectionData = (VOID *)((UINT8 *)Section +
+                                sizeof (EFI_COMMON_SECTION_HEADER));
       }
 
       return EFI_SUCCESS;
@@ -267,17 +275,28 @@ LoadDxeCore (
   EFI_PHYSICAL_ADDRESS        ImageAddress;
   UINT64                      ImageSize;
 
-  PayloadFv = (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)PcdGet32 (PcdPayloadFdMemBase);
+  PayloadFv = (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)PcdGet32 (
+                                                     PcdPayloadFdMemBase
+                                                     );
 
   //
   // DXE FV is inside Payload FV. Here find DXE FV from Payload FV
   //
-  Status = FvFindFileByTypeGuid (PayloadFv, EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE, NULL, &FileHeader);
+  Status = FvFindFileByTypeGuid (
+             PayloadFv,
+             EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE,
+             NULL,
+             &FileHeader
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = FileFindSection (FileHeader, EFI_SECTION_FIRMWARE_VOLUME_IMAGE, (VOID **)&DxeCoreFv);
+  Status = FileFindSection (
+             FileHeader,
+             EFI_SECTION_FIRMWARE_VOLUME_IMAGE,
+             (VOID **)&DxeCoreFv
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -290,12 +309,21 @@ LoadDxeCore (
   //
   // Find DXE core file from DXE FV
   //
-  Status = FvFindFileByTypeGuid (DxeCoreFv, EFI_FV_FILETYPE_DXE_CORE, NULL, &FileHeader);
+  Status = FvFindFileByTypeGuid (
+             DxeCoreFv,
+             EFI_FV_FILETYPE_DXE_CORE,
+             NULL,
+             &FileHeader
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = FileFindSection (FileHeader, EFI_SECTION_PE32, (VOID **)&PeCoffImage);
+  Status = FileFindSection (
+             FileHeader,
+             EFI_SECTION_PE32,
+             (VOID **)&PeCoffImage
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -303,12 +331,24 @@ LoadDxeCore (
   //
   // Get DXE core info
   //
-  Status = LoadPeCoffImage (PeCoffImage, &ImageAddress, &ImageSize, DxeCoreEntryPoint);
+  Status = LoadPeCoffImage (
+             PeCoffImage,
+             &ImageAddress,
+             &ImageSize,
+             DxeCoreEntryPoint
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  BuildModuleHob (&FileHeader->Name, ImageAddress, EFI_SIZE_TO_PAGES ((UINT32)ImageSize) * EFI_PAGE_SIZE, *DxeCoreEntryPoint);
+  BuildModuleHob (
+    &FileHeader->Name,
+    ImageAddress,
+    EFI_SIZE_TO_PAGES (
+      (UINT32)ImageSize
+      ) * EFI_PAGE_SIZE,
+    *DxeCoreEntryPoint
+    );
 
   return EFI_SUCCESS;
 }
@@ -337,12 +377,21 @@ UniversalLoadDxeCore (
   //
   // Find DXE core file from DXE FV
   //
-  Status = FvFindFileByTypeGuid (DxeFv, EFI_FV_FILETYPE_DXE_CORE, NULL, &FileHeader);
+  Status = FvFindFileByTypeGuid (
+             DxeFv,
+             EFI_FV_FILETYPE_DXE_CORE,
+             NULL,
+             &FileHeader
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = FileFindSection (FileHeader, EFI_SECTION_PE32, (VOID **)&PeCoffImage);
+  Status = FileFindSection (
+             FileHeader,
+             EFI_SECTION_PE32,
+             (VOID **)&PeCoffImage
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -350,12 +399,24 @@ UniversalLoadDxeCore (
   //
   // Get DXE core info
   //
-  Status = LoadPeCoffImage (PeCoffImage, &ImageAddress, &ImageSize, DxeCoreEntryPoint);
+  Status = LoadPeCoffImage (
+             PeCoffImage,
+             &ImageAddress,
+             &ImageSize,
+             DxeCoreEntryPoint
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  BuildModuleHob (&FileHeader->Name, ImageAddress, EFI_SIZE_TO_PAGES ((UINT32)ImageSize) * EFI_PAGE_SIZE, *DxeCoreEntryPoint);
+  BuildModuleHob (
+    &FileHeader->Name,
+    ImageAddress,
+    EFI_SIZE_TO_PAGES (
+      (UINT32)ImageSize
+      ) * EFI_PAGE_SIZE,
+    *DxeCoreEntryPoint
+    );
 
   return EFI_SUCCESS;
 }

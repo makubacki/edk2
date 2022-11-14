@@ -20,7 +20,9 @@ typedef struct {
 SMM_PCH_REGISTER  mSmiPchReg;
 
 EFI_SMM_CPU_PROTOCOL  *mSmmCpuProtocol;
-LIST_ENTRY            mSmmSwDispatch2Queue = INITIALIZE_LIST_HEAD_VARIABLE (mSmmSwDispatch2Queue);
+LIST_ENTRY            mSmmSwDispatch2Queue = INITIALIZE_LIST_HEAD_VARIABLE (
+                                               mSmmSwDispatch2Queue
+                                               );
 
 /**
   Find SmmSwDispatch2Context by SwSmiInputValue.
@@ -130,7 +132,12 @@ SmmSwDispatcher (
       // Great! Find it.
       //
       SwContext.SwSmiCpuIndex = Index;
-      DEBUG ((DEBUG_VERBOSE, "CPU index = 0x%x/0x%x\n", Index, gSmst->NumberOfCpus));
+      DEBUG ((
+        DEBUG_VERBOSE,
+        "CPU index = 0x%x/0x%x\n",
+        Index,
+        gSmst->NumberOfCpus
+        ));
       break;
     }
   }
@@ -146,20 +153,34 @@ SmmSwDispatcher (
   //
   Context = FindContextBySwSmiInputValue (SwContext.CommandPort);
   if (Context == NULL) {
-    DEBUG ((DEBUG_INFO, "No handler for SMI value 0x%x\n", SwContext.CommandPort));
+    DEBUG ((
+      DEBUG_INFO,
+      "No handler for SMI value 0x%x\n",
+      SwContext.CommandPort
+      ));
     Status = EFI_SUCCESS;
     goto End;
   }
 
-  DEBUG ((DEBUG_VERBOSE, "Prepare to call handler for 0x%x\n", SwContext.CommandPort));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "Prepare to call handler for 0x%x\n",
+    SwContext.CommandPort
+    ));
 
   //
   // Dispatch
   //
   DispatchContext.SwSmiInputValue = SwContext.CommandPort;
   Size                            = sizeof (SwContext);
-  DispatchFunction                = (EFI_SMM_HANDLER_ENTRY_POINT2)Context->DispatchFunction;
-  Status                          = DispatchFunction (DispatchHandle, &DispatchContext, &SwContext, &Size);
+  DispatchFunction                =
+    (EFI_SMM_HANDLER_ENTRY_POINT2)Context->DispatchFunction;
+  Status = DispatchFunction (
+             DispatchHandle,
+             &DispatchContext,
+             &SwContext,
+             &Size
+             );
 
 End:
   //
@@ -263,15 +284,25 @@ SmmSwDispatch2Register (
     }
   }
 
-  if ((RegContext->SwSmiInputValue > MAXIMUM_SWI_VALUE) || (RegContext->SwSmiInputValue == 0)) {
-    DEBUG ((DEBUG_ERROR, "ERROR: SMI value range (1 ~ 0x%x)\n", MAXIMUM_SWI_VALUE));
+  if ((RegContext->SwSmiInputValue > MAXIMUM_SWI_VALUE) ||
+      (RegContext->SwSmiInputValue == 0))
+  {
+    DEBUG ((
+      DEBUG_ERROR,
+      "ERROR: SMI value range (1 ~ 0x%x)\n",
+      MAXIMUM_SWI_VALUE
+      ));
     return EFI_INVALID_PARAMETER;
   }
 
   //
   // Register
   //
-  Status = gSmst->SmmAllocatePool (EfiRuntimeServicesData, sizeof (*Context), (VOID **)&Context);
+  Status = gSmst->SmmAllocatePool (
+                    EfiRuntimeServicesData,
+                    sizeof (*Context),
+                    (VOID **)&Context
+                    );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     return EFI_OUT_OF_RESOURCES;
@@ -369,9 +400,21 @@ GetSmmCtrlRegById (
       (PldReg->Value != 1))
   {
     DEBUG ((DEBUG_INFO, "Unexpected SMM register.\n"));
-    DEBUG ((DEBUG_INFO, "AddressSpaceId= 0x%x\n", PldReg->Address.AddressSpaceId));
-    DEBUG ((DEBUG_INFO, "RegBitWidth   = 0x%x\n", PldReg->Address.RegisterBitWidth));
-    DEBUG ((DEBUG_INFO, "RegBitOffset  = 0x%x\n", PldReg->Address.RegisterBitOffset));
+    DEBUG ((
+      DEBUG_INFO,
+      "AddressSpaceId= 0x%x\n",
+      PldReg->Address.AddressSpaceId
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "RegBitWidth   = 0x%x\n",
+      PldReg->Address.RegisterBitWidth
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "RegBitOffset  = 0x%x\n",
+      PldReg->Address.RegisterBitOffset
+      ));
     DEBUG ((DEBUG_INFO, "AccessSize    = 0x%x\n", PldReg->Address.AccessSize));
     DEBUG ((DEBUG_INFO, "Address       = 0x%lx\n", PldReg->Address.Address));
     return NULL;
@@ -430,13 +473,21 @@ PchSmiDispatchEntryPoint (
   //
   // Locate PI SMM CPU protocol
   //
-  Status = gSmst->SmmLocateProtocol (&gEfiSmmCpuProtocolGuid, NULL, (VOID **)&mSmmCpuProtocol);
+  Status = gSmst->SmmLocateProtocol (
+                    &gEfiSmmCpuProtocolGuid,
+                    NULL,
+                    (VOID **)&mSmmCpuProtocol
+                    );
   ASSERT_EFI_ERROR (Status);
 
   //
   // Register a SMM handler to handle subsequent SW SMIs.
   //
-  Status = gSmst->SmiHandlerRegister ((EFI_MM_HANDLER_ENTRY_POINT)SmmSwDispatcher, NULL, &DispatchHandle);
+  Status = gSmst->SmiHandlerRegister (
+                    (EFI_MM_HANDLER_ENTRY_POINT)SmmSwDispatcher,
+                    NULL,
+                    &DispatchHandle
+                    );
   ASSERT_EFI_ERROR (Status);
 
   //

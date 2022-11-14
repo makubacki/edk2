@@ -242,7 +242,11 @@ RelocateElf64Dynamic (
       //
       // Verify the existence of the dynamic section.
       //
-      DynShdr = GetElf64SectionByRange (ElfCt->FileBase, Phdr->p_offset, Phdr->p_filesz);
+      DynShdr = GetElf64SectionByRange (
+                  ElfCt->FileBase,
+                  Phdr->p_offset,
+                  Phdr->p_filesz
+                  );
       break;
     }
   }
@@ -267,7 +271,11 @@ RelocateElf64Dynamic (
   RelaEntrySize = 0;
   RelaType      = 0;
   for ( Index = 0, Dyn = (Elf64_Dyn *)(ElfCt->FileBase + DynShdr->sh_offset)
-        ; Index < DivU64x64Remainder (DynShdr->sh_size, DynShdr->sh_entsize, NULL)
+        ; Index < DivU64x64Remainder (
+                    DynShdr->sh_size,
+                    DynShdr->sh_entsize,
+                    NULL
+                    )
         ; Index++, Dyn = ELF_NEXT_ENTRY (Elf64_Dyn, Dyn, DynShdr->sh_entsize)
         )
   {
@@ -371,7 +379,8 @@ RelocateElf64Sections  (
     return EFI_UNSUPPORTED;
   }
 
-  Delta             = (UINTN)ElfCt->ImageAddress - (UINTN)ElfCt->PreferredImageAddress;
+  Delta = (UINTN)ElfCt->ImageAddress -
+          (UINTN)ElfCt->PreferredImageAddress;
   ElfCt->EntryPoint = (UINTN)(Ehdr->e_entry + Delta);
 
   //
@@ -393,10 +402,17 @@ RelocateElf64Sections  (
   //  But the ELF loader in firmware supports to load the image to a different address.
   //  The below relocation is needed in this case.
   //
-  DEBUG ((DEBUG_INFO, "EXEC ELF: Fix actual/preferred base address delta ...\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "EXEC ELF: Fix actual/preferred base address delta ...\n"
+    ));
   for ( Index = 0, RelShdr = (Elf64_Shdr *)(ElfCt->FileBase + Ehdr->e_shoff)
         ; Index < Ehdr->e_shnum
-        ; Index++, RelShdr = ELF_NEXT_ENTRY (Elf64_Shdr, RelShdr, Ehdr->e_shentsize)
+        ; Index++, RelShdr = ELF_NEXT_ENTRY (
+                               Elf64_Shdr,
+                               RelShdr,
+                               Ehdr->e_shentsize
+                               )
         )
   {
     if ((RelShdr->sh_type != SHT_REL) && (RelShdr->sh_type != SHT_RELA)) {
@@ -471,8 +487,16 @@ LoadElf64Image (
     // Note: CopyMem() does nothing when the dst equals to src.
     //
     Delta = (UINTN)Phdr->p_paddr - (UINTN)ElfCt->PreferredImageAddress;
-    CopyMem (ElfCt->ImageAddress + Delta, ElfCt->FileBase + (UINTN)Phdr->p_offset, (UINTN)Phdr->p_filesz);
-    ZeroMem (ElfCt->ImageAddress + Delta + (UINTN)Phdr->p_filesz, (UINTN)(Phdr->p_memsz - Phdr->p_filesz));
+    CopyMem (
+      ElfCt->ImageAddress + Delta,
+      ElfCt->FileBase +
+      (UINTN)Phdr->p_offset,
+      (UINTN)Phdr->p_filesz
+      );
+    ZeroMem (
+      ElfCt->ImageAddress + Delta + (UINTN)Phdr->p_filesz,
+      (UINTN)(Phdr->p_memsz - Phdr->p_filesz)
+      );
   }
 
   //

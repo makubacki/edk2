@@ -50,7 +50,10 @@ GraphicsOutputQueryMode (
   OUT EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  **Info
   )
 {
-  if ((This == NULL) || (Info == NULL) || (SizeOfInfo == NULL) || (ModeNumber >= This->Mode->MaxMode)) {
+  if ((This == NULL) || (Info == NULL) || (SizeOfInfo == NULL) || (ModeNumber >=
+                                                                   This->Mode->
+                                                                     MaxMode))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -282,7 +285,11 @@ GraphicsOutputDriverBindingSupported (
 
   if ((RemainingDevicePath == NULL) ||
       IsDevicePathEnd (RemainingDevicePath) ||
-      (CompareMem (RemainingDevicePath, &mGraphicsOutputAdrNode, sizeof (mGraphicsOutputAdrNode)) == 0))
+      (CompareMem (
+         RemainingDevicePath,
+         &mGraphicsOutputAdrNode,
+         sizeof (mGraphicsOutputAdrNode)
+         ) == 0))
   {
     return EFI_SUCCESS;
   } else {
@@ -325,18 +332,29 @@ GraphicsOutputDriverBindingStart (
   FrameBufferBase = 0;
 
   HobStart = GetFirstGuidHob (&gEfiGraphicsInfoHobGuid);
-  ASSERT ((HobStart != NULL) && (GET_GUID_HOB_DATA_SIZE (HobStart) == sizeof (EFI_PEI_GRAPHICS_INFO_HOB)));
+  ASSERT (
+    (HobStart != NULL) && (GET_GUID_HOB_DATA_SIZE (HobStart) ==
+                           sizeof (EFI_PEI_GRAPHICS_INFO_HOB))
+    );
   GraphicsInfo = (EFI_PEI_GRAPHICS_INFO_HOB *)(GET_GUID_HOB_DATA (HobStart));
 
   HobStart = GetFirstGuidHob (&gEfiGraphicsDeviceInfoHobGuid);
-  if ((HobStart == NULL) || (GET_GUID_HOB_DATA_SIZE (HobStart) < sizeof (*DeviceInfo))) {
+  if ((HobStart == NULL) || (GET_GUID_HOB_DATA_SIZE (HobStart) <
+                             sizeof (*DeviceInfo)))
+  {
     //
     // Use default device infomation when the device info HOB doesn't exist
     //
     DeviceInfo = &mDefaultGraphicsDeviceInfo;
-    DEBUG ((DEBUG_INFO, "[%a]: GraphicsDeviceInfo HOB doesn't exist!\n", gEfiCallerBaseName));
+    DEBUG ((
+      DEBUG_INFO,
+      "[%a]: GraphicsDeviceInfo HOB doesn't exist!\n",
+      gEfiCallerBaseName
+      ));
   } else {
-    DeviceInfo = (EFI_PEI_GRAPHICS_DEVICE_INFO_HOB *)(GET_GUID_HOB_DATA (HobStart));
+    DeviceInfo = (EFI_PEI_GRAPHICS_DEVICE_INFO_HOB *)(GET_GUID_HOB_DATA (
+                                                        HobStart
+                                                        ));
     DEBUG ((
       DEBUG_INFO,
       "[%a]: GraphicsDeviceInfo HOB:\n"
@@ -390,11 +408,23 @@ GraphicsOutputDriverBindingStart (
   Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0, sizeof (Pci), &Pci);
   if (!EFI_ERROR (Status)) {
     if (!IS_PCI_DISPLAY (&Pci) || (
-                                   ((DeviceInfo->VendorId != MAX_UINT16) && (DeviceInfo->VendorId != Pci.Hdr.VendorId)) ||
-                                   ((DeviceInfo->DeviceId != MAX_UINT16) && (DeviceInfo->DeviceId != Pci.Hdr.DeviceId)) ||
-                                   ((DeviceInfo->RevisionId != MAX_UINT8) && (DeviceInfo->RevisionId != Pci.Hdr.RevisionID)) ||
-                                   ((DeviceInfo->SubsystemVendorId != MAX_UINT16) && (DeviceInfo->SubsystemVendorId != Pci.Device.SubsystemVendorID)) ||
-                                   ((DeviceInfo->SubsystemId != MAX_UINT16) && (DeviceInfo->SubsystemId != Pci.Device.SubsystemID))
+                                   ((DeviceInfo->VendorId != MAX_UINT16) &&
+                                    (DeviceInfo->VendorId !=
+                                     Pci.Hdr.VendorId)) ||
+                                   ((DeviceInfo->DeviceId != MAX_UINT16) &&
+                                    (DeviceInfo->DeviceId !=
+                                     Pci.Hdr.DeviceId)) ||
+                                   ((DeviceInfo->RevisionId != MAX_UINT8) &&
+                                    (DeviceInfo->RevisionId !=
+                                     Pci.Hdr.RevisionID)) ||
+                                   ((DeviceInfo->SubsystemVendorId !=
+                                     MAX_UINT16) &&
+                                    (DeviceInfo->SubsystemVendorId !=
+                                     Pci.Device.
+                                       SubsystemVendorID)) ||
+                                   ((DeviceInfo->SubsystemId != MAX_UINT16) &&
+                                    (DeviceInfo->SubsystemId !=
+                                     Pci.Device.SubsystemID))
                                    )
         )
     {
@@ -410,11 +440,18 @@ GraphicsOutputDriverBindingStart (
       // Store the new frame buffer base.
       //
       for (Index = 0; Index < MAX_PCI_BAR; Index++) {
-        if ((DeviceInfo->BarIndex != MAX_UINT8) && (DeviceInfo->BarIndex != Index)) {
+        if ((DeviceInfo->BarIndex != MAX_UINT8) && (DeviceInfo->BarIndex !=
+                                                    Index))
+        {
           continue;
         }
 
-        Status = PciIo->GetBarAttributes (PciIo, Index, NULL, (VOID **)&Resources);
+        Status = PciIo->GetBarAttributes (
+                          PciIo,
+                          Index,
+                          NULL,
+                          (VOID **)&Resources
+                          );
         if (!EFI_ERROR (Status)) {
           DEBUG ((
             DEBUG_INFO,
@@ -425,7 +462,8 @@ GraphicsOutputDriverBindingStart (
             Resources->AddrLen
             ));
           if ((Resources->Desc == ACPI_ADDRESS_SPACE_DESCRIPTOR) &&
-              (Resources->Len == (UINT16)(sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3)) &&
+              (Resources->Len ==
+               (UINT16)(sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) - 3)) &&
               (Resources->ResType == ACPI_ADDRESS_SPACE_TYPE_MEM) &&
               (Resources->AddrLen >= GraphicsInfo->FrameBufferSize)
               )
@@ -462,7 +500,10 @@ GraphicsOutputDriverBindingStart (
     return EFI_SUCCESS;
   }
 
-  Private = AllocateCopyPool (sizeof (mGraphicsOutputInstanceTemplate), &mGraphicsOutputInstanceTemplate);
+  Private = AllocateCopyPool (
+              sizeof (mGraphicsOutputInstanceTemplate),
+              &mGraphicsOutputInstanceTemplate
+              );
   if (Private == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto CloseProtocols;
@@ -509,10 +550,14 @@ GraphicsOutputDriverBindingStart (
                    &Private->FrameBufferBltLibConfigureSize
                    );
   if (ReturnStatus == RETURN_BUFFER_TOO_SMALL) {
-    Private->FrameBufferBltLibConfigure = AllocatePool (Private->FrameBufferBltLibConfigureSize);
+    Private->FrameBufferBltLibConfigure = AllocatePool (
+                                            Private->
+                                              FrameBufferBltLibConfigureSize
+                                            );
     if (Private->FrameBufferBltLibConfigure != NULL) {
       ReturnStatus = FrameBufferBltConfigure (
-                       (VOID *)(UINTN)Private->GraphicsOutput.Mode->FrameBufferBase,
+                       (VOID *)(UINTN)Private->GraphicsOutput.Mode->
+                         FrameBufferBase,
                        Private->GraphicsOutput.Mode->Info,
                        Private->FrameBufferBltLibConfigure,
                        &Private->FrameBufferBltLibConfigureSize
@@ -525,7 +570,10 @@ GraphicsOutputDriverBindingStart (
     goto RestorePciAttributes;
   }
 
-  Private->DevicePath = AppendDevicePathNode (PciDevicePath, (EFI_DEVICE_PATH_PROTOCOL *)&mGraphicsOutputAdrNode);
+  Private->DevicePath = AppendDevicePathNode (
+                          PciDevicePath,
+                          (EFI_DEVICE_PATH_PROTOCOL *)&mGraphicsOutputAdrNode
+                          );
   if (Private->DevicePath == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto RestorePciAttributes;
@@ -761,7 +809,9 @@ InitializeGraphicsOutput (
 
   HobStart = GetFirstGuidHob (&gEfiGraphicsInfoHobGuid);
 
-  if ((HobStart == NULL) || (GET_GUID_HOB_DATA_SIZE (HobStart) < sizeof (EFI_PEI_GRAPHICS_INFO_HOB))) {
+  if ((HobStart == NULL) || (GET_GUID_HOB_DATA_SIZE (HobStart) <
+                             sizeof (EFI_PEI_GRAPHICS_INFO_HOB)))
+  {
     return EFI_NOT_FOUND;
   }
 

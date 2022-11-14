@@ -28,12 +28,14 @@ typedef struct {
 ///
 /// Size of SMM communicate header, without including the payload.
 ///
-#define SMM_COMMUNICATE_HEADER_SIZE  (OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data))
+#define SMM_COMMUNICATE_HEADER_SIZE  \
+  (OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data))
 
 ///
 /// Size of SMM FVB communicate function header, without including the payload.
 ///
-#define SMM_FVB_COMMUNICATE_HEADER_SIZE  (OFFSET_OF (SMM_FVB_COMMUNICATE_FUNCTION_HEADER, Data))
+#define SMM_FVB_COMMUNICATE_HEADER_SIZE  \
+  (OFFSET_OF (SMM_FVB_COMMUNICATE_FUNCTION_HEADER, Data))
 
 typedef struct {
   EFI_SMM_FIRMWARE_VOLUME_BLOCK_PROTOCOL    *SmmFvb;

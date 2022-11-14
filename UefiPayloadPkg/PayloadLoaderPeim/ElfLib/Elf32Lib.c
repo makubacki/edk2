@@ -233,7 +233,11 @@ RelocateElf32Dynamic (
       //
       // Verify the existence of the dynamic section.
       //
-      DynShdr = GetElf32SectionByRange (ElfCt->FileBase, Phdr->p_offset, Phdr->p_filesz);
+      DynShdr = GetElf32SectionByRange (
+                  ElfCt->FileBase,
+                  Phdr->p_offset,
+                  Phdr->p_filesz
+                  );
       break;
     }
   }
@@ -362,7 +366,8 @@ RelocateElf32Sections  (
     return EFI_UNSUPPORTED;
   }
 
-  Delta             = (UINTN)ElfCt->ImageAddress - (UINTN)ElfCt->PreferredImageAddress;
+  Delta = (UINTN)ElfCt->ImageAddress -
+          (UINTN)ElfCt->PreferredImageAddress;
   ElfCt->EntryPoint = (UINTN)(Ehdr->e_entry + Delta);
 
   //
@@ -384,10 +389,17 @@ RelocateElf32Sections  (
   //  But the ELF loader in firmware supports to load the image to a different address.
   //  The below relocation is needed in this case.
   //
-  DEBUG ((DEBUG_INFO, "EXEC ELF: Fix actual/preferred base address delta ...\n"));
+  DEBUG ((
+    DEBUG_INFO,
+    "EXEC ELF: Fix actual/preferred base address delta ...\n"
+    ));
   for ( Index = 0, RelShdr = (Elf32_Shdr *)(ElfCt->FileBase + Ehdr->e_shoff)
         ; Index < Ehdr->e_shnum
-        ; Index++, RelShdr = ELF_NEXT_ENTRY (Elf32_Shdr, RelShdr, Ehdr->e_shentsize)
+        ; Index++, RelShdr = ELF_NEXT_ENTRY (
+                               Elf32_Shdr,
+                               RelShdr,
+                               Ehdr->e_shentsize
+                               )
         )
   {
     if ((RelShdr->sh_type != SHT_REL) && (RelShdr->sh_type != SHT_RELA)) {
@@ -462,8 +474,16 @@ LoadElf32Image (
     // Note: CopyMem() does nothing when the dst equals to src.
     //
     Delta = Phdr->p_paddr - (UINT32)(UINTN)ElfCt->PreferredImageAddress;
-    CopyMem (ElfCt->ImageAddress + Delta, ElfCt->FileBase + Phdr->p_offset, Phdr->p_filesz);
-    ZeroMem (ElfCt->ImageAddress + Delta + Phdr->p_filesz, Phdr->p_memsz - Phdr->p_filesz);
+    CopyMem (
+      ElfCt->ImageAddress + Delta,
+      ElfCt->FileBase + Phdr->p_offset,
+      Phdr->p_filesz
+      );
+    ZeroMem (
+      ElfCt->ImageAddress + Delta + Phdr->p_filesz,
+      Phdr->p_memsz -
+      Phdr->p_filesz
+      );
   }
 
   //

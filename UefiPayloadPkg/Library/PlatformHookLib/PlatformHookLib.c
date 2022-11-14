@@ -56,14 +56,26 @@ PlatformHookSerialPortInitialize (
     return EFI_NOT_FOUND;
   }
 
-  GenericHeader = (UNIVERSAL_PAYLOAD_GENERIC_HEADER *)GET_GUID_HOB_DATA (GuidHob);
-  if ((sizeof (UNIVERSAL_PAYLOAD_GENERIC_HEADER) > GET_GUID_HOB_DATA_SIZE (GuidHob)) || (GenericHeader->Length > GET_GUID_HOB_DATA_SIZE (GuidHob))) {
+  GenericHeader = (UNIVERSAL_PAYLOAD_GENERIC_HEADER *)GET_GUID_HOB_DATA (
+                                                        GuidHob
+                                                        );
+  if ((sizeof (UNIVERSAL_PAYLOAD_GENERIC_HEADER) > GET_GUID_HOB_DATA_SIZE (
+                                                     GuidHob
+                                                     )) ||
+      (GenericHeader->Length > GET_GUID_HOB_DATA_SIZE (GuidHob)))
+  {
     return EFI_NOT_FOUND;
   }
 
   if (GenericHeader->Revision == UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO_REVISION) {
-    SerialPortInfo = (UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO *)GET_GUID_HOB_DATA (GuidHob);
-    if (GenericHeader->Length < UNIVERSAL_PAYLOAD_SIZEOF_THROUGH_FIELD (UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO, RegisterBase)) {
+    SerialPortInfo = (UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO *)GET_GUID_HOB_DATA (
+                                                             GuidHob
+                                                             );
+    if (GenericHeader->Length < UNIVERSAL_PAYLOAD_SIZEOF_THROUGH_FIELD (
+                                  UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO,
+                                  RegisterBase
+                                  ))
+    {
       //
       // Return if can't find the Serial Port Info Hob with enough length
       //
@@ -80,7 +92,10 @@ PlatformHookSerialPortInitialize (
       return Status;
     }
 
-    Status = PcdSet32S (PcdSerialRegisterStride, SerialPortInfo->RegisterStride);
+    Status = PcdSet32S (
+               PcdSerialRegisterStride,
+               SerialPortInfo->RegisterStride
+               );
     if (RETURN_ERROR (Status)) {
       return Status;
     }

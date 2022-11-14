@@ -55,7 +55,11 @@ DxeHobListLibConstructor (
   UINTN  Index;
 
   for (Index = 0; Index < SystemTable->NumberOfTableEntries; Index++) {
-    if (LocalCompareGuid (&gEfiHobListGuid, &SystemTable->ConfigurationTable[Index].VendorGuid)) {
+    if (LocalCompareGuid (
+          &gEfiHobListGuid,
+          &SystemTable->ConfigurationTable[Index].VendorGuid
+          ))
+    {
       gHobList = SystemTable->ConfigurationTable[Index].VendorTable;
       return EFI_SUCCESS;
     }

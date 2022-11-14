@@ -37,31 +37,31 @@ typedef struct _X64_IDT_TABLE {
 GLOBAL_REMOVE_IF_UNREFERENCED IA32_GDT  gGdtEntries[] = {
   /* selector { Global Segment Descriptor                              } */
   /* 0x00 */ {
-    { 0,      0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0, 0 }
+    { 0,      0,      0,      0,   0,   0,   0, 0,   0,   0,   0, 0, 0 }
   },                                                                      // null descriptor
   /* 0x08 */ {
-    { 0xffff, 0, 0, 0x2, 1, 0, 1, 0xf, 0, 0, 1, 1, 0 }
+    { 0xffff, 0,      0,      0x2, 1,   0,   1, 0xf, 0,   0,   1, 1, 0 }
   },                                                                      // linear data segment descriptor
   /* 0x10 */ {
-    { 0xffff, 0, 0, 0xf, 1, 0, 1, 0xf, 0, 0, 1, 1, 0 }
+    { 0xffff, 0,      0,      0xf, 1,   0,   1, 0xf, 0,   0,   1, 1, 0 }
   },                                                                      // linear code segment descriptor
   /* 0x18 */ {
-    { 0xffff, 0, 0, 0x3, 1, 0, 1, 0xf, 0, 0, 1, 1, 0 }
+    { 0xffff, 0,      0,      0x3, 1,   0,   1, 0xf, 0,   0,   1, 1, 0 }
   },                                                                      // system data segment descriptor
   /* 0x20 */ {
-    { 0xffff, 0, 0, 0xa, 1, 0, 1, 0xf, 0, 0, 1, 1, 0 }
+    { 0xffff, 0,      0,      0xa, 1,   0,   1, 0xf, 0,   0,   1, 1, 0 }
   },                                                                      // system code segment descriptor
   /* 0x28 */ {
-    { 0,      0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0, 0 }
+    { 0,      0,      0,      0,   0,   0,   0, 0,   0,   0,   0, 0, 0 }
   },                                                                      // spare segment descriptor
   /* 0x30 */ {
-    { 0xffff, 0, 0, 0x2, 1, 0, 1, 0xf, 0, 0, 1, 1, 0 }
+    { 0xffff, 0,      0,      0x2, 1,   0,   1, 0xf, 0,   0,   1, 1, 0 }
   },                                                                      // system data segment descriptor
   /* 0x38 */ {
-    { 0xffff, 0, 0, 0xa, 1, 0, 1, 0xf, 0, 1, 0, 1, 0 }
+    { 0xffff, 0,      0,      0xa, 1,   0,   1, 0xf, 0,   1,   0, 1, 0 }
   },                                                                      // system code segment descriptor
   /* 0x40 */ {
-    { 0,      0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0, 0 }
+    { 0,      0,      0,      0,   0,   0,   0, 0,   0,   0,   0, 0, 0 }
   },                                                                      // spare segment descriptor
 };
 
@@ -109,7 +109,8 @@ Create4GPageTablesIa32Pae (
   //
   // Make sure AddressEncMask is contained to smallest supported address field
   //
-  AddressEncMask = PcdGet64 (PcdPteMemoryEncryptionAddressOrMask) & PAGING_1G_ADDRESS_MASK_64;
+  AddressEncMask = PcdGet64 (PcdPteMemoryEncryptionAddressOrMask) &
+                   PAGING_1G_ADDRESS_MASK_64;
 
   PhysicalAddressBits = 32;
 
@@ -128,7 +129,9 @@ Create4GPageTablesIa32Pae (
   PageDirectoryPointerEntry = PageMap;
   PhysicalAddress           = 0;
 
-  for (IndexOfPdpEntries = 0; IndexOfPdpEntries < NumberOfPdpEntriesNeeded; IndexOfPdpEntries++, PageDirectoryPointerEntry++) {
+  for (IndexOfPdpEntries = 0; IndexOfPdpEntries < NumberOfPdpEntriesNeeded;
+       IndexOfPdpEntries++, PageDirectoryPointerEntry++)
+  {
     //
     // Each Directory Pointer entries points to a page of Page Directory entires.
     // So allocate space for them and fill them in in the IndexOfPageDirectoryEntries loop.
@@ -139,10 +142,14 @@ Create4GPageTablesIa32Pae (
     //
     // Fill in a Page Directory Pointer Entries
     //
-    PageDirectoryPointerEntry->Uint64       = (UINT64)(UINTN)PageDirectoryEntry | AddressEncMask;
+    PageDirectoryPointerEntry->Uint64 =
+      (UINT64)(UINTN)PageDirectoryEntry | AddressEncMask;
     PageDirectoryPointerEntry->Bits.Present = 1;
 
-    for (IndexOfPageDirectoryEntries = 0; IndexOfPageDirectoryEntries < 512; IndexOfPageDirectoryEntries++, PageDirectoryEntry++, PhysicalAddress += SIZE_2MB) {
+    for (IndexOfPageDirectoryEntries = 0; IndexOfPageDirectoryEntries < 512;
+         IndexOfPageDirectoryEntries++, PageDirectoryEntry++, PhysicalAddress +=
+           SIZE_2MB)
+    {
       if (  (IsNullDetectionEnabled () && (PhysicalAddress == 0))
          || (  (PhysicalAddress < StackBase + StackSize)
             && ((PhysicalAddress + SIZE_2MB) > StackBase)))
@@ -150,12 +157,20 @@ Create4GPageTablesIa32Pae (
         //
         // Need to split this 2M page that covers stack range.
         //
-        Split2MPageTo4K (PhysicalAddress, (UINT64 *)PageDirectoryEntry, StackBase, StackSize, 0, 0);
+        Split2MPageTo4K (
+          PhysicalAddress,
+          (UINT64 *)PageDirectoryEntry,
+          StackBase,
+          StackSize,
+          0,
+          0
+          );
       } else {
         //
         // Fill in the Page Directory entries
         //
-        PageDirectoryEntry->Uint64         = (UINT64)PhysicalAddress | AddressEncMask;
+        PageDirectoryEntry->Uint64 = (UINT64)PhysicalAddress |
+                                     AddressEncMask;
         PageDirectoryEntry->Bits.ReadWrite = 1;
         PageDirectoryEntry->Bits.Present   = 1;
         PageDirectoryEntry->Bits.MustBe1   = 1;
@@ -163,7 +178,9 @@ Create4GPageTablesIa32Pae (
     }
   }
 
-  for ( ; IndexOfPdpEntries < 512; IndexOfPdpEntries++, PageDirectoryPointerEntry++) {
+  for ( ; IndexOfPdpEntries < 512; IndexOfPdpEntries++,
+        PageDirectoryPointerEntry++)
+  {
     ZeroMem (
       PageDirectoryPointerEntry,
       sizeof (PAGE_MAP_AND_DIRECTORY_POINTER)
@@ -276,7 +293,11 @@ HandOffToDxeCore (
     BuildMemoryAllocationHob (0, EFI_PAGES_TO_SIZE (1), EfiBootServicesData);
   }
 
-  BaseOfStack = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePages (EFI_SIZE_TO_PAGES (STACK_SIZE));
+  BaseOfStack = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePages (
+                                               EFI_SIZE_TO_PAGES (
+                                                 STACK_SIZE
+                                                 )
+                                               );
   ASSERT (BaseOfStack != 0);
 
   if (FeaturePcdGet (PcdDxeIplSwitchToLongMode)) {
@@ -289,7 +310,8 @@ HandOffToDxeCore (
     // register parameters is reserved on the stack, in case the called function
     // wants to spill them; this is important if the function is variadic.
     //
-    TopOfStack = BaseOfStack + EFI_SIZE_TO_PAGES (STACK_SIZE) * EFI_PAGE_SIZE - 32;
+    TopOfStack = BaseOfStack + EFI_SIZE_TO_PAGES (STACK_SIZE) * EFI_PAGE_SIZE -
+                 32;
 
     //
     //  x64 Calling Conventions requires that the stack must be aligned to 16 bytes
@@ -304,7 +326,12 @@ HandOffToDxeCore (
     //
     // Create page table and save PageMapLevel4 to CR3
     //
-    PageTables = CreateIdentityMappingPageTables (BaseOfStack, STACK_SIZE, 0, 0);
+    PageTables = CreateIdentityMappingPageTables (
+                   BaseOfStack,
+                   STACK_SIZE,
+                   0,
+                   0
+                   );
 
     //
     // Paging might be already enabled. To avoid conflict configuration,
@@ -320,7 +347,13 @@ HandOffToDxeCore (
 
     SizeOfTemplate = AsmGetVectorTemplatInfo (&TemplateBase);
 
-    VectorAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePages (EFI_SIZE_TO_PAGES (sizeof (X64_IDT_TABLE) + SizeOfTemplate * IDT_ENTRY_COUNT));
+    VectorAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocatePages (
+                                                   EFI_SIZE_TO_PAGES (
+                                                     sizeof (X64_IDT_TABLE) +
+                                                     SizeOfTemplate *
+                                                     IDT_ENTRY_COUNT
+                                                     )
+                                                   );
     ASSERT (VectorAddress != 0);
 
     //
@@ -338,8 +371,14 @@ HandOffToDxeCore (
       IdtTable[Index].Ia32IdtEntry.Bits.Selector   =  SYS_CODE64_SEL;
 
       IdtTable[Index].Ia32IdtEntry.Bits.OffsetLow  = (UINT16)VectorAddress;
-      IdtTable[Index].Ia32IdtEntry.Bits.OffsetHigh = (UINT16)(RShiftU64 (VectorAddress, 16));
-      IdtTable[Index].Offset32To63                 = (UINT32)(RShiftU64 (VectorAddress, 32));
+      IdtTable[Index].Ia32IdtEntry.Bits.OffsetHigh = (UINT16)(RShiftU64 (
+                                                                VectorAddress,
+                                                                16
+                                                                ));
+      IdtTable[Index].Offset32To63                 = (UINT32)(RShiftU64 (
+                                                                VectorAddress,
+                                                                32
+                                                                ));
       IdtTable[Index].Reserved                     = 0;
 
       CopyMem ((VOID *)(UINTN)VectorAddress, TemplateBase, SizeOfTemplate);

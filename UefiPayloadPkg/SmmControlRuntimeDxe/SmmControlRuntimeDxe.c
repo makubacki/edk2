@@ -63,7 +63,8 @@ Activate (
   }
 
   SmiEn         = IoRead32 (mSmiCtrlReg.Address);
-  SmiEnableBits = (1 << mSmiCtrlReg.GblBitOffset) | (1 << mSmiCtrlReg.ApmBitOffset);
+  SmiEnableBits = (1 << mSmiCtrlReg.GblBitOffset) | (1 <<
+                                                     mSmiCtrlReg.ApmBitOffset);
   if ((SmiEn & SmiEnableBits) != SmiEnableBits) {
     //
     // Set the "global SMI enable" bit and APM bit
@@ -153,9 +154,21 @@ GetSmmCtrlRegById (
       (PldReg->Value != 1))
   {
     DEBUG ((DEBUG_INFO, "Unexpected SMM register.\n"));
-    DEBUG ((DEBUG_INFO, "AddressSpaceId= 0x%x\n", PldReg->Address.AddressSpaceId));
-    DEBUG ((DEBUG_INFO, "RegBitWidth   = 0x%x\n", PldReg->Address.RegisterBitWidth));
-    DEBUG ((DEBUG_INFO, "RegBitOffset  = 0x%x\n", PldReg->Address.RegisterBitOffset));
+    DEBUG ((
+      DEBUG_INFO,
+      "AddressSpaceId= 0x%x\n",
+      PldReg->Address.AddressSpaceId
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "RegBitWidth   = 0x%x\n",
+      PldReg->Address.RegisterBitWidth
+      ));
+    DEBUG ((
+      DEBUG_INFO,
+      "RegBitOffset  = 0x%x\n",
+      PldReg->Address.RegisterBitOffset
+      ));
     DEBUG ((DEBUG_INFO, "AccessSize    = 0x%x\n", PldReg->Address.AccessSize));
     DEBUG ((DEBUG_INFO, "Address       = 0x%lx\n", PldReg->Address.Address));
     return NULL;
@@ -228,8 +241,16 @@ SmmControlEntryPoint (
   }
 
   if (SmiApmEnReg->Address.Address != mSmiCtrlReg.Address) {
-    DEBUG ((DEBUG_ERROR, "SMI APM EN and SMI GBL EN are expected to have same register base\n"));
-    DEBUG ((DEBUG_ERROR, "APM:0x%x, GBL:0x%x\n", SmiApmEnReg->Address.Address, mSmiCtrlReg.Address));
+    DEBUG ((
+      DEBUG_ERROR,
+      "SMI APM EN and SMI GBL EN are expected to have same register base\n"
+      ));
+    DEBUG ((
+      DEBUG_ERROR,
+      "APM:0x%x, GBL:0x%x\n",
+      SmiApmEnReg->Address.Address,
+      mSmiCtrlReg.Address
+      ));
     return EFI_UNSUPPORTED;
   }
 

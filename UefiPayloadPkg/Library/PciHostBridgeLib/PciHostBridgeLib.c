@@ -201,14 +201,31 @@ PciHostBridgeGetRootBridges (
   //
   GuidHob = GetFirstGuidHob (&gUniversalPayloadPciRootBridgeInfoGuid);
   if (GuidHob != NULL) {
-    GenericHeader = (UNIVERSAL_PAYLOAD_GENERIC_HEADER *)GET_GUID_HOB_DATA (GuidHob);
-    if ((sizeof (UNIVERSAL_PAYLOAD_GENERIC_HEADER) <= GET_GUID_HOB_DATA_SIZE (GuidHob)) && (GenericHeader->Length <= GET_GUID_HOB_DATA_SIZE (GuidHob))) {
-      if ((GenericHeader->Revision == UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES_REVISION) && (GenericHeader->Length >= sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES))) {
+    GenericHeader = (UNIVERSAL_PAYLOAD_GENERIC_HEADER *)GET_GUID_HOB_DATA (
+                                                          GuidHob
+                                                          );
+    if ((sizeof (UNIVERSAL_PAYLOAD_GENERIC_HEADER) <= GET_GUID_HOB_DATA_SIZE (
+                                                        GuidHob
+                                                        )) &&
+        (GenericHeader->Length <= GET_GUID_HOB_DATA_SIZE (GuidHob)))
+    {
+      if ((GenericHeader->Revision ==
+           UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES_REVISION) &&
+          (GenericHeader->Length >=
+           sizeof (
+                                                                      UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES)))
+      {
         //
         // UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES structure is used when Revision equals to UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES_REVISION
         //
-        PciRootBridgeInfo = (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES *)GET_GUID_HOB_DATA (GuidHob);
-        if (PciRootBridgeInfo->Count <= (GET_GUID_HOB_DATA_SIZE (GuidHob) - sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES)) / sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE)) {
+        PciRootBridgeInfo =
+          (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES *)GET_GUID_HOB_DATA (GuidHob);
+        if (PciRootBridgeInfo->Count <= (GET_GUID_HOB_DATA_SIZE (GuidHob) -
+                                         sizeof (
+                                                                                   UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGES))
+            /
+            sizeof (UNIVERSAL_PAYLOAD_PCI_ROOT_BRIDGE))
+        {
           return RetrieveRootBridgeInfoFromHob (PciRootBridgeInfo, Count);
         }
       }

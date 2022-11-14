@@ -43,7 +43,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
                               EFI_FVB2_LOCK_CAP \
                               )
 
-#define EFI_FVB2_STATUS  (EFI_FVB2_READ_STATUS | EFI_FVB2_WRITE_STATUS | EFI_FVB2_LOCK_STATUS)
+#define EFI_FVB2_STATUS  \
+  (EFI_FVB2_READ_STATUS | EFI_FVB2_WRITE_STATUS | EFI_FVB2_LOCK_STATUS)
 
 typedef struct {
   UINTN                         FvBase;
@@ -64,8 +65,12 @@ typedef struct {
 //
 // Fvb Protocol instance data
 //
-#define FVB_DEVICE_FROM_THIS(a)         CR(a, EFI_FW_VOL_BLOCK_DEVICE, FwVolBlockInstance, FVB_DEVICE_SIGNATURE)
-#define FVB_EXTEND_DEVICE_FROM_THIS(a)  CR(a, EFI_FW_VOL_BLOCK_DEVICE, FvbExtension, FVB_DEVICE_SIGNATURE)
+#define FVB_DEVICE_FROM_THIS( \
+                            a)         \
+      CR(a, EFI_FW_VOL_BLOCK_DEVICE, FwVolBlockInstance, FVB_DEVICE_SIGNATURE)
+#define FVB_EXTEND_DEVICE_FROM_THIS( \
+                                   a)  \
+      CR(a, EFI_FW_VOL_BLOCK_DEVICE, FvbExtension, FVB_DEVICE_SIGNATURE)
 #define FVB_DEVICE_SIGNATURE  SIGNATURE_32('F','V','B','C')
 
 typedef struct {

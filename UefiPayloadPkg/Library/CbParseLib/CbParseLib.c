@@ -106,9 +106,15 @@ IsValidCbTable (
     return FALSE;
   }
 
-  CheckSum = CbCheckSum16 ((UINT16 *)((UINT8 *)Header + sizeof (*Header)), Header->table_bytes);
+  CheckSum = CbCheckSum16 (
+               (UINT16 *)((UINT8 *)Header + sizeof (*Header)),
+               Header->table_bytes
+               );
   if (CheckSum != Header->table_checksum) {
-    DEBUG ((DEBUG_ERROR, "Incorrect checksum of all the coreboot table entries\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Incorrect checksum of all the coreboot table entries\n"
+      ));
     return FALSE;
   }
 
@@ -353,7 +359,8 @@ ParseCbMemTable (
     Size  = cb_unpack64 (Range->size);
 
     if ((Range->type == CB_MEM_TABLE) && (Start > 0x1000)) {
-      CbMemRoot = (struct  cbmem_root *)(UINTN)(Start + Size - DYN_CBMEM_ALIGN_SIZE);
+      CbMemRoot = (struct  cbmem_root *)(UINTN)(Start + Size -
+                                                DYN_CBMEM_ALIGN_SIZE);
       Status    = FindCbMemTable (CbMemRoot, TableId, MemTable, MemTableSize);
       if (!EFI_ERROR (Status)) {
         break;
@@ -434,7 +441,11 @@ ParseSmbiosTable (
   VOID        *MemTable;
   UINT32      MemTableSize;
 
-  Status = ParseCbMemTable (SIGNATURE_32 ('T', 'B', 'M', 'S'), &MemTable, &MemTableSize);
+  Status = ParseCbMemTable (
+             SIGNATURE_32 ('T', 'B', 'M', 'S'),
+             &MemTable,
+             &MemTableSize
+             );
   if (EFI_ERROR (Status)) {
     return EFI_NOT_FOUND;
   }
@@ -463,7 +474,11 @@ ParseAcpiTableInfo (
   VOID        *MemTable;
   UINT32      MemTableSize;
 
-  Status = ParseCbMemTable (SIGNATURE_32 ('I', 'P', 'C', 'A'), &MemTable, &MemTableSize);
+  Status = ParseCbMemTable (
+             SIGNATURE_32 ('I', 'P', 'C', 'A'),
+             &MemTable,
+             &MemTableSize
+             );
   if (EFI_ERROR (Status)) {
     return EFI_NOT_FOUND;
   }
@@ -545,24 +560,37 @@ ParseGfxInfo (
   DEBUG ((DEBUG_INFO, "green_mask_pos: 0x%x\n", CbFbRec->green_mask_pos));
   DEBUG ((DEBUG_INFO, "blue_mask_size: 0x%x\n", CbFbRec->blue_mask_size));
   DEBUG ((DEBUG_INFO, "blue_mask_pos: 0x%x\n", CbFbRec->blue_mask_pos));
-  DEBUG ((DEBUG_INFO, "reserved_mask_size: 0x%x\n", CbFbRec->reserved_mask_size));
+  DEBUG ((
+    DEBUG_INFO,
+    "reserved_mask_size: 0x%x\n",
+    CbFbRec->reserved_mask_size
+    ));
   DEBUG ((DEBUG_INFO, "reserved_mask_pos: 0x%x\n", CbFbRec->reserved_mask_pos));
 
   GfxMode                       = &GfxInfo->GraphicsMode;
   GfxMode->Version              = 0;
   GfxMode->HorizontalResolution = CbFbRec->x_resolution;
   GfxMode->VerticalResolution   = CbFbRec->y_resolution;
-  GfxMode->PixelsPerScanLine    = (CbFbRec->bytes_per_line << 3) / CbFbRec->bits_per_pixel;
-  if ((CbFbRec->red_mask_pos == 0) && (CbFbRec->green_mask_pos == 8) && (CbFbRec->blue_mask_pos == 16)) {
+  GfxMode->PixelsPerScanLine    = (CbFbRec->bytes_per_line << 3) /
+                                  CbFbRec->bits_per_pixel;
+  if ((CbFbRec->red_mask_pos == 0) && (CbFbRec->green_mask_pos == 8) &&
+      (CbFbRec->blue_mask_pos == 16))
+  {
     GfxMode->PixelFormat = PixelRedGreenBlueReserved8BitPerColor;
-  } else if ((CbFbRec->blue_mask_pos == 0) && (CbFbRec->green_mask_pos == 8) && (CbFbRec->red_mask_pos == 16)) {
+  } else if ((CbFbRec->blue_mask_pos == 0) && (CbFbRec->green_mask_pos == 8) &&
+             (CbFbRec->red_mask_pos == 16))
+  {
     GfxMode->PixelFormat = PixelBlueGreenRedReserved8BitPerColor;
   }
 
-  GfxMode->PixelInformation.RedMask      = ((1 << CbFbRec->red_mask_size)      - 1) << CbFbRec->red_mask_pos;
-  GfxMode->PixelInformation.GreenMask    = ((1 << CbFbRec->green_mask_size)    - 1) << CbFbRec->green_mask_pos;
-  GfxMode->PixelInformation.BlueMask     = ((1 << CbFbRec->blue_mask_size)     - 1) << CbFbRec->blue_mask_pos;
-  GfxMode->PixelInformation.ReservedMask = ((1 << CbFbRec->reserved_mask_size) - 1) << CbFbRec->reserved_mask_pos;
+  GfxMode->PixelInformation.RedMask      = ((1 << CbFbRec->red_mask_size)      -
+                                            1) << CbFbRec->red_mask_pos;
+  GfxMode->PixelInformation.GreenMask    = ((1 << CbFbRec->green_mask_size)    -
+                                            1) << CbFbRec->green_mask_pos;
+  GfxMode->PixelInformation.BlueMask     = ((1 << CbFbRec->blue_mask_size)     -
+                                            1) << CbFbRec->blue_mask_pos;
+  GfxMode->PixelInformation.ReservedMask = ((1 << CbFbRec->reserved_mask_size) -
+                                            1) << CbFbRec->reserved_mask_pos;
 
   GfxInfo->FrameBufferBase = CbFbRec->physical_address;
   GfxInfo->FrameBufferSize = CbFbRec->bytes_per_line *  CbFbRec->y_resolution;

@@ -48,12 +48,19 @@ AllocatePages (
   //
   // Check available memory for the allocation
   //
-  if (HobTable->EfiFreeMemoryTop - ((Pages * EFI_PAGE_SIZE) + sizeof (EFI_HOB_MEMORY_ALLOCATION)) < HobTable->EfiFreeMemoryBottom) {
+  if (HobTable->EfiFreeMemoryTop - ((Pages * EFI_PAGE_SIZE) +
+                                    sizeof (EFI_HOB_MEMORY_ALLOCATION)) <
+      HobTable->EfiFreeMemoryBottom)
+  {
     return NULL;
   }
 
   HobTable->EfiFreeMemoryTop -= Pages * EFI_PAGE_SIZE;
-  BuildMemoryAllocationHob (HobTable->EfiFreeMemoryTop, Pages * EFI_PAGE_SIZE, EfiBootServicesData);
+  BuildMemoryAllocationHob (
+    HobTable->EfiFreeMemoryTop,
+    Pages * EFI_PAGE_SIZE,
+    EfiBootServicesData
+    );
 
   return (VOID *)(UINTN)HobTable->EfiFreeMemoryTop;
 }
@@ -162,7 +169,11 @@ AllocatePool (
     return NULL;
   }
 
-  Hob = (EFI_HOB_MEMORY_POOL *)CreateHob (EFI_HOB_TYPE_MEMORY_POOL, (UINT16)(sizeof (EFI_HOB_MEMORY_POOL) + AllocationSize));
+  Hob = (EFI_HOB_MEMORY_POOL *)CreateHob (
+                                 EFI_HOB_TYPE_MEMORY_POOL,
+                                 (UINT16)(sizeof (EFI_HOB_MEMORY_POOL) +
+                                          AllocationSize)
+                                 );
   return (VOID *)(Hob + 1);
 }
 

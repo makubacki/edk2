@@ -62,7 +62,11 @@ Open (
   }
 
   mSmmAccess.SmmRegionState &= ~(EFI_SMRAM_CLOSED | EFI_ALLOCATED);
-  SyncRegionState2SmramDesc (FALSE, (UINT64)(UINTN)(~(EFI_SMRAM_CLOSED | EFI_ALLOCATED)));
+  SyncRegionState2SmramDesc (
+    FALSE,
+    (UINT64)(UINTN)(~(EFI_SMRAM_CLOSED |
+                      EFI_ALLOCATED))
+    );
 
   mSmmAccess.SmmRegionState |= EFI_SMRAM_OPEN;
   SyncRegionState2SmramDesc (TRUE, EFI_SMRAM_OPEN);
@@ -172,7 +176,8 @@ GetCapabilities (
   EFI_STATUS  Status;
   UINTN       NecessaryBufferSize;
 
-  NecessaryBufferSize = mSmmAccess.NumberRegions * sizeof (EFI_SMRAM_DESCRIPTOR);
+  NecessaryBufferSize = mSmmAccess.NumberRegions *
+                        sizeof (EFI_SMRAM_DESCRIPTOR);
   if (*SmramMapSize < NecessaryBufferSize) {
     Status = EFI_BUFFER_TOO_SMALL;
   } else {
@@ -216,14 +221,23 @@ SmmAccessEntryPoint (
     return EFI_NOT_FOUND;
   }
 
-  SmramHob             = (EFI_SMRAM_HOB_DESCRIPTOR_BLOCK *)GET_GUID_HOB_DATA (GuidHob);
+  SmramHob = (EFI_SMRAM_HOB_DESCRIPTOR_BLOCK *)GET_GUID_HOB_DATA (
+                                                 GuidHob
+                                                 );
   SmmRegionNum         = SmramHob->NumberOfSmmReservedRegions;
-  mSmmAccess.SmramDesc = AllocateZeroPool (sizeof (EFI_SMRAM_DESCRIPTOR) * SmmRegionNum);
+  mSmmAccess.SmramDesc = AllocateZeroPool (
+                           sizeof (EFI_SMRAM_DESCRIPTOR) *
+                           SmmRegionNum
+                           );
   if (mSmmAccess.SmramDesc == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CopyMem (mSmmAccess.SmramDesc, &SmramHob->Descriptor, sizeof (EFI_SMRAM_DESCRIPTOR) * SmmRegionNum);
+  CopyMem (
+    mSmmAccess.SmramDesc,
+    &SmramHob->Descriptor,
+    sizeof (EFI_SMRAM_DESCRIPTOR) * SmmRegionNum
+    );
 
   DEBUG ((DEBUG_INFO, "NumberOfSmmReservedRegions = 0x%x\n", SmmRegionNum));
   for (Index = 0; Index < SmmRegionNum; Index++) {

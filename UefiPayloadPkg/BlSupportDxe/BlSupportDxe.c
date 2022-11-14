@@ -112,9 +112,23 @@ BlDxeEntryPoint (
   //
   // Report MMIO/IO Resources
   //
-  ReserveResourceInGcd (TRUE, EfiGcdMemoryTypeMemoryMappedIo, 0xFEC00000, SIZE_4KB, 0, ImageHandle); // IOAPIC
+  ReserveResourceInGcd (
+    TRUE,
+    EfiGcdMemoryTypeMemoryMappedIo,
+    0xFEC00000,
+    SIZE_4KB,
+    0,
+    ImageHandle
+    );                                                                                               // IOAPIC
 
-  ReserveResourceInGcd (TRUE, EfiGcdMemoryTypeMemoryMappedIo, 0xFED00000, SIZE_1KB, 0, ImageHandle); // HPET
+  ReserveResourceInGcd (
+    TRUE,
+    EfiGcdMemoryTypeMemoryMappedIo,
+    0xFED00000,
+    SIZE_1KB,
+    0,
+    ImageHandle
+    );                                                                                               // HPET
 
   //
   // Find the frame buffer information and update PCDs
@@ -122,13 +136,25 @@ BlDxeEntryPoint (
   GuidHob = GetFirstGuidHob (&gEfiGraphicsInfoHobGuid);
   if (GuidHob != NULL) {
     GfxInfo = (EFI_PEI_GRAPHICS_INFO_HOB *)GET_GUID_HOB_DATA (GuidHob);
-    Status  = PcdSet32S (PcdVideoHorizontalResolution, GfxInfo->GraphicsMode.HorizontalResolution);
+    Status  = PcdSet32S (
+                PcdVideoHorizontalResolution,
+                GfxInfo->GraphicsMode.HorizontalResolution
+                );
     ASSERT_EFI_ERROR (Status);
-    Status = PcdSet32S (PcdVideoVerticalResolution, GfxInfo->GraphicsMode.VerticalResolution);
+    Status = PcdSet32S (
+               PcdVideoVerticalResolution,
+               GfxInfo->GraphicsMode.VerticalResolution
+               );
     ASSERT_EFI_ERROR (Status);
-    Status = PcdSet32S (PcdSetupVideoHorizontalResolution, GfxInfo->GraphicsMode.HorizontalResolution);
+    Status = PcdSet32S (
+               PcdSetupVideoHorizontalResolution,
+               GfxInfo->GraphicsMode.HorizontalResolution
+               );
     ASSERT_EFI_ERROR (Status);
-    Status = PcdSet32S (PcdSetupVideoVerticalResolution, GfxInfo->GraphicsMode.VerticalResolution);
+    Status = PcdSet32S (
+               PcdSetupVideoVerticalResolution,
+               GfxInfo->GraphicsMode.VerticalResolution
+               );
     ASSERT_EFI_ERROR (Status);
   }
 
@@ -138,7 +164,10 @@ BlDxeEntryPoint (
   GuidHob = GetFirstGuidHob (&gUefiAcpiBoardInfoGuid);
   if (GuidHob != NULL) {
     AcpiBoardInfo = (ACPI_BOARD_INFO *)GET_GUID_HOB_DATA (GuidHob);
-    Status        = PcdSet64S (PcdPciExpressBaseAddress, AcpiBoardInfo->PcieBaseAddress);
+    Status        = PcdSet64S (
+                      PcdPciExpressBaseAddress,
+                      AcpiBoardInfo->PcieBaseAddress
+                      );
     ASSERT_EFI_ERROR (Status);
     Status = PcdSet64S (PcdPciExpressBaseSize, AcpiBoardInfo->PcieBaseSize);
     ASSERT_EFI_ERROR (Status);

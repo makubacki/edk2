@@ -93,7 +93,10 @@ PrepareLpcBridgeDevicePath (
   //
   // Register Keyboard
   //
-  DevicePath = AppendDevicePathNode (DevicePath, (EFI_DEVICE_PATH_PROTOCOL *)&gPnpPs2KeyboardDeviceNode);
+  DevicePath = AppendDevicePathNode (
+                 DevicePath,
+                 (EFI_DEVICE_PATH_PROTOCOL *)&gPnpPs2KeyboardDeviceNode
+                 );
   EfiBootManagerUpdateConsoleVariable (ConIn, DevicePath, NULL);
   return EFI_SUCCESS;
 }
@@ -155,7 +158,11 @@ GetGopDevicePath (
     // Add all the child handles as possible Console Device
     //
     for (Index = 0; Index < GopHandleCount; Index++) {
-      Status = gBS->HandleProtocol (GopHandleBuffer[Index], &gEfiDevicePathProtocolGuid, (VOID *)&TempDevicePath);
+      Status = gBS->HandleProtocol (
+                      GopHandleBuffer[Index],
+                      &gEfiDevicePathProtocolGuid,
+                      (VOID *)&TempDevicePath
+                      );
       if (EFI_ERROR (Status)) {
         continue;
       }
@@ -386,7 +393,10 @@ AddDevicePathForOneSerialIoInstance (
                       &gEfiDevicePathProtocolGuid,
                       (VOID *)&DevicePath
                       );
-  DevicePath = AppendDevicePathNode (DevicePath, (EFI_DEVICE_PATH_PROTOCOL *)&gTerminalTypeDeviceNode);
+  DevicePath = AppendDevicePathNode (
+                 DevicePath,
+                 (EFI_DEVICE_PATH_PROTOCOL *)&gTerminalTypeDeviceNode
+                 );
 
   EfiBootManagerUpdateConsoleVariable (ConOut, DevicePath, NULL);
   EfiBootManagerUpdateConsoleVariable (ConIn, DevicePath, NULL);

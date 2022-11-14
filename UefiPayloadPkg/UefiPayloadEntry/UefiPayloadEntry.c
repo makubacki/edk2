@@ -11,12 +11,23 @@
 STATIC UINT32  mTopOfLowerUsableDram = 0;
 
 EFI_MEMORY_TYPE_INFORMATION  mDefaultMemoryTypeInformation[] = {
-  { EfiACPIReclaimMemory,   FixedPcdGet32 (PcdMemoryTypeEfiACPIReclaimMemory)   },
-  { EfiACPIMemoryNVS,       FixedPcdGet32 (PcdMemoryTypeEfiACPIMemoryNVS)       },
-  { EfiReservedMemoryType,  FixedPcdGet32 (PcdMemoryTypeEfiReservedMemoryType)  },
-  { EfiRuntimeServicesData, FixedPcdGet32 (PcdMemoryTypeEfiRuntimeServicesData) },
-  { EfiRuntimeServicesCode, FixedPcdGet32 (PcdMemoryTypeEfiRuntimeServicesCode) },
-  { EfiMaxMemoryType,       0                                                   }
+  { EfiACPIReclaimMemory,   FixedPcdGet32 (
+                              PcdMemoryTypeEfiACPIReclaimMemory
+                              )         },
+  { EfiACPIMemoryNVS,       FixedPcdGet32 (
+                              PcdMemoryTypeEfiACPIMemoryNVS
+                              )                   },
+  { EfiReservedMemoryType,  FixedPcdGet32 (
+                              PcdMemoryTypeEfiReservedMemoryType
+                              )                    },
+  { EfiRuntimeServicesData, FixedPcdGet32 (
+                              PcdMemoryTypeEfiRuntimeServicesData
+                              )                         },
+  { EfiRuntimeServicesCode, FixedPcdGet32 (
+                              PcdMemoryTypeEfiRuntimeServicesCode
+                              )                               },
+  { EfiMaxMemoryType,
+    0                                                                                 }
 };
 
 /**
@@ -31,7 +42,8 @@ ForceModulesBelow4G (
   VOID
   )
 {
-  DEBUG ((DEBUG_INFO, "Building hob to restrict memory resorces to below 4G.\n"));
+  DEBUG ((DEBUG_INFO,
+    "Building hob to restrict memory resorces to below 4G.\n"));
 
   //
   // Create Memory Type Information HOB
@@ -76,7 +88,8 @@ MemInfoCallbackMmio (
   //
   // Skip types already handled in MemInfoCallback
   //
-  if ((MemoryMapEntry->Type == E820_RAM) || (MemoryMapEntry->Type == E820_ACPI)) {
+  if ((MemoryMapEntry->Type == E820_RAM) || (MemoryMapEntry->Type ==
+                                             E820_ACPI)) {
     return EFI_SUCCESS;
   }
 
@@ -90,7 +103,9 @@ MemInfoCallbackMmio (
     // It's in DRAM and thus must be reserved
     //
     Type = EFI_RESOURCE_MEMORY_RESERVED;
-  } else if ((MemoryMapEntry->Base < 0x100000000ULL) && (MemoryMapEntry->Base >= mTopOfLowerUsableDram)) {
+  } else if ((MemoryMapEntry->Base < 0x100000000ULL) && (MemoryMapEntry->Base >=
+                                                         mTopOfLowerUsableDram))
+  {
     //
     // It's not in DRAM, must be MMIO
     //
@@ -111,7 +126,8 @@ MemInfoCallbackMmio (
              EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE;
 
   BuildResourceDescriptorHob (Type, Attribue, (EFI_PHYSICAL_ADDRESS)Base, Size);
-  DEBUG ((DEBUG_INFO, "buildhob: base = 0x%lx, size = 0x%lx, type = 0x%x\n", Base, Size, Type));
+  DEBUG ((DEBUG_INFO, "buildhob: base = 0x%lx, size = 0x%lx, type = 0x%x\n",
+    Base, Size, Type));
 
   if ((MemoryMapEntry->Type == E820_UNUSABLE) ||
       (MemoryMapEntry->Type == E820_DISABLED))
@@ -153,7 +169,8 @@ FindToludCallback (
   //
   // Skip memory types not RAM or reserved
   //
-  if ((MemoryMapEntry->Type == E820_UNUSABLE) || (MemoryMapEntry->Type == E820_DISABLED) ||
+  if ((MemoryMapEntry->Type == E820_UNUSABLE) || (MemoryMapEntry->Type ==
+                                                  E820_DISABLED) ||
       (MemoryMapEntry->Type == E820_PMEM))
   {
     return EFI_SUCCESS;
@@ -166,14 +183,16 @@ FindToludCallback (
     return EFI_SUCCESS;
   }
 
-  if ((MemoryMapEntry->Type == E820_RAM) || (MemoryMapEntry->Type == E820_ACPI) ||
+  if ((MemoryMapEntry->Type == E820_RAM) || (MemoryMapEntry->Type ==
+                                             E820_ACPI) ||
       (MemoryMapEntry->Type == E820_NVS))
   {
     //
     // It's usable DRAM. Update TOLUD.
     //
     if (mTopOfLowerUsableDram < (MemoryMapEntry->Base + MemoryMapEntry->Size)) {
-      mTopOfLowerUsableDram = (UINT32)(MemoryMapEntry->Base + MemoryMapEntry->Size);
+      mTopOfLowerUsableDram = (UINT32)(MemoryMapEntry->Base +
+                                       MemoryMapEntry->Size);
     }
   } else {
     //
@@ -183,7 +202,8 @@ FindToludCallback (
     // as it could be bootloader installed tables, TSEG, GTT, ...
     //
     if (mTopOfLowerUsableDram == MemoryMapEntry->Base) {
-      mTopOfLowerUsableDram = (UINT32)(MemoryMapEntry->Base + MemoryMapEntry->Size);
+      mTopOfLowerUsableDram = (UINT32)(MemoryMapEntry->Base +
+                                       MemoryMapEntry->Size);
     }
   }
 
@@ -216,7 +236,8 @@ MemInfoCallback (
   // Skip everything not known to be usable DRAM.
   // It will be added later.
   //
-  if ((MemoryMapEntry->Type != E820_RAM) && (MemoryMapEntry->Type != E820_ACPI) &&
+  if ((MemoryMapEntry->Type != E820_RAM) && (MemoryMapEntry->Type !=
+                                             E820_ACPI) &&
       (MemoryMapEntry->Type != E820_NVS))
   {
     return RETURN_SUCCESS;
@@ -235,7 +256,8 @@ MemInfoCallback (
              EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE;
 
   BuildResourceDescriptorHob (Type, Attribue, (EFI_PHYSICAL_ADDRESS)Base, Size);
-  DEBUG ((DEBUG_INFO, "buildhob: base = 0x%lx, size = 0x%lx, type = 0x%x\n", Base, Size, Type));
+  DEBUG ((DEBUG_INFO, "buildhob: base = 0x%lx, size = 0x%lx, type = 0x%x\n",
+    Base, Size, Type));
 
   if (MemoryMapEntry->Type == E820_ACPI) {
     BuildMemoryAllocationHob (Base, Size, EfiACPIReclaimMemory);
@@ -299,7 +321,8 @@ BuildHobFromBl (
 
   Status = ParseGfxDeviceInfo (&GfxDeviceInfo);
   if (!EFI_ERROR (Status)) {
-    NewGfxDeviceInfo = BuildGuidHob (&gEfiGraphicsDeviceInfoHobGuid, sizeof (GfxDeviceInfo));
+    NewGfxDeviceInfo = BuildGuidHob (&gEfiGraphicsDeviceInfoHobGuid,
+                         sizeof (GfxDeviceInfo));
     ASSERT (NewGfxDeviceInfo != NULL);
     CopyMem (NewGfxDeviceInfo, &GfxDeviceInfo, sizeof (GfxDeviceInfo));
     DEBUG ((DEBUG_INFO, "Created graphics device info hob\n"));
@@ -308,24 +331,29 @@ BuildHobFromBl (
   //
   // Creat SmBios table Hob
   //
-  SmBiosTableHob = BuildGuidHob (&gUniversalPayloadSmbiosTableGuid, sizeof (UNIVERSAL_PAYLOAD_SMBIOS_TABLE));
+  SmBiosTableHob = BuildGuidHob (&gUniversalPayloadSmbiosTableGuid,
+                     sizeof (UNIVERSAL_PAYLOAD_SMBIOS_TABLE));
   ASSERT (SmBiosTableHob != NULL);
   SmBiosTableHob->Header.Revision = UNIVERSAL_PAYLOAD_SMBIOS_TABLE_REVISION;
   SmBiosTableHob->Header.Length   = sizeof (UNIVERSAL_PAYLOAD_SMBIOS_TABLE);
-  DEBUG ((DEBUG_INFO, "Create smbios table gUniversalPayloadSmbiosTableGuid guid hob\n"));
+  DEBUG ((DEBUG_INFO,
+    "Create smbios table gUniversalPayloadSmbiosTableGuid guid hob\n"));
   Status = ParseSmbiosTable (SmBiosTableHob);
   if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Detected Smbios Table at 0x%lx\n", SmBiosTableHob->SmBiosEntryPoint));
+    DEBUG ((DEBUG_INFO, "Detected Smbios Table at 0x%lx\n",
+      SmBiosTableHob->SmBiosEntryPoint));
   }
 
   //
   // Creat ACPI table Hob
   //
-  AcpiTableHob = BuildGuidHob (&gUniversalPayloadAcpiTableGuid, sizeof (UNIVERSAL_PAYLOAD_ACPI_TABLE));
+  AcpiTableHob = BuildGuidHob (&gUniversalPayloadAcpiTableGuid,
+                   sizeof (UNIVERSAL_PAYLOAD_ACPI_TABLE));
   ASSERT (AcpiTableHob != NULL);
   AcpiTableHob->Header.Revision = UNIVERSAL_PAYLOAD_ACPI_TABLE_REVISION;
   AcpiTableHob->Header.Length   = sizeof (UNIVERSAL_PAYLOAD_ACPI_TABLE);
-  DEBUG ((DEBUG_INFO, "Create ACPI table gUniversalPayloadAcpiTableGuid guid hob\n"));
+  DEBUG ((DEBUG_INFO,
+    "Create ACPI table gUniversalPayloadAcpiTableGuid guid hob\n"));
   Status = ParseAcpiTableInfo (AcpiTableHob);
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "Detected ACPI Table at 0x%lx\n", AcpiTableHob->Rsdp));
@@ -340,7 +368,8 @@ BuildHobFromBl (
   //
   // Parse memory info and build memory HOBs for reserved DRAM and MMIO
   //
-  DEBUG ((DEBUG_INFO, "Building ResourceDescriptorHobs for reserved memory:\n"));
+  DEBUG ((DEBUG_INFO,
+    "Building ResourceDescriptorHobs for reserved memory:\n"));
   Status = ParseMemoryInfo (MemInfoCallbackMmio, AcpiBoardInfo);
   if (EFI_ERROR (Status)) {
     return Status;
@@ -359,7 +388,8 @@ BuildHobFromBl (
   //
   Status = ParsePlatformInfo ();
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Error when parsing platform info, Status = %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "Error when parsing platform info, Status = %r\n",
+      Status));
     return Status;
   }
 
@@ -380,7 +410,9 @@ BuildGenericHob (
   EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttribute;
 
   // The UEFI payload FV
-  BuildMemoryAllocationHob (PcdGet32 (PcdPayloadFdMemBase), PcdGet32 (PcdPayloadFdMemSize), EfiBootServicesData);
+  BuildMemoryAllocationHob (PcdGet32 (PcdPayloadFdMemBase), PcdGet32 (
+                                                              PcdPayloadFdMemSize),
+    EfiBootServicesData);
 
   //
   // Build CPU memory space and IO space hob
@@ -404,7 +436,8 @@ BuildGenericHob (
                        EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
                        EFI_RESOURCE_ATTRIBUTE_TESTED
                        );
-  BuildResourceDescriptorHob (EFI_RESOURCE_MEMORY_MAPPED_IO, ResourceAttribute, 0xFEC80000, SIZE_512KB);
+  BuildResourceDescriptorHob (EFI_RESOURCE_MEMORY_MAPPED_IO, ResourceAttribute,
+    0xFEC80000, SIZE_512KB);
   BuildMemoryAllocationHob (0xFEC80000, SIZE_512KB, EfiMemoryMappedIO);
 }
 
@@ -441,21 +474,26 @@ _ModuleEntryPoint (
   HobMemBase = ALIGN_VALUE (MemBase + PcdGet32 (PcdPayloadFdMemSize), SIZE_1MB);
   HobMemTop  = HobMemBase + FixedPcdGet32 (PcdSystemMemoryUefiRegionSize);
 
-  HobConstructor ((VOID *)MemBase, (VOID *)HobMemTop, (VOID *)HobMemBase, (VOID *)HobMemTop);
+  HobConstructor ((VOID *)MemBase, (VOID *)HobMemTop, (VOID *)HobMemBase,
+    (VOID *)HobMemTop);
 
   //
   // Build serial port info
   //
   Status = ParseSerialInfo (&SerialPortInfo);
   if (!EFI_ERROR (Status)) {
-    UniversalSerialPort = BuildGuidHob (&gUniversalPayloadSerialPortInfoGuid, sizeof (UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO));
+    UniversalSerialPort = BuildGuidHob (&gUniversalPayloadSerialPortInfoGuid,
+                            sizeof (UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO));
     ASSERT (UniversalSerialPort != NULL);
-    UniversalSerialPort->Header.Revision = UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO_REVISION;
-    UniversalSerialPort->Header.Length   = sizeof (UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO);
-    UniversalSerialPort->UseMmio         = (SerialPortInfo.Type == 1) ? FALSE : TRUE;
-    UniversalSerialPort->RegisterBase    = SerialPortInfo.BaseAddr;
-    UniversalSerialPort->BaudRate        = SerialPortInfo.Baud;
-    UniversalSerialPort->RegisterStride  = (UINT8)SerialPortInfo.RegWidth;
+    UniversalSerialPort->Header.Revision =
+      UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO_REVISION;
+    UniversalSerialPort->Header.Length =
+      sizeof (UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO);
+    UniversalSerialPort->UseMmio = (SerialPortInfo.Type == 1) ? FALSE :
+                                   TRUE;
+    UniversalSerialPort->RegisterBase   = SerialPortInfo.BaseAddr;
+    UniversalSerialPort->BaudRate       = SerialPortInfo.Baud;
+    UniversalSerialPort->RegisterStride = (UINT8)SerialPortInfo.RegWidth;
   }
 
   // The library constructors might depend on serial port, so call it after serial port hob
@@ -489,7 +527,8 @@ _ModuleEntryPoint (
   IoWrite8 (LEGACY_8259_MASK_REGISTER_MASTER, 0xFF);
   IoWrite8 (LEGACY_8259_MASK_REGISTER_SLAVE, 0xFF);
 
-  Hob.HandoffInformationTable = (EFI_HOB_HANDOFF_INFO_TABLE *)GetFirstHob (EFI_HOB_TYPE_HANDOFF);
+  Hob.HandoffInformationTable = (EFI_HOB_HANDOFF_INFO_TABLE *)GetFirstHob (
+                                                                EFI_HOB_TYPE_HANDOFF);
   HandOffToDxeCore (DxeCoreEntryPoint, Hob);
 
   // Should not get here
