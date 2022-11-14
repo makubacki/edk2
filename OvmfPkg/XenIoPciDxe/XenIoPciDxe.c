@@ -316,8 +316,8 @@ STATIC EFI_DRIVER_BINDING_PROTOCOL  gDriverBinding = {
 //
 STATIC
 EFI_UNICODE_STRING_TABLE  mDriverNameTable[] = {
-  { "eng;en", L"XenIo PCI Driver"     },
-  { NULL,     NULL                    }
+  { "eng;en", L"XenIo PCI Driver" },
+  { NULL,     NULL                }
 };
 
 STATIC

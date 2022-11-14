@@ -500,7 +500,7 @@ SataControllerStart (
     Data32                                = AhciReadReg (PciIo, R_AHCI_CAP);
     SataPrivateData->IdeInit.ChannelCount = (UINT8)((Data32 & B_AHCI_CAP_NPS) +
                                                     1);
-    SataPrivateData->DeviceCount          = AHCI_MAX_DEVICES;
+    SataPrivateData->DeviceCount = AHCI_MAX_DEVICES;
     if ((Data32 & B_AHCI_CAP_SPM) == B_AHCI_CAP_SPM) {
       SataPrivateData->DeviceCount = AHCI_MULTI_MAX_DEVICES;
     }

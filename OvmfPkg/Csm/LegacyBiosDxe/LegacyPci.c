@@ -413,8 +413,8 @@ GetPciLegacyRom (
   RomHeader.Raw = BestImage;
   Pcir          = (PCI_3_0_DATA_STRUCTURE *)(RomHeader.Raw +
                                              RomHeader.Generic->PcirOffset);
-  *Rom          = BestImage;
-  *ImageSize    = Pcir->ImageLength * 512;
+  *Rom       = BestImage;
+  *ImageSize = Pcir->ImageLength * 512;
 
   if (MaxRuntimeImageLength != NULL) {
     if (Pcir->Revision < 3) {
@@ -760,7 +760,7 @@ Rotate (B,C,D,A) by 1 giving C,D,A,B. Translated PIRQ is C.
     //
     if ((LocalBus >= Bridges[SBridgeIndex].SecondaryBus) && (LocalBus <=
                                                              Bridges[
-                                                                                SBridgeIndex
+                                                                     SBridgeIndex
                                                              ].SubordinateBus))
     {
       //
@@ -1065,8 +1065,8 @@ InstallLegacyIrqHandler (
   Private->IntThunk->PciHandler.PciBus       = (UINT8)PciBus;
   Private->IntThunk->PciHandler.PciDeviceFun = (UINT8)((PciDevice << 3) +
                                                        PciFunction);
-  Private->IntThunk->PciHandler.PciSegment   = (UINT8)PciSegment;
-  Private->IntThunk->PciHandler.PciClass     =
+  Private->IntThunk->PciHandler.PciSegment = (UINT8)PciSegment;
+  Private->IntThunk->PciHandler.PciClass   =
     PciConfigHeader->Hdr.ClassCode[2];
   Private->IntThunk->PciHandler.PciSubclass =
     PciConfigHeader->Hdr.ClassCode[1];
@@ -1696,8 +1696,8 @@ UpdateBevBcvTable (
 
     if ((PnpPtr == (LEGACY_PNP_EXPANSION_HEADER *)PciPtr) || (PnpPtr >
                                                               (
-                                                                       LEGACY_PNP_EXPANSION_HEADER
-                                                                       *)RomEnd))
+                                                               LEGACY_PNP_EXPANSION_HEADER
+                                                               *)RomEnd))
     {
       break;
     }
@@ -3156,10 +3156,10 @@ LegacyBiosInstallPciRom (
       if (
             (
                ((PciConfigHeader.Hdr.ClassCode[2] == PCI_CLASS_OLD) &&
-                (PciConfigHeader.Hdr.ClassCode[1] == PCI_CLASS_OLD_VGA))
+              (PciConfigHeader.Hdr.ClassCode[1] == PCI_CLASS_OLD_VGA))
             ||
-               ((PciConfigHeader.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
-                (PciConfigHeader.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA))
+             ((PciConfigHeader.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
+              (PciConfigHeader.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA))
             )
          &&
             (!Private->VgaInstalled)

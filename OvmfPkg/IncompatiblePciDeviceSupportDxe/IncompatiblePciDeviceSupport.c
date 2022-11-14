@@ -50,7 +50,7 @@ STATIC CONST EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  mMmio64Configuration = {
   ACPI_ADDRESS_SPACE_DESCRIPTOR,                   // Desc
   (UINT16)(                                        // Len
                                                    sizeof (
-                                                          EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR)
+                                                           EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR)
                                                    -
                                                    OFFSET_OF (
                                                      EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR,
@@ -86,7 +86,7 @@ STATIC CONST EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  mOptionRomConfiguration =   {
   ACPI_ADDRESS_SPACE_DESCRIPTOR,                   // Desc
   (UINT16)(                                        // Len
                                                    sizeof (
-                                                          EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR)
+                                                           EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR)
                                                    -
                                                    OFFSET_OF (
                                                      EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR,

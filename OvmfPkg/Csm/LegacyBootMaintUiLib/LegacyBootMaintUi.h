@@ -44,7 +44,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // defined below
 //
 #define VAR_OFFSET( \
-                  Field)  \
+                    Field)  \
   ((UINT16) ((UINTN) &(((LEGACY_BOOT_NV_DATA *) 0)->Field)))
 
 //

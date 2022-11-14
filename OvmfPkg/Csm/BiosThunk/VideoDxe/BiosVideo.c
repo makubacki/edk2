@@ -65,29 +65,29 @@ VESA_BIOS_EXTENSIONS_EDID_TIMING  mEstablishedEdidTiming[] = {
   //
   // Established Timing I
   //
-  { 800,  600,  60     },
-  { 800,  600,  56     },
-  { 640,  480,  75     },
-  { 640,  480,  72     },
-  { 640,  480,  67     },
-  { 640,  480,  60     },
-  { 720,  400,  88     },
-  { 720,  400,  70     },
+  { 800,  600,  60 },
+  { 800,  600,  56 },
+  { 640,  480,  75 },
+  { 640,  480,  72 },
+  { 640,  480,  67 },
+  { 640,  480,  60 },
+  { 720,  400,  88 },
+  { 720,  400,  70 },
   //
   // Established Timing II
   //
-  { 1280, 1024, 75     },
-  { 1024, 768,  75     },
-  { 1024, 768,  70     },
-  { 1024, 768,  60     },
-  { 1024, 768,  87     },
-  { 832,  624,  75     },
-  { 800,  600,  75     },
-  { 800,  600,  72     },
+  { 1280, 1024, 75 },
+  { 1024, 768,  75 },
+  { 1024, 768,  70 },
+  { 1024, 768,  60 },
+  { 1024, 768,  87 },
+  { 832,  624,  75 },
+  { 800,  600,  75 },
+  { 800,  600,  72 },
   //
   // Established Timing III
   //
-  { 1152, 870,  75     }
+  { 1152, 870,  75 }
 };
 
 /**
@@ -1436,16 +1436,16 @@ BiosVideoCheckForVbe (
   //
   BiosVideoPrivate->NumberOfPagesBelow1MB = EFI_SIZE_TO_PAGES (
                                               sizeof (
-                                                     VESA_BIOS_EXTENSIONS_INFORMATION_BLOCK)
+                                                      VESA_BIOS_EXTENSIONS_INFORMATION_BLOCK)
                                               +
                                               sizeof (
-                                                     VESA_BIOS_EXTENSIONS_MODE_INFORMATION_BLOCK)
+                                                      VESA_BIOS_EXTENSIONS_MODE_INFORMATION_BLOCK)
                                               +
                                               sizeof (
-                                                     VESA_BIOS_EXTENSIONS_EDID_DATA_BLOCK)
+                                                      VESA_BIOS_EXTENSIONS_EDID_DATA_BLOCK)
                                               +
                                               sizeof (
-                                                     VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK)
+                                                      VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK)
                                               );
 
   BiosVideoPrivate->PagesBelow1MB = 0x00100000 - 1;
@@ -1878,22 +1878,22 @@ BiosVideoCheckForVbe (
         BiosVideoPrivate->VbeModeInformationBlock->LinBytesPerScanLine;
       CurrentModeData->Red.Position =
         BiosVideoPrivate->VbeModeInformationBlock->LinRedFieldPosition;
-      CurrentModeData->Red.Mask      = (UINT8)((1 <<
-                                                BiosVideoPrivate->
-                                                  VbeModeInformationBlock->
-                                                  LinRedMaskSize) - 1);
+      CurrentModeData->Red.Mask = (UINT8)((1 <<
+                                           BiosVideoPrivate->
+                                             VbeModeInformationBlock->
+                                             LinRedMaskSize) - 1);
       CurrentModeData->Blue.Position =
         BiosVideoPrivate->VbeModeInformationBlock->LinBlueFieldPosition;
-      CurrentModeData->Blue.Mask      = (UINT8)((1 <<
-                                                 BiosVideoPrivate->
-                                                   VbeModeInformationBlock->
-                                                   LinBlueMaskSize) - 1);
+      CurrentModeData->Blue.Mask = (UINT8)((1 <<
+                                            BiosVideoPrivate->
+                                              VbeModeInformationBlock->
+                                              LinBlueMaskSize) - 1);
       CurrentModeData->Green.Position =
         BiosVideoPrivate->VbeModeInformationBlock->LinGreenFieldPosition;
-      CurrentModeData->Green.Mask        = (UINT8)((1 <<
-                                                    BiosVideoPrivate->
-                                                      VbeModeInformationBlock->
-                                                      LinGreenMaskSize) - 1);
+      CurrentModeData->Green.Mask = (UINT8)((1 <<
+                                             BiosVideoPrivate->
+                                               VbeModeInformationBlock->
+                                               LinGreenMaskSize) - 1);
       CurrentModeData->Reserved.Position =
         BiosVideoPrivate->VbeModeInformationBlock->LinRsvdFieldPosition;
       CurrentModeData->Reserved.Mask = (UINT8)((1 <<
@@ -1905,22 +1905,22 @@ BiosVideoCheckForVbe (
         BiosVideoPrivate->VbeModeInformationBlock->BytesPerScanLine;
       CurrentModeData->Red.Position =
         BiosVideoPrivate->VbeModeInformationBlock->RedFieldPosition;
-      CurrentModeData->Red.Mask      = (UINT8)((1 <<
-                                                BiosVideoPrivate->
-                                                  VbeModeInformationBlock->
-                                                  RedMaskSize) - 1);
+      CurrentModeData->Red.Mask = (UINT8)((1 <<
+                                           BiosVideoPrivate->
+                                             VbeModeInformationBlock->
+                                             RedMaskSize) - 1);
       CurrentModeData->Blue.Position =
         BiosVideoPrivate->VbeModeInformationBlock->BlueFieldPosition;
-      CurrentModeData->Blue.Mask      = (UINT8)((1 <<
-                                                 BiosVideoPrivate->
-                                                   VbeModeInformationBlock->
-                                                   BlueMaskSize) - 1);
+      CurrentModeData->Blue.Mask = (UINT8)((1 <<
+                                            BiosVideoPrivate->
+                                              VbeModeInformationBlock->
+                                              BlueMaskSize) - 1);
       CurrentModeData->Green.Position =
         BiosVideoPrivate->VbeModeInformationBlock->GreenFieldPosition;
-      CurrentModeData->Green.Mask        = (UINT8)((1 <<
-                                                    BiosVideoPrivate->
-                                                      VbeModeInformationBlock->
-                                                      GreenMaskSize) - 1);
+      CurrentModeData->Green.Mask = (UINT8)((1 <<
+                                             BiosVideoPrivate->
+                                               VbeModeInformationBlock->
+                                               GreenMaskSize) - 1);
       CurrentModeData->Reserved.Position =
         BiosVideoPrivate->VbeModeInformationBlock->RsvdFieldPosition;
       CurrentModeData->Reserved.Mask = (UINT8)((1 <<
@@ -2199,7 +2199,7 @@ BiosVideoGraphicsOutputQueryMode (
 
   *Info = (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *)AllocatePool (
                                                     sizeof (
-                                                           EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
+                                                            EFI_GRAPHICS_OUTPUT_MODE_INFORMATION)
                                                     );
   if (NULL == *Info) {
     return EFI_OUT_OF_RESOURCES;
@@ -2676,7 +2676,7 @@ BiosVideoVbeBltWorker (
         Blt = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)(BltUint8 + DstY * Delta +
                                                 DestinationX *
                                                 sizeof (
-                                                                                                EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+                                                        EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
         //
         // Shuffle the packed bytes in the hardware buffer to match EFI_GRAPHICS_OUTPUT_BLT_PIXEL
         //
@@ -2685,12 +2685,12 @@ BiosVideoVbeBltWorker (
         for (DstX = DestinationX; DstX < (Width + DestinationX); DstX++) {
           Pixel = VbeBuffer[0] | VbeBuffer[1] << 8 | VbeBuffer[2] <<
                   16 | VbeBuffer[3] << 24;
-          Blt->Red      = (UINT8)((Pixel >> Mode->Red.Position) &
-                                  Mode->Red.Mask);
-          Blt->Blue     = (UINT8)((Pixel >> Mode->Blue.Position) &
-                                  Mode->Blue.Mask);
-          Blt->Green    = (UINT8)((Pixel >> Mode->Green.Position) &
-                                  Mode->Green.Mask);
+          Blt->Red = (UINT8)((Pixel >> Mode->Red.Position) &
+                             Mode->Red.Mask);
+          Blt->Blue = (UINT8)((Pixel >> Mode->Blue.Position) &
+                              Mode->Blue.Mask);
+          Blt->Green = (UINT8)((Pixel >> Mode->Green.Position) &
+                               Mode->Green.Mask);
           Blt->Reserved = 0;
           Blt++;
           VbeBuffer += VbePixelWidth;
@@ -2709,8 +2709,8 @@ BiosVideoVbeBltWorker (
           DstY = DestinationY + Height - Index - 1;
         }
 
-        VbeBuffer  = ((UINT8 *)VbeFrameBuffer + DstY * BytesPerScanLine +
-                      DestinationX * VbePixelWidth);
+        VbeBuffer = ((UINT8 *)VbeFrameBuffer + DstY * BytesPerScanLine +
+                     DestinationX * VbePixelWidth);
         VbeBuffer1 = ((UINT8 *)VbeFrameBuffer + SrcY * BytesPerScanLine +
                       SourceX * VbePixelWidth);
 
@@ -2741,7 +2741,7 @@ BiosVideoVbeBltWorker (
       VbeBuffer = (UINT8 *)((UINTN)VbeFrameBuffer + (DestinationY *
                                                      BytesPerScanLine) +
                             DestinationX * VbePixelWidth);
-      Blt       = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)BltUint8;
+      Blt = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)BltUint8;
       //
       // Shuffle the RGB fields in EFI_GRAPHICS_OUTPUT_BLT_PIXEL to match the hardware buffer
       //
@@ -2795,11 +2795,11 @@ BiosVideoVbeBltWorker (
       for (SrcY = SourceY, DstY = DestinationY; SrcY < (Height + SourceY);
            SrcY++, DstY++)
       {
-        Blt       = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)(BltUint8 + (SrcY *
-                                                                  Delta) +
-                                                      (SourceX) *
-                                                      sizeof (
-                                                                                                     EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+        Blt = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)(BltUint8 + (SrcY *
+                                                            Delta) +
+                                                (SourceX) *
+                                                sizeof (
+                                                        EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
         VbeBuffer = ((UINT8 *)VbeFrameBuffer + (DstY * BytesPerScanLine +
                                                 DestinationX * VbePixelWidth));
         for (DstX = DestinationX; DstX < (Width + DestinationX); DstX++) {
@@ -3036,7 +3036,7 @@ VgaConvertToGraphicsOutputColor (
 
   MemoryBuffer += ((CoordinateY << 6) + (CoordinateY << 4) + (CoordinateX >>
                                                               3));
-  Mask          = mVgaBitMaskTable[CoordinateX & 0x07];
+  Mask = mVgaBitMaskTable[CoordinateX & 0x07];
   for (Bit = 0x01, Color = 0; Bit < 0x10; Bit <<= 1, MemoryBuffer +=
          VGA_BYTES_PER_BIT_PLANE)
   {
@@ -3275,13 +3275,13 @@ BiosVideoGraphicsOutputVgaBlt (
           VGA_GRAPHICS_CONTROLLER_WRITE_MODE_1
           );
 
-        SourceAddress      = (UINT8 *)(MemAddress + (SourceY << 6) + (SourceY <<
-                                                                      4) +
-                                       (SourceX >> 3));
+        SourceAddress = (UINT8 *)(MemAddress + (SourceY << 6) + (SourceY <<
+                                                                 4) +
+                                  (SourceX >> 3));
         DestinationAddress = (UINT8 *)(MemAddress + (DestinationY << 6) +
                                        (DestinationY << 4) + (DestinationX >>
                                                               3));
-        Bytes              = Width >> 3;
+        Bytes = Width >> 3;
         for (Index = 0, Offset = 0; Index < Height; Index++, Offset +=
                BytesPerScanLine)
         {
@@ -3317,9 +3317,9 @@ BiosVideoGraphicsOutputVgaBlt (
       StartAddress = (UINTN)(MemAddress + (DestinationY << 6) + (DestinationY <<
                                                                  4) +
                              (DestinationX >> 3));
-      Bytes        = ((DestinationX + Width - 1) >> 3) - (DestinationX >> 3);
-      LeftMask     = mVgaLeftMaskTable[DestinationX & 0x07];
-      RightMask    = mVgaRightMaskTable[(DestinationX + Width - 1) & 0x07];
+      Bytes     = ((DestinationX + Width - 1) >> 3) - (DestinationX >> 3);
+      LeftMask  = mVgaLeftMaskTable[DestinationX & 0x07];
+      RightMask = mVgaRightMaskTable[(DestinationX + Width - 1) & 0x07];
       if (Bytes == 0) {
         LeftMask  = (UINT8)(LeftMask & RightMask);
         RightMask = 0;
@@ -3463,7 +3463,7 @@ BiosVideoGraphicsOutputVgaBlt (
       StartAddress = (UINTN)(MemAddress + (DestinationY << 6) + (DestinationY <<
                                                                  4) +
                              (DestinationX >> 3));
-      LeftMask     = mVgaBitMaskTable[DestinationX & 0x07];
+      LeftMask = mVgaBitMaskTable[DestinationX & 0x07];
 
       //
       // Program the Mode Register Write mode 2, Read mode 0

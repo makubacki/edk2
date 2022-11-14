@@ -1300,8 +1300,8 @@ LegacyBiosInstall (
   // Save Unexpected interrupt vector so can restore it just prior to boot
   //
   ACCESS_PAGE0_CODE (
-    BaseVectorMaster           = (UINT32 *)(sizeof (UINT32) *
-                                            PROTECTED_MODE_BASE_VECTOR_MASTER);
+    BaseVectorMaster = (UINT32 *)(sizeof (UINT32) *
+                                  PROTECTED_MODE_BASE_VECTOR_MASTER);
     Private->BiosUnexpectedInt = BaseVectorMaster[0];
     IntRedirCode               =
       (UINT32)(UINTN)Private->IntThunk->InterruptRedirectionCode;

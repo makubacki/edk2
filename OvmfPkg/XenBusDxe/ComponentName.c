@@ -35,8 +35,8 @@ EFI_COMPONENT_NAME2_PROTOCOL  gXenBusDxeComponentName2 = {
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_UNICODE_STRING_TABLE  mXenBusDxeDriverNameTable[] = {
-  { "eng;en", (CHAR16 *)L"XenBus Bus Driver"     },
-  { NULL,     NULL                               }
+  { "eng;en", (CHAR16 *)L"XenBus Bus Driver" },
+  { NULL,     NULL                           }
 };
 
 ///
@@ -44,8 +44,8 @@ EFI_UNICODE_STRING_TABLE  mXenBusDxeDriverNameTable[] = {
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_UNICODE_STRING_TABLE  mXenBusDxeControllerNameTable[] = {
-  { "eng;en", (CHAR16 *)L"XenBus Controller"     },
-  { NULL,     NULL                               }
+  { "eng;en", (CHAR16 *)L"XenBus Controller" },
+  { NULL,     NULL                           }
 };
 
 /**

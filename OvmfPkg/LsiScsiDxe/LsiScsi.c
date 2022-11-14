@@ -1158,8 +1158,8 @@ EFI_DRIVER_BINDING_PROTOCOL  gDriverBinding = {
 
 STATIC
 EFI_UNICODE_STRING_TABLE  mDriverNameTable[] = {
-  { "eng;en", L"LSI 53C895A SCSI Controller Driver"     },
-  { NULL,     NULL                                      }
+  { "eng;en", L"LSI 53C895A SCSI Controller Driver" },
+  { NULL,     NULL                                  }
 };
 
 STATIC

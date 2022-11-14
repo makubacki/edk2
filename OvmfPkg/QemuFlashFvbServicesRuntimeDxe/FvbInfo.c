@@ -111,10 +111,10 @@ GetFvbInfo (
       Checksum                                      = CalculateCheckSum16 (
                                                         (UINT16 *)&
                                                         mPlatformFvbMediaInfo[
-                                                                                        Index
+                                                                              Index
                                                         ].FvbInfo,
                                                         mPlatformFvbMediaInfo[
-                                                                             Index
+                                                                              Index
                                                         ].FvbInfo.HeaderLength
                                                         );
       mPlatformFvbMediaInfo[Index].FvbInfo.Checksum = Checksum;

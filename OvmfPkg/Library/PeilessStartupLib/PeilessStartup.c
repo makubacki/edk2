@@ -25,14 +25,14 @@
 #define GET_GPAW_INIT_STATE(INFO)  ((UINT8) ((INFO) & 0x3f))
 
 EFI_MEMORY_TYPE_INFORMATION  mDefaultMemoryTypeInformation[] = {
-  { EfiACPIMemoryNVS,       0x004       },
-  { EfiACPIReclaimMemory,   0x008       },
-  { EfiReservedMemoryType,  0x004       },
-  { EfiRuntimeServicesData, 0x024       },
-  { EfiRuntimeServicesCode, 0x030       },
-  { EfiBootServicesCode,    0x180       },
-  { EfiBootServicesData,    0xF00       },
-  { EfiMaxMemoryType,       0x000       }
+  { EfiACPIMemoryNVS,       0x004 },
+  { EfiACPIReclaimMemory,   0x008 },
+  { EfiReservedMemoryType,  0x004 },
+  { EfiRuntimeServicesData, 0x024 },
+  { EfiRuntimeServicesCode, 0x030 },
+  { EfiBootServicesCode,    0x180 },
+  { EfiBootServicesData,    0xF00 },
+  { EfiMaxMemoryType,       0x000 }
 };
 
 EFI_STATUS

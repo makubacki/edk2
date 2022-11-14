@@ -265,7 +265,7 @@ GetPvhMemmapEntries (
 
   *Entries = (struct
               hvm_memmap_table_entry *)(UINTN)pvh_start_info->memmap_paddr;
-  *Count   = pvh_start_info->memmap_entries;
+  *Count = pvh_start_info->memmap_entries;
 
   return EFI_SUCCESS;
 }

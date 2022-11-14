@@ -933,14 +933,14 @@ VirtioBlkInit (
   Dev->BlockIoMedia.LogicalPartition = FALSE;
   Dev->BlockIoMedia.ReadOnly         = (BOOLEAN)((Features & VIRTIO_BLK_F_RO) !=
                                                  0);
-  Dev->BlockIoMedia.WriteCaching     = (BOOLEAN)((Features &
-                                                  VIRTIO_BLK_F_FLUSH) != 0);
-  Dev->BlockIoMedia.BlockSize        = BlockSize;
-  Dev->BlockIoMedia.IoAlign          = 0;
-  Dev->BlockIoMedia.LastBlock        = DivU64x32 (
-                                         NumSectors,
-                                         BlockSize / 512
-                                         ) - 1;
+  Dev->BlockIoMedia.WriteCaching = (BOOLEAN)((Features &
+                                              VIRTIO_BLK_F_FLUSH) != 0);
+  Dev->BlockIoMedia.BlockSize = BlockSize;
+  Dev->BlockIoMedia.IoAlign   = 0;
+  Dev->BlockIoMedia.LastBlock = DivU64x32 (
+                                  NumSectors,
+                                  BlockSize / 512
+                                  ) - 1;
 
   DEBUG ((
     DEBUG_INFO,
@@ -1268,8 +1268,8 @@ STATIC EFI_DRIVER_BINDING_PROTOCOL  gDriverBinding = {
 
 STATIC
 EFI_UNICODE_STRING_TABLE  mDriverNameTable[] = {
-  { "eng;en", L"Virtio Block Driver"     },
-  { NULL,     NULL                       }
+  { "eng;en", L"Virtio Block Driver" },
+  { NULL,     NULL                   }
 };
 
 STATIC

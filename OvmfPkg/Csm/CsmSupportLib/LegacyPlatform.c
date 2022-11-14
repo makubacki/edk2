@@ -10,14 +10,14 @@
 #include "LegacyPlatform.h"
 
 EFI_SETUP_BBS_MAP  mSetupBbsMap[] = {
-  { 1, 2,    1,    1                      }, // ATA HardDrive
-  { 2, 3,    1,    1                      }, // ATAPI CDROM
-  { 3, 0x80, 2,    0                      }, // PXE
-  { 4, 1,    0,    6                      }, // USB Floppy
-  { 4, 2,    0,    6                      }, // USB HDD
-  { 4, 3,    0,    6                      }, // USB CD
-  { 4, 1,    0,    0                      }, // USB ZIP Bugbug since Class/SubClass code is uninitialized
-  { 4, 2,    0,    0                      } // USB ZIP Bugbug since Class/SubClass code is uninitialized
+  { 1, 2,    1, 1 },                        // ATA HardDrive
+  { 2, 3,    1, 1 },                        // ATAPI CDROM
+  { 3, 0x80, 2, 0 },                        // PXE
+  { 4, 1,    0, 6 },                        // USB Floppy
+  { 4, 2,    0, 6 },                        // USB HDD
+  { 4, 3,    0, 6 },                        // USB CD
+  { 4, 1,    0, 0 },                        // USB ZIP Bugbug since Class/SubClass code is uninitialized
+  { 4, 2,    0, 0 }                         // USB ZIP Bugbug since Class/SubClass code is uninitialized
 };
 
 //
@@ -30,8 +30,8 @@ EFI_SETUP_BBS_MAP  mSetupBbsMap[] = {
 { 0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }
 
 SYSTEM_ROM_TABLE  mSystemRomTable[] = {
-  { SYSTEM_ROM_FILE_GUID, 1                 },
-  { NULL_ROM_FILE_GUID,   0                 }
+  { SYSTEM_ROM_FILE_GUID, 1 },
+  { NULL_ROM_FILE_GUID,   0 }
 };
 
 EFI_HANDLE  mVgaHandles[0x20];
@@ -78,42 +78,42 @@ EFI_LEGACY_PIRQ_TABLE  PirqTableHead = {
     // Bus  Dev   Reg   Map     Reg   Map     Reg   Map     Reg   Map
     //
     { 0x00, 0x08, {
-                                            { 0x60, 0xDEB8 }, { 0x61, 0xDEB8 },
-                                            { 0x62,
-                                          0xDEB8 },
-                                            { 0x63,
-                                          0xDEB8 }
-                                          }, 0x00, 0x00 },
+            { 0x60, 0xDEB8 }, { 0x61, 0xDEB8 },
+            { 0x62,
+          0xDEB8 },
+            { 0x63,
+          0xDEB8 }
+          }, 0x00, 0x00 },
     { 0x00, 0x10, {
-                                            { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 },
-                                            { 0x63,
-                                          0xDEB8 },
-                                            { 0x60, 0xDEB8 }
-                                          }, 0x01, 0x00 },
+            { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 },
+            { 0x63,
+          0xDEB8 },
+            { 0x60, 0xDEB8 }
+          }, 0x01, 0x00 },
     { 0x00, 0x18, {
-                                            { 0x62, 0xDEB8 }, { 0x63, 0xDEB8 },
-                                            { 0x60,
-                                          0xDEB8 },
-                                            { 0x61, 0xDEB8 }
-                                          }, 0x02, 0x00 },
+            { 0x62, 0xDEB8 }, { 0x63, 0xDEB8 },
+            { 0x60,
+          0xDEB8 },
+            { 0x61, 0xDEB8 }
+          }, 0x02, 0x00 },
     { 0x00, 0x20, {
-                                            { 0x63, 0xDEB8 }, { 0x60, 0xDEB8 },
-                                            { 0x61,
-                                          0xDEB8 },
-                                            { 0x62, 0xDEB8 }
-                                          }, 0x03, 0x00 },
+            { 0x63, 0xDEB8 }, { 0x60, 0xDEB8 },
+            { 0x61,
+          0xDEB8 },
+            { 0x62, 0xDEB8 }
+          }, 0x03, 0x00 },
     { 0x00, 0x28, {
-                                            { 0x60, 0xDEB8 }, { 0x61, 0xDEB8 },
-                                            { 0x62,
-                                          0xDEB8 },
-                                            { 0x63, 0xDEB8 }
-                                          }, 0x04, 0x00 },
+            { 0x60, 0xDEB8 }, { 0x61, 0xDEB8 },
+            { 0x62,
+          0xDEB8 },
+            { 0x63, 0xDEB8 }
+          }, 0x04, 0x00 },
     { 0x00, 0x30, {
-                                            { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 },
-                                            { 0x63,
-                                          0xDEB8 },
-                                            { 0x60, 0xDEB8 }
-                                          }, 0x05, 0x00 },
+            { 0x61, 0xDEB8 }, { 0x62, 0xDEB8 },
+            { 0x63,
+          0xDEB8 },
+            { 0x60, 0xDEB8 }
+          }, 0x05, 0x00 },
   }
 };
 

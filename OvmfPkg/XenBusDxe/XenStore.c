@@ -706,21 +706,21 @@ typedef struct {
 } XenStoreErrors;
 
 static XenStoreErrors  gXenStoreErrors[] = {
-  { XENSTORE_STATUS_EINVAL,    "EINVAL"          },
-  { XENSTORE_STATUS_EACCES,    "EACCES"          },
-  { XENSTORE_STATUS_EEXIST,    "EEXIST"          },
-  { XENSTORE_STATUS_EISDIR,    "EISDIR"          },
-  { XENSTORE_STATUS_ENOENT,    "ENOENT"          },
-  { XENSTORE_STATUS_ENOMEM,    "ENOMEM"          },
-  { XENSTORE_STATUS_ENOSPC,    "ENOSPC"          },
-  { XENSTORE_STATUS_EIO,       "EIO"             },
-  { XENSTORE_STATUS_ENOTEMPTY, "ENOTEMPTY"       },
-  { XENSTORE_STATUS_ENOSYS,    "ENOSYS"          },
-  { XENSTORE_STATUS_EROFS,     "EROFS"           },
-  { XENSTORE_STATUS_EBUSY,     "EBUSY"           },
-  { XENSTORE_STATUS_EAGAIN,    "EAGAIN"          },
-  { XENSTORE_STATUS_EISCONN,   "EISCONN"         },
-  { XENSTORE_STATUS_E2BIG,     "E2BIG"           }
+  { XENSTORE_STATUS_EINVAL,    "EINVAL"    },
+  { XENSTORE_STATUS_EACCES,    "EACCES"    },
+  { XENSTORE_STATUS_EEXIST,    "EEXIST"    },
+  { XENSTORE_STATUS_EISDIR,    "EISDIR"    },
+  { XENSTORE_STATUS_ENOENT,    "ENOENT"    },
+  { XENSTORE_STATUS_ENOMEM,    "ENOMEM"    },
+  { XENSTORE_STATUS_ENOSPC,    "ENOSPC"    },
+  { XENSTORE_STATUS_EIO,       "EIO"       },
+  { XENSTORE_STATUS_ENOTEMPTY, "ENOTEMPTY" },
+  { XENSTORE_STATUS_ENOSYS,    "ENOSYS"    },
+  { XENSTORE_STATUS_EROFS,     "EROFS"     },
+  { XENSTORE_STATUS_EBUSY,     "EBUSY"     },
+  { XENSTORE_STATUS_EAGAIN,    "EAGAIN"    },
+  { XENSTORE_STATUS_EISCONN,   "EISCONN"   },
+  { XENSTORE_STATUS_E2BIG,     "E2BIG"     }
 };
 
 STATIC

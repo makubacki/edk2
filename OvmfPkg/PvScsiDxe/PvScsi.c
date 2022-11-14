@@ -1500,8 +1500,8 @@ STATIC EFI_DRIVER_BINDING_PROTOCOL  mPvScsiDriverBinding = {
 //
 
 STATIC EFI_UNICODE_STRING_TABLE  mDriverNameTable[] = {
-  { "eng;en", L"PVSCSI Host Driver"     },
-  { NULL,     NULL                      }
+  { "eng;en", L"PVSCSI Host Driver" },
+  { NULL,     NULL                  }
 };
 
 STATIC EFI_COMPONENT_NAME_PROTOCOL  mComponentName;

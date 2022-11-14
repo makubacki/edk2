@@ -548,8 +548,8 @@ XenPvBlockAsyncIo (
     Request->seg[Index].last_sect  = EFI_PAGE_SIZE / 512 - 1;
   }
 
-  Request->seg[0].first_sect              = (UINT8)(((UINTN)IoData->Buffer &
-                                                     EFI_PAGE_MASK) / 512);
+  Request->seg[0].first_sect = (UINT8)(((UINTN)IoData->Buffer &
+                                        EFI_PAGE_MASK) / 512);
   Request->seg[NumSegments - 1].last_sect =
     (UINT8)((((UINTN)IoData->Buffer + IoData->Size - 1) & EFI_PAGE_MASK) / 512);
   for (Index = 0; Index < NumSegments; Index++) {

@@ -793,12 +793,12 @@ LegacyBmCreateDevOrder (
   DevOrderPtr->BbsType = BBS_FLOPPY;
   DevOrderPtr->Length  = (UINT16)(sizeof (DevOrderPtr->Length) + FDCount *
                                   sizeof (UINT16));
-  DevOrderPtr          = (LEGACY_DEV_ORDER_ENTRY *)LegacyBmFillDevOrderBuf (
-                                                     BbsTable,
-                                                     BBS_FLOPPY,
-                                                     BbsCount,
-                                                     DevOrderPtr->Data
-                                                     );
+  DevOrderPtr = (LEGACY_DEV_ORDER_ENTRY *)LegacyBmFillDevOrderBuf (
+                                            BbsTable,
+                                            BBS_FLOPPY,
+                                            BbsCount,
+                                            DevOrderPtr->Data
+                                            );
 
   DevOrderPtr->BbsType = BBS_HARDDISK;
   DevOrderPtr->Length  = (UINT16)(sizeof (UINT16) + HDCount * sizeof (UINT16));
@@ -1014,11 +1014,11 @@ LegacyBmUpdateDevOrder (
   //
   // copy HD
   //
-  Ptr             = (LEGACY_DEV_ORDER_ENTRY *)(&Ptr->Data[Ptr->Length /
-                                                          sizeof (UINT16) - 1]);
-  NewPtr          = (LEGACY_DEV_ORDER_ENTRY *)(&NewPtr->Data[NewPtr->Length /
-                                                             sizeof (UINT16) -
-                                                             1]);
+  Ptr = (LEGACY_DEV_ORDER_ENTRY *)(&Ptr->Data[Ptr->Length /
+                                              sizeof (UINT16) - 1]);
+  NewPtr = (LEGACY_DEV_ORDER_ENTRY *)(&NewPtr->Data[NewPtr->Length /
+                                                    sizeof (UINT16) -
+                                                    1]);
   NewPtr->BbsType = Ptr->BbsType;
   NewPtr->Length  = (UINT16)(sizeof (UINT16) + HDCount * sizeof (UINT16));
   for (Index = 0; Index < Ptr->Length / sizeof (UINT16) - 1; Index++) {
@@ -1038,11 +1038,11 @@ LegacyBmUpdateDevOrder (
   //
   // copy CD
   //
-  Ptr             = (LEGACY_DEV_ORDER_ENTRY *)(&Ptr->Data[Ptr->Length /
-                                                          sizeof (UINT16) - 1]);
-  NewPtr          = (LEGACY_DEV_ORDER_ENTRY *)(&NewPtr->Data[NewPtr->Length /
-                                                             sizeof (UINT16) -
-                                                             1]);
+  Ptr = (LEGACY_DEV_ORDER_ENTRY *)(&Ptr->Data[Ptr->Length /
+                                              sizeof (UINT16) - 1]);
+  NewPtr = (LEGACY_DEV_ORDER_ENTRY *)(&NewPtr->Data[NewPtr->Length /
+                                                    sizeof (UINT16) -
+                                                    1]);
   NewPtr->BbsType = Ptr->BbsType;
   NewPtr->Length  = (UINT16)(sizeof (UINT16) + CDCount * sizeof (UINT16));
   for (Index = 0; Index < Ptr->Length / sizeof (UINT16) - 1; Index++) {
@@ -1062,11 +1062,11 @@ LegacyBmUpdateDevOrder (
   //
   // copy NET
   //
-  Ptr             = (LEGACY_DEV_ORDER_ENTRY *)(&Ptr->Data[Ptr->Length /
-                                                          sizeof (UINT16) - 1]);
-  NewPtr          = (LEGACY_DEV_ORDER_ENTRY *)(&NewPtr->Data[NewPtr->Length /
-                                                             sizeof (UINT16) -
-                                                             1]);
+  Ptr = (LEGACY_DEV_ORDER_ENTRY *)(&Ptr->Data[Ptr->Length /
+                                              sizeof (UINT16) - 1]);
+  NewPtr = (LEGACY_DEV_ORDER_ENTRY *)(&NewPtr->Data[NewPtr->Length /
+                                                    sizeof (UINT16) -
+                                                    1]);
   NewPtr->BbsType = Ptr->BbsType;
   NewPtr->Length  = (UINT16)(sizeof (UINT16) + NETCount * sizeof (UINT16));
   for (Index = 0; Index < Ptr->Length / sizeof (UINT16) - 1; Index++) {
@@ -1086,11 +1086,11 @@ LegacyBmUpdateDevOrder (
   //
   // copy BEV
   //
-  Ptr             = (LEGACY_DEV_ORDER_ENTRY *)(&Ptr->Data[Ptr->Length /
-                                                          sizeof (UINT16) - 1]);
-  NewPtr          = (LEGACY_DEV_ORDER_ENTRY *)(&NewPtr->Data[NewPtr->Length /
-                                                             sizeof (UINT16) -
-                                                             1]);
+  Ptr = (LEGACY_DEV_ORDER_ENTRY *)(&Ptr->Data[Ptr->Length /
+                                              sizeof (UINT16) - 1]);
+  NewPtr = (LEGACY_DEV_ORDER_ENTRY *)(&NewPtr->Data[NewPtr->Length /
+                                                    sizeof (UINT16) -
+                                                    1]);
   NewPtr->BbsType = Ptr->BbsType;
   NewPtr->Length  = (UINT16)(sizeof (UINT16) + BEVCount * sizeof (UINT16));
   for (Index = 0; Index < Ptr->Length / sizeof (UINT16) - 1; Index++) {

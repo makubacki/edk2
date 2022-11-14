@@ -2037,7 +2037,7 @@ LegacyBiosBuildE820 (
   Private->NumberE820Entries                                  = (UINT32)Index;
   *Size                                                       = (UINTN)(Index *
                                                                         sizeof (
-                                                                                       EFI_E820_ENTRY64));
+                                                                                EFI_E820_ENTRY64));
 
   //
   // Sort E820Table from low to high
@@ -2108,7 +2108,7 @@ LegacyBiosBuildE820 (
   Private->NumberE820Entries                                  = (UINT32)Index;
   *Size                                                       = (UINTN)(Index *
                                                                         sizeof (
-                                                                                       EFI_E820_ENTRY64));
+                                                                                EFI_E820_ENTRY64));
 
   //
   // Determine OS usable memory above 1MB
@@ -2213,8 +2213,8 @@ LegacyBiosCompleteBdaBeforeBoot (
 
   Bda->NumberOfDrives = (UINT8)(Bda->NumberOfDrives + Private->IdeDriveCount);
   if (SioPtr->Floppy.NumberOfFloppy != 0x00) {
-    MachineConfig    = (UINT16)(MachineConfig + 0x01 +
-                                (SioPtr->Floppy.NumberOfFloppy - 1) * 0x40);
+    MachineConfig = (UINT16)(MachineConfig + 0x01 +
+                             (SioPtr->Floppy.NumberOfFloppy - 1) * 0x40);
     Bda->FloppyXRate = 0x07;
   }
 
@@ -2226,8 +2226,8 @@ LegacyBiosCompleteBdaBeforeBoot (
   //
   // Force VGA and Coprocessor, indicate 101/102 keyboard
   //
-  MachineConfig      = (UINT16)(MachineConfig + 0x00 + 0x02 +
-                                (SioPtr->MousePresent * 0x04));
+  MachineConfig = (UINT16)(MachineConfig + 0x00 + 0x02 +
+                           (SioPtr->MousePresent * 0x04));
   Bda->MachineConfig = MachineConfig;
 
   return EFI_SUCCESS;

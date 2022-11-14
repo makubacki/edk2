@@ -22,7 +22,7 @@
 
 #define NR_RESERVED_ENTRIES  8
 
-#define NR_GRANT_FRAMES    (FixedPcdGet32 (PcdXenGrantFrames))
+#define NR_GRANT_FRAMES  (FixedPcdGet32 (PcdXenGrantFrames))
 #define NR_GRANT_ENTRIES  \
                            (NR_GRANT_FRAMES * EFI_PAGE_SIZE / sizeof(grant_entry_v1_t))
 

@@ -149,10 +149,10 @@ extern VENDOR_DEVICE_PATH        gTerminalTypeDeviceNode;
 #define PCI_SUBCLASS_SERIAL  0x00
 #define PCI_IF_16550         0x02
 #define IS_PCI_16550SERIAL( \
-                          _p)  \
+                            _p)  \
       IS_CLASS3 (_p, PCI_CLASS_SCC, PCI_SUBCLASS_SERIAL, PCI_IF_16550)
 #define IS_PCI_ISA_PDECODE( \
-                          _p)  \
+                            _p)  \
       IS_CLASS3 (_p, PCI_CLASS_BRIDGE, PCI_CLASS_BRIDGE_ISA_PDECODE, 0)
 
 typedef struct {

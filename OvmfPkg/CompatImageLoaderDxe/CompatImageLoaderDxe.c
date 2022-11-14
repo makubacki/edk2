@@ -71,8 +71,8 @@ GetCompatEntryPoint (
       //
       // Dereference the section contents to find the mixed mode entry point
       //
-      PeCompat    = (PE_COMPAT_TYPE1 *)((UINTN)ImageBase +
-                                        Section->VirtualAddress);
+      PeCompat = (PE_COMPAT_TYPE1 *)((UINTN)ImageBase +
+                                     Section->VirtualAddress);
       PeCompatEnd = (UINTN)(VOID *)PeCompat + Section->Misc.VirtualSize;
 
       while (PeCompat->Type != 0 && (UINTN)(VOID *)PeCompat < PeCompatEnd) {

@@ -154,7 +154,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 /// Software Class PEI Core Subclass Error Code definitions.
 ///
 ///@{
-#define EFI_SW_PEIM_CORE_EC_DXE_CORRUPT    EFI_SW_PEI_CORE_EC_DXE_CORRUPT
+#define EFI_SW_PEIM_CORE_EC_DXE_CORRUPT  EFI_SW_PEI_CORE_EC_DXE_CORRUPT
 #define EFI_SW_PEIM_CORE_EC_DXEIPL_NOT_FOUND  \
                                            EFI_SW_PEI_CORE_EC_DXEIPL_NOT_FOUND
 ///@}

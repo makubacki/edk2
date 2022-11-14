@@ -32,7 +32,7 @@
 #define LOW_8_BITS    0x000000FF
 
 #define FOLD_32BIT_INTO_16BIT( \
-                             value)  \
+                               value)  \
   ( ( value >> 16 ) | ( value & LOW_16_BITS ) )
 
 #define GET_LOW_BYTE(value)   ( value & LOW_8_BITS )
@@ -41,9 +41,9 @@
 // Each command must be sent simultaneously to both chips,
 // i.e. at the lower 16 bits AND at the higher 16 bits
 #define CREATE_NOR_ADDRESS(BaseAddr, \
-                           OffsetAddr)        ((BaseAddr) + ((OffsetAddr) << 2))
+                           OffsetAddr)  ((BaseAddr) + ((OffsetAddr) << 2))
 #define CREATE_DUAL_CMD( \
-                       Cmd)                           \
+                         Cmd)                           \
                                               ( ( Cmd << 16) | ( Cmd & LOW_16_BITS) )
 #define SEND_NOR_COMMAND(BaseAddr, Offset, \
                          Cmd)        \
@@ -117,7 +117,7 @@
 
 #define NOR_FLASH_SIGNATURE  SIGNATURE_32('n', 'o', 'r', '0')
 #define INSTANCE_FROM_FVB_THIS( \
-                              a)  \
+                                a)  \
   CR(a, NOR_FLASH_INSTANCE, FvbProtocol, NOR_FLASH_SIGNATURE)
 
 typedef struct _NOR_FLASH_INSTANCE NOR_FLASH_INSTANCE;

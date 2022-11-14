@@ -116,15 +116,15 @@ CHAR16  mBootVarName[] = L"BootOrder";
 
 VARIABLE_TYPE  mVariableType[] = {
   { EFI_SECURE_BOOT_MODE_NAME,
-    &gEfiGlobalVariableGuid                      },
+    &gEfiGlobalVariableGuid },
   { EFI_PLATFORM_KEY_NAME,
-    &gEfiGlobalVariableGuid                      },
+    &gEfiGlobalVariableGuid },
   { EFI_KEY_EXCHANGE_KEY_NAME,
-    &gEfiGlobalVariableGuid                      },
+    &gEfiGlobalVariableGuid },
   { EFI_IMAGE_SECURITY_DATABASE,
-    &gEfiImageSecurityDatabaseGuid               },
+    &gEfiImageSecurityDatabaseGuid },
   { EFI_IMAGE_SECURITY_DATABASE1,
-    &gEfiImageSecurityDatabaseGuid               },
+    &gEfiImageSecurityDatabaseGuid },
 };
 
 EFI_CC_EVENTLOG_ACPI_TABLE  mTdxEventlogAcpiTemplate = {
@@ -781,7 +781,8 @@ DumpCcEventLog (
   //
   CcEvent = (CC_EVENT *)((UINTN)TcgEfiSpecIdEventStruct +
                          GetTcgEfiSpecIdEventStructSize (
-                           TcgEfiSpecIdEventStruct));
+                           TcgEfiSpecIdEventStruct
+                           ));
   while ((UINTN)CcEvent <= EventLogLastEntry) {
     DumpCcEvent (CcEvent);
     CcEvent = (CC_EVENT *)((UINTN)CcEvent + GetCcEventSize (CcEvent));
@@ -1733,12 +1734,12 @@ SetupCcEventLog (
   mTdxDxeData.FinalEventLogAreaStruct[Index].EventLogFormat = LogFormat;
   mTdxDxeData.FinalEventLogAreaStruct[Index].Lasa           = Lasa +
                                                               sizeof (
-                                                                                   EFI_CC_FINAL_EVENTS_TABLE);
+                                                                      EFI_CC_FINAL_EVENTS_TABLE);
   mTdxDxeData.FinalEventLogAreaStruct[Index].Laml = PcdGet32 (
                                                       PcdTcg2FinalLogAreaLen
                                                       ) -
                                                     sizeof (
-                                                                                                                EFI_CC_FINAL_EVENTS_TABLE);
+                                                            EFI_CC_FINAL_EVENTS_TABLE);
   mTdxDxeData.FinalEventLogAreaStruct[Index].EventLogSize = 0;
   mTdxDxeData.FinalEventLogAreaStruct[Index].LastEvent    =
     (VOID *)(UINTN)mTdxDxeData.FinalEventLogAreaStruct[Index].Lasa;

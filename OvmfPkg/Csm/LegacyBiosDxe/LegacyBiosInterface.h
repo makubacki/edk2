@@ -95,9 +95,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // offset + 0xabcd could overflow which exceeds 0xFFFF which is invalid in real mode.
 // So this will keep offset as small as possible to avoid offset overflow in real mode.
 //
-#define NORMALIZE_EFI_SEGMENT(_Adr)    (UINT16) (((UINTN) (_Adr)) >> 4)
+#define NORMALIZE_EFI_SEGMENT(_Adr)  (UINT16) (((UINTN) (_Adr)) >> 4)
 #define NORMALIZE_EFI_OFFSET( \
-                            _Adr)   \
+                              _Adr)   \
                                        (UINT16) (((UINT16) ((UINTN) (_Adr))) & 0xf)
 
 //
@@ -674,7 +674,7 @@ typedef struct {
 #pragma pack()
 
 #define LEGACY_BIOS_INSTANCE_FROM_THIS( \
-                                      this)  \
+                                        this)  \
   CR (this, LEGACY_BIOS_INSTANCE, LegacyBios, LEGACY_BIOS_INSTANCE_SIGNATURE)
 
 /**

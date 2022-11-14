@@ -59,10 +59,10 @@ NOR_FLASH_INSTANCE  mNorFlashInstanceTemplate = {
         }
       },
       { 0x0,                               0x0,
-          0x0,{ 0x0,                               0x0,
-          0x0, 0x0, 0x0,
-          0x0,
-          0x0, 0x0 }
+          0x0, { 0x0,                          0x0,
+                 0x0, 0x0, 0x0,
+                 0x0,
+                 0x0, 0x0 }
       },                                                             // GUID ... NEED TO BE FILLED
     },
     0, // Index

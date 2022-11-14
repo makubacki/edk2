@@ -1478,8 +1478,8 @@ STATIC EFI_DRIVER_BINDING_PROTOCOL  gDriverBinding = {
 
 STATIC
 EFI_UNICODE_STRING_TABLE  mDriverNameTable[] = {
-  { "eng;en", L"Virtio SCSI Host Driver"     },
-  { NULL,     NULL                           }
+  { "eng;en", L"Virtio SCSI Host Driver" },
+  { NULL,     NULL                       }
 };
 
 STATIC

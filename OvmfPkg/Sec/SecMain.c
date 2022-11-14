@@ -380,8 +380,8 @@ DecompressMemFvs (
     return Status;
   }
 
-  OutputBuffer  = (VOID *)((UINT8 *)(UINTN)PcdGet32 (PcdOvmfDxeMemFvBase) +
-                           SIZE_1MB);
+  OutputBuffer = (VOID *)((UINT8 *)(UINTN)PcdGet32 (PcdOvmfDxeMemFvBase) +
+                          SIZE_1MB);
   ScratchBuffer = ALIGN_POINTER (
                     (UINT8 *)OutputBuffer + OutputBufferSize,
                     SIZE_1MB

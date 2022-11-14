@@ -127,13 +127,13 @@ typedef struct {
 } BIOS_VIDEO_DEV;
 
 #define BIOS_VIDEO_DEV_FROM_PCI_IO_THIS( \
-                                       a)           \
+                                         a)           \
       CR (a, BIOS_VIDEO_DEV, PciIo, BIOS_VIDEO_DEV_SIGNATURE)
 #define BIOS_VIDEO_DEV_FROM_GRAPHICS_OUTPUT_THIS( \
-                                                a)  \
+                                                  a)  \
       CR (a, BIOS_VIDEO_DEV, GraphicsOutput, BIOS_VIDEO_DEV_SIGNATURE)
 #define BIOS_VIDEO_DEV_FROM_VGA_MINI_PORT_THIS( \
-                                              a)    \
+                                                a)    \
       CR (a, BIOS_VIDEO_DEV, VgaMiniPort, BIOS_VIDEO_DEV_SIGNATURE)
 
 #define GRAPHICS_OUTPUT_INVALIDE_MODE_NUMBER  0xffff
@@ -423,10 +423,10 @@ BiosVideoNotifyExitBootServices (
 //
 // Standard VGA Definitions
 //
-#define VGA_HORIZONTAL_RESOLUTION        640
-#define VGA_VERTICAL_RESOLUTION          480
-#define VGA_NUMBER_OF_BIT_PLANES         4
-#define VGA_PIXELS_PER_BYTE              8
+#define VGA_HORIZONTAL_RESOLUTION  640
+#define VGA_VERTICAL_RESOLUTION    480
+#define VGA_NUMBER_OF_BIT_PLANES   4
+#define VGA_PIXELS_PER_BYTE        8
 #define VGA_BYTES_PER_SCAN_LINE    \
                                          (VGA_HORIZONTAL_RESOLUTION / VGA_PIXELS_PER_BYTE)
 #define VGA_BYTES_PER_BIT_PLANE    \

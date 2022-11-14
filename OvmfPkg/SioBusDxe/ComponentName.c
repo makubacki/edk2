@@ -14,8 +14,8 @@
 //
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE
   mSioBusDriverNameTable[] = {
-  { "eng;en", L"OVMF Sio Bus Driver"     },
-  { NULL,     NULL                       }
+  { "eng;en", L"OVMF Sio Bus Driver" },
+  { NULL,     NULL                   }
 };
 
 //

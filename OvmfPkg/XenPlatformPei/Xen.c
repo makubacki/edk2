@@ -416,8 +416,8 @@ PhysicalAddressIdentityMapping (
 
   // L3 / Next level Page Directory Pointers
 
-  L3    = (VOID *)(EFI_PHYSICAL_ADDRESS)(L4[Index].Bits.PageTableBaseAddress <<
-                                         12);
+  L3 = (VOID *)(EFI_PHYSICAL_ADDRESS)(L4[Index].Bits.PageTableBaseAddress <<
+                                      12);
   Index = PDP_OFFSET (AddressToMap);
 
   if (!L3[Index].Bits.Present) {
@@ -590,9 +590,9 @@ CalibrateLapicTimer (
 
   SharedInfo = (VOID *)((UINTN)PcdGet32 (PcdCpuLocalApicBaseAddress) +
                         SIZE_1MB);
-  Status     = PhysicalAddressIdentityMapping (
-                 (EFI_PHYSICAL_ADDRESS)SharedInfo
-                 );
+  Status = PhysicalAddressIdentityMapping (
+             (EFI_PHYSICAL_ADDRESS)SharedInfo
+             );
   if (EFI_ERROR (Status)) {
     DEBUG ((
       DEBUG_ERROR,

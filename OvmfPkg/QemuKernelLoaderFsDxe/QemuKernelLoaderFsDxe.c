@@ -53,18 +53,18 @@ STATIC KERNEL_BLOB  mKernelBlob[KernelBlobTypeMax] = {
   {
     L"kernel",
     {
-      { QemuFwCfgItemKernelSetupSize, QemuFwCfgItemKernelSetupData,      },
-      { QemuFwCfgItemKernelSize,      QemuFwCfgItemKernelData,           },
+      { QemuFwCfgItemKernelSetupSize, QemuFwCfgItemKernelSetupData, },
+      { QemuFwCfgItemKernelSize,      QemuFwCfgItemKernelData,      },
     }
   },  {
     L"initrd",
     {
-      { QemuFwCfgItemInitrdSize,      QemuFwCfgItemInitrdData,           },
+      { QemuFwCfgItemInitrdSize,      QemuFwCfgItemInitrdData,      },
     }
   },  {
     L"cmdline",
     {
-      { QemuFwCfgItemCommandLineSize, QemuFwCfgItemCommandLineData,      },
+      { QemuFwCfgItemCommandLineSize, QemuFwCfgItemCommandLineData, },
     }
   }
 };

@@ -53,63 +53,63 @@ STATIC CONST UINT16  vbeModeIds[] = {
 STATIC VBE2_MODE_INFO  vbeModes[] = {
   { // 0x13f 640x480x32
     // ModeAttr - BytesPerScanLine
-    VBE_MODE_DISABLED, 0x07,              0x00,              0x40,
+    VBE_MODE_DISABLED, 0x07,   0x00, 0x40,
     0x40,
     0xA000,            0x00,
     0x0000,            640*4,
     // Width, Height..., Vbe3
-    640,               480,               16,                8,
+    640,               480,    16,   8,
     1,                 32,
     1,
-    0x06,              0,                 0,
+    0x06,              0,      0,
     1,
     // Masks
-    0x08,              0x10,              0x08,              0x08,
+    0x08,              0x10,   0x08, 0x08,
     0x08,              0x00,
     0x08,
     0x18,              0x00,
     // Framebuffer
-    0xdeadbeef,        0x0000,            0x0000
+    0xdeadbeef,        0x0000, 0x0000
   },
   { // 0x140 800x600x32
     // ModeAttr - BytesPerScanLine
-    VBE_MODE_DISABLED, 0x07,              0x00,              0x40,
+    VBE_MODE_DISABLED, 0x07,   0x00, 0x40,
     0x40,
     0xA000,            0x00,
     0x0000,            800*4,
     // Width, Height..., Vbe3
-    800,               600,               16,                8,
+    800,               600,    16,   8,
     1,                 32,
     1,
-    0x06,              0,                 0,
+    0x06,              0,      0,
     1,
     // Masks
-    0x08,              0x10,              0x08,              0x08,
+    0x08,              0x10,   0x08, 0x08,
     0x08,              0x00,
     0x08,
     0x18,              0x00,
     // Framebuffer
-    0xdeadbeef,        0x0000,            0x0000
+    0xdeadbeef,        0x0000, 0x0000
   },
   { // 0x141 1024x768x32
     // ModeAttr - BytesPerScanLine
-    VBE_MODE_ENABLED,  0x07,              0x00,              0x40,
+    VBE_MODE_ENABLED,  0x07,   0x00, 0x40,
     0x40,
     0xA000,            0x00,
     0x0000,            1024*4,
     // Width, Height..., Vbe3
-    1024,              768,               16,                8,
+    1024,              768,    16,   8,
     1,                 32,
     1,
-    0x06,              0,                 0,
+    0x06,              0,      0,
     1,
     // Masks
-    0x08,              0x10,              0x08,              0x08,
+    0x08,              0x10,   0x08, 0x08,
     0x08,              0x00,
     0x08,
     0x18,              0x00,
     // Framebuffer
-    0xdeadbeef,        0x0000,            0x0000
+    0xdeadbeef,        0x0000, 0x0000
   }
 };
 
@@ -263,14 +263,14 @@ InstallVbeShim (
 
   VbeInfo->ProductNameAddress = (UINT32)SegmentC << 12 | (UINT16)((UINTN)Ptr-
                                                                   SegmentC);
-  Printed                     = AsciiSPrint (
-                                  (CHAR8 *)Ptr,
-                                  sizeof VbeInfoFull->Buffer - (Ptr -
-                                                                VbeInfoFull->
-                                                                  Buffer),
-                                  "%s",
-                                  CardName
-                                  );
+  Printed = AsciiSPrint (
+              (CHAR8 *)Ptr,
+              sizeof VbeInfoFull->Buffer - (Ptr -
+                                            VbeInfoFull->
+                                              Buffer),
+              "%s",
+              CardName
+              );
   Ptr += Printed + 1;
 
   VbeInfo->ProductRevAddress = (UINT32)SegmentC << 12 | (UINT16)((UINTN)Ptr-

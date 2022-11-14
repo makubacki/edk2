@@ -402,10 +402,10 @@ LegacyBiosInitializeThunk (
 
   MemoryAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)Private->IntThunk;
 
-  mThunkContext.RealModeBuffer     = (VOID *)(UINTN)(MemoryAddress +
-                                                     ((sizeof (LOW_MEMORY_THUNK)
-                                                       / EFI_PAGE_SIZE) + 1) *
-                                                     EFI_PAGE_SIZE);
+  mThunkContext.RealModeBuffer = (VOID *)(UINTN)(MemoryAddress +
+                                                 ((sizeof (LOW_MEMORY_THUNK)
+                                                   / EFI_PAGE_SIZE) + 1) *
+                                                 EFI_PAGE_SIZE);
   mThunkContext.RealModeBufferSize = EFI_PAGE_SIZE;
   mThunkContext.ThunkAttributes    = THUNK_ATTRIBUTE_BIG_REAL_MODE |
                                      THUNK_ATTRIBUTE_DISABLE_A20_MASK_INT_15;

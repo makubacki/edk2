@@ -35,8 +35,8 @@ EFI_COMPONENT_NAME2_PROTOCOL  gXenPvBlkDxeComponentName2 = {
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_UNICODE_STRING_TABLE  mXenPvBlkDxeDriverNameTable[] = {
-  { "eng;en", (CHAR16 *)L"Xen PV Block Driver"     },
-  { NULL,     NULL                                 }
+  { "eng;en", (CHAR16 *)L"Xen PV Block Driver" },
+  { NULL,     NULL                             }
 };
 
 ///
@@ -44,8 +44,8 @@ EFI_UNICODE_STRING_TABLE  mXenPvBlkDxeDriverNameTable[] = {
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED
 EFI_UNICODE_STRING_TABLE  mXenPvBlkDxeControllerNameTable[] = {
-  { "eng;en", (CHAR16 *)L"Xen PV Block Device"     },
-  { NULL,     NULL                                 }
+  { "eng;en", (CHAR16 *)L"Xen PV Block Device" },
+  { NULL,     NULL                             }
 };
 
 /**

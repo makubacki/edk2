@@ -57,8 +57,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL
 };
 
 EFI_UNICODE_STRING_TABLE  mEmuGopDriverNameTable[] = {
-  { "eng", L"Emulator GOP Driver"  },
-  { NULL,  NULL                    }
+  { "eng", L"Emulator GOP Driver" },
+  { NULL,  NULL                   }
 };
 
 /**
