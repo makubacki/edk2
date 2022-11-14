@@ -161,7 +161,10 @@ SyncCacheConfigPage (
   UINT64                         GcdAttributes;
 
   // Get the Base Address from FirstLevelDescriptor;
-  BaseAddress = TT_DESCRIPTOR_PAGE_BASE_ADDRESS (SectionIndex << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
+  BaseAddress = TT_DESCRIPTOR_PAGE_BASE_ADDRESS (
+                  SectionIndex <<
+                  TT_DESCRIPTOR_SECTION_BASE_SHIFT
+                  );
 
   // Convert SectionAttributes into PageAttributes
   NextPageAttributes =
@@ -169,12 +172,17 @@ SyncCacheConfigPage (
     TT_DESCRIPTOR_CONVERT_TO_PAGE_AP (*NextSectionAttributes);
 
   // obtain page table base
-  SecondLevelTable = (ARM_PAGE_TABLE_ENTRY *)(FirstLevelDescriptor & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK);
+  SecondLevelTable = (ARM_PAGE_TABLE_ENTRY *)(FirstLevelDescriptor &
+                                              TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK);
 
   for (i = 0; i < TRANSLATION_TABLE_PAGE_COUNT; i++) {
-    if ((SecondLevelTable[i] & TT_DESCRIPTOR_PAGE_TYPE_MASK) == TT_DESCRIPTOR_PAGE_TYPE_PAGE) {
+    if ((SecondLevelTable[i] & TT_DESCRIPTOR_PAGE_TYPE_MASK) ==
+        TT_DESCRIPTOR_PAGE_TYPE_PAGE)
+    {
       // extract attributes (cacheability and permissions)
-      PageAttributes = SecondLevelTable[i] & (TT_DESCRIPTOR_PAGE_CACHE_POLICY_MASK | TT_DESCRIPTOR_PAGE_AP_MASK);
+      PageAttributes = SecondLevelTable[i] &
+                       (TT_DESCRIPTOR_PAGE_CACHE_POLICY_MASK |
+                        TT_DESCRIPTOR_PAGE_AP_MASK);
 
       if (NextPageAttributes == 0) {
         // start on a new region
@@ -187,7 +195,13 @@ SyncCacheConfigPage (
         ASSERT_EFI_ERROR (Status);
 
         // update GCD with these changes (this will recurse into our own CpuSetMemoryAttributes below which is OK)
-        SetGcdMemorySpaceAttributes (MemorySpaceMap, NumberOfDescriptors, *NextRegionBase, *NextRegionLength, GcdAttributes);
+        SetGcdMemorySpaceAttributes (
+          MemorySpaceMap,
+          NumberOfDescriptors,
+          *NextRegionBase,
+          *NextRegionLength,
+          GcdAttributes
+          );
 
         // start on a new region
         *NextRegionLength  = 0;
@@ -200,7 +214,13 @@ SyncCacheConfigPage (
       ASSERT_EFI_ERROR (Status);
 
       // update GCD with these changes (this will recurse into our own CpuSetMemoryAttributes below which is OK)
-      SetGcdMemorySpaceAttributes (MemorySpaceMap, NumberOfDescriptors, *NextRegionBase, *NextRegionLength, GcdAttributes);
+      SetGcdMemorySpaceAttributes (
+        MemorySpaceMap,
+        NumberOfDescriptors,
+        *NextRegionBase,
+        *NextRegionLength,
+        GcdAttributes
+        );
 
       *NextRegionLength  = 0;
       *NextRegionBase    = BaseAddress | (i << TT_DESCRIPTOR_PAGE_BASE_SHIFT);
@@ -243,7 +263,10 @@ SyncCacheConfig (
   // Get the memory space map from GCD
   //
   MemorySpaceMap = NULL;
-  Status         = gDS->GetMemorySpaceMap (&NumberOfDescriptors, &MemorySpaceMap);
+  Status         = gDS->GetMemorySpaceMap (
+                          &NumberOfDescriptors,
+                          &MemorySpaceMap
+                          );
   ASSERT_EFI_ERROR (Status);
 
   // The GCD implementation maintains its own copy of the state of memory space attributes.  GCD needs
@@ -256,19 +279,28 @@ SyncCacheConfig (
   FirstLevelTable = (ARM_FIRST_LEVEL_DESCRIPTOR *)(ArmGetTTBR0BaseAddress ());
 
   // Get the first region
-  NextSectionAttributes = FirstLevelTable[0] & (TT_DESCRIPTOR_SECTION_CACHE_POLICY_MASK | TT_DESCRIPTOR_SECTION_AP_MASK);
+  NextSectionAttributes = FirstLevelTable[0] &
+                          (TT_DESCRIPTOR_SECTION_CACHE_POLICY_MASK |
+                           TT_DESCRIPTOR_SECTION_AP_MASK);
 
   // iterate through each 1MB descriptor
   NextRegionBase = NextRegionLength = 0;
   for (i = 0; i < TRANSLATION_TABLE_SECTION_COUNT; i++) {
-    if ((FirstLevelTable[i] & TT_DESCRIPTOR_SECTION_TYPE_MASK) == TT_DESCRIPTOR_SECTION_TYPE_SECTION) {
+    if ((FirstLevelTable[i] & TT_DESCRIPTOR_SECTION_TYPE_MASK) ==
+        TT_DESCRIPTOR_SECTION_TYPE_SECTION)
+    {
       // extract attributes (cacheability and permissions)
-      SectionAttributes = FirstLevelTable[i] & (TT_DESCRIPTOR_SECTION_CACHE_POLICY_MASK | TT_DESCRIPTOR_SECTION_AP_MASK);
+      SectionAttributes = FirstLevelTable[i] &
+                          (TT_DESCRIPTOR_SECTION_CACHE_POLICY_MASK |
+                           TT_DESCRIPTOR_SECTION_AP_MASK);
 
       if (NextSectionAttributes == 0) {
         // start on a new region
-        NextRegionLength      = 0;
-        NextRegionBase        = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (i << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
+        NextRegionLength = 0;
+        NextRegionBase   = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (
+                             i <<
+                             TT_DESCRIPTOR_SECTION_BASE_SHIFT
+                             );
         NextSectionAttributes = SectionAttributes;
       } else if (SectionAttributes != NextSectionAttributes) {
         // Convert Section Attributes into GCD Attributes
@@ -276,11 +308,20 @@ SyncCacheConfig (
         ASSERT_EFI_ERROR (Status);
 
         // update GCD with these changes (this will recurse into our own CpuSetMemoryAttributes below which is OK)
-        SetGcdMemorySpaceAttributes (MemorySpaceMap, NumberOfDescriptors, NextRegionBase, NextRegionLength, GcdAttributes);
+        SetGcdMemorySpaceAttributes (
+          MemorySpaceMap,
+          NumberOfDescriptors,
+          NextRegionBase,
+          NextRegionLength,
+          GcdAttributes
+          );
 
         // start on a new region
-        NextRegionLength      = 0;
-        NextRegionBase        = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (i << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
+        NextRegionLength = 0;
+        NextRegionBase   = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (
+                             i <<
+                             TT_DESCRIPTOR_SECTION_BASE_SHIFT
+                             );
         NextSectionAttributes = SectionAttributes;
       }
 
@@ -303,7 +344,10 @@ SyncCacheConfig (
       ASSERT_EFI_ERROR (Status);
     } else {
       // We do not support yet 16MB sections
-      ASSERT ((FirstLevelTable[i] & TT_DESCRIPTOR_SECTION_TYPE_MASK) != TT_DESCRIPTOR_SECTION_TYPE_SUPERSECTION);
+      ASSERT (
+        (FirstLevelTable[i] & TT_DESCRIPTOR_SECTION_TYPE_MASK) !=
+        TT_DESCRIPTOR_SECTION_TYPE_SUPERSECTION
+        );
 
       // start on a new region
       if (NextSectionAttributes != 0) {
@@ -312,10 +356,19 @@ SyncCacheConfig (
         ASSERT_EFI_ERROR (Status);
 
         // update GCD with these changes (this will recurse into our own CpuSetMemoryAttributes below which is OK)
-        SetGcdMemorySpaceAttributes (MemorySpaceMap, NumberOfDescriptors, NextRegionBase, NextRegionLength, GcdAttributes);
+        SetGcdMemorySpaceAttributes (
+          MemorySpaceMap,
+          NumberOfDescriptors,
+          NextRegionBase,
+          NextRegionLength,
+          GcdAttributes
+          );
 
-        NextRegionLength      = 0;
-        NextRegionBase        = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (i << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
+        NextRegionLength = 0;
+        NextRegionBase   = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (
+                             i <<
+                             TT_DESCRIPTOR_SECTION_BASE_SHIFT
+                             );
         NextSectionAttributes = 0;
       }
 
@@ -329,7 +382,13 @@ SyncCacheConfig (
     ASSERT_EFI_ERROR (Status);
 
     // update GCD with these changes (this will recurse into our own CpuSetMemoryAttributes below which is OK)
-    SetGcdMemorySpaceAttributes (MemorySpaceMap, NumberOfDescriptors, NextRegionBase, NextRegionLength, GcdAttributes);
+    SetGcdMemorySpaceAttributes (
+      MemorySpaceMap,
+      NumberOfDescriptors,
+      NextRegionBase,
+      NextRegionLength,
+      GcdAttributes
+      );
   }
 
   FreePool (MemorySpaceMap);
@@ -399,10 +458,14 @@ GetMemoryRegionPage (
   UINT32  PageDescriptor;
 
   // Convert the section attributes into page attributes
-  PageAttributes = ConvertSectionAttributesToPageAttributes (*RegionAttributes, 0);
+  PageAttributes = ConvertSectionAttributesToPageAttributes (
+                     *RegionAttributes,
+                     0
+                     );
 
   // Calculate index into first level translation table for start of modification
-  TableIndex = ((*BaseAddress) & TT_DESCRIPTOR_PAGE_INDEX_MASK)  >> TT_DESCRIPTOR_PAGE_BASE_SHIFT;
+  TableIndex = ((*BaseAddress) & TT_DESCRIPTOR_PAGE_INDEX_MASK)  >>
+               TT_DESCRIPTOR_PAGE_BASE_SHIFT;
   ASSERT (TableIndex < TRANSLATION_TABLE_PAGE_COUNT);
 
   // Go through the page table to find the end of the section
@@ -410,11 +473,17 @@ GetMemoryRegionPage (
     // Get the section at the given index
     PageDescriptor = PageTable[TableIndex];
 
-    if ((PageDescriptor & TT_DESCRIPTOR_PAGE_TYPE_MASK) == TT_DESCRIPTOR_PAGE_TYPE_FAULT) {
+    if ((PageDescriptor & TT_DESCRIPTOR_PAGE_TYPE_MASK) ==
+        TT_DESCRIPTOR_PAGE_TYPE_FAULT)
+    {
       // Case: End of the boundary of the region
       return EFI_SUCCESS;
-    } else if ((PageDescriptor & TT_DESCRIPTOR_PAGE_TYPE_PAGE) == TT_DESCRIPTOR_PAGE_TYPE_PAGE) {
-      if ((PageDescriptor & TT_DESCRIPTOR_PAGE_ATTRIBUTE_MASK) == PageAttributes) {
+    } else if ((PageDescriptor & TT_DESCRIPTOR_PAGE_TYPE_PAGE) ==
+               TT_DESCRIPTOR_PAGE_TYPE_PAGE)
+    {
+      if ((PageDescriptor & TT_DESCRIPTOR_PAGE_ATTRIBUTE_MASK) ==
+          PageAttributes)
+      {
         *RegionLength = *RegionLength + TT_DESCRIPTOR_PAGE_SIZE;
       } else {
         // Case: End of the boundary of the region
@@ -452,7 +521,8 @@ GetMemoryRegion (
   FirstLevelTable = (ARM_FIRST_LEVEL_DESCRIPTOR *)ArmGetTTBR0BaseAddress ();
 
   // Calculate index into first level translation table for start of modification
-  TableIndex = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (*BaseAddress) >> TT_DESCRIPTOR_SECTION_BASE_SHIFT;
+  TableIndex = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (*BaseAddress) >>
+               TT_DESCRIPTOR_SECTION_BASE_SHIFT;
   ASSERT (TableIndex < TRANSLATION_TABLE_SECTION_COUNT);
 
   // Get the section at the given index
@@ -462,24 +532,34 @@ GetMemoryRegion (
   }
 
   // If 'BaseAddress' belongs to the section then round it to the section boundary
-  if (((SectionDescriptor & TT_DESCRIPTOR_SECTION_TYPE_MASK) == TT_DESCRIPTOR_SECTION_TYPE_SECTION) ||
-      ((SectionDescriptor & TT_DESCRIPTOR_SECTION_TYPE_MASK) == TT_DESCRIPTOR_SECTION_TYPE_SUPERSECTION))
+  if (((SectionDescriptor & TT_DESCRIPTOR_SECTION_TYPE_MASK) ==
+       TT_DESCRIPTOR_SECTION_TYPE_SECTION) ||
+      ((SectionDescriptor & TT_DESCRIPTOR_SECTION_TYPE_MASK) ==
+       TT_DESCRIPTOR_SECTION_TYPE_SUPERSECTION))
   {
-    *BaseAddress      = (*BaseAddress) & TT_DESCRIPTOR_SECTION_BASE_ADDRESS_MASK;
-    *RegionAttributes = SectionDescriptor & TT_DESCRIPTOR_SECTION_ATTRIBUTE_MASK;
+    *BaseAddress = (*BaseAddress) &
+                   TT_DESCRIPTOR_SECTION_BASE_ADDRESS_MASK;
+    *RegionAttributes = SectionDescriptor &
+                        TT_DESCRIPTOR_SECTION_ATTRIBUTE_MASK;
   } else {
     // Otherwise, we round it to the page boundary
     *BaseAddress = (*BaseAddress) & TT_DESCRIPTOR_PAGE_BASE_ADDRESS_MASK;
 
     // Get the attribute at the page table level (Level 2)
-    PageTable = (UINT32 *)(SectionDescriptor & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK);
+    PageTable = (UINT32 *)(SectionDescriptor &
+                           TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK);
 
     // Calculate index into first level translation table for start of modification
-    PageTableIndex = ((*BaseAddress) & TT_DESCRIPTOR_PAGE_INDEX_MASK)  >> TT_DESCRIPTOR_PAGE_BASE_SHIFT;
+    PageTableIndex = ((*BaseAddress) & TT_DESCRIPTOR_PAGE_INDEX_MASK)  >>
+                     TT_DESCRIPTOR_PAGE_BASE_SHIFT;
     ASSERT (PageTableIndex < TRANSLATION_TABLE_PAGE_COUNT);
 
-    PageAttributes    = PageTable[PageTableIndex] & TT_DESCRIPTOR_PAGE_ATTRIBUTE_MASK;
-    *RegionAttributes = TT_DESCRIPTOR_CONVERT_TO_SECTION_CACHE_POLICY (PageAttributes, 0) |
+    PageAttributes = PageTable[PageTableIndex] &
+                     TT_DESCRIPTOR_PAGE_ATTRIBUTE_MASK;
+    *RegionAttributes = TT_DESCRIPTOR_CONVERT_TO_SECTION_CACHE_POLICY (
+                          PageAttributes,
+                          0
+                          ) |
                         TT_DESCRIPTOR_CONVERT_TO_SECTION_AP (PageAttributes);
   }
 
@@ -490,19 +570,29 @@ GetMemoryRegion (
     // If the entry is a level-2 page table then we scan it to find the end of the region
     if (TT_DESCRIPTOR_SECTION_TYPE_IS_PAGE_TABLE (SectionDescriptor)) {
       // Extract the page table location from the descriptor
-      PageTable = (UINT32 *)(SectionDescriptor & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK);
+      PageTable = (UINT32 *)(SectionDescriptor &
+                             TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK);
 
       // Scan the page table to find the end of the region.
-      Status = GetMemoryRegionPage (PageTable, BaseAddress, RegionLength, RegionAttributes);
+      Status = GetMemoryRegionPage (
+                 PageTable,
+                 BaseAddress,
+                 RegionLength,
+                 RegionAttributes
+                 );
 
       // If we have found the end of the region (Status == EFI_SUCCESS) then we exit the for-loop
       if (Status == EFI_SUCCESS) {
         break;
       }
-    } else if (((SectionDescriptor & TT_DESCRIPTOR_SECTION_TYPE_MASK) == TT_DESCRIPTOR_SECTION_TYPE_SECTION) ||
-               ((SectionDescriptor & TT_DESCRIPTOR_SECTION_TYPE_MASK) == TT_DESCRIPTOR_SECTION_TYPE_SUPERSECTION))
+    } else if (((SectionDescriptor & TT_DESCRIPTOR_SECTION_TYPE_MASK) ==
+                TT_DESCRIPTOR_SECTION_TYPE_SECTION) ||
+               ((SectionDescriptor & TT_DESCRIPTOR_SECTION_TYPE_MASK) ==
+                TT_DESCRIPTOR_SECTION_TYPE_SUPERSECTION))
     {
-      if ((SectionDescriptor & TT_DESCRIPTOR_SECTION_ATTRIBUTE_MASK) != *RegionAttributes) {
+      if ((SectionDescriptor & TT_DESCRIPTOR_SECTION_ATTRIBUTE_MASK) !=
+          *RegionAttributes)
+      {
         // If the attributes of the section differ from the one targeted then we exit the loop
         break;
       } else {

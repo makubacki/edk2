@@ -49,7 +49,9 @@ typedef enum {
                    SCMI_CLOCK_PROTOCOL_PENDING_ASYNC_RATES_MASK)
 
 // Total of clock devices supported by the SCP, Attr Bits[15:0]
-#define SCMI_CLOCK_PROTOCOL_TOTAL_CLKS(Attr)  (Attr & SCMI_CLOCK_PROTOCOL_NUM_CLOCKS_MASK)
+#define SCMI_CLOCK_PROTOCOL_TOTAL_CLKS( \
+                                      Attr)  \
+  (Attr & SCMI_CLOCK_PROTOCOL_NUM_CLOCKS_MASK)
 
 #pragma pack(1)
 

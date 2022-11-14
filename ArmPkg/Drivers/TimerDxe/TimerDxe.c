@@ -362,12 +362,19 @@ TimerInitialize (
   UINT32      TimerHypIntrNum;
 
   if (ArmIsArchTimerImplemented () == 0) {
-    DEBUG ((DEBUG_ERROR, "ARM Architectural Timer is not available in the CPU, hence can't use this Driver \n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ARM Architectural Timer is not available in the CPU, hence can't use this Driver \n"
+      ));
     ASSERT (0);
   }
 
   // Find the interrupt controller protocol.  ASSERT if not found.
-  Status = gBS->LocateProtocol (&gHardwareInterruptProtocolGuid, NULL, (VOID **)&gInterrupt);
+  Status = gBS->LocateProtocol (
+                  &gHardwareInterruptProtocolGuid,
+                  NULL,
+                  (VOID **)&gInterrupt
+                  );
   ASSERT_EFI_ERROR (Status);
 
   // Disable the timer
@@ -382,7 +389,13 @@ TimerInitialize (
   // Note: Because it is not possible to determine the security state of the
   // CPU dynamically, we just install interrupt handler for both sec and non-sec
   // timer PPI
-  Status = gInterrupt->RegisterInterruptSource (gInterrupt, PcdGet32 (PcdArmArchTimerVirtIntrNum), TimerInterruptHandler);
+  Status = gInterrupt->RegisterInterruptSource (
+                         gInterrupt,
+                         PcdGet32 (
+                           PcdArmArchTimerVirtIntrNum
+                           ),
+                         TimerInterruptHandler
+                         );
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -391,14 +404,30 @@ TimerInitialize (
   //
   TimerHypIntrNum = PcdGet32 (PcdArmArchTimerHypIntrNum);
   if (TimerHypIntrNum != 0) {
-    Status = gInterrupt->RegisterInterruptSource (gInterrupt, TimerHypIntrNum, TimerInterruptHandler);
+    Status = gInterrupt->RegisterInterruptSource (
+                           gInterrupt,
+                           TimerHypIntrNum,
+                           TimerInterruptHandler
+                           );
     ASSERT_EFI_ERROR (Status);
   }
 
-  Status = gInterrupt->RegisterInterruptSource (gInterrupt, PcdGet32 (PcdArmArchTimerSecIntrNum), TimerInterruptHandler);
+  Status = gInterrupt->RegisterInterruptSource (
+                         gInterrupt,
+                         PcdGet32 (
+                           PcdArmArchTimerSecIntrNum
+                           ),
+                         TimerInterruptHandler
+                         );
   ASSERT_EFI_ERROR (Status);
 
-  Status = gInterrupt->RegisterInterruptSource (gInterrupt, PcdGet32 (PcdArmArchTimerIntrNum), TimerInterruptHandler);
+  Status = gInterrupt->RegisterInterruptSource (
+                         gInterrupt,
+                         PcdGet32 (
+                           PcdArmArchTimerIntrNum
+                           ),
+                         TimerInterruptHandler
+                         );
   ASSERT_EFI_ERROR (Status);
 
   // Set up default timer
@@ -420,7 +449,13 @@ TimerInitialize (
   ArmGenericTimerSetTimerCtrlReg (TimerCtrlReg);
 
   // Register for an ExitBootServicesEvent
-  Status = gBS->CreateEvent (EVT_SIGNAL_EXIT_BOOT_SERVICES, TPL_NOTIFY, ExitBootServicesEvent, NULL, &EfiExitBootServicesEvent);
+  Status = gBS->CreateEvent (
+                  EVT_SIGNAL_EXIT_BOOT_SERVICES,
+                  TPL_NOTIFY,
+                  ExitBootServicesEvent,
+                  NULL,
+                  &EfiExitBootServicesEvent
+                  );
   ASSERT_EFI_ERROR (Status);
 
   return Status;

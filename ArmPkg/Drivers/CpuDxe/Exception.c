@@ -23,7 +23,10 @@ InitializeExceptions (
   BOOLEAN                  FiqEnabled;
 
   VectorInfo = (EFI_VECTOR_HANDOFF_INFO *)NULL;
-  Status     = EfiGetSystemConfigurationTable (&gEfiVectorHandoffTableGuid, (VOID **)&VectorInfoList);
+  Status     = EfiGetSystemConfigurationTable (
+                 &gEfiVectorHandoffTableGuid,
+                 (VOID **)&VectorInfoList
+                 );
   if ((Status == EFI_SUCCESS) && (VectorInfoList != NULL)) {
     VectorInfo = VectorInfoList;
   }
@@ -96,5 +99,8 @@ RegisterInterruptHandler (
   )
 {
   // pass down to CpuExceptionHandlerLib
-  return (EFI_STATUS)RegisterCpuInterruptHandler (InterruptType, InterruptHandler);
+  return (EFI_STATUS)RegisterCpuInterruptHandler (
+                       InterruptType,
+                       InterruptHandler
+                       );
 }

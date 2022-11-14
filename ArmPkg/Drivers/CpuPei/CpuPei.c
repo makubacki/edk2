@@ -68,14 +68,26 @@ InitializeCpuPeim (
   BuildCpuHob (ArmGetPhysicalAddressBits (), PcdGet8 (PcdPrePiCpuIoSize));
 
   // Only MP Core platform need to produce gArmMpCoreInfoPpiGuid
-  Status = PeiServicesLocatePpi (&gArmMpCoreInfoPpiGuid, 0, NULL, (VOID **)&ArmMpCoreInfoPpi);
+  Status = PeiServicesLocatePpi (
+             &gArmMpCoreInfoPpiGuid,
+             0,
+             NULL,
+             (VOID **)&ArmMpCoreInfoPpi
+             );
   if (!EFI_ERROR (Status)) {
     // Build the MP Core Info Table
     ArmCoreCount = 0;
-    Status       = ArmMpCoreInfoPpi->GetMpCoreInfo (&ArmCoreCount, &ArmCoreInfoTable);
+    Status       = ArmMpCoreInfoPpi->GetMpCoreInfo (
+                                       &ArmCoreCount,
+                                       &ArmCoreInfoTable
+                                       );
     if (!EFI_ERROR (Status) && (ArmCoreCount > 0)) {
       // Build MPCore Info HOB
-      BuildGuidDataHob (&gArmMpCoreInfoGuid, ArmCoreInfoTable, sizeof (ARM_CORE_INFO) * ArmCoreCount);
+      BuildGuidDataHob (
+        &gArmMpCoreInfoGuid,
+        ArmCoreInfoTable,
+        sizeof (ARM_CORE_INFO) * ArmCoreCount
+        );
     }
   }
 

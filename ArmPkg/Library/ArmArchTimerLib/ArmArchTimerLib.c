@@ -67,7 +67,10 @@ TimerConstructor (
     //
     ASSERT (ArmGenericTimerGetTimerFreq () != 0);
   } else {
-    DEBUG ((DEBUG_ERROR, "ARM Architectural Timer is not available in the CPU, hence this library cannot be used.\n"));
+    DEBUG ((
+      DEBUG_ERROR,
+      "ARM Architectural Timer is not available in the CPU, hence this library cannot be used.\n"
+      ));
     ASSERT (0);
   }
 

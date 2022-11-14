@@ -53,7 +53,7 @@ STATIC PLATFORM_SERIAL_CONSOLE  mSerialConsole = {
   // VENDOR_DEVICE_PATH SerialDxe
   //
   {
-    { HARDWARE_DEVICE_PATH,  HW_VENDOR_DP, DP_NODE_LEN (VENDOR_DEVICE_PATH) },
+    { HARDWARE_DEVICE_PATH,  HW_VENDOR_DP,  DP_NODE_LEN (VENDOR_DEVICE_PATH)  },
     EDKII_SERIAL_PORT_LIB_VENDOR_GUID
   },
 
@@ -61,7 +61,7 @@ STATIC PLATFORM_SERIAL_CONSOLE  mSerialConsole = {
   // UART_DEVICE_PATH Uart
   //
   {
-    { MESSAGING_DEVICE_PATH, MSG_UART_DP,  DP_NODE_LEN (UART_DEVICE_PATH)   },
+    { MESSAGING_DEVICE_PATH, MSG_UART_DP,   DP_NODE_LEN (UART_DEVICE_PATH)    },
     0,                                      // Reserved
     FixedPcdGet64 (PcdUartDefaultBaudRate), // BaudRate
     FixedPcdGet8 (PcdUartDefaultDataBits),  // DataBits
@@ -694,7 +694,11 @@ PlatformBootManagerBeforeConsole (
   // non-discoverable USB host controllers need to have the non-discoverable
   // PCI driver attached first.
   //
-  FilterAndProcess (&gEdkiiNonDiscoverableDeviceProtocolGuid, IsUsbHost, Connect);
+  FilterAndProcess (
+    &gEdkiiNonDiscoverableDeviceProtocolGuid,
+    IsUsbHost,
+    Connect
+    );
 
   //
   // Add the hardcoded short-form USB keyboard device path to ConIn.
@@ -891,7 +895,12 @@ BootDiscoveryPolicyHandler (
 
   Status = BMPolicy->ConnectDeviceClass (BMPolicy, Class);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - ConnectDeviceClass returns - %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - ConnectDeviceClass returns - %r\n",
+      __FUNCTION__,
+      Status
+      ));
     return Status;
   }
 

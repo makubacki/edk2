@@ -35,17 +35,17 @@ typedef struct {
 } CPSR_CHAR;
 
 STATIC CONST CPSR_CHAR  mCpsrChar[] = {
-  { 31, 'n' },
-  { 30, 'z' },
-  { 29, 'c' },
-  { 28, 'v' },
+  { 31, 'n'  },
+  { 30, 'z'  },
+  { 29, 'c'  },
+  { 28, 'v'  },
 
-  { 9,  'e' },
-  { 8,  'a' },
-  { 7,  'i' },
-  { 6,  'f' },
-  { 5,  't' },
-  { 0,  '?' }
+  { 9,  'e'  },
+  { 8,  'a'  },
+  { 7,  'i'  },
+  { 6,  'f'  },
+  { 5,  't'  },
+  { 0,  '?'  }
 };
 
 CHAR8 *
@@ -234,7 +234,11 @@ DefaultExceptionHandler (
   CpsrString (SystemContext.SystemContextArm->CPSR, CpsrStr);
   DEBUG ((DEBUG_ERROR, "%a\n", CpsrStr));
 
-  Pdb    = GetImageName (SystemContext.SystemContextArm->PC, &ImageBase, &PeCoffSizeOfHeader);
+  Pdb = GetImageName (
+          SystemContext.SystemContextArm->PC,
+          &ImageBase,
+          &PeCoffSizeOfHeader
+          );
   Offset = SystemContext.SystemContextArm->PC - ImageBase;
   if (Pdb != NULL) {
     DEBUG ((DEBUG_ERROR, "%a\n", Pdb));
@@ -247,12 +251,26 @@ DefaultExceptionHandler (
     // you need to subtract out the size of the PE/COFF header to get
     // get the offset that matches the link map.
     //
-    DEBUG ((DEBUG_ERROR, "loaded at 0x%08x (PE/COFF offset) 0x%x (ELF or Mach-O offset) 0x%x", ImageBase, Offset, Offset - PeCoffSizeOfHeader));
+    DEBUG ((
+      DEBUG_ERROR,
+      "loaded at 0x%08x (PE/COFF offset) 0x%x (ELF or Mach-O offset) 0x%x",
+      ImageBase,
+      Offset,
+      Offset - PeCoffSizeOfHeader
+      ));
 
     // If we come from an image it is safe to show the instruction. We know it should not fault
     DisAsm  = (UINT8 *)(UINTN)SystemContext.SystemContextArm->PC;
     ItBlock = 0;
-    DisassembleInstruction (&DisAsm, (SystemContext.SystemContextArm->CPSR & BIT5) == BIT5, TRUE, &ItBlock, Buffer, sizeof (Buffer));
+    DisassembleInstruction (
+      &DisAsm,
+      (SystemContext.SystemContextArm->CPSR &
+       BIT5) == BIT5,
+      TRUE,
+      &ItBlock,
+      Buffer,
+      sizeof (Buffer)
+      );
     DEBUG ((DEBUG_ERROR, "\n%a", Buffer));
 
     switch (ExceptionType) {
@@ -270,22 +288,72 @@ DefaultExceptionHandler (
   }
 
   DEBUG_CODE_END ();
-  DEBUG ((DEBUG_ERROR, "\n  R0 0x%08x   R1 0x%08x   R2 0x%08x   R3 0x%08x\n", SystemContext.SystemContextArm->R0, SystemContext.SystemContextArm->R1, SystemContext.SystemContextArm->R2, SystemContext.SystemContextArm->R3));
-  DEBUG ((DEBUG_ERROR, "  R4 0x%08x   R5 0x%08x   R6 0x%08x   R7 0x%08x\n", SystemContext.SystemContextArm->R4, SystemContext.SystemContextArm->R5, SystemContext.SystemContextArm->R6, SystemContext.SystemContextArm->R7));
-  DEBUG ((DEBUG_ERROR, "  R8 0x%08x   R9 0x%08x  R10 0x%08x  R11 0x%08x\n", SystemContext.SystemContextArm->R8, SystemContext.SystemContextArm->R9, SystemContext.SystemContextArm->R10, SystemContext.SystemContextArm->R11));
-  DEBUG ((DEBUG_ERROR, " R12 0x%08x   SP 0x%08x   LR 0x%08x   PC 0x%08x\n", SystemContext.SystemContextArm->R12, SystemContext.SystemContextArm->SP, SystemContext.SystemContextArm->LR, SystemContext.SystemContextArm->PC));
-  DEBUG ((DEBUG_ERROR, "DFSR 0x%08x DFAR 0x%08x IFSR 0x%08x IFAR 0x%08x\n", SystemContext.SystemContextArm->DFSR, SystemContext.SystemContextArm->DFAR, SystemContext.SystemContextArm->IFSR, SystemContext.SystemContextArm->IFAR));
+  DEBUG ((
+    DEBUG_ERROR,
+    "\n  R0 0x%08x   R1 0x%08x   R2 0x%08x   R3 0x%08x\n",
+    SystemContext.SystemContextArm->R0,
+    SystemContext.SystemContextArm->R1,
+    SystemContext.SystemContextArm->R2,
+    SystemContext.SystemContextArm->R3
+    ));
+  DEBUG ((
+    DEBUG_ERROR,
+    "  R4 0x%08x   R5 0x%08x   R6 0x%08x   R7 0x%08x\n",
+    SystemContext.SystemContextArm->R4,
+    SystemContext.SystemContextArm->R5,
+    SystemContext.SystemContextArm->R6,
+    SystemContext.SystemContextArm->R7
+    ));
+  DEBUG ((
+    DEBUG_ERROR,
+    "  R8 0x%08x   R9 0x%08x  R10 0x%08x  R11 0x%08x\n",
+    SystemContext.SystemContextArm->R8,
+    SystemContext.SystemContextArm->R9,
+    SystemContext.SystemContextArm->R10,
+    SystemContext.SystemContextArm->R11
+    ));
+  DEBUG ((
+    DEBUG_ERROR,
+    " R12 0x%08x   SP 0x%08x   LR 0x%08x   PC 0x%08x\n",
+    SystemContext.SystemContextArm->R12,
+    SystemContext.SystemContextArm->SP,
+    SystemContext.SystemContextArm->LR,
+    SystemContext.SystemContextArm->PC
+    ));
+  DEBUG ((
+    DEBUG_ERROR,
+    "DFSR 0x%08x DFAR 0x%08x IFSR 0x%08x IFAR 0x%08x\n",
+    SystemContext.SystemContextArm->DFSR,
+    SystemContext.SystemContextArm->DFAR,
+    SystemContext.SystemContextArm->IFSR,
+    SystemContext.SystemContextArm->IFAR
+    ));
 
   // Bit10 is Status[4] Bit3:0 is Status[3:0]
-  DfsrStatus = (SystemContext.SystemContextArm->DFSR & 0xf) | ((SystemContext.SystemContextArm->DFSR >> 6) & 0x10);
-  DfsrWrite  = (SystemContext.SystemContextArm->DFSR & BIT11) != 0;
+  DfsrStatus = (SystemContext.SystemContextArm->DFSR & 0xf) |
+               ((SystemContext.SystemContextArm->DFSR >> 6) & 0x10);
+  DfsrWrite = (SystemContext.SystemContextArm->DFSR & BIT11) != 0;
   if (DfsrStatus != 0x00) {
-    DEBUG ((DEBUG_ERROR, " %a: %a 0x%08x\n", FaultStatusToString (DfsrStatus), DfsrWrite ? "write to" : "read from", SystemContext.SystemContextArm->DFAR));
+    DEBUG ((
+      DEBUG_ERROR,
+      " %a: %a 0x%08x\n",
+      FaultStatusToString (DfsrStatus),
+      DfsrWrite ? "write to" : "read from",
+      SystemContext.SystemContextArm->DFAR
+      ));
   }
 
-  IfsrStatus = (SystemContext.SystemContextArm->IFSR & 0xf) | ((SystemContext.SystemContextArm->IFSR >> 6) & 0x10);
+  IfsrStatus = (SystemContext.SystemContextArm->IFSR & 0xf) |
+               ((SystemContext.SystemContextArm->IFSR >> 6) & 0x10);
   if (IfsrStatus != 0) {
-    DEBUG ((DEBUG_ERROR, " Instruction %a at 0x%08x\n", FaultStatusToString (SystemContext.SystemContextArm->IFSR & 0xf), SystemContext.SystemContextArm->IFAR));
+    DEBUG ((
+      DEBUG_ERROR,
+      " Instruction %a at 0x%08x\n",
+      FaultStatusToString (
+        SystemContext.SystemContextArm->IFSR & 0xf
+        ),
+      SystemContext.SystemContextArm->IFAR
+      ));
   }
 
   DEBUG ((DEBUG_ERROR, "\n"));

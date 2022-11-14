@@ -60,11 +60,13 @@ typedef struct {
 
 SEMIHOST_DEVICE_PATH  gDevicePath = {
   {
-    { HARDWARE_DEVICE_PATH, HW_VENDOR_DP,                   { sizeof (VENDOR_DEVICE_PATH),       0 }
+    { HARDWARE_DEVICE_PATH,              HW_VENDOR_DP,
+          { sizeof (VENDOR_DEVICE_PATH),       0 }
     },
     EFI_CALLER_ID_GUID
   },
-  { END_DEVICE_PATH_TYPE, END_ENTIRE_DEVICE_PATH_SUBTYPE, { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0 }
+  { END_DEVICE_PATH_TYPE,              END_ENTIRE_DEVICE_PATH_SUBTYPE,
+          { sizeof (EFI_DEVICE_PATH_PROTOCOL), 0 }
   }
 };
 
@@ -81,8 +83,12 @@ typedef struct {
 } SEMIHOST_FCB;
 
 #define SEMIHOST_FCB_SIGNATURE  SIGNATURE_32( 'S', 'H', 'F', 'C' )
-#define SEMIHOST_FCB_FROM_THIS(a)  CR(a, SEMIHOST_FCB, File, SEMIHOST_FCB_SIGNATURE)
-#define SEMIHOST_FCB_FROM_LINK(a)  CR(a, SEMIHOST_FCB, Link, SEMIHOST_FCB_SIGNATURE);
+#define SEMIHOST_FCB_FROM_THIS( \
+                              a)  \
+      CR(a, SEMIHOST_FCB, File, SEMIHOST_FCB_SIGNATURE)
+#define SEMIHOST_FCB_FROM_LINK( \
+                              a)  \
+      CR(a, SEMIHOST_FCB, Link, SEMIHOST_FCB_SIGNATURE);
 
 EFI_HANDLE  gInstallHandle = NULL;
 LIST_ENTRY  gFileList      = INITIALIZE_LIST_HEAD_VARIABLE (gFileList);
@@ -193,7 +199,8 @@ FileOpen (
 
   if ((OpenMode != EFI_FILE_MODE_READ) &&
       (OpenMode != (EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE)) &&
-      (OpenMode != (EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE)))
+      (OpenMode != (EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE |
+                    EFI_FILE_MODE_CREATE)))
   {
     return EFI_INVALID_PARAMETER;
   }
@@ -234,7 +241,8 @@ FileOpen (
   if (OpenMode == EFI_FILE_MODE_READ) {
     SemihostMode = SEMIHOST_FILE_MODE_READ | SEMIHOST_FILE_MODE_BINARY;
   } else {
-    SemihostMode = SEMIHOST_FILE_MODE_READ | SEMIHOST_FILE_MODE_BINARY | SEMIHOST_FILE_MODE_UPDATE;
+    SemihostMode = SEMIHOST_FILE_MODE_READ | SEMIHOST_FILE_MODE_BINARY |
+                   SEMIHOST_FILE_MODE_UPDATE;
   }
 
   Return = SemihostFileOpen (AsciiFileName, SemihostMode, &SemihostHandle);
@@ -248,7 +256,8 @@ FileOpen (
       //
       Return = SemihostFileOpen (
                  AsciiFileName,
-                 SEMIHOST_FILE_MODE_WRITE | SEMIHOST_FILE_MODE_BINARY | SEMIHOST_FILE_MODE_UPDATE,
+                 SEMIHOST_FILE_MODE_WRITE | SEMIHOST_FILE_MODE_BINARY |
+                 SEMIHOST_FILE_MODE_UPDATE,
                  &SemihostHandle
                  );
       if (RETURN_ERROR (Return)) {
@@ -578,7 +587,11 @@ ExtendFile (
   while (Remaining > 0) {
     WriteNb   = MIN (Remaining, sizeof (WriteBuffer));
     WriteSize = WriteNb;
-    Return    = SemihostFileWrite (Fcb->SemihostHandle, &WriteSize, WriteBuffer);
+    Return    = SemihostFileWrite (
+                  Fcb->SemihostHandle,
+                  &WriteSize,
+                  WriteBuffer
+                  );
     if (RETURN_ERROR (Return)) {
       return EFI_DEVICE_ERROR;
     }
@@ -740,7 +753,13 @@ FileSetPosition (
       Position = Fcb->Info.FileSize;
     }
 
-    Return = SemihostFileSeek (Fcb->SemihostHandle, MIN (Position, Fcb->Info.FileSize));
+    Return = SemihostFileSeek (
+               Fcb->SemihostHandle,
+               MIN (
+                 Position,
+                 Fcb->Info.FileSize
+                 )
+               );
     if (RETURN_ERROR (Return)) {
       return EFI_DEVICE_ERROR;
     }
@@ -912,7 +931,11 @@ FileGetInfo (
     Status = GetFilesystemInfo (Fcb, BufferSize, Buffer);
   } else if (CompareGuid (InformationType, &gEfiFileInfoGuid)) {
     Status = GetFileInfo (Fcb, BufferSize, Buffer);
-  } else if (CompareGuid (InformationType, &gEfiFileSystemVolumeLabelInfoIdGuid)) {
+  } else if (CompareGuid (
+               InformationType,
+               &gEfiFileSystemVolumeLabelInfoIdGuid
+               ))
+  {
     ResultSize = StrSize (mSemihostFsLabel);
 
     if (*BufferSize >= ResultSize) {
@@ -1170,7 +1193,11 @@ FileSetInfo (
     } else {
       return EFI_INVALID_PARAMETER;
     }
-  } else if (!CompareGuid (InformationType, &gEfiFileSystemVolumeLabelInfoIdGuid)) {
+  } else if (!CompareGuid (
+                InformationType,
+                &gEfiFileSystemVolumeLabelInfoIdGuid
+                ))
+  {
     return EFI_UNSUPPORTED;
   } else {
     return EFI_UNSUPPORTED;
@@ -1210,7 +1237,10 @@ SemihostFsEntryPoint (
   Status = EFI_NOT_FOUND;
 
   if (SemihostConnectionSupported ()) {
-    mSemihostFsLabel = AllocateCopyPool (StrSize (DEFAULT_SEMIHOST_FS_LABEL), DEFAULT_SEMIHOST_FS_LABEL);
+    mSemihostFsLabel = AllocateCopyPool (
+                         StrSize (DEFAULT_SEMIHOST_FS_LABEL),
+                         DEFAULT_SEMIHOST_FS_LABEL
+                         );
     if (mSemihostFsLabel == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }

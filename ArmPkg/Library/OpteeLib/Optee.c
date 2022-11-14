@@ -72,7 +72,10 @@ OpteeSharedMemoryRemap (
   }
 
   if (ArmSmcArgs.Arg3 != OPTEE_SMC_SHARED_MEMORY_CACHED) {
-    DEBUG ((DEBUG_WARN, "OP-TEE: Only normal cached shared memory supported\n"));
+    DEBUG ((
+      DEBUG_WARN,
+      "OP-TEE: Only normal cached shared memory supported\n"
+      ));
     return EFI_UNSUPPORTED;
   }
 
@@ -323,8 +326,9 @@ OpteeToMessageParam (
           (VOID *)(UINTN)InParam->Union.Memory.BufferAddress,
           InParam->Union.Memory.Size
           );
-        MessageParam->Union.Memory.BufferAddress = (UINT64)ParamSharedMemoryAddress;
-        MessageParam->Union.Memory.Size          = InParam->Union.Memory.Size;
+        MessageParam->Union.Memory.BufferAddress =
+          (UINT64)ParamSharedMemoryAddress;
+        MessageParam->Union.Memory.Size = InParam->Union.Memory.Size;
 
         Size = (InParam->Union.Memory.Size + sizeof (UINT64) - 1) &
                ~(sizeof (UINT64) - 1);

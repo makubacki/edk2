@@ -134,18 +134,25 @@ PopulateLevel2PageTable (
   if (*SectionEntry != 0) {
     // The entry must be a page table. Otherwise it exists an overlapping in the memory map
     if (TT_DESCRIPTOR_SECTION_TYPE_IS_PAGE_TABLE (*SectionEntry)) {
-      TranslationTable = *SectionEntry & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK;
-    } else if ((*SectionEntry & TT_DESCRIPTOR_SECTION_TYPE_MASK) == TT_DESCRIPTOR_SECTION_TYPE_SECTION) {
+      TranslationTable = *SectionEntry &
+                         TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK;
+    } else if ((*SectionEntry & TT_DESCRIPTOR_SECTION_TYPE_MASK) ==
+               TT_DESCRIPTOR_SECTION_TYPE_SECTION)
+    {
       // Case where a virtual memory map descriptor overlapped a section entry
 
       // Allocate a Level2 Page Table for this Section
       TranslationTable = (UINTN)AllocateAlignedPages (
-                                  EFI_SIZE_TO_PAGES (TRANSLATION_TABLE_PAGE_SIZE),
+                                  EFI_SIZE_TO_PAGES (
+                                    TRANSLATION_TABLE_PAGE_SIZE
+                                    ),
                                   TRANSLATION_TABLE_PAGE_ALIGNMENT
                                   );
 
       // Translate the Section Descriptor into Page Descriptor
-      SectionDescriptor = TT_DESCRIPTOR_PAGE_TYPE_PAGE | ConvertSectionAttributesToPageAttributes (*SectionEntry, FALSE);
+      SectionDescriptor = TT_DESCRIPTOR_PAGE_TYPE_PAGE |
+                          ConvertSectionAttributesToPageAttributes (
+                            *SectionEntry, FALSE);
 
       BaseSectionAddress = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (*SectionEntry);
 
@@ -161,12 +168,17 @@ PopulateLevel2PageTable (
       // Populate the new Level2 Page Table for the section
       PageEntry = (UINT32 *)TranslationTable;
       for (Index = 0; Index < TRANSLATION_TABLE_PAGE_COUNT; Index++) {
-        PageEntry[Index] = TT_DESCRIPTOR_PAGE_BASE_ADDRESS (BaseSectionAddress + (Index << 12)) | SectionDescriptor;
+        PageEntry[Index] = TT_DESCRIPTOR_PAGE_BASE_ADDRESS (
+                             BaseSectionAddress +
+                             (Index << 12)
+                             ) | SectionDescriptor;
       }
 
       // Overwrite the section entry to point to the new Level2 Translation Table
-      *SectionEntry = (TranslationTable & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK) |
-                      (IS_ARM_MEMORY_REGION_ATTRIBUTES_SECURE (Attributes) ? (1 << 3) : 0) |
+      *SectionEntry = (TranslationTable &
+                       TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK) |
+                      (IS_ARM_MEMORY_REGION_ATTRIBUTES_SECURE (Attributes) ?
+                       (1 << 3) : 0) |
                       TT_DESCRIPTOR_SECTION_TYPE_PAGE_TABLE;
     } else {
       // We do not support the other section type (16MB Section)
@@ -188,19 +200,24 @@ PopulateLevel2PageTable (
       );
     ZeroMem ((VOID *)TranslationTable, TRANSLATION_TABLE_PAGE_SIZE);
 
-    *SectionEntry = (TranslationTable & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK) |
-                    (IS_ARM_MEMORY_REGION_ATTRIBUTES_SECURE (Attributes) ? (1 << 3) : 0) |
+    *SectionEntry = (TranslationTable &
+                     TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK) |
+                    (IS_ARM_MEMORY_REGION_ATTRIBUTES_SECURE (Attributes) ? (1 <<
+                                                                            3) :
+                     0) |
                     TT_DESCRIPTOR_SECTION_TYPE_PAGE_TABLE;
   }
 
-  FirstPageOffset = (PhysicalBase & TT_DESCRIPTOR_PAGE_INDEX_MASK) >> TT_DESCRIPTOR_PAGE_BASE_SHIFT;
-  PageEntry       = (UINT32 *)TranslationTable + FirstPageOffset;
-  Pages           = RemainLength / TT_DESCRIPTOR_PAGE_SIZE;
+  FirstPageOffset = (PhysicalBase & TT_DESCRIPTOR_PAGE_INDEX_MASK) >>
+                    TT_DESCRIPTOR_PAGE_BASE_SHIFT;
+  PageEntry = (UINT32 *)TranslationTable + FirstPageOffset;
+  Pages     = RemainLength / TT_DESCRIPTOR_PAGE_SIZE;
 
   ASSERT (FirstPageOffset + Pages <= TRANSLATION_TABLE_PAGE_COUNT);
 
   for (Index = 0; Index < Pages; Index++) {
-    *PageEntry++  =  TT_DESCRIPTOR_PAGE_BASE_ADDRESS (PhysicalBase) | PageAttributes;
+    *PageEntry++ =  TT_DESCRIPTOR_PAGE_BASE_ADDRESS (PhysicalBase) |
+                   PageAttributes;
     PhysicalBase += TT_DESCRIPTOR_PAGE_SIZE;
   }
 
@@ -280,7 +297,10 @@ FillTranslationTable (
   }
 
   // Get the first section entry for this mapping
-  SectionEntry = TRANSLATION_TABLE_ENTRY_FOR_VIRTUAL_ADDRESS (TranslationTable, MemoryRegion->VirtualBase);
+  SectionEntry = TRANSLATION_TABLE_ENTRY_FOR_VIRTUAL_ADDRESS (
+                   TranslationTable,
+                   MemoryRegion->VirtualBase
+                   );
 
   while (RemainLength != 0) {
     if ((PhysicalBase % TT_DESCRIPTOR_SECTION_SIZE == 0) &&
@@ -288,7 +308,8 @@ FillTranslationTable (
     {
       // Case: Physical address aligned on the Section Size (1MB) && the length
       // is greater than the Section Size
-      *SectionEntry = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (PhysicalBase) | Attributes;
+      *SectionEntry = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (PhysicalBase) |
+                      Attributes;
 
       //
       // Issue a DMB to ensure that the page table entry update made it to

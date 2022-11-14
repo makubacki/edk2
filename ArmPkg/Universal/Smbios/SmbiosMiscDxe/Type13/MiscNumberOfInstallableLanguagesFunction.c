@@ -130,19 +130,28 @@ SMBIOS_MISC_TABLE_FUNCTION (MiscNumberOfInstallableLanguages) {
 
   InputData = (SMBIOS_TABLE_TYPE13 *)RecordData;
 
-  InputData->InstallableLanguages = GetSupportedLanguageNumber (mSmbiosMiscHiiHandle);
+  InputData->InstallableLanguages = GetSupportedLanguageNumber (
+                                      mSmbiosMiscHiiHandle
+                                      );
 
   //
   // Try to check if current langcode matches with the langcodes in installed languages
   //
   ZeroMem (CurrentLang, SMBIOS_STRING_MAX_LENGTH - 1);
-  (VOID)AsciiStrCpyS (CurrentLang, SMBIOS_STRING_MAX_LENGTH - 1, "en|US|iso8859-1");
+  (VOID)AsciiStrCpyS (
+          CurrentLang,
+          SMBIOS_STRING_MAX_LENGTH - 1,
+          "en|US|iso8859-1"
+          );
   LangStrLen = AsciiStrLen (CurrentLang);
 
   //
   // Two zeros following the last string.
   //
-  SmbiosRecord = AllocateZeroPool (sizeof (SMBIOS_TABLE_TYPE13) + LangStrLen + 1 + 1);
+  SmbiosRecord = AllocateZeroPool (
+                   sizeof (SMBIOS_TABLE_TYPE13) + LangStrLen +
+                   1 + 1
+                   );
   if (SmbiosRecord == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -152,7 +161,11 @@ SMBIOS_MISC_TABLE_FUNCTION (MiscNumberOfInstallableLanguages) {
   SmbiosRecord->Hdr.Length = sizeof (SMBIOS_TABLE_TYPE13);
 
   OptionalStrStart = (CHAR8 *)(SmbiosRecord + 1);
-  (VOID)AsciiStrCpyS (OptionalStrStart, SMBIOS_STRING_MAX_LENGTH - 1, CurrentLang);
+  (VOID)AsciiStrCpyS (
+          OptionalStrStart,
+          SMBIOS_STRING_MAX_LENGTH - 1,
+          CurrentLang
+          );
   //
   // Now we have got the full smbios record, call smbios protocol to add this record.
   //

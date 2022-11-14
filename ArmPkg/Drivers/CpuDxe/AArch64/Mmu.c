@@ -91,13 +91,20 @@ GetFirstPageAttribute (
   // Get the first entry of the table
   FirstEntry = *FirstLevelTableAddress;
 
-  if ((TableLevel != 3) && ((FirstEntry & TT_TYPE_MASK) == TT_TYPE_TABLE_ENTRY)) {
+  if ((TableLevel != 3) && ((FirstEntry & TT_TYPE_MASK) ==
+                            TT_TYPE_TABLE_ENTRY))
+  {
     // Only valid for Levels 0, 1 and 2
 
     // Get the attribute of the subsequent table
-    return GetFirstPageAttribute ((UINT64 *)(FirstEntry & TT_ADDRESS_MASK_DESCRIPTION_TABLE), TableLevel + 1);
+    return GetFirstPageAttribute (
+             (UINT64 *)(FirstEntry &
+                        TT_ADDRESS_MASK_DESCRIPTION_TABLE),
+             TableLevel + 1
+             );
   } else if (((FirstEntry & TT_TYPE_MASK) == TT_TYPE_BLOCK_ENTRY) ||
-             ((TableLevel == 3) && ((FirstEntry & TT_TYPE_MASK) == TT_TYPE_BLOCK_ENTRY_LEVEL3)))
+             ((TableLevel == 3) && ((FirstEntry & TT_TYPE_MASK) ==
+                                    TT_TYPE_BLOCK_ENTRY_LEVEL3)))
   {
     return FirstEntry & TT_ATTR_INDX_MASK;
   } else {
@@ -126,7 +133,10 @@ GetNextEntryAttribute (
 
   // Get the memory space map from GCD
   MemorySpaceMap = NULL;
-  Status         = gDS->GetMemorySpaceMap (&NumberOfDescriptors, &MemorySpaceMap);
+  Status         = gDS->GetMemorySpaceMap (
+                          &NumberOfDescriptors,
+                          &MemorySpaceMap
+                          );
   ASSERT_EFI_ERROR (Status);
 
   // We cannot get more than 3-level page table
@@ -143,20 +153,25 @@ GetNextEntryAttribute (
     if ((EntryType == TT_TYPE_BLOCK_ENTRY) ||
         ((TableLevel == 3) && (EntryType == TT_TYPE_BLOCK_ENTRY_LEVEL3)))
     {
-      if ((*PrevEntryAttribute == INVALID_ENTRY) || (EntryAttribute != *PrevEntryAttribute)) {
+      if ((*PrevEntryAttribute == INVALID_ENTRY) || (EntryAttribute !=
+                                                     *PrevEntryAttribute))
+      {
         if (*PrevEntryAttribute != INVALID_ENTRY) {
           // Update GCD with the last region
           SetGcdMemorySpaceAttributes (
             MemorySpaceMap,
             NumberOfDescriptors,
             *StartGcdRegion,
-            (BaseAddress + (Index * TT_ADDRESS_AT_LEVEL (TableLevel))) - *StartGcdRegion,
+            (BaseAddress + (Index * TT_ADDRESS_AT_LEVEL (TableLevel))) -
+            *StartGcdRegion,
             PageAttributeToGcdAttribute (*PrevEntryAttribute)
             );
         }
 
         // Start of the new region
-        *StartGcdRegion     = BaseAddress + (Index * TT_ADDRESS_AT_LEVEL (TableLevel));
+        *StartGcdRegion     = BaseAddress + (Index * TT_ADDRESS_AT_LEVEL (
+                                                       TableLevel
+                                                       ));
         *PrevEntryAttribute = EntryAttribute;
       } else {
         continue;
@@ -181,12 +196,15 @@ GetNextEntryAttribute (
           MemorySpaceMap,
           NumberOfDescriptors,
           *StartGcdRegion,
-          (BaseAddress + (Index * TT_ADDRESS_AT_LEVEL (TableLevel))) - *StartGcdRegion,
+          (BaseAddress + (Index * TT_ADDRESS_AT_LEVEL (TableLevel))) -
+          *StartGcdRegion,
           PageAttributeToGcdAttribute (*PrevEntryAttribute)
           );
 
         // Start of the new region
-        *StartGcdRegion     = BaseAddress + (Index * TT_ADDRESS_AT_LEVEL (TableLevel));
+        *StartGcdRegion     = BaseAddress + (Index * TT_ADDRESS_AT_LEVEL (
+                                                       TableLevel
+                                                       ));
         *PrevEntryAttribute = INVALID_ENTRY;
       }
     }
@@ -221,7 +239,10 @@ SyncCacheConfig (
   // Get the memory space map from GCD
   //
   MemorySpaceMap = NULL;
-  Status         = gDS->GetMemorySpaceMap (&NumberOfDescriptors, &MemorySpaceMap);
+  Status         = gDS->GetMemorySpaceMap (
+                          &NumberOfDescriptors,
+                          &MemorySpaceMap
+                          );
   ASSERT_EFI_ERROR (Status);
 
   // The GCD implementation maintains its own copy of the state of memory space attributes.  GCD needs
@@ -341,17 +362,25 @@ GetMemoryRegionRec (
   }
 
   // Find the block entry linked to the Base Address
-  BlockEntry = (UINT64 *)TT_GET_ENTRY_FOR_ADDRESS (TranslationTable, TableLevel, *BaseAddress);
-  EntryType  = *BlockEntry & TT_TYPE_MASK;
+  BlockEntry = (UINT64 *)TT_GET_ENTRY_FOR_ADDRESS (
+                           TranslationTable,
+                           TableLevel,
+                           *BaseAddress
+                           );
+  EntryType = *BlockEntry & TT_TYPE_MASK;
 
   if ((TableLevel < 3) && (EntryType == TT_TYPE_TABLE_ENTRY)) {
-    NextTranslationTable = (UINT64 *)(*BlockEntry & TT_ADDRESS_MASK_DESCRIPTION_TABLE);
+    NextTranslationTable = (UINT64 *)(*BlockEntry &
+                                      TT_ADDRESS_MASK_DESCRIPTION_TABLE);
 
     // The entry is a page table, so we go to the next level
     Status = GetMemoryRegionRec (
                NextTranslationTable, // Address of the next level page table
                TableLevel + 1,       // Next Page Table level
-               (UINTN *)TT_LAST_BLOCK_ADDRESS (NextTranslationTable, TT_ENTRY_COUNT),
+               (UINTN *)TT_LAST_BLOCK_ADDRESS (
+                          NextTranslationTable,
+                          TT_ENTRY_COUNT
+                          ),
                BaseAddress,
                RegionLength,
                RegionAttributes
@@ -406,7 +435,10 @@ GetMemoryRegion (
   UINTN       EntryCount;
   UINTN       T0SZ;
 
-  ASSERT ((BaseAddress != NULL) && (RegionLength != NULL) && (RegionAttributes != NULL));
+  ASSERT (
+    (BaseAddress != NULL) && (RegionLength != NULL) &&
+    (RegionAttributes != NULL)
+    );
 
   TranslationTable = ArmGetTTBR0BaseAddress ();
 

@@ -109,7 +109,10 @@ InitializeCpuExceptionHandlers (
     // for AArch64 Align=4K is required.  Align=Auto can be used but this
     // is known to cause an issue with populating the reset vector area
     // for encapsulated FVs.
-    ASSERT (((UINTN)ExceptionHandlersStart & gExceptionVectorAlignmentMask) == 0);
+    ASSERT (
+      ((UINTN)ExceptionHandlersStart & gExceptionVectorAlignmentMask) ==
+      0
+      );
 
     // We do not copy the Exception Table at PcdGet64(PcdCpuVectorBaseAddress). We just set Vector
     // Base Address to point into CpuDxe code.
@@ -168,7 +171,11 @@ CopyExceptionHandlers (
 
   if (FeaturePcdGet (PcdDebuggerExceptionSupport) == TRUE) {
     // Save existing vector table, in case debugger is already hooked in
-    CopyMem ((VOID *)gDebuggerExceptionHandlers, (VOID *)VectorBase, sizeof (EFI_EXCEPTION_CALLBACK)* (gMaxExceptionNumber+1));
+    CopyMem (
+      (VOID *)gDebuggerExceptionHandlers,
+      (VOID *)VectorBase,
+      sizeof (EFI_EXCEPTION_CALLBACK)* (gMaxExceptionNumber+1)
+      );
   }
 
   // Copy our assembly code into the page that contains the exception vectors.
@@ -179,7 +186,8 @@ CopyExceptionHandlers (
   //
   for (Index = 0; Index <= gMaxExceptionNumber; Index++) {
     if (!FeaturePcdGet (PcdDebuggerExceptionSupport) ||
-        (gDebuggerExceptionHandlers[Index] == 0) || (gDebuggerExceptionHandlers[Index] == (VOID *)gDebuggerNoHandlerValue))
+        (gDebuggerExceptionHandlers[Index] == 0) ||
+        (gDebuggerExceptionHandlers[Index] == (VOID *)gDebuggerNoHandlerValue))
     {
       Status = RegisterExceptionHandler (Index, NULL);
       ASSERT_EFI_ERROR (Status);
@@ -230,7 +238,9 @@ RegisterCpuInterruptHandler (
     return RETURN_UNSUPPORTED;
   }
 
-  if ((ExceptionHandler != NULL) && (gExceptionHandlers[ExceptionType] != NULL)) {
+  if ((ExceptionHandler != NULL) && (gExceptionHandlers[ExceptionType] !=
+                                     NULL))
+  {
     return RETURN_ALREADY_STARTED;
   }
 

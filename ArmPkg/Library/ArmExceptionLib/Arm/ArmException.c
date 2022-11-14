@@ -17,10 +17,16 @@
 
 #include <Protocol/DebugSupport.h> // for MAX_ARM_EXCEPTION
 
-UINTN                   gMaxExceptionNumber                               = MAX_ARM_EXCEPTION;
-EFI_EXCEPTION_CALLBACK  gExceptionHandlers[MAX_ARM_EXCEPTION + 1]         = { 0 };
-EFI_EXCEPTION_CALLBACK  gDebuggerExceptionHandlers[MAX_ARM_EXCEPTION + 1] = { 0 };
-PHYSICAL_ADDRESS        gExceptionVectorAlignmentMask                     = ARM_VECTOR_TABLE_ALIGNMENT;
+UINTN  gMaxExceptionNumber =
+  MAX_ARM_EXCEPTION;
+EFI_EXCEPTION_CALLBACK  gExceptionHandlers[MAX_ARM_EXCEPTION + 1] = {
+  0
+};
+EFI_EXCEPTION_CALLBACK  gDebuggerExceptionHandlers[MAX_ARM_EXCEPTION + 1] = {
+  0
+};
+PHYSICAL_ADDRESS        gExceptionVectorAlignmentMask =
+  ARM_VECTOR_TABLE_ALIGNMENT;
 
 // Exception handler contains branch to vector location (jmp $) so no handler
 // NOTE: This code assumes vectors are ARM and not Thumb code

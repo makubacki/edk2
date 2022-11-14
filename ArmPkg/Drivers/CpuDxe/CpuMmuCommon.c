@@ -43,13 +43,15 @@ SearchGcdMemorySpaces (
   *EndIndex   = 0;
   for (Index = 0; Index < NumberOfDescriptors; Index++) {
     if ((BaseAddress >= MemorySpaceMap[Index].BaseAddress) &&
-        (BaseAddress < (MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length)))
+        (BaseAddress < (MemorySpaceMap[Index].BaseAddress +
+                        MemorySpaceMap[Index].Length)))
     {
       *StartIndex = Index;
     }
 
     if (((BaseAddress + Length - 1) >= MemorySpaceMap[Index].BaseAddress) &&
-        ((BaseAddress + Length - 1) < (MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length)))
+        ((BaseAddress + Length - 1) < (MemorySpaceMap[Index].BaseAddress +
+                                       MemorySpaceMap[Index].Length)))
     {
       *EndIndex = Index;
       return EFI_SUCCESS;
@@ -140,10 +142,13 @@ SetGcdMemorySpaceAttributes (
       RegionStart = MemorySpaceMap[Index].BaseAddress;
     }
 
-    if ((BaseAddress + Length - 1) < (MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length)) {
+    if ((BaseAddress + Length - 1) < (MemorySpaceMap[Index].BaseAddress +
+                                      MemorySpaceMap[Index].Length))
+    {
       RegionLength = BaseAddress + Length - RegionStart;
     } else {
-      RegionLength = MemorySpaceMap[Index].BaseAddress + MemorySpaceMap[Index].Length - RegionStart;
+      RegionLength = MemorySpaceMap[Index].BaseAddress +
+                     MemorySpaceMap[Index].Length - RegionStart;
     }
 
     //
@@ -152,7 +157,8 @@ SetGcdMemorySpaceAttributes (
     gDS->SetMemorySpaceAttributes (
            RegionStart,
            RegionLength,
-           (MemorySpaceMap[Index].Attributes & ~EFI_MEMORY_CACHETYPE_MASK) | (MemorySpaceMap[Index].Capabilities & Attributes)
+           (MemorySpaceMap[Index].Attributes & ~EFI_MEMORY_CACHETYPE_MASK) |
+           (MemorySpaceMap[Index].Capabilities & Attributes)
            );
   }
 
@@ -201,7 +207,13 @@ CpuSetMemoryAttributes (
 
   if ((BaseAddress & (SIZE_4KB - 1)) != 0) {
     // Minimum granularity is SIZE_4KB (4KB on ARM)
-    DEBUG ((DEBUG_PAGE, "CpuSetMemoryAttributes(%lx, %lx, %lx): Minimum granularity is SIZE_4KB\n", BaseAddress, Length, EfiAttributes));
+    DEBUG ((
+      DEBUG_PAGE,
+      "CpuSetMemoryAttributes(%lx, %lx, %lx): Minimum granularity is SIZE_4KB\n",
+      BaseAddress,
+      Length,
+      EfiAttributes
+      ));
     return EFI_UNSUPPORTED;
   }
 
@@ -210,7 +222,11 @@ CpuSetMemoryAttributes (
 
   // Get the region starting from 'BaseAddress' and its 'Attribute'
   RegionBaseAddress = BaseAddress;
-  Status            = GetMemoryRegion (&RegionBaseAddress, &RegionLength, &RegionArmAttributes);
+  Status            = GetMemoryRegion (
+                        &RegionBaseAddress,
+                        &RegionLength,
+                        &RegionArmAttributes
+                        );
 
   // Data & Instruction Caches are flushed when we set new memory attributes.
   // So, we only set the attributes if the new region is different.

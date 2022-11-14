@@ -26,7 +26,8 @@ CacheRangeOperation (
   UINTN  EndAddress;
 
   ArmCacheLineAlignmentMask = LineLength - 1;
-  AlignedAddress            = (UINTN)Start - ((UINTN)Start & ArmCacheLineAlignmentMask);
+  AlignedAddress            = (UINTN)Start - ((UINTN)Start &
+                                              ArmCacheLineAlignmentMask);
   EndAddress                = (UINTN)Start + Length;
 
   // Perform the line operation on an address in each cache line

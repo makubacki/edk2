@@ -239,7 +239,8 @@ SMBIOS_MISC_TABLE_FUNCTION (MiscBiosVendor) {
   (VOID)CopyMem (SmbiosRecord, InputData, sizeof (SMBIOS_TABLE_TYPE0));
 
   SmbiosRecord->Hdr.Length  = sizeof (SMBIOS_TABLE_TYPE0);
-  SmbiosRecord->BiosSegment = (UINT16)(FixedPcdGet32 (PcdFdBaseAddress) / SIZE_64KB);
+  SmbiosRecord->BiosSegment = (UINT16)(FixedPcdGet32 (PcdFdBaseAddress) /
+                                       SIZE_64KB);
   if (BiosPhysicalSize < SIZE_16MB) {
     SmbiosRecord->BiosSize = Base2ToByteWith64KUnit (BiosPhysicalSize) - 1;
   } else {
@@ -256,8 +257,10 @@ SMBIOS_MISC_TABLE_FUNCTION (MiscBiosVendor) {
   SmbiosRecord->SystemBiosMajorRelease = (UINT8)(OemGetBiosRelease () >> 8);
   SmbiosRecord->SystemBiosMinorRelease = (UINT8)(OemGetBiosRelease () & 0xFF);
 
-  SmbiosRecord->EmbeddedControllerFirmwareMajorRelease = (UINT16)(OemGetEmbeddedControllerFirmwareRelease () >> 8);
-  SmbiosRecord->EmbeddedControllerFirmwareMinorRelease = (UINT16)(OemGetEmbeddedControllerFirmwareRelease () & 0xFF);
+  SmbiosRecord->EmbeddedControllerFirmwareMajorRelease =
+    (UINT16)(OemGetEmbeddedControllerFirmwareRelease () >> 8);
+  SmbiosRecord->EmbeddedControllerFirmwareMinorRelease =
+    (UINT16)(OemGetEmbeddedControllerFirmwareRelease () & 0xFF);
 
   OptionalStrStart = (CHAR8 *)(SmbiosRecord + 1);
   UnicodeStrToAsciiStrS (Vendor, OptionalStrStart, VendorStrLen + 1);

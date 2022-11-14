@@ -146,7 +146,11 @@ MmCommunication2Communicate (
   CommunicateSmcArgs.Arg1 = 0;
 
   // Copy Communication Payload
-  CopyMem ((VOID *)mNsCommBuffMemRegion.VirtualBase, CommBufferVirtual, BufferSize);
+  CopyMem (
+    (VOID *)mNsCommBuffMemRegion.VirtualBase,
+    CommBufferVirtual,
+    BufferSize
+    );
 
   // comm_buffer_address (64-bit physical address)
   CommunicateSmcArgs.Arg2 = (UINTN)mNsCommBuffMemRegion.PhysicalBase;
@@ -162,10 +166,11 @@ MmCommunication2Communicate (
       ZeroMem (CommBufferVirtual, BufferSize);
       // On successful return, the size of data being returned is inferred from
       // MessageLength + Header.
-      CommunicateHeader = (EFI_MM_COMMUNICATE_HEADER *)mNsCommBuffMemRegion.VirtualBase;
-      BufferSize        = CommunicateHeader->MessageLength +
-                          sizeof (CommunicateHeader->HeaderGuid) +
-                          sizeof (CommunicateHeader->MessageLength);
+      CommunicateHeader =
+        (EFI_MM_COMMUNICATE_HEADER *)mNsCommBuffMemRegion.VirtualBase;
+      BufferSize = CommunicateHeader->MessageLength +
+                   sizeof (CommunicateHeader->HeaderGuid) +
+                   sizeof (CommunicateHeader->MessageLength);
 
       CopyMem (
         CommBufferVirtual,

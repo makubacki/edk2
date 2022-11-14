@@ -125,7 +125,11 @@ ReplaceTableEntry (
         (((RegionStart ^ (UINTN)Entry) & ~BlockMask) == 0))
     {
       DisableMmu = TRUE;
-      DEBUG ((DEBUG_WARN, "%a: splitting block entry with MMU disabled\n", __FUNCTION__));
+      DEBUG ((
+        DEBUG_WARN,
+        "%a: splitting block entry with MMU disabled\n",
+        __FUNCTION__
+        ));
     }
 
     mReplaceLiveEntryFunc (Entry, Value, RegionStart, DisableMmu);
@@ -229,7 +233,8 @@ UpdateRegionMappingRecursive (
 
   for ( ; RegionStart < RegionEnd; RegionStart = BlockEnd) {
     BlockEnd = MIN (RegionEnd, (RegionStart | BlockMask) + 1);
-    Entry    = &PageTable[(RegionStart >> (64 - BlockShift)) & (TT_ENTRY_COUNT - 1)];
+    Entry    = &PageTable[(RegionStart >> (64 - BlockShift)) & (TT_ENTRY_COUNT -
+                                                                1)];
 
     //
     // If RegionStart or BlockEnd is not aligned to the block size at this
@@ -297,7 +302,8 @@ UpdateRegionMappingRecursive (
 
         NextTableIsLive = FALSE;
       } else {
-        TranslationTable = (VOID *)(UINTN)(*Entry & TT_ADDRESS_MASK_BLOCK_ENTRY);
+        TranslationTable = (VOID *)(UINTN)(*Entry &
+                                           TT_ADDRESS_MASK_BLOCK_ENTRY);
         NextTableIsLive  = TableIsLive;
       }
 
@@ -414,7 +420,8 @@ GcdAttributeToPageAttribute (
       PageAttributes = TT_ATTR_INDX_MEMORY_NON_CACHEABLE;
       break;
     case EFI_MEMORY_WT:
-      PageAttributes = TT_ATTR_INDX_MEMORY_WRITE_THROUGH | TT_SH_INNER_SHAREABLE;
+      PageAttributes = TT_ATTR_INDX_MEMORY_WRITE_THROUGH |
+                       TT_SH_INNER_SHAREABLE;
       break;
     case EFI_MEMORY_WB:
       PageAttributes = TT_ATTR_INDX_MEMORY_WRITE_BACK | TT_SH_INNER_SHAREABLE;
@@ -717,10 +724,22 @@ ArmConfigureMmu (
   // EFI_MEMORY_WB ==> MAIR_ATTR_NORMAL_MEMORY_WRITE_BACK
   //
   ArmSetMAIR (
-    MAIR_ATTR (TT_ATTR_INDX_DEVICE_MEMORY, MAIR_ATTR_DEVICE_MEMORY)               |
-    MAIR_ATTR (TT_ATTR_INDX_MEMORY_NON_CACHEABLE, MAIR_ATTR_NORMAL_MEMORY_NON_CACHEABLE) |
-    MAIR_ATTR (TT_ATTR_INDX_MEMORY_WRITE_THROUGH, MAIR_ATTR_NORMAL_MEMORY_WRITE_THROUGH) |
-    MAIR_ATTR (TT_ATTR_INDX_MEMORY_WRITE_BACK, MAIR_ATTR_NORMAL_MEMORY_WRITE_BACK)
+    MAIR_ATTR (
+      TT_ATTR_INDX_DEVICE_MEMORY,
+      MAIR_ATTR_DEVICE_MEMORY
+      )               |
+    MAIR_ATTR (
+      TT_ATTR_INDX_MEMORY_NON_CACHEABLE,
+      MAIR_ATTR_NORMAL_MEMORY_NON_CACHEABLE
+      ) |
+    MAIR_ATTR (
+      TT_ATTR_INDX_MEMORY_WRITE_THROUGH,
+      MAIR_ATTR_NORMAL_MEMORY_WRITE_THROUGH
+      ) |
+    MAIR_ATTR (
+      TT_ATTR_INDX_MEMORY_WRITE_BACK,
+      MAIR_ATTR_NORMAL_MEMORY_WRITE_BACK
+      )
     );
 
   ArmSetTTBR0 (TranslationTable);

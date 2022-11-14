@@ -115,7 +115,8 @@ WatchdogInterruptHandler (
   // the timer period plus 1.
   //
   if (mWatchdogNotify != NULL) {
-    TimerPeriod = ((TIME_UNITS_PER_SECOND / mTimerFrequencyHz) * mNumTimerTicks);
+    TimerPeriod = ((TIME_UNITS_PER_SECOND / mTimerFrequencyHz) *
+                   mNumTimerTicks);
     mWatchdogNotify (TimerPeriod + 1);
   }
 

@@ -77,7 +77,12 @@ SMBIOS_MISC_TABLE_FUNCTION (MiscBaseBoardManufacturer) {
   BaseBoardManufacturer = (CHAR16 *)PcdGetPtr (PcdBaseBoardManufacturer);
   if (StrLen (BaseBoardManufacturer) > 0) {
     TokenToUpdate = STRING_TOKEN (STR_MISC_BASE_BOARD_MANUFACTURER);
-    HiiSetString (mSmbiosMiscHiiHandle, TokenToUpdate, BaseBoardManufacturer, NULL);
+    HiiSetString (
+      mSmbiosMiscHiiHandle,
+      TokenToUpdate,
+      BaseBoardManufacturer,
+      NULL
+      );
   } else {
     OemUpdateSmbiosInfo (
       mSmbiosMiscHiiHandle,
@@ -89,7 +94,12 @@ SMBIOS_MISC_TABLE_FUNCTION (MiscBaseBoardManufacturer) {
   BaseBoardProductName = (CHAR16 *)PcdGetPtr (PcdBaseBoardProductName);
   if (StrLen (BaseBoardProductName) > 0) {
     TokenToUpdate = STRING_TOKEN (STR_MISC_BASE_BOARD_PRODUCT_NAME);
-    HiiSetString (mSmbiosMiscHiiHandle, TokenToUpdate, BaseBoardProductName, NULL);
+    HiiSetString (
+      mSmbiosMiscHiiHandle,
+      TokenToUpdate,
+      BaseBoardProductName,
+      NULL
+      );
   } else {
     OemUpdateSmbiosInfo (
       mSmbiosMiscHiiHandle,
@@ -132,12 +142,20 @@ SMBIOS_MISC_TABLE_FUNCTION (MiscBaseBoardManufacturer) {
     );
 
   TokenToGet            = STRING_TOKEN (STR_MISC_BASE_BOARD_MANUFACTURER);
-  BaseBoardManufacturer = HiiGetPackageString (&gEfiCallerIdGuid, TokenToGet, NULL);
-  ManuStrLen            = StrLen (BaseBoardManufacturer);
+  BaseBoardManufacturer = HiiGetPackageString (
+                            &gEfiCallerIdGuid,
+                            TokenToGet,
+                            NULL
+                            );
+  ManuStrLen = StrLen (BaseBoardManufacturer);
 
   TokenToGet           = STRING_TOKEN (STR_MISC_BASE_BOARD_PRODUCT_NAME);
-  BaseBoardProductName = HiiGetPackageString (&gEfiCallerIdGuid, TokenToGet, NULL);
-  ProductNameStrLen    = StrLen (BaseBoardProductName);
+  BaseBoardProductName = HiiGetPackageString (
+                           &gEfiCallerIdGuid,
+                           TokenToGet,
+                           NULL
+                           );
+  ProductNameStrLen = StrLen (BaseBoardProductName);
 
   TokenToGet = STRING_TOKEN (STR_MISC_BASE_BOARD_VERSION);
   Version    = HiiGetPackageString (&gEfiCallerIdGuid, TokenToGet, NULL);
@@ -192,7 +210,12 @@ SMBIOS_MISC_TABLE_FUNCTION (MiscBaseBoardManufacturer) {
   FreePool (HandleArray);
 
   OptionalStrStart = (CHAR8 *)(SmbiosRecord + 1);
-  UnicodeStrToAsciiStrS (BaseBoardManufacturer, OptionalStrStart, ManuStrLen + 1);
+  UnicodeStrToAsciiStrS (
+    BaseBoardManufacturer,
+    OptionalStrStart,
+    ManuStrLen +
+    1
+    );
 
   StrStart = OptionalStrStart + ManuStrLen + 1;
   UnicodeStrToAsciiStrS (BaseBoardProductName, StrStart, ProductNameStrLen + 1);

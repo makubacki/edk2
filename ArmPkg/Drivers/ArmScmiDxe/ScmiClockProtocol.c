@@ -252,17 +252,22 @@ ClockDescribeRates (
     RateOffset = 0;
 
     if (*Format == ScmiClockRateFormatDiscrete) {
-      for (RateNo = 0; RateNo < NUM_RATES (DescribeRates->NumRatesFlags); RateNo++) {
+      for (RateNo = 0; RateNo < NUM_RATES (DescribeRates->NumRatesFlags);
+           RateNo++)
+      {
         Rate = &DescribeRates->Rates[RateOffset++];
         // Non-linear discrete rates.
         RateArray[RateIndex++].DiscreteRate.Rate =
           ConvertTo64Bit (Rate->Low, Rate->High);
       }
     } else {
-      for (RateNo = 0; RateNo < NUM_RATES (DescribeRates->NumRatesFlags); RateNo++) {
+      for (RateNo = 0; RateNo < NUM_RATES (DescribeRates->NumRatesFlags);
+           RateNo++)
+      {
         // Linear clock rates from minimum to maximum in steps
         // Minimum clock rate.
-        Rate                                    = &DescribeRates->Rates[RateOffset++];
+        Rate =
+          &DescribeRates->Rates[RateOffset++];
         RateArray[RateIndex].ContinuousRate.Min =
           ConvertTo64Bit (Rate->Low, Rate->High);
 

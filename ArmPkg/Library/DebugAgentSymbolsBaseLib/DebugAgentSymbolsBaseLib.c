@@ -110,7 +110,8 @@ GetFfsFile (
   ASSERT (FwVolHeader->Signature == EFI_FVH_SIGNATURE);
 
   FvLength      = FwVolHeader->FvLength;
-  FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FwVolHeader + FwVolHeader->HeaderLength);
+  FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FwVolHeader +
+                                          FwVolHeader->HeaderLength);
   FileOffset    = FwVolHeader->HeaderLength;
 
   if (FwVolHeader->Attributes & EFI_FVB2_ERASE_POLARITY) {
@@ -126,7 +127,8 @@ GetFfsFile (
     switch (FileState) {
       case EFI_FILE_HEADER_INVALID:
         FileOffset   += sizeof (EFI_FFS_FILE_HEADER);
-        FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + sizeof (EFI_FFS_FILE_HEADER));
+        FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                sizeof (EFI_FFS_FILE_HEADER));
         break;
 
       case EFI_FILE_DATA_VALID:
@@ -145,14 +147,16 @@ GetFfsFile (
         FileOccupiedSize = GET_OCCUPIED_SIZE (FileLength, 8);
 
         FileOffset   += FileOccupiedSize;
-        FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + FileOccupiedSize);
+        FfsFileHeader = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                FileOccupiedSize);
         break;
 
       case EFI_FILE_DELETED:
         FileLength       = *(UINT32 *)(FfsFileHeader->Size) & 0x00FFFFFF;
         FileOccupiedSize = GET_OCCUPIED_SIZE (FileLength, 8);
         FileOffset      += FileOccupiedSize;
-        FfsFileHeader    = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader + FileOccupiedSize);
+        FfsFileHeader    = (EFI_FFS_FILE_HEADER *)((UINT8 *)FfsFileHeader +
+                                                   FileOccupiedSize);
         break;
 
       default:
@@ -186,7 +190,9 @@ GetImageContext (
   EfiImage     = NULL;
 
   while (ParsedLength < SectionSize) {
-    if ((Section->Type == EFI_SECTION_PE32) || (Section->Type == EFI_SECTION_TE)) {
+    if ((Section->Type == EFI_SECTION_PE32) || (Section->Type ==
+                                                EFI_SECTION_TE))
+    {
       EfiImage = (EFI_IMAGE_OPTIONAL_HEADER_UNION *)(Section + 1);
       break;
     }
@@ -200,7 +206,8 @@ GetImageContext (
     SectionLength = GET_OCCUPIED_SIZE (SectionLength, 4);
     ASSERT (SectionLength != 0);
     ParsedLength += SectionLength;
-    Section       = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)Section + SectionLength);
+    Section       = (EFI_COMMON_SECTION_HEADER *)((UINT8 *)Section +
+                                                  SectionLength);
   }
 
   if (EfiImage == NULL) {
@@ -213,24 +220,32 @@ GetImageContext (
   ImageContext->ImageRead = PeCoffLoaderImageReadFromMemory;
 
   Status =  PeCoffLoaderGetImageInfo (ImageContext);
-  if (!EFI_ERROR (Status) && ((VOID *)(UINTN)ImageContext->DebugDirectoryEntryRva != NULL)) {
+  if (!EFI_ERROR (Status) &&
+      ((VOID *)(UINTN)ImageContext->DebugDirectoryEntryRva != NULL))
+  {
     ImageAddress = ImageContext->ImageAddress;
     if (ImageContext->IsTeImage) {
-      ImageAddress += sizeof (EFI_TE_IMAGE_HEADER) - ((EFI_TE_IMAGE_HEADER *)EfiImage)->StrippedSize;
+      ImageAddress += sizeof (EFI_TE_IMAGE_HEADER) -
+                      ((EFI_TE_IMAGE_HEADER *)EfiImage)->StrippedSize;
     }
 
-    DebugEntry = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)(ImageAddress + ImageContext->DebugDirectoryEntryRva);
+    DebugEntry = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY *)(ImageAddress +
+                                                     ImageContext->
+                                                       DebugDirectoryEntryRva);
     if (DebugEntry->Type == EFI_IMAGE_DEBUG_TYPE_CODEVIEW) {
       CodeViewEntryPointer = (VOID *)(ImageAddress + (UINTN)DebugEntry->RVA);
       switch (*(UINT32 *)CodeViewEntryPointer) {
         case CODEVIEW_SIGNATURE_NB10:
-          ImageContext->PdbPointer = (CHAR8 *)CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY);
+          ImageContext->PdbPointer = (CHAR8 *)CodeViewEntryPointer +
+                                     sizeof (EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY);
           break;
         case CODEVIEW_SIGNATURE_RSDS:
-          ImageContext->PdbPointer = (CHAR8 *)CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_RSDS_ENTRY);
+          ImageContext->PdbPointer = (CHAR8 *)CodeViewEntryPointer +
+                                     sizeof (EFI_IMAGE_DEBUG_CODEVIEW_RSDS_ENTRY);
           break;
         case CODEVIEW_SIGNATURE_MTOC:
-          ImageContext->PdbPointer = (CHAR8 *)CodeViewEntryPointer + sizeof (EFI_IMAGE_DEBUG_CODEVIEW_MTOC_ENTRY);
+          ImageContext->PdbPointer = (CHAR8 *)CodeViewEntryPointer +
+                                     sizeof (EFI_IMAGE_DEBUG_CODEVIEW_MTOC_ENTRY);
           break;
         default:
           break;
@@ -282,7 +297,13 @@ InitializeDebugAgent (
     //
     // Get the Sec or PrePeiCore module (defined as SEC type module)
     //
-    Status = GetFfsFile ((EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)PcdGet64 (PcdSecureFvBaseAddress), EFI_FV_FILETYPE_SECURITY_CORE, &FfsHeader);
+    Status = GetFfsFile (
+               (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)PcdGet64 (
+                                                      PcdSecureFvBaseAddress
+                                                      ),
+               EFI_FV_FILETYPE_SECURITY_CORE,
+               &FfsHeader
+               );
     if (!EFI_ERROR (Status)) {
       Status = GetImageContext (FfsHeader, &ImageContext);
       if (!EFI_ERROR (Status)) {
@@ -293,7 +314,13 @@ InitializeDebugAgent (
     //
     // Get the PrePi or PrePeiCore module (defined as SEC type module)
     //
-    Status = GetFfsFile ((EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)PcdGet64 (PcdFvBaseAddress), EFI_FV_FILETYPE_SECURITY_CORE, &FfsHeader);
+    Status = GetFfsFile (
+               (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)PcdGet64 (
+                                                      PcdFvBaseAddress
+                                                      ),
+               EFI_FV_FILETYPE_SECURITY_CORE,
+               &FfsHeader
+               );
     if (!EFI_ERROR (Status)) {
       Status = GetImageContext (FfsHeader, &ImageContext);
       if (!EFI_ERROR (Status)) {
@@ -304,7 +331,13 @@ InitializeDebugAgent (
     //
     // Get the PeiCore module (defined as PEI_CORE type module)
     //
-    Status = GetFfsFile ((EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)PcdGet64 (PcdFvBaseAddress), EFI_FV_FILETYPE_PEI_CORE, &FfsHeader);
+    Status = GetFfsFile (
+               (EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)PcdGet64 (
+                                                      PcdFvBaseAddress
+                                                      ),
+               EFI_FV_FILETYPE_PEI_CORE,
+               &FfsHeader
+               );
     if (!EFI_ERROR (Status)) {
       Status = GetImageContext (FfsHeader, &ImageContext);
       if (!EFI_ERROR (Status)) {

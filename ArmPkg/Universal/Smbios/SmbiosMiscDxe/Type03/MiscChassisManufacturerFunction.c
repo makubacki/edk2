@@ -152,7 +152,8 @@ SMBIOS_MISC_TABLE_FUNCTION (MiscChassisManufacturer) {
 
   *SkuNumberField = 5;
 
-  OptionalStrStart = (CHAR8 *)((UINT8 *)SmbiosRecord + sizeof (SMBIOS_TABLE_TYPE3) +
+  OptionalStrStart = (CHAR8 *)((UINT8 *)SmbiosRecord +
+                               sizeof (SMBIOS_TABLE_TYPE3) +
                                ExtendLength + 1);
   UnicodeStrToAsciiStrS (Manufacturer, OptionalStrStart, ManuStrLen + 1);
   StrStart = OptionalStrStart + ManuStrLen + 1;

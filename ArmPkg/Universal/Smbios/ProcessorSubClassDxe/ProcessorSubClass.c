@@ -279,9 +279,11 @@ ConfigureCacheArchitectureInformation (
       break;
   }
 
-  Type7Record->CacheConfiguration = (CacheModeUnknown << CACHE_OPERATION_MODE_SHIFT) |
+  Type7Record->CacheConfiguration = (CacheModeUnknown <<
+                                     CACHE_OPERATION_MODE_SHIFT) |
                                     (1 << CACHE_ENABLED_SHIFT) |
-                                    (CacheLocationUnknown << CACHE_LOCATION_SHIFT) |
+                                    (CacheLocationUnknown <<
+                                     CACHE_LOCATION_SHIFT) |
                                     (0 << CACHE_SOCKETED_SHIFT) |
                                     (CacheLevel - 1);
 }
@@ -341,7 +343,12 @@ AllocateAndInitCacheInformation (
   Type7Record->ErrorCorrectionType       = CacheErrorUnknown;
 
   OptionalStrStart = (CHAR8 *)(Type7Record + 1);
-  UnicodeStrToAsciiStrS (CacheSocketStr, OptionalStrStart, CacheSocketStrLen + 1);
+  UnicodeStrToAsciiStrS (
+    CacheSocketStr,
+    OptionalStrStart,
+    CacheSocketStrLen +
+    1
+    );
   FreePool (CacheSocketStr);
 
   return Type7Record;
@@ -516,19 +523,40 @@ AllocateType4AndSetProcessorInformationStrings (
   SET_HII_STRING_IF_PCD_NOT_EMPTY (PcdProcessorAssetTag, AssetTag);
 
   if (StrLen ((CHAR16 *)FixedPcdGetPtr (PcdProcessorSerialNumber)) > 0) {
-    HiiSetString (mHiiHandle, SerialNumber, (CHAR16 *)FixedPcdGetPtr (PcdProcessorSerialNumber), NULL);
+    HiiSetString (
+      mHiiHandle,
+      SerialNumber,
+      (CHAR16 *)FixedPcdGetPtr (
+                  PcdProcessorSerialNumber
+                  ),
+      NULL
+      );
   } else {
     OemUpdateSmbiosInfo (mHiiHandle, SerialNumber, ProcessorSerialNumType04);
   }
 
   if (StrLen ((CHAR16 *)FixedPcdGetPtr (PcdProcessorPartNumber)) > 0) {
-    HiiSetString (mHiiHandle, PartNumber, (CHAR16 *)FixedPcdGetPtr (PcdProcessorPartNumber), NULL);
+    HiiSetString (
+      mHiiHandle,
+      PartNumber,
+      (CHAR16 *)FixedPcdGetPtr (
+                  PcdProcessorPartNumber
+                  ),
+      NULL
+      );
   } else {
     OemUpdateSmbiosInfo (mHiiHandle, PartNumber, ProcessorPartNumType04);
   }
 
   if (StrLen ((CHAR16 *)FixedPcdGetPtr (PcdProcessorVersion)) > 0) {
-    HiiSetString (mHiiHandle, ProcessorVersion, (CHAR16 *)FixedPcdGetPtr (PcdProcessorVersion), NULL);
+    HiiSetString (
+      mHiiHandle,
+      ProcessorVersion,
+      (CHAR16 *)FixedPcdGetPtr (
+                  PcdProcessorVersion
+                  ),
+      NULL
+      );
   } else {
     OemUpdateSmbiosInfo (mHiiHandle, ProcessorVersion, ProcessorVersionType04);
   }
@@ -548,15 +576,27 @@ AllocateType4AndSetProcessorInformationStrings (
                       );
 
   // Processor Manufacture
-  ProcessorManuStr    = HiiGetPackageString (&gEfiCallerIdGuid, ProcessorManu, NULL);
+  ProcessorManuStr = HiiGetPackageString (
+                       &gEfiCallerIdGuid,
+                       ProcessorManu,
+                       NULL
+                       );
   ProcessorManuStrLen = StrLen (ProcessorManuStr);
 
   // Processor Version
-  ProcessorVersionStr    = HiiGetPackageString (&gEfiCallerIdGuid, ProcessorVersion, NULL);
+  ProcessorVersionStr = HiiGetPackageString (
+                          &gEfiCallerIdGuid,
+                          ProcessorVersion,
+                          NULL
+                          );
   ProcessorVersionStrLen = StrLen (ProcessorVersionStr);
 
   // Serial Number
-  SerialNumberStr    = HiiGetPackageString (&gEfiCallerIdGuid, SerialNumber, NULL);
+  SerialNumberStr = HiiGetPackageString (
+                      &gEfiCallerIdGuid,
+                      SerialNumber,
+                      NULL
+                      );
   SerialNumberStrLen = StrLen (SerialNumberStr);
 
   // Asset Tag
@@ -581,7 +621,11 @@ AllocateType4AndSetProcessorInformationStrings (
     goto Exit;
   }
 
-  CopyMem (*Type4Record, &mSmbiosProcessorTableTemplate, sizeof (SMBIOS_TABLE_TYPE4));
+  CopyMem (
+    *Type4Record,
+    &mSmbiosProcessorTableTemplate,
+    sizeof (SMBIOS_TABLE_TYPE4)
+    );
 
   OptionalStrStart = (CHAR8 *)(*Type4Record + 1);
   UnicodeStrToAsciiStrS (
@@ -724,7 +768,8 @@ AddSmbiosProcessorTypeTable (
   *ProcessorId = SmbiosGetProcessorId ();
 
   ProcessorCharacteristics               = SmbiosGetProcessorCharacteristics ();
-  Type4Record->ProcessorCharacteristics |= *((UINT64 *)&ProcessorCharacteristics);
+  Type4Record->ProcessorCharacteristics |=
+    *((UINT64 *)&ProcessorCharacteristics);
 
   Type4Record->ProcessorFamily  = SmbiosGetProcessorFamily ();
   Type4Record->ProcessorFamily2 = SmbiosGetProcessorFamily2 ();
@@ -774,7 +819,11 @@ ProcessorSubClassEntryPoint (
   //
   // Locate dependent protocols
   //
-  Status = gBS->LocateProtocol (&gEfiSmbiosProtocolGuid, NULL, (VOID **)&mSmbios);
+  Status = gBS->LocateProtocol (
+                  &gEfiSmbiosProtocolGuid,
+                  NULL,
+                  (VOID **)&mSmbios
+                  );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Could not locate SMBIOS protocol.  %r\n", Status));
     return Status;
@@ -797,7 +846,9 @@ ProcessorSubClassEntryPoint (
   //
   // Add SMBIOS tables for populated sockets.
   //
-  for (ProcessorIndex = 0; ProcessorIndex < OemGetMaxProcessors (); ProcessorIndex++) {
+  for (ProcessorIndex = 0; ProcessorIndex < OemGetMaxProcessors ();
+       ProcessorIndex++)
+  {
     Status = AddSmbiosProcessorTypeTable (ProcessorIndex);
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "Add Processor Type Table Failed!  %r.\n", Status));

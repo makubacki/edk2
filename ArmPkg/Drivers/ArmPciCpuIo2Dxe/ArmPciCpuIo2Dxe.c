@@ -244,7 +244,9 @@ CpuMemoryServiceRead (
   InStride       = mInStride[Width];
   OutStride      = mOutStride[Width];
   OperationWidth = (EFI_CPU_IO_PROTOCOL_WIDTH)(Width & 0x03);
-  for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
+  for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer +=
+         OutStride, Count--)
+  {
     if (OperationWidth == EfiCpuIoWidthUint8) {
       *Uint8Buffer = MmioRead8 ((UINTN)Address);
     } else if (OperationWidth == EfiCpuIoWidthUint16) {
@@ -326,7 +328,9 @@ CpuMemoryServiceWrite (
   InStride       = mInStride[Width];
   OutStride      = mOutStride[Width];
   OperationWidth = (EFI_CPU_IO_PROTOCOL_WIDTH)(Width & 0x03);
-  for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
+  for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer +=
+         OutStride, Count--)
+  {
     if (OperationWidth == EfiCpuIoWidthUint8) {
       MmioWrite8 ((UINTN)Address, *Uint8Buffer);
     } else if (OperationWidth == EfiCpuIoWidthUint16) {
@@ -411,7 +415,9 @@ CpuIoServiceRead (
   OutStride      = mOutStride[Width];
   OperationWidth = (EFI_CPU_IO_PROTOCOL_WIDTH)(Width & 0x03);
 
-  for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
+  for (Uint8Buffer = Buffer; Count > 0; Address += InStride, Uint8Buffer +=
+         OutStride, Count--)
+  {
     if (OperationWidth == EfiCpuIoWidthUint8) {
       *Uint8Buffer = MmioRead8 ((UINTN)Address);
     } else if (OperationWidth == EfiCpuIoWidthUint16) {
@@ -497,7 +503,9 @@ CpuIoServiceWrite (
   OutStride      = mOutStride[Width];
   OperationWidth = (EFI_CPU_IO_PROTOCOL_WIDTH)(Width & 0x03);
 
-  for (Uint8Buffer = (UINT8 *)Buffer; Count > 0; Address += InStride, Uint8Buffer += OutStride, Count--) {
+  for (Uint8Buffer = (UINT8 *)Buffer; Count > 0; Address += InStride,
+       Uint8Buffer += OutStride, Count--)
+  {
     if (OperationWidth == EfiCpuIoWidthUint8) {
       MmioWrite8 ((UINTN)Address, *Uint8Buffer);
     } else if (OperationWidth == EfiCpuIoWidthUint16) {

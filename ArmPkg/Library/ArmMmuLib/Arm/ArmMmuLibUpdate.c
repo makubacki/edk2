@@ -42,18 +42,25 @@ ConvertSectionToPages (
   volatile ARM_FIRST_LEVEL_DESCRIPTOR  *FirstLevelTable;
   volatile ARM_PAGE_TABLE_ENTRY        *PageTable;
 
-  DEBUG ((DEBUG_PAGE, "Converting section at 0x%x to pages\n", (UINTN)BaseAddress));
+  DEBUG ((
+    DEBUG_PAGE,
+    "Converting section at 0x%x to pages\n",
+    (UINTN)BaseAddress
+    ));
 
   // Obtain page table base
   FirstLevelTable = (ARM_FIRST_LEVEL_DESCRIPTOR *)ArmGetTTBR0BaseAddress ();
 
   // Calculate index into first level translation table for start of modification
-  FirstLevelIdx = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (BaseAddress) >> TT_DESCRIPTOR_SECTION_BASE_SHIFT;
+  FirstLevelIdx = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (BaseAddress) >>
+                  TT_DESCRIPTOR_SECTION_BASE_SHIFT;
   ASSERT (FirstLevelIdx < TRANSLATION_TABLE_SECTION_COUNT);
 
   // Get section attributes and convert to page attributes
   SectionDescriptor = FirstLevelTable[FirstLevelIdx];
-  PageDescriptor    = TT_DESCRIPTOR_PAGE_TYPE_PAGE | ConvertSectionAttributesToPageAttributes (SectionDescriptor, FALSE);
+  PageDescriptor    = TT_DESCRIPTOR_PAGE_TYPE_PAGE |
+                      ConvertSectionAttributesToPageAttributes (
+                        SectionDescriptor, FALSE);
 
   // Allocate a page table for the 4KB entries (we use up a full page even though we only need 1KB)
   PageTable = (volatile ARM_PAGE_TABLE_ENTRY *)AllocatePages (1);
@@ -63,11 +70,16 @@ ConvertSectionToPages (
 
   // Write the page table entries out
   for (Index = 0; Index < TRANSLATION_TABLE_PAGE_COUNT; Index++) {
-    PageTable[Index] = TT_DESCRIPTOR_PAGE_BASE_ADDRESS (BaseAddress + (Index << 12)) | PageDescriptor;
+    PageTable[Index] = TT_DESCRIPTOR_PAGE_BASE_ADDRESS (
+                         BaseAddress + (Index <<
+                                        12)
+                         ) | PageDescriptor;
   }
 
   // Formulate page table entry, Domain=0, NS=0
-  PageTableDescriptor = (((UINTN)PageTable) & TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK) | TT_DESCRIPTOR_SECTION_TYPE_PAGE_TABLE;
+  PageTableDescriptor = (((UINTN)PageTable) &
+                         TT_DESCRIPTOR_SECTION_PAGETABLE_ADDRESS_MASK) |
+                        TT_DESCRIPTOR_SECTION_TYPE_PAGE_TABLE;
 
   // Write the page table entry out, replacing section entry
   FirstLevelTable[FirstLevelIdx] = PageTableDescriptor;
@@ -159,7 +171,8 @@ UpdatePageEntries (
   for (p = 0; p < NumPageEntries; p++) {
     // Calculate index into first level translation table for page table value
 
-    FirstLevelIdx = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (BaseAddress + Offset) >> TT_DESCRIPTOR_SECTION_BASE_SHIFT;
+    FirstLevelIdx = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (BaseAddress + Offset) >>
+                    TT_DESCRIPTOR_SECTION_BASE_SHIFT;
     ASSERT (FirstLevelIdx < TRANSLATION_TABLE_SECTION_COUNT);
 
     // Read the descriptor from the first level page table
@@ -167,7 +180,10 @@ UpdatePageEntries (
 
     // Does this descriptor need to be converted from section entry to 4K pages?
     if (!TT_DESCRIPTOR_SECTION_TYPE_IS_PAGE_TABLE (Descriptor)) {
-      Status = ConvertSectionToPages (FirstLevelIdx << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
+      Status = ConvertSectionToPages (
+                 FirstLevelIdx <<
+                 TT_DESCRIPTOR_SECTION_BASE_SHIFT
+                 );
       if (EFI_ERROR (Status)) {
         // Exit for loop
         break;
@@ -181,10 +197,13 @@ UpdatePageEntries (
     }
 
     // Obtain page table base address
-    PageTable = (ARM_PAGE_TABLE_ENTRY *)TT_DESCRIPTOR_PAGE_BASE_ADDRESS (Descriptor);
+    PageTable = (ARM_PAGE_TABLE_ENTRY *)TT_DESCRIPTOR_PAGE_BASE_ADDRESS (
+                                          Descriptor
+                                          );
 
     // Calculate index into the page table
-    PageTableIndex = ((BaseAddress + Offset) & TT_DESCRIPTOR_PAGE_INDEX_MASK) >> TT_DESCRIPTOR_PAGE_BASE_SHIFT;
+    PageTableIndex = ((BaseAddress + Offset) & TT_DESCRIPTOR_PAGE_INDEX_MASK) >>
+                     TT_DESCRIPTOR_PAGE_BASE_SHIFT;
     ASSERT (PageTableIndex < TRANSLATION_TABLE_PAGE_COUNT);
 
     // Get the entry
@@ -197,7 +216,10 @@ UpdatePageEntries (
     PageTableEntry |= EntryValue;
 
     if (CurrentPageTableEntry  != PageTableEntry) {
-      Mva = (VOID *)(UINTN)((((UINTN)FirstLevelIdx) << TT_DESCRIPTOR_SECTION_BASE_SHIFT) + (PageTableIndex << TT_DESCRIPTOR_PAGE_BASE_SHIFT));
+      Mva = (VOID *)(UINTN)((((UINTN)FirstLevelIdx) <<
+                             TT_DESCRIPTOR_SECTION_BASE_SHIFT) +
+                            (PageTableIndex <<
+                             TT_DESCRIPTOR_PAGE_BASE_SHIFT));
 
       // Only need to update if we are changing the entry
       PageTable[PageTableIndex] = PageTableEntry;
@@ -285,7 +307,8 @@ UpdateSectionEntries (
   FirstLevelTable = (ARM_FIRST_LEVEL_DESCRIPTOR *)ArmGetTTBR0BaseAddress ();
 
   // calculate index into first level translation table for start of modification
-  FirstLevelIdx = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (BaseAddress) >> TT_DESCRIPTOR_SECTION_BASE_SHIFT;
+  FirstLevelIdx = TT_DESCRIPTOR_SECTION_BASE_ADDRESS (BaseAddress) >>
+                  TT_DESCRIPTOR_SECTION_BASE_SHIFT;
   ASSERT (FirstLevelIdx < TRANSLATION_TABLE_SECTION_COUNT);
 
   // calculate number of 1MB first level entries this applies to
@@ -311,18 +334,24 @@ UpdateSectionEntries (
         // mask off appropriate fields
         Descriptor = CurrentDescriptor & ~EntryMask;
       } else {
-        Descriptor = ((UINTN)FirstLevelIdx + i) << TT_DESCRIPTOR_SECTION_BASE_SHIFT;
+        Descriptor = ((UINTN)FirstLevelIdx + i) <<
+                     TT_DESCRIPTOR_SECTION_BASE_SHIFT;
       }
 
       // mask in new attributes and/or permissions
       Descriptor |= EntryValue;
 
       if (CurrentDescriptor  != Descriptor) {
-        Mva = (VOID *)(UINTN)(((UINTN)FirstLevelIdx + i) << TT_DESCRIPTOR_SECTION_BASE_SHIFT);
+        Mva = (VOID *)(UINTN)(((UINTN)FirstLevelIdx + i) <<
+                              TT_DESCRIPTOR_SECTION_BASE_SHIFT);
 
         // Only need to update if we are changing the descriptor
         FirstLevelTable[FirstLevelIdx + i] = Descriptor;
-        ArmUpdateTranslationTableEntry ((VOID *)&FirstLevelTable[FirstLevelIdx + i], Mva);
+        ArmUpdateTranslationTableEntry (
+          (VOID *)&FirstLevelTable[FirstLevelIdx +
+                                   i],
+          Mva
+          );
       }
 
       Status = EFI_SUCCESS;

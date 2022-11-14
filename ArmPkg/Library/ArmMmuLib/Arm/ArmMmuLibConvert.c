@@ -22,9 +22,15 @@ ConvertSectionAttributesToPageAttributes (
   UINT32  PageAttributes;
 
   PageAttributes  = 0;
-  PageAttributes |= TT_DESCRIPTOR_CONVERT_TO_PAGE_CACHE_POLICY (SectionAttributes, IsLargePage);
+  PageAttributes |= TT_DESCRIPTOR_CONVERT_TO_PAGE_CACHE_POLICY (
+                      SectionAttributes,
+                      IsLargePage
+                      );
   PageAttributes |= TT_DESCRIPTOR_CONVERT_TO_PAGE_AP (SectionAttributes);
-  PageAttributes |= TT_DESCRIPTOR_CONVERT_TO_PAGE_XN (SectionAttributes, IsLargePage);
+  PageAttributes |= TT_DESCRIPTOR_CONVERT_TO_PAGE_XN (
+                      SectionAttributes,
+                      IsLargePage
+                      );
   PageAttributes |= TT_DESCRIPTOR_CONVERT_TO_PAGE_NG (SectionAttributes);
   PageAttributes |= TT_DESCRIPTOR_CONVERT_TO_PAGE_S (SectionAttributes);
 
