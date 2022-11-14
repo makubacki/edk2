@@ -390,8 +390,9 @@ AmlCodeGenRdDWordSpace (
   RdDWord.Header.Header.Bits.Name =
     ACPI_LARGE_DWORD_ADDRESS_SPACE_DESCRIPTOR_NAME;
   RdDWord.Header.Header.Bits.Type = ACPI_LARGE_ITEM_FLAG;
-  RdDWord.Header.Length           = sizeof (EFI_ACPI_DWORD_ADDRESS_SPACE_DESCRIPTOR) -
-                                    sizeof (ACPI_LARGE_RESOURCE_HEADER);
+  RdDWord.Header.Length           =
+    sizeof (EFI_ACPI_DWORD_ADDRESS_SPACE_DESCRIPTOR) -
+    sizeof (ACPI_LARGE_RESOURCE_HEADER);
 
   // Body
   RdDWord.ResType = ResourceType;
@@ -647,8 +648,9 @@ AmlCodeGenRdMemory32Fixed (
   EFI_ACPI_32_BIT_FIXED_MEMORY_RANGE_DESCRIPTOR  RangeDesc;
 
   RangeDesc.Header.Header.Byte = ACPI_32_BIT_FIXED_MEMORY_RANGE_DESCRIPTOR;
-  RangeDesc.Header.Length      = sizeof (EFI_ACPI_32_BIT_FIXED_MEMORY_RANGE_DESCRIPTOR) -
-                                 sizeof (ACPI_LARGE_RESOURCE_HEADER);
+  RangeDesc.Header.Length      =
+    sizeof (EFI_ACPI_32_BIT_FIXED_MEMORY_RANGE_DESCRIPTOR) -
+    sizeof (ACPI_LARGE_RESOURCE_HEADER);
   RangeDesc.Information = IsReadWrite ? BIT0 : 0;
   RangeDesc.BaseAddress = Address;
   RangeDesc.Length      = RangeLength;
@@ -770,8 +772,9 @@ AmlCodeGenRdWordSpace (
   Rdword.Header.Header.Bits.Name =
     ACPI_LARGE_WORD_ADDRESS_SPACE_DESCRIPTOR_NAME;
   Rdword.Header.Header.Bits.Type = ACPI_LARGE_ITEM_FLAG;
-  Rdword.Header.Length           = sizeof (EFI_ACPI_WORD_ADDRESS_SPACE_DESCRIPTOR) -
-                                   sizeof (ACPI_LARGE_RESOURCE_HEADER);
+  Rdword.Header.Length           =
+    sizeof (EFI_ACPI_WORD_ADDRESS_SPACE_DESCRIPTOR) -
+    sizeof (ACPI_LARGE_RESOURCE_HEADER);
 
   // Body
   Rdword.ResType = ResourceType;
@@ -981,8 +984,9 @@ AmlCodeGenRdQWordSpace (
   RdQword.Header.Header.Bits.Name =
     ACPI_LARGE_QWORD_ADDRESS_SPACE_DESCRIPTOR_NAME;
   RdQword.Header.Header.Bits.Type = ACPI_LARGE_ITEM_FLAG;
-  RdQword.Header.Length           = sizeof (EFI_ACPI_QWORD_ADDRESS_SPACE_DESCRIPTOR) -
-                                    sizeof (ACPI_LARGE_RESOURCE_HEADER);
+  RdQword.Header.Length           =
+    sizeof (EFI_ACPI_QWORD_ADDRESS_SPACE_DESCRIPTOR) -
+    sizeof (ACPI_LARGE_RESOURCE_HEADER);
 
   // Body
   RdQword.ResType = ResourceType;
@@ -1174,8 +1178,9 @@ AmlCodeGenRdInterrupt (
   RdInterrupt.Header.Header.Bits.Name =
     ACPI_LARGE_EXTENDED_IRQ_DESCRIPTOR_NAME;
   RdInterrupt.Header.Header.Bits.Type = ACPI_LARGE_ITEM_FLAG;
-  RdInterrupt.Header.Length           = sizeof (EFI_ACPI_EXTENDED_INTERRUPT_DESCRIPTOR) -
-                                        sizeof (ACPI_LARGE_RESOURCE_HEADER);
+  RdInterrupt.Header.Length           =
+    sizeof (EFI_ACPI_EXTENDED_INTERRUPT_DESCRIPTOR) -
+    sizeof (ACPI_LARGE_RESOURCE_HEADER);
 
   // Body
   RdInterrupt.InterruptVectorFlags = (ResourceConsumer ? BIT0 : 0) |
@@ -1273,8 +1278,9 @@ AmlCodeGenRdRegister (
   RdRegister.Header.Header.Bits.Name =
     ACPI_LARGE_GENERIC_REGISTER_DESCRIPTOR_NAME;
   RdRegister.Header.Header.Bits.Type = ACPI_LARGE_ITEM_FLAG;
-  RdRegister.Header.Length           = sizeof (EFI_ACPI_GENERIC_REGISTER_DESCRIPTOR) -
-                                       sizeof (ACPI_LARGE_RESOURCE_HEADER);
+  RdRegister.Header.Length           =
+    sizeof (EFI_ACPI_GENERIC_REGISTER_DESCRIPTOR) -
+    sizeof (ACPI_LARGE_RESOURCE_HEADER);
 
   // Body
   RdRegister.AddressSpaceId    = AddressSpace;

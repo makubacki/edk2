@@ -92,8 +92,10 @@ EFIAPI
 AddGenericTimerInfo (
   IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL         *CONST  CfgMgrProtocol,
   IN        EFI_ACPI_6_4_GENERIC_TIMER_DESCRIPTION_TABLE *CONST  Gtdt,
-  IN  CONST UINT32                                               PlatformTimerCount,
-  IN  CONST UINT32                                               AcpiTableRevision
+  IN  CONST UINT32
+  PlatformTimerCount,
+  IN  CONST UINT32
+  AcpiTableRevision
   )
 {
   EFI_STATUS                 Status;
@@ -133,9 +135,12 @@ AddGenericTimerInfo (
     GenericTimerInfo->CounterReadBaseAddress;
   Gtdt->PlatformTimerCount  = PlatformTimerCount;
   Gtdt->PlatformTimerOffset = (PlatformTimerCount == 0) ? 0 :
-                              sizeof (EFI_ACPI_6_4_GENERIC_TIMER_DESCRIPTION_TABLE);
+                              sizeof (
+                                     EFI_ACPI_6_4_GENERIC_TIMER_DESCRIPTION_TABLE);
 
-  if (AcpiTableRevision > EFI_ACPI_6_2_GENERIC_TIMER_DESCRIPTION_TABLE_REVISION) {
+  if (AcpiTableRevision >
+      EFI_ACPI_6_2_GENERIC_TIMER_DESCRIPTION_TABLE_REVISION)
+  {
     Gtdt->VirtualPL2TimerGSIV  = GenericTimerInfo->VirtualPL2TimerGSIV;
     Gtdt->VirtualPL2TimerFlags = GenericTimerInfo->VirtualPL2TimerFlags;
   }
@@ -300,7 +305,8 @@ AddGTBlockTimerFrames (
     GtBlockFrame->GTxPhysicalTimerFlags =
       GTBlockTimerFrameList->PhysicalTimerFlags;
 
-    GtBlockFrame->GTxVirtualTimerGSIV  = GTBlockTimerFrameList->VirtualTimerGSIV;
+    GtBlockFrame->GTxVirtualTimerGSIV =
+      GTBlockTimerFrameList->VirtualTimerGSIV;
     GtBlockFrame->GTxVirtualTimerFlags =
       GTBlockTimerFrameList->VirtualTimerFlags;
 
@@ -567,8 +573,9 @@ BuildGtdtTable (
   if (WatchdogCount != 0) {
     WatchdogOffset      = TableSize;
     PlatformTimerCount += WatchdogCount;
-    TableSize          += (sizeof (EFI_ACPI_6_4_GTDT_ARM_GENERIC_WATCHDOG_STRUCTURE) *
-                           WatchdogCount);
+    TableSize          +=
+      (sizeof (EFI_ACPI_6_4_GTDT_ARM_GENERIC_WATCHDOG_STRUCTURE) *
+       WatchdogCount);
     DEBUG ((
       DEBUG_INFO,
       "GTDT: WatchdogOffset = 0x%x, PLATFORM_TIMER_COUNT = %d\n",

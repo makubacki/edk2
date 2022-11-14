@@ -296,8 +296,9 @@ AddGICMsiFrame (
   ASSERT (GicMsiFrame != NULL);
   ASSERT (GicMsiFrameInfo != NULL);
 
-  GicMsiFrame->Type                = EFI_ACPI_6_3_GIC_MSI_FRAME;
-  GicMsiFrame->Length              = sizeof (EFI_ACPI_6_3_GIC_MSI_FRAME_STRUCTURE);
+  GicMsiFrame->Type   = EFI_ACPI_6_3_GIC_MSI_FRAME;
+  GicMsiFrame->Length =
+    sizeof (EFI_ACPI_6_3_GIC_MSI_FRAME_STRUCTURE);
   GicMsiFrame->Reserved1           = EFI_ACPI_RESERVED_WORD;
   GicMsiFrame->GicMsiFrameId       = GicMsiFrameInfo->GicMsiFrameId;
   GicMsiFrame->PhysicalBaseAddress = GicMsiFrameInfo->PhysicalBaseAddress;

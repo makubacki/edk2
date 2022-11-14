@@ -549,7 +549,8 @@ GeneratePciCrs (
                    0,
                    AddrMapInfo->PciAddress,
                    AddrMapInfo->PciAddress + AddrMapInfo->AddressSize - 1,
-                   Translation ? AddrMapInfo->CpuAddress - AddrMapInfo->PciAddress : 0,
+                   Translation ? AddrMapInfo->CpuAddress -
+                   AddrMapInfo->PciAddress : 0,
                    AddrMapInfo->AddressSize,
                    0,
                    NULL,
@@ -571,7 +572,8 @@ GeneratePciCrs (
                    0,
                    AddrMapInfo->PciAddress,
                    AddrMapInfo->PciAddress + AddrMapInfo->AddressSize - 1,
-                   Translation ? AddrMapInfo->CpuAddress - AddrMapInfo->PciAddress : 0,
+                   Translation ? AddrMapInfo->CpuAddress -
+                   AddrMapInfo->PciAddress : 0,
                    AddrMapInfo->AddressSize,
                    0,
                    NULL,
@@ -593,7 +595,8 @@ GeneratePciCrs (
                    0,
                    AddrMapInfo->PciAddress,
                    AddrMapInfo->PciAddress + AddrMapInfo->AddressSize - 1,
-                   Translation ? AddrMapInfo->CpuAddress - AddrMapInfo->PciAddress : 0,
+                   Translation ? AddrMapInfo->CpuAddress -
+                   AddrMapInfo->PciAddress : 0,
                    AddrMapInfo->AddressSize,
                    0,
                    NULL,
@@ -709,9 +712,13 @@ ReserveEcamSpace (
   }
 
   AddressMinimum = PciInfo->BaseAddress + (PciInfo->StartBusNumber *
-                                           PCI_MAX_DEVICE_COUNT_PER_BUS * PCI_MAX_FUNCTION_COUNT_PER_DEVICE * SIZE_4KB);
+                                           PCI_MAX_DEVICE_COUNT_PER_BUS *
+                                           PCI_MAX_FUNCTION_COUNT_PER_DEVICE *
+                                           SIZE_4KB);
   AddressMaximum = PciInfo->BaseAddress + ((PciInfo->EndBusNumber + 1) *
-                                           PCI_MAX_DEVICE_COUNT_PER_BUS * PCI_MAX_FUNCTION_COUNT_PER_DEVICE * SIZE_4KB) - 1;
+                                           PCI_MAX_DEVICE_COUNT_PER_BUS *
+                                           PCI_MAX_FUNCTION_COUNT_PER_DEVICE *
+                                           SIZE_4KB) - 1;
 
   Status = AmlCodeGenRdQWordMemory (
              FALSE,

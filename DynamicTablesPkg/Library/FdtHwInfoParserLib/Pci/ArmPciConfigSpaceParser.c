@@ -219,7 +219,9 @@ ParseAddressMap (
     Offset = Index * AddressMapSize;
 
     // Pci address attributes
-    PciAddressAttr                     = fdt32_to_cpu (*(UINT32 *)&Data[Offset]);
+    PciAddressAttr = fdt32_to_cpu (
+                       *(UINT32 *)&Data[Offset]
+                       );
     PciAddressMapInfo[Index].SpaceCode = READ_PCI_SS (PciAddressAttr);
     Offset                            += sizeof (UINT32);
 
@@ -435,11 +437,15 @@ ParseIrqMap (
     // Pci irq
     PciInterruptMapInfo[Index].PciInterrupt = fdt32_to_cpu (
                                                 (*(UINT32 *)&Data[Offset]) &
-                                                (*(UINT32 *)&IrqMapMask[3 * sizeof (UINT32)])
+                                                (*(UINT32 *)&IrqMapMask[3 *
+                                                                        sizeof (
+                                                                                   UINT32)
+                                                 ])
                                                 );
     // -1 to translate from device-tree (INTA=1) to ACPI (INTA=0) irq IDs.
     PciInterruptMapInfo[Index].PciInterrupt -= 1;
-    Offset                                  += PCI_INTERRUPTS_CELLS * sizeof (UINT32);
+    Offset                                  += PCI_INTERRUPTS_CELLS *
+                                               sizeof (UINT32);
 
     // PHandle (skip it)
     Offset += sizeof (UINT32);

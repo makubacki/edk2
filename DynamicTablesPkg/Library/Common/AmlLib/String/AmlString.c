@@ -145,7 +145,9 @@ AmlIsLeadNameChar (
   IN  CHAR8  Ch
   )
 {
-  if ((Ch == '_') || ((Ch >= 'A') && (Ch <= 'Z')) || ((Ch >= 'a') && (Ch <= 'z'))) {
+  if ((Ch == '_') || ((Ch >= 'A') && (Ch <= 'Z')) || ((Ch >= 'a') && (Ch <=
+                                                                      'z')))
+  {
     return TRUE;
   } else {
     return FALSE;

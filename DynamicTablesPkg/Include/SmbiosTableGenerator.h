@@ -124,9 +124,10 @@ typedef enum StdSmbiosTableGeneratorId {
 
 /** Forward declarations.
 */
-typedef struct ConfigurationManagerProtocol EDKII_CONFIGURATION_MANAGER_PROTOCOL;
-typedef struct CmStdObjSmbiosTableInfo      CM_STD_OBJ_SMBIOS_TABLE_INFO;
-typedef struct SmbiosTableGenerator         SMBIOS_TABLE_GENERATOR;
+typedef struct ConfigurationManagerProtocol
+                                        EDKII_CONFIGURATION_MANAGER_PROTOCOL;
+typedef struct CmStdObjSmbiosTableInfo CM_STD_OBJ_SMBIOS_TABLE_INFO;
+typedef struct SmbiosTableGenerator    SMBIOS_TABLE_GENERATOR;
 
 /** This function pointer describes the interface to SMBIOS table build
     functions provided by the SMBIOS table generator and called by the

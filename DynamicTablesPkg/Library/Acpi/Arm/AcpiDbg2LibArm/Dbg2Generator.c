@@ -85,7 +85,9 @@ typedef struct {
   UINT32                                           AddressSize;
 
   /// The debug port name string
-  UINT8                                            NameSpaceString[DBG2_NAMESPACESTRING_FIELD_SIZE];
+  UINT8                                            NameSpaceString[
+                                                                   DBG2_NAMESPACESTRING_FIELD_SIZE
+  ];
 } DBG2_DEBUG_DEVICE_INFORMATION;
 
 /** A structure representing the information about the debug port(s)
@@ -96,7 +98,8 @@ typedef struct {
   EFI_ACPI_DEBUG_PORT_2_DESCRIPTION_TABLE    Description;
 
   /// Debug port information list
-  DBG2_DEBUG_DEVICE_INFORMATION              Dbg2DeviceInfo[DBG2_NUM_DEBUG_PORTS];
+  DBG2_DEBUG_DEVICE_INFORMATION              Dbg2DeviceInfo[DBG2_NUM_DEBUG_PORTS
+  ];
 } DBG2_TABLE;
 
 /** A helper macro used for initializing the debug port device

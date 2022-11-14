@@ -203,7 +203,8 @@ AmlUpdateRdInterruptEx (
   }
 
   // Update the Resource Data information (structure size, interrupt count).
-  RdInterrupt                     = (EFI_ACPI_EXTENDED_INTERRUPT_DESCRIPTOR *)UpdateBuffer;
+  RdInterrupt =
+    (EFI_ACPI_EXTENDED_INTERRUPT_DESCRIPTOR *)UpdateBuffer;
   RdInterrupt->Header.Header.Byte =
     AML_RD_BUILD_LARGE_DESC_ID (ACPI_LARGE_EXTENDED_IRQ_DESCRIPTOR_NAME);
   RdInterrupt->Header.Length =

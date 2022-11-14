@@ -130,7 +130,11 @@ SerialPortNodeParser (
   Data = fdt_getprop (Fdt, SerialPortNode, "reg", &DataSize);
   if ((Data == NULL) ||
       (DataSize < (INT32)(sizeof (UINT32) *
-                          GET_DT_REG_ADDRESS_OFFSET (1, AddressCells, SizeCells)) - 1))
+                          GET_DT_REG_ADDRESS_OFFSET (
+                            1,
+                            AddressCells,
+                            SizeCells
+                            )) - 1))
   {
     // If error or not enough space.
     ASSERT (0);

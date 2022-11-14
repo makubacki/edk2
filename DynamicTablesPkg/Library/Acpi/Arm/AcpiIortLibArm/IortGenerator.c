@@ -899,7 +899,8 @@ AddItsGroupNodes (
     // IORT specific data
     ItsGroupNode->NumItsIdentifiers = NodeList->ItsIdCount;
     ItsIds                          = (UINT32 *)((UINT8 *)ItsGroupNode +
-                                                 sizeof (EFI_ACPI_6_0_IO_REMAPPING_ITS_NODE));
+                                                 sizeof (
+                                                        EFI_ACPI_6_0_IO_REMAPPING_ITS_NODE));
 
     Status = GetEArmObjGicItsIdentifierArray (
                CfgMgrProtocol,
@@ -930,8 +931,10 @@ AddItsGroupNodes (
     } // ITS identifier array
 
     // Next IORT Group Node
-    ItsGroupNode = (EFI_ACPI_6_0_IO_REMAPPING_ITS_NODE *)((UINT8 *)ItsGroupNode +
-                                                          ItsGroupNode->Node.Length);
+    ItsGroupNode =
+      (EFI_ACPI_6_0_IO_REMAPPING_ITS_NODE *)((UINT8 *)ItsGroupNode +
+                                             ItsGroupNode->Node.
+                                               Length);
     NodeList++;
   } // IORT Group Node
 
@@ -1013,8 +1016,14 @@ AddNamedComponentNodes (
 
     ObjectNameLength         = AsciiStrLen (NodeList->ObjectName) + 1;
     NcNode->Node.IdReference = (NodeList->IdMappingCount == 0) ?
-                               0 : ((UINT32)(sizeof (EFI_ACPI_6_0_IO_REMAPPING_NAMED_COMP_NODE) +
-                                             (ALIGN_VALUE (ObjectNameLength, 4))));
+                               0 :
+                               ((UINT32)(sizeof (
+                                                    EFI_ACPI_6_0_IO_REMAPPING_NAMED_COMP_NODE)
+                                         +
+                                         (ALIGN_VALUE (
+                                            ObjectNameLength,
+                                            4
+                                            ))));
 
     // Named Component specific data
     NcNode->Flags             = NodeList->Flags;
@@ -1056,7 +1065,8 @@ AddNamedComponentNodes (
 
       // Ids for Named Component
       IdMapArray = (EFI_ACPI_6_0_IO_REMAPPING_ID_TABLE *)((UINT8 *)NcNode +
-                                                          NcNode->Node.IdReference);
+                                                          NcNode->Node.
+                                                            IdReference);
 
       Status = AddIdMappingArray (
                  This,
@@ -1184,7 +1194,8 @@ AddRootComplexNodes (
 
       // Ids for Root Complex
       IdMapArray = (EFI_ACPI_6_0_IO_REMAPPING_ID_TABLE *)((UINT8 *)RcNode +
-                                                          RcNode->Node.IdReference);
+                                                          RcNode->Node.
+                                                            IdReference);
       Status = AddIdMappingArray (
                  This,
                  CfgMgrProtocol,
@@ -1338,11 +1349,16 @@ AddSmmuV1V2Nodes (
     SmmuNode->Node.Length        = (UINT16)NodeLength;
     SmmuNode->Node.NumIdMappings = NodeList->IdMappingCount;
     SmmuNode->Node.IdReference   = (NodeList->IdMappingCount == 0) ?
-                                   0 : (sizeof (EFI_ACPI_6_0_IO_REMAPPING_SMMU_NODE) +
-                                        (NodeList->ContextInterruptCount *
-                                         sizeof (EFI_ACPI_6_0_IO_REMAPPING_SMMU_INT)) +
-                                        (NodeList->PmuInterruptCount *
-                                         sizeof (EFI_ACPI_6_0_IO_REMAPPING_SMMU_INT)));
+                                   0 :
+                                   (sizeof (EFI_ACPI_6_0_IO_REMAPPING_SMMU_NODE)
+                                    +
+                                    (NodeList->ContextInterruptCount *
+                                     sizeof (
+                                             EFI_ACPI_6_0_IO_REMAPPING_SMMU_INT))
+                                    +
+                                    (NodeList->PmuInterruptCount *
+                                     sizeof (
+                                             EFI_ACPI_6_0_IO_REMAPPING_SMMU_INT)));
 
     if (AcpiTableInfo->AcpiTableRevision <
         EFI_ACPI_IO_REMAPPING_TABLE_REVISION_05)
@@ -1463,7 +1479,8 @@ AddSmmuV1V2Nodes (
 
       // Ids for SMMU v1/v2 Node
       IdMapArray = (EFI_ACPI_6_0_IO_REMAPPING_ID_TABLE *)((UINT8 *)SmmuNode +
-                                                          SmmuNode->Node.IdReference);
+                                                          SmmuNode->Node.
+                                                            IdReference);
       Status = AddIdMappingArray (
                  This,
                  CfgMgrProtocol,
@@ -1547,7 +1564,9 @@ AddSmmuV3Nodes (
     SmmuV3Node->Node.Length        = (UINT16)NodeLength;
     SmmuV3Node->Node.NumIdMappings = NodeList->IdMappingCount;
     SmmuV3Node->Node.IdReference   = (NodeList->IdMappingCount == 0) ?
-                                     0 : sizeof (EFI_ACPI_6_0_IO_REMAPPING_SMMU3_NODE);
+                                     0 :
+                                     sizeof (
+                                                EFI_ACPI_6_0_IO_REMAPPING_SMMU3_NODE);
 
     if (AcpiTableInfo->AcpiTableRevision <
         EFI_ACPI_IO_REMAPPING_TABLE_REVISION_05)
@@ -1602,7 +1621,8 @@ AddSmmuV3Nodes (
 
       // Ids for SMMUv3 node
       IdMapArray = (EFI_ACPI_6_0_IO_REMAPPING_ID_TABLE *)((UINT8 *)SmmuV3Node +
-                                                          SmmuV3Node->Node.IdReference);
+                                                          SmmuV3Node->Node.
+                                                            IdReference);
       Status = AddIdMappingArray (
                  This,
                  CfgMgrProtocol,
@@ -1622,7 +1642,8 @@ AddSmmuV3Nodes (
 
     // Next SMMUv3 Node
     SmmuV3Node = (EFI_ACPI_6_0_IO_REMAPPING_SMMU3_NODE *)((UINT8 *)SmmuV3Node +
-                                                          SmmuV3Node->Node.Length);
+                                                          SmmuV3Node->Node.
+                                                            Length);
     NodeList++;
   } // SMMUv3 Node
 
@@ -1688,7 +1709,8 @@ AddPmcgNodes (
     PmcgNode->Node.Length        = (UINT16)NodeLength;
     PmcgNode->Node.NumIdMappings = NodeList->IdMappingCount;
     PmcgNode->Node.IdReference   = (NodeList->IdMappingCount == 0) ?
-                                   0 : sizeof (EFI_ACPI_6_0_IO_REMAPPING_PMCG_NODE);
+                                   0 :
+                                   sizeof (EFI_ACPI_6_0_IO_REMAPPING_PMCG_NODE);
 
     if (AcpiTableInfo->AcpiTableRevision <
         EFI_ACPI_IO_REMAPPING_TABLE_REVISION_05)
@@ -1738,7 +1760,8 @@ AddPmcgNodes (
 
       // Ids for PMCG node
       IdMapArray = (EFI_ACPI_6_0_IO_REMAPPING_ID_TABLE *)((UINT8 *)PmcgNode +
-                                                          PmcgNode->Node.IdReference);
+                                                          PmcgNode->Node.
+                                                            IdReference);
 
       Status = AddIdMappingArray (
                  This,
@@ -1921,15 +1944,17 @@ AddRmrNodes (
     RmrNode->Node.Identifier    = NodeList->Identifier;
     RmrNode->Node.NumIdMappings = NodeList->IdMappingCount;
     RmrNode->Node.IdReference   = (NodeList->IdMappingCount == 0) ?
-                                  0 : sizeof (EFI_ACPI_6_0_IO_REMAPPING_RMR_NODE);
+                                  0 :
+                                  sizeof (EFI_ACPI_6_0_IO_REMAPPING_RMR_NODE);
 
     // RMR specific data
     RmrNode->Flags           = NodeList->Flags;
     RmrNode->NumMemRangeDesc = NodeList->MemRangeDescCount;
     RmrNode->MemRangeDescRef = (NodeList->MemRangeDescCount == 0) ?
-                               0 : (sizeof (EFI_ACPI_6_0_IO_REMAPPING_RMR_NODE) +
-                                    (NodeList->IdMappingCount *
-                                     sizeof (EFI_ACPI_6_0_IO_REMAPPING_ID_TABLE)));
+                               0 :
+                               (sizeof (EFI_ACPI_6_0_IO_REMAPPING_RMR_NODE) +
+                                (NodeList->IdMappingCount *
+                                 sizeof (EFI_ACPI_6_0_IO_REMAPPING_ID_TABLE)));
 
     if (NodeList->IdMappingCount > 0) {
       if (NodeList->IdMappingToken == CM_NULL_TOKEN) {
@@ -1946,7 +1971,8 @@ AddRmrNodes (
 
       // Ids for RMR node
       IdMapArray = (EFI_ACPI_6_0_IO_REMAPPING_ID_TABLE *)((UINT8 *)RmrNode +
-                                                          RmrNode->Node.IdReference);
+                                                          RmrNode->Node.
+                                                            IdReference);
 
       Status = AddIdMappingArray (
                  This,
@@ -1967,8 +1993,10 @@ AddRmrNodes (
 
     // Memory Range Descriptors for RMR node
     MemRangeDescArray = (EFI_ACPI_6_0_IO_REMAPPING_MEM_RANGE_DESC *)(
-                                                                     (UINT8 *)RmrNode +
-                                                                     RmrNode->MemRangeDescRef
+                                                                     (UINT8 *)
+                                                                     RmrNode +
+                                                                     RmrNode->
+                                                                       MemRangeDescRef
                                                                      );
 
     Status = AddMemRangeDescArray (
@@ -2123,8 +2151,10 @@ BuildIortTable (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((AcpiTableInfo->AcpiTableRevision > EFI_ACPI_IO_REMAPPING_TABLE_REVISION_00) &&
-      (AcpiTableInfo->AcpiTableRevision < EFI_ACPI_IO_REMAPPING_TABLE_REVISION_05))
+  if ((AcpiTableInfo->AcpiTableRevision >
+       EFI_ACPI_IO_REMAPPING_TABLE_REVISION_00) &&
+      (AcpiTableInfo->AcpiTableRevision <
+       EFI_ACPI_IO_REMAPPING_TABLE_REVISION_05))
   {
     DEBUG ((
       DEBUG_ERROR,

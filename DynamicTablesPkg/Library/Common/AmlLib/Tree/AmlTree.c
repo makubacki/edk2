@@ -827,7 +827,11 @@ AmlReplaceVariableArgument (
     // data node or an object node. This has already been checked. So,
     // check for other cases.
 
-    if (AmlNodeHasAttribute ((AML_OBJECT_NODE *)ParentNode, AML_HAS_BYTE_LIST)) {
+    if (AmlNodeHasAttribute (
+          (AML_OBJECT_NODE *)ParentNode,
+          AML_HAS_BYTE_LIST
+          ))
+    {
       if (!IS_AML_DATA_NODE (NewNode)                       ||
           ((NewDataNode->DataType != EAmlNodeDataTypeRaw)   &&
            (NewDataNode->DataType != EAmlNodeDataTypeResourceData)))

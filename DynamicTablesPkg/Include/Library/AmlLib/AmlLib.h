@@ -1273,11 +1273,16 @@ AmlAddLpiState (
   IN  UINT32                                  ArchFlags,
   IN  UINT32                                  ResCntFreq,
   IN  UINT32                                  EnableParentState,
-  IN  EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE  *GenericRegisterDescriptor   OPTIONAL,
-  IN  UINT64                                  Integer                     OPTIONAL,
-  IN  EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE  *ResidencyCounterRegister    OPTIONAL,
-  IN  EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE  *UsageCounterRegister        OPTIONAL,
-  IN  CHAR8                                   *StateName                   OPTIONAL,
+  IN  EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE  *GenericRegisterDescriptor
+  OPTIONAL,
+  IN  UINT64
+  Integer                     OPTIONAL,
+  IN  EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE  *ResidencyCounterRegister
+  OPTIONAL,
+  IN  EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE  *UsageCounterRegister
+  OPTIONAL,
+  IN  CHAR8                                   *StateName
+  OPTIONAL,
   IN  AML_OBJECT_NODE_HANDLE                  LpiNode
   );
 

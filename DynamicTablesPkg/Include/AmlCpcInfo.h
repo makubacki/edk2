@@ -66,7 +66,8 @@ typedef struct AmlCpcInfo {
 
   /// Performance Reduction Tolerance Register.
   /// Optional
-  EFI_ACPI_6_4_GENERIC_ADDRESS_STRUCTURE    PerformanceReductionToleranceRegister;
+  EFI_ACPI_6_4_GENERIC_ADDRESS_STRUCTURE
+                                            PerformanceReductionToleranceRegister;
 
   /// Time Window Register.
   /// Optional

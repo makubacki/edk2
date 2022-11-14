@@ -465,10 +465,12 @@ IsGicCTokenEqual (
 STATIC
 EFI_STATUS
 AddProcHierarchyNodes (
-  IN  CONST ACPI_PPTT_GENERATOR                   *CONST             Generator,
-  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  *CONST             CfgMgrProtocol,
+  IN  CONST ACPI_PPTT_GENERATOR                   *CONST  Generator,
+  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  *CONST
+  CfgMgrProtocol,
   IN  CONST EFI_ACPI_6_4_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER  *Pptt,
-  IN  CONST UINT32                                                   NodesStartOffset
+  IN  CONST UINT32
+  NodesStartOffset
   )
 {
   EFI_STATUS                             Status;
@@ -543,10 +545,13 @@ AddProcHierarchyNodes (
     ProcStruct->Reserved[1] = EFI_ACPI_RESERVED_BYTE;
 
     // Populate the flags
-    ProcStruct->Flags.PhysicalPackage         = ProcInfoNode->Flags & BIT0;
-    ProcStruct->Flags.AcpiProcessorIdValid    = (ProcInfoNode->Flags & BIT1) >> 1;
-    ProcStruct->Flags.ProcessorIsAThread      = (ProcInfoNode->Flags & BIT2) >> 2;
-    ProcStruct->Flags.NodeIsALeaf             = (ProcInfoNode->Flags & BIT3) >> 3;
+    ProcStruct->Flags.PhysicalPackage      = ProcInfoNode->Flags & BIT0;
+    ProcStruct->Flags.AcpiProcessorIdValid = (ProcInfoNode->Flags & BIT1) >>
+                                             1;
+    ProcStruct->Flags.ProcessorIsAThread = (ProcInfoNode->Flags & BIT2) >>
+                                           2;
+    ProcStruct->Flags.NodeIsALeaf = (ProcInfoNode->Flags & BIT3) >>
+                                    3;
     ProcStruct->Flags.IdenticalImplementation =
       (ProcInfoNode->Flags & BIT4) >> 4;
     ProcStruct->Flags.Reserved = 0;
@@ -660,7 +665,8 @@ AddProcHierarchyNodes (
 
     ProcStruct->NumberOfPrivateResources = ProcInfoNode->NoOfPrivateResources;
     PrivateResources                     = (UINT32 *)((UINT8 *)ProcStruct +
-                                                      sizeof (EFI_ACPI_6_4_PPTT_STRUCTURE_PROCESSOR));
+                                                      sizeof (
+                                                             EFI_ACPI_6_4_PPTT_STRUCTURE_PROCESSOR));
 
     if (ProcStruct->NumberOfPrivateResources != 0) {
       // Populate the private resources array
@@ -776,11 +782,13 @@ IsCacheIdUnique (
 STATIC
 EFI_STATUS
 AddCacheTypeStructures (
-  IN  CONST ACPI_PPTT_GENERATOR                   *CONST             Generator,
-  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  *CONST             CfgMgrProtocol,
+  IN  CONST ACPI_PPTT_GENERATOR                   *CONST  Generator,
+  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  *CONST
+  CfgMgrProtocol,
   IN  CONST EFI_ACPI_6_4_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_HEADER  *Pptt,
-  IN  CONST UINT32                                                   NodesStartOffset,
-  IN  CONST UINT32                                                   Revision
+  IN  CONST UINT32
+  NodesStartOffset,
+  IN  CONST UINT32  Revision
   )
 {
   EFI_STATUS                         Status;
@@ -1177,7 +1185,8 @@ BuildPpttTable (
     TableSize                              += GetSizeofProcHierarchyNodes (
                                                 ProcHierarchyNodeOffset,
                                                 ProcHierarchyNodeList,
-                                                Generator->ProcHierarchyNodeCount,
+                                                Generator->
+                                                  ProcHierarchyNodeCount,
                                                 &NodeIndexer
                                                 );
 

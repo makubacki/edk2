@@ -71,9 +71,10 @@ typedef enum StdDtTableId {
 
 /** Forward declarations.
 */
-typedef struct ConfigurationManagerProtocol EDKII_CONFIGURATION_MANAGER_PROTOCOL;
-typedef struct CmAStdObjDtTableInfo         CM_STD_OBJ_DT_TABLE_INFO;
-typedef struct DtTableGenerator             DT_TABLE_GENERATOR;
+typedef struct ConfigurationManagerProtocol
+                                     EDKII_CONFIGURATION_MANAGER_PROTOCOL;
+typedef struct CmAStdObjDtTableInfo CM_STD_OBJ_DT_TABLE_INFO;
+typedef struct DtTableGenerator     DT_TABLE_GENERATOR;
 
 /** This function pointer describes the interface to DT table build
     functions provided by the DT table generator and called by the

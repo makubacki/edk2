@@ -322,8 +322,9 @@ AddSubspaceStructType0 (
   Doorbell      = &PccCmObj->DoorbellReg;
   ChannelTiming = &PccCmObj->ChannelTiming;
 
-  PccAcpi->Type                    = PccCmObj->Type;
-  PccAcpi->Length                  = sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_GENERIC);
+  PccAcpi->Type   = PccCmObj->Type;
+  PccAcpi->Length =
+    sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_GENERIC);
   *(UINT32 *)&PccAcpi->Reserved[0] = EFI_ACPI_RESERVED_DWORD;
   *(UINT16 *)&PccAcpi->Reserved[4] = EFI_ACPI_RESERVED_WORD;
   PccAcpi->BaseAddress             = PccCmObj->BaseAddress;
@@ -339,7 +340,8 @@ AddSubspaceStructType0 (
 
   PccAcpi->NominalLatency               = ChannelTiming->NominalLatency;
   PccAcpi->MaximumPeriodicAccessRate    = ChannelTiming->MaxPeriodicAccessRate;
-  PccAcpi->MinimumRequestTurnaroundTime = ChannelTiming->MinRequestTurnaroundTime;
+  PccAcpi->MinimumRequestTurnaroundTime =
+    ChannelTiming->MinRequestTurnaroundTime;
 
   return EFI_SUCCESS;
 }
@@ -367,7 +369,8 @@ AddSubspaceStructType1 (
   GenericPccCmObj = (CM_ARM_PCC_SUBSPACE_TYPE0_INFO *)PccCmObj;
 
   if ((PccCmObj == NULL) ||
-      (GenericPccCmObj->Type != EFI_ACPI_6_4_PCCT_SUBSPACE_TYPE_1_HW_REDUCED_COMMUNICATIONS)  ||
+      (GenericPccCmObj->Type !=
+       EFI_ACPI_6_4_PCCT_SUBSPACE_TYPE_1_HW_REDUCED_COMMUNICATIONS)  ||
       (PccAcpi == NULL))
   {
     ASSERT_EFI_ERROR (EFI_INVALID_PARAMETER);
@@ -377,8 +380,9 @@ AddSubspaceStructType1 (
   Doorbell      = &GenericPccCmObj->DoorbellReg;
   ChannelTiming = &GenericPccCmObj->ChannelTiming;
 
-  PccAcpi->Type                   = GenericPccCmObj->Type;
-  PccAcpi->Length                 = sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_1_HW_REDUCED_COMMUNICATIONS);
+  PccAcpi->Type   = GenericPccCmObj->Type;
+  PccAcpi->Length =
+    sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_1_HW_REDUCED_COMMUNICATIONS);
   PccAcpi->PlatformInterrupt      = PccCmObj->PlatIrq.Interrupt;
   PccAcpi->PlatformInterruptFlags = PccCmObj->PlatIrq.Flags;
   PccAcpi->Reserved               = EFI_ACPI_RESERVED_BYTE;
@@ -395,7 +399,8 @@ AddSubspaceStructType1 (
 
   PccAcpi->NominalLatency               = ChannelTiming->NominalLatency;
   PccAcpi->MaximumPeriodicAccessRate    = ChannelTiming->MaxPeriodicAccessRate;
-  PccAcpi->MinimumRequestTurnaroundTime = ChannelTiming->MinRequestTurnaroundTime;
+  PccAcpi->MinimumRequestTurnaroundTime =
+    ChannelTiming->MinRequestTurnaroundTime;
 
   if ((PccCmObj->PlatIrq.Interrupt != 0)) {
     mHasPlatformInterrupt = TRUE;
@@ -428,7 +433,8 @@ AddSubspaceStructType2 (
   GenericPccCmObj = (CM_ARM_PCC_SUBSPACE_TYPE0_INFO *)PccCmObj;
 
   if ((PccCmObj == NULL) ||
-      (GenericPccCmObj->Type != EFI_ACPI_6_4_PCCT_SUBSPACE_TYPE_2_HW_REDUCED_COMMUNICATIONS)  ||
+      (GenericPccCmObj->Type !=
+       EFI_ACPI_6_4_PCCT_SUBSPACE_TYPE_2_HW_REDUCED_COMMUNICATIONS)  ||
       (PccAcpi == NULL))
   {
     ASSERT_EFI_ERROR (EFI_INVALID_PARAMETER);
@@ -439,8 +445,9 @@ AddSubspaceStructType2 (
   PlatIrqAck    = &PccCmObj->PlatIrqAckReg;
   ChannelTiming = &GenericPccCmObj->ChannelTiming;
 
-  PccAcpi->Type                   = GenericPccCmObj->Type;
-  PccAcpi->Length                 = sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS);
+  PccAcpi->Type   = GenericPccCmObj->Type;
+  PccAcpi->Length =
+    sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS);
   PccAcpi->PlatformInterrupt      = PccCmObj->PlatIrq.Interrupt;
   PccAcpi->PlatformInterruptFlags = PccCmObj->PlatIrq.Flags;
   PccAcpi->BaseAddress            = GenericPccCmObj->BaseAddress;
@@ -458,7 +465,8 @@ AddSubspaceStructType2 (
 
   PccAcpi->NominalLatency               = ChannelTiming->NominalLatency;
   PccAcpi->MaximumPeriodicAccessRate    = ChannelTiming->MaxPeriodicAccessRate;
-  PccAcpi->MinimumRequestTurnaroundTime = ChannelTiming->MinRequestTurnaroundTime;
+  PccAcpi->MinimumRequestTurnaroundTime =
+    ChannelTiming->MinRequestTurnaroundTime;
 
   CopyMem (
     &PccAcpi->PlatformInterruptAckRegister,
@@ -502,8 +510,10 @@ AddSubspaceStructType34 (
   GenericPccCmObj = (CM_ARM_PCC_SUBSPACE_TYPE0_INFO *)PccCmObj;
 
   if ((PccCmObj == NULL) ||
-      ((GenericPccCmObj->Type != EFI_ACPI_6_4_PCCT_SUBSPACE_TYPE_3_EXTENDED_PCC) &&
-       (GenericPccCmObj->Type != EFI_ACPI_6_4_PCCT_SUBSPACE_TYPE_4_EXTENDED_PCC)) ||
+      ((GenericPccCmObj->Type !=
+        EFI_ACPI_6_4_PCCT_SUBSPACE_TYPE_3_EXTENDED_PCC) &&
+       (GenericPccCmObj->Type !=
+        EFI_ACPI_6_4_PCCT_SUBSPACE_TYPE_4_EXTENDED_PCC)) ||
       (PccAcpi == NULL))
   {
     ASSERT_EFI_ERROR (EFI_INVALID_PARAMETER);
@@ -517,8 +527,9 @@ AddSubspaceStructType34 (
   ErrorStatus       = &PccCmObj->ErrorStatusReg;
   ChannelTiming     = &GenericPccCmObj->ChannelTiming;
 
-  PccAcpi->Type                   = GenericPccCmObj->Type;
-  PccAcpi->Length                 = sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_3_EXTENDED_PCC);
+  PccAcpi->Type   = GenericPccCmObj->Type;
+  PccAcpi->Length =
+    sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_3_EXTENDED_PCC);
   PccAcpi->PlatformInterrupt      = PccCmObj->PlatIrq.Interrupt;
   PccAcpi->PlatformInterruptFlags = PccCmObj->PlatIrq.Flags;
   PccAcpi->Reserved               = EFI_ACPI_RESERVED_BYTE;
@@ -535,7 +546,8 @@ AddSubspaceStructType34 (
 
   PccAcpi->NominalLatency               = ChannelTiming->NominalLatency;
   PccAcpi->MaximumPeriodicAccessRate    = ChannelTiming->MaxPeriodicAccessRate;
-  PccAcpi->MinimumRequestTurnaroundTime = ChannelTiming->MinRequestTurnaroundTime;
+  PccAcpi->MinimumRequestTurnaroundTime =
+    ChannelTiming->MinRequestTurnaroundTime;
 
   CopyMem (
     &PccAcpi->PlatformInterruptAckRegister,
@@ -612,7 +624,8 @@ AddSubspaceStructType5 (
   GenericPccCmObj = (CM_ARM_PCC_SUBSPACE_TYPE0_INFO *)PccCmObj;
 
   if ((PccCmObj == NULL) ||
-      (GenericPccCmObj->Type != EFI_ACPI_6_4_PCCT_SUBSPACE_TYPE_5_HW_REGISTERS_COMMUNICATIONS)  ||
+      (GenericPccCmObj->Type !=
+       EFI_ACPI_6_4_PCCT_SUBSPACE_TYPE_5_HW_REGISTERS_COMMUNICATIONS)  ||
       (PccAcpi == NULL))
   {
     ASSERT_EFI_ERROR (EFI_INVALID_PARAMETER);
@@ -624,8 +637,9 @@ AddSubspaceStructType5 (
   ErrorStatus      = &PccCmObj->ErrorStatusReg;
   ChannelTiming    = &GenericPccCmObj->ChannelTiming;
 
-  PccAcpi->Type                    = GenericPccCmObj->Type;
-  PccAcpi->Length                  = sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_5_HW_REGISTERS_COMMUNICATIONS);
+  PccAcpi->Type   = GenericPccCmObj->Type;
+  PccAcpi->Length =
+    sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_5_HW_REGISTERS_COMMUNICATIONS);
   PccAcpi->Version                 = PccCmObj->Version;
   PccAcpi->BaseAddress             = GenericPccCmObj->BaseAddress;
   PccAcpi->SharedMemoryRangeLength = GenericPccCmObj->AddressLength;
@@ -656,7 +670,8 @@ AddSubspaceStructType5 (
 
   PccAcpi->NominalLatency = ChannelTiming->NominalLatency;
   // No MaximumPeriodicAccessRate.
-  PccAcpi->MinimumRequestTurnaroundTime = ChannelTiming->MinRequestTurnaroundTime;
+  PccAcpi->MinimumRequestTurnaroundTime =
+    ChannelTiming->MinRequestTurnaroundTime;
 
   return EFI_SUCCESS;
 }
@@ -715,19 +730,23 @@ PopulatePcctTable (
       case EFI_ACPI_6_4_PCCT_SUBSPACE_TYPE_1_HW_REDUCED_COMMUNICATIONS:
         Status = AddSubspaceStructType1 (
                    (CM_ARM_PCC_SUBSPACE_TYPE1_INFO *)CurrentPccSubspace,
-                   (EFI_ACPI_6_4_PCCT_SUBSPACE_1_HW_REDUCED_COMMUNICATIONS *)PccBuffer
+                   (EFI_ACPI_6_4_PCCT_SUBSPACE_1_HW_REDUCED_COMMUNICATIONS *)
+                   PccBuffer
                    );
 
-        CmObjSize = sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_1_HW_REDUCED_COMMUNICATIONS);
+        CmObjSize =
+          sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_1_HW_REDUCED_COMMUNICATIONS);
         break;
 
       case EFI_ACPI_6_4_PCCT_SUBSPACE_TYPE_2_HW_REDUCED_COMMUNICATIONS:
         Status = AddSubspaceStructType2 (
                    (CM_ARM_PCC_SUBSPACE_TYPE2_INFO *)CurrentPccSubspace,
-                   (EFI_ACPI_6_4_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS *)PccBuffer
+                   (EFI_ACPI_6_4_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS *)
+                   PccBuffer
                    );
 
-        CmObjSize = sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS);
+        CmObjSize =
+          sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS);
         break;
 
       case EFI_ACPI_6_4_PCCT_SUBSPACE_TYPE_3_EXTENDED_PCC:
@@ -751,10 +770,12 @@ PopulatePcctTable (
       case EFI_ACPI_6_4_PCCT_SUBSPACE_TYPE_5_HW_REGISTERS_COMMUNICATIONS:
         Status = AddSubspaceStructType5 (
                    (CM_ARM_PCC_SUBSPACE_TYPE5_INFO *)CurrentPccSubspace,
-                   (EFI_ACPI_6_4_PCCT_SUBSPACE_5_HW_REGISTERS_COMMUNICATIONS *)PccBuffer
+                   (EFI_ACPI_6_4_PCCT_SUBSPACE_5_HW_REGISTERS_COMMUNICATIONS *)
+                   PccBuffer
                    );
 
-        CmObjSize = sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_5_HW_REGISTERS_COMMUNICATIONS);
+        CmObjSize =
+          sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_5_HW_REGISTERS_COMMUNICATIONS);
         break;
 
       default:
@@ -982,13 +1003,19 @@ BuildPcctTable (
   }
 
   // Compute the size of the PCCT table.
-  TableSize  = sizeof (EFI_ACPI_6_4_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER);
+  TableSize =
+    sizeof (EFI_ACPI_6_4_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER);
   TableSize += PccType0Count * sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_GENERIC);
-  TableSize += PccType1Count * sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_1_HW_REDUCED_COMMUNICATIONS);
-  TableSize += PccType2Count * sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS);
-  TableSize += PccType3Count * sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_3_EXTENDED_PCC);
-  TableSize += PccType4Count * sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_4_EXTENDED_PCC);
-  TableSize += PccType5Count * sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_5_HW_REGISTERS_COMMUNICATIONS);
+  TableSize += PccType1Count *
+               sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_1_HW_REDUCED_COMMUNICATIONS);
+  TableSize += PccType2Count *
+               sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS);
+  TableSize += PccType3Count *
+               sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_3_EXTENDED_PCC);
+  TableSize += PccType4Count *
+               sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_4_EXTENDED_PCC);
+  TableSize += PccType5Count *
+               sizeof (EFI_ACPI_6_4_PCCT_SUBSPACE_5_HW_REGISTERS_COMMUNICATIONS);
 
   // Allocate a Buffer for the PCCT table.
   *Table = (EFI_ACPI_DESCRIPTION_HEADER *)AllocateZeroPool (TableSize);
@@ -1017,9 +1044,11 @@ BuildPcctTable (
     goto error_handler;
   }
 
-  Buffer     = (UINT8 *)Pcct;
-  Buffer    += sizeof (EFI_ACPI_6_4_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER);
-  TableSize -= sizeof (EFI_ACPI_6_4_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER);
+  Buffer  = (UINT8 *)Pcct;
+  Buffer +=
+    sizeof (EFI_ACPI_6_4_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER);
+  TableSize -=
+    sizeof (EFI_ACPI_6_4_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER);
 
   // Populate the PCCT table by following the Subspace Id mapping.
   Status = PopulatePcctTable (MappingTable, Buffer, TableSize);

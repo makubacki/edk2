@@ -755,7 +755,11 @@ CreateAmlProcessorContainer (
     return Status;
   }
 
-  Status = AmlCodeGenDevice (AslNameProcContainer, ParentNode, &ProcContainerNode);
+  Status = AmlCodeGenDevice (
+             AslNameProcContainer,
+             ParentNode,
+             &ProcContainerNode
+             );
   if (EFI_ERROR (Status)) {
     ASSERT (0);
     return Status;
@@ -1082,7 +1086,12 @@ CreateTopologyFromGicC (
     // If a CPC info is associated with the
     // GicCinfo, create an _CPC method returning them.
     if (GicCInfo->CpcToken != CM_NULL_TOKEN) {
-      Status = CreateAmlCpcNode (Generator, CfgMgrProtocol, &GicCInfo[Index], CpuNode);
+      Status = CreateAmlCpcNode (
+                 Generator,
+                 CfgMgrProtocol,
+                 &GicCInfo[Index],
+                 CpuNode
+                 );
       if (EFI_ERROR (Status)) {
         ASSERT_EFI_ERROR (Status);
         break;

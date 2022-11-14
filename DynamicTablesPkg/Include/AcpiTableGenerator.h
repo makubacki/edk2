@@ -197,9 +197,10 @@ typedef enum StdAcpiTableId {
 
 /** Forward declarations.
 */
-typedef struct ConfigurationManagerProtocol EDKII_CONFIGURATION_MANAGER_PROTOCOL;
-typedef struct CmAStdObjAcpiTableInfo       CM_STD_OBJ_ACPI_TABLE_INFO;
-typedef struct AcpiTableGenerator           ACPI_TABLE_GENERATOR;
+typedef struct ConfigurationManagerProtocol
+                                       EDKII_CONFIGURATION_MANAGER_PROTOCOL;
+typedef struct CmAStdObjAcpiTableInfo CM_STD_OBJ_ACPI_TABLE_INFO;
+typedef struct AcpiTableGenerator     ACPI_TABLE_GENERATOR;
 
 /** This function pointer describes the interface to ACPI table build
     functions provided by the ACPI table generator and called by the

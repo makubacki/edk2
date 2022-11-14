@@ -202,8 +202,9 @@ AddGICItsAffinity (
   while (GicItsCount-- != 0) {
     DEBUG ((DEBUG_INFO, "SRAT: GicItsAff = 0x%p\n", GicItsAff));
 
-    GicItsAff->Type            = EFI_ACPI_6_3_GIC_ITS_AFFINITY;
-    GicItsAff->Length          = sizeof (EFI_ACPI_6_3_GIC_ITS_AFFINITY_STRUCTURE);
+    GicItsAff->Type   = EFI_ACPI_6_3_GIC_ITS_AFFINITY;
+    GicItsAff->Length =
+      sizeof (EFI_ACPI_6_3_GIC_ITS_AFFINITY_STRUCTURE);
     GicItsAff->ProximityDomain = GicItsInfo->ProximityDomain;
     GicItsAff->Reserved[0]     = EFI_ACPI_RESERVED_BYTE;
     GicItsAff->Reserved[1]     = EFI_ACPI_RESERVED_BYTE;
@@ -309,7 +310,9 @@ AddGenericInitiatorAffinity (
   ASSERT (GenInitAffInfo != NULL);
 
   GenInitAff = (EFI_ACPI_6_3_GENERIC_INITIATOR_AFFINITY_STRUCTURE *)(
-                                                                     (UINT8 *)Srat + GenInitAffOff);
+                                                                     (UINT8 *)
+                                                                     Srat +
+                                                                     GenInitAffOff);
 
   while (GenInitAffCount-- != 0) {
     DEBUG ((DEBUG_INFO, "SRAT: GenInitAff = 0x%p\n", GenInitAff));
@@ -384,7 +387,8 @@ AddGenericInitiatorAffinity (
       ASSERT (DeviceHandleCount == 1);
 
       // Populate the ACPI device handle information.
-      GenInitAff->DeviceHandle.Pci.PciSegment   = DeviceHandlePci->SegmentNumber;
+      GenInitAff->DeviceHandle.Pci.PciSegment =
+        DeviceHandlePci->SegmentNumber;
       GenInitAff->DeviceHandle.Pci.PciBdfNumber = GetBdf (DeviceHandlePci);
 
       GenInitAff->DeviceHandle.Pci.Reserved[0]  = EFI_ACPI_RESERVED_BYTE;
@@ -588,8 +592,9 @@ BuildSratTable (
 
   if (GenInitiatorAffCount != 0) {
     GenInitiatorAffOffset = TableSize;
-    TableSize            += (sizeof (EFI_ACPI_6_3_GENERIC_INITIATOR_AFFINITY_STRUCTURE) *
-                             GenInitiatorAffCount);
+    TableSize            +=
+      (sizeof (EFI_ACPI_6_3_GENERIC_INITIATOR_AFFINITY_STRUCTURE) *
+       GenInitiatorAffCount);
   }
 
   // Allocate the Buffer for SRAT table

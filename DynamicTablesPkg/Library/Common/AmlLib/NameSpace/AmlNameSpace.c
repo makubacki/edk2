@@ -1414,7 +1414,9 @@ AmlFindNode (
   //    path. For this:
   // 1.1. First initialize a backward stream.
   RawAmlAbsSearchPathBufferSize = MAX_AML_NAMESTRING_SIZE;
-  RawAmlAbsSearchPathBuffer     = AllocateZeroPool (RawAmlAbsSearchPathBufferSize);
+  RawAmlAbsSearchPathBuffer     = AllocateZeroPool (
+                                    RawAmlAbsSearchPathBufferSize
+                                    );
   if (RawAmlAbsSearchPathBuffer == NULL) {
     ASSERT (0);
     return EFI_OUT_OF_RESOURCES;

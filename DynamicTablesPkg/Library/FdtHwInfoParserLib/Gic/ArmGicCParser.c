@@ -306,7 +306,8 @@ GicCIntcNodeParser (
   // but it is assumed that only one Gic is available.
   Data = fdt_getprop (Fdt, GicIntcNode, "interrupts", &DataSize);
   if ((Data != NULL) && (DataSize == (IntCells * sizeof (UINT32)))) {
-    GicCInfo                           = (CM_ARM_GICC_INFO *)GicCCmObjDesc->Data;
+    GicCInfo =
+      (CM_ARM_GICC_INFO *)GicCCmObjDesc->Data;
     GicCInfo->VGICMaintenanceInterrupt =
       FdtGetInterruptId ((CONST UINT32 *)Data);
     GicCInfo->Flags = DT_IRQ_IS_EDGE_TRIGGERED (
@@ -417,21 +418,33 @@ GicCv2IntcNodeParser (
     {
       // GicV is at index 3 in the reg property. GicV is optional.
       GicVValue = Data + (sizeof (UINT32) *
-                          GET_DT_REG_ADDRESS_OFFSET (3, AddressCells, SizeCells));
+                          GET_DT_REG_ADDRESS_OFFSET (
+                            3,
+                            AddressCells,
+                            SizeCells
+                            ));
       // fall-through.
     }
     case 3:
     {
       // GicH is at index 2 in the reg property. GicH is optional.
       GicHValue = Data + (sizeof (UINT32) *
-                          GET_DT_REG_ADDRESS_OFFSET (2, AddressCells, SizeCells));
+                          GET_DT_REG_ADDRESS_OFFSET (
+                            2,
+                            AddressCells,
+                            SizeCells
+                            ));
       // fall-through.
     }
     case 2:
     {
       // GicC is at index 1 in the reg property. GicC is mandatory.
       GicCValue = Data + (sizeof (UINT32) *
-                          GET_DT_REG_ADDRESS_OFFSET (1, AddressCells, SizeCells));
+                          GET_DT_REG_ADDRESS_OFFSET (
+                            1,
+                            AddressCells,
+                            SizeCells
+                            ));
       break;
     }
     default:

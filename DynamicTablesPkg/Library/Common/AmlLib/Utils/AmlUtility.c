@@ -442,7 +442,9 @@ AmlNodeSetIntegerValue (
     // Detach and free the DataNode containing the integer value.
     DataNode->NodeHeader.Parent          = NULL;
     Node->FixedArgs[EAmlParseIndexTerm0] = NULL;
-    Status                               = AmlDeleteNode ((AML_NODE_HEADER *)DataNode);
+    Status                               = AmlDeleteNode (
+                                             (AML_NODE_HEADER *)DataNode
+                                             );
     if (EFI_ERROR (Status)) {
       ASSERT (0);
       return Status;
@@ -828,7 +830,9 @@ AmlPropagateNodeCount (
     }
 
     // Update the node count in the DataNode.
-    CurrNodeCount                              = IsIncrement ? (CurrNodeCount + 1) : (CurrNodeCount - 1);
+    CurrNodeCount = IsIncrement ? (CurrNodeCount +
+                                   1) :
+                    (CurrNodeCount - 1);
     *(((AML_DATA_NODE *)NodeCountArg)->Buffer) =  CurrNodeCount;
   } else if (AmlNodeCompareOpCode (ObjectNode, AML_VAR_PACKAGE_OP, 0)) {
     // First fixed argument of PackageOp stores the number of elements

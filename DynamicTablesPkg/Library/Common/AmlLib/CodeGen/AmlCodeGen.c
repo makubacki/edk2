@@ -2170,11 +2170,16 @@ AmlAddLpiState (
   IN  UINT32                                  ArchFlags,
   IN  UINT32                                  ResCntFreq,
   IN  UINT32                                  EnableParentState,
-  IN  EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE  *GenericRegisterDescriptor   OPTIONAL,
-  IN  UINT64                                  Integer                     OPTIONAL,
-  IN  EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE  *ResidencyCounterRegister    OPTIONAL,
-  IN  EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE  *UsageCounterRegister        OPTIONAL,
-  IN  CHAR8                                   *StateName                   OPTIONAL,
+  IN  EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE  *GenericRegisterDescriptor
+  OPTIONAL,
+  IN  UINT64
+  Integer                     OPTIONAL,
+  IN  EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE  *ResidencyCounterRegister
+  OPTIONAL,
+  IN  EFI_ACPI_6_3_GENERIC_ADDRESS_STRUCTURE  *UsageCounterRegister
+  OPTIONAL,
+  IN  CHAR8                                   *StateName
+  OPTIONAL,
   IN  AML_OBJECT_NODE_HANDLE                  LpiNode
   )
 {
@@ -3191,31 +3196,46 @@ AmlCreateCpcNode (
     goto error_handler;
   }
 
-  Status = AmlAddRegisterToPackage (&CpcInfo->GuaranteedPerformanceRegister, CpcPackage);
+  Status = AmlAddRegisterToPackage (
+             &CpcInfo->GuaranteedPerformanceRegister,
+             CpcPackage
+             );
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
     goto error_handler;
   }
 
-  Status = AmlAddRegisterToPackage (&CpcInfo->DesiredPerformanceRegister, CpcPackage);
+  Status = AmlAddRegisterToPackage (
+             &CpcInfo->DesiredPerformanceRegister,
+             CpcPackage
+             );
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
     goto error_handler;
   }
 
-  Status = AmlAddRegisterToPackage (&CpcInfo->MinimumPerformanceRegister, CpcPackage);
+  Status = AmlAddRegisterToPackage (
+             &CpcInfo->MinimumPerformanceRegister,
+             CpcPackage
+             );
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
     goto error_handler;
   }
 
-  Status = AmlAddRegisterToPackage (&CpcInfo->MaximumPerformanceRegister, CpcPackage);
+  Status = AmlAddRegisterToPackage (
+             &CpcInfo->MaximumPerformanceRegister,
+             CpcPackage
+             );
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
     goto error_handler;
   }
 
-  Status = AmlAddRegisterToPackage (&CpcInfo->PerformanceReductionToleranceRegister, CpcPackage);
+  Status = AmlAddRegisterToPackage (
+             &CpcInfo->PerformanceReductionToleranceRegister,
+             CpcPackage
+             );
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
     goto error_handler;
@@ -3237,19 +3257,28 @@ AmlCreateCpcNode (
     goto error_handler;
   }
 
-  Status = AmlAddRegisterToPackage (&CpcInfo->ReferencePerformanceCounterRegister, CpcPackage);
+  Status = AmlAddRegisterToPackage (
+             &CpcInfo->ReferencePerformanceCounterRegister,
+             CpcPackage
+             );
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
     goto error_handler;
   }
 
-  Status = AmlAddRegisterToPackage (&CpcInfo->DeliveredPerformanceCounterRegister, CpcPackage);
+  Status = AmlAddRegisterToPackage (
+             &CpcInfo->DeliveredPerformanceCounterRegister,
+             CpcPackage
+             );
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
     goto error_handler;
   }
 
-  Status = AmlAddRegisterToPackage (&CpcInfo->PerformanceLimitedRegister, CpcPackage);
+  Status = AmlAddRegisterToPackage (
+             &CpcInfo->PerformanceLimitedRegister,
+             CpcPackage
+             );
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
     goto error_handler;
@@ -3271,13 +3300,19 @@ AmlCreateCpcNode (
     goto error_handler;
   }
 
-  Status = AmlAddRegisterToPackage (&CpcInfo->AutonomousActivityWindowRegister, CpcPackage);
+  Status = AmlAddRegisterToPackage (
+             &CpcInfo->AutonomousActivityWindowRegister,
+             CpcPackage
+             );
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
     goto error_handler;
   }
 
-  Status = AmlAddRegisterToPackage (&CpcInfo->EnergyPerformancePreferenceRegister, CpcPackage);
+  Status = AmlAddRegisterToPackage (
+             &CpcInfo->EnergyPerformancePreferenceRegister,
+             CpcPackage
+             );
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
     goto error_handler;

@@ -32,8 +32,9 @@
 /**
   Forward declarations:
 */
-typedef struct ConfigurationManagerProtocol  EDKII_CONFIGURATION_MANAGER_PROTOCOL;
-typedef struct PlatformRepositoryInfo        EDKII_PLATFORM_REPOSITORY_INFO;
+typedef struct ConfigurationManagerProtocol
+                                         EDKII_CONFIGURATION_MANAGER_PROTOCOL;
+typedef struct PlatformRepositoryInfo    EDKII_PLATFORM_REPOSITORY_INFO;
 
 /** The GetObject function defines the interface implemented by the
     Configuration Manager Protocol for returning the Configuration
