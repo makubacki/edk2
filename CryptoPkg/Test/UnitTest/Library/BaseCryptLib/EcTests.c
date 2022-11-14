@@ -463,15 +463,15 @@ TEST_DESC  mEcTest[] = {
   //
   // -----Description-----------------Class------------------Function----Pre----Post----Context
   //
-  { "TestVerifyEcBasic()", "CryptoPkg.BaseCryptLib.Ec",    TestVerifyEcBasic,
-    TestVerifyEcPreReq,    TestVerifyEcCleanUp,
-    NULL                               },
-  { "TestVerifyEcDh()",    "CryptoPkg.BaseCryptLib.Ec",    TestVerifyEcDh,
-    TestVerifyEcPreReq,  TestVerifyEcCleanUp,
-    NULL                                                 },
-  { "TestVerifyEcKey()",   "CryptoPkg.BaseCryptLib.Ec",    TestVerifyEcKey,
+  { "TestVerifyEcBasic()", "CryptoPkg.BaseCryptLib.Ec", TestVerifyEcBasic,
+    TestVerifyEcPreReq, TestVerifyEcCleanUp,
+    NULL },
+  { "TestVerifyEcDh()",    "CryptoPkg.BaseCryptLib.Ec", TestVerifyEcDh,
+    TestVerifyEcPreReq, TestVerifyEcCleanUp,
+    NULL },
+  { "TestVerifyEcKey()",   "CryptoPkg.BaseCryptLib.Ec", TestVerifyEcKey,
     NULL, NULL,
-    NULL                                                                   },
+    NULL },
 };
 
 UINTN  mEcTestNum = ARRAY_SIZE (mEcTest);

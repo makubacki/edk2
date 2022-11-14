@@ -206,10 +206,10 @@ typedef struct {
 // BLOCK_CIPHER_TEST_CONTEXT mAes256EcbTestCtx = {AesGetContextSize,  AesInit,  AesEcbEncrypt,  AesEcbDecrypt,  NULL,           NULL,           NULL,      Aes256EcbKey, 256,             NULL,          Aes256EcbData, sizeof(Aes256EcbData), Aes256EcbCipher, sizeof(Aes256EcbCipher)};
 // BLOCK_CIPHER_TEST_CONTEXT mArc4TestCtx      = {Arc4GetContextSize, Arc4Init, Arc4Encrypt,    (EFI_BLOCK_CIPHER_ECB_ENCRYPT_DECRYPT), Arc4Decrypt,    NULL,           NULL,           Arc4Reset, Arc4Key,      sizeof(Arc4Key), NULL,          Arc4Data,      sizeof(Arc4Data),      Arc4Cipher,      sizeof(Arc4Cipher)};
 BLOCK_CIPHER_TEST_CONTEXT  mAes128CbcTestCtx = {
-  AesGetContextSize,      AesInit,       NULL,               NULL,
+  AesGetContextSize,      AesInit, NULL,          NULL,
   AesCbcEncrypt,
   AesCbcDecrypt,          NULL,
-  Aes128CbcKey,           128,           Aes128CbcIvec,      Aes128CbcData,
+  Aes128CbcKey,           128,     Aes128CbcIvec, Aes128CbcData,
   sizeof (Aes128CbcData),
   Aes128CbcCipher,        sizeof (Aes128CbcCipher)
 };

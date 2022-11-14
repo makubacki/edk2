@@ -80,9 +80,9 @@ DECLARE_ASN1_FUNCTIONS (
   )
 ASN1_SEQUENCE (TS_ACCURACY) =
 {
-  ASN1_OPT (TS_ACCURACY,     Seconds,     ASN1_INTEGER),
-  ASN1_IMP_OPT (TS_ACCURACY, Millis,      ASN1_INTEGER,     0),
-  ASN1_IMP_OPT (TS_ACCURACY, Micros,      ASN1_INTEGER,     1)
+  ASN1_OPT (TS_ACCURACY,     Seconds, ASN1_INTEGER),
+  ASN1_IMP_OPT (TS_ACCURACY, Millis,  ASN1_INTEGER, 0),
+  ASN1_IMP_OPT (TS_ACCURACY, Micros,  ASN1_INTEGER, 1)
 }
 
 ASN1_SEQUENCE_END (TS_ACCURACY)
@@ -132,22 +132,46 @@ DECLARE_ASN1_FUNCTIONS (
   )
 ASN1_SEQUENCE (TS_TST_INFO) =
 {
-  ASN1_SIMPLE (TS_TST_INFO,
-    Version,                                           ASN1_INTEGER),
-  ASN1_SIMPLE (TS_TST_INFO,                          Policy,
-    ASN1_OBJECT),
-  ASN1_SIMPLE (TS_TST_INFO,
-    MessageImprint,                                    TS_MESSAGE_IMPRINT),
-  ASN1_SIMPLE (TS_TST_INFO,
-    SerialNumber,                                      ASN1_INTEGER),
-  ASN1_SIMPLE (TS_TST_INFO,
-    GenTime,                                           ASN1_GENERALIZEDTIME),
-  ASN1_OPT (TS_TST_INFO,
-    Accuracy,                                          TS_ACCURACY),
-  ASN1_OPT (TS_TST_INFO,
-    Ordering,                                          ASN1_FBOOLEAN),
-  ASN1_OPT (TS_TST_INFO,                             Nonce,
-    ASN1_INTEGER),
+  ASN1_SIMPLE (
+    TS_TST_INFO,
+    Version,
+    ASN1_INTEGER
+    ),
+  ASN1_SIMPLE (
+    TS_TST_INFO,
+    Policy,
+    ASN1_OBJECT
+    ),
+  ASN1_SIMPLE (
+    TS_TST_INFO,
+    MessageImprint,
+    TS_MESSAGE_IMPRINT
+    ),
+  ASN1_SIMPLE (
+    TS_TST_INFO,
+    SerialNumber,
+    ASN1_INTEGER
+    ),
+  ASN1_SIMPLE (
+    TS_TST_INFO,
+    GenTime,
+    ASN1_GENERALIZEDTIME
+    ),
+  ASN1_OPT (
+    TS_TST_INFO,
+    Accuracy,
+    TS_ACCURACY
+    ),
+  ASN1_OPT (
+    TS_TST_INFO,
+    Ordering,
+    ASN1_FBOOLEAN
+    ),
+  ASN1_OPT (
+    TS_TST_INFO,
+    Nonce,
+    ASN1_INTEGER
+    ),
   ASN1_EXP_OPT (
     TS_TST_INFO,
     Tsa,

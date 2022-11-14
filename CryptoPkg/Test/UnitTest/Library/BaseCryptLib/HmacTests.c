@@ -144,16 +144,16 @@ typedef struct {
 // HMAC_TEST_CONTEXT       mHmacMd5TestCtx    = {MD5_DIGEST_SIZE,    HmacMd5New,    HmacMd5Free,  HmacMd5SetKey,    HmacMd5Update,    HmacMd5Final,    HmacMd5Key,    sizeof(HmacMd5Key),    HmacMd5Digest};
 // HMAC_TEST_CONTEXT       mHmacSha1TestCtx   = {SHA1_DIGEST_SIZE,   HmacSha1New,   HmacSha1Free, HmacSha1SetKey,   HmacSha1Update,   HmacSha1Final,   HmacSha1Key,   sizeof(HmacSha1Key),   HmacSha1Digest};
 HMAC_TEST_CONTEXT  mHmacSha256TestCtx = {
-  SHA256_DIGEST_SIZE,     HmacSha256New,         HmacSha256Free,
+  SHA256_DIGEST_SIZE,     HmacSha256New,   HmacSha256Free,
   HmacSha256SetKey,
-  HmacSha256Update,       HmacSha256Final,       HmacSha256Key,
+  HmacSha256Update,       HmacSha256Final, HmacSha256Key,
   sizeof (HmacSha256Key),
   HmacSha256Digest
 };
 HMAC_TEST_CONTEXT  mHmacSha384TestCtx = {
-  SHA384_DIGEST_SIZE,     HmacSha384New,         HmacSha384Free,
+  SHA384_DIGEST_SIZE,     HmacSha384New,   HmacSha384Free,
   HmacSha384SetKey,
-  HmacSha384Update,       HmacSha384Final,       HmacSha384Key,
+  HmacSha384Update,       HmacSha384Final, HmacSha384Key,
   sizeof (HmacSha384Key),
   HmacSha384Digest
 };
@@ -232,7 +232,7 @@ TEST_DESC  mHmacTest[] = {
   { "TestVerifyHmacSha256()", "CryptoPkg.BaseCryptLib.Hmac", TestVerifyHmac,
     TestVerifyHmacPreReq, TestVerifyHmacCleanUp, &mHmacSha256TestCtx },
   { "TestVerifyHmacSha384()", "CryptoPkg.BaseCryptLib.Hmac", TestVerifyHmac,
-    TestVerifyHmacPreReq,  TestVerifyHmacCleanUp, &mHmacSha384TestCtx },
+    TestVerifyHmacPreReq, TestVerifyHmacCleanUp, &mHmacSha384TestCtx },
   // These functions have been deprecated but they've been left commented out for future reference
   // {"TestVerifyHmacMd5()",    "CryptoPkg.BaseCryptLib.Hmac",   TestVerifyHmac, TestVerifyHmacPreReq, TestVerifyHmacCleanUp, &mHmacMd5TestCtx},
   // {"TestVerifyHmacSha1()",   "CryptoPkg.BaseCryptLib.Hmac",   TestVerifyHmac, TestVerifyHmacPreReq, TestVerifyHmacCleanUp, &mHmacSha1TestCtx},

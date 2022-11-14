@@ -407,17 +407,17 @@ strcpy (
 //
 // Macros that directly map functions to BaseLib, BaseMemoryLib, and DebugLib functions
 //
-#define memcpy(dest, source, count)     CopyMem(dest,source,(UINTN)(count))
+#define memcpy(dest, source, count)  CopyMem(dest,source,(UINTN)(count))
 #define memset(dest, ch, \
-               count)                   SetMem(dest,(UINTN)(count),(UINT8)(ch))
+               count)                SetMem(dest,(UINTN)(count),(UINT8)(ch))
 #define memchr(buf, ch, \
-               count)                   ScanMem8(buf,(UINTN)(count),(UINT8)ch)
+               count)                ScanMem8(buf,(UINTN)(count),(UINT8)ch)
 #define memcmp(buf1, buf2, \
                count)           \
                                         (int)(CompareMem(buf1,buf2,(UINTN)(count)))
-#define memmove(dest, source, count)    CopyMem(dest,source,(UINTN)(count))
+#define memmove(dest, source, count)  CopyMem(dest,source,(UINTN)(count))
 #define strlen( \
-              str)                         \
+                str)                         \
                                         (size_t)(AsciiStrnLenS(str,MAX_STRING_SIZE))
 #define strncpy(strDest, strSource, \
                 count)  \
@@ -428,15 +428,15 @@ strcpy (
 #define strncmp(string1, string2, \
                 count)    \
                                         (int)(AsciiStrnCmp(string1,string2,(UINTN)(count)))
-#define strcasecmp(str1, str2)          (int)AsciiStriCmp(str1,str2)
-#define strstr(s1, s2)                  AsciiStrStr(s1,s2)
+#define strcasecmp(str1, str2)  (int)AsciiStriCmp(str1,str2)
+#define strstr(s1, s2)          AsciiStrStr(s1,s2)
 #define sprintf(buf, \
                 ...)                   \
                                         AsciiSPrint(buf,MAX_STRING_SIZE,__VA_ARGS__)
-#define localtime(timer)                NULL
+#define localtime(timer)  NULL
 #define assert(expression)
-#define offsetof(type, member)    OFFSET_OF(type,member)
-#define atoi(nptr)                AsciiStrDecimalToUintn(nptr)
+#define offsetof(type, member)  OFFSET_OF(type,member)
+#define atoi(nptr)              AsciiStrDecimalToUintn(nptr)
 #define gettimeofday(tvp, \
                      tz)   \
                                   do { (tvp)->tv_sec = time(NULL); (tvp)->tv_usec = 0; } while (0)

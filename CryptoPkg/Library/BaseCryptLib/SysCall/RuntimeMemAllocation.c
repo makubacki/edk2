@@ -25,9 +25,9 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define RT_PAGE_SHIFT  9
 
 #define RT_SIZE_TO_PAGES( \
-                        a)  \
+                          a)  \
                                (((a) >> RT_PAGE_SHIFT) + (((a) & RT_PAGE_MASK) ? 1 : 0))
-#define RT_PAGES_TO_SIZE(a)    ((a) << RT_PAGE_SHIFT)
+#define RT_PAGES_TO_SIZE(a)  ((a) << RT_PAGE_SHIFT)
 
 //
 // Page Flag Definitions
@@ -102,8 +102,8 @@ InitializeScratchMemory (
   MemorySize = ScratchBufferSize - sizeof (RT_MEMORY_PAGE_TABLE) +
                sizeof (RT_MEMORY_PAGE_ENTRY);
 
-  mRTPageTable->PageCount           = MemorySize / (RT_PAGE_SIZE +
-                                                    sizeof (RT_MEMORY_PAGE_ENTRY));
+  mRTPageTable->PageCount = MemorySize / (RT_PAGE_SIZE +
+                                          sizeof (RT_MEMORY_PAGE_ENTRY));
   mRTPageTable->LastEmptyPageOffset = 0x0;
 
   for (Index = 0; Index < mRTPageTable->PageCount; Index++) {

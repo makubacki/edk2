@@ -330,14 +330,14 @@ TEST_DESC  mRsaTest[] = {
   // -----Description--------------------------------------Class----------------------Function---------------------------------Pre---------------------Post---------Context
   //
   { "TestVerifyRsaSetGetKeyComponents()",   "CryptoPkg.BaseCryptLib.Rsa",
-    TestVerifyRsaSetGetKeyComponents,   TestVerifyRsaPreReq,
+    TestVerifyRsaSetGetKeyComponents, TestVerifyRsaPreReq,
     TestVerifyRsaCleanUp, NULL },
   { "TestVerifyRsaGenerateKeyComponents()", "CryptoPkg.BaseCryptLib.Rsa",
-    TestVerifyRsaGenerateKeyComponents,      TestVerifyRsaPreReq,
-    TestVerifyRsaCleanUp,       NULL },
+    TestVerifyRsaGenerateKeyComponents, TestVerifyRsaPreReq,
+    TestVerifyRsaCleanUp, NULL },
   { "TestVerifyRsaPkcs1SignVerify()",       "CryptoPkg.BaseCryptLib.Rsa",
     TestVerifyRsaPkcs1SignVerify, TestVerifyRsaPreReq,
-    TestVerifyRsaCleanUp,       NULL       },
+    TestVerifyRsaCleanUp, NULL },
 };
 
 UINTN  mRsaTestNum = ARRAY_SIZE (mRsaTest);

@@ -80,20 +80,20 @@ typedef struct {
 } TLS_ALGO_TO_NAME;
 
 STATIC CONST TLS_ALGO_TO_NAME  TlsHashAlgoToName[] = {
-  { TlsHashAlgoNone,   NULL        },
-  { TlsHashAlgoMd5,    "MD5"       },
-  { TlsHashAlgoSha1,   "SHA1"      },
-  { TlsHashAlgoSha224, "SHA224"    },
-  { TlsHashAlgoSha256, "SHA256"    },
-  { TlsHashAlgoSha384, "SHA384"    },
-  { TlsHashAlgoSha512, "SHA512"    },
+  { TlsHashAlgoNone,   NULL     },
+  { TlsHashAlgoMd5,    "MD5"    },
+  { TlsHashAlgoSha1,   "SHA1"   },
+  { TlsHashAlgoSha224, "SHA224" },
+  { TlsHashAlgoSha256, "SHA256" },
+  { TlsHashAlgoSha384, "SHA384" },
+  { TlsHashAlgoSha512, "SHA512" },
 };
 
 STATIC CONST TLS_ALGO_TO_NAME  TlsSignatureAlgoToName[] = {
-  { TlsSignatureAlgoAnonymous, NULL          },
-  { TlsSignatureAlgoRsa,       "RSA"         },
-  { TlsSignatureAlgoDsa,       "DSA"         },
-  { TlsSignatureAlgoEcdsa,     "ECDSA"       },
+  { TlsSignatureAlgoAnonymous, NULL    },
+  { TlsSignatureAlgoRsa,       "RSA"   },
+  { TlsSignatureAlgoDsa,       "DSA"   },
+  { TlsSignatureAlgoEcdsa,     "ECDSA" },
 };
 
 /**

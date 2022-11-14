@@ -198,7 +198,7 @@ TEST_DESC  mHkdfTest[] = {
   { "TestVerifyHkdfSha256()", "CryptoPkg.BaseCryptLib.Hkdf",
     TestVerifyHkdfSha256, NULL, NULL, NULL },
   { "TestVerifyHkdfSha384()", "CryptoPkg.BaseCryptLib.Hkdf",
-    TestVerifyHkdfSha384,  NULL, NULL, NULL },
+    TestVerifyHkdfSha384, NULL, NULL, NULL },
 };
 
 UINTN  mHkdfTestNum = ARRAY_SIZE (mHkdfTest);

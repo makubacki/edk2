@@ -284,8 +284,13 @@ Pkcs7GetSigners (
     return FALSE;
   }
 
-  Status = WrapPkcs7Data (P7Data, P7Length, &Wrapped, &SignedData,
-             &SignedDataSize);
+  Status = WrapPkcs7Data (
+             P7Data,
+             P7Length,
+             &Wrapped,
+             &SignedData,
+             &SignedDataSize
+             );
   if (!Status) {
     return Status;
   }
@@ -531,8 +536,11 @@ Pkcs7GetCertificatesList (
   //
   // Decodes PKCS#7 SignedData
   //
-  Pkcs7 = d2i_PKCS7 (NULL, (const unsigned char **)&NewP7Data,
-            (int)NewP7Length);
+  Pkcs7 = d2i_PKCS7 (
+            NULL,
+            (const unsigned char **)&NewP7Data,
+            (int)NewP7Length
+            );
   if ((Pkcs7 == NULL) || (!PKCS7_type_is_signed (Pkcs7))) {
     goto _Error;
   }
@@ -837,8 +845,13 @@ Pkcs7Verify (
     return FALSE;
   }
 
-  Status = WrapPkcs7Data (P7Data, P7Length, &Wrapped, &SignedData,
-             &SignedDataSize);
+  Status = WrapPkcs7Data (
+             P7Data,
+             P7Length,
+             &Wrapped,
+             &SignedData,
+             &SignedDataSize
+             );
   if (!Status) {
     return Status;
   }
@@ -914,8 +927,14 @@ Pkcs7Verify (
   //
   // Verifies the PKCS#7 signedData structure
   //
-  Status = (BOOLEAN)PKCS7_verify (Pkcs7, NULL, CertStore, DataBio, NULL,
-                      PKCS7_BINARY);
+  Status = (BOOLEAN)PKCS7_verify (
+                      Pkcs7,
+                      NULL,
+                      CertStore,
+                      DataBio,
+                      NULL,
+                      PKCS7_BINARY
+                      );
 
 _Exit:
   //
