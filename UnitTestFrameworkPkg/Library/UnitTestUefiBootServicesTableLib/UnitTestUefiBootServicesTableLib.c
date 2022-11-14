@@ -65,8 +65,10 @@ STATIC EFI_BOOT_SERVICES  mBootServices = {
   (EFI_PROTOCOLS_PER_HANDLE)UnitTestProtocolsPerHandle,                                       // ProtocolsPerHandle
   (EFI_LOCATE_HANDLE_BUFFER)UnitTestLocateHandleBuffer,                                       // LocateHandleBuffer
   (EFI_LOCATE_PROTOCOL)UnitTestLocateProtocol,                                                // LocateProtocol
-  (EFI_INSTALL_MULTIPLE_PROTOCOL_INTERFACES)UnitTestInstallMultipleProtocolInterfaces,        // InstallMultipleProtocolInterfaces
-  (EFI_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES)UnitTestUninstallMultipleProtocolInterfaces,    // UninstallMultipleProtocolInterfaces
+  (EFI_INSTALL_MULTIPLE_PROTOCOL_INTERFACES)
+  UnitTestInstallMultipleProtocolInterfaces,                                                  // InstallMultipleProtocolInterfaces
+  (EFI_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES)
+  UnitTestUninstallMultipleProtocolInterfaces,                                                // UninstallMultipleProtocolInterfaces
   (EFI_CALCULATE_CRC32)UnitTestCalculateCrc32,                                                // CalculateCrc32
   (EFI_COPY_MEM)CopyMem,                                                                      // CopyMem
   (EFI_SET_MEM)SetMem,                                                                        // SetMem

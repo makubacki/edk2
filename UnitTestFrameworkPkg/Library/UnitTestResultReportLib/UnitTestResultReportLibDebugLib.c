@@ -43,7 +43,12 @@ ReportOutput (
 
   Length = AsciiStrLen (Output);
   for (Index = 0; Index < Length; Index += (sizeof (AsciiString) - 1)) {
-    AsciiStrnCpyS (AsciiString, sizeof (AsciiString), &Output[Index], sizeof (AsciiString) - 1);
+    AsciiStrnCpyS (
+      AsciiString,
+      sizeof (AsciiString),
+      &Output[Index],
+      sizeof (AsciiString) - 1
+      );
     DEBUG ((DEBUG_INFO, AsciiString));
   }
 }

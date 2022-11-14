@@ -8,10 +8,14 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #include "UnitTestUefiBootServicesTableLibProtocol.h"
 
-STATIC LIST_ENTRY  mProtocolDatabase       = INITIALIZE_LIST_HEAD_VARIABLE (mProtocolDatabase);
-STATIC LIST_ENTRY  gHandleList             = INITIALIZE_LIST_HEAD_VARIABLE (gHandleList);
-STATIC UINT64      gHandleDatabaseKey      = 0;
-STATIC UINTN       mEfiLocateHandleRequest = 0;
+STATIC LIST_ENTRY  mProtocolDatabase = INITIALIZE_LIST_HEAD_VARIABLE (
+                                         mProtocolDatabase
+                                         );
+STATIC LIST_ENTRY  gHandleList = INITIALIZE_LIST_HEAD_VARIABLE (
+                                   gHandleList
+                                   );
+STATIC UINT64  gHandleDatabaseKey      = 0;
+STATIC UINTN   mEfiLocateHandleRequest = 0;
 
 //
 // Helper Functions
@@ -38,7 +42,9 @@ UnitTestValidateHandle (
     return EFI_INVALID_PARAMETER;
   }
 
-  for (Link = gHandleList.BackLink; Link != &gHandleList; Link = Link->BackLink) {
+  for (Link = gHandleList.BackLink; Link != &gHandleList; Link =
+         Link->BackLink)
+  {
     Handle = CR (Link, IHANDLE, AllHandles, EFI_HANDLE_SIGNATURE);
     if (Handle == (IHANDLE *)UserHandle) {
       return EFI_SUCCESS;
@@ -147,7 +153,9 @@ UnitTestFindProtocolInterface (
     //
     // Look at each protocol interface for any matches
     //
-    for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
+    for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols;
+         Link = Link->ForwardLink)
+    {
       //
       // If this protocol interface matches, remove it
       //
@@ -177,7 +185,9 @@ UnitTestNotifyProtocolEntry (
   PROTOCOL_NOTIFY  *ProtNotify;
   LIST_ENTRY       *Link;
 
-  for (Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link = Link->ForwardLink) {
+  for (Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link =
+         Link->ForwardLink)
+  {
     ProtNotify = CR (Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
     UnitTestSignalEvent (ProtNotify->Event);
   }
@@ -258,7 +268,12 @@ UnitTestGetNextLocateByRegisterNotify (
     //
     Link = ProtNotify->Position->ForwardLink;
     if (Link != &ProtNotify->Protocol->Protocols) {
-      Prot       = CR (Link, PROTOCOL_INTERFACE, ByProtocol, PROTOCOL_INTERFACE_SIGNATURE);
+      Prot = CR (
+               Link,
+               PROTOCOL_INTERFACE,
+               ByProtocol,
+               PROTOCOL_INTERFACE_SIGNATURE
+               );
       Handle     = Prot->Handle;
       *Interface = Prot->Interface;
     }
@@ -308,7 +323,12 @@ UnitTestGetNextLocateByProtocol (
     //
     // Get the handle
     //
-    Prot       = CR (Link, PROTOCOL_INTERFACE, ByProtocol, PROTOCOL_INTERFACE_SIGNATURE);
+    Prot = CR (
+             Link,
+             PROTOCOL_INTERFACE,
+             ByProtocol,
+             PROTOCOL_INTERFACE_SIGNATURE
+             );
     Handle     = Prot->Handle;
     *Interface = Prot->Interface;
 
@@ -357,10 +377,21 @@ UnitTestDisconnectControllersUsingProtocolInterface (
   //
   do {
     ItemFound = FALSE;
-    for (Link = Prot->OpenList.ForwardLink; Link != &Prot->OpenList; Link = Link->ForwardLink) {
-      OpenData = CR (Link, OPEN_PROTOCOL_DATA, Link, OPEN_PROTOCOL_DATA_SIGNATURE);
+    for (Link = Prot->OpenList.ForwardLink; Link != &Prot->OpenList; Link =
+           Link->ForwardLink)
+    {
+      OpenData = CR (
+                   Link,
+                   OPEN_PROTOCOL_DATA,
+                   Link,
+                   OPEN_PROTOCOL_DATA_SIGNATURE
+                   );
       if ((OpenData->Attributes & EFI_OPEN_PROTOCOL_BY_DRIVER) != 0) {
-        Status = UnitTestDisconnectController (UserHandle, OpenData->AgentHandle, NULL);
+        Status = UnitTestDisconnectController (
+                   UserHandle,
+                   OpenData->AgentHandle,
+                   NULL
+                   );
         if (!EFI_ERROR (Status)) {
           ItemFound = TRUE;
         }
@@ -375,9 +406,16 @@ UnitTestDisconnectControllersUsingProtocolInterface (
     // Attempt to remove BY_HANDLE_PROTOCOL and GET_PROTOCOL and TEST_PROTOCOL Open List items
     //
     for (Link = Prot->OpenList.ForwardLink; Link != &Prot->OpenList;) {
-      OpenData = CR (Link, OPEN_PROTOCOL_DATA, Link, OPEN_PROTOCOL_DATA_SIGNATURE);
+      OpenData = CR (
+                   Link,
+                   OPEN_PROTOCOL_DATA,
+                   Link,
+                   OPEN_PROTOCOL_DATA_SIGNATURE
+                   );
       if ((OpenData->Attributes &
-           (EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL | EFI_OPEN_PROTOCOL_GET_PROTOCOL | EFI_OPEN_PROTOCOL_TEST_PROTOCOL)) != 0)
+           (EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL |
+            EFI_OPEN_PROTOCOL_GET_PROTOCOL |
+            EFI_OPEN_PROTOCOL_TEST_PROTOCOL)) != 0)
       {
         Link = RemoveEntryList (&OpenData->Link);
         Prot->OpenListCount--;
@@ -428,7 +466,9 @@ UnitTestRemoveInterfaceFromProtocol (
     //
     // If there's a protocol notify location pointing to this entry, back it up one
     //
-    for (Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify; Link = Link->ForwardLink) {
+    for (Link = ProtEntry->Notify.ForwardLink; Link != &ProtEntry->Notify;
+         Link = Link->ForwardLink)
+    {
       ProtNotify = CR (Link, PROTOCOL_NOTIFY, Link, PROTOCOL_NOTIFY_SIGNATURE);
 
       if (ProtNotify->Position == &Prot->ByProtocol) {
@@ -480,8 +520,15 @@ UnitTestGetProtocolInterface (
   //
   // Look at each protocol interface for a match
   //
-  for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
-    Prot      = CR (Link, PROTOCOL_INTERFACE, Link, PROTOCOL_INTERFACE_SIGNATURE);
+  for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link =
+         Link->ForwardLink)
+  {
+    Prot = CR (
+             Link,
+             PROTOCOL_INTERFACE,
+             Link,
+             PROTOCOL_INTERFACE_SIGNATURE
+             );
     ProtEntry = Prot->Protocol;
     if (CompareGuid (&ProtEntry->ProtocolID, Protocol)) {
       return Prot;
@@ -545,7 +592,11 @@ UnitTestInstallProtocolInterfaceNotify (
   Handle = NULL;
 
   if (*UserHandle != NULL) {
-    Status = UnitTestHandleProtocol (*UserHandle, Protocol, (VOID **)&ExistingInterface);
+    Status = UnitTestHandleProtocol (
+               *UserHandle,
+               Protocol,
+               (VOID **)&ExistingInterface
+               );
     if (!EFI_ERROR (Status)) {
       return EFI_INVALID_PARAMETER;
     }
@@ -599,7 +650,11 @@ UnitTestInstallProtocolInterfaceNotify (
   } else {
     Status =  UnitTestValidateHandle (Handle);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "InstallProtocolInterface: input handle at 0x%x is invalid\n", Handle));
+      DEBUG ((
+        DEBUG_ERROR,
+        "InstallProtocolInterface: input handle at 0x%x is invalid\n",
+        Handle
+        ));
       goto Done;
     }
   }
@@ -658,7 +713,13 @@ Done:
       UnitTestFreePool (Prot);
     }
 
-    DEBUG ((DEBUG_ERROR, "InstallProtocolInterface: %g %p failed with %r\n", Protocol, Interface, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "InstallProtocolInterface: %g %p failed with %r\n",
+      Protocol,
+      Interface,
+      Status
+      ));
   }
 
   return Status;
@@ -1214,8 +1275,15 @@ UnitTestOpenProtocol (
 
   ByDriver  = FALSE;
   Exclusive = FALSE;
-  for ( Link = Prot->OpenList.ForwardLink; Link != &Prot->OpenList; Link = Link->ForwardLink) {
-    OpenData   = CR (Link, OPEN_PROTOCOL_DATA, Link, OPEN_PROTOCOL_DATA_SIGNATURE);
+  for ( Link = Prot->OpenList.ForwardLink; Link != &Prot->OpenList; Link =
+          Link->ForwardLink)
+  {
+    OpenData = CR (
+                 Link,
+                 OPEN_PROTOCOL_DATA,
+                 Link,
+                 OPEN_PROTOCOL_DATA_SIGNATURE
+                 );
     ExactMatch =  (BOOLEAN)((OpenData->AgentHandle == ImageHandle) &&
                             (OpenData->Attributes == Attributes)  &&
                             (OpenData->ControllerHandle == ControllerHandle));
@@ -1261,11 +1329,22 @@ UnitTestOpenProtocol (
       if (ByDriver) {
         do {
           Disconnect = FALSE;
-          for (Link = Prot->OpenList.ForwardLink; Link != &Prot->OpenList; Link = Link->ForwardLink) {
-            OpenData = CR (Link, OPEN_PROTOCOL_DATA, Link, OPEN_PROTOCOL_DATA_SIGNATURE);
+          for (Link = Prot->OpenList.ForwardLink; Link != &Prot->OpenList;
+               Link = Link->ForwardLink)
+          {
+            OpenData = CR (
+                         Link,
+                         OPEN_PROTOCOL_DATA,
+                         Link,
+                         OPEN_PROTOCOL_DATA_SIGNATURE
+                         );
             if ((OpenData->Attributes & EFI_OPEN_PROTOCOL_BY_DRIVER) != 0) {
               Disconnect = TRUE;
-              Status     = UnitTestDisconnectController (UserHandle, OpenData->AgentHandle, NULL);
+              Status     = UnitTestDisconnectController (
+                             UserHandle,
+                             OpenData->AgentHandle,
+                             NULL
+                             );
               if (EFI_ERROR (Status)) {
                 Status = EFI_ACCESS_DENIED;
                 goto Done;
@@ -1639,7 +1718,12 @@ UnitTestUninstallMultipleProtocolInterfaces (
     for ( ; Index > 1; Index--) {
       Protocol  = VA_ARG (Args, EFI_GUID *);
       Interface = VA_ARG (Args, VOID *);
-      UnitTestInstallProtocolInterface (&Handle, Protocol, EFI_NATIVE_INTERFACE, Interface);
+      UnitTestInstallProtocolInterface (
+        &Handle,
+        Protocol,
+        EFI_NATIVE_INTERFACE,
+        Interface
+        );
     }
 
     VA_END (Args);

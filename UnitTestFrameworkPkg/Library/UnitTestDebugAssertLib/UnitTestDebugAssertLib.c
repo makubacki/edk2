@@ -38,7 +38,12 @@ UnitTestDebugAssert (
   CHAR8  Message[256];
 
   if (gUnitTestExpectAssertFailureJumpBuffer != NULL) {
-    UT_LOG_INFO ("Detected expected ASSERT: %a(%d): %a\n", FileName, LineNumber, Description);
+    UT_LOG_INFO (
+      "Detected expected ASSERT: %a(%d): %a\n",
+      FileName,
+      LineNumber,
+      Description
+      );
     LongJump (gUnitTestExpectAssertFailureJumpBuffer, 1);
   } else {
     AsciiStrCpyS (Message, sizeof (Message), "Detected unexpected ASSERT(");

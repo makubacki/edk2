@@ -173,9 +173,13 @@ AllocateAlignedPages (
     return NULL;
   }
 
-  PageHead.AlignedBuffer = (VOID *)(((UINTN)PageHead.AllocatedBufffer + AlignmentMask) & ~AlignmentMask);
-  if ((UINTN)PageHead.AlignedBuffer - (UINTN)PageHead.AllocatedBufffer < sizeof (PAGE_HEAD)) {
-    PageHead.AlignedBuffer = (VOID *)((UINTN)PageHead.AlignedBuffer + Alignment);
+  PageHead.AlignedBuffer = (VOID *)(((UINTN)PageHead.AllocatedBufffer +
+                                     AlignmentMask) & ~AlignmentMask);
+  if ((UINTN)PageHead.AlignedBuffer - (UINTN)PageHead.AllocatedBufffer <
+      sizeof (PAGE_HEAD))
+  {
+    PageHead.AlignedBuffer = (VOID *)((UINTN)PageHead.AlignedBuffer +
+                                      Alignment);
   }
 
   PageHeadPtr = (VOID *)((UINTN)PageHead.AlignedBuffer - sizeof (PAGE_HEAD));

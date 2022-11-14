@@ -42,9 +42,15 @@ RunTestSuite (
   TestEntry       = NULL;
   ParentFramework = (UNIT_TEST_FRAMEWORK *)Suite->ParentFramework;
 
-  DEBUG ((DEBUG_VERBOSE, "---------------------------------------------------------\n"));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "---------------------------------------------------------\n"
+    ));
   DEBUG ((DEBUG_VERBOSE, "RUNNING TEST SUITE: %a\n", Suite->Title));
-  DEBUG ((DEBUG_VERBOSE, "---------------------------------------------------------\n"));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "---------------------------------------------------------\n"
+    ));
 
   if (Suite->Setup != NULL) {
     Suite->Setup ();
@@ -53,22 +59,35 @@ RunTestSuite (
   //
   // Iterate all tests within the suite
   //
-  for (TestEntry = (UNIT_TEST_LIST_ENTRY *)GetFirstNode (&(Suite->TestCaseList));
+  for (TestEntry = (UNIT_TEST_LIST_ENTRY *)GetFirstNode (
+                                             &(Suite->TestCaseList)
+                                             );
        (LIST_ENTRY *)TestEntry != &(Suite->TestCaseList);
-       TestEntry = (UNIT_TEST_LIST_ENTRY *)GetNextNode (&(Suite->TestCaseList), (LIST_ENTRY *)TestEntry))
+       TestEntry = (UNIT_TEST_LIST_ENTRY *)GetNextNode (
+                                             &(Suite->TestCaseList),
+                                             (LIST_ENTRY *)TestEntry
+                                             ))
   {
     Test                         = &TestEntry->UT;
     ParentFramework->CurrentTest = Test;
 
-    DEBUG ((DEBUG_VERBOSE, "*********************************************************\n"));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "*********************************************************\n"
+      ));
     DEBUG ((DEBUG_VERBOSE, " RUNNING TEST: %a:\n", Test->Description));
-    DEBUG ((DEBUG_VERBOSE, "**********************************************************\n"));
+    DEBUG ((
+      DEBUG_VERBOSE,
+      "**********************************************************\n"
+      ));
 
     //
     // First, check to see whether the test has already been run.
     // NOTE: This would generally only be the case if a saved state was detected and loaded.
     //
-    if ((Test->Result != UNIT_TEST_PENDING) && (Test->Result != UNIT_TEST_RUNNING)) {
+    if ((Test->Result != UNIT_TEST_PENDING) && (Test->Result !=
+                                                UNIT_TEST_RUNNING))
+    {
       DEBUG ((DEBUG_VERBOSE, "Test was run on a previous pass. Skipping.\n"));
       ParentFramework->CurrentTest = NULL;
       continue;
@@ -158,17 +177,31 @@ RunAllTestSuites (
     return EFI_INVALID_PARAMETER;
   }
 
-  DEBUG ((DEBUG_VERBOSE, "---------------------------------------------------------\n"));
-  DEBUG ((DEBUG_VERBOSE, "------------     RUNNING ALL TEST SUITES   --------------\n"));
-  DEBUG ((DEBUG_VERBOSE, "---------------------------------------------------------\n"));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "---------------------------------------------------------\n"
+    ));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "------------     RUNNING ALL TEST SUITES   --------------\n"
+    ));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "---------------------------------------------------------\n"
+    ));
   mFrameworkHandle = FrameworkHandle;
 
   //
   // Iterate all suites
   //
-  for (Suite = (UNIT_TEST_SUITE_LIST_ENTRY *)GetFirstNode (&Framework->TestSuiteList);
+  for (Suite = (UNIT_TEST_SUITE_LIST_ENTRY *)GetFirstNode (
+                                               &Framework->TestSuiteList
+                                               );
        (LIST_ENTRY *)Suite != &Framework->TestSuiteList;
-       Suite = (UNIT_TEST_SUITE_LIST_ENTRY *)GetNextNode (&Framework->TestSuiteList, (LIST_ENTRY *)Suite))
+       Suite = (UNIT_TEST_SUITE_LIST_ENTRY *)GetNextNode (
+                                               &Framework->TestSuiteList,
+                                               (LIST_ENTRY *)Suite
+                                               ))
   {
     Status = RunTestSuite (&(Suite->UTS));
     if (EFI_ERROR (Status)) {

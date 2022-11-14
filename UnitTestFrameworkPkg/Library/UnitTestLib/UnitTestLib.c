@@ -56,8 +56,9 @@ AllocateAndCopyString (
   UINTN  NewStringLength;
 
   NewString       = NULL;
-  NewStringLength = AsciiStrnLenS (StringToCopy, UNIT_TEST_MAX_STRING_LENGTH) + 1;
-  NewString       = AllocatePool (NewStringLength * sizeof (CHAR8));
+  NewStringLength = AsciiStrnLenS (StringToCopy, UNIT_TEST_MAX_STRING_LENGTH) +
+                    1;
+  NewString = AllocatePool (NewStringLength * sizeof (CHAR8));
   if (NewString != NULL) {
     AsciiStrCpyS (NewString, NewStringLength, StringToCopy);
   }
@@ -75,8 +76,18 @@ SetFrameworkFingerprint (
   UINT32  NewFingerprint;
 
   // For this one we'll just use the title and version as the unique fingerprint.
-  NewFingerprint = CalculateCrc32 (Framework->Title, (AsciiStrLen (Framework->Title) * sizeof (CHAR8)));
-  NewFingerprint = (NewFingerprint >> 8) ^ CalculateCrc32 (Framework->VersionString, (AsciiStrLen (Framework->VersionString) * sizeof (CHAR8)));
+  NewFingerprint = CalculateCrc32 (
+                     Framework->Title,
+                     (AsciiStrLen (
+                        Framework->Title
+                        ) * sizeof (CHAR8))
+                     );
+  NewFingerprint = (NewFingerprint >> 8) ^ CalculateCrc32 (
+                                             Framework->VersionString,
+                                             (AsciiStrLen (
+                                                Framework->VersionString) *
+                                              sizeof (CHAR8))
+                                             );
 
   CopyMem (Fingerprint, &NewFingerprint, UNIT_TEST_FINGERPRINT_SIZE);
   return;
@@ -93,9 +104,20 @@ SetSuiteFingerprint (
   UINT32  NewFingerprint;
 
   // For this one, we'll use the fingerprint from the framework, and the title of the suite.
-  NewFingerprint = CalculateCrc32 (&Framework->Fingerprint[0], UNIT_TEST_FINGERPRINT_SIZE);
-  NewFingerprint = (NewFingerprint >> 8) ^ CalculateCrc32 (Suite->Title, (AsciiStrLen (Suite->Title) * sizeof (CHAR8)));
-  NewFingerprint = (NewFingerprint >> 8) ^ CalculateCrc32 (Suite->Name, (AsciiStrLen (Suite->Name) * sizeof (CHAR8)));
+  NewFingerprint = CalculateCrc32 (
+                     &Framework->Fingerprint[0],
+                     UNIT_TEST_FINGERPRINT_SIZE
+                     );
+  NewFingerprint = (NewFingerprint >> 8) ^ CalculateCrc32 (
+                                             Suite->Title,
+                                             (AsciiStrLen (Suite->Title) *
+                                              sizeof (CHAR8))
+                                             );
+  NewFingerprint = (NewFingerprint >> 8) ^ CalculateCrc32 (
+                                             Suite->Name,
+                                             (AsciiStrLen (Suite->Name) *
+                                              sizeof (CHAR8))
+                                             );
 
   CopyMem (Fingerprint, &NewFingerprint, UNIT_TEST_FINGERPRINT_SIZE);
   return;
@@ -112,9 +134,20 @@ SetTestFingerprint (
   UINT32  NewFingerprint;
 
   // For this one, we'll use the fingerprint from the suite, and the description and classname of the test.
-  NewFingerprint = CalculateCrc32 (&Suite->Fingerprint[0], UNIT_TEST_FINGERPRINT_SIZE);
-  NewFingerprint = (NewFingerprint >> 8) ^ CalculateCrc32 (Test->Description, (AsciiStrLen (Test->Description) * sizeof (CHAR8)));
-  NewFingerprint = (NewFingerprint >> 8) ^ CalculateCrc32 (Test->Name, (AsciiStrLen (Test->Name) * sizeof (CHAR8)));
+  NewFingerprint = CalculateCrc32 (
+                     &Suite->Fingerprint[0],
+                     UNIT_TEST_FINGERPRINT_SIZE
+                     );
+  NewFingerprint = (NewFingerprint >> 8) ^ CalculateCrc32 (
+                                             Test->Description,
+                                             (AsciiStrLen (Test->Description) *
+                                              sizeof (CHAR8))
+                                             );
+  NewFingerprint = (NewFingerprint >> 8) ^ CalculateCrc32 (
+                                             Test->Name,
+                                             (AsciiStrLen (Test->Name) *
+                                              sizeof (CHAR8))
+                                             );
 
   CopyMem (Fingerprint, &NewFingerprint, UNIT_TEST_FINGERPRINT_SIZE);
   return;
@@ -127,7 +160,8 @@ CompareFingerprints (
   IN UINT8  *FingerprintB
   )
 {
-  return (CompareMem (FingerprintA, FingerprintB, UNIT_TEST_FINGERPRINT_SIZE) == 0);
+  return (CompareMem (FingerprintA, FingerprintB, UNIT_TEST_FINGERPRINT_SIZE) ==
+          0);
 }
 
 /**
@@ -267,12 +301,19 @@ InitUnitTestFramework (
   // If there is a persisted context, load it now.
   //
   if (DoesCacheExist (NewFrameworkHandle)) {
-    Status = LoadUnitTestCache (NewFrameworkHandle, (UNIT_TEST_SAVE_HEADER **)(&NewFramework->SavedState));
+    Status = LoadUnitTestCache (
+               NewFrameworkHandle,
+               (UNIT_TEST_SAVE_HEADER **)(&NewFramework->SavedState)
+               );
     if (EFI_ERROR (Status)) {
       //
       // Don't actually report it as an error, but emit a warning.
       //
-      DEBUG ((DEBUG_ERROR, "%a - Cache was detected, but failed to load.\n", __FUNCTION__));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a - Cache was detected, but failed to load.\n",
+        __FUNCTION__
+        ));
       Status = EFI_SUCCESS;
     }
   }
@@ -340,7 +381,9 @@ CreateUnitTestSuite (
   //
   // First, let's check to make sure that our parameters look good.
   //
-  if ((SuiteHandle == NULL) || (Framework == NULL) || (Title == NULL) || (Name == NULL)) {
+  if ((SuiteHandle == NULL) || (Framework == NULL) || (Title == NULL) ||
+      (Name == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -376,7 +419,11 @@ CreateUnitTestSuite (
   //
   // Create the suite fingerprint.
   //
-  SetSuiteFingerprint (&NewSuiteEntry->UTS.Fingerprint[0], Framework, &NewSuiteEntry->UTS);
+  SetSuiteFingerprint (
+    &NewSuiteEntry->UTS.Fingerprint[0],
+    Framework,
+    &NewSuiteEntry->UTS
+    );
 
 Exit:
   //
@@ -442,7 +489,9 @@ AddTestCase (
   //
   // First, let's check to make sure that our parameters look good.
   //
-  if ((Suite == NULL) || (Description == NULL) || (Name == NULL) || (Function == NULL)) {
+  if ((Suite == NULL) || (Description == NULL) || (Name == NULL) || (Function ==
+                                                                     NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -481,7 +530,11 @@ AddTestCase (
   //
   // Create the test fingerprint.
   //
-  SetTestFingerprint (&NewTestEntry->UT.Fingerprint[0], Suite, &NewTestEntry->UT);
+  SetTestFingerprint (
+    &NewTestEntry->UT.Fingerprint[0],
+    Suite,
+    &NewTestEntry->UT
+    );
 
   // TODO: Make sure that duplicate fingerprints cannot be created.
 
@@ -541,7 +594,11 @@ UpdateTestFromSave (
   FloatingPointer = (UINT8 *)SavedState + sizeof (*SavedState);
   for (Index = 0; Index < SavedState->TestCount; Index++) {
     CurrentTest = (UNIT_TEST_SAVE_TEST *)FloatingPointer;
-    if (CompareFingerprints (&Test->Fingerprint[0], &CurrentTest->Fingerprint[0])) {
+    if (CompareFingerprints (
+          &Test->Fingerprint[0],
+          &CurrentTest->Fingerprint[0]
+          ))
+    {
       MatchingTest = CurrentTest;
       //
       // If there's a saved context, it's important that we iterate through the entire list.
@@ -583,7 +640,12 @@ UpdateTestFromSave (
     //                 fast and loose with data buffers.
     //
     if (MatchingTest->Size > sizeof (UNIT_TEST_SAVE_TEST)) {
-      UnitTestLogInit (Test, (UINT8 *)MatchingTest->Log, MatchingTest->Size - sizeof (UNIT_TEST_SAVE_TEST));
+      UnitTestLogInit (
+        Test,
+        (UINT8 *)MatchingTest->Log,
+        MatchingTest->Size -
+        sizeof (UNIT_TEST_SAVE_TEST)
+        );
     }
   }
 
@@ -597,7 +659,10 @@ UpdateTestFromSave (
     //
     SavedContext = (UNIT_TEST_SAVE_CONTEXT *)FloatingPointer;
     if (((SavedContext->Size - sizeof (UNIT_TEST_SAVE_CONTEXT)) > 0) &&
-        CompareFingerprints (&Test->Fingerprint[0], &SavedContext->Fingerprint[0]))
+        CompareFingerprints (
+          &Test->Fingerprint[0],
+          &SavedContext->Fingerprint[0]
+          ))
     {
       //
       // Override the test context with the saved context.
@@ -656,12 +721,16 @@ SerializeState (
   // Iterate all suites.
   //
   SuiteListHead = &Framework->TestSuiteList;
-  for (Suite = GetFirstNode (SuiteListHead); Suite != SuiteListHead; Suite = GetNextNode (SuiteListHead, Suite)) {
+  for (Suite = GetFirstNode (SuiteListHead); Suite != SuiteListHead; Suite =
+         GetNextNode (SuiteListHead, Suite))
+  {
     //
     // Iterate all tests within the suite.
     //
     TestListHead = &((UNIT_TEST_SUITE_LIST_ENTRY *)Suite)->UTS.TestCaseList;
-    for (Test = GetFirstNode (TestListHead); Test != TestListHead; Test = GetNextNode (TestListHead, Test)) {
+    for (Test = GetFirstNode (TestListHead); Test != TestListHead; Test =
+           GetNextNode (TestListHead, Test))
+    {
       UnitTest = &((UNIT_TEST_LIST_ENTRY *)Test)->UT;
       //
       // Account for the size of a test structure.
@@ -713,7 +782,11 @@ SerializeState (
   //
   Header->Version       = UNIT_TEST_PERSISTENCE_LIB_VERSION;
   Header->SaveStateSize = TotalSize;
-  CopyMem (&Header->Fingerprint[0], &Framework->Fingerprint[0], UNIT_TEST_FINGERPRINT_SIZE);
+  CopyMem (
+    &Header->Fingerprint[0],
+    &Framework->Fingerprint[0],
+    UNIT_TEST_FINGERPRINT_SIZE
+    );
   CopyMem (&Header->StartTime, &Framework->StartTime, sizeof (EFI_TIME));
   Header->TestCount       = TestCount;
   Header->HasSavedContext = FALSE;
@@ -727,26 +800,39 @@ SerializeState (
   // Iterate all suites.
   //
   SuiteListHead = &Framework->TestSuiteList;
-  for (Suite = GetFirstNode (SuiteListHead); Suite != SuiteListHead; Suite = GetNextNode (SuiteListHead, Suite)) {
+  for (Suite = GetFirstNode (SuiteListHead); Suite != SuiteListHead; Suite =
+         GetNextNode (SuiteListHead, Suite))
+  {
     //
     // Iterate all tests within the suite.
     //
     TestListHead = &((UNIT_TEST_SUITE_LIST_ENTRY *)Suite)->UTS.TestCaseList;
-    for (Test = GetFirstNode (TestListHead); Test != TestListHead; Test = GetNextNode (TestListHead, Test)) {
+    for (Test = GetFirstNode (TestListHead); Test != TestListHead; Test =
+           GetNextNode (TestListHead, Test))
+    {
       TestSaveData = (UNIT_TEST_SAVE_TEST *)FloatingPointer;
       UnitTest     = &((UNIT_TEST_LIST_ENTRY *)Test)->UT;
 
       //
       // Save the fingerprint.
       //
-      CopyMem (&TestSaveData->Fingerprint[0], &UnitTest->Fingerprint[0], UNIT_TEST_FINGERPRINT_SIZE);
+      CopyMem (
+        &TestSaveData->Fingerprint[0],
+        &UnitTest->Fingerprint[0],
+        UNIT_TEST_FINGERPRINT_SIZE
+        );
 
       //
       // Save the result.
       //
       TestSaveData->Result      = UnitTest->Result;
       TestSaveData->FailureType = UnitTest->FailureType;
-      AsciiStrnCpyS (&TestSaveData->FailureMessage[0], UNIT_TEST_TESTFAILUREMSG_LENGTH, &UnitTest->FailureMessage[0], UNIT_TEST_TESTFAILUREMSG_LENGTH);
+      AsciiStrnCpyS (
+        &TestSaveData->FailureMessage[0],
+        UNIT_TEST_TESTFAILUREMSG_LENGTH,
+        &UnitTest->FailureMessage[0],
+        UNIT_TEST_TESTFAILUREMSG_LENGTH
+        );
 
       //
       // If there is a log, save the log.
@@ -774,9 +860,18 @@ SerializeState (
   //
   if ((ContextToSave != NULL) && (Framework->CurrentTest != NULL)) {
     TestSaveContext       = (UNIT_TEST_SAVE_CONTEXT *)FloatingPointer;
-    TestSaveContext->Size = (UINT32)ContextToSaveSize + sizeof (UNIT_TEST_SAVE_CONTEXT);
-    CopyMem (&TestSaveContext->Fingerprint[0], &Framework->CurrentTest->Fingerprint[0], UNIT_TEST_FINGERPRINT_SIZE);
-    CopyMem (((UINT8 *)TestSaveContext + sizeof (UNIT_TEST_SAVE_CONTEXT)), ContextToSave, ContextToSaveSize);
+    TestSaveContext->Size = (UINT32)ContextToSaveSize +
+                            sizeof (UNIT_TEST_SAVE_CONTEXT);
+    CopyMem (
+      &TestSaveContext->Fingerprint[0],
+      &Framework->CurrentTest->Fingerprint[0],
+      UNIT_TEST_FINGERPRINT_SIZE
+      );
+    CopyMem (
+      ((UINT8 *)TestSaveContext + sizeof (UNIT_TEST_SAVE_CONTEXT)),
+      ContextToSave,
+      ContextToSaveSize
+      );
     Header->HasSavedContext = TRUE;
   }
 
@@ -854,7 +949,12 @@ SaveFrameworkState (
   //
   Status = SaveUnitTestCache (FrameworkHandle, Header);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - Could not save state! %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Could not save state! %r\n",
+      __FUNCTION__,
+      Status
+      ));
     Status = EFI_DEVICE_ERROR;
   }
 

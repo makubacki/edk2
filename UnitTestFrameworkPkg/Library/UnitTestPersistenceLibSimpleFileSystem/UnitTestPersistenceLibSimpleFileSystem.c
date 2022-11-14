@@ -59,7 +59,12 @@ GetCacheFileDevicePath (
                   (VOID **)&LoadedImage
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "%a - Failed to locate DevicePath for loaded image. %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_WARN,
+      "%a - Failed to locate DevicePath for loaded image. %r\n",
+      __FUNCTION__,
+      Status
+      ));
     return NULL;
   }
 
@@ -83,13 +88,21 @@ GetCacheFileDevicePath (
   // PathCleanUpDirectories (FileNameCopy);
   //     if (PathRemoveLastItem (FileNameCopy)) {
   //
-  AppPath              = ConvertDevicePathToText (LoadedImage->FilePath, TRUE, TRUE); // NOTE: This must be freed.
+  AppPath = ConvertDevicePathToText (
+              LoadedImage->FilePath,
+              TRUE,
+              TRUE
+              );                                                                      // NOTE: This must be freed.
   DirectorySlashOffset = StrLen (AppPath);
   //
   // Make sure we didn't get any weird data.
   //
   if (DirectorySlashOffset == 0) {
-    DEBUG ((DEBUG_ERROR, "%a - Weird 0-length string when processing app path.\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Weird 0-length string when processing app path.\n",
+      __FUNCTION__
+      ));
     goto Exit;
   }
 
@@ -110,7 +123,11 @@ GetCacheFileDevicePath (
   // Let's check and make sure that's right.
   //
   if (AppPath[DirectorySlashOffset] != L'\\') {
-    DEBUG ((DEBUG_ERROR, "%a - Could not find a single directory separator in app path.\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Could not find a single directory separator in app path.\n",
+      __FUNCTION__
+      ));
     goto Exit;
   }
 
@@ -121,7 +138,10 @@ GetCacheFileDevicePath (
   CacheFilePathLength += StrLen (TestName);
   CacheFilePathLength += StrLen (CACHE_FILE_SUFFIX);
   CacheFilePathLength += 1;   // Don't forget the NULL terminator.
-  CacheFilePath        = AllocateZeroPool (CacheFilePathLength * sizeof (CHAR16));
+  CacheFilePath        = AllocateZeroPool (
+                           CacheFilePathLength *
+                           sizeof (CHAR16)
+                           );
   if (!CacheFilePath) {
     goto Exit;
   }
@@ -129,14 +149,23 @@ GetCacheFileDevicePath (
   //
   // Let's produce our final path string, shall we?
   //
-  StrnCpyS (CacheFilePath, CacheFilePathLength, AppPath, DirectorySlashOffset + 1);  // Copy the path for the parent directory.
+  StrnCpyS (
+    CacheFilePath,
+    CacheFilePathLength,
+    AppPath,
+    DirectorySlashOffset +
+    1
+    );                                                                               // Copy the path for the parent directory.
   StrCatS (CacheFilePath, CacheFilePathLength, TestName);                            // Copy the base name for the test cache.
   StrCatS (CacheFilePath, CacheFilePathLength, CACHE_FILE_SUFFIX);                   // Copy the file suffix.
 
   //
   // Finally, try to create the device path for the thing thing.
   //
-  CacheFileDevicePath = FileDevicePath (LoadedImage->DeviceHandle, CacheFilePath);
+  CacheFileDevicePath = FileDevicePath (
+                          LoadedImage->DeviceHandle,
+                          CacheFilePath
+                          );
 
 Exit:
   //
@@ -200,7 +229,14 @@ DoesCacheExist (
     FreePool (FileDevicePath);
   }
 
-  DEBUG ((DEBUG_VERBOSE, "%a - Returning %d\n", __FUNCTION__, !EFI_ERROR (Status)));
+  DEBUG ((
+    DEBUG_VERBOSE,
+    "%a - Returning %d\n",
+    __FUNCTION__,
+    !EFI_ERROR (
+       Status
+       )
+    ));
 
   return (!EFI_ERROR (Status));
 }
@@ -259,7 +295,12 @@ SaveUnitTestCache (
     //
     Status = ShellDeleteFile (&FileHandle);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a failed to delete file %r\n", __FUNCTION__, Status));
+      DEBUG ((
+        DEBUG_ERROR,
+        "%a failed to delete file %r\n",
+        __FUNCTION__,
+        Status
+        ));
     }
   }
 
@@ -273,7 +314,12 @@ SaveUnitTestCache (
              0
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - Opening file for writing failed! %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Opening file for writing failed! %r\n",
+      __FUNCTION__,
+      Status
+      ));
     goto Exit;
   }
 
@@ -281,7 +327,12 @@ SaveUnitTestCache (
   // Write the data to the file.
   //
   WriteCount = SaveData->SaveStateSize;
-  DEBUG ((DEBUG_INFO, "%a - Writing %d bytes to file...\n", __FUNCTION__, WriteCount));
+  DEBUG ((
+    DEBUG_INFO,
+    "%a - Writing %d bytes to file...\n",
+    __FUNCTION__,
+    WriteCount
+    ));
   Status = ShellWriteFile (
              FileHandle,
              &WriteCount,
@@ -289,7 +340,12 @@ SaveUnitTestCache (
              );
 
   if (EFI_ERROR (Status) || (WriteCount != SaveData->SaveStateSize)) {
-    DEBUG ((DEBUG_ERROR, "%a - Writing to file failed! %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Writing to file failed! %r\n",
+      __FUNCTION__,
+      Status
+      ));
   } else {
     DEBUG ((DEBUG_INFO, "%a - SUCCESS!\n", __FUNCTION__));
   }
@@ -362,7 +418,12 @@ LoadUnitTestCache (
              0
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - Opening file for writing failed! %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Opening file for writing failed! %r\n",
+      __FUNCTION__,
+      Status
+      ));
     goto Exit;
   } else {
     IsFileOpened = TRUE;
@@ -373,7 +434,12 @@ LoadUnitTestCache (
   //
   Status = ShellGetFileSize (FileHandle, &LargeFileSize);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - Failed to determine file size! %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Failed to determine file size! %r\n",
+      __FUNCTION__,
+      Status
+      ));
     goto Exit;
   }
 
@@ -383,7 +449,12 @@ LoadUnitTestCache (
   FileSize = (UINTN)LargeFileSize;    // You know what... if it's too large, this lib don't care.
   Buffer   = AllocatePool (FileSize);
   if (Buffer == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a - Failed to allocate a pool to hold the file contents! %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Failed to allocate a pool to hold the file contents! %r\n",
+      __FUNCTION__,
+      Status
+      ));
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;
   }
@@ -393,7 +464,12 @@ LoadUnitTestCache (
   //
   Status = ShellReadFile (FileHandle, &FileSize, Buffer);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a - Failed to read the file contents! %r\n", __FUNCTION__, Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Failed to read the file contents! %r\n",
+      __FUNCTION__,
+      Status
+      ));
   }
 
 Exit:

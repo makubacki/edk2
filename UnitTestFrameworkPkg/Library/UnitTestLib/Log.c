@@ -24,10 +24,10 @@ struct _UNIT_TEST_LOG_PREFIX_STRING {
 };
 
 struct _UNIT_TEST_LOG_PREFIX_STRING  mLogPrefixStrings[] = {
-  { UNIT_TEST_LOG_LEVEL_ERROR,   "[ERROR]       " },
-  { UNIT_TEST_LOG_LEVEL_WARN,    "[WARNING]     " },
-  { UNIT_TEST_LOG_LEVEL_INFO,    "[INFO]        " },
-  { UNIT_TEST_LOG_LEVEL_VERBOSE, "[VERBOSE]     " }
+  { UNIT_TEST_LOG_LEVEL_ERROR,   "[ERROR]       "       },
+  { UNIT_TEST_LOG_LEVEL_WARN,    "[WARNING]     "       },
+  { UNIT_TEST_LOG_LEVEL_INFO,    "[INFO]        "       },
+  { UNIT_TEST_LOG_LEVEL_VERBOSE, "[VERBOSE]     "       }
 };
 
 //
@@ -88,7 +88,11 @@ AddStringToUnitTestLog (
              UNIT_TEST_MAX_SINGLE_LOG_STRING_LENGTH
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to add unit test log string.  Status = %r\n", Status));
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed to add unit test log string.  Status = %r\n",
+      Status
+      ));
     return Status;
   }
 
@@ -118,7 +122,11 @@ UnitTestLogInit (
   // Make sure that you're cooking with gas.
   //
   if (Test == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a called with invalid Test parameter\n", __FUNCTION__));
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a called with invalid Test parameter\n",
+      __FUNCTION__
+      ));
     return;
   }
 
@@ -137,7 +145,9 @@ UnitTestLogInit (
     return;
   }
 
-  if ((Buffer != NULL) && (BufferSize > 0) && (BufferSize <= UNIT_TEST_MAX_LOG_BUFFER)) {
+  if ((Buffer != NULL) && (BufferSize > 0) && (BufferSize <=
+                                               UNIT_TEST_MAX_LOG_BUFFER))
+  {
     CopyMem (Test->Log, Buffer, BufferSize);
   }
 }
@@ -160,10 +170,12 @@ UnitTestLog (
   )
 {
   UNIT_TEST_FRAMEWORK_HANDLE  FrameworkHandle;
-  CHAR8                       NewFormatString[UNIT_TEST_MAX_SINGLE_LOG_STRING_LENGTH];
-  CHAR8                       LogString[UNIT_TEST_MAX_SINGLE_LOG_STRING_LENGTH];
-  CONST CHAR8                 *LogTypePrefix;
-  VA_LIST                     Marker;
+  CHAR8                       NewFormatString[
+                                              UNIT_TEST_MAX_SINGLE_LOG_STRING_LENGTH
+  ];
+  CHAR8        LogString[UNIT_TEST_MAX_SINGLE_LOG_STRING_LENGTH];
+  CONST CHAR8  *LogTypePrefix;
+  VA_LIST      Marker;
 
   FrameworkHandle = GetActiveFrameworkHandle ();
 
@@ -182,7 +194,13 @@ UnitTestLog (
   //
   LogTypePrefix = GetStringForStatusLogPrefix (ErrorLevel);
   if (LogTypePrefix != NULL) {
-    AsciiSPrint (NewFormatString, sizeof (NewFormatString), "%a%a", LogTypePrefix, Format);
+    AsciiSPrint (
+      NewFormatString,
+      sizeof (NewFormatString),
+      "%a%a",
+      LogTypePrefix,
+      Format
+      );
   } else {
     AsciiStrCpyS (NewFormatString, sizeof (NewFormatString), Format);
   }
@@ -197,5 +215,8 @@ UnitTestLog (
   //
   // Finally, add the string to the log.
   //
-  AddStringToUnitTestLog (((UNIT_TEST_FRAMEWORK *)FrameworkHandle)->CurrentTest, LogString);
+  AddStringToUnitTestLog (
+    ((UNIT_TEST_FRAMEWORK *)FrameworkHandle)->CurrentTest,
+    LogString
+    );
 }
