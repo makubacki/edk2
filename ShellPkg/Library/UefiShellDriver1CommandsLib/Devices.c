@@ -74,7 +74,13 @@ GetDeviceHandleInfo (
   HandleBuffer = NULL;
   Status       = EFI_SUCCESS;
 
-  gEfiShellProtocol->GetDeviceName (TheHandle, EFI_DEVICE_NAME_USE_COMPONENT_NAME|EFI_DEVICE_NAME_USE_DEVICE_PATH, (CHAR8 *)Language, Name);
+  gEfiShellProtocol->GetDeviceName (
+                       TheHandle,
+                       EFI_DEVICE_NAME_USE_COMPONENT_NAME|
+                       EFI_DEVICE_NAME_USE_DEVICE_PATH,
+                       (CHAR8 *)Language,
+                       Name
+                       );
 
   Status = ParseHandleDatabaseForChildControllers (TheHandle, Children, NULL);
   //  if (!EFI_ERROR(Status)) {
@@ -90,18 +96,52 @@ GetDeviceHandleInfo (
   }
 
   //  }
-  Status = PARSE_HANDLE_DATABASE_UEFI_DRIVERS (TheHandle, Devices, &HandleBuffer);
+  Status = PARSE_HANDLE_DATABASE_UEFI_DRIVERS (
+             TheHandle,
+             Devices,
+             &HandleBuffer
+             );
   if (!EFI_ERROR (Status) && (Devices != NULL) && (HandleBuffer != NULL)) {
     for (Count = 0; Count < *Devices; Count++) {
-      if (!EFI_ERROR (gBS->OpenProtocol (HandleBuffer[Count], &gEfiDriverConfigurationProtocolGuid, NULL, NULL, gImageHandle, EFI_OPEN_PROTOCOL_TEST_PROTOCOL))) {
+      if (!EFI_ERROR (
+             gBS->OpenProtocol (
+                    HandleBuffer[Count],
+                    &gEfiDriverConfigurationProtocolGuid,
+                    NULL,
+                    NULL,
+                    gImageHandle,
+                    EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                    )
+             ))
+      {
         *Cfg = TRUE;
       }
 
-      if (!EFI_ERROR (gBS->OpenProtocol (HandleBuffer[Count], &gEfiDriverDiagnosticsProtocolGuid, NULL, NULL, gImageHandle, EFI_OPEN_PROTOCOL_TEST_PROTOCOL))) {
+      if (!EFI_ERROR (
+             gBS->OpenProtocol (
+                    HandleBuffer[Count],
+                    &gEfiDriverDiagnosticsProtocolGuid,
+                    NULL,
+                    NULL,
+                    gImageHandle,
+                    EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                    )
+             ))
+      {
         *Diag = TRUE;
       }
 
-      if (!EFI_ERROR (gBS->OpenProtocol (HandleBuffer[Count], &gEfiDriverDiagnostics2ProtocolGuid, NULL, NULL, gImageHandle, EFI_OPEN_PROTOCOL_TEST_PROTOCOL))) {
+      if (!EFI_ERROR (
+             gBS->OpenProtocol (
+                    HandleBuffer[Count],
+                    &gEfiDriverDiagnostics2ProtocolGuid,
+                    NULL,
+                    NULL,
+                    gImageHandle,
+                    EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                    )
+             ))
+      {
         *Diag = TRUE;
       }
     }
@@ -113,9 +153,9 @@ GetDeviceHandleInfo (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-sfo", TypeFlag  },
-  { L"-l",   TypeValue },
-  { NULL,    TypeMax   }
+  { L"-sfo", TypeFlag        },
+  { L"-l",   TypeValue       },
+  { NULL,    TypeMax         }
 };
 
 /**
@@ -167,7 +207,15 @@ ShellCommandRunDevices (
   Status = ShellCommandLineParse (ParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellDriver1HiiHandle, L"devices", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellDriver1HiiHandle,
+        L"devices",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -181,7 +229,14 @@ ShellCommandRunDevices (
       //
       // error for too many parameters
       //
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellDriver1HiiHandle, L"devices");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellDriver1HiiHandle,
+        L"devices"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       //
@@ -197,7 +252,15 @@ ShellCommandRunDevices (
         //        AsciiSPrint(Language, 10, "en-us");
       } else {
         ASSERT (Language == NULL);
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_NO_VALUE), gShellDriver1HiiHandle, L"devices", L"-l");
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_GEN_NO_VALUE),
+          gShellDriver1HiiHandle,
+          L"devices",
+          L"-l"
+          );
         ShellCommandLineFreeVarList (Package);
         return (SHELL_INVALID_PARAMETER);
       }
@@ -207,10 +270,25 @@ ShellCommandRunDevices (
 
       //
       if (ShellCommandLineGetFlag (Package, L"-sfo")) {
-        ShellPrintHiiEx (-1, -1, Language, STRING_TOKEN (STR_GEN_SFO_HEADER), gShellDriver1HiiHandle, L"devices");
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          Language,
+          STRING_TOKEN (STR_GEN_SFO_HEADER),
+          gShellDriver1HiiHandle,
+          L"devices"
+          );
         SfoFlag = TRUE;
       } else {
-        ShellPrintHiiEx (-1, -1, Language, STRING_TOKEN (STR_DEVICES_HEADER_LINES), gShellDriver1HiiHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          Language,
+          STRING_TOKEN (
+            STR_DEVICES_HEADER_LINES
+            ),
+          gShellDriver1HiiHandle
+          );
       }
 
       //
@@ -227,13 +305,27 @@ ShellCommandRunDevices (
         // get all the info on each handle
         //
         Name   = NULL;
-        Status = GetDeviceHandleInfo (*HandleListWalker, &Type, &Cfg, &Diag, &Parents, &Devices, &Children, &Name, Language);
-        if ((Name != NULL) && ((Parents != 0) || (Devices != 0) || (Children != 0))) {
+        Status = GetDeviceHandleInfo (
+                   *HandleListWalker,
+                   &Type,
+                   &Cfg,
+                   &Diag,
+                   &Parents,
+                   &Devices,
+                   &Children,
+                   &Name,
+                   Language
+                   );
+        if ((Name != NULL) && ((Parents != 0) || (Devices != 0) || (Children !=
+                                                                    0)))
+        {
           ShellPrintHiiEx (
             -1,
             -1,
             Language,
-            SfoFlag ? STRING_TOKEN (STR_DEVICES_ITEM_LINE_SFO) : STRING_TOKEN (STR_DEVICES_ITEM_LINE),
+            SfoFlag ? STRING_TOKEN (STR_DEVICES_ITEM_LINE_SFO) : STRING_TOKEN (
+                                                                   STR_DEVICES_ITEM_LINE
+                                                                   ),
             gShellDriver1HiiHandle,
             ConvertHandleToHandleIndex (*HandleListWalker),
             Type,

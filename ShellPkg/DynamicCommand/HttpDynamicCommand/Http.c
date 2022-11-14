@@ -150,13 +150,13 @@ STATIC CONST CHAR16  *ErrStatusDesc[] =
 };
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-i", TypeValue },
-  { L"-k", TypeFlag  },
-  { L"-l", TypeValue },
-  { L"-m", TypeFlag  },
-  { L"-s", TypeValue },
-  { L"-t", TypeValue },
-  { NULL,  TypeMax   }
+  { L"-i", TypeValue  },
+  { L"-k", TypeFlag   },
+  { L"-l", TypeValue  },
+  { L"-m", TypeFlag   },
+  { L"-s", TypeValue  },
+  { L"-t", TypeValue  },
+  { NULL,  TypeMax    }
 };
 
 //
@@ -1154,7 +1154,10 @@ SendRequest (
   Context->RequestToken.Status  = EFI_SUCCESS;
   Context->RequestToken.Message = &RequestMessage;
   gRequestCallbackComplete      = FALSE;
-  Status                        = Context->Http->Request (Context->Http, &Context->RequestToken);
+  Status                        = Context->Http->Request (
+                                                   Context->Http,
+                                                   &Context->RequestToken
+                                                   );
   if (EFI_ERROR (Status)) {
     goto Error;
   }

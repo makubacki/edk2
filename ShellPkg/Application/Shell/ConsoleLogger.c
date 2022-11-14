@@ -37,7 +37,8 @@ ConsoleLoggerInstall (
     return (EFI_OUT_OF_RESOURCES);
   }
 
-  (*ConsoleInfo)->Signature                   = CONSOLE_LOGGER_PRIVATE_DATA_SIGNATURE;
+  (*ConsoleInfo)->Signature =
+    CONSOLE_LOGGER_PRIVATE_DATA_SIGNATURE;
   (*ConsoleInfo)->OldConOut                   = gST->ConOut;
   (*ConsoleInfo)->OldConHandle                = gST->ConsoleOutHandle;
   (*ConsoleInfo)->Buffer                      = NULL;
@@ -74,7 +75,12 @@ ConsoleLoggerInstall (
     return (Status);
   }
 
-  Status = gBS->InstallProtocolInterface (&gImageHandle, &gEfiSimpleTextOutProtocolGuid, EFI_NATIVE_INTERFACE, (VOID *)&((*ConsoleInfo)->OurConOut));
+  Status = gBS->InstallProtocolInterface (
+                  &gImageHandle,
+                  &gEfiSimpleTextOutProtocolGuid,
+                  EFI_NATIVE_INTERFACE,
+                  (VOID *)&((*ConsoleInfo)->OurConOut)
+                  );
   if (EFI_ERROR (Status)) {
     SHELL_FREE_NON_NULL ((*ConsoleInfo)->Buffer);
     SHELL_FREE_NON_NULL ((*ConsoleInfo)->Attributes);
@@ -148,7 +154,11 @@ ConsoleLoggerUninstall (
          &gST->Hdr.CRC32
          );
 
-  return (gBS->UninstallProtocolInterface (gImageHandle, &gEfiSimpleTextOutProtocolGuid, (VOID *)&ConsoleInfo->OurConOut));
+  return (gBS->UninstallProtocolInterface (
+                 gImageHandle,
+                 &gEfiSimpleTextOutProtocolGuid,
+                 (VOID *)&ConsoleInfo->OurConOut
+                 ));
 }
 
 /**
@@ -193,7 +203,9 @@ ConsoleLoggerDisplayHistory (
   // Do the math for direction
   //
   if (Forward) {
-    if ((ConsoleInfo->OriginalStartRow - ConsoleInfo->CurrentStartRow) < RowChange) {
+    if ((ConsoleInfo->OriginalStartRow - ConsoleInfo->CurrentStartRow) <
+        RowChange)
+    {
       RowChange = ConsoleInfo->OriginalStartRow - ConsoleInfo->CurrentStartRow;
     }
   } else {
@@ -294,8 +306,10 @@ UpdateDisplayFromHistory (
   ConsoleInfo->OldConOut->EnableCursor (ConsoleInfo->OldConOut, FALSE);
   ConsoleInfo->OldConOut->SetCursorPosition (ConsoleInfo->OldConOut, 0, 0);
 
-  Screen     = &ConsoleInfo->Buffer[(ConsoleInfo->ColsPerScreen + 2) * ConsoleInfo->CurrentStartRow];
-  Attributes = &ConsoleInfo->Attributes[ConsoleInfo->ColsPerScreen * ConsoleInfo->CurrentStartRow];
+  Screen     = &ConsoleInfo->Buffer[(ConsoleInfo->ColsPerScreen + 2) *
+                                    ConsoleInfo->CurrentStartRow];
+  Attributes = &ConsoleInfo->Attributes[ConsoleInfo->ColsPerScreen *
+                                        ConsoleInfo->CurrentStartRow];
   for ( CurrentRow = 0
         ; CurrentRow < ConsoleInfo->RowsPerScreen
         ; CurrentRow++,
@@ -307,7 +321,8 @@ UpdateDisplayFromHistory (
     // dont use the last char - prevents screen scroll
     //
     if (CurrentRow == (ConsoleInfo->RowsPerScreen-1)) {
-      TempCharHolder                         = Screen[ConsoleInfo->ColsPerScreen - 1];
+      TempCharHolder =
+        Screen[ConsoleInfo->ColsPerScreen - 1];
       Screen[ConsoleInfo->ColsPerScreen - 1] = CHAR_NULL;
     }
 
@@ -344,9 +359,19 @@ UpdateDisplayFromHistory (
         // Now write out as much as had the same Attributes
         //
 
-        ConsoleInfo->OldConOut->SetAttribute (ConsoleInfo->OldConOut, CurrentAttrib);
-        ConsoleInfo->OldConOut->SetCursorPosition (ConsoleInfo->OldConOut, CurrentColumn, CurrentRow);
-        Status = ConsoleInfo->OldConOut->OutputString (ConsoleInfo->OldConOut, StringSegment);
+        ConsoleInfo->OldConOut->SetAttribute (
+                                  ConsoleInfo->OldConOut,
+                                  CurrentAttrib
+                                  );
+        ConsoleInfo->OldConOut->SetCursorPosition (
+                                  ConsoleInfo->OldConOut,
+                                  CurrentColumn,
+                                  CurrentRow
+                                  );
+        Status = ConsoleInfo->OldConOut->OutputString (
+                                           ConsoleInfo->OldConOut,
+                                           StringSegment
+                                           );
 
         if (EFI_ERROR (Status)) {
           ASSERT (FALSE);
@@ -387,7 +412,8 @@ UpdateDisplayFromHistory (
     ConsoleInfo->OldConOut->SetCursorPosition (
                               ConsoleInfo->OldConOut,
                               ConsoleInfo->HistoryMode.CursorColumn,
-                              ConsoleInfo->HistoryMode.CursorRow - ConsoleInfo->OriginalStartRow
+                              ConsoleInfo->HistoryMode.CursorRow -
+                              ConsoleInfo->OriginalStartRow
                               );
 
     Status = ConsoleInfo->OldConOut->EnableCursor (
@@ -432,7 +458,10 @@ ConsoleLoggerReset (
   //
   // Forward the request to the original ConOut
   //
-  Status = ConsoleInfo->OldConOut->Reset (ConsoleInfo->OldConOut, ExtendedVerification);
+  Status = ConsoleInfo->OldConOut->Reset (
+                                     ConsoleInfo->OldConOut,
+                                     ExtendedVerification
+                                     );
 
   //
   // Check that the buffers are still correct for logging
@@ -482,17 +511,23 @@ AppendStringToHistory (
 
         break;
       case (CHAR_LINEFEED):
-        if (ConsoleInfo->HistoryMode.CursorRow >= (INT32)((ConsoleInfo->RowsPerScreen * ConsoleInfo->ScreenCount)-1)) {
+        if (ConsoleInfo->HistoryMode.CursorRow >=
+            (INT32)((ConsoleInfo->RowsPerScreen * ConsoleInfo->ScreenCount)-1))
+        {
           //
           // Should never be bigger
           //
-          ASSERT (ConsoleInfo->HistoryMode.CursorRow == (INT32)((ConsoleInfo->RowsPerScreen * ConsoleInfo->ScreenCount)-1));
+          ASSERT (
+            ConsoleInfo->HistoryMode.CursorRow ==
+            (INT32)((ConsoleInfo->RowsPerScreen * ConsoleInfo->ScreenCount)-1)
+            );
 
           //
           // scroll history attributes 'up' 1 row and set the last row to default attribute
           //
           CopySize = ConsoleInfo->ColsPerScreen
-                     * ((ConsoleInfo->RowsPerScreen * ConsoleInfo->ScreenCount) - 1)
+                     * ((ConsoleInfo->RowsPerScreen *
+                         ConsoleInfo->ScreenCount) - 1)
                      * sizeof (ConsoleInfo->Attributes[0]);
           ASSERT (CopySize < ConsoleInfo->AttribSize);
           CopyMem (
@@ -506,14 +541,18 @@ AppendStringToHistory (
                 ; Index++
                 )
           {
-            *(ConsoleInfo->Attributes + (CopySize/sizeof (ConsoleInfo->Attributes[0])) + Index) = ConsoleInfo->HistoryMode.Attribute;
+            *(ConsoleInfo->Attributes + (CopySize/
+                                         sizeof (ConsoleInfo->Attributes[0])) +
+              Index) =
+              ConsoleInfo->HistoryMode.Attribute;
           }
 
           //
           // scroll history buffer 'up' 1 row and set the last row to spaces (L' ')
           //
           CopySize = (ConsoleInfo->ColsPerScreen + 2)
-                     * ((ConsoleInfo->RowsPerScreen * ConsoleInfo->ScreenCount) - 1)
+                     * ((ConsoleInfo->RowsPerScreen *
+                         ConsoleInfo->ScreenCount) - 1)
                      * sizeof (ConsoleInfo->Buffer[0]);
           ASSERT (CopySize < ConsoleInfo->BufferSize);
           CopyMem (
@@ -525,7 +564,11 @@ AppendStringToHistory (
           //
           // Set that last row of chars to spaces
           //
-          SetMem16 (((UINT8 *)ConsoleInfo->Buffer)+CopySize, ConsoleInfo->ColsPerScreen*sizeof (CHAR16), L' ');
+          SetMem16 (
+            ((UINT8 *)ConsoleInfo->Buffer)+CopySize,
+            ConsoleInfo->ColsPerScreen*sizeof (CHAR16),
+            L' '
+            );
         } else {
           //
           // we are not on the last row
@@ -534,11 +577,18 @@ AppendStringToHistory (
           //
           // We should not be scrolling history
           //
-          ASSERT (ConsoleInfo->OriginalStartRow == ConsoleInfo->CurrentStartRow);
+          ASSERT (
+            ConsoleInfo->OriginalStartRow ==
+            ConsoleInfo->CurrentStartRow
+            );
           //
           // are we at the end of a row?
           //
-          if (ConsoleInfo->HistoryMode.CursorRow == (INT32)(ConsoleInfo->OriginalStartRow + ConsoleInfo->RowsPerScreen - 1)) {
+          if (ConsoleInfo->HistoryMode.CursorRow ==
+              (INT32)(ConsoleInfo->OriginalStartRow +
+                      ConsoleInfo->RowsPerScreen -
+                      1))
+          {
             ConsoleInfo->OriginalStartRow++;
             ConsoleInfo->CurrentStartRow++;
           }
@@ -558,10 +608,13 @@ AppendStringToHistory (
         // Acrtually print characters into the history buffer
         //
 
-        PrintIndex = ConsoleInfo->HistoryMode.CursorRow * ConsoleInfo->ColsPerScreen + ConsoleInfo->HistoryMode.CursorColumn;
+        PrintIndex = ConsoleInfo->HistoryMode.CursorRow *
+                     ConsoleInfo->ColsPerScreen +
+                     ConsoleInfo->HistoryMode.CursorColumn;
 
         for ( // no initializer needed
-              ; ConsoleInfo->HistoryMode.CursorColumn < (INT32)ConsoleInfo->ColsPerScreen
+              ; ConsoleInfo->HistoryMode.CursorColumn <
+              (INT32)ConsoleInfo->ColsPerScreen
               ; ConsoleInfo->HistoryMode.CursorColumn++,
               PrintIndex++,
               Walker++
@@ -581,16 +634,24 @@ AppendStringToHistory (
           // The buffer is 2*CursorRow more since it has that many \r\n characters at the end of each row.
           //
 
-          ASSERT (PrintIndex + ConsoleInfo->HistoryMode.CursorRow < ConsoleInfo->BufferSize);
-          ConsoleInfo->Buffer[PrintIndex + (2*ConsoleInfo->HistoryMode.CursorRow)] = *Walker;
+          ASSERT (
+            PrintIndex + ConsoleInfo->HistoryMode.CursorRow <
+            ConsoleInfo->BufferSize
+            );
+          ConsoleInfo->Buffer[PrintIndex + (2*
+                                            ConsoleInfo->HistoryMode.CursorRow)]
+            = *Walker;
           ASSERT (PrintIndex < ConsoleInfo->AttribSize);
-          ConsoleInfo->Attributes[PrintIndex] = ConsoleInfo->HistoryMode.Attribute;
+          ConsoleInfo->Attributes[PrintIndex] =
+            ConsoleInfo->HistoryMode.Attribute;
         } // for loop
 
         //
         // Add the carriage return and line feed at the end of the lines
         //
-        if (ConsoleInfo->HistoryMode.CursorColumn >= (INT32)ConsoleInfo->ColsPerScreen) {
+        if (ConsoleInfo->HistoryMode.CursorColumn >=
+            (INT32)ConsoleInfo->ColsPerScreen)
+        {
           AppendStringToHistory (L"\r\n", ConsoleInfo);
           Walker--;
         }
@@ -629,7 +690,10 @@ ConsoleLoggerOutputStringSplit (
   //
   // Forward the request to the original ConOut
   //
-  Status = ConsoleInfo->OldConOut->OutputString (ConsoleInfo->OldConOut, (CHAR16 *)String);
+  Status = ConsoleInfo->OldConOut->OutputString (
+                                     ConsoleInfo->OldConOut,
+                                     (CHAR16 *)String
+                                     );
 
   if (EFI_ERROR (Status)) {
     return (Status);
@@ -657,7 +721,12 @@ ConsoleLoggerDoPageBreak (
   Resp = NULL;
   ASSERT (ShellInfoObject.PageBreakEnabled);
   ShellInfoObject.PageBreakEnabled = FALSE;
-  Status                           = ShellPromptForResponseHii (ShellPromptResponseTypeQuitContinue, STRING_TOKEN (STR_SHELL_QUIT_CONT), ShellInfoObject.HiiHandle, (VOID **)&Resp);
+  Status                           = ShellPromptForResponseHii (
+                                       ShellPromptResponseTypeQuitContinue,
+                                       STRING_TOKEN (STR_SHELL_QUIT_CONT),
+                                       ShellInfoObject.HiiHandle,
+                                       (VOID **)&Resp
+                                       );
   ShellInfoObject.PageBreakEnabled = TRUE;
   ASSERT (Resp != NULL);
   if (Resp == NULL) {
@@ -782,7 +851,9 @@ ConsoleLoggerPrintWithPageBreak (
         //
         // check if that is the last column
         //
-        if ((INTN)ConsoleInfo->ColsPerScreen == ConsoleInfo->OurConOut.Mode->CursorColumn + 1) {
+        if ((INTN)ConsoleInfo->ColsPerScreen ==
+            ConsoleInfo->OurConOut.Mode->CursorColumn + 1)
+        {
           //
           // output a line similar to the linefeed character.
           //
@@ -822,7 +893,9 @@ ConsoleLoggerPrintWithPageBreak (
     //
     // check if that was the last printable row.  If yes handle PageBreak mode
     //
-    if ((ConsoleInfo->RowsPerScreen) -1 == ShellInfoObject.ConsoleInfo->RowCounter) {
+    if ((ConsoleInfo->RowsPerScreen) -1 ==
+        ShellInfoObject.ConsoleInfo->RowCounter)
+    {
       if (EFI_ERROR (ConsoleLoggerDoPageBreak ())) {
         //
         // We got an error which means 'break' and halt the printing
@@ -877,7 +950,11 @@ ConsoleLoggerOutputString (
 
   ASSERT (ShellInfoObject.ConsoleInfo == ConsoleInfo);
 
-  Status = gBS->HandleProtocol (gST->ConsoleInHandle, &gEfiSimpleTextInputExProtocolGuid, (VOID **)&TxtInEx);
+  Status = gBS->HandleProtocol (
+                  gST->ConsoleInHandle,
+                  &gEfiSimpleTextInputExProtocolGuid,
+                  (VOID **)&TxtInEx
+                  );
   if (!EFI_ERROR (Status)) {
     while (ShellInfoObject.HaltOutput) {
       ShellInfoObject.HaltOutput = FALSE;
@@ -891,9 +968,12 @@ ConsoleLoggerOutputString (
         break;
       }
 
-      if ((KeyData.Key.UnicodeChar == L's') && (KeyData.Key.ScanCode == SCAN_NULL) &&
-          ((KeyData.KeyState.KeyShiftState == (EFI_SHIFT_STATE_VALID | EFI_LEFT_CONTROL_PRESSED)) ||
-           (KeyData.KeyState.KeyShiftState == (EFI_SHIFT_STATE_VALID | EFI_RIGHT_CONTROL_PRESSED))
+      if ((KeyData.Key.UnicodeChar == L's') && (KeyData.Key.ScanCode ==
+                                                SCAN_NULL) &&
+          ((KeyData.KeyState.KeyShiftState == (EFI_SHIFT_STATE_VALID |
+                                               EFI_LEFT_CONTROL_PRESSED)) ||
+           (KeyData.KeyState.KeyShiftState == (EFI_SHIFT_STATE_VALID |
+                                               EFI_RIGHT_CONTROL_PRESSED))
           )
           )
       {
@@ -1053,7 +1133,10 @@ ConsoleLoggerSetAttribute (
   //
   // Forward the request to the original ConOut
   //
-  Status = ConsoleInfo->OldConOut->SetAttribute (ConsoleInfo->OldConOut, Attribute);
+  Status = ConsoleInfo->OldConOut->SetAttribute (
+                                     ConsoleInfo->OldConOut,
+                                     Attribute
+                                     );
 
   //
   // Record console output history
@@ -1104,8 +1187,10 @@ ConsoleLoggerClearScreen (
   // Record console output history
   //
   if (!EFI_ERROR (Status)) {
-    Screen     = &ConsoleInfo->Buffer[(ConsoleInfo->ColsPerScreen + 2) * ConsoleInfo->CurrentStartRow];
-    Attributes = &ConsoleInfo->Attributes[ConsoleInfo->ColsPerScreen * ConsoleInfo->CurrentStartRow];
+    Screen     = &ConsoleInfo->Buffer[(ConsoleInfo->ColsPerScreen + 2) *
+                                      ConsoleInfo->CurrentStartRow];
+    Attributes = &ConsoleInfo->Attributes[ConsoleInfo->ColsPerScreen *
+                                          ConsoleInfo->CurrentStartRow];
     for ( Row = ConsoleInfo->OriginalStartRow
           ; Row < (ConsoleInfo->RowsPerScreen * ConsoleInfo->ScreenCount)
           ; Row++
@@ -1178,7 +1263,8 @@ ConsoleLoggerSetCursorPosition (
   //
   if (!EFI_ERROR (Status)) {
     ConsoleInfo->HistoryMode.CursorColumn = (INT32)Column;
-    ConsoleInfo->HistoryMode.CursorRow    = (INT32)(ConsoleInfo->OriginalStartRow + Row);
+    ConsoleInfo->HistoryMode.CursorRow    =
+      (INT32)(ConsoleInfo->OriginalStartRow + Row);
   }
 
   return Status;
@@ -1212,7 +1298,10 @@ ConsoleLoggerEnableCursor (
   //
   // Forward the request to the original ConOut
   //
-  Status = ConsoleInfo->OldConOut->EnableCursor (ConsoleInfo->OldConOut, Visible);
+  Status = ConsoleInfo->OldConOut->EnableCursor (
+                                     ConsoleInfo->OldConOut,
+                                     Visible
+                                     );
 
   //
   // Record console output history
@@ -1251,13 +1340,24 @@ ConsoleLoggerResetBuffers (
     ConsoleInfo->AttribSize = 0;
   }
 
-  Status = gST->ConOut->QueryMode (gST->ConOut, gST->ConOut->Mode->Mode, &ConsoleInfo->ColsPerScreen, &ConsoleInfo->RowsPerScreen);
+  Status = gST->ConOut->QueryMode (
+                          gST->ConOut,
+                          gST->ConOut->Mode->Mode,
+                          &ConsoleInfo->ColsPerScreen,
+                          &ConsoleInfo->RowsPerScreen
+                          );
   if (EFI_ERROR (Status)) {
     return (Status);
   }
 
-  ConsoleInfo->BufferSize = (ConsoleInfo->ColsPerScreen + 2) * ConsoleInfo->RowsPerScreen * ConsoleInfo->ScreenCount * sizeof (ConsoleInfo->Buffer[0]);
-  ConsoleInfo->AttribSize = ConsoleInfo->ColsPerScreen * ConsoleInfo->RowsPerScreen * ConsoleInfo->ScreenCount * sizeof (ConsoleInfo->Attributes[0]);
+  ConsoleInfo->BufferSize = (ConsoleInfo->ColsPerScreen + 2) *
+                            ConsoleInfo->RowsPerScreen *
+                            ConsoleInfo->ScreenCount *
+                            sizeof (ConsoleInfo->Buffer[0]);
+  ConsoleInfo->AttribSize = ConsoleInfo->ColsPerScreen *
+                            ConsoleInfo->RowsPerScreen *
+                            ConsoleInfo->ScreenCount *
+                            sizeof (ConsoleInfo->Attributes[0]);
 
   ConsoleInfo->Buffer = (CHAR16 *)AllocateZeroPool (ConsoleInfo->BufferSize);
 
@@ -1272,7 +1372,11 @@ ConsoleLoggerResetBuffers (
     return (EFI_OUT_OF_RESOURCES);
   }
 
-  CopyMem (&ConsoleInfo->HistoryMode, ConsoleInfo->OldConOut->Mode, sizeof (EFI_SIMPLE_TEXT_OUTPUT_MODE));
+  CopyMem (
+    &ConsoleInfo->HistoryMode,
+    ConsoleInfo->OldConOut->Mode,
+    sizeof (EFI_SIMPLE_TEXT_OUTPUT_MODE)
+    );
 
   return (EFI_SUCCESS);
 }

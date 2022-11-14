@@ -10,9 +10,9 @@
 #include "UefiShellDriver1CommandsLib.h"
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-d", TypeFlag  },
-  { L"-l", TypeValue },
-  { NULL,  TypeMax   }
+  { L"-d", TypeFlag    },
+  { L"-l", TypeValue   },
+  { NULL,  TypeMax     }
 };
 
 /**
@@ -85,7 +85,10 @@ DoDevTreeForHandle (
     return SHELL_SUCCESS;
   }
 
-  FormatString = AllocateZeroPool (StrSize (HiiString) + (10)*sizeof (FormatString[0]));
+  FormatString = AllocateZeroPool (
+                   StrSize (HiiString) + (10)*
+                   sizeof (FormatString[0])
+                   );
   if (FormatString == NULL) {
     return SHELL_OUT_OF_RESOURCES;
   }
@@ -96,8 +99,23 @@ DoDevTreeForHandle (
   // handles the indenting.
   //
 
-  UnicodeSPrint (FormatString, StrSize (HiiString) + (10)*sizeof (FormatString[0]), L"%%%ds %s", IndentCharCount, HiiString);
-  gEfiShellProtocol->GetDeviceName ((EFI_HANDLE)TheHandle, !UseDevPaths ? EFI_DEVICE_NAME_USE_COMPONENT_NAME|EFI_DEVICE_NAME_USE_DEVICE_PATH : EFI_DEVICE_NAME_USE_DEVICE_PATH, (CHAR8 *)Lang, &Name);
+  UnicodeSPrint (
+    FormatString,
+    StrSize (HiiString) + (10)*
+    sizeof (FormatString[0]),
+    L"%%%ds %s",
+    IndentCharCount,
+    HiiString
+    );
+  gEfiShellProtocol->GetDeviceName (
+                       (EFI_HANDLE)TheHandle,
+                       !UseDevPaths ?
+                       EFI_DEVICE_NAME_USE_COMPONENT_NAME|
+                       EFI_DEVICE_NAME_USE_DEVICE_PATH :
+                       EFI_DEVICE_NAME_USE_DEVICE_PATH,
+                       (CHAR8 *)Lang,
+                       &Name
+                       );
   //
   // print out the information for ourselves
   //
@@ -118,9 +136,21 @@ DoDevTreeForHandle (
   //
   // recurse on each child handle with IndentCharCount + 2
   //
-  ParseHandleDatabaseForChildControllers (TheHandle, &ChildCount, &ChildHandleBuffer);
-  for (LoopVar = 0; LoopVar < ChildCount && ShellStatus == SHELL_SUCCESS; LoopVar++) {
-    ShellStatus = DoDevTreeForHandle (ChildHandleBuffer[LoopVar], Lang, UseDevPaths, IndentCharCount+2, HiiString);
+  ParseHandleDatabaseForChildControllers (
+    TheHandle,
+    &ChildCount,
+    &ChildHandleBuffer
+    );
+  for (LoopVar = 0; LoopVar < ChildCount && ShellStatus == SHELL_SUCCESS;
+       LoopVar++)
+  {
+    ShellStatus = DoDevTreeForHandle (
+                    ChildHandleBuffer[LoopVar],
+                    Lang,
+                    UseDevPaths,
+                    IndentCharCount+2,
+                    HiiString
+                    );
     if (ShellStatus == SHELL_ABORTED) {
       break;
     }
@@ -179,7 +209,15 @@ ShellCommandRunDevTree (
   Status = ShellCommandLineParse (ParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellDriver1HiiHandle, L"devtree", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellDriver1HiiHandle,
+        L"devtree",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -187,7 +225,14 @@ ShellCommandRunDevTree (
     }
   } else {
     if (ShellCommandLineGetCount (Package) > 2) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellDriver1HiiHandle, L"devtree");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellDriver1HiiHandle,
+        L"devtree"
+        );
       ShellCommandLineFreeVarList (Package);
       return (SHELL_INVALID_PARAMETER);
     }
@@ -202,7 +247,15 @@ ShellCommandRunDevTree (
       //      AsciiSPrint(Language, 10, "en-us");
     } else {
       ASSERT (Language == NULL);
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_NO_VALUE), gShellDriver1HiiHandle, L"devtree", L"-l");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_NO_VALUE),
+        gShellDriver1HiiHandle,
+        L"devtree",
+        L"-l"
+        );
       ShellCommandLineFreeVarList (Package);
       return (SHELL_INVALID_PARAMETER);
     }
@@ -210,7 +263,13 @@ ShellCommandRunDevTree (
     FlagD = ShellCommandLineGetFlag (Package, L"-d");
 
     Lang      = ShellCommandLineGetRawValue (Package, 1);
-    HiiString = HiiGetString (gShellDriver1HiiHandle, STRING_TOKEN (STR_DEV_TREE_OUTPUT), Language);
+    HiiString = HiiGetString (
+                  gShellDriver1HiiHandle,
+                  STRING_TOKEN (
+                    STR_DEV_TREE_OUTPUT
+                    ),
+                  Language
+                  );
 
     if (Lang == NULL) {
       for (LoopVar = 1; ; LoopVar++) {
@@ -251,15 +310,40 @@ ShellCommandRunDevTree (
         //
         // Start a devtree from TheHandle that has a device path and no parents
         //
-        ShellStatus = DoDevTreeForHandle (TheHandle, Language, FlagD, 0, HiiString);
+        ShellStatus = DoDevTreeForHandle (
+                        TheHandle,
+                        Language,
+                        FlagD,
+                        0,
+                        HiiString
+                        );
       }
     } else {
       Status = ShellConvertStringToUint64 (Lang, &Intermediate, TRUE, FALSE);
-      if (EFI_ERROR (Status) || (ConvertHandleIndexToHandle ((UINTN)Intermediate) == NULL)) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_INV_HANDLE), gShellDriver1HiiHandle, L"devtree", Lang);
+      if (EFI_ERROR (Status) || (ConvertHandleIndexToHandle (
+                                   (UINTN)Intermediate
+                                   ) == NULL))
+      {
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_GEN_INV_HANDLE),
+          gShellDriver1HiiHandle,
+          L"devtree",
+          Lang
+          );
         ShellStatus = SHELL_INVALID_PARAMETER;
       } else {
-        ShellStatus = DoDevTreeForHandle (ConvertHandleIndexToHandle ((UINTN)Intermediate), Language, FlagD, 0, HiiString);
+        ShellStatus = DoDevTreeForHandle (
+                        ConvertHandleIndexToHandle (
+                          (UINTN)Intermediate
+                          ),
+                        Language,
+                        FlagD,
+                        0,
+                        HiiString
+                        );
       }
     }
 

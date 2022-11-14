@@ -32,13 +32,13 @@ EFI_HII_HANDLE  gShellAcpiViewHiiHandle  = NULL;
   An array of acpiview command line parameters.
 **/
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-q", TypeFlag  },
-  { L"-d", TypeFlag  },
-  { L"-h", TypeFlag  },
-  { L"-l", TypeFlag  },
-  { L"-s", TypeValue },
-  { L"-r", TypeValue },
-  { NULL,  TypeMax   }
+  { L"-q", TypeFlag                  },
+  { L"-d", TypeFlag                  },
+  { L"-h", TypeFlag                  },
+  { L"-l", TypeFlag                  },
+  { L"-s", TypeValue                 },
+  { L"-r", TypeValue                 },
+  { NULL,  TypeMax                   }
 };
 
 /**
@@ -47,29 +47,46 @@ STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
 STATIC
 CONST
 ACPI_TABLE_PARSER  ParserList[] = {
-  { EFI_ACPI_6_3_ARM_ERROR_SOURCE_TABLE_SIGNATURE,                                                       ParseAcpiAest },
-  { EFI_ACPI_6_2_BOOT_GRAPHICS_RESOURCE_TABLE_SIGNATURE,                                                 ParseAcpiBgrt },
-  { EFI_ACPI_6_2_DEBUG_PORT_2_TABLE_SIGNATURE,                                                           ParseAcpiDbg2 },
+  { EFI_ACPI_6_3_ARM_ERROR_SOURCE_TABLE_SIGNATURE,
+    ParseAcpiAest                                                                                     },
+  { EFI_ACPI_6_2_BOOT_GRAPHICS_RESOURCE_TABLE_SIGNATURE,
+    ParseAcpiBgrt                                                                                                                                                                          },
+  { EFI_ACPI_6_2_DEBUG_PORT_2_TABLE_SIGNATURE,
+    ParseAcpiDbg2                                                                                                                                                                                                                                                              },
   { EFI_ACPI_6_2_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE,
     ParseAcpiDsdt },
-  { EFI_ACPI_6_3_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE,                                              ParseAcpiFacs },
-  { EFI_ACPI_6_2_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE,                                                 ParseAcpiFadt },
-  { EFI_ACPI_6_4_GENERIC_TIMER_DESCRIPTION_TABLE_SIGNATURE,                                              ParseAcpiGtdt },
-  { EFI_ACPI_6_4_HETEROGENEOUS_MEMORY_ATTRIBUTE_TABLE_SIGNATURE,                                         ParseAcpiHmat },
-  { EFI_ACPI_6_2_IO_REMAPPING_TABLE_SIGNATURE,                                                           ParseAcpiIort },
-  { EFI_ACPI_6_2_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE,                                              ParseAcpiMadt },
-  { EFI_ACPI_6_2_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE,
-    ParseAcpiMcfg },
+  { EFI_ACPI_6_3_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE,
+    ParseAcpiFacs                                                                                                                                                                                                                                                                                                                                                  },
+  { EFI_ACPI_6_2_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE,
+    ParseAcpiFadt                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+  { EFI_ACPI_6_4_GENERIC_TIMER_DESCRIPTION_TABLE_SIGNATURE,
+    ParseAcpiGtdt                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+  { EFI_ACPI_6_4_HETEROGENEOUS_MEMORY_ATTRIBUTE_TABLE_SIGNATURE,
+    ParseAcpiHmat                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { EFI_ACPI_6_2_IO_REMAPPING_TABLE_SIGNATURE,
+    ParseAcpiIort                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { EFI_ACPI_6_2_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE,
+    ParseAcpiMadt                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+  {
+    EFI_ACPI_6_2_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE,
+    ParseAcpiMcfg
+  },
   { EFI_ACPI_6_4_PLATFORM_COMMUNICATIONS_CHANNEL_TABLE_SIGNATURE,
     ParseAcpiPcct },
   { EFI_ACPI_6_4_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_STRUCTURE_SIGNATURE,
     ParseAcpiPptt },
-  { RSDP_TABLE_INFO,                                                                                     ParseAcpiRsdp },
-  { EFI_ACPI_6_2_SYSTEM_LOCALITY_INFORMATION_TABLE_SIGNATURE,                                            ParseAcpiSlit },
-  { EFI_ACPI_6_2_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE,                                        ParseAcpiSpcr },
-  { EFI_ACPI_6_2_SYSTEM_RESOURCE_AFFINITY_TABLE_SIGNATURE,                                               ParseAcpiSrat },
-  { EFI_ACPI_6_2_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE,                                           ParseAcpiSsdt },
-  { EFI_ACPI_6_2_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE,                                            ParseAcpiXsdt }
+  { RSDP_TABLE_INFO,
+    ParseAcpiRsdp                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+  { EFI_ACPI_6_2_SYSTEM_LOCALITY_INFORMATION_TABLE_SIGNATURE,
+    ParseAcpiSlit                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { EFI_ACPI_6_2_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE,
+    ParseAcpiSpcr                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { EFI_ACPI_6_2_SYSTEM_RESOURCE_AFFINITY_TABLE_SIGNATURE,
+    ParseAcpiSrat                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { EFI_ACPI_6_2_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE,
+    ParseAcpiSsdt                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+  { EFI_ACPI_6_2_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE,
+    ParseAcpiXsdt                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }
 };
 
 /**

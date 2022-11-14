@@ -40,7 +40,9 @@ MenuBarInit (
 {
   CONST EDITOR_MENU_ITEM  *ItemsWalker;
 
-  for (NumItems = 0, ItemsWalker = Items; ItemsWalker != NULL && ItemsWalker->Function != NULL; ItemsWalker++, NumItems++) {
+  for (NumItems = 0, ItemsWalker = Items; ItemsWalker != NULL &&
+       ItemsWalker->Function != NULL; ItemsWalker++, NumItems++)
+  {
   }
 
   MenuItems = AllocateZeroPool ((NumItems+1) * sizeof (EDITOR_MENU_ITEM));
@@ -114,9 +116,19 @@ MenuBarRefresh (
       Col = 1;
     }
 
-    FunctionKeyString = HiiGetString (gShellDebug1HiiHandle, Item->FunctionKeyToken, NULL);
+    FunctionKeyString = HiiGetString (
+                          gShellDebug1HiiHandle,
+                          Item->FunctionKeyToken,
+                          NULL
+                          );
 
-    ShellPrintEx ((INT32)(Col) - 1, (INT32)(Row) - 1, L"%E%s%N  %H%s%N  ", FunctionKeyString, NameString);
+    ShellPrintEx (
+      (INT32)(Col) - 1,
+      (INT32)(Row) - 1,
+      L"%E%s%N  %H%s%N  ",
+      FunctionKeyString,
+      NameString
+      );
 
     FreePool (NameString);
     FreePool (FunctionKeyString);
@@ -185,16 +197,25 @@ MenuBarDispatchControlHotKey (
     //
     ControlIndex = KeyData->Key.UnicodeChar;
   } else if (((KeyData->KeyState.KeyShiftState & EFI_SHIFT_STATE_VALID) != 0) &&
-             ((KeyData->KeyState.KeyShiftState & (EFI_RIGHT_CONTROL_PRESSED | EFI_LEFT_CONTROL_PRESSED)) != 0) &&
-             ((KeyData->KeyState.KeyShiftState & ~(EFI_SHIFT_STATE_VALID | EFI_RIGHT_CONTROL_PRESSED | EFI_LEFT_CONTROL_PRESSED)) == 0))
+             ((KeyData->KeyState.KeyShiftState & (EFI_RIGHT_CONTROL_PRESSED |
+                                                  EFI_LEFT_CONTROL_PRESSED)) !=
+              0) &&
+             ((KeyData->KeyState.KeyShiftState & ~(EFI_SHIFT_STATE_VALID |
+                                                   EFI_RIGHT_CONTROL_PRESSED |
+                                                   EFI_LEFT_CONTROL_PRESSED)) ==
+              0))
   {
     //
     // For consoles that supports/reports shift state,
     // make sure only CONTROL is pressed.
     //
-    if ((KeyData->Key.UnicodeChar >= L'A') && (KeyData->Key.UnicodeChar <= L'Z')) {
+    if ((KeyData->Key.UnicodeChar >= L'A') && (KeyData->Key.UnicodeChar <=
+                                               L'Z'))
+    {
       ControlIndex = KeyData->Key.UnicodeChar - L'A' + 1;
-    } else if ((KeyData->Key.UnicodeChar >= L'a') && (KeyData->Key.UnicodeChar <= L'z')) {
+    } else if ((KeyData->Key.UnicodeChar >= L'a') &&
+               (KeyData->Key.UnicodeChar <= L'z'))
+    {
       ControlIndex = KeyData->Key.UnicodeChar - L'a' + 1;
     }
   }

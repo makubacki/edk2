@@ -113,7 +113,8 @@ IsVolatileEnv (
   @retval other                 An error occurred
   @sa SetVariable
 **/
-#define SHELL_GET_ENVIRONMENT_VARIABLE_AND_ATTRIBUTES(EnvVarName, Atts, BufferSize, Buffer)    \
+#define SHELL_GET_ENVIRONMENT_VARIABLE_AND_ATTRIBUTES(EnvVarName, Atts, \
+                                                      BufferSize, Buffer)    \
   (gRT->GetVariable((CHAR16*)EnvVarName,                        \
   &gShellVariableGuid,                                          \
   Atts,                                                            \

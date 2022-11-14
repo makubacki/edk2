@@ -158,9 +158,9 @@ TypeFileByHandle (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-a", TypeFlag },
-  { L"-u", TypeFlag },
-  { NULL,  TypeMax  }
+  { L"-a", TypeFlag  },
+  { L"-u", TypeFlag  },
+  { NULL,  TypeMax   }
 };
 
 /**
@@ -207,7 +207,15 @@ ShellCommandRunType (
   Status = ShellCommandLineParse (ParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel3HiiHandle, L"type", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel3HiiHandle,
+        L"type",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -225,27 +233,60 @@ ShellCommandRunType (
     UnicodeMode = ShellCommandLineGetFlag (Package, L"-u");
 
     if (AsciiMode && UnicodeMode) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel3HiiHandle, L"type", L"-a & -u");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PARAM_INV),
+        gShellLevel3HiiHandle,
+        L"type",
+        L"-a & -u"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else if (ShellCommandLineGetRawValue (Package, 1) == NULL) {
       //
       // we insufficient parameters
       //
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_FEW), gShellLevel3HiiHandle, L"type");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_FEW),
+        gShellLevel3HiiHandle,
+        L"type"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       //
       // get a list with each file specified by parameters
       // if parameter is a directory then add all the files below it to the list
       //
-      for ( ParamCount = 1, Param = ShellCommandLineGetRawValue (Package, ParamCount)
+      for ( ParamCount = 1, Param = ShellCommandLineGetRawValue (
+                                      Package,
+                                      ParamCount
+                                      )
             ; Param != NULL
-            ; ParamCount++, Param = ShellCommandLineGetRawValue (Package, ParamCount)
+            ; ParamCount++, Param = ShellCommandLineGetRawValue (
+                                      Package,
+                                      ParamCount
+                                      )
             )
       {
-        Status = ShellOpenFileMetaArg ((CHAR16 *)Param, EFI_FILE_MODE_READ, &FileList);
+        Status = ShellOpenFileMetaArg (
+                   (CHAR16 *)Param,
+                   EFI_FILE_MODE_READ,
+                   &FileList
+                   );
         if (EFI_ERROR (Status)) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_OPEN_FAIL), gShellLevel3HiiHandle, L"type", (CHAR16 *)Param);
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_FILE_OPEN_FAIL),
+            gShellLevel3HiiHandle,
+            L"type",
+            (CHAR16 *)Param
+            );
           ShellStatus = SHELL_NOT_FOUND;
           break;
         }
@@ -259,15 +300,27 @@ ShellCommandRunType (
           // check that we have at least 1 file
           //
           if ((FileList == NULL) || IsListEmpty (&FileList->Link)) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_NF), gShellLevel3HiiHandle, L"type", Param);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_FILE_NF),
+              gShellLevel3HiiHandle,
+              L"type",
+              Param
+              );
             continue;
           } else {
             //
             // loop through the list and make sure we are not aborting...
             //
             for ( Node = (EFI_SHELL_FILE_INFO *)GetFirstNode (&FileList->Link)
-                  ; !IsNull (&FileList->Link, &Node->Link) && !ShellGetExecutionBreakFlag ()
-                  ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (&FileList->Link, &Node->Link)
+                  ; !IsNull (&FileList->Link, &Node->Link) &&
+                  !ShellGetExecutionBreakFlag ()
+                  ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (
+                                                    &FileList->Link,
+                                                    &Node->Link
+                                                    )
                   )
             {
               if (ShellGetExecutionBreakFlag ()) {
@@ -278,7 +331,17 @@ ShellCommandRunType (
               // make sure the file opened ok
               //
               if (EFI_ERROR (Node->Status)) {
-                ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_OPEN_FAIL), gShellLevel3HiiHandle, L"type", Node->FileName);
+                ShellPrintHiiEx (
+                  -1,
+                  -1,
+                  NULL,
+                  STRING_TOKEN (
+                    STR_GEN_FILE_OPEN_FAIL
+                    ),
+                  gShellLevel3HiiHandle,
+                  L"type",
+                  Node->FileName
+                  );
                 ShellStatus = SHELL_NOT_FOUND;
                 continue;
               }
@@ -287,7 +350,15 @@ ShellCommandRunType (
               // make sure its not a directory
               //
               if (FileHandleIsDirectory (Node->Handle) == EFI_SUCCESS) {
-                ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_IS_DIR), gShellLevel3HiiHandle, L"type", Node->FileName);
+                ShellPrintHiiEx (
+                  -1,
+                  -1,
+                  NULL,
+                  STRING_TOKEN (STR_GEN_IS_DIR),
+                  gShellLevel3HiiHandle,
+                  L"type",
+                  Node->FileName
+                  );
                 ShellStatus = SHELL_NOT_FOUND;
                 continue;
               }
@@ -297,7 +368,15 @@ ShellCommandRunType (
               //
               Status = TypeFileByHandle (Node->Handle, AsciiMode, UnicodeMode);
               if (EFI_ERROR (Status)) {
-                ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_TYP_ERROR), gShellLevel3HiiHandle, L"type", Node->FileName);
+                ShellPrintHiiEx (
+                  -1,
+                  -1,
+                  NULL,
+                  STRING_TOKEN (STR_TYP_ERROR),
+                  gShellLevel3HiiHandle,
+                  L"type",
+                  Node->FileName
+                  );
                 ShellStatus = SHELL_INVALID_PARAMETER;
               }
 

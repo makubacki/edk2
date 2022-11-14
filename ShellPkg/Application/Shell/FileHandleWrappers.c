@@ -373,7 +373,13 @@ CreateTabCompletionList (
         // and it doesn't begin with "\\", it's a path relative to current directory.
         // TabStr = "<cwd>\\"
         //
-        StrnCpyS (TabStr, BufferSize / sizeof (CHAR16), Cwd, (BufferSize) / sizeof (CHAR16) - 1);
+        StrnCpyS (
+          TabStr,
+          BufferSize / sizeof (CHAR16),
+          Cwd,
+          (BufferSize) /
+          sizeof (CHAR16) - 1
+          );
         StrCatS (TabStr, (BufferSize) / sizeof (CHAR16), L"\\");
       } else {
         //
@@ -386,8 +392,19 @@ CreateTabCompletionList (
     }
   }
 
-  StrnCatS (TabStr, (BufferSize) / sizeof (CHAR16), InputString + TabPos, StringLen - TabPos);
-  StrnCatS (TabStr, (BufferSize) / sizeof (CHAR16), L"*", (BufferSize) / sizeof (CHAR16) - 1 - StrLen (TabStr));
+  StrnCatS (
+    TabStr,
+    (BufferSize) / sizeof (CHAR16),
+    InputString + TabPos,
+    StringLen - TabPos
+    );
+  StrnCatS (
+    TabStr,
+    (BufferSize) / sizeof (CHAR16),
+    L"*",
+    (BufferSize) /
+    sizeof (CHAR16) - 1 - StrLen (TabStr)
+    );
   Status = ShellInfoObject.NewEfiShellProtocol->FindFiles (TabStr, &FileList);
 
   //
@@ -402,16 +419,25 @@ CreateTabCompletionList (
       InputString++;
     }
 
-    for (FileInfo = (EFI_SHELL_FILE_INFO *)GetFirstNode (&FileList->Link); !IsNull (&FileList->Link, &FileInfo->Link); ) {
-      if (((StrCmp (FileInfo->FileName, L".") == 0) || (StrCmp (FileInfo->FileName, L"..") == 0)) ||
-          ((((InputString[0] == L'c') || (InputString[0] == L'C')) && ((InputString[1] == L'd') || (InputString[1] == L'D'))) &&
+    for (FileInfo = (EFI_SHELL_FILE_INFO *)GetFirstNode (&FileList->Link);
+         !IsNull (&FileList->Link, &FileInfo->Link); )
+    {
+      if (((StrCmp (FileInfo->FileName, L".") == 0) || (StrCmp (
+                                                          FileInfo->FileName,
+                                                          L".."
+                                                          ) == 0)) ||
+          ((((InputString[0] == L'c') || (InputString[0] == L'C')) &&
+            ((InputString[1] == L'd') || (InputString[1] == L'D'))) &&
            (ShellIsDirectory (FileInfo->FullName) != EFI_SUCCESS)))
       {
         TempFileInfo = FileInfo;
         FileInfo     = (EFI_SHELL_FILE_INFO *)RemoveEntryList (&FileInfo->Link);
         InternalFreeShellFileInfoNode (TempFileInfo);
       } else {
-        FileInfo = (EFI_SHELL_FILE_INFO *)GetNextNode (&FileList->Link, &FileInfo->Link);
+        FileInfo = (EFI_SHELL_FILE_INFO *)GetNextNode (
+                                            &FileList->Link,
+                                            &FileInfo->Link
+                                            );
       }
     }
   }
@@ -498,14 +524,15 @@ FileInterfaceStdInRead (
     return (EFI_BUFFER_TOO_SMALL);
   }
 
-  Done            = FALSE;
-  CurrentString   = Buffer;
-  StringLen       = 0;
-  StringCurPos    = 0;
-  OutputLength    = 0;
-  Update          = 0;
-  Delete          = 0;
-  LinePos         = NewPos = (BUFFER_LIST *)(&ShellInfoObject.ViewingSettings.CommandHistory);
+  Done          = FALSE;
+  CurrentString = Buffer;
+  StringLen     = 0;
+  StringCurPos  = 0;
+  OutputLength  = 0;
+  Update        = 0;
+  Delete        = 0;
+  LinePos       = NewPos =
+    (BUFFER_LIST *)(&ShellInfoObject.ViewingSettings.CommandHistory);
   InScrolling     = FALSE;
   InTabScrolling  = FALSE;
   Status          = EFI_SUCCESS;
@@ -519,7 +546,12 @@ FileInterfaceStdInRead (
   //
   Column = StartColumn = gST->ConOut->Mode->CursorColumn;
   Row    = gST->ConOut->Mode->CursorRow;
-  gST->ConOut->QueryMode (gST->ConOut, gST->ConOut->Mode->Mode, &TotalColumn, &TotalRow);
+  gST->ConOut->QueryMode (
+                 gST->ConOut,
+                 gST->ConOut->Mode->Mode,
+                 &TotalColumn,
+                 &TotalRow
+                 );
 
   //
   // Limit the line length to the buffer size or the minimum size of the
@@ -551,7 +583,9 @@ FileInterfaceStdInRead (
     // Press PageUp or PageDown to scroll the history screen up or down.
     // Press any other key to quit scrolling.
     //
-    if ((Key.UnicodeChar == 0) && ((Key.ScanCode == SCAN_PAGE_UP) || (Key.ScanCode == SCAN_PAGE_DOWN))) {
+    if ((Key.UnicodeChar == 0) && ((Key.ScanCode == SCAN_PAGE_UP) ||
+                                   (Key.ScanCode == SCAN_PAGE_DOWN)))
+    {
       if (Key.ScanCode == SCAN_PAGE_UP) {
         ConsoleLoggerDisplayHistory (FALSE, 0, ShellInfoObject.ConsoleInfo);
       } else if (Key.ScanCode == SCAN_PAGE_DOWN) {
@@ -600,7 +634,12 @@ FileInterfaceStdInRead (
           StringCurPos--;
           Update = StringCurPos;
           Delete = 1;
-          CopyMem (CurrentString + StringCurPos, CurrentString + StringCurPos + 1, sizeof (CHAR16) * (StringLen - StringCurPos));
+          CopyMem (
+            CurrentString + StringCurPos,
+            CurrentString + StringCurPos +
+            1,
+            sizeof (CHAR16) * (StringLen - StringCurPos)
+            );
 
           //
           // Adjust the current column and row
@@ -616,7 +655,13 @@ FileInterfaceStdInRead (
           //
           // Initialize a tab complete operation.
           //
-          Status = CreateTabCompletionList (CurrentString, StringLen, *BufferSize, &TabCompleteList, &TabUpdatePos);
+          Status = CreateTabCompletionList (
+                     CurrentString,
+                     StringLen,
+                     *BufferSize,
+                     &TabCompleteList,
+                     &TabUpdatePos
+                     );
           if (!EFI_ERROR (Status)) {
             InTabScrolling = TRUE;
           }
@@ -634,16 +679,24 @@ FileInterfaceStdInRead (
           //
           ASSERT (TabCompleteList != NULL);
           if (TabCurrent == NULL) {
-            TabCurrent = (EFI_SHELL_FILE_INFO *)GetFirstNode (&TabCompleteList->Link);
+            TabCurrent = (EFI_SHELL_FILE_INFO *)GetFirstNode (
+                                                  &TabCompleteList->Link
+                                                  );
           } else {
-            TabCurrent = (EFI_SHELL_FILE_INFO *)GetNextNode (&TabCompleteList->Link, &TabCurrent->Link);
+            TabCurrent = (EFI_SHELL_FILE_INFO *)GetNextNode (
+                                                  &TabCompleteList->Link,
+                                                  &TabCurrent->Link
+                                                  );
           }
 
           //
           // Skip over the empty list beginning node
           //
           if (IsNull (&TabCompleteList->Link, &TabCurrent->Link)) {
-            TabCurrent = (EFI_SHELL_FILE_INFO *)GetNextNode (&TabCompleteList->Link, &TabCurrent->Link);
+            TabCurrent = (EFI_SHELL_FILE_INFO *)GetNextNode (
+                                                  &TabCompleteList->Link,
+                                                  &TabCurrent->Link
+                                                  );
           }
         }
 
@@ -654,7 +707,10 @@ FileInterfaceStdInRead (
           //
           // If we are at the buffer's end, drop the key
           //
-          if ((StringLen == MaxStr - 1) && (ShellInfoObject.ViewingSettings.InsertMode || (StringCurPos == StringLen))) {
+          if ((StringLen == MaxStr - 1) &&
+              (ShellInfoObject.ViewingSettings.InsertMode || (StringCurPos ==
+                                                              StringLen)))
+          {
             break;
           }
 
@@ -663,7 +719,12 @@ FileInterfaceStdInRead (
           // space higher in the array
           //
           if (ShellInfoObject.ViewingSettings.InsertMode) {
-            CopyMem (CurrentString + StringCurPos + 1, CurrentString + StringCurPos, (StringLen - StringCurPos)*sizeof (CurrentString[0]));
+            CopyMem (
+              CurrentString + StringCurPos + 1,
+              CurrentString +
+              StringCurPos,
+              (StringLen - StringCurPos)*sizeof (CurrentString[0])
+              );
           }
 
           CurrentString[StringCurPos] = Key.UnicodeChar;
@@ -684,7 +745,12 @@ FileInterfaceStdInRead (
             if (StringLen != 0) {
               Update = StringCurPos;
               Delete = 1;
-              CopyMem (CurrentString + StringCurPos, CurrentString + StringCurPos + 1, sizeof (CHAR16) * (StringLen - StringCurPos));
+              CopyMem (
+                CurrentString + StringCurPos,
+                CurrentString +
+                StringCurPos + 1,
+                sizeof (CHAR16) * (StringLen - StringCurPos)
+                );
             }
 
             break;
@@ -693,9 +759,21 @@ FileInterfaceStdInRead (
             //
             // Prepare to print the previous command
             //
-            NewPos = (BUFFER_LIST *)GetPreviousNode (&ShellInfoObject.ViewingSettings.CommandHistory.Link, &LinePos->Link);
-            if (IsNull (&ShellInfoObject.ViewingSettings.CommandHistory.Link, &LinePos->Link)) {
-              NewPos = (BUFFER_LIST *)GetPreviousNode (&ShellInfoObject.ViewingSettings.CommandHistory.Link, &LinePos->Link);
+            NewPos = (BUFFER_LIST *)GetPreviousNode (
+                                      &ShellInfoObject.ViewingSettings.
+                                        CommandHistory.Link,
+                                      &LinePos->Link
+                                      );
+            if (IsNull (
+                  &ShellInfoObject.ViewingSettings.CommandHistory.Link,
+                  &LinePos->Link
+                  ))
+            {
+              NewPos = (BUFFER_LIST *)GetPreviousNode (
+                                        &ShellInfoObject.ViewingSettings.
+                                          CommandHistory.Link,
+                                        &LinePos->Link
+                                        );
             }
 
             break;
@@ -704,9 +782,19 @@ FileInterfaceStdInRead (
             //
             // Prepare to print the next command
             //
-            NewPos = (BUFFER_LIST *)GetNextNode (&ShellInfoObject.ViewingSettings.CommandHistory.Link, &LinePos->Link);
-            if (NewPos == (BUFFER_LIST *)(&ShellInfoObject.ViewingSettings.CommandHistory)) {
-              NewPos = (BUFFER_LIST *)GetNextNode (&ShellInfoObject.ViewingSettings.CommandHistory.Link, &LinePos->Link);
+            NewPos = (BUFFER_LIST *)GetNextNode (
+                                      &ShellInfoObject.ViewingSettings.
+                                        CommandHistory.Link,
+                                      &LinePos->Link
+                                      );
+            if (NewPos ==
+                (BUFFER_LIST *)(&ShellInfoObject.ViewingSettings.CommandHistory))
+            {
+              NewPos = (BUFFER_LIST *)GetNextNode (
+                                        &ShellInfoObject.ViewingSettings.
+                                          CommandHistory.Link,
+                                        &LinePos->Link
+                                        );
             }
 
             break;
@@ -746,7 +834,8 @@ FileInterfaceStdInRead (
             //
             // Move current cursor position to the end of the command line
             //
-            TailRow      = Row + (StringLen - StringCurPos + Column) / TotalColumn;
+            TailRow = Row + (StringLen - StringCurPos + Column) /
+                      TotalColumn;
             TailColumn   = (StringLen - StringCurPos + Column) % TotalColumn;
             Row          = TailRow;
             Column       = TailColumn;
@@ -769,7 +858,8 @@ FileInterfaceStdInRead (
             //
             // Toggle the SEnvInsertMode flag
             //
-            ShellInfoObject.ViewingSettings.InsertMode = (BOOLEAN) !ShellInfoObject.ViewingSettings.InsertMode;
+            ShellInfoObject.ViewingSettings.InsertMode =
+              (BOOLEAN) !ShellInfoObject.ViewingSettings.InsertMode;
             break;
 
           case SCAN_F7:
@@ -802,8 +892,10 @@ FileInterfaceStdInRead (
       //
       // Adjust the column and row to the start of TAB-completion string.
       //
-      Column       = (StartColumn + TabUpdatePos) % TotalColumn;
-      Row         -= (StartColumn + StringCurPos) / TotalColumn - (StartColumn + TabUpdatePos) / TotalColumn;
+      Column = (StartColumn + TabUpdatePos) % TotalColumn;
+      Row   -= (StartColumn + StringCurPos) / TotalColumn - (StartColumn +
+                                                             TabUpdatePos)
+               / TotalColumn;
       OutputLength = StrLen (TabCurrent->FileName);
       //
       // if the output string contains  blank space, quotation marks L'\"'
@@ -811,16 +903,33 @@ FileInterfaceStdInRead (
       //
       if (StrStr (TabCurrent->FileName, L" ") != NULL) {
         TabOutputStr[0] = L'\"';
-        CopyMem (TabOutputStr + 1, TabCurrent->FileName, OutputLength * sizeof (CHAR16));
+        CopyMem (
+          TabOutputStr + 1,
+          TabCurrent->FileName,
+          OutputLength *
+          sizeof (CHAR16)
+          );
         TabOutputStr[OutputLength + 1] = L'\"';
         TabOutputStr[OutputLength + 2] = CHAR_NULL;
       } else {
-        CopyMem (TabOutputStr, TabCurrent->FileName, OutputLength * sizeof (CHAR16));
+        CopyMem (
+          TabOutputStr,
+          TabCurrent->FileName,
+          OutputLength *
+          sizeof (CHAR16)
+          );
         TabOutputStr[OutputLength] = CHAR_NULL;
       }
 
-      OutputLength = StrLen (TabOutputStr) < MaxStr - 1 ? StrLen (TabOutputStr) : MaxStr - 1;
-      CopyMem (CurrentString + TabUpdatePos, TabOutputStr, OutputLength * sizeof (CHAR16));
+      OutputLength = StrLen (TabOutputStr) < MaxStr - 1 ? StrLen (
+                                                            TabOutputStr
+                                                            ) : MaxStr - 1;
+      CopyMem (
+        CurrentString + TabUpdatePos,
+        TabOutputStr,
+        OutputLength *
+        sizeof (CHAR16)
+        );
       CurrentString[TabUpdatePos + OutputLength] = CHAR_NULL;
       StringCurPos                               = TabUpdatePos + OutputLength;
       Update                                     = TabUpdatePos;
@@ -835,14 +944,19 @@ FileInterfaceStdInRead (
     // If we have a new position, we are preparing to print a previous or
     // next command.
     //
-    if (NewPos != (BUFFER_LIST *)(&ShellInfoObject.ViewingSettings.CommandHistory)) {
+    if (NewPos !=
+        (BUFFER_LIST *)(&ShellInfoObject.ViewingSettings.CommandHistory))
+    {
       Column = StartColumn;
       Row   -= (StringCurPos + StartColumn) / TotalColumn;
 
       LinePos = NewPos;
-      NewPos  = (BUFFER_LIST *)(&ShellInfoObject.ViewingSettings.CommandHistory);
+      NewPos  =
+        (BUFFER_LIST *)(&ShellInfoObject.ViewingSettings.CommandHistory);
 
-      OutputLength = StrLen (LinePos->Buffer) < MaxStr - 1 ? StrLen (LinePos->Buffer) : MaxStr - 1;
+      OutputLength = StrLen (LinePos->Buffer) < MaxStr - 1 ? StrLen (
+                                                               LinePos->Buffer
+                                                               ) : MaxStr - 1;
       CopyMem (CurrentString, LinePos->Buffer, OutputLength * sizeof (CHAR16));
       CurrentString[OutputLength] = CHAR_NULL;
 
@@ -864,7 +978,15 @@ FileInterfaceStdInRead (
     // If we need to update the output do so now
     //
     if (Update != (UINTN)-1) {
-      ShellPrintEx ((INT32)Column, (INT32)Row, L"%s%.*s", CurrentString + Update, Delete, L"");
+      ShellPrintEx (
+        (INT32)Column,
+        (INT32)Row,
+        L"%s%.*s",
+        CurrentString +
+        Update,
+        Delete,
+        L""
+        );
       StringLen = StrLen (CurrentString);
 
       if (Delete != 0) {
@@ -882,12 +1004,17 @@ FileInterfaceStdInRead (
       // BACKSPACE and DELETE, we need to move the cursor position forward,
       // so adjust row and column here.
       //
-      if ((Key.UnicodeChar != CHAR_BACKSPACE) && !((Key.UnicodeChar == 0) && (Key.ScanCode == SCAN_DELETE))) {
+      if ((Key.UnicodeChar != CHAR_BACKSPACE) && !((Key.UnicodeChar == 0) &&
+                                                   (Key.ScanCode ==
+                                                    SCAN_DELETE)))
+      {
         //
         // Calculate row and column of the tail of current string
         //
-        TailRow    = Row + (StringLen - StringCurPos + Column + OutputLength) / TotalColumn;
-        TailColumn = (StringLen - StringCurPos + Column + OutputLength) % TotalColumn;
+        TailRow = Row + (StringLen - StringCurPos + Column + OutputLength) /
+                  TotalColumn;
+        TailColumn = (StringLen - StringCurPos + Column + OutputLength) %
+                     TotalColumn;
 
         //
         // If the tail of string reaches screen end, screen rolls up, so if
@@ -1032,7 +1159,8 @@ typedef struct {
   CHAR16                   Name[1];
 } EFI_FILE_PROTOCOL_ENVIRONMENT;
 // ANSI compliance helper to get size of the struct.
-#define SIZE_OF_EFI_FILE_PROTOCOL_ENVIRONMENT  EFI_FIELD_OFFSET (EFI_FILE_PROTOCOL_ENVIRONMENT, Name)
+#define SIZE_OF_EFI_FILE_PROTOCOL_ENVIRONMENT  \
+  EFI_FIELD_OFFSET (EFI_FILE_PROTOCOL_ENVIRONMENT, Name)
 
 /**
   File style interface for Environment Variable (Close).
@@ -1065,12 +1193,19 @@ FileInterfaceEnvClose (
   NewSize   = 0;
   TotalSize = 0;
 
-  Status = IsVolatileEnv (((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name, &Volatile);
+  Status = IsVolatileEnv (
+             ((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name,
+             &Volatile
+             );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = SHELL_GET_ENVIRONMENT_VARIABLE (((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name, &NewSize, NewBuffer);
+  Status = SHELL_GET_ENVIRONMENT_VARIABLE (
+             ((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name,
+             &NewSize,
+             NewBuffer
+             );
   if (Status == EFI_BUFFER_TOO_SMALL) {
     TotalSize = NewSize + sizeof (CHAR16);
     NewBuffer = AllocateZeroPool (TotalSize);
@@ -1078,13 +1213,19 @@ FileInterfaceEnvClose (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    Status = SHELL_GET_ENVIRONMENT_VARIABLE (((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name, &NewSize, NewBuffer);
+    Status = SHELL_GET_ENVIRONMENT_VARIABLE (
+               ((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name,
+               &NewSize,
+               NewBuffer
+               );
   }
 
   if (!EFI_ERROR (Status) && (NewBuffer != NULL)) {
     if (TotalSize / sizeof (CHAR16) >= 3) {
-      if ((((CHAR16 *)NewBuffer)[TotalSize / sizeof (CHAR16) - 2] == CHAR_LINEFEED) &&
-          (((CHAR16 *)NewBuffer)[TotalSize / sizeof (CHAR16) - 3] == CHAR_CARRIAGE_RETURN)
+      if ((((CHAR16 *)NewBuffer)[TotalSize / sizeof (CHAR16) - 2] ==
+           CHAR_LINEFEED) &&
+          (((CHAR16 *)NewBuffer)[TotalSize / sizeof (CHAR16) - 3] ==
+           CHAR_CARRIAGE_RETURN)
           )
       {
         ((CHAR16 *)NewBuffer)[TotalSize / sizeof (CHAR16) - 3] = CHAR_NULL;
@@ -1146,7 +1287,9 @@ FileInterfaceEnvDelete (
   IN EFI_FILE_PROTOCOL  *This
   )
 {
-  SHELL_DELETE_ENVIRONMENT_VARIABLE (((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name);
+  SHELL_DELETE_ENVIRONMENT_VARIABLE (
+    ((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name
+    );
   return (FileInterfaceEnvClose (This));
 }
 
@@ -1222,7 +1365,11 @@ FileInterfaceEnvVolWrite (
   NewSize   = 0;
   TotalSize = 0;
 
-  Status = SHELL_GET_ENVIRONMENT_VARIABLE (((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name, &NewSize, NewBuffer);
+  Status = SHELL_GET_ENVIRONMENT_VARIABLE (
+             ((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name,
+             &NewSize,
+             NewBuffer
+             );
   if (Status == EFI_BUFFER_TOO_SMALL) {
     TotalSize = NewSize + *BufferSize + sizeof (CHAR16);
   } else if (Status == EFI_NOT_FOUND) {
@@ -1237,7 +1384,11 @@ FileInterfaceEnvVolWrite (
   }
 
   if (Status == EFI_BUFFER_TOO_SMALL) {
-    Status = SHELL_GET_ENVIRONMENT_VARIABLE (((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name, &NewSize, NewBuffer);
+    Status = SHELL_GET_ENVIRONMENT_VARIABLE (
+               ((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name,
+               &NewSize,
+               NewBuffer
+               );
   }
 
   if (EFI_ERROR (Status) && (Status != EFI_NOT_FOUND)) {
@@ -1298,7 +1449,11 @@ FileInterfaceEnvNonVolWrite (
   NewSize   = 0;
   TotalSize = 0;
 
-  Status = SHELL_GET_ENVIRONMENT_VARIABLE (((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name, &NewSize, NewBuffer);
+  Status = SHELL_GET_ENVIRONMENT_VARIABLE (
+             ((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name,
+             &NewSize,
+             NewBuffer
+             );
   if (Status == EFI_BUFFER_TOO_SMALL) {
     TotalSize = NewSize + *BufferSize + sizeof (CHAR16);
   } else if (Status == EFI_NOT_FOUND) {
@@ -1313,7 +1468,11 @@ FileInterfaceEnvNonVolWrite (
   }
 
   if (Status == EFI_BUFFER_TOO_SMALL) {
-    Status = SHELL_GET_ENVIRONMENT_VARIABLE (((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name, &NewSize, NewBuffer);
+    Status = SHELL_GET_ENVIRONMENT_VARIABLE (
+               ((EFI_FILE_PROTOCOL_ENVIRONMENT *)This)->Name,
+               &NewSize,
+               NewBuffer
+               );
   }
 
   if (EFI_ERROR (Status) && (Status != EFI_NOT_FOUND)) {
@@ -1378,7 +1537,10 @@ CreateFileInterfaceEnv (
   // Get some memory
   //
   EnvNameSize      = StrSize (EnvName);
-  EnvFileInterface = AllocateZeroPool (sizeof (EFI_FILE_PROTOCOL_ENVIRONMENT)+EnvNameSize);
+  EnvFileInterface = AllocateZeroPool (
+                       sizeof (EFI_FILE_PROTOCOL_ENVIRONMENT)+
+                       EnvNameSize
+                       );
   if (EnvFileInterface == NULL) {
     return (NULL);
   }
@@ -1498,9 +1660,19 @@ PrintCommandHistory (
   //
   // go through history list...
   //
-  for ( Node = (BUFFER_LIST *)GetFirstNode (&ShellInfoObject.ViewingSettings.CommandHistory.Link)
-        ; !IsNull (&ShellInfoObject.ViewingSettings.CommandHistory.Link, &Node->Link)
-        ; Node = (BUFFER_LIST *)GetNextNode (&ShellInfoObject.ViewingSettings.CommandHistory.Link, &Node->Link)
+  for ( Node = (BUFFER_LIST *)GetFirstNode (
+                                &ShellInfoObject.ViewingSettings.CommandHistory.
+                                  Link
+                                )
+        ; !IsNull (
+             &ShellInfoObject.ViewingSettings.CommandHistory.Link,
+             &Node->Link
+             )
+        ; Node = (BUFFER_LIST *)GetNextNode (
+                                  &ShellInfoObject.ViewingSettings.
+                                    CommandHistory.Link,
+                                  &Node->Link
+                                  )
         )
   {
     Index++;
@@ -1664,8 +1836,15 @@ FileInterfaceMemWrite (
     //
     // Unicode
     //
-    if ((UINTN)(MemFile->Position + (*BufferSize)) > (UINTN)(MemFile->BufferSize)) {
-      MemFile->Buffer = ReallocatePool ((UINTN)(MemFile->BufferSize), (UINTN)(MemFile->BufferSize) + (*BufferSize) + MEM_WRITE_REALLOC_OVERHEAD, MemFile->Buffer);
+    if ((UINTN)(MemFile->Position + (*BufferSize)) >
+        (UINTN)(MemFile->BufferSize))
+    {
+      MemFile->Buffer = ReallocatePool (
+                          (UINTN)(MemFile->BufferSize),
+                          (UINTN)(MemFile->BufferSize) + (*BufferSize) +
+                          MEM_WRITE_REALLOC_OVERHEAD,
+                          MemFile->Buffer
+                          );
       if (MemFile->Buffer == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -1673,7 +1852,11 @@ FileInterfaceMemWrite (
       MemFile->BufferSize += (*BufferSize) + MEM_WRITE_REALLOC_OVERHEAD;
     }
 
-    CopyMem (((UINT8 *)MemFile->Buffer) + MemFile->Position, Buffer, *BufferSize);
+    CopyMem (
+      ((UINT8 *)MemFile->Buffer) + MemFile->Position,
+      Buffer,
+      *BufferSize
+      );
     MemFile->Position += (*BufferSize);
     MemFile->FileSize  = MemFile->Position;
     return (EFI_SUCCESS);
@@ -1687,17 +1870,30 @@ FileInterfaceMemWrite (
     }
 
     AsciiSPrint (AsciiBuffer, *BufferSize, "%S", Buffer);
-    if ((UINTN)(MemFile->Position + AsciiStrSize (AsciiBuffer)) > (UINTN)(MemFile->BufferSize)) {
-      MemFile->Buffer = ReallocatePool ((UINTN)(MemFile->BufferSize), (UINTN)(MemFile->BufferSize) + AsciiStrSize (AsciiBuffer) + MEM_WRITE_REALLOC_OVERHEAD, MemFile->Buffer);
+    if ((UINTN)(MemFile->Position + AsciiStrSize (AsciiBuffer)) >
+        (UINTN)(MemFile->BufferSize))
+    {
+      MemFile->Buffer = ReallocatePool (
+                          (UINTN)(MemFile->BufferSize),
+                          (UINTN)(MemFile->BufferSize) + AsciiStrSize (
+                                                           AsciiBuffer) +
+                          MEM_WRITE_REALLOC_OVERHEAD,
+                          MemFile->Buffer
+                          );
       if (MemFile->Buffer == NULL) {
         FreePool (AsciiBuffer);
         return EFI_OUT_OF_RESOURCES;
       }
 
-      MemFile->BufferSize += AsciiStrSize (AsciiBuffer) + MEM_WRITE_REALLOC_OVERHEAD;
+      MemFile->BufferSize += AsciiStrSize (AsciiBuffer) +
+                             MEM_WRITE_REALLOC_OVERHEAD;
     }
 
-    CopyMem (((UINT8 *)MemFile->Buffer) + MemFile->Position, AsciiBuffer, AsciiStrSize (AsciiBuffer));
+    CopyMem (
+      ((UINT8 *)MemFile->Buffer) + MemFile->Position,
+      AsciiBuffer,
+      AsciiStrSize (AsciiBuffer)
+      );
     MemFile->Position += (*BufferSize / sizeof (CHAR16));
     MemFile->FileSize  = MemFile->Position;
     FreePool (AsciiBuffer);
@@ -1729,7 +1925,11 @@ FileInterfaceMemRead (
     (*BufferSize) = (UINTN)((MemFile->FileSize) - (UINTN)(MemFile->Position));
   }
 
-  CopyMem (Buffer, ((UINT8 *)MemFile->Buffer) + MemFile->Position, (*BufferSize));
+  CopyMem (
+    Buffer,
+    ((UINT8 *)MemFile->Buffer) + MemFile->Position,
+    (*BufferSize)
+    );
   MemFile->Position = MemFile->Position + (*BufferSize);
   return (EFI_SUCCESS);
 }
@@ -1846,7 +2046,11 @@ FileInterfaceFileSetPosition (
   IN UINT64             Position
   )
 {
-  return ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->SetPosition (((EFI_FILE_PROTOCOL_FILE *)This)->Orig, Position);
+  return ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->SetPosition (
+                                                   ((EFI_FILE_PROTOCOL_FILE *)
+                                                    This)->Orig,
+                                                   Position
+                                                   );
 }
 
 /**
@@ -1866,7 +2070,11 @@ FileInterfaceFileGetPosition (
   OUT UINT64            *Position
   )
 {
-  return ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->GetPosition (((EFI_FILE_PROTOCOL_FILE *)This)->Orig, Position);
+  return ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->GetPosition (
+                                                   ((EFI_FILE_PROTOCOL_FILE *)
+                                                    This)->Orig,
+                                                   Position
+                                                   );
 }
 
 /**
@@ -1896,7 +2104,13 @@ FileInterfaceFileGetInfo (
   OUT VOID              *Buffer
   )
 {
-  return ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->GetInfo (((EFI_FILE_PROTOCOL_FILE *)This)->Orig, InformationType, BufferSize, Buffer);
+  return ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->GetInfo (
+                                                   ((EFI_FILE_PROTOCOL_FILE *)
+                                                    This)->Orig,
+                                                   InformationType,
+                                                   BufferSize,
+                                                   Buffer
+                                                   );
 }
 
 /**
@@ -1925,7 +2139,13 @@ FileInterfaceFileSetInfo (
   IN VOID               *Buffer
   )
 {
-  return ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->SetInfo (((EFI_FILE_PROTOCOL_FILE *)This)->Orig, InformationType, BufferSize, Buffer);
+  return ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->SetInfo (
+                                                   ((EFI_FILE_PROTOCOL_FILE *)
+                                                    This)->Orig,
+                                                   InformationType,
+                                                   BufferSize,
+                                                   Buffer
+                                                   );
 }
 
 /**
@@ -1949,7 +2169,10 @@ FileInterfaceFileFlush (
   IN EFI_FILE_PROTOCOL  *This
   )
 {
-  return ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Flush (((EFI_FILE_PROTOCOL_FILE *)This)->Orig);
+  return ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Flush (
+                                                   ((EFI_FILE_PROTOCOL_FILE *)
+                                                    This)->Orig
+                                                   );
 }
 
 /**
@@ -1986,7 +2209,12 @@ FileInterfaceFileRead (
     // There might be different file tag for the Unicode file. We cannot unconditionally insert the \xFEFF.
     // So we choose to leave the file content as is.
     //
-    return (((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Read (((EFI_FILE_PROTOCOL_FILE *)This)->Orig, BufferSize, Buffer));
+    return (((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Read (
+                                                      ((EFI_FILE_PROTOCOL_FILE *)
+                                                       This)->Orig,
+                                                      BufferSize,
+                                                      Buffer
+                                                      ));
   } else {
     //
     // Ascii
@@ -1996,7 +2224,11 @@ FileInterfaceFileRead (
       return EFI_SUCCESS;
     }
 
-    Status = ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->GetPosition (((EFI_FILE_PROTOCOL_FILE *)This)->Orig, &Position);
+    Status = ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->GetPosition (
+                                                       ((EFI_FILE_PROTOCOL_FILE
+                                                         *)This)->Orig,
+                                                       &Position
+                                                       );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -2023,7 +2255,12 @@ FileInterfaceFileRead (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    Status = ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Read (((EFI_FILE_PROTOCOL_FILE *)This)->Orig, &Size, AsciiStrBuffer);
+    Status = ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Read (
+                                                       ((EFI_FILE_PROTOCOL_FILE
+                                                         *)This)->Orig,
+                                                       &Size,
+                                                       AsciiStrBuffer
+                                                       );
     if (!EFI_ERROR (Status)) {
       AsciiStrToUnicodeStrS (AsciiStrBuffer, UscStrBuffer, Size + 1);
       *BufferSize = Size * sizeof (CHAR16);
@@ -2065,7 +2302,14 @@ FileInterfaceFileOpen (
   IN UINT64              Attributes
   )
 {
-  return ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Open (((EFI_FILE_PROTOCOL_FILE *)This)->Orig, NewHandle, FileName, OpenMode, Attributes);
+  return ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Open (
+                                                   ((EFI_FILE_PROTOCOL_FILE *)
+                                                    This)->Orig,
+                                                   NewHandle,
+                                                   FileName,
+                                                   OpenMode,
+                                                   Attributes
+                                                   );
 }
 
 /**
@@ -2085,7 +2329,10 @@ FileInterfaceFileDelete (
 {
   EFI_STATUS  Status;
 
-  Status = ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Delete (((EFI_FILE_PROTOCOL_FILE *)This)->Orig);
+  Status = ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Delete (
+                                                     ((EFI_FILE_PROTOCOL_FILE *)
+                                                      This)->Orig
+                                                     );
   FreePool (This);
   return (Status);
 }
@@ -2105,7 +2352,10 @@ FileInterfaceFileClose (
 {
   EFI_STATUS  Status;
 
-  Status = ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Close (((EFI_FILE_PROTOCOL_FILE *)This)->Orig);
+  Status = ((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Close (
+                                                     ((EFI_FILE_PROTOCOL_FILE *)
+                                                      This)->Orig
+                                                     );
   FreePool (This);
   return (Status);
 }
@@ -2138,7 +2388,12 @@ FileInterfaceFileWrite (
     //
     // Unicode
     //
-    return (((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Write (((EFI_FILE_PROTOCOL_FILE *)This)->Orig, BufferSize, Buffer));
+    return (((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Write (
+                                                      ((EFI_FILE_PROTOCOL_FILE *)
+                                                       This)->Orig,
+                                                      BufferSize,
+                                                      Buffer
+                                                      ));
   } else {
     //
     // Ascii
@@ -2146,7 +2401,12 @@ FileInterfaceFileWrite (
     AsciiBuffer = AllocateZeroPool (*BufferSize);
     AsciiSPrint (AsciiBuffer, *BufferSize, "%S", Buffer);
     Size   = AsciiStrSize (AsciiBuffer) - 1; // (we dont need the null terminator)
-    Status = (((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Write (((EFI_FILE_PROTOCOL_FILE *)This)->Orig, &Size, AsciiBuffer));
+    Status = (((EFI_FILE_PROTOCOL_FILE *)This)->Orig->Write (
+                                                        ((EFI_FILE_PROTOCOL_FILE
+                                                          *)This)->Orig,
+                                                        &Size,
+                                                        AsciiBuffer
+                                                        ));
     FreePool (AsciiBuffer);
     return (Status);
   }

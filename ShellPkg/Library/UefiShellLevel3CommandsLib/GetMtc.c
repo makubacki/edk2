@@ -42,10 +42,23 @@ ShellCommandRunGetMtc (
   //
   // parse the command line
   //
-  Status = ShellCommandLineParse (EmptyParamList, &Package, &ProblemParam, TRUE);
+  Status = ShellCommandLineParse (
+             EmptyParamList,
+             &Package,
+             &ProblemParam,
+             TRUE
+             );
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel3HiiHandle, L"getmtc", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel3HiiHandle,
+        L"getmtc",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -58,7 +71,14 @@ ShellCommandRunGetMtc (
     if (ShellCommandLineGetFlag (Package, L"-?")) {
       ASSERT (FALSE);
     } else if (ShellCommandLineGetRawValue (Package, 1) != NULL) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel3HiiHandle, L"getmtc");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellLevel3HiiHandle,
+        L"getmtc"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       //
@@ -77,7 +97,14 @@ ShellCommandRunGetMtc (
       // print it...
       //
       if (ShellStatus == SHELL_SUCCESS) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GET_MTC_OUTPUT), gShellLevel3HiiHandle, Mtc);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_GET_MTC_OUTPUT),
+          gShellLevel3HiiHandle,
+          Mtc
+          );
       }
     }
 

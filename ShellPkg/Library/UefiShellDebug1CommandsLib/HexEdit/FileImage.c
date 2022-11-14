@@ -157,12 +157,22 @@ HFileImageRead (
   // so if you want to print the error status
   // you should set the status string
   //
-  Status = ReadFileIntoBuffer (FileName, (VOID **)&Buffer, &HFileImage.Size, &HFileImage.ReadOnly);
+  Status = ReadFileIntoBuffer (
+             FileName,
+             (VOID **)&Buffer,
+             &HFileImage.Size,
+             &HFileImage.ReadOnly
+             );
   //
   // NULL pointer is only also a failure for a non-zero file size.
   //
   if ((EFI_ERROR (Status)) || ((Buffer == NULL) && (HFileImage.Size != 0))) {
-    UnicodeBuffer = CatSPrint (NULL, L"Read error on file %s: %r", FileName, Status);
+    UnicodeBuffer = CatSPrint (
+                      NULL,
+                      L"Read error on file %s: %r",
+                      FileName,
+                      Status
+                      );
     if (UnicodeBuffer == NULL) {
       SHELL_FREE_NON_NULL (Buffer);
       return EFI_OUT_OF_RESOURCES;
@@ -215,7 +225,12 @@ HFileImageRead (
   // has line
   //
   if (HBufferImage.Lines != 0) {
-    HBufferImage.CurrentLine = CR (HBufferImage.ListHead->ForwardLink, HEFI_EDITOR_LINE, Link, EFI_EDITOR_LINE_LIST);
+    HBufferImage.CurrentLine = CR (
+                                 HBufferImage.ListHead->ForwardLink,
+                                 HEFI_EDITOR_LINE,
+                                 Link,
+                                 EFI_EDITOR_LINE_LIST
+                                 );
   } else {
     //
     // create a dummy line
@@ -268,7 +283,12 @@ HFileImageSave (
   //
   // if is the old file
   //
-  if ((HFileImage.FileName != NULL) && (FileName != NULL) && (StrCmp (FileName, HFileImage.FileName) == 0)) {
+  if ((HFileImage.FileName != NULL) && (FileName != NULL) && (StrCmp (
+                                                                FileName,
+                                                                HFileImage.
+                                                                  FileName
+                                                                ) == 0))
+  {
     //
     // check whether file exists on disk
     //
@@ -296,7 +316,13 @@ HFileImageSave (
     return EFI_LOAD_ERROR;
   }
 
-  Status = ShellOpenFileByName (FileName, &FileHandle, EFI_FILE_MODE_READ|EFI_FILE_MODE_WRITE, 0);
+  Status = ShellOpenFileByName (
+             FileName,
+             &FileHandle,
+             EFI_FILE_MODE_READ|
+             EFI_FILE_MODE_WRITE,
+             0
+             );
 
   if (!EFI_ERROR (Status)) {
     //
@@ -314,7 +340,9 @@ HFileImageSave (
   //
   NumLines  = 0;
   TotalSize = 0;
-  for (Link = HBufferImage.ListHead->ForwardLink; Link != HBufferImage.ListHead; Link = Link->ForwardLink) {
+  for (Link = HBufferImage.ListHead->ForwardLink; Link != HBufferImage.ListHead;
+       Link = Link->ForwardLink)
+  {
     Line = CR (Link, HEFI_EDITOR_LINE, Link, EFI_EDITOR_LINE_LIST);
 
     if (Line->Size != 0) {
@@ -336,7 +364,9 @@ HFileImageSave (
   }
 
   Ptr = Buffer;
-  for (Link = HBufferImage.ListHead->ForwardLink; Link != HBufferImage.ListHead; Link = Link->ForwardLink) {
+  for (Link = HBufferImage.ListHead->ForwardLink; Link != HBufferImage.ListHead;
+       Link = Link->ForwardLink)
+  {
     Line = CR (Link, HEFI_EDITOR_LINE, Link, EFI_EDITOR_LINE_LIST);
 
     if (Line->Size != 0) {
@@ -349,7 +379,13 @@ HFileImageSave (
     //
   }
 
-  Status = ShellOpenFileByName (FileName, &FileHandle, EFI_FILE_MODE_READ|EFI_FILE_MODE_WRITE|EFI_FILE_MODE_CREATE, 0);
+  Status = ShellOpenFileByName (
+             FileName,
+             &FileHandle,
+             EFI_FILE_MODE_READ|
+             EFI_FILE_MODE_WRITE|EFI_FILE_MODE_CREATE,
+             0
+             );
 
   if (EFI_ERROR (Status)) {
     StatusBarSetStatusString (L"Create File Failed");
@@ -378,7 +414,8 @@ HFileImageSave (
   // now everything is ready , you can set the new file name to filebuffer
   //
   if (((BufferTypeBackup != FileTypeFileBuffer) && (FileName != NULL)) ||
-      ((FileName != NULL) && (HFileImage.FileName != NULL) && (StringNoCaseCompare (&FileName, &HFileImage.FileName) != 0)))
+      ((FileName != NULL) && (HFileImage.FileName != NULL) &&
+       (StringNoCaseCompare (&FileName, &HFileImage.FileName) != 0)))
   {
     //
     // not the same

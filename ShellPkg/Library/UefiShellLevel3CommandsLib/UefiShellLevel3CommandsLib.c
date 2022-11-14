@@ -51,7 +51,12 @@ ShellLevel3CommandsLibConstructor (
     return (EFI_SUCCESS);
   }
 
-  gShellLevel3HiiHandle = HiiAddPackages (&gShellLevel3HiiGuid, gImageHandle, UefiShellLevel3CommandsLibStrings, NULL);
+  gShellLevel3HiiHandle = HiiAddPackages (
+                            &gShellLevel3HiiGuid,
+                            gImageHandle,
+                            UefiShellLevel3CommandsLibStrings,
+                            NULL
+                            );
   if (gShellLevel3HiiHandle == NULL) {
     return (EFI_DEVICE_ERROR);
   }
@@ -61,15 +66,96 @@ ShellLevel3CommandsLibConstructor (
   //
   // Note: that Time, Timezone, and Date are part of level 2 library
   //
-  ShellCommandRegisterCommandName (L"type", ShellCommandRunType, ShellCommandGetManFileNameLevel3, 3, L"", TRUE, gShellLevel3HiiHandle, STRING_TOKEN (STR_GET_HELP_TYPE));
-  ShellCommandRegisterCommandName (L"touch", ShellCommandRunTouch, ShellCommandGetManFileNameLevel3, 3, L"", TRUE, gShellLevel3HiiHandle, STRING_TOKEN (STR_GET_HELP_TOUCH));
-  ShellCommandRegisterCommandName (L"ver", ShellCommandRunVer, ShellCommandGetManFileNameLevel3, 3, L"", TRUE, gShellLevel3HiiHandle, STRING_TOKEN (STR_GET_HELP_VER));
-  ShellCommandRegisterCommandName (L"alias", ShellCommandRunAlias, ShellCommandGetManFileNameLevel3, 3, L"", TRUE, gShellLevel3HiiHandle, STRING_TOKEN (STR_GET_HELP_ALIAS));
-  ShellCommandRegisterCommandName (L"cls", ShellCommandRunCls, ShellCommandGetManFileNameLevel3, 3, L"", TRUE, gShellLevel3HiiHandle, STRING_TOKEN (STR_GET_HELP_CLS));
-  ShellCommandRegisterCommandName (L"echo", ShellCommandRunEcho, ShellCommandGetManFileNameLevel3, 3, L"", FALSE, gShellLevel3HiiHandle, STRING_TOKEN (STR_GET_HELP_ECHO));
-  ShellCommandRegisterCommandName (L"pause", ShellCommandRunPause, ShellCommandGetManFileNameLevel3, 3, L"", TRUE, gShellLevel3HiiHandle, STRING_TOKEN (STR_GET_HELP_PAUSE));
-  ShellCommandRegisterCommandName (L"getmtc", ShellCommandRunGetMtc, ShellCommandGetManFileNameLevel3, 3, L"", TRUE, gShellLevel3HiiHandle, STRING_TOKEN (STR_GET_HELP_GETMTC));
-  ShellCommandRegisterCommandName (L"help", ShellCommandRunHelp, ShellCommandGetManFileNameLevel3, 3, L"", TRUE, gShellLevel3HiiHandle, STRING_TOKEN (STR_GET_HELP_HELP));
+  ShellCommandRegisterCommandName (
+    L"type",
+    ShellCommandRunType,
+    ShellCommandGetManFileNameLevel3,
+    3,
+    L"",
+    TRUE,
+    gShellLevel3HiiHandle,
+    STRING_TOKEN (STR_GET_HELP_TYPE)
+    );
+  ShellCommandRegisterCommandName (
+    L"touch",
+    ShellCommandRunTouch,
+    ShellCommandGetManFileNameLevel3,
+    3,
+    L"",
+    TRUE,
+    gShellLevel3HiiHandle,
+    STRING_TOKEN (STR_GET_HELP_TOUCH)
+    );
+  ShellCommandRegisterCommandName (
+    L"ver",
+    ShellCommandRunVer,
+    ShellCommandGetManFileNameLevel3,
+    3,
+    L"",
+    TRUE,
+    gShellLevel3HiiHandle,
+    STRING_TOKEN (STR_GET_HELP_VER)
+    );
+  ShellCommandRegisterCommandName (
+    L"alias",
+    ShellCommandRunAlias,
+    ShellCommandGetManFileNameLevel3,
+    3,
+    L"",
+    TRUE,
+    gShellLevel3HiiHandle,
+    STRING_TOKEN (STR_GET_HELP_ALIAS)
+    );
+  ShellCommandRegisterCommandName (
+    L"cls",
+    ShellCommandRunCls,
+    ShellCommandGetManFileNameLevel3,
+    3,
+    L"",
+    TRUE,
+    gShellLevel3HiiHandle,
+    STRING_TOKEN (STR_GET_HELP_CLS)
+    );
+  ShellCommandRegisterCommandName (
+    L"echo",
+    ShellCommandRunEcho,
+    ShellCommandGetManFileNameLevel3,
+    3,
+    L"",
+    FALSE,
+    gShellLevel3HiiHandle,
+    STRING_TOKEN (STR_GET_HELP_ECHO)
+    );
+  ShellCommandRegisterCommandName (
+    L"pause",
+    ShellCommandRunPause,
+    ShellCommandGetManFileNameLevel3,
+    3,
+    L"",
+    TRUE,
+    gShellLevel3HiiHandle,
+    STRING_TOKEN (STR_GET_HELP_PAUSE)
+    );
+  ShellCommandRegisterCommandName (
+    L"getmtc",
+    ShellCommandRunGetMtc,
+    ShellCommandGetManFileNameLevel3,
+    3,
+    L"",
+    TRUE,
+    gShellLevel3HiiHandle,
+    STRING_TOKEN (STR_GET_HELP_GETMTC)
+    );
+  ShellCommandRegisterCommandName (
+    L"help",
+    ShellCommandRunHelp,
+    ShellCommandGetManFileNameLevel3,
+    3,
+    L"",
+    TRUE,
+    gShellLevel3HiiHandle,
+    STRING_TOKEN (STR_GET_HELP_HELP)
+    );
 
   ShellCommandRegisterAlias (L"type", L"cat");
 

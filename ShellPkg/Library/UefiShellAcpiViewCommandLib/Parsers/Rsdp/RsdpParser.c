@@ -91,16 +91,36 @@ ValidateXsdtAddress (
   An array describing the ACPI RSDP Table.
 **/
 STATIC CONST ACPI_PARSER  RsdpParser[] = {
-  { L"Signature",         8, 0,  NULL,        Dump8Chars, NULL,                  NULL,                NULL },
-  { L"Checksum",          1, 8,  L"0x%x",     NULL,       NULL,                  NULL,                NULL },
-  { L"Oem ID",            6, 9,  NULL,        Dump6Chars, NULL,                  NULL,                NULL },
-  { L"Revision",          1, 15, L"%d",       NULL,       NULL,                  NULL,                NULL },
-  { L"RSDT Address",      4, 16, L"0x%x",     NULL,       NULL,                  ValidateRsdtAddress, NULL },
-  { L"Length",            4, 20, L"%d",       NULL,       NULL,                  NULL,                NULL },
-  { L"XSDT Address",      8, 24, L"0x%lx",    NULL,       (VOID **)&XsdtAddress,
+  { L"Signature",         8,            0,             NULL,
+    Dump8Chars,
+    NULL,                        NULL,
+    NULL                },
+  { L"Checksum",          1,            8,             L"0x%x",
+    NULL,
+    NULL,                                NULL,
+    NULL                                                },
+  { L"Oem ID",            6,            9,             NULL,
+    Dump6Chars,       NULL,                               NULL,
+    NULL                                                                                      },
+  { L"Revision",          1,            15,            L"%d",
+    NULL,                   NULL,                              NULL,
+    NULL                                                                                                                                    },
+  { L"RSDT Address",      4,            16,            L"0x%x",
+    NULL,                  NULL,
+    ValidateRsdtAddress,
+    NULL                                                                                                                                                                                 },
+  { L"Length",            4,            20,            L"%d",
+    NULL,                  NULL,                                   NULL,
+    NULL                                                                                                                                                                                                                             },
+  { L"XSDT Address",      8,            24,            L"0x%lx",
+    NULL,                  (VOID **)&XsdtAddress,
     ValidateXsdtAddress, NULL },
-  { L"Extended Checksum", 1, 32, L"0x%x",     NULL,       NULL,                  NULL,                NULL },
-  { L"Reserved",          3, 33, L"%x %x %x", Dump3Chars, NULL,                  NULL,                NULL }
+  { L"Extended Checksum", 1,            32,            L"0x%x",
+    NULL,                  NULL,                  NULL,
+    NULL                                                                                                                                                                                                                                                                },
+  { L"Reserved",          3,            33,            L"%x %x %x",
+    Dump3Chars, NULL,            NULL,
+    NULL                                                                                                                                                                                                                                                                                                  }
 };
 
 /**

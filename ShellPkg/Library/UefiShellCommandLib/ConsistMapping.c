@@ -60,7 +60,8 @@ typedef struct {
   UINT8                     Type;
   UINT8                     SubType;
   SERIAL_DECODE_FUNCTION    SerialFun;
-  INTN (EFIAPI *CompareFun)(EFI_DEVICE_PATH_PROTOCOL *DevPath, EFI_DEVICE_PATH_PROTOCOL *DevPath2);
+  INTN (EFIAPI *CompareFun)(EFI_DEVICE_PATH_PROTOCOL *DevPath,
+                            EFI_DEVICE_PATH_PROTOCOL *DevPath2);
 } DEV_PATH_CONSIST_MAPPING_TABLE;
 
 /**
@@ -360,7 +361,9 @@ DevPathCompareAcpi (
 
   Acpi1 = (ACPI_HID_DEVICE_PATH *)DevicePath1;
   Acpi2 = (ACPI_HID_DEVICE_PATH *)DevicePath2;
-  if ((Acpi1->HID > Acpi2->HID) || ((Acpi1->HID == Acpi2->HID) && (Acpi1->UID > Acpi2->UID))) {
+  if ((Acpi1->HID > Acpi2->HID) || ((Acpi1->HID == Acpi2->HID) && (Acpi1->UID >
+                                                                   Acpi2->UID)))
+  {
     return 1;
   }
 
@@ -395,7 +398,9 @@ DevPathComparePci (
 
   Pci1 = (PCI_DEVICE_PATH *)DevicePath1;
   Pci2 = (PCI_DEVICE_PATH *)DevicePath2;
-  if ((Pci1->Device > Pci2->Device) || ((Pci1->Device == Pci2->Device) && (Pci1->Function > Pci2->Function))) {
+  if ((Pci1->Device > Pci2->Device) || ((Pci1->Device == Pci2->Device) &&
+                                        (Pci1->Function > Pci2->Function)))
+  {
     return 1;
   }
 
@@ -493,7 +498,11 @@ DevPathSerialAtapi (
   ASSERT (MappingItem != NULL);
 
   Atapi = (ATAPI_DEVICE_PATH *)DevicePathNode;
-  return AppendCSDNum (MappingItem, (Atapi->PrimarySecondary * 2 + Atapi->SlaveMaster));
+  return AppendCSDNum (
+           MappingItem,
+           (Atapi->PrimarySecondary * 2 +
+            Atapi->SlaveMaster)
+           );
 }
 
 /**
@@ -632,17 +641,30 @@ DevPathSerialUsb (
   }
 
   if (PcdGetBool (PcdUsbExtendedDecode)) {
-    Status = gBS->LocateDevicePath (&gEfiUsbIoProtocolGuid, &DevicePath, &TempHandle);
-    UsbIo  = NULL;
+    Status = gBS->LocateDevicePath (
+                    &gEfiUsbIoProtocolGuid,
+                    &DevicePath,
+                    &TempHandle
+                    );
+    UsbIo = NULL;
     if (!EFI_ERROR (Status)) {
-      Status = gBS->OpenProtocol (TempHandle, &gEfiUsbIoProtocolGuid, (VOID **)&UsbIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+      Status = gBS->OpenProtocol (
+                      TempHandle,
+                      &gEfiUsbIoProtocolGuid,
+                      (VOID **)&UsbIo,
+                      gImageHandle,
+                      NULL,
+                      EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                      );
     }
 
     if (!EFI_ERROR (Status)) {
       ASSERT (UsbIo != NULL);
       Status = UsbIo->UsbGetInterfaceDescriptor (UsbIo, &InterfaceDesc);
       if (!EFI_ERROR (Status)) {
-        if ((InterfaceDesc.InterfaceClass == USB_MASS_STORE_CLASS) && (MappingItem->Mtd == MTDTypeUnknown)) {
+        if ((InterfaceDesc.InterfaceClass == USB_MASS_STORE_CLASS) &&
+            (MappingItem->Mtd == MTDTypeUnknown))
+        {
           switch (InterfaceDesc.InterfaceSubClass) {
             case USB_MASS_STORE_SCSI:
               MappingItem->Mtd = MTDTypeHardDisk;
@@ -712,12 +734,19 @@ DevPathSerialVendor (
       Status = AppendCSDNum (MappingItem, Sas->RelativeTargetPort);
     }
   } else {
-    TargetNameLength = MIN (DevicePathNodeLength (DevicePathNode) - sizeof (VENDOR_DEVICE_PATH), PcdGet32 (PcdShellVendorExtendedDecode));
+    TargetNameLength = MIN (
+                         DevicePathNodeLength (DevicePathNode) -
+                         sizeof (VENDOR_DEVICE_PATH),
+                         PcdGet32 (PcdShellVendorExtendedDecode)
+                         );
     if (TargetNameLength != 0) {
       //
       // String is 2 chars per data byte, plus NULL terminator
       //
-      Buffer = AllocateZeroPool (((TargetNameLength * 2) + 1) * sizeof (CHAR16));
+      Buffer = AllocateZeroPool (
+                 ((TargetNameLength * 2) + 1) *
+                 sizeof (CHAR16)
+                 );
       if (Buffer == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -726,7 +755,12 @@ DevPathSerialVendor (
       // Build the string data
       //
       for (Index = 0; Index < TargetNameLength; Index++) {
-        NewBuffer = CatSPrint (Buffer, L"%02x", *((UINT8 *)Vendor + sizeof (VENDOR_DEVICE_PATH) + Index));
+        NewBuffer = CatSPrint (
+                      Buffer,
+                      L"%02x",
+                      *((UINT8 *)Vendor +
+                        sizeof (VENDOR_DEVICE_PATH) + Index)
+                      );
         if (NewBuffer == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
           break;
@@ -859,7 +893,8 @@ DevPathSerialIScsi (
       return Status;
     }
 
-    TargetNameLength = DevicePathNodeLength (DevicePathNode) - sizeof (ISCSI_DEVICE_PATH);
+    TargetNameLength = DevicePathNodeLength (DevicePathNode) -
+                       sizeof (ISCSI_DEVICE_PATH);
     if (TargetNameLength > 0) {
       TargetName = AllocateZeroPool ((TargetNameLength + 1) * sizeof (CHAR16));
       if (TargetName == NULL) {
@@ -938,7 +973,9 @@ DevPathSerialMacAddr (
     HwAddressSize = 6;
   }
 
-  for (Index = 0, PBuffer = Buffer; Index < HwAddressSize; Index++, PBuffer += 2) {
+  for (Index = 0, PBuffer = Buffer; Index < HwAddressSize; Index++, PBuffer +=
+         2)
+  {
     UnicodeSPrint (PBuffer, 0, L"%02x", (UINTN)Mac->MacAddress.Addr[Index]);
   }
 
@@ -1089,7 +1126,12 @@ DevPathSerialIPv6 (
 
   if (!EFI_ERROR (Status)) {
     for (Index = 0, PBuffer = Buffer; Index < 16; Index++, PBuffer += 2) {
-      UnicodeSPrint (PBuffer, 0, L"%02x", (UINTN)Ip->RemoteIpAddress.Addr[Index]);
+      UnicodeSPrint (
+        PBuffer,
+        0,
+        L"%02x",
+        (UINTN)Ip->RemoteIpAddress.Addr[Index]
+        );
     }
 
     Status = AppendCSDStr (MappingItem, Buffer);
@@ -1465,9 +1507,13 @@ GetDeviceConsistMappingInfo (
     // Find the handler to dump this device path node and
     // initialize with generic function in case nothing is found
     //
-    for (SerialFun = DevPathSerialDefault, Index = 0; DevPathConsistMappingTable[Index].SerialFun != NULL; Index += 1) {
-      if ((DevicePathType (DevicePath) == DevPathConsistMappingTable[Index].Type) &&
-          (DevicePathSubType (DevicePath) == DevPathConsistMappingTable[Index].SubType)
+    for (SerialFun = DevPathSerialDefault, Index = 0;
+         DevPathConsistMappingTable[Index].SerialFun != NULL; Index += 1)
+    {
+      if ((DevicePathType (DevicePath) ==
+           DevPathConsistMappingTable[Index].Type) &&
+          (DevicePathSubType (DevicePath) ==
+           DevPathConsistMappingTable[Index].SubType)
           )
       {
         SerialFun = DevPathConsistMappingTable[Index].SerialFun;
@@ -1525,7 +1571,10 @@ ShellCommandConsistMappingInitialize (
                   );
   ASSERT_EFI_ERROR (Status);
 
-  TempTable = AllocateZeroPool ((HandleNum + 1) * sizeof (EFI_DEVICE_PATH_PROTOCOL *));
+  TempTable = AllocateZeroPool (
+                (HandleNum + 1) *
+                sizeof (EFI_DEVICE_PATH_PROTOCOL *)
+                );
   if (TempTable == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1573,7 +1622,12 @@ ShellCommandConsistMappingInitialize (
   for (Index = 0; TempTable[Index] != NULL; Index++) {
   }
 
-  PerformQuickSort (TempTable, Index, sizeof (EFI_DEVICE_PATH_PROTOCOL *), DevicePathCompare);
+  PerformQuickSort (
+    TempTable,
+    Index,
+    sizeof (EFI_DEVICE_PATH_PROTOCOL *),
+    DevicePathCompare
+    );
   *Table = TempTable;
 
   if (HandleBuffer != NULL) {
@@ -1713,10 +1767,18 @@ ShellCommandFindMapItem (
 
   for ( MapListItem = (SHELL_MAP_LIST *)GetFirstNode (&gShellMapList.Link)
         ; !IsNull (&gShellMapList.Link, &MapListItem->Link)
-        ; MapListItem = (SHELL_MAP_LIST *)GetNextNode (&gShellMapList.Link, &MapListItem->Link)
+        ; MapListItem = (SHELL_MAP_LIST *)GetNextNode (
+                                            &gShellMapList.Link,
+                                            &MapListItem->Link
+                                            )
         )
   {
-    if (gUnicodeCollation->StriColl (gUnicodeCollation, MapListItem->MapName, (CHAR16 *)MapKey) == 0) {
+    if (gUnicodeCollation->StriColl (
+                             gUnicodeCollation,
+                             MapListItem->MapName,
+                             (CHAR16 *)MapKey
+                             ) == 0)
+    {
       return (MapListItem);
     }
   }

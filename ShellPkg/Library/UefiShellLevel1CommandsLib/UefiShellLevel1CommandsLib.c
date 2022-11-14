@@ -51,7 +51,12 @@ ShellLevel1CommandsLibConstructor (
     return (EFI_SUCCESS);
   }
 
-  gShellLevel1HiiHandle = HiiAddPackages (&gShellLevel1HiiGuid, gImageHandle, UefiShellLevel1CommandsLibStrings, NULL);
+  gShellLevel1HiiHandle = HiiAddPackages (
+                            &gShellLevel1HiiGuid,
+                            gImageHandle,
+                            UefiShellLevel1CommandsLibStrings,
+                            NULL
+                            );
   if (gShellLevel1HiiHandle == NULL) {
     return (EFI_DEVICE_ERROR);
   }
@@ -59,15 +64,114 @@ ShellLevel1CommandsLibConstructor (
   //
   // install our shell command handlers that are always installed
   //
-  ShellCommandRegisterCommandName (L"stall", ShellCommandRunStall, ShellCommandGetManFileNameLevel1, 1, L"", FALSE, gShellLevel1HiiHandle, (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (STR_GET_HELP_STALL)));
-  ShellCommandRegisterCommandName (L"for", ShellCommandRunFor, ShellCommandGetManFileNameLevel1, 1, L"", FALSE, gShellLevel1HiiHandle, (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (STR_GET_HELP_FOR)));
-  ShellCommandRegisterCommandName (L"goto", ShellCommandRunGoto, ShellCommandGetManFileNameLevel1, 1, L"", FALSE, gShellLevel1HiiHandle, (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (STR_GET_HELP_GOTO)));
-  ShellCommandRegisterCommandName (L"if", ShellCommandRunIf, ShellCommandGetManFileNameLevel1, 1, L"", FALSE, gShellLevel1HiiHandle, (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (STR_GET_HELP_IF)));
-  ShellCommandRegisterCommandName (L"shift", ShellCommandRunShift, ShellCommandGetManFileNameLevel1, 1, L"", FALSE, gShellLevel1HiiHandle, (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (STR_GET_HELP_SHIFT)));
-  ShellCommandRegisterCommandName (L"exit", ShellCommandRunExit, ShellCommandGetManFileNameLevel1, 1, L"", TRUE, gShellLevel1HiiHandle, (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (STR_GET_HELP_EXIT)));
-  ShellCommandRegisterCommandName (L"else", ShellCommandRunElse, ShellCommandGetManFileNameLevel1, 1, L"", FALSE, gShellLevel1HiiHandle, (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (STR_GET_HELP_ELSE)));
-  ShellCommandRegisterCommandName (L"endif", ShellCommandRunEndIf, ShellCommandGetManFileNameLevel1, 1, L"", FALSE, gShellLevel1HiiHandle, (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (STR_GET_HELP_ENDIF)));
-  ShellCommandRegisterCommandName (L"endfor", ShellCommandRunEndFor, ShellCommandGetManFileNameLevel1, 1, L"", FALSE, gShellLevel1HiiHandle, (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (STR_GET_HELP_ENDFOR)));
+  ShellCommandRegisterCommandName (
+    L"stall",
+    ShellCommandRunStall,
+    ShellCommandGetManFileNameLevel1,
+    1,
+    L"",
+    FALSE,
+    gShellLevel1HiiHandle,
+    (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (
+                                                               STR_GET_HELP_STALL
+                                                               ))
+    );
+  ShellCommandRegisterCommandName (
+    L"for",
+    ShellCommandRunFor,
+    ShellCommandGetManFileNameLevel1,
+    1,
+    L"",
+    FALSE,
+    gShellLevel1HiiHandle,
+    (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (
+                                                               STR_GET_HELP_FOR
+                                                               ))
+    );
+  ShellCommandRegisterCommandName (
+    L"goto",
+    ShellCommandRunGoto,
+    ShellCommandGetManFileNameLevel1,
+    1,
+    L"",
+    FALSE,
+    gShellLevel1HiiHandle,
+    (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (
+                                                               STR_GET_HELP_GOTO
+                                                               ))
+    );
+  ShellCommandRegisterCommandName (
+    L"if",
+    ShellCommandRunIf,
+    ShellCommandGetManFileNameLevel1,
+    1,
+    L"",
+    FALSE,
+    gShellLevel1HiiHandle,
+    (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (
+                                                               STR_GET_HELP_IF
+                                                               ))
+    );
+  ShellCommandRegisterCommandName (
+    L"shift",
+    ShellCommandRunShift,
+    ShellCommandGetManFileNameLevel1,
+    1,
+    L"",
+    FALSE,
+    gShellLevel1HiiHandle,
+    (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (
+                                                               STR_GET_HELP_SHIFT
+                                                               ))
+    );
+  ShellCommandRegisterCommandName (
+    L"exit",
+    ShellCommandRunExit,
+    ShellCommandGetManFileNameLevel1,
+    1,
+    L"",
+    TRUE,
+    gShellLevel1HiiHandle,
+    (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (
+                                                               STR_GET_HELP_EXIT
+                                                               ))
+    );
+  ShellCommandRegisterCommandName (
+    L"else",
+    ShellCommandRunElse,
+    ShellCommandGetManFileNameLevel1,
+    1,
+    L"",
+    FALSE,
+    gShellLevel1HiiHandle,
+    (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (
+                                                               STR_GET_HELP_ELSE
+                                                               ))
+    );
+  ShellCommandRegisterCommandName (
+    L"endif",
+    ShellCommandRunEndIf,
+    ShellCommandGetManFileNameLevel1,
+    1,
+    L"",
+    FALSE,
+    gShellLevel1HiiHandle,
+    (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (
+                                                               STR_GET_HELP_ENDIF
+                                                               ))
+    );
+  ShellCommandRegisterCommandName (
+    L"endfor",
+    ShellCommandRunEndFor,
+    ShellCommandGetManFileNameLevel1,
+    1,
+    L"",
+    FALSE,
+    gShellLevel1HiiHandle,
+    (EFI_STRING_ID)(PcdGet8 (PcdShellSupportLevel) < 3 ? 0 : STRING_TOKEN (
+                                                               STR_GET_HELP_ENDFOR
+                                                               ))
+    );
 
   return (EFI_SUCCESS);
 }
@@ -188,7 +292,10 @@ TestNodeForMove (
       Found = TRUE;
       if (!FindOnly) {
         if (MovePast) {
-          ScriptFile->CurrentCommand = (SCRIPT_COMMAND_LIST *)(*Function)(&ScriptFile->CommandList, &CommandNode->Link);
+          ScriptFile->CurrentCommand = (SCRIPT_COMMAND_LIST *)(*Function)(
+  &ScriptFile->CommandList,
+  &CommandNode->Link
+  );
         } else {
           ScriptFile->CurrentCommand = (SCRIPT_COMMAND_LIST *)CommandNode;
         }
@@ -208,7 +315,10 @@ TestNodeForMove (
         // we found the target label without loops
         //
         if (MovePast) {
-          ScriptFile->CurrentCommand = (SCRIPT_COMMAND_LIST *)(*Function)(&ScriptFile->CommandList, &CommandNode->Link);
+          ScriptFile->CurrentCommand = (SCRIPT_COMMAND_LIST *)(*Function)(
+  &ScriptFile->CommandList,
+  &CommandNode->Link
+  );
         } else {
           ScriptFile->CurrentCommand = (SCRIPT_COMMAND_LIST *)CommandNode;
         }
@@ -272,9 +382,15 @@ MoveToTag (
     return FALSE;
   }
 
-  for (CommandNode = (SCRIPT_COMMAND_LIST *)(*Function)(&ScriptFile->CommandList, &ScriptFile->CurrentCommand->Link), Found = FALSE
+  for (CommandNode = (SCRIPT_COMMAND_LIST *)(*Function)(
+  &ScriptFile->CommandList,
+  &ScriptFile->CurrentCommand->Link
+  ), Found = FALSE
        ; !IsNull (&ScriptFile->CommandList, &CommandNode->Link) && !Found
-       ; CommandNode = (SCRIPT_COMMAND_LIST *)(*Function)(&ScriptFile->CommandList, &CommandNode->Link)
+       ; CommandNode = (SCRIPT_COMMAND_LIST *)(*Function)(
+  &ScriptFile->CommandList,
+  &CommandNode->Link
+  )
        )
   {
     Found = TestNodeForMove (
@@ -291,9 +407,14 @@ MoveToTag (
   }
 
   if (WrapAroundScript && !Found) {
-    for (CommandNode = (SCRIPT_COMMAND_LIST *)GetFirstNode (&ScriptFile->CommandList), Found = FALSE
+    for (CommandNode = (SCRIPT_COMMAND_LIST *)GetFirstNode (
+                                                &ScriptFile->CommandList
+                                                ), Found = FALSE
          ; CommandNode != ScriptFile->CurrentCommand && !Found
-         ; CommandNode = (SCRIPT_COMMAND_LIST *)(*Function)(&ScriptFile->CommandList, &CommandNode->Link)
+         ; CommandNode = (SCRIPT_COMMAND_LIST *)(*Function)(
+  &ScriptFile->CommandList,
+  &CommandNode->Link
+  )
          )
     {
       Found = TestNodeForMove (

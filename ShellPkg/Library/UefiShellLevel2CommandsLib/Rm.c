@@ -10,8 +10,8 @@
 #include "UefiShellLevel2CommandsLib.h"
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-q", TypeFlag },
-  { NULL,  TypeMax  }
+  { L"-q", TypeFlag   },
+  { NULL,  TypeMax    }
 };
 
 /**
@@ -82,15 +82,36 @@ CascadeDelete (
   Status      = EFI_SUCCESS;
 
   if ((Node->Info->Attribute & EFI_FILE_READ_ONLY) == EFI_FILE_READ_ONLY) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_RM_LOG_DETELE_RO), gShellLevel2HiiHandle, L"rm", Node->FullName);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_RM_LOG_DETELE_RO),
+      gShellLevel2HiiHandle,
+      L"rm",
+      Node->FullName
+      );
     return (SHELL_ACCESS_DENIED);
   }
 
   if ((Node->Info->Attribute & EFI_FILE_DIRECTORY) == EFI_FILE_DIRECTORY) {
     if (!IsDirectoryEmpty (Node->Handle)) {
       if (!Quiet) {
-        Status = ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_RM_LOG_DELETE_CONF), gShellLevel2HiiHandle, Node->FullName);
-        Status = ShellPromptForResponse (ShellPromptResponseTypeYesNo, NULL, (VOID **)&Resp);
+        Status = ShellPrintHiiEx (
+                   -1,
+                   -1,
+                   NULL,
+                   STRING_TOKEN (
+                     STR_RM_LOG_DELETE_CONF
+                     ),
+                   gShellLevel2HiiHandle,
+                   Node->FullName
+                   );
+        Status = ShellPromptForResponse (
+                   ShellPromptResponseTypeYesNo,
+                   NULL,
+                   (VOID **)&Resp
+                   );
         ASSERT (Resp != NULL);
         if (EFI_ERROR (Status) || (*Resp != ShellPromptResponseYes)) {
           SHELL_FREE_NON_NULL (Resp);
@@ -114,18 +135,32 @@ CascadeDelete (
 
       for (Node2 = (EFI_SHELL_FILE_INFO   *)GetFirstNode (&List->Link)
            ; !IsNull (&List->Link, &Node2->Link)
-           ; Node2 = (EFI_SHELL_FILE_INFO   *)GetNextNode (&List->Link, &Node2->Link)
+           ; Node2 = (EFI_SHELL_FILE_INFO   *)GetNextNode (
+                                                &List->Link,
+                                                &Node2->Link
+                                                )
            )
       {
         //
         // skip the directory traversing stuff...
         //
-        if ((StrCmp (Node2->FileName, L".") == 0) || (StrCmp (Node2->FileName, L"..") == 0)) {
+        if ((StrCmp (Node2->FileName, L".") == 0) || (StrCmp (
+                                                        Node2->FileName,
+                                                        L".."
+                                                        ) == 0))
+        {
           continue;
         }
 
-        Node2->Status = gEfiShellProtocol->OpenFileByName (Node2->FullName, &Node2->Handle, EFI_FILE_MODE_READ|EFI_FILE_MODE_WRITE);
-        if (EFI_ERROR (Node2->Status) && (StrStr (Node2->FileName, L":") == NULL)) {
+        Node2->Status = gEfiShellProtocol->OpenFileByName (
+                                             Node2->FullName,
+                                             &Node2->Handle,
+                                             EFI_FILE_MODE_READ|
+                                             EFI_FILE_MODE_WRITE
+                                             );
+        if (EFI_ERROR (Node2->Status) && (StrStr (Node2->FileName, L":") ==
+                                          NULL))
+        {
           //
           // Update the node filename to have full path with file system identifier
           //
@@ -143,7 +178,12 @@ CascadeDelete (
             //
             // Now try again to open the file
             //
-            Node2->Status = gEfiShellProtocol->OpenFileByName (Node2->FullName, &Node2->Handle, EFI_FILE_MODE_READ|EFI_FILE_MODE_WRITE);
+            Node2->Status = gEfiShellProtocol->OpenFileByName (
+                                                 Node2->FullName,
+                                                 &Node2->Handle,
+                                                 EFI_FILE_MODE_READ|
+                                                 EFI_FILE_MODE_WRITE
+                                                 );
           }
         }
 
@@ -168,12 +208,23 @@ CascadeDelete (
     }
   }
 
-  if (!((StrCmp (Node->FileName, L".") == 0) || (StrCmp (Node->FileName, L"..") == 0))) {
+  if (!((StrCmp (Node->FileName, L".") == 0) || (StrCmp (
+                                                   Node->FileName,
+                                                   L".."
+                                                   ) == 0)))
+  {
     //
     // now delete the current node...
     //
     if (!Quiet) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_RM_LOG_DELETE), gShellLevel2HiiHandle, Node->FullName);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_RM_LOG_DELETE),
+        gShellLevel2HiiHandle,
+        Node->FullName
+        );
     }
 
     Status       = gEfiShellProtocol->DeleteFile (Node->Handle);
@@ -184,11 +235,24 @@ CascadeDelete (
   // We cant allow for the warning here! (Dont use EFI_ERROR Macro).
   //
   if (Status != EFI_SUCCESS) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_RM_LOG_DELETE_ERR), gShellLevel2HiiHandle, Status);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_RM_LOG_DELETE_ERR),
+      gShellLevel2HiiHandle,
+      Status
+      );
     return (SHELL_ACCESS_DENIED);
   } else {
     if (!Quiet) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_RM_LOG_DELETE_COMP), gShellLevel2HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_RM_LOG_DELETE_COMP),
+        gShellLevel2HiiHandle
+        );
     }
 
     return (SHELL_SUCCESS);
@@ -251,7 +315,12 @@ IsValidDeleteTarget (
     RetVal = FALSE;
   } else {
     RetVal = TRUE;
-    if (gUnicodeCollation->MetaiMatch (gUnicodeCollation, Pattern, SearchString)) {
+    if (gUnicodeCollation->MetaiMatch (
+                             gUnicodeCollation,
+                             Pattern,
+                             SearchString
+                             ))
+    {
       RetVal = FALSE;
     }
   }
@@ -301,7 +370,15 @@ ShellCommandRunRm (
   Status = ShellCommandLineParse (ParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel2HiiHandle, L"rm", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel2HiiHandle,
+        L"rm",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -319,21 +396,50 @@ ShellCommandRunRm (
       //
       // we insufficient parameters
       //
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_FEW), gShellLevel2HiiHandle, L"rm");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_FEW),
+        gShellLevel2HiiHandle,
+        L"rm"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       //
       // get a list with each file specified by parameters
       // if parameter is a directory then add all the files below it to the list
       //
-      for ( ParamCount = 1, Param = ShellCommandLineGetRawValue (Package, ParamCount)
+      for ( ParamCount = 1, Param = ShellCommandLineGetRawValue (
+                                      Package,
+                                      ParamCount
+                                      )
             ; Param != NULL
-            ; ParamCount++, Param = ShellCommandLineGetRawValue (Package, ParamCount)
+            ; ParamCount++, Param = ShellCommandLineGetRawValue (
+                                      Package,
+                                      ParamCount
+                                      )
             )
       {
-        Status = ShellOpenFileMetaArg ((CHAR16 *)Param, EFI_FILE_MODE_WRITE|EFI_FILE_MODE_READ, &FileList);
-        if (EFI_ERROR (Status) || (FileList == NULL) || IsListEmpty (&FileList->Link)) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_NF), gShellLevel2HiiHandle, L"rm", (CHAR16 *)Param);
+        Status = ShellOpenFileMetaArg (
+                   (CHAR16 *)Param,
+                   EFI_FILE_MODE_WRITE|
+                   EFI_FILE_MODE_READ,
+                   &FileList
+                   );
+        if (EFI_ERROR (Status) || (FileList == NULL) || IsListEmpty (
+                                                          &FileList->Link
+                                                          ))
+        {
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_FILE_NF),
+            gShellLevel2HiiHandle,
+            L"rm",
+            (CHAR16 *)Param
+            );
           ShellStatus = SHELL_NOT_FOUND;
           break;
         }
@@ -344,14 +450,22 @@ ShellCommandRunRm (
         // loop through the list and make sure we are not aborting...
         //
         for ( Node = (EFI_SHELL_FILE_INFO *)GetFirstNode (&FileList->Link)
-              ; !IsNull (&FileList->Link, &Node->Link) && !ShellGetExecutionBreakFlag ()
-              ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (&FileList->Link, &Node->Link)
+              ; !IsNull (&FileList->Link, &Node->Link) &&
+              !ShellGetExecutionBreakFlag ()
+              ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (
+                                                &FileList->Link,
+                                                &Node->Link
+                                                )
               )
         {
           //
           // skip the directory traversing stuff...
           //
-          if ((StrCmp (Node->FileName, L".") == 0) || (StrCmp (Node->FileName, L"..") == 0)) {
+          if ((StrCmp (Node->FileName, L".") == 0) || (StrCmp (
+                                                         Node->FileName,
+                                                         L".."
+                                                         ) == 0))
+          {
             continue;
           }
 
@@ -359,18 +473,42 @@ ShellCommandRunRm (
           // do the deleting of nodes
           //
           if (EFI_ERROR (Node->Status)) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_RM_LOG_DELETE_ERR2), gShellLevel2HiiHandle, Node->Status);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (
+                STR_RM_LOG_DELETE_ERR2
+                ),
+              gShellLevel2HiiHandle,
+              Node->Status
+              );
             ShellStatus = SHELL_ACCESS_DENIED;
             break;
           }
 
           if (!IsValidDeleteTarget (FileList, Node, Package)) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_RM_LOG_DELETE_ERR3), gShellLevel2HiiHandle, Node->FullName);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (
+                STR_RM_LOG_DELETE_ERR3
+                ),
+              gShellLevel2HiiHandle,
+              Node->FullName
+              );
             ShellStatus = SHELL_INVALID_PARAMETER;
             break;
           }
 
-          ShellStatus = CascadeDelete (Node, ShellCommandLineGetFlag (Package, L"-q"));
+          ShellStatus = CascadeDelete (
+                          Node,
+                          ShellCommandLineGetFlag (
+                            Package,
+                            L"-q"
+                            )
+                          );
         }
       }
 

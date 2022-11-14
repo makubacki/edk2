@@ -752,7 +752,9 @@ ShellCommandLineParseEx (
   );
 
 /// Make it easy to upgrade from older versions of the shell library.
-#define ShellCommandLineParse(CheckList, CheckPackage, ProblemParam, AutoPageBreak)  ShellCommandLineParseEx(CheckList,CheckPackage,ProblemParam,AutoPageBreak,FALSE)
+#define ShellCommandLineParse(CheckList, CheckPackage, ProblemParam, \
+                              AutoPageBreak)  \
+  ShellCommandLineParseEx(CheckList,CheckPackage,ProblemParam,AutoPageBreak,FALSE)
 
 /**
   Frees shell variable list that was returned from ShellCommandLineParse.

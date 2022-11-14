@@ -62,7 +62,10 @@ TraverseHandleDatabase (
       //
       // print out the human readable name for this one.
       //
-      TempString = GetStringNameFromGuid (ProtocolGuidArray[ProtocolIndex], NULL);
+      TempString = GetStringNameFromGuid (
+                     ProtocolGuidArray[ProtocolIndex],
+                     NULL
+                     );
       if (TempString == NULL) {
         continue;
       }
@@ -81,30 +84,46 @@ TraverseHandleDatabase (
                       );
       ASSERT_EFI_ERROR (Status);
       if (!EFI_ERROR (Status)) {
-        for (OpenInfoIndex = 0; OpenInfoIndex < OpenInfoCount; OpenInfoIndex++) {
+        for (OpenInfoIndex = 0; OpenInfoIndex < OpenInfoCount;
+             OpenInfoIndex++)
+        {
           switch (OpenInfo[OpenInfoIndex].Attributes) {
-            case EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL:  OpenTypeString = StringHandProt;
+            case EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL:  OpenTypeString =
+              StringHandProt;
               break;
-            case EFI_OPEN_PROTOCOL_GET_PROTOCOL:        OpenTypeString = StringGetProt;
+            case EFI_OPEN_PROTOCOL_GET_PROTOCOL:        OpenTypeString =
+              StringGetProt;
               break;
-            case EFI_OPEN_PROTOCOL_TEST_PROTOCOL:       OpenTypeString = StringTestProt;
+            case EFI_OPEN_PROTOCOL_TEST_PROTOCOL:       OpenTypeString =
+              StringTestProt;
               break;
-            case EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER: OpenTypeString = StringChild;
+            case EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER: OpenTypeString =
+              StringChild;
               break;
-            case EFI_OPEN_PROTOCOL_BY_DRIVER:           OpenTypeString = StringDriver;
+            case EFI_OPEN_PROTOCOL_BY_DRIVER:           OpenTypeString =
+              StringDriver;
               break;
-            case EFI_OPEN_PROTOCOL_EXCLUSIVE:           OpenTypeString = StringExclusive;
+            case EFI_OPEN_PROTOCOL_EXCLUSIVE:           OpenTypeString =
+              StringExclusive;
               break;
             case EFI_OPEN_PROTOCOL_BY_DRIVER|EFI_OPEN_PROTOCOL_EXCLUSIVE:
               OpenTypeString = StringDriverEx;
               break;
-            default:                                    OpenTypeString = StringUnknown;
+            default:                                    OpenTypeString =
+              StringUnknown;
               break;
           }
 
-          HandleIndex     = ConvertHandleToHandleIndex (OpenInfo[OpenInfoIndex].AgentHandle);
-          Name            = GetStringNameFromHandle (OpenInfo[OpenInfoIndex].AgentHandle, NULL);
-          ControllerIndex = ConvertHandleToHandleIndex (OpenInfo[OpenInfoIndex].ControllerHandle);
+          HandleIndex = ConvertHandleToHandleIndex (
+                          OpenInfo[OpenInfoIndex].AgentHandle
+                          );
+          Name = GetStringNameFromHandle (
+                   OpenInfo[OpenInfoIndex].AgentHandle,
+                   NULL
+                   );
+          ControllerIndex = ConvertHandleToHandleIndex (
+                              OpenInfo[OpenInfoIndex].ControllerHandle
+                              );
           if (ControllerIndex != 0) {
             ShellPrintHiiEx (
               -1,
@@ -178,10 +197,23 @@ ShellCommandRunOpenInfo (
   //
   // parse the command line
   //
-  Status = ShellCommandLineParse (EmptyParamList, &Package, &ProblemParam, TRUE);
+  Status = ShellCommandLineParse (
+             EmptyParamList,
+             &Package,
+             &ProblemParam,
+             TRUE
+             );
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellDriver1HiiHandle, L"openinfo", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellDriver1HiiHandle,
+        L"openinfo",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -192,26 +224,66 @@ ShellCommandRunOpenInfo (
       //
       // error for too many parameters
       //
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellDriver1HiiHandle, L"openinfo");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellDriver1HiiHandle,
+        L"openinfo"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else if (ShellCommandLineGetCount (Package) == 0) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_FEW), gShellDriver1HiiHandle, L"openinfo");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_FEW),
+        gShellDriver1HiiHandle,
+        L"openinfo"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       Param1 = ShellCommandLineGetRawValue (Package, 1);
       Status = ShellConvertStringToUint64 (Param1, &Intermediate, TRUE, FALSE);
-      if (EFI_ERROR (Status) || (Param1 == NULL) || (ConvertHandleIndexToHandle ((UINTN)Intermediate) == NULL)) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_INV_HANDLE), gShellDriver1HiiHandle, L"openinfo", Param1);
+      if (EFI_ERROR (Status) || (Param1 == NULL) ||
+          (ConvertHandleIndexToHandle ((UINTN)Intermediate) == NULL))
+      {
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_GEN_INV_HANDLE),
+          gShellDriver1HiiHandle,
+          L"openinfo",
+          Param1
+          );
         ShellStatus = SHELL_INVALID_PARAMETER;
       } else {
         TheHandle = ConvertHandleIndexToHandle ((UINTN)Intermediate);
         ASSERT (TheHandle != NULL);
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_OPENINFO_HEADER_LINE), gShellDriver1HiiHandle, (UINTN)Intermediate, TheHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_OPENINFO_HEADER_LINE),
+          gShellDriver1HiiHandle,
+          (UINTN)Intermediate,
+          TheHandle
+          );
 
         Status = TraverseHandleDatabase (TheHandle);
         if (!EFI_ERROR (Status)) {
         } else {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_INV_HANDLE), gShellDriver1HiiHandle, L"openinfo", Param1);
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_INV_HANDLE),
+            gShellDriver1HiiHandle,
+            L"openinfo",
+            Param1
+            );
           ShellStatus = SHELL_NOT_FOUND;
         }
       }

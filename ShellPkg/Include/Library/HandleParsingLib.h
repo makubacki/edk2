@@ -133,19 +133,20 @@ GetBestLanguageForDriver (
   IN BOOLEAN      Iso639Language
   );
 
-#define HR_UNKNOWN                      0
-#define HR_IMAGE_HANDLE                 BIT1
-#define HR_DRIVER_BINDING_HANDLE        BIT2 // has driver binding
-#define HR_DEVICE_DRIVER                BIT3 // device driver (hybrid?)
-#define HR_BUS_DRIVER                   BIT4 // a bus driver  (hybrid?)
-#define HR_DRIVER_CONFIGURATION_HANDLE  BIT5
-#define HR_DRIVER_DIAGNOSTICS_HANDLE    BIT6
-#define HR_COMPONENT_NAME_HANDLE        BIT7
-#define HR_DEVICE_HANDLE                BIT8
-#define HR_PARENT_HANDLE                BIT9
-#define HR_CONTROLLER_HANDLE            BIT10
-#define HR_CHILD_HANDLE                 BIT11
-#define HR_VALID_MASK                   (BIT1|BIT2|BIT3|BIT4|BIT5|BIT6|BIT7|BIT8|BIT9|BIT10|BIT11)
+#define HR_UNKNOWN                        0
+#define HR_IMAGE_HANDLE                   BIT1
+#define HR_DRIVER_BINDING_HANDLE          BIT2 // has driver binding
+#define HR_DEVICE_DRIVER                  BIT3 // device driver (hybrid?)
+#define HR_BUS_DRIVER                     BIT4 // a bus driver  (hybrid?)
+#define HR_DRIVER_CONFIGURATION_HANDLE    BIT5
+#define HR_DRIVER_DIAGNOSTICS_HANDLE      BIT6
+#define HR_COMPONENT_NAME_HANDLE          BIT7
+#define HR_DEVICE_HANDLE                  BIT8
+#define HR_PARENT_HANDLE                  BIT9
+#define HR_CONTROLLER_HANDLE              BIT10
+#define HR_CHILD_HANDLE                   BIT11
+#define HR_VALID_MASK                   \
+                                          (BIT1|BIT2|BIT3|BIT4|BIT5|BIT6|BIT7|BIT8|BIT9|BIT10|BIT11)
 
 /**
   Gets all the related EFI_HANDLEs based on the mask supplied.
@@ -260,7 +261,8 @@ ParseHandleDatabaseByRelationshipWithType (
   @retval EFI_SUCCESS               The operation was successful.
   @sa ParseHandleDatabaseByRelationship
 **/
-#define PARSE_HANDLE_DATABASE_MANAGED_CHILDREN(DriverHandle, ControllerHandle, Count, Buffer) \
+#define PARSE_HANDLE_DATABASE_MANAGED_CHILDREN(DriverHandle, ControllerHandle, \
+                                               Count, Buffer) \
   ParseHandleDatabaseByRelationship(DriverHandle, ControllerHandle, HR_CHILD_HANDLE|HR_DEVICE_HANDLE, Count, Buffer)
 
 /**

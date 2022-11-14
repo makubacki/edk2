@@ -42,10 +42,23 @@ ShellCommandRunStall (
   //
   // parse the command line
   //
-  Status = ShellCommandLineParse (EmptyParamList, &Package, &ProblemParam, TRUE);
+  Status = ShellCommandLineParse (
+             EmptyParamList,
+             &Package,
+             &ProblemParam,
+             TRUE
+             );
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel1HiiHandle, L"stall", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel1HiiHandle,
+        L"stall",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -53,20 +66,62 @@ ShellCommandRunStall (
     }
   } else {
     if (ShellCommandLineGetRawValue (Package, 2) != NULL) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel1HiiHandle, L"stall");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellLevel1HiiHandle,
+        L"stall"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else if (ShellCommandLineGetRawValue (Package, 1) == NULL) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_FEW), gShellLevel1HiiHandle, L"stall");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_FEW),
+        gShellLevel1HiiHandle,
+        L"stall"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
-      Status = ShellConvertStringToUint64 (ShellCommandLineGetRawValue (Package, 1), &Intermediate, FALSE, FALSE);
-      if (EFI_ERROR (Status) || (((UINT64)(UINTN)(Intermediate)) != Intermediate)) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel1HiiHandle, L"stall", ShellCommandLineGetRawValue (Package, 1));
+      Status = ShellConvertStringToUint64 (
+                 ShellCommandLineGetRawValue (
+                   Package,
+                   1
+                   ),
+                 &Intermediate,
+                 FALSE,
+                 FALSE
+                 );
+      if (EFI_ERROR (Status) || (((UINT64)(UINTN)(Intermediate)) !=
+                                 Intermediate))
+      {
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_GEN_PARAM_INV),
+          gShellLevel1HiiHandle,
+          L"stall",
+          ShellCommandLineGetRawValue (
+            Package,
+            1
+            )
+          );
         ShellStatus = SHELL_INVALID_PARAMETER;
       } else {
         Status = gBS->Stall ((UINTN)Intermediate);
         if (EFI_ERROR (Status)) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_STALL_FAILED), gShellLevel1HiiHandle, L"stall");
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_STALL_FAILED),
+            gShellLevel1HiiHandle,
+            L"stall"
+            );
           ShellStatus = SHELL_DEVICE_ERROR;
         }
       }

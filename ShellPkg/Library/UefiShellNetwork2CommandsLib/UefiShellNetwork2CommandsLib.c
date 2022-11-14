@@ -51,7 +51,12 @@ ShellNetwork2CommandsLibConstructor (
     return (EFI_SUCCESS);
   }
 
-  gShellNetwork2HiiHandle = HiiAddPackages (&gShellNetwork2HiiGuid, gImageHandle, UefiShellNetwork2CommandsLibStrings, NULL);
+  gShellNetwork2HiiHandle = HiiAddPackages (
+                              &gShellNetwork2HiiGuid,
+                              gImageHandle,
+                              UefiShellNetwork2CommandsLibStrings,
+                              NULL
+                              );
   if (gShellNetwork2HiiHandle == NULL) {
     return (EFI_DEVICE_ERROR);
   }
@@ -59,8 +64,26 @@ ShellNetwork2CommandsLibConstructor (
   //
   // install our shell command handlers
   //
-  ShellCommandRegisterCommandName (L"ping6", ShellCommandRunPing6, ShellCommandGetManFileNameNetwork2, 0, L"network2", TRUE, gShellNetwork2HiiHandle, STRING_TOKEN (STR_GET_HELP_PING6));
-  ShellCommandRegisterCommandName (L"ifconfig6", ShellCommandRunIfconfig6, ShellCommandGetManFileNameNetwork2, 0, L"network2", TRUE, gShellNetwork2HiiHandle, STRING_TOKEN (STR_GET_HELP_IFCONFIG6));
+  ShellCommandRegisterCommandName (
+    L"ping6",
+    ShellCommandRunPing6,
+    ShellCommandGetManFileNameNetwork2,
+    0,
+    L"network2",
+    TRUE,
+    gShellNetwork2HiiHandle,
+    STRING_TOKEN (STR_GET_HELP_PING6)
+    );
+  ShellCommandRegisterCommandName (
+    L"ifconfig6",
+    ShellCommandRunIfconfig6,
+    ShellCommandGetManFileNameNetwork2,
+    0,
+    L"network2",
+    TRUE,
+    gShellNetwork2HiiHandle,
+    STRING_TOKEN (STR_GET_HELP_IFCONFIG6)
+    );
 
   return EFI_SUCCESS;
 }

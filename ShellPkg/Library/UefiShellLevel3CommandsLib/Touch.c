@@ -34,11 +34,23 @@ TouchFileByHandle (
 
   Status = gRT->GetTime (&FileInfo->ModificationTime, NULL);
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel3HiiHandle, L"gRT->GetTime", Status);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_GEN_PROBLEM),
+      gShellLevel3HiiHandle,
+      L"gRT->GetTime",
+      Status
+      );
     return (SHELL_DEVICE_ERROR);
   }
 
-  CopyMem (&FileInfo->LastAccessTime, &FileInfo->ModificationTime, sizeof (EFI_TIME));
+  CopyMem (
+    &FileInfo->LastAccessTime,
+    &FileInfo->ModificationTime,
+    sizeof (EFI_TIME)
+    );
 
   Status = gEfiShellProtocol->SetFileInfo (Handle, FileInfo);
 
@@ -94,7 +106,15 @@ DoTouchByHandle (
   //
   Status = TouchFileByHandle (Handle);
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_OPEN_FAIL), gShellLevel3HiiHandle, L"touch", Name);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_GEN_FILE_OPEN_FAIL),
+      gShellLevel3HiiHandle,
+      L"touch",
+      Name
+      );
     return (Status);
   }
 
@@ -113,8 +133,12 @@ DoTouchByHandle (
     // recurse on each
     //
     for (Walker = (EFI_SHELL_FILE_INFO *)GetFirstNode (&FileList->Link)
-         ; FileList != NULL && !IsNull (&FileList->Link, &Walker->Link) && !EFI_ERROR (Status)
-         ; Walker = (EFI_SHELL_FILE_INFO *)GetNextNode (&FileList->Link, &Walker->Link)
+         ; FileList != NULL && !IsNull (&FileList->Link, &Walker->Link) &&
+         !EFI_ERROR (Status)
+         ; Walker = (EFI_SHELL_FILE_INFO *)GetNextNode (
+                                             &FileList->Link,
+                                             &Walker->Link
+                                             )
          )
     {
       if (  (StrCmp (Walker->FileName, L".") != 0)
@@ -124,9 +148,21 @@ DoTouchByHandle (
         //
         // Open the file since we need that handle.
         //
-        Status = gEfiShellProtocol->OpenFileByName (Walker->FullName, &Walker->Handle, EFI_FILE_MODE_READ|EFI_FILE_MODE_WRITE);
+        Status = gEfiShellProtocol->OpenFileByName (
+                                      Walker->FullName,
+                                      &Walker->Handle,
+                                      EFI_FILE_MODE_READ|EFI_FILE_MODE_WRITE
+                                      );
         if (EFI_ERROR (Status)) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_OPEN_FAIL), gShellLevel3HiiHandle, L"touch", Walker->FullName);
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_FILE_OPEN_FAIL),
+            gShellLevel3HiiHandle,
+            L"touch",
+            Walker->FullName
+            );
           Status = EFI_ACCESS_DENIED;
         } else {
           Status = DoTouchByHandle (Walker->FullName, FS, Walker->Handle, TRUE);
@@ -139,7 +175,12 @@ DoTouchByHandle (
     //
     // free stuff
     //
-    if ((FileList != NULL) && EFI_ERROR (gEfiShellProtocol->FreeFileList (&FileList))) {
+    if ((FileList != NULL) && EFI_ERROR (
+                                gEfiShellProtocol->FreeFileList (
+                                                     &FileList
+                                                     )
+                                ))
+    {
       Status = EFI_INVALID_PARAMETER;
     }
   }
@@ -148,8 +189,8 @@ DoTouchByHandle (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-r", TypeFlag },
-  { NULL,  TypeMax  }
+  { L"-r", TypeFlag  },
+  { NULL,  TypeMax   }
 };
 
 /**
@@ -194,7 +235,15 @@ ShellCommandRunTouch (
   Status = ShellCommandLineParse (ParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel3HiiHandle, L"touch", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel3HiiHandle,
+        L"touch",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -212,21 +261,47 @@ ShellCommandRunTouch (
       //
       // we insufficient parameters
       //
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_FEW), gShellLevel3HiiHandle, L"touch");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_FEW),
+        gShellLevel3HiiHandle,
+        L"touch"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       //
       // get a list with each file specified by parameters
       // if parameter is a directory then add all the files below it to the list
       //
-      for ( ParamCount = 1, Param = ShellCommandLineGetRawValue (Package, ParamCount)
+      for ( ParamCount = 1, Param = ShellCommandLineGetRawValue (
+                                      Package,
+                                      ParamCount
+                                      )
             ; Param != NULL
-            ; ParamCount++, Param = ShellCommandLineGetRawValue (Package, ParamCount)
+            ; ParamCount++, Param = ShellCommandLineGetRawValue (
+                                      Package,
+                                      ParamCount
+                                      )
             )
       {
-        Status = ShellOpenFileMetaArg ((CHAR16 *)Param, EFI_FILE_MODE_READ|EFI_FILE_MODE_WRITE, &FileList);
+        Status = ShellOpenFileMetaArg (
+                   (CHAR16 *)Param,
+                   EFI_FILE_MODE_READ|
+                   EFI_FILE_MODE_WRITE,
+                   &FileList
+                   );
         if (EFI_ERROR (Status)) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel3HiiHandle, L"touch", (CHAR16 *)Param);
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_PARAM_INV),
+            gShellLevel3HiiHandle,
+            L"touch",
+            (CHAR16 *)Param
+            );
           ShellStatus = SHELL_NOT_FOUND;
           break;
         }
@@ -240,29 +315,66 @@ ShellCommandRunTouch (
           // check that we have at least 1 file
           //
           if ((FileList == NULL) || IsListEmpty (&FileList->Link)) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_NF), gShellLevel3HiiHandle, L"touch", Param);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_FILE_NF),
+              gShellLevel3HiiHandle,
+              L"touch",
+              Param
+              );
             continue;
           } else {
             //
             // loop through the list and make sure we are not aborting...
             //
             for ( Node = (EFI_SHELL_FILE_INFO *)GetFirstNode (&FileList->Link)
-                  ; !IsNull (&FileList->Link, &Node->Link) && !ShellGetExecutionBreakFlag ()
-                  ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (&FileList->Link, &Node->Link)
+                  ; !IsNull (&FileList->Link, &Node->Link) &&
+                  !ShellGetExecutionBreakFlag ()
+                  ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (
+                                                    &FileList->Link,
+                                                    &Node->Link
+                                                    )
                   )
             {
               //
               // make sure the file opened ok
               //
               if (EFI_ERROR (Node->Status)) {
-                ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_OPEN_FAIL), gShellLevel3HiiHandle, L"touch", Node->FileName);
+                ShellPrintHiiEx (
+                  -1,
+                  -1,
+                  NULL,
+                  STRING_TOKEN (
+                    STR_GEN_FILE_OPEN_FAIL
+                    ),
+                  gShellLevel3HiiHandle,
+                  L"touch",
+                  Node->FileName
+                  );
                 ShellStatus = SHELL_NOT_FOUND;
                 continue;
               }
 
-              Status = DoTouchByHandle (Node->FullName, NULL, Node->Handle, ShellCommandLineGetFlag (Package, L"-r"));
+              Status = DoTouchByHandle (
+                         Node->FullName,
+                         NULL,
+                         Node->Handle,
+                         ShellCommandLineGetFlag (Package, L"-r")
+                         );
               if (EFI_ERROR (Status) && (Status != EFI_ACCESS_DENIED)) {
-                ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_OPEN_FAIL), gShellLevel3HiiHandle, L"touch", Node->FileName);
+                ShellPrintHiiEx (
+                  -1,
+                  -1,
+                  NULL,
+                  STRING_TOKEN (
+                    STR_GEN_FILE_OPEN_FAIL
+                    ),
+                  gShellLevel3HiiHandle,
+                  L"touch",
+                  Node->FileName
+                  );
                 ShellStatus = SHELL_NOT_FOUND;
               }
             }

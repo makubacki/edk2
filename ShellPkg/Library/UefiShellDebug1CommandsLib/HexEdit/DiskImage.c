@@ -47,7 +47,11 @@ HDiskImageInit (
   //
   CopyMem (&HDiskImage, &HDiskImageConst, sizeof (HDiskImage));
 
-  CopyMem (&HDiskImageBackupVar, &HDiskImageConst, sizeof (HDiskImageBackupVar));
+  CopyMem (
+    &HDiskImageBackupVar,
+    &HDiskImageConst,
+    sizeof (HDiskImageBackupVar)
+    );
 
   return EFI_SUCCESS;
 }
@@ -184,14 +188,25 @@ HDiskImageRead (
   //
   // get blkio interface
   //
-  Status = gBS->LocateDevicePath (&gEfiBlockIoProtocolGuid, &DupDevicePath, &Handle);
+  Status = gBS->LocateDevicePath (
+                  &gEfiBlockIoProtocolGuid,
+                  &DupDevicePath,
+                  &Handle
+                  );
   FreePool (DupDevicePathForFree);
   if (EFI_ERROR (Status)) {
     StatusBarSetStatusString (L"Read Disk Failed");
     return Status;
   }
 
-  Status = gBS->OpenProtocol (Handle, &gEfiBlockIoProtocolGuid, (VOID **)&BlkIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+  Status = gBS->OpenProtocol (
+                  Handle,
+                  &gEfiBlockIoProtocolGuid,
+                  (VOID **)&BlkIo,
+                  gImageHandle,
+                  NULL,
+                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                  );
   if (EFI_ERROR (Status)) {
     StatusBarSetStatusString (L"Read Disk Failed");
     return Status;
@@ -201,7 +216,9 @@ HDiskImageRead (
   // if Offset exceeds LastBlock,
   //   return error
   //
-  if ((Offset > BlkIo->Media->LastBlock) || (Offset + Size > BlkIo->Media->LastBlock)) {
+  if ((Offset > BlkIo->Media->LastBlock) || (Offset + Size >
+                                             BlkIo->Media->LastBlock))
+  {
     StatusBarSetStatusString (L"Invalid Offset + Size");
     return EFI_LOAD_ERROR;
   }
@@ -362,14 +379,25 @@ HDiskImageSave (
   //
   // get blkio interface
   //
-  Status = gBS->LocateDevicePath (&gEfiBlockIoProtocolGuid, &DupDevicePath, &Handle);
+  Status = gBS->LocateDevicePath (
+                  &gEfiBlockIoProtocolGuid,
+                  &DupDevicePath,
+                  &Handle
+                  );
   FreePool (DupDevicePathForFree);
   if (EFI_ERROR (Status)) {
     //    StatusBarSetStatusString (L"Read Disk Failed");
     return Status;
   }
 
-  Status = gBS->OpenProtocol (Handle, &gEfiBlockIoProtocolGuid, (VOID **)&BlkIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+  Status = gBS->OpenProtocol (
+                  Handle,
+                  &gEfiBlockIoProtocolGuid,
+                  (VOID **)&BlkIo,
+                  gImageHandle,
+                  NULL,
+                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                  );
   if (EFI_ERROR (Status)) {
     //    StatusBarSetStatusString (L"Read Disk Failed");
     return Status;

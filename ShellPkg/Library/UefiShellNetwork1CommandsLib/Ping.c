@@ -11,7 +11,9 @@
 
 #include "UefiShellNetwork1CommandsLib.h"
 
-#define PING_IP4_COPY_ADDRESS(Dest, Src)  (CopyMem ((Dest), (Src), sizeof (EFI_IPv4_ADDRESS)))
+#define PING_IP4_COPY_ADDRESS(Dest, \
+                              Src)  \
+  (CopyMem ((Dest), (Src), sizeof (EFI_IPv4_ADDRESS)))
 
 UINT64  mCurrentTick = 0;
 
@@ -130,8 +132,14 @@ typedef struct _PING_PRIVATE_DATA {
 
   PING_IPX_PROTOCOL            ProtocolPointers;
   VOID                         *IpProtocol;
-  UINT8                        SrcAddress[MAX (sizeof (EFI_IPv6_ADDRESS), sizeof (EFI_IPv4_ADDRESS))];
-  UINT8                        DstAddress[MAX (sizeof (EFI_IPv6_ADDRESS), sizeof (EFI_IPv4_ADDRESS))];
+  UINT8                        SrcAddress[MAX (
+                                            sizeof (EFI_IPv6_ADDRESS),
+                                            sizeof (EFI_IPv4_ADDRESS)
+                                            )];
+  UINT8                        DstAddress[MAX (
+                                            sizeof (EFI_IPv6_ADDRESS),
+                                            sizeof (EFI_IPv4_ADDRESS)
+                                            )];
   PING_IPX_COMPLETION_TOKEN    RxToken;
   UINT16                       FailedCount;
 } PING_PRIVATE_DATA;
@@ -496,7 +504,9 @@ Ping6MatchEchoReply (
   NET_LIST_FOR_EACH_SAFE (Entry, NextEntry, &Private->TxList) {
     TxInfo = BASE_CR (Entry, PING_ICMPX_TX_INFO, Link);
 
-    if ((TxInfo->SequenceNum == Packet->SequenceNum) && (TxInfo->TimeStamp == Packet->TimeStamp)) {
+    if ((TxInfo->SequenceNum == Packet->SequenceNum) && (TxInfo->TimeStamp ==
+                                                         Packet->TimeStamp))
+    {
       Private->RxCount++;
       RemoveEntryList (&TxInfo->Link);
       PingDestroyTxInfo (TxInfo, Private->IpChoice);
@@ -548,7 +558,9 @@ Ping6OnEchoReplyReceived (
 
   Private = (PING_PRIVATE_DATA *)Context;
 
-  if ((Private == NULL) || (Private->Status == EFI_ABORTED) || (Private->Signature != PING_PRIVATE_DATA_SIGNATURE)) {
+  if ((Private == NULL) || (Private->Status == EFI_ABORTED) ||
+      (Private->Signature != PING_PRIVATE_DATA_SIGNATURE))
+  {
     return;
   }
 
@@ -557,14 +569,24 @@ Ping6OnEchoReplyReceived (
   }
 
   if (Private->IpChoice == PING_IP_CHOICE_IP6) {
-    Reply   = ((EFI_IP6_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->FragmentTable[0].FragmentBuffer;
-    PayLoad = ((EFI_IP6_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->DataLength;
-    if (((EFI_IP6_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->Header->NextHeader != IP6_ICMP) {
+    Reply =
+      ((EFI_IP6_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->FragmentTable[0]
+        .
+        FragmentBuffer;
+    PayLoad =
+      ((EFI_IP6_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->DataLength;
+    if (((EFI_IP6_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->Header->
+          NextHeader != IP6_ICMP)
+    {
       goto ON_EXIT;
     }
 
     if (!IP6_IS_MULTICAST ((EFI_IPv6_ADDRESS *)&Private->DstAddress) &&
-        !EFI_IP6_EQUAL (&((EFI_IP6_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->Header->SourceAddress, (EFI_IPv6_ADDRESS *)&Private->DstAddress))
+        !EFI_IP6_EQUAL (
+           &((EFI_IP6_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->Header->
+             SourceAddress,
+           (EFI_IPv6_ADDRESS *)&Private->DstAddress
+           ))
     {
       goto ON_EXIT;
     }
@@ -573,10 +595,22 @@ Ping6OnEchoReplyReceived (
       goto ON_EXIT;
     }
   } else {
-    Reply   = ((EFI_IP4_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->FragmentTable[0].FragmentBuffer;
-    PayLoad = ((EFI_IP4_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->DataLength;
-    if (!IP4_IS_MULTICAST (EFI_IP4 (*(EFI_IPv4_ADDRESS *)Private->DstAddress)) &&
-        !EFI_IP4_EQUAL (&((EFI_IP4_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->Header->SourceAddress, (EFI_IPv4_ADDRESS *)&Private->DstAddress))
+    Reply =
+      ((EFI_IP4_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->FragmentTable[0]
+        .
+        FragmentBuffer;
+    PayLoad =
+      ((EFI_IP4_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->DataLength;
+    if (!IP4_IS_MULTICAST (
+           EFI_IP4 (
+             *(EFI_IPv4_ADDRESS *)Private->DstAddress
+             )
+           ) &&
+        !EFI_IP4_EQUAL (
+           &((EFI_IP4_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->Header->
+             SourceAddress,
+           (EFI_IPv4_ADDRESS *)&Private->DstAddress
+           ))
     {
       goto ON_EXIT;
     }
@@ -616,7 +650,9 @@ Ping6OnEchoReplyReceived (
     PayLoad,
     mDstString,
     Reply->SequenceNum,
-    Private->IpChoice == PING_IP_CHOICE_IP6 ? ((EFI_IP6_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->Header->HopLimit : 0,
+    Private->IpChoice == PING_IP_CHOICE_IP6 ?
+    ((EFI_IP6_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->Header->HopLimit :
+    0,
     Rtt,
     Rtt + Private->TimerPeriod
     );
@@ -626,7 +662,12 @@ ON_EXIT:
   //
   // Recycle the packet before reusing RxToken
   //
-  gBS->SignalEvent (Private->IpChoice == PING_IP_CHOICE_IP6 ? ((EFI_IP6_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->RecycleSignal : ((EFI_IP4_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->RecycleSignal);
+  gBS->SignalEvent (
+         Private->IpChoice == PING_IP_CHOICE_IP6 ?
+         ((EFI_IP6_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->RecycleSignal
+  :
+         ((EFI_IP4_RECEIVE_DATA *)Private->RxToken.Packet.RxData)->RecycleSignal
+         );
 
   if (Private->RxCount < Private->SendNum) {
     //
@@ -634,10 +675,20 @@ ON_EXIT:
     //
     Private->RxToken.Status = EFI_ABORTED;
 
-    Status = Private->ProtocolPointers.Receive (Private->IpProtocol, &Private->RxToken);
+    Status = Private->ProtocolPointers.Receive (
+                                         Private->IpProtocol,
+                                         &Private->RxToken
+                                         );
 
     if (EFI_ERROR (Status)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_RECEIVE), gShellNetwork1HiiHandle, Status);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_PING_RECEIVE),
+        gShellNetwork1HiiHandle,
+        Status
+        );
       Private->Status = EFI_ABORTED;
     }
   } else {
@@ -677,7 +728,10 @@ PingGenerateToken (
     return NULL;
   }
 
-  TxData = AllocateZeroPool (Private->IpChoice == PING_IP_CHOICE_IP6 ? sizeof (EFI_IP6_TRANSMIT_DATA) : sizeof (EFI_IP4_TRANSMIT_DATA));
+  TxData = AllocateZeroPool (
+             Private->IpChoice == PING_IP_CHOICE_IP6 ?
+             sizeof (EFI_IP6_TRANSMIT_DATA) : sizeof (EFI_IP4_TRANSMIT_DATA)
+             );
   if (TxData == NULL) {
     FreePool (Request);
     return NULL;
@@ -693,7 +747,8 @@ PingGenerateToken (
   //
   // Assembly echo request packet.
   //
-  Request->Type        = (UINT8)(Private->IpChoice == PING_IP_CHOICE_IP6 ? ICMP_V6_ECHO_REQUEST : ICMP_V4_ECHO_REQUEST);
+  Request->Type        = (UINT8)(Private->IpChoice == PING_IP_CHOICE_IP6 ?
+                                 ICMP_V6_ECHO_REQUEST : ICMP_V4_ECHO_REQUEST);
   Request->Code        = 0;
   Request->SequenceNum = SequenceNum;
   Request->Identifier  = 0;
@@ -703,31 +758,45 @@ PingGenerateToken (
   // Assembly token for transmit.
   //
   if (Private->IpChoice == PING_IP_CHOICE_IP6) {
-    Request->TimeStamp                                                 = TimeStamp;
-    ((EFI_IP6_TRANSMIT_DATA *)TxData)->ExtHdrsLength                   = 0;
-    ((EFI_IP6_TRANSMIT_DATA *)TxData)->ExtHdrs                         = NULL;
-    ((EFI_IP6_TRANSMIT_DATA *)TxData)->OverrideData                    = 0;
-    ((EFI_IP6_TRANSMIT_DATA *)TxData)->DataLength                      = Private->BufferSize;
+    Request->TimeStamp =
+      TimeStamp;
+    ((EFI_IP6_TRANSMIT_DATA *)TxData)->ExtHdrsLength = 0;
+    ((EFI_IP6_TRANSMIT_DATA *)TxData)->ExtHdrs       = NULL;
+    ((EFI_IP6_TRANSMIT_DATA *)TxData)->OverrideData  = 0;
+    ((EFI_IP6_TRANSMIT_DATA *)TxData)->DataLength    =
+      Private->BufferSize;
     ((EFI_IP6_TRANSMIT_DATA *)TxData)->FragmentCount                   = 1;
-    ((EFI_IP6_TRANSMIT_DATA *)TxData)->FragmentTable[0].FragmentBuffer = (VOID *)Request;
-    ((EFI_IP6_TRANSMIT_DATA *)TxData)->FragmentTable[0].FragmentLength = Private->BufferSize;
+    ((EFI_IP6_TRANSMIT_DATA *)TxData)->FragmentTable[0].FragmentBuffer =
+      (VOID *)Request;
+    ((EFI_IP6_TRANSMIT_DATA *)TxData)->FragmentTable[0].FragmentLength =
+      Private->BufferSize;
   } else {
-    ((EFI_IP4_TRANSMIT_DATA *)TxData)->OptionsLength                   = 0;
-    ((EFI_IP4_TRANSMIT_DATA *)TxData)->OptionsBuffer                   = NULL;
-    ((EFI_IP4_TRANSMIT_DATA *)TxData)->OverrideData                    = 0;
-    ((EFI_IP4_TRANSMIT_DATA *)TxData)->TotalDataLength                 = Private->BufferSize;
+    ((EFI_IP4_TRANSMIT_DATA *)TxData)->OptionsLength   = 0;
+    ((EFI_IP4_TRANSMIT_DATA *)TxData)->OptionsBuffer   = NULL;
+    ((EFI_IP4_TRANSMIT_DATA *)TxData)->OverrideData    = 0;
+    ((EFI_IP4_TRANSMIT_DATA *)TxData)->TotalDataLength =
+      Private->BufferSize;
     ((EFI_IP4_TRANSMIT_DATA *)TxData)->FragmentCount                   = 1;
-    ((EFI_IP4_TRANSMIT_DATA *)TxData)->FragmentTable[0].FragmentBuffer = (VOID *)Request;
-    ((EFI_IP4_TRANSMIT_DATA *)TxData)->FragmentTable[0].FragmentLength = Private->BufferSize;
-    ((EFI_IP4_TRANSMIT_DATA *)TxData)->DestinationAddress.Addr[0]      = Private->DstAddress[0];
-    ((EFI_IP4_TRANSMIT_DATA *)TxData)->DestinationAddress.Addr[1]      = Private->DstAddress[1];
-    ((EFI_IP4_TRANSMIT_DATA *)TxData)->DestinationAddress.Addr[2]      = Private->DstAddress[2];
-    ((EFI_IP4_TRANSMIT_DATA *)TxData)->DestinationAddress.Addr[3]      = Private->DstAddress[3];
+    ((EFI_IP4_TRANSMIT_DATA *)TxData)->FragmentTable[0].FragmentBuffer =
+      (VOID *)Request;
+    ((EFI_IP4_TRANSMIT_DATA *)TxData)->FragmentTable[0].FragmentLength =
+      Private->BufferSize;
+    ((EFI_IP4_TRANSMIT_DATA *)TxData)->DestinationAddress.Addr[0] =
+      Private->DstAddress[0];
+    ((EFI_IP4_TRANSMIT_DATA *)TxData)->DestinationAddress.Addr[1] =
+      Private->DstAddress[1];
+    ((EFI_IP4_TRANSMIT_DATA *)TxData)->DestinationAddress.Addr[2] =
+      Private->DstAddress[2];
+    ((EFI_IP4_TRANSMIT_DATA *)TxData)->DestinationAddress.Addr[3] =
+      Private->DstAddress[3];
 
     HeadSum            = NetChecksum ((UINT8 *)Request, Private->BufferSize);
     Request->TimeStamp = TimeStamp;
-    TempChecksum       = NetChecksum ((UINT8 *)&Request->TimeStamp, sizeof (UINT64));
-    Request->Checksum  = (UINT16)(~NetAddChecksum (HeadSum, TempChecksum));
+    TempChecksum       = NetChecksum (
+                           (UINT8 *)&Request->TimeStamp,
+                           sizeof (UINT64)
+                           );
+    Request->Checksum = (UINT16)(~NetAddChecksum (HeadSum, TempChecksum));
   }
 
   Token->Status        = EFI_ABORTED;
@@ -792,7 +861,10 @@ PingSendEchoRequest (
 
   InsertTailList (&Private->TxList, &TxInfo->Link);
 
-  Status = Private->ProtocolPointers.Transmit (Private->IpProtocol, TxInfo->Token);
+  Status = Private->ProtocolPointers.Transmit (
+                                       Private->IpProtocol,
+                                       TxInfo->Token
+                                       );
 
   if (EFI_ERROR (Status)) {
     RemoveEntryList (&TxInfo->Link);
@@ -837,9 +909,19 @@ Ping6ReceiveEchoReply (
 
   Private->RxToken.Status = EFI_NOT_READY;
 
-  Status = Private->ProtocolPointers.Receive (Private->IpProtocol, &Private->RxToken);
+  Status = Private->ProtocolPointers.Receive (
+                                       Private->IpProtocol,
+                                       &Private->RxToken
+                                       );
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_RECEIVE), gShellNetwork1HiiHandle, Status);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_PING_RECEIVE),
+      gShellNetwork1HiiHandle,
+      Status
+      );
   }
 
   return Status;
@@ -879,7 +961,14 @@ Ping6OnTimerRoutine (
     Status = PingSendEchoRequest (Private);
     if (Private->TxCount != 0) {
       if (EFI_ERROR (Status)) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_SEND_REQUEST), gShellNetwork1HiiHandle, Private->TxCount + 1);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_PING_SEND_REQUEST),
+          gShellNetwork1HiiHandle,
+          Private->TxCount + 1
+          );
       }
     }
   }
@@ -902,7 +991,14 @@ Ping6OnTimerRoutine (
       //
       // Remove the timeout icmp6 echo request from list.
       //
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_TIMEOUT), gShellNetwork1HiiHandle, TxInfo->SequenceNum);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_PING_TIMEOUT),
+        gShellNetwork1HiiHandle,
+        TxInfo->SequenceNum
+        );
 
       RemoveEntryList (&TxInfo->Link);
       PingDestroyTxInfo (TxInfo, Private->IpChoice);
@@ -910,7 +1006,9 @@ Ping6OnTimerRoutine (
       Private->RxCount++;
       Private->FailedCount++;
 
-      if (IsListEmpty (&Private->TxList) && (Private->TxCount == Private->SendNum)) {
+      if (IsListEmpty (&Private->TxList) && (Private->TxCount ==
+                                             Private->SendNum))
+      {
         //
         // All the left icmp6 echo request in the list timeout.
         //
@@ -935,7 +1033,8 @@ PingNetIp4IsLinkLocalAddr (
   IN CONST EFI_IPv4_ADDRESS  *Address
   )
 {
-  return ((BOOLEAN)(Address->Addr[0] == 169 && Address->Addr[1] == 254 && Address->Addr[2] >= 1 && Address->Addr[2] <= 254));
+  return ((BOOLEAN)(Address->Addr[0] == 169 && Address->Addr[1] == 254 &&
+                    Address->Addr[2] >= 1 && Address->Addr[2] <= 254));
 }
 
 /**
@@ -951,7 +1050,8 @@ PingNetIp4IsUnspecifiedAddr (
   IN CONST EFI_IPv4_ADDRESS  *Address
   )
 {
-  return  ((BOOLEAN)((ReadUnaligned32 ((UINT32 *)&Address->Addr[0])) == 0x00000000));
+  return  ((BOOLEAN)((ReadUnaligned32 ((UINT32 *)&Address->Addr[0])) ==
+                     0x00000000));
 }
 
 /**
@@ -997,7 +1097,9 @@ PingCreateIpInstance (
   //
   Status = gBS->LocateHandleBuffer (
                   ByProtocol,
-                  Private->IpChoice == PING_IP_CHOICE_IP6 ? &gEfiIp6ServiceBindingProtocolGuid : &gEfiIp4ServiceBindingProtocolGuid,
+                  Private->IpChoice == PING_IP_CHOICE_IP6 ?
+                  &gEfiIp6ServiceBindingProtocolGuid :
+                  &gEfiIp4ServiceBindingProtocolGuid,
                   NULL,
                   &HandleNum,
                   &HandleBuffer
@@ -1006,7 +1108,10 @@ PingCreateIpInstance (
     return EFI_ABORTED;
   }
 
-  if ((Private->IpChoice == PING_IP_CHOICE_IP6) ? NetIp6IsUnspecifiedAddr ((EFI_IPv6_ADDRESS *)&Private->SrcAddress) : \
+  if ((Private->IpChoice == PING_IP_CHOICE_IP6) ? NetIp6IsUnspecifiedAddr (
+                                                    (EFI_IPv6_ADDRESS *)&Private
+                                                      ->SrcAddress
+                                                    ) : \
       PingNetIp4IsUnspecifiedAddr ((EFI_IPv4_ADDRESS *)&Private->SrcAddress))
   {
     //
@@ -1019,15 +1124,31 @@ PingCreateIpInstance (
   // Source address is required when pinging a link-local address.
   //
   if (Private->IpChoice == PING_IP_CHOICE_IP6) {
-    if (NetIp6IsLinkLocalAddr ((EFI_IPv6_ADDRESS *)&Private->DstAddress) && UnspecifiedSrc) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_INVALID_SOURCE), gShellNetwork1HiiHandle);
+    if (NetIp6IsLinkLocalAddr ((EFI_IPv6_ADDRESS *)&Private->DstAddress) &&
+        UnspecifiedSrc)
+    {
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_PING_INVALID_SOURCE),
+        gShellNetwork1HiiHandle
+        );
       Status = EFI_INVALID_PARAMETER;
       goto ON_ERROR;
     }
   } else {
     ASSERT (Private->IpChoice == PING_IP_CHOICE_IP4);
-    if (PingNetIp4IsLinkLocalAddr ((EFI_IPv4_ADDRESS *)&Private->DstAddress) && UnspecifiedSrc) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_INVALID_SOURCE), gShellNetwork1HiiHandle);
+    if (PingNetIp4IsLinkLocalAddr ((EFI_IPv4_ADDRESS *)&Private->DstAddress) &&
+        UnspecifiedSrc)
+    {
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_PING_INVALID_SOURCE),
+        gShellNetwork1HiiHandle
+        );
       Status = EFI_INVALID_PARAMETER;
       goto ON_ERROR;
     }
@@ -1056,7 +1177,9 @@ PingCreateIpInstance (
 
     Status = gBS->HandleProtocol (
                     HandleBuffer[HandleIndex],
-                    Private->IpChoice == PING_IP_CHOICE_IP6 ? &gEfiIp6ServiceBindingProtocolGuid : &gEfiIp4ServiceBindingProtocolGuid,
+                    Private->IpChoice == PING_IP_CHOICE_IP6 ?
+                    &gEfiIp6ServiceBindingProtocolGuid :
+                    &gEfiIp4ServiceBindingProtocolGuid,
                     (VOID **)&EfiSb
                     );
     if (EFI_ERROR (Status)) {
@@ -1069,7 +1192,8 @@ PingCreateIpInstance (
     //
     Status = gBS->HandleProtocol (
                     HandleBuffer[HandleIndex],
-                    Private->IpChoice == PING_IP_CHOICE_IP6 ? &gEfiIp6ConfigProtocolGuid : &gEfiIp4Config2ProtocolGuid,
+                    Private->IpChoice == PING_IP_CHOICE_IP6 ?
+                    &gEfiIp6ConfigProtocolGuid : &gEfiIp4Config2ProtocolGuid,
                     (VOID **)&IpXCfg
                     );
 
@@ -1104,7 +1228,14 @@ PingCreateIpInstance (
     }
 
     if (Status != EFI_BUFFER_TOO_SMALL) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_GETDATA), gShellNetwork1HiiHandle, Status);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_PING_GETDATA),
+        gShellNetwork1HiiHandle,
+        Status
+        );
       goto ON_ERROR;
     }
 
@@ -1135,7 +1266,14 @@ PingCreateIpInstance (
     }
 
     if (EFI_ERROR (Status)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_GETDATA), gShellNetwork1HiiHandle, Status);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_PING_GETDATA),
+        gShellNetwork1HiiHandle,
+        Status
+        );
       goto ON_ERROR;
     }
 
@@ -1143,11 +1281,20 @@ PingCreateIpInstance (
     // Check whether the source address is one of the interface addresses.
     //
     if (Private->IpChoice == PING_IP_CHOICE_IP6) {
-      for (AddrIndex = 0; AddrIndex < ((EFI_IP6_CONFIG_INTERFACE_INFO *)IpXInterfaceInfo)->AddressInfoCount; AddrIndex++) {
-        Addr = &(((EFI_IP6_CONFIG_INTERFACE_INFO *)IpXInterfaceInfo)->AddressInfo[AddrIndex].Address);
+      for (AddrIndex = 0; AddrIndex <
+           ((EFI_IP6_CONFIG_INTERFACE_INFO *)IpXInterfaceInfo)->AddressInfoCount;
+           AddrIndex++)
+      {
+        Addr =
+          &(((EFI_IP6_CONFIG_INTERFACE_INFO *)IpXInterfaceInfo)->AddressInfo[
+                                                                                   AddrIndex
+            ].Address);
 
         if (UnspecifiedSrc) {
-          if (!NetIp6IsUnspecifiedAddr (Addr) && !NetIp6IsLinkLocalAddr (Addr)) {
+          if (!NetIp6IsUnspecifiedAddr (Addr) && !NetIp6IsLinkLocalAddr (
+                                                    Addr
+                                                    ))
+          {
             //
             // Select the interface automatically.
             //
@@ -1162,7 +1309,9 @@ PingCreateIpInstance (
         }
       }
 
-      if (AddrIndex < ((EFI_IP6_CONFIG_INTERFACE_INFO *)IpXInterfaceInfo)->AddressInfoCount) {
+      if (AddrIndex <
+          ((EFI_IP6_CONFIG_INTERFACE_INFO *)IpXInterfaceInfo)->AddressInfoCount)
+      {
         //
         // Found a nic handle with right interface address.
         //
@@ -1170,15 +1319,27 @@ PingCreateIpInstance (
       }
     } else {
       if (UnspecifiedSrc) {
-        if (!PingNetIp4IsUnspecifiedAddr (&((EFI_IP4_CONFIG2_INTERFACE_INFO *)IpXInterfaceInfo)->StationAddress) &&
-            !PingNetIp4IsLinkLocalAddr (&((EFI_IP4_CONFIG2_INTERFACE_INFO *)IpXInterfaceInfo)->StationAddress))
+        if (  !PingNetIp4IsUnspecifiedAddr (
+                 &((EFI_IP4_CONFIG2_INTERFACE_INFO *)IpXInterfaceInfo)->
+                   StationAddress
+                 )
+           &&
+              !PingNetIp4IsLinkLocalAddr (
+                 &((EFI_IP4_CONFIG2_INTERFACE_INFO *)IpXInterfaceInfo)->
+                   StationAddress
+                 ))
         {
           //
           // Select the interface automatically.
           //
           break;
         }
-      } else if (EFI_IP4_EQUAL (&Private->SrcAddress, &((EFI_IP4_CONFIG2_INTERFACE_INFO *)IpXInterfaceInfo)->StationAddress)) {
+      } else if (EFI_IP4_EQUAL (
+                   &Private->SrcAddress,
+                   &((EFI_IP4_CONFIG2_INTERFACE_INFO *)IpXInterfaceInfo)->
+                     StationAddress
+                   ))
+      {
         //
         // Match a certain interface address.
         //
@@ -1195,7 +1356,14 @@ PingCreateIpInstance (
   //
 
   if (HandleIndex == HandleNum) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_CONFIGD_NIC_NF), gShellNetwork1HiiHandle, L"ping");
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_PING_CONFIGD_NIC_NF),
+      gShellNetwork1HiiHandle,
+      L"ping"
+      );
     Status = EFI_NOT_FOUND;
     goto ON_ERROR;
   }
@@ -1240,17 +1408,31 @@ PingCreateIpInstance (
     IP6_COPY_ADDRESS (&Ip6Config.StationAddress, &Private->SrcAddress);
     IP6_COPY_ADDRESS (&Ip6Config.DestinationAddress, &Private->DstAddress);
 
-    Status = ((EFI_IP6_PROTOCOL *)(Private->IpProtocol))->Configure (Private->IpProtocol, &Ip6Config);
+    Status = ((EFI_IP6_PROTOCOL *)(Private->IpProtocol))->Configure (
+                                                            Private->IpProtocol,
+                                                            &Ip6Config
+                                                            );
 
     if (EFI_ERROR (Status)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_CONFIG), gShellNetwork1HiiHandle, Status);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_PING_CONFIG),
+        gShellNetwork1HiiHandle,
+        Status
+        );
       goto ON_ERROR;
     }
 
-    Private->ProtocolPointers.Transmit = (PING_IPX_TRANSMIT)((EFI_IP6_PROTOCOL *)Private->IpProtocol)->Transmit;
-    Private->ProtocolPointers.Receive  = (PING_IPX_RECEIVE)((EFI_IP6_PROTOCOL *)Private->IpProtocol)->Receive;
-    Private->ProtocolPointers.Cancel   = (PING_IPX_CANCEL)((EFI_IP6_PROTOCOL *)Private->IpProtocol)->Cancel;
-    Private->ProtocolPointers.Poll     = (PING_IPX_POLL)((EFI_IP6_PROTOCOL *)Private->IpProtocol)->Poll;
+    Private->ProtocolPointers.Transmit =
+      (PING_IPX_TRANSMIT)((EFI_IP6_PROTOCOL *)Private->IpProtocol)->Transmit;
+    Private->ProtocolPointers.Receive =
+      (PING_IPX_RECEIVE)((EFI_IP6_PROTOCOL *)Private->IpProtocol)->Receive;
+    Private->ProtocolPointers.Cancel =
+      (PING_IPX_CANCEL)((EFI_IP6_PROTOCOL *)Private->IpProtocol)->Cancel;
+    Private->ProtocolPointers.Poll =
+      (PING_IPX_POLL)((EFI_IP6_PROTOCOL *)Private->IpProtocol)->Poll;
   } else {
     Status = gBS->OpenProtocol (
                     Private->IpChildHandle,
@@ -1282,17 +1464,31 @@ PingCreateIpInstance (
     Ip4Config.TimeToLive        = 128;
     Ip4Config.TypeOfService     = 0;
 
-    Status = ((EFI_IP4_PROTOCOL *)(Private->IpProtocol))->Configure (Private->IpProtocol, &Ip4Config);
+    Status = ((EFI_IP4_PROTOCOL *)(Private->IpProtocol))->Configure (
+                                                            Private->IpProtocol,
+                                                            &Ip4Config
+                                                            );
 
     if (EFI_ERROR (Status)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_CONFIG), gShellNetwork1HiiHandle, Status);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_PING_CONFIG),
+        gShellNetwork1HiiHandle,
+        Status
+        );
       goto ON_ERROR;
     }
 
-    Private->ProtocolPointers.Transmit = (PING_IPX_TRANSMIT)((EFI_IP4_PROTOCOL *)Private->IpProtocol)->Transmit;
-    Private->ProtocolPointers.Receive  = (PING_IPX_RECEIVE)((EFI_IP4_PROTOCOL *)Private->IpProtocol)->Receive;
-    Private->ProtocolPointers.Cancel   = (PING_IPX_CANCEL)((EFI_IP4_PROTOCOL *)Private->IpProtocol)->Cancel;
-    Private->ProtocolPointers.Poll     = (PING_IPX_POLL)((EFI_IP4_PROTOCOL *)Private->IpProtocol)->Poll;
+    Private->ProtocolPointers.Transmit =
+      (PING_IPX_TRANSMIT)((EFI_IP4_PROTOCOL *)Private->IpProtocol)->Transmit;
+    Private->ProtocolPointers.Receive =
+      (PING_IPX_RECEIVE)((EFI_IP4_PROTOCOL *)Private->IpProtocol)->Receive;
+    Private->ProtocolPointers.Cancel =
+      (PING_IPX_CANCEL)((EFI_IP4_PROTOCOL *)Private->IpProtocol)->Cancel;
+    Private->ProtocolPointers.Poll =
+      (PING_IPX_POLL)((EFI_IP4_PROTOCOL *)Private->IpProtocol)->Poll;
   }
 
   if (HandleBuffer != NULL) {
@@ -1333,14 +1529,17 @@ Ping6DestroyIp6Instance (
 
   gBS->CloseProtocol (
          Private->IpChildHandle,
-         Private->IpChoice == PING_IP_CHOICE_IP6 ? &gEfiIp6ProtocolGuid : &gEfiIp4ProtocolGuid,
+         Private->IpChoice == PING_IP_CHOICE_IP6 ? &gEfiIp6ProtocolGuid :
+         &gEfiIp4ProtocolGuid,
          gImageHandle,
          Private->IpChildHandle
          );
 
   Status = gBS->HandleProtocol (
                   Private->NicHandle,
-                  Private->IpChoice == PING_IP_CHOICE_IP6 ? &gEfiIp6ServiceBindingProtocolGuid : &gEfiIp4ServiceBindingProtocolGuid,
+                  Private->IpChoice == PING_IP_CHOICE_IP6 ?
+                  &gEfiIp6ServiceBindingProtocolGuid :
+                  &gEfiIp4ServiceBindingProtocolGuid,
                   (VOID **)&IpSb
                   );
 
@@ -1409,7 +1608,15 @@ ShellPing (
   //
   // Print the command line itself.
   //
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_START), gShellNetwork1HiiHandle, mDstString, Private->BufferSize);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (STR_PING_START),
+    gShellNetwork1HiiHandle,
+    mDstString,
+    Private->BufferSize
+    );
   //
   // Create a ipv6 token to receive the first icmp6 echo reply packet.
   //
@@ -1455,11 +1662,34 @@ ShellPing (
   if (EFI_ERROR (Status) && (Status != EFI_NOT_READY)) {
     ShellStatus = SHELL_ACCESS_DENIED;
     if (Status == EFI_NOT_FOUND) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_NOSOURCE_INDO), gShellNetwork1HiiHandle, mDstString);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_PING_NOSOURCE_INDO),
+        gShellNetwork1HiiHandle,
+        mDstString
+        );
     } else if (Status == RETURN_NO_MAPPING) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_NOROUTE_FOUND), gShellNetwork1HiiHandle, mDstString, mSrcString);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_PING_NOROUTE_FOUND),
+        gShellNetwork1HiiHandle,
+        mDstString,
+        mSrcString
+        );
     } else {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_PING_NETWORK_ERROR), gShellNetwork1HiiHandle, L"ping", Status);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_PING_NETWORK_ERROR),
+        gShellNetwork1HiiHandle,
+        L"ping",
+        Status
+        );
     }
 
     goto ON_EXIT;
@@ -1507,7 +1737,8 @@ ON_STAT:
       gShellNetwork1HiiHandle,
       Private->TxCount,
       (Private->RxCount - Private->FailedCount),
-      (100 - ((100 * (Private->RxCount - Private->FailedCount)) / Private->TxCount)),
+      (100 - ((100 * (Private->RxCount - Private->FailedCount)) /
+              Private->TxCount)),
       Private->RttSum
       );
   }
@@ -1523,8 +1754,18 @@ ON_STAT:
       Private->RttMin + Private->TimerPeriod,
       Private->RttMax,
       Private->RttMax + Private->TimerPeriod,
-      DivU64x64Remainder (Private->RttSum, (Private->RxCount - Private->FailedCount), NULL),
-      DivU64x64Remainder (Private->RttSum, (Private->RxCount - Private->FailedCount), NULL) + Private->TimerPeriod
+      DivU64x64Remainder (
+        Private->RttSum,
+        (Private->RxCount -
+         Private->FailedCount),
+        NULL
+        ),
+      DivU64x64Remainder (
+        Private->RttSum,
+        (Private->RxCount -
+         Private->FailedCount),
+        NULL
+        ) + Private->TimerPeriod
       );
   }
 
@@ -1534,8 +1775,13 @@ ON_EXIT:
     NET_LIST_FOR_EACH_SAFE (Entry, NextEntry, &Private->TxList) {
       TxInfo = BASE_CR (Entry, PING_ICMPX_TX_INFO, Link);
 
-      if ((Private->IpProtocol != NULL) && (Private->ProtocolPointers.Cancel != NULL)) {
-        Status = Private->ProtocolPointers.Cancel (Private->IpProtocol, TxInfo->Token);
+      if ((Private->IpProtocol != NULL) && (Private->ProtocolPointers.Cancel !=
+                                            NULL))
+      {
+        Status = Private->ProtocolPointers.Cancel (
+                                             Private->IpProtocol,
+                                             TxInfo->Token
+                                             );
       }
 
       RemoveEntryList (&TxInfo->Link);
@@ -1548,8 +1794,13 @@ ON_EXIT:
       gBS->CloseEvent (Private->Timer);
     }
 
-    if ((Private->IpProtocol != NULL) && (Private->ProtocolPointers.Cancel != NULL)) {
-      Status = Private->ProtocolPointers.Cancel (Private->IpProtocol, &Private->RxToken);
+    if ((Private->IpProtocol != NULL) && (Private->ProtocolPointers.Cancel !=
+                                          NULL))
+    {
+      Status = Private->ProtocolPointers.Cancel (
+                                           Private->IpProtocol,
+                                           &Private->RxToken
+                                           );
     }
 
     if (Private->RxToken.Event != NULL) {
@@ -1600,16 +1851,33 @@ ShellCommandRunPing (
   // make sure this is enough space!
   //
   ASSERT (sizeof (EFI_IPv4_ADDRESS) <= sizeof (EFI_IPv6_ADDRESS));
-  ASSERT (sizeof (EFI_IP4_COMPLETION_TOKEN) <= sizeof (EFI_IP6_COMPLETION_TOKEN));
+  ASSERT (
+    sizeof (EFI_IP4_COMPLETION_TOKEN) <=
+    sizeof (EFI_IP6_COMPLETION_TOKEN)
+    );
 
   IpChoice = PING_IP_CHOICE_IP4;
 
   ShellStatus  = SHELL_SUCCESS;
   ProblemParam = NULL;
 
-  Status = ShellCommandLineParseEx (PingParamList, &ParamPackage, &ProblemParam, TRUE, FALSE);
+  Status = ShellCommandLineParseEx (
+             PingParamList,
+             &ParamPackage,
+             &ProblemParam,
+             TRUE,
+             FALSE
+             );
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellNetwork1HiiHandle, L"ping", ProblemParam);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_GEN_PARAM_INV),
+      gShellNetwork1HiiHandle,
+      L"ping",
+      ProblemParam
+      );
     ShellStatus = SHELL_INVALID_PARAMETER;
     goto ON_EXIT;
   }
@@ -1629,7 +1897,15 @@ ShellCommandRunPing (
     // ShellStrToUintn will return 0 when input is 0 or an invalid input string.
     //
     if ((SendNumber == 0) || (SendNumber > MAX_SEND_NUMBER)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellNetwork1HiiHandle, L"ping", ValueStr);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PARAM_INV),
+        gShellNetwork1HiiHandle,
+        L"ping",
+        ValueStr
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
       goto ON_EXIT;
     }
@@ -1648,7 +1924,15 @@ ShellCommandRunPing (
     // ShellStrToUintn will return 0 when input is 0 or an invalid input string.
     //
     if ((BufferSize < 16) || (BufferSize > MAX_BUFFER_SIZE)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellNetwork1HiiHandle, L"ping", ValueStr);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PARAM_INV),
+        gShellNetwork1HiiHandle,
+        L"ping",
+        ValueStr
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
       goto ON_EXIT;
     }
@@ -1676,7 +1960,15 @@ ShellCommandRunPing (
     }
 
     if (EFI_ERROR (Status)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellNetwork1HiiHandle, L"ping", ValueStr);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PARAM_INV),
+        gShellNetwork1HiiHandle,
+        L"ping",
+        ValueStr
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
       goto ON_EXIT;
     }
@@ -1687,13 +1979,27 @@ ShellCommandRunPing (
   //
   NonOptionCount = ShellCommandLineGetCount (ParamPackage);
   if (NonOptionCount < 2) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_FEW), gShellNetwork1HiiHandle, L"ping");
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_GEN_TOO_FEW),
+      gShellNetwork1HiiHandle,
+      L"ping"
+      );
     ShellStatus = SHELL_INVALID_PARAMETER;
     goto ON_EXIT;
   }
 
   if (NonOptionCount > 2) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellNetwork1HiiHandle, L"ping");
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_GEN_TOO_MANY),
+      gShellNetwork1HiiHandle,
+      L"ping"
+      );
     ShellStatus = SHELL_INVALID_PARAMETER;
     goto ON_EXIT;
   }
@@ -1708,7 +2014,15 @@ ShellCommandRunPing (
     }
 
     if (EFI_ERROR (Status)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellNetwork1HiiHandle, L"ping", ValueStr);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PARAM_INV),
+        gShellNetwork1HiiHandle,
+        L"ping",
+        ValueStr
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
       goto ON_EXIT;
     }

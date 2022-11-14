@@ -23,8 +23,8 @@ STATIC ACPI_DESCRIPTION_HEADER_INFO  AcpiHdrInfo;
 **/
 STATIC CONST ACPI_PARSER  SlitParser[] = {
   PARSE_ACPI_HEADER (&AcpiHdrInfo),
-  { L"Number of System Localities",   8,     36, L"0x%lx", NULL,
-    (VOID **)&SlitSystemLocalityCount,NULL,  NULL }
+  { L"Number of System Localities",   8,    36,     L"0x%lx", NULL,
+    (VOID **)&SlitSystemLocalityCount,NULL, NULL }
 };
 
 /**
@@ -160,7 +160,9 @@ ParseAcpiSlit (
   for (Count = 0; Count < LocalityCount; Count++) {
     for (Index = 0; Index < LocalityCount; Index++) {
       // Element[x][x] must be equal to 10
-      if ((Count == Index) && (SLIT_ELEMENT (LocalityPtr, Count, Index) != 10)) {
+      if ((Count == Index) && (SLIT_ELEMENT (LocalityPtr, Count, Index) !=
+                               10))
+      {
         IncrementErrorCount ();
         Print (
           L"ERROR: Diagonal Element[0x%lx][0x%lx] (%3d)."

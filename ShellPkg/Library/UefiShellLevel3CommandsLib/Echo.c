@@ -12,9 +12,9 @@
 #include <Library/ShellLib.h>
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-on",  TypeFlag },
-  { L"-off", TypeFlag },
-  { NULL,    TypeMax  }
+  { L"-on",  TypeFlag    },
+  { L"-off", TypeFlag    },
+  { NULL,    TypeMax     }
 };
 
 /**
@@ -52,10 +52,24 @@ ShellCommandRunEcho (
   //
   // parse the command line
   //
-  Status = ShellCommandLineParseEx (ParamList, &Package, &ProblemParam, TRUE, TRUE);
+  Status = ShellCommandLineParseEx (
+             ParamList,
+             &Package,
+             &ProblemParam,
+             TRUE,
+             TRUE
+             );
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel3HiiHandle, L"echo", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel3HiiHandle,
+        L"echo",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -84,9 +98,21 @@ ShellCommandRunEcho (
       // output its current state
       //
       if (ShellCommandGetEchoState ()) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_ECHO_ON), gShellLevel3HiiHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_ECHO_ON),
+          gShellLevel3HiiHandle
+          );
       } else {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_ECHO_OFF), gShellLevel3HiiHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_ECHO_OFF),
+          gShellLevel3HiiHandle
+          );
       }
     } else {
       //
@@ -97,7 +123,15 @@ ShellCommandRunEcho (
             ; ParamCount++
             )
       {
-        StrnCatGrow (&PrintString, &Size, ShellCommandLineGetRawValue (Package, ParamCount), 0);
+        StrnCatGrow (
+          &PrintString,
+          &Size,
+          ShellCommandLineGetRawValue (
+            Package,
+            ParamCount
+            ),
+          0
+          );
         if (ShellCommandLineGetRawValue (Package, ParamCount+1) != NULL) {
           StrnCatGrow (&PrintString, &Size, L" ", 0);
         }

@@ -102,7 +102,16 @@ CheckAndSetDate (
 
   Status = gRT->GetTime (&TheTime, NULL);
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN), gShellLevel2HiiHandle, L"date", L"gRT->GetTime", Status);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN),
+      gShellLevel2HiiHandle,
+      L"date",
+      L"gRT->GetTime",
+      Status
+      );
     return (SHELL_DEVICE_ERROR);
   }
 
@@ -201,7 +210,15 @@ ShellCommandRunDate (
   Status = ShellCommandLineParse (SfoParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel2HiiHandle, L"date", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel2HiiHandle,
+        L"date",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -214,7 +231,14 @@ ShellCommandRunDate (
     if (ShellCommandLineGetFlag (Package, L"-?")) {
       ASSERT (FALSE);
     } else if (ShellCommandLineGetRawValue (Package, 2) != NULL) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel2HiiHandle, L"date");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellLevel2HiiHandle,
+        L"date"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       //
@@ -227,7 +251,16 @@ ShellCommandRunDate (
         //
         Status = gRT->GetTime (&TheTime, NULL);
         if (EFI_ERROR (Status)) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN), gShellLevel2HiiHandle, L"date", L"gRT->GetTime", Status);
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN),
+            gShellLevel2HiiHandle,
+            L"date",
+            L"gRT->GetTime",
+            Status
+            );
           return (SHELL_DEVICE_ERROR);
         }
 
@@ -240,14 +273,46 @@ ShellCommandRunDate (
           // ShellCommand,"date"
           // Date,"DD","MM","YYYY"
           //
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_SFO_HEADER), gShellLevel2HiiHandle, L"date");
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_DATE_SFO_FORMAT), gShellLevel2HiiHandle, TheTime.Day, TheTime.Month, TheTime.Year);
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_SFO_HEADER),
+            gShellLevel2HiiHandle,
+            L"date"
+            );
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_DATE_SFO_FORMAT),
+            gShellLevel2HiiHandle,
+            TheTime.Day,
+            TheTime.Month,
+            TheTime.Year
+            );
         } else {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_DATE_FORMAT), gShellLevel2HiiHandle, TheTime.Month, TheTime.Day, TheTime.Year);
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_DATE_FORMAT),
+            gShellLevel2HiiHandle,
+            TheTime.Month,
+            TheTime.Day,
+            TheTime.Year
+            );
         }
       } else {
         if (PcdGet8 (PcdShellSupportLevel) == 2) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel2HiiHandle, L"date");
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_TOO_MANY),
+            gShellLevel2HiiHandle,
+            L"date"
+            );
           ShellStatus = SHELL_INVALID_PARAMETER;
         } else {
           //
@@ -261,7 +326,15 @@ ShellCommandRunDate (
           }
 
           if (ShellStatus != SHELL_SUCCESS) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel2HiiHandle, L"date", Param1);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_PARAM_INV),
+              gShellLevel2HiiHandle,
+              L"date",
+              Param1
+              );
             ShellStatus = SHELL_INVALID_PARAMETER;
           }
         }
@@ -284,14 +357,17 @@ ShellCommandRunDate (
 // Note "-tz" is invalid for this (non-interactive) version of 'time'.
 //
 STATIC CONST SHELL_PARAM_ITEM  TimeParamList2[] = {
-  { L"-d", TypeValue },
-  { NULL,  TypeMax   }
+  { L"-d", TypeValue                                          },
+  { NULL,  TypeMax                                            }
 };
 
 STATIC CONST SHELL_PARAM_ITEM  TimeParamList3[] = {
-  { L"-d",  TypeValue },
-  { L"-tz", TypeValue },
-  { NULL,   TypeMax   }
+  { L"-d",
+    TypeValue                                                             },
+  { L"-tz",
+    TypeValue                                                                },
+  { NULL,
+    TypeMax                                                                  }
 };
 
 /**
@@ -319,17 +395,36 @@ CheckAndSetTime (
   CHAR16      *Walker1;
   CHAR16      *Walker2;
 
-  if ((TimeString != NULL) && !InternalIsTimeLikeString (TimeString, L':', 1, 2, FALSE)) {
+  if ((TimeString != NULL) && !InternalIsTimeLikeString (
+                                 TimeString,
+                                 L':',
+                                 1,
+                                 2,
+                                 FALSE
+                                 ))
+  {
     return (SHELL_INVALID_PARAMETER);
   }
 
-  if ((Daylight != 0xFF) && ((Daylight & (EFI_TIME_IN_DAYLIGHT|EFI_TIME_ADJUST_DAYLIGHT)) != Daylight)) {
+  if ((Daylight != 0xFF) && ((Daylight & (EFI_TIME_IN_DAYLIGHT|
+                                          EFI_TIME_ADJUST_DAYLIGHT)) !=
+                             Daylight))
+  {
     return (SHELL_INVALID_PARAMETER);
   }
 
   Status = gRT->GetTime (&TheTime, NULL);
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN), gShellLevel2HiiHandle, L"time", L"gRT->GetTime", Status);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN),
+      gShellLevel2HiiHandle,
+      L"time",
+      L"gRT->GetTime",
+      Status
+      );
     return (SHELL_DEVICE_ERROR);
   }
 
@@ -437,15 +532,35 @@ ShellCommandRunTime (
   // parse the command line
   //
   if (PcdGet8 (PcdShellSupportLevel) == 2) {
-    Status = ShellCommandLineParseEx (TimeParamList2, &Package, &ProblemParam, TRUE, TRUE);
+    Status = ShellCommandLineParseEx (
+               TimeParamList2,
+               &Package,
+               &ProblemParam,
+               TRUE,
+               TRUE
+               );
   } else {
     ASSERT (PcdGet8 (PcdShellSupportLevel) == 3);
-    Status = ShellCommandLineParseEx (TimeParamList3, &Package, &ProblemParam, TRUE, TRUE);
+    Status = ShellCommandLineParseEx (
+               TimeParamList3,
+               &Package,
+               &ProblemParam,
+               TRUE,
+               TRUE
+               );
   }
 
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel2HiiHandle, L"time", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel2HiiHandle,
+        L"time",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -457,14 +572,30 @@ ShellCommandRunTime (
     //
     Status = gRT->GetTime (&TheTime, NULL);
     if (EFI_ERROR (Status)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN), gShellLevel2HiiHandle, L"time", L"gRT->GetTime", Status);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN),
+        gShellLevel2HiiHandle,
+        L"time",
+        L"gRT->GetTime",
+        Status
+        );
       return (SHELL_DEVICE_ERROR);
     }
 
     if (ShellCommandLineGetFlag (Package, L"-?")) {
       ASSERT (FALSE);
     } else if (ShellCommandLineGetRawValue (Package, 2) != NULL) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel2HiiHandle, L"time");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellLevel2HiiHandle,
+        L"time"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       //
@@ -510,8 +641,16 @@ ShellCommandRunTime (
             );
         }
 
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_CRLF), gShellLevel2HiiHandle);
-      } else if (ShellCommandLineGetFlag (Package, L"-d") && (ShellCommandLineGetValue (Package, L"-d") == NULL)) {
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_GEN_CRLF),
+          gShellLevel2HiiHandle
+          );
+      } else if (ShellCommandLineGetFlag (Package, L"-d") &&
+                 (ShellCommandLineGetValue (Package, L"-d") == NULL))
+      {
         if (TheTime.TimeZone == EFI_UNSPECIFIED_TIMEZONE) {
           ShellPrintHiiEx (
             -1,
@@ -542,30 +681,80 @@ ShellCommandRunTime (
 
         switch (TheTime.Daylight) {
           case 0:
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_TIME_DST0), gShellLevel2HiiHandle);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_TIME_DST0),
+              gShellLevel2HiiHandle
+              );
             break;
           case EFI_TIME_ADJUST_DAYLIGHT:
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_TIME_DST1), gShellLevel2HiiHandle);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_TIME_DST1),
+              gShellLevel2HiiHandle
+              );
             break;
           case EFI_TIME_IN_DAYLIGHT:
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_TIME_DST2), gShellLevel2HiiHandle);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_TIME_DST2),
+              gShellLevel2HiiHandle
+              );
             break;
           case EFI_TIME_IN_DAYLIGHT|EFI_TIME_ADJUST_DAYLIGHT:
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_TIME_DST3), gShellLevel2HiiHandle);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_TIME_DST3),
+              gShellLevel2HiiHandle
+              );
             break;
           default:
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_UEFI_FUNC_ERROR), gShellLevel2HiiHandle, L"time", L"gRT->GetTime", L"TheTime.Daylight", TheTime.Daylight);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (
+                STR_GEN_UEFI_FUNC_ERROR
+                ),
+              gShellLevel2HiiHandle,
+              L"time",
+              L"gRT->GetTime",
+              L"TheTime.Daylight",
+              TheTime.Daylight
+              );
         }
       } else {
         if (PcdGet8 (PcdShellSupportLevel) == 2) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel2HiiHandle, L"time");
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_TOO_MANY),
+            gShellLevel2HiiHandle,
+            L"time"
+            );
           ShellStatus = SHELL_INVALID_PARAMETER;
         } else {
           //
           // perform level 3 operation here.
           //
-          if ((TempLocation = ShellCommandLineGetValue (Package, L"-tz")) != NULL) {
-            if (gUnicodeCollation->StriColl (gUnicodeCollation, (CHAR16 *)TempLocation, L"_local") == 0) {
+          if ((TempLocation = ShellCommandLineGetValue (Package, L"-tz")) !=
+              NULL)
+          {
+            if (gUnicodeCollation->StriColl (
+                                     gUnicodeCollation,
+                                     (CHAR16 *)TempLocation,
+                                     L"_local"
+                                     ) == 0)
+            {
               Tz = EFI_UNSPECIFIED_TIMEZONE;
             } else if (TempLocation[0] == L'-') {
               Tz = (INT16)ShellStrToUintn (++TempLocation);
@@ -593,8 +782,19 @@ ShellCommandRunTime (
               }
             }
 
-            if (!((Tz >= -1440) && (Tz <= 1440)) && (Tz != EFI_UNSPECIFIED_TIMEZONE)) {
-              ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM_VAL), gShellLevel2HiiHandle, L"time", TempLocation, L"-tz");
+            if (!((Tz >= -1440) && (Tz <= 1440)) && (Tz !=
+                                                     EFI_UNSPECIFIED_TIMEZONE))
+            {
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                STRING_TOKEN (STR_GEN_PROBLEM_VAL),
+                gShellLevel2HiiHandle,
+                L"time",
+                TempLocation,
+                L"-tz"
+                );
               ShellStatus = SHELL_INVALID_PARAMETER;
             }
           } else {
@@ -617,7 +817,16 @@ ShellCommandRunTime (
             }
 
             if ((Daylight != 0) && (Daylight != 1) && (Daylight != 3)) {
-              ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM_VAL), gShellLevel2HiiHandle, L"time", TempLocation, L"-d");
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                STRING_TOKEN (STR_GEN_PROBLEM_VAL),
+                gShellLevel2HiiHandle,
+                L"time",
+                TempLocation,
+                L"-d"
+                );
               ShellStatus = SHELL_INVALID_PARAMETER;
             }
           } else {
@@ -628,9 +837,27 @@ ShellCommandRunTime (
           }
 
           if (ShellStatus == SHELL_SUCCESS) {
-            ShellStatus = CheckAndSetTime (ShellCommandLineGetRawValue (Package, 1), Tz, Daylight);
+            ShellStatus = CheckAndSetTime (
+                            ShellCommandLineGetRawValue (
+                              Package,
+                              1
+                              ),
+                            Tz,
+                            Daylight
+                            );
             if (ShellStatus != SHELL_SUCCESS) {
-              ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel2HiiHandle, L"time", ShellCommandLineGetRawValue (Package, 1));
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                STRING_TOKEN (STR_GEN_PARAM_INV),
+                gShellLevel2HiiHandle,
+                L"time",
+                ShellCommandLineGetRawValue (
+                  Package,
+                  1
+                  )
+                );
               ShellStatus = SHELL_INVALID_PARAMETER;
             }
           }
@@ -656,54 +883,125 @@ typedef struct {
 } TIME_ZONE_ITEM;
 
 STATIC CONST SHELL_PARAM_ITEM  TimeZoneParamList2[] = {
-  { L"-l", TypeFlag },
-  { L"-f", TypeFlag },
-  { NULL,  TypeMax  }
+  { L"-l", TypeFlag                                          },
+  { L"-f", TypeFlag                                          },
+  { NULL,  TypeMax                                           }
 };
 STATIC CONST SHELL_PARAM_ITEM  TimeZoneParamList3[] = {
-  { L"-l", TypeFlag      },
-  { L"-f", TypeFlag      },
-  { L"-s", TypeTimeValue },
-  { NULL,  TypeMax       }
+  { L"-l", TypeFlag                                               },
+  { L"-f", TypeFlag                                               },
+  { L"-s", TypeTimeValue                                          },
+  { NULL,  TypeMax                                                }
 };
 
 STATIC CONST TIME_ZONE_ITEM  TimeZoneList[] = {
-  { 720,                      STRING_TOKEN (STR_TIMEZONE_M12)   },
-  { 660,                      STRING_TOKEN (STR_TIMEZONE_M11)   },
-  { 600,                      STRING_TOKEN (STR_TIMEZONE_M10)   },
-  { 540,                      STRING_TOKEN (STR_TIMEZONE_M9)    },
-  { 480,                      STRING_TOKEN (STR_TIMEZONE_M8)    },
-  { 420,                      STRING_TOKEN (STR_TIMEZONE_M7)    },
-  { 360,                      STRING_TOKEN (STR_TIMEZONE_M6)    },
-  { 300,                      STRING_TOKEN (STR_TIMEZONE_M5)    },
-  { 270,                      STRING_TOKEN (STR_TIMEZONE_M430)  },
-  { 240,                      STRING_TOKEN (STR_TIMEZONE_M4)    },
-  { 210,                      STRING_TOKEN (STR_TIMEZONE_M330)  },
-  { 180,                      STRING_TOKEN (STR_TIMEZONE_M3)    },
-  { 120,                      STRING_TOKEN (STR_TIMEZONE_M2)    },
-  { 60,                       STRING_TOKEN (STR_TIMEZONE_M1)    },
-  { 0,                        STRING_TOKEN (STR_TIMEZONE_0)     },
-  { -60,                      STRING_TOKEN (STR_TIMEZONE_P1)    },
-  { -120,                     STRING_TOKEN (STR_TIMEZONE_P2)    },
-  { -180,                     STRING_TOKEN (STR_TIMEZONE_P3)    },
-  { -210,                     STRING_TOKEN (STR_TIMEZONE_P330)  },
-  { -240,                     STRING_TOKEN (STR_TIMEZONE_P4)    },
-  { -270,                     STRING_TOKEN (STR_TIMEZONE_P430)  },
-  { -300,                     STRING_TOKEN (STR_TIMEZONE_P5)    },
-  { -330,                     STRING_TOKEN (STR_TIMEZONE_P530)  },
-  { -345,                     STRING_TOKEN (STR_TIMEZONE_P545)  },
-  { -360,                     STRING_TOKEN (STR_TIMEZONE_P6)    },
-  { -390,                     STRING_TOKEN (STR_TIMEZONE_P630)  },
-  { -420,                     STRING_TOKEN (STR_TIMEZONE_P7)    },
-  { -480,                     STRING_TOKEN (STR_TIMEZONE_P8)    },
-  { -540,                     STRING_TOKEN (STR_TIMEZONE_P9)    },
-  { -570,                     STRING_TOKEN (STR_TIMEZONE_P930)  },
-  { -600,                     STRING_TOKEN (STR_TIMEZONE_P10)   },
-  { -660,                     STRING_TOKEN (STR_TIMEZONE_P11)   },
-  { -720,                     STRING_TOKEN (STR_TIMEZONE_P12)   },
-  { -780,                     STRING_TOKEN (STR_TIMEZONE_P13)   },
-  { -840,                     STRING_TOKEN (STR_TIMEZONE_P14)   },
-  { EFI_UNSPECIFIED_TIMEZONE, STRING_TOKEN (STR_TIMEZONE_LOCAL) }
+  { 720,                      STRING_TOKEN (
+                                STR_TIMEZONE_M12
+                                )                                                 },
+  { 660,                      STRING_TOKEN (
+                                STR_TIMEZONE_M11
+                                )                                                                        },
+  { 600,                      STRING_TOKEN (
+                                STR_TIMEZONE_M10
+                                )                                                                                               },
+  { 540,                      STRING_TOKEN (
+                                STR_TIMEZONE_M9
+                                )                                                                                                                       },
+  { 480,                      STRING_TOKEN (
+                                STR_TIMEZONE_M8
+                                )                                                                                                                                              },
+  { 420,                      STRING_TOKEN (
+                                STR_TIMEZONE_M7
+                                )                                                                                                                                                                     },
+  { 360,                      STRING_TOKEN (
+                                STR_TIMEZONE_M6
+                                )                                                                                                                                                                                            },
+  { 300,                      STRING_TOKEN (
+                                STR_TIMEZONE_M5
+                                )                                                                                                                                                                                                                   },
+  { 270,                      STRING_TOKEN (
+                                STR_TIMEZONE_M430
+                                )                                                                                                                                                                                                                                        },
+  { 240,                      STRING_TOKEN (
+                                STR_TIMEZONE_M4
+                                )                                                                                                                                                                                                                                                                 },
+  { 210,                      STRING_TOKEN (
+                                STR_TIMEZONE_M330
+                                )                                                                                                                                                                                                                                                                                      },
+  { 180,                      STRING_TOKEN (
+                                STR_TIMEZONE_M3
+                                )                                                                                                                                                                                                                                                                                                               },
+  { 120,                      STRING_TOKEN (
+                                STR_TIMEZONE_M2
+                                )                                                                                                                                                                                                                                                                                                                                      },
+  { 60,                       STRING_TOKEN (
+                                STR_TIMEZONE_M1
+                                )                                                                                                                                                                                                                                                                                                                                                             },
+  { 0,                        STRING_TOKEN (
+                                STR_TIMEZONE_0
+                                )                                                                                                                                                                                                                                                                                                                                                                                   },
+  { -60,                      STRING_TOKEN (
+                                STR_TIMEZONE_P1
+                                )                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { -120,                     STRING_TOKEN (
+                                STR_TIMEZONE_P2
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                           },
+  { -180,                     STRING_TOKEN (
+                                STR_TIMEZONE_P3
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+  { -210,                     STRING_TOKEN (
+                                STR_TIMEZONE_P330
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+  { -240,                     STRING_TOKEN (
+                                STR_TIMEZONE_P4
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { -270,                     STRING_TOKEN (
+                                STR_TIMEZONE_P430
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+  { -300,                     STRING_TOKEN (
+                                STR_TIMEZONE_P5
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+  { -330,                     STRING_TOKEN (
+                                STR_TIMEZONE_P530
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+  { -345,                     STRING_TOKEN (
+                                STR_TIMEZONE_P545
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+  { -360,                     STRING_TOKEN (
+                                STR_TIMEZONE_P6
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+  { -390,                     STRING_TOKEN (
+                                STR_TIMEZONE_P630
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+  { -420,                     STRING_TOKEN (
+                                STR_TIMEZONE_P7
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { -480,                     STRING_TOKEN (
+                                STR_TIMEZONE_P8
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { -540,                     STRING_TOKEN (
+                                STR_TIMEZONE_P9
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { -570,                     STRING_TOKEN (
+                                STR_TIMEZONE_P930
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+  { -600,                     STRING_TOKEN (
+                                STR_TIMEZONE_P10
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { -660,                     STRING_TOKEN (
+                                STR_TIMEZONE_P11
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { -720,                     STRING_TOKEN (
+                                STR_TIMEZONE_P12
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+  { -780,                     STRING_TOKEN (
+                                STR_TIMEZONE_P13
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+  { -840,                     STRING_TOKEN (
+                                STR_TIMEZONE_P14
+                                )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { EFI_UNSPECIFIED_TIMEZONE, STRING_TOKEN (
+                                STR_TIMEZONE_LOCAL)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
 };
 
 /**
@@ -732,10 +1030,23 @@ CheckAndSetTimeZone (
     return (SHELL_INVALID_PARAMETER);
   }
 
-  if (gUnicodeCollation->StriColl (gUnicodeCollation, (CHAR16 *)TimeZoneString, L"_local") == 0) {
+  if (gUnicodeCollation->StriColl (
+                           gUnicodeCollation,
+                           (CHAR16 *)TimeZoneString,
+                           L"_local"
+                           ) == 0)
+  {
     Status = gRT->GetTime (&TheTime, NULL);
     if (EFI_ERROR (Status)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN), gShellLevel2HiiHandle, L"gRT->GetTime", Status);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN),
+        gShellLevel2HiiHandle,
+        L"gRT->GetTime",
+        Status
+        );
       return (SHELL_DEVICE_ERROR);
     }
 
@@ -748,13 +1059,29 @@ CheckAndSetTimeZone (
     return (SHELL_INVALID_PARAMETER);
   }
 
-  if ((TimeZoneString != NULL) && !InternalIsTimeLikeString (TimeZoneString, L':', 1, 1, TRUE)) {
+  if ((TimeZoneString != NULL) && !InternalIsTimeLikeString (
+                                     TimeZoneString,
+                                     L':',
+                                     1,
+                                     1,
+                                     TRUE
+                                     ))
+  {
     return (SHELL_INVALID_PARAMETER);
   }
 
   Status = gRT->GetTime (&TheTime, NULL);
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN), gShellLevel2HiiHandle, L"timezone", L"gRT->GetTime", Status);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN),
+      gShellLevel2HiiHandle,
+      L"timezone",
+      L"gRT->GetTime",
+      Status
+      );
     return (SHELL_DEVICE_ERROR);
   }
 
@@ -782,9 +1109,13 @@ CheckAndSetTimeZone (
 
   if ((Walker != NULL) && (Walker[0] != CHAR_NULL)) {
     if (TheTime.TimeZone < 0) {
-      TheTime.TimeZone = (INT16)(TheTime.TimeZone - (UINT8)ShellStrToUintn (Walker));
+      TheTime.TimeZone = (INT16)(TheTime.TimeZone - (UINT8)ShellStrToUintn (
+                                                             Walker
+                                                             ));
     } else {
-      TheTime.TimeZone = (INT16)(TheTime.TimeZone + (UINT8)ShellStrToUintn (Walker));
+      TheTime.TimeZone = (INT16)(TheTime.TimeZone + (UINT8)ShellStrToUintn (
+                                                             Walker
+                                                             ));
     }
   }
 
@@ -848,15 +1179,34 @@ ShellCommandRunTimeZone (
   // parse the command line
   //
   if (PcdGet8 (PcdShellSupportLevel) == 2) {
-    Status = ShellCommandLineParse (TimeZoneParamList2, &Package, &ProblemParam, TRUE);
+    Status = ShellCommandLineParse (
+               TimeZoneParamList2,
+               &Package,
+               &ProblemParam,
+               TRUE
+               );
   } else {
     ASSERT (PcdGet8 (PcdShellSupportLevel) == 3);
-    Status = ShellCommandLineParseEx (TimeZoneParamList3, &Package, &ProblemParam, TRUE, TRUE);
+    Status = ShellCommandLineParseEx (
+               TimeZoneParamList3,
+               &Package,
+               &ProblemParam,
+               TRUE,
+               TRUE
+               );
   }
 
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel2HiiHandle, L"timezone", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel2HiiHandle,
+        L"timezone",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -867,26 +1217,67 @@ ShellCommandRunTimeZone (
     // check for "-?"
     //
     if (ShellCommandLineGetCount (Package) > 1) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel2HiiHandle, L"timezone");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellLevel2HiiHandle,
+        L"timezone"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else if (ShellCommandLineGetFlag (Package, L"-?")) {
       ASSERT (FALSE);
     } else if (ShellCommandLineGetFlag (Package, L"-s")) {
-      if ((ShellCommandLineGetFlag (Package, L"-l")) || (ShellCommandLineGetFlag (Package, L"-f"))) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel2HiiHandle, L"timezone", L"-l or -f");
+      if ((ShellCommandLineGetFlag (Package, L"-l")) ||
+          (ShellCommandLineGetFlag (Package, L"-f")))
+      {
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_GEN_PARAM_INV),
+          gShellLevel2HiiHandle,
+          L"timezone",
+          L"-l or -f"
+          );
         ShellStatus = SHELL_INVALID_PARAMETER;
       } else {
         ASSERT (PcdGet8 (PcdShellSupportLevel) == 3);
         if (ShellCommandLineGetValue (Package, L"-s") == NULL) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_NO_VALUE), gShellLevel2HiiHandle, L"timezone", L"-s");
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_NO_VALUE),
+            gShellLevel2HiiHandle,
+            L"timezone",
+            L"-s"
+            );
           ShellStatus = SHELL_INVALID_PARAMETER;
         } else {
           //
           // Set the time zone
           //
-          ShellStatus = CheckAndSetTimeZone (ShellCommandLineGetValue (Package, L"-s"));
+          ShellStatus = CheckAndSetTimeZone (
+                          ShellCommandLineGetValue (
+                            Package,
+                            L"-s"
+                            )
+                          );
           if (ShellStatus != SHELL_SUCCESS) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel2HiiHandle, L"timezone", ShellCommandLineGetValue (Package, L"-s"));
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_PARAM_INV),
+              gShellLevel2HiiHandle,
+              L"timezone",
+              ShellCommandLineGetValue (
+                Package,
+                L"-s"
+                )
+              );
             ShellStatus = SHELL_INVALID_PARAMETER;
           }
         }
@@ -900,7 +1291,13 @@ ShellCommandRunTimeZone (
             ; LoopVar++
             )
       {
-        ShellPrintHiiEx (-1, -1, NULL, TimeZoneList[LoopVar].StringId, gShellLevel2HiiHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          TimeZoneList[LoopVar].StringId,
+          gShellLevel2HiiHandle
+          );
       }
     } else {
       //
@@ -908,7 +1305,16 @@ ShellCommandRunTimeZone (
       //
       Status = gRT->GetTime (&TheTime, NULL);
       if (EFI_ERROR (Status)) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN), gShellLevel2HiiHandle, L"timezone", L"gRT->GetTime", Status);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN),
+          gShellLevel2HiiHandle,
+          L"timezone",
+          L"gRT->GetTime",
+          Status
+          );
         return (SHELL_DEVICE_ERROR);
       }
 
@@ -924,7 +1330,13 @@ ShellCommandRunTimeZone (
               //
               //  Print all info about current time zone
               //
-              ShellPrintHiiEx (-1, -1, NULL, TimeZoneList[LoopVar].StringId, gShellLevel2HiiHandle);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                TimeZoneList[LoopVar].StringId,
+                gShellLevel2HiiHandle
+                );
             } else {
               //
               // Print basic info only
@@ -966,7 +1378,13 @@ ShellCommandRunTimeZone (
             );
 
           if (ShellCommandLineGetFlag (Package, L"-f")) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_TIMEZONE_NI), gShellLevel2HiiHandle);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_TIMEZONE_NI),
+              gShellLevel2HiiHandle
+              );
           }
         }
       } else {
@@ -983,7 +1401,13 @@ ShellCommandRunTimeZone (
               //
               //  Print all info about current time zone
               //
-              ShellPrintHiiEx (-1, -1, NULL, TimeZoneList[LoopVar].StringId, gShellLevel2HiiHandle);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                TimeZoneList[LoopVar].StringId,
+                gShellLevel2HiiHandle
+                );
               break;
             }
           }
@@ -991,7 +1415,15 @@ ShellCommandRunTimeZone (
           //
           // Print basic info only
           //
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_TIMEZONE_SIMPLE_LOCAL), gShellLevel2HiiHandle);
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (
+              STR_TIMEZONE_SIMPLE_LOCAL
+              ),
+            gShellLevel2HiiHandle
+            );
         }
       }
     }

@@ -11,8 +11,8 @@
 #include "UefiShellLevel3CommandsLib.h"
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-sfo", TypeFlag },
-  { NULL,    TypeMax  }
+  { L"-sfo", TypeFlag       },
+  { NULL,    TypeMax        }
 };
 
 /**
@@ -57,7 +57,15 @@ ShellCommandRunCls (
   Status = ShellCommandLineParse (ParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel3HiiHandle, L"cls", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel3HiiHandle,
+        L"cls",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -71,12 +79,26 @@ ShellCommandRunCls (
       ASSERT (FALSE);
     } else if (ShellCommandLineGetFlag (Package, L"-sfo")) {
       if (ShellCommandLineGetCount (Package) > 1) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel3HiiHandle, L"cls");
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_GEN_TOO_MANY),
+          gShellLevel3HiiHandle,
+          L"cls"
+          );
         ShellStatus = SHELL_INVALID_PARAMETER;
       } else {
         Background = (gST->ConOut->Mode->Attribute >> 4) & 0x7;
         Foreground = gST->ConOut->Mode->Attribute & 0x0F;
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_SFO_HEADER), gShellLevel3HiiHandle, L"cls");
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_GEN_SFO_HEADER),
+          gShellLevel3HiiHandle,
+          L"cls"
+          );
         ShellPrintHiiEx (
           -1,
           -1,
@@ -101,12 +123,30 @@ ShellCommandRunCls (
         //
         gST->ConOut->ClearScreen (gST->ConOut);
       } else if (ShellCommandLineGetCount (Package) > 3) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel3HiiHandle, L"cls");
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_GEN_TOO_MANY),
+          gShellLevel3HiiHandle,
+          L"cls"
+          );
         ShellStatus = SHELL_INVALID_PARAMETER;
       } else {
         if (BackColorStr != NULL) {
-          if ((ShellStrToUintn (BackColorStr) > 7) || (StrLen (BackColorStr) > 1) || (!ShellIsDecimalDigitCharacter (*BackColorStr))) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel3HiiHandle, L"cls", BackColorStr);
+          if ((ShellStrToUintn (BackColorStr) > 7) || (StrLen (BackColorStr) >
+                                                       1) ||
+              (!ShellIsDecimalDigitCharacter (*BackColorStr)))
+          {
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_PARAM_INV),
+              gShellLevel3HiiHandle,
+              L"cls",
+              BackColorStr
+              );
             ShellStatus = SHELL_INVALID_PARAMETER;
           } else {
             switch (ShellStrToUintn (BackColorStr)) {
@@ -137,8 +177,23 @@ ShellCommandRunCls (
             }
 
             if (ForeColorStr != NULL) {
-              if ((ShellStrToUintn (ForeColorStr) > 15) || (StrLen (ForeColorStr) > 2) || (!ShellIsDecimalDigitCharacter (*ForeColorStr))) {
-                ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel3HiiHandle, L"cls", ForeColorStr);
+              if ((ShellStrToUintn (ForeColorStr) > 15) || (StrLen (
+                                                              ForeColorStr
+                                                              ) > 2) ||
+                  (!ShellIsDecimalDigitCharacter (
+                      *
+                      ForeColorStr
+                      )))
+              {
+                ShellPrintHiiEx (
+                  -1,
+                  -1,
+                  NULL,
+                  STRING_TOKEN (STR_GEN_PARAM_INV),
+                  gShellLevel3HiiHandle,
+                  L"cls",
+                  ForeColorStr
+                  );
                 ShellStatus = SHELL_INVALID_PARAMETER;
               } else {
                 switch (ShellStrToUintn (ForeColorStr)) {
@@ -201,7 +256,11 @@ ShellCommandRunCls (
             }
 
             if (ShellStatus == SHELL_SUCCESS) {
-              Status = gST->ConOut->SetAttribute (gST->ConOut, (Foreground | Background) & 0x7F);
+              Status = gST->ConOut->SetAttribute (
+                                      gST->ConOut,
+                                      (Foreground |
+                                       Background) & 0x7F
+                                      );
               ASSERT_EFI_ERROR (Status);
               Status = gST->ConOut->ClearScreen (gST->ConOut);
               ASSERT_EFI_ERROR (Status);

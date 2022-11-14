@@ -101,27 +101,70 @@ ValidateSpeOverflowInterrupt (
   An ACPI_PARSER array describing the GICC Interrupt Controller Structure.
 **/
 STATIC CONST ACPI_PARSER  GicCParser[] = {
-  { L"Type",                             1, 0,  L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Length",                           1, 1,  L"%d",    NULL, NULL, NULL, NULL },
-  { L"Reserved",                         2, 2,  L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Type",                             1,                             0,
+    L"0x%x",  NULL,    NULL, NULL, NULL },
+  { L"Length",                           1,                             1,
+    L"%d",     NULL,    NULL,    NULL, NULL },
+  { L"Reserved",                         2,                             2,
+    L"0x%x",                              NULL,   NULL,    NULL,    NULL },
 
-  { L"CPU Interface Number",             4, 4,  L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"ACPI Processor UID",               4, 8,  L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Flags",                            4, 12, L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Parking Protocol Version",         4, 16, L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"CPU Interface Number",             4,                             4,
+    L"0x%x",                              NULL,
+    NULL,   NULL,    NULL    },
+  { L"ACPI Processor UID",               4,                             8,
+    L"0x%x",                              NULL,
+    NULL,                              NULL,   NULL       },
+  { L"Flags",                            4,                             12,
+    L"0x%x",                              NULL,
+    NULL,                              NULL,
+    NULL         },
+  { L"Parking Protocol Version",         4,                             16,
+    L"0x%x",                              NULL,
+    NULL,                              NULL,
+    NULL                                      },
 
-  { L"Performance Interrupt GSIV",       4, 20, L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Parked Address",                   8, 24, L"0x%lx", NULL, NULL, NULL, NULL },
-  { L"Physical Base Address",            8, 32, L"0x%lx", NULL, NULL, NULL, NULL },
-  { L"GICV",                             8, 40, L"0x%lx", NULL, NULL, NULL, NULL },
-  { L"GICH",                             8, 48, L"0x%lx", NULL, NULL, NULL, NULL },
-  { L"VGIC Maintenance interrupt",       4, 56, L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"GICR Base Address",                8, 60, L"0x%lx", NULL, NULL, NULL, NULL },
-  { L"MPIDR",                            8, 68, L"0x%lx", NULL, NULL, NULL, NULL },
-  { L"Processor Power Efficiency Class", 1, 76, L"0x%x",  NULL, NULL, NULL,
+  { L"Performance Interrupt GSIV",       4,                             20,
+    L"0x%x",                              NULL,
+    NULL,                              NULL,
+    NULL                                                                   },
+  { L"Parked Address",                   8,                             24,
+    L"0x%lx",                             NULL,
+    NULL,                              NULL,
+    NULL                                                                                                },
+  { L"Physical Base Address",            8,                             32,
+    L"0x%lx",                             NULL,
+    NULL,                              NULL,
+    NULL                                                                                                                             },
+  { L"GICV",                             8,                             40,
+    L"0x%lx",                             NULL,
+    NULL,                              NULL,
+    NULL                                                                                                                                                          },
+  { L"GICH",                             8,                             48,
+    L"0x%lx",                             NULL,
+    NULL,                              NULL,
+    NULL                                                                                                                                                                                       },
+  { L"VGIC Maintenance interrupt",       4,                             56,
+    L"0x%x",                              NULL,
+    NULL,                              NULL,
+    NULL                                                                                                                                                                                                                    },
+  { L"GICR Base Address",                8,                             60,
+    L"0x%lx",                             NULL,
+    NULL,                              NULL,
+    NULL                                                                                                                                                                                                                                                 },
+  { L"MPIDR",                            8,                             68,
+    L"0x%lx",                            NULL,
+    NULL,                              NULL,
+    NULL                                                                                                                                                                                                                                                                              },
+  { L"Processor Power Efficiency Class", 1,                             76,
+    L"0x%x",                             NULL,
+    NULL,                              NULL,
     NULL },
-  { L"Reserved",                         1, 77, L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"SPE overflow Interrupt",           2, 78, L"0x%x",  NULL, NULL,
+  { L"Reserved",                         1,                             77,
+    L"0x%x",                             NULL,                             NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                           },
+  { L"SPE overflow Interrupt",           2,                             78,
+    L"0x%x",                             NULL,                             NULL,
     ValidateSpeOverflowInterrupt, NULL }
 };
 
@@ -129,88 +172,185 @@ STATIC CONST ACPI_PARSER  GicCParser[] = {
   An ACPI_PARSER array describing the GICD Interrupt Controller Structure.
 **/
 STATIC CONST ACPI_PARSER  GicDParser[] = {
-  { L"Type",                  1, 0,  L"0x%x",     NULL,       NULL, NULL, NULL },
-  { L"Length",                1, 1,  L"%d",       NULL,       NULL, NULL, NULL },
-  { L"Reserved",              2, 2,  L"0x%x",     NULL,       NULL, NULL, NULL },
+  { L"Type",                  1,                  0,                   L"0x%x",
+    NULL,                        NULL,                        NULL,
+    NULL                                                                                                                                                                                                                                                                                      },
+  { L"Length",                1,                  1,                   L"%d",
+    NULL,                         NULL,                        NULL,
+    NULL                                                                                                                                                                                                                                                                                                             },
+  { L"Reserved",              2,                  2,                   L"0x%x",
+    NULL,                        NULL,                         NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                    },
 
-  { L"GIC ID",                4, 4,  L"0x%x",     NULL,       NULL, NULL, NULL },
-  { L"Physical Base Address", 8, 8,  L"0x%lx",    NULL,       NULL, NULL, NULL },
-  { L"System Vector Base",    4, 16, L"0x%x",     NULL,       NULL,
+  { L"GIC ID",                4,                  4,                   L"0x%x",
+    NULL,                        NULL,                        NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                           },
+  { L"Physical Base Address", 8,                  8,                   L"0x%lx",
+    NULL,                        NULL,                        NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                   },
+  { L"System Vector Base",    4,                  16,                  L"0x%x",
+    NULL,                        NULL,
     ValidateGICDSystemVectorBase, NULL },
-  { L"GIC Version",           1, 20, L"%d",       NULL,       NULL, NULL, NULL },
-  { L"Reserved",              3, 21, L"%x %x %x", Dump3Chars, NULL, NULL, NULL }
+  { L"GIC Version",           1,                  20,                  L"%d",
+    NULL,                        NULL,                        NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                          },
+  { L"Reserved",              3,                  21,
+    L"%x %x %x",                 Dump3Chars, NULL,                  NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                 }
 };
 
 /**
   An ACPI_PARSER array describing the MSI Frame Interrupt Controller Structure.
 **/
 STATIC CONST ACPI_PARSER  GicMSIFrameParser[] = {
-  { L"Type",                  1, 0,  L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Length",                1, 1,  L"%d",    NULL, NULL, NULL, NULL },
-  { L"Reserved",              2, 2,  L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Type",                  1,                  0,                   L"0x%x",
+    NULL,                      NULL,                      NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                      },
+  { L"Length",                1,                  1,                   L"%d",
+    NULL,                       NULL,                      NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                           },
+  { L"Reserved",              2,                  2,                   L"0x%x",
+    NULL,                      NULL,                       NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                },
 
-  { L"MSI Frame ID",          4, 4,  L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Physical Base Address", 8, 8,  L"0x%lx", NULL, NULL, NULL, NULL },
-  { L"Flags",                 4, 16, L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"MSI Frame ID",          4,                  4,                   L"0x%x",
+    NULL,                      NULL,                      NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+  { L"Physical Base Address", 8,                  8,                   L"0x%lx",
+    NULL,                      NULL,                      NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+  { L"Flags",                 4,                  16,                  L"0x%x",
+    NULL,                      NULL,                      NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
 
-  { L"SPI Count",             2, 20, L"%d",    NULL, NULL, NULL, NULL },
-  { L"SPI Base",              2, 22, L"0x%x",  NULL, NULL, NULL, NULL }
+  { L"SPI Count",             2,                  20,                  L"%d",
+    NULL,                    NULL,                      NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+  { L"SPI Base",              2,                  22,                  L"0x%x",
+    NULL, NULL,                    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }
 };
 
 /**
   An ACPI_PARSER array describing the GICR Interrupt Controller Structure.
 **/
 STATIC CONST ACPI_PARSER  GicRParser[] = {
-  { L"Type",                         1, 0,  L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Length",                       1, 1,  L"%d",    NULL, NULL, NULL, NULL },
-  { L"Reserved",                     2, 2,  L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Type",                         1,                         0,
+    L"0x%x",                           NULL,                             NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+  { L"Length",                       1,                         1,
+    L"%d",                              NULL,                             NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+  { L"Reserved",                     2,                         2,
+    L"0x%x",                           NULL,                            NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
 
-  { L"Discovery Range Base Address", 8, 4,  L"0x%lx", NULL, NULL, NULL,
+  { L"Discovery Range Base Address", 8,                         4,
+    L"0x%lx",                          NULL,                            NULL,
+    NULL,
     NULL },
-  { L"Discovery Range Length",       4, 12, L"0x%x",  NULL, NULL, NULL, NULL }
+  { L"Discovery Range Length",       4,                         12,
+    L"0x%x", NULL,                           NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
 };
 
 /**
   An ACPI_PARSER array describing the GIC ITS Interrupt Controller Structure.
 **/
 STATIC CONST ACPI_PARSER  GicITSParser[] = {
-  { L"Type",                  1, 0,  L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Length",                1, 1,  L"%d",    NULL, NULL, NULL, NULL },
-  { L"Reserved",              2, 2,  L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Type",                  1,                  0,                   L"0x%x",
+    NULL,                      NULL,                      NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { L"Length",                1,                  1,                   L"%d",
+    NULL,                     NULL,                      NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { L"Reserved",              2,                  2,                   L"0x%x",
+    NULL,                    NULL,                     NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
 
-  { L"GIC ITS ID",            4, 4,  L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Physical Base Address", 8, 8,  L"0x%lx", NULL, NULL, NULL, NULL },
-  { L"Reserved",              4, 16, L"0x%x",  NULL, NULL, NULL, NULL }
+  { L"GIC ITS ID",            4,                  4,                   L"0x%x",
+    NULL,                    NULL,                    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+  { L"Physical Base Address", 8,                  8,                   L"0x%lx",
+    NULL,                    NULL,                    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+  { L"Reserved",              4,                  16,                  L"0x%x",
+    NULL, NULL,                    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
 };
 
 /**
   An ACPI_PARSER array describing the IO APIC Structure.
 **/
 STATIC CONST ACPI_PARSER  IoApic[] = {
-  { L"Type",                         1, 0, L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Length",                       1, 1, L"%d",   NULL, NULL, NULL, NULL },
-  { L"I/O APIC ID",                  1, 2, L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Reserved",                     1, 3, L"0x%x", NULL, NULL, NULL, NULL },
-  { L"I/O APIC Address",             4, 4, L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Global System Interrupt Base", 4, 8, L"0x%x", NULL, NULL, NULL, NULL }
+  { L"Type",                         1,                         0,
+    L"0x%x",                         NULL,                           NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+  { L"Length",                       1,                         1,
+    L"%d",                            NULL,                           NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+  { L"I/O APIC ID",                  1,                         2,
+    L"0x%x",                         NULL,                          NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { L"Reserved",                     1,                         3,
+    L"0x%x",                         NULL,                         NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+  { L"I/O APIC Address",             4,                         4,
+    L"0x%x",                         NULL,                         NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { L"Global System Interrupt Base", 4,                         8,
+    L"0x%x", NULL,                         NULL,                         NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
 };
 
 /**
   An ACPI_PARSER array describing the Interrupt Source Override Structure.
 **/
 STATIC CONST ACPI_PARSER  InterruptSourceOverride[] = {
-  { L"Type",                    1, 0, L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Length",                  1, 1, L"%d",   NULL, NULL, NULL, NULL },
-  { L"Bus",                     1, 2, L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Source",                  1, 3, L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Global System Interrupt", 4, 4, L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Flags",                   2, 8, L"0x%x", NULL, NULL, NULL, NULL }
+  { L"Type",                    1,                     0,
+    L"0x%x",                     NULL,                       NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { L"Length",                  1,                     1,
+    L"%d",                        NULL,                       NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+  { L"Bus",                     1,                     2,
+    L"0x%x",                     NULL,                      NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+  { L"Source",                  1,                     3,
+    L"0x%x",                     NULL,                     NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+  { L"Global System Interrupt", 4,                     4,
+    L"0x%x",                     NULL,                     NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+  { L"Flags",                   2,                     8,
+    L"0x%x", NULL,                     NULL,                     NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
 };
 
 STATIC CONST ACPI_PARSER  LocalApicFlags[] = {
-  { L"Enabled",        1,  0, L"%d", NULL, NULL, NULL, NULL },
-  { L"Online Capable", 1,  1, L"%d", NULL, NULL, NULL, NULL },
-  { L"Reserved",       30, 2, L"%d", NULL, NULL, NULL, NULL }
+  { L"Enabled",        1,        0,        L"%d",        NULL,        NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                  },
+  { L"Online Capable", 1,        1,        L"%d",        NULL,        NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                         },
+  { L"Reserved",       30,       2,        L"%d",        NULL,        NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                 }
 };
 
 /**
@@ -247,38 +387,81 @@ DumpLocalApicBitFlags (
    An ACPI_PARSER array describing the Processor Local APIC Structure.
  **/
 STATIC CONST ACPI_PARSER  ProcessorLocalApic[] = {
-  { L"Type",               1, 0, L"0x%x", NULL,                  NULL, NULL, NULL },
-  { L"Length",             1, 1, L"%d",   NULL,                  NULL, NULL, NULL },
+  { L"Type",               1,               0,               L"0x%x",
+    NULL,                                   NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+  { L"Length",             1,               1,               L"%d",
+    NULL,                                    NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
 
-  { L"ACPI Processor UID", 1, 2, L"0x%x", NULL,                  NULL, NULL, NULL },
-  { L"APIC ID",            1, 3, L"0x%x", NULL,                  NULL, NULL, NULL },
-  { L"Flags",              4, 4, NULL,    DumpLocalApicBitFlags, NULL, NULL, NULL }
+  { L"ACPI Processor UID", 1,               2,               L"0x%x",
+    NULL,                                   NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+  { L"APIC ID",            1,               3,               L"0x%x",
+    NULL,                                   NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+  { L"Flags",              4,               4,               NULL,
+    DumpLocalApicBitFlags, NULL,                  NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             }
 };
 
 /**
   An ACPI_PARSER array describing the Processor Local x2APIC Structure.
 **/
 STATIC CONST ACPI_PARSER  ProcessorLocalX2Apic[] = {
-  { L"Type",               1, 0,  L"0x%x", NULL,                  NULL, NULL, NULL },
-  { L"Length",             1, 1,  L"%d",   NULL,                  NULL, NULL, NULL },
-  { L"Reserved",           2, 2,  L"0x%x", NULL,                  NULL, NULL, NULL },
+  { L"Type",               1,               0,                L"0x%x",
+    NULL,                                    NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        },
+  { L"Length",             1,               1,                L"%d",
+    NULL,                                     NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+  { L"Reserved",           2,               2,                L"0x%x",
+    NULL,                                    NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
 
-  { L"X2APIC ID",          4, 4,  L"0x%x", NULL,                  NULL, NULL, NULL },
-  { L"Flags",              4, 8,  NULL,    DumpLocalApicBitFlags, NULL, NULL, NULL },
-  { L"ACPI Processor UID", 4, 12, L"0x%x", NULL,                  NULL, NULL, NULL }
+  { L"X2APIC ID",          4,               4,                L"0x%x",
+    NULL,                                    NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+  { L"Flags",              4,               8,                NULL,
+    DumpLocalApicBitFlags,           NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+  { L"ACPI Processor UID", 4,               12,               L"0x%x",
+    NULL, NULL,                            NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
 };
 
 /**
   An ACPI_PARSER array describing the Local x2APIC NMI Structure.
 **/
 STATIC CONST ACPI_PARSER  LocalX2ApicNmi[] = {
-  { L"Type",               1, 0, L"0x%x",     NULL,       NULL, NULL, NULL },
-  { L"Length",             1, 1, L"%d",       NULL,       NULL, NULL, NULL },
-  { L"Flags",              2, 2, L"0x%x",     NULL,       NULL, NULL, NULL },
+  { L"Type",               1,               0,               L"0x%x",
+    NULL,                     NULL,                     NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+  { L"Length",             1,               1,               L"%d",
+    NULL,                      NULL,                     NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+  { L"Flags",              2,               2,               L"0x%x",
+    NULL,                     NULL,                      NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
 
-  { L"ACPI Processor UID", 4, 4, L"0x%x",     NULL,       NULL, NULL, NULL },
-  { L"Local x2APIC LINT#", 1, 8, L"0x%x",     NULL,       NULL, NULL, NULL },
-  { L"Reserved",           3, 9, L"0x%x%x%x", Dump3Chars, NULL, NULL, NULL }
+  { L"ACPI Processor UID", 4,               4,               L"0x%x",
+    NULL,                     NULL,                     NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+  { L"Local x2APIC LINT#", 1,               8,               L"0x%x",
+    NULL,                     NULL,                     NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { L"Reserved",           3,               9,               L"0x%x%x%x",
+    Dump3Chars, NULL,               NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      }
 };
 
 /**
@@ -286,19 +469,28 @@ STATIC CONST ACPI_PARSER  LocalX2ApicNmi[] = {
 **/
 STATIC CONST ACPI_PARSER  MadtParser[] = {
   PARSE_ACPI_HEADER (&AcpiHdrInfo),
-  { L"Local Interrupt Controller Address",4,         36, L"0x%x", NULL, NULL, NULL,
+  { L"Local Interrupt Controller Address",4,                           36,
+    L"0x%x",                       NULL,                        NULL,
+    NULL,
     NULL },
-  { L"Flags",                      4,         40, L"0x%x", NULL, NULL, NULL,NULL}
+  { L"Flags",                      4,                           40,
+    L"0x%x",                       NULL,                        NULL,
+    NULL,
+    NULL }
 };
 
 /**
   An ACPI_PARSER array describing the MADT Interrupt Controller Structure Header Structure.
 **/
 STATIC CONST ACPI_PARSER  MadtInterruptControllerHeaderParser[] = {
-  { NULL,        1, 0, NULL, NULL, (VOID **)&MadtInterruptControllerType,   NULL, NULL },
-  { L"Length",   1, 1, NULL, NULL, (VOID **)&MadtInterruptControllerLength, NULL,
+  { NULL,        1,        0,        NULL,        NULL,
+    (VOID **)&MadtInterruptControllerType,          NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  { L"Length",   1,        1,        NULL,        NULL,
+    (VOID **)&MadtInterruptControllerLength,        NULL,
     NULL },
-  { L"Reserved", 2, 2, NULL, NULL, NULL,                                    NULL, NULL }
+  { L"Reserved", 2,        2,        NULL,        NULL,       NULL, NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
 };
 
 /**

@@ -144,18 +144,25 @@ DumpSratPciBdfNumber (
   An ACPI_PARSER array describing the Device Handle - ACPI
 **/
 STATIC CONST ACPI_PARSER  SratDeviceHandleAcpiParser[] = {
-  { L"ACPI_HID", 8, 0,  L"0x%lx", NULL, NULL, NULL, NULL },
-  { L"ACPI_UID", 4, 8,  L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Reserved", 4, 12, L"0x%x",  NULL, NULL, NULL, NULL }
+  { L"ACPI_HID", 8, 0,  L"0x%lx",  NULL,   NULL,   NULL,
+    NULL                },
+  { L"ACPI_UID", 4, 8,  L"0x%x",   NULL,   NULL,   NULL,
+    NULL                },
+  { L"Reserved", 4, 12, L"0x%x",   NULL,   NULL,   NULL,  NULL                 }
 };
 
 /**
   An ACPI_PARSER array describing the Device Handle - PCI
 **/
 STATIC CONST ACPI_PARSER  SratDeviceHandlePciParser[] = {
-  { L"PCI Segment",    2,  0, L"0x%x",                                    NULL,                 NULL, NULL, NULL },
-  { L"PCI BDF Number", 2,  2, NULL,                                       DumpSratPciBdfNumber, NULL, NULL, NULL },
-  { L"Reserved",       12, 4, L"%x %x %x %x - %x %x %x %x - %x %x %x %x", Dump12Chars,
+  { L"PCI Segment",    2,        0,        L"0x%x",
+    NULL,                                                       NULL,
+    NULL, NULL },
+  { L"PCI BDF Number", 2,        2,        NULL,
+    DumpSratPciBdfNumber,                                  NULL,
+    NULL,                 NULL },
+  { L"Reserved",       12,       4,
+    L"%x %x %x %x - %x %x %x %x - %x %x %x %x", Dump12Chars,
     NULL, NULL, NULL }
 };
 
@@ -229,106 +236,215 @@ DumpSratApicProximity (
 **/
 STATIC CONST ACPI_PARSER  SratParser[] = {
   PARSE_ACPI_HEADER (&AcpiHdrInfo),
-  { L"Reserved",                   4,  36, L"0x%x",  NULL, NULL, ValidateSratReserved, NULL },
-  { L"Reserved",                   8,  40, L"0x%lx", NULL, NULL, NULL,                 NULL }
+  { L"Reserved",                   4,                           36,
+    L"0x%x",                       NULL,                        NULL,
+    ValidateSratReserved,
+    NULL                                                 },
+  { L"Reserved",                   8,                           40,
+    L"0x%lx",                      NULL,                        NULL,
+    NULL,
+    NULL                                                                  }
 };
 
 /**
   An ACPI_PARSER array describing the Resource Allocation structure header.
 **/
 STATIC CONST ACPI_PARSER  SratResourceAllocationParser[] = {
-  { L"Type",   1, 0, NULL, NULL, (VOID **)&SratRAType,   NULL, NULL },
-  { L"Length", 1, 1, NULL, NULL, (VOID **)&SratRALength, NULL, NULL }
+  { L"Type",   1,   0,   NULL,   NULL,   (VOID **)&SratRAType,     NULL,
+    NULL         },
+  { L"Length", 1,   1,   NULL,   NULL,   (VOID **)&SratRALength,   NULL,
+    NULL        }
 };
 
 /**
   An ACPI_PARSER array describing the GICC Affinity structure.
 **/
 STATIC CONST ACPI_PARSER  SratGicCAffinityParser[] = {
-  { L"Type",               1, 0,  L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Length",             1, 1,  L"0x%x", NULL, NULL, NULL, NULL },
+  { L"Type",               1,               0,                L"0x%x",
+    NULL,                NULL,                NULL,
+    NULL                  },
+  { L"Length",             1,               1,                L"0x%x",
+    NULL,                 NULL,                NULL,
+    NULL                                 },
 
-  { L"Proximity Domain",   4, 2,  L"0x%x", NULL, NULL, NULL, NULL },
-  { L"ACPI Processor UID", 4, 6,  L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Flags",              4, 10, L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Clock Domain",       4, 14, L"0x%x", NULL, NULL, NULL, NULL }
+  { L"Proximity Domain",   4,               2,                L"0x%x",
+    NULL,                NULL,                 NULL,
+    NULL                                                },
+  { L"ACPI Processor UID", 4,               6,                L"0x%x",
+    NULL,                NULL,                NULL,
+    NULL                                                               },
+  { L"Flags",              4,               10,               L"0x%x",
+    NULL,                NULL,                NULL,
+    NULL                                                                               },
+  { L"Clock Domain",       4,               14,               L"0x%x",
+    NULL, NULL,                NULL,
+    NULL                                                                                              }
 };
 
 /**
   An ACPI_PARSER array describing the GIC ITS Affinity structure.
 **/
 STATIC CONST ACPI_PARSER  SratGicITSAffinityParser[] = {
-  { L"Type",             1, 0, L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Length",           1, 1, L"0x%x", NULL, NULL, NULL, NULL },
+  { L"Type",             1,             0,             L"0x%x",
+    NULL,             NULL,             NULL,
+    NULL                                                                                     },
+  { L"Length",           1,             1,             L"0x%x",            NULL,
+    NULL,             NULL,
+    NULL                                                                                                 },
 
-  { L"Proximity Domain", 4, 2, L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Reserved",         2, 6, L"0x%x", NULL, NULL, NULL, NULL },
-  { L"ITS Id",           4, 8, L"0x%x", NULL, NULL, NULL, NULL },
+  { L"Proximity Domain", 4,             2,             L"0x%x",            NULL,
+    NULL,               NULL,
+    NULL                                                                                                             },
+  { L"Reserved",         2,             6,             L"0x%x",            NULL,
+    NULL,             NULL,
+    NULL                                                                                                                         },
+  { L"ITS Id",           4,             8,             L"0x%x",            NULL,
+    NULL, NULL,
+    NULL                                                                                                                                       },
 };
 
 /**
   An ACPI_PARSER array describing the Generic Initiator Affinity Structure
 **/
 STATIC CONST ACPI_PARSER  SratGenericInitiatorAffinityParser[] = {
-  { L"Type",               1,  0,  L"0x%x", NULL,                 NULL,                           NULL, NULL },
-  { L"Length",             1,  1,  L"0x%x", NULL,                 NULL,                           NULL, NULL },
+  { L"Type",               1,               0,                L"0x%x",
+    NULL,                                  NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+  { L"Length",             1,               1,                L"0x%x",
+    NULL,                                   NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
 
-  { L"Reserved",           1,  2,  L"0x%x", NULL,                 NULL,                           NULL, NULL },
-  { L"Device Handle Type", 1,  3,  L"%d",   NULL,                 (VOID **)&SratDeviceHandleType,
+  { L"Reserved",           1,               2,                L"0x%x",
+    NULL,                                  NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+  { L"Device Handle Type", 1,               3,                L"%d",
+    NULL,                                  (VOID **)&SratDeviceHandleType,
     ValidateSratDeviceHandleType, NULL },
-  { L"Proximity Domain",   4,  4,  L"0x%x", NULL,                 NULL,                           NULL, NULL },
-  { L"Device Handle",      16, 8,  L"%s",   DumpSratDeviceHandle, NULL,                           NULL, NULL },
-  { L"Flags",              4,  24, L"0x%x", NULL,                 NULL,                           NULL, NULL },
-  { L"Reserved",           4,  28, L"0x%x", NULL,                 NULL,                           NULL, NULL }
+  { L"Proximity Domain",   4,               4,                L"0x%x",
+    NULL,                                  NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+  { L"Device Handle",      16,              8,                L"%s",
+    DumpSratDeviceHandle,  NULL,                                  NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+  { L"Flags",              4,               24,               L"0x%x",
+    NULL,                NULL,                  NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { L"Reserved",           4,               28,               L"0x%x",
+    NULL, NULL,                NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               }
 };
 
 /**
   An ACPI_PARSER array describing the Memory Affinity structure.
 **/
 STATIC CONST ACPI_PARSER  SratMemAffinityParser[] = {
-  { L"Type",              1, 0,  L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Length",            1, 1,  L"0x%x",  NULL, NULL, NULL, NULL },
+  { L"Type",              1,              0,               L"0x%x",
+    NULL,               NULL,               NULL,
+    NULL                                                                                                                                                                                                                                                                              },
+  { L"Length",            1,              1,               L"0x%x",
+    NULL,                NULL,               NULL,
+    NULL                                                                                                                                                                                                                                                                                            },
 
-  { L"Proximity Domain",  4, 2,  L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Reserved",          2, 6,  L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Base Address Low",  4, 8,  L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Base Address High", 4, 12, L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Length Low",        4, 16, L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Length High",       4, 20, L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Reserved",          4, 24, L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Flags",             4, 28, L"0x%x",  NULL, NULL, NULL, NULL },
-  { L"Reserved",          8, 32, L"0x%lx", NULL, NULL, NULL, NULL }
+  { L"Proximity Domain",  4,              2,               L"0x%x",
+    NULL,               NULL,                NULL,
+    NULL                                                                                                                                                                                                                                                                                                          },
+  { L"Reserved",          2,              6,               L"0x%x",
+    NULL,               NULL,               NULL,
+    NULL                                                                                                                                                                                                                                                                                                                        },
+  { L"Base Address Low",  4,              8,               L"0x%x",
+    NULL,               NULL,               NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                       },
+  { L"Base Address High", 4,              12,              L"0x%x",
+    NULL,               NULL,               NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                     },
+  { L"Length Low",        4,              16,              L"0x%x",
+    NULL,               NULL,               NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                   },
+  { L"Length High",       4,              20,              L"0x%x",
+    NULL,               NULL,               NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                 },
+  { L"Reserved",          4,              24,              L"0x%x",
+    NULL,               NULL,               NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                               },
+  { L"Flags",             4,              28,              L"0x%x",
+    NULL,              NULL,               NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                             },
+  { L"Reserved",          8,              32,              L"0x%lx",
+    NULL, NULL,              NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                           }
 };
 
 /**
   An ACPI_PARSER array describing the APIC/SAPIC Affinity structure.
 **/
 STATIC CONST ACPI_PARSER  SratApciSapicAffinityParser[] = {
-  { L"Type",                    1, 0,  L"0x%x", NULL,                  NULL, NULL, NULL },
-  { L"Length",                  1, 1,  L"0x%x", NULL,                  NULL, NULL, NULL },
+  { L"Type",                    1,                    0,
+    L"0x%x",                     NULL,
+    NULL,                                      NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+  { L"Length",                  1,                    1,
+    L"0x%x",                      NULL,
+    NULL,                                      NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
 
-  { L"Proximity Domain [7:0]",  1, 2,  L"0x%x", NULL,                  NULL, NULL, NULL },
-  { L"APIC ID",                 1, 3,  L"0x%x", NULL,                  NULL, NULL, NULL },
-  { L"Flags",                   4, 4,  L"0x%x", NULL,                  NULL, NULL, NULL },
-  { L"Local SAPIC EID",         1, 8,  L"0x%x", NULL,                  NULL, NULL, NULL },
-  { L"Proximity Domain [31:8]", 3, 9,  L"0x%x", DumpSratApicProximity,
+  { L"Proximity Domain [7:0]",  1,                    2,
+    L"0x%x",                     NULL,
+    NULL,                                      NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { L"APIC ID",                 1,                    3,
+    L"0x%x",                     NULL,
+    NULL,                                       NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
+  { L"Flags",                   4,                    4,
+    L"0x%x",                     NULL,
+    NULL,                                      NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+  { L"Local SAPIC EID",         1,                    8,
+    L"0x%x",                     NULL,
+    NULL,                                      NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       },
+  { L"Proximity Domain [31:8]", 3,                    9,
+    L"0x%x",                     DumpSratApicProximity,
     NULL, NULL, NULL },
-  { L"Clock Domain",            4, 12, L"0x%x", NULL,                  NULL, NULL, NULL }
+  { L"Clock Domain",            4,                    12,
+    L"0x%x", NULL,                     NULL,
+    NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
 };
 
 /**
   An ACPI_PARSER array describing the Processor Local x2APIC Affinity structure.
 **/
 STATIC CONST ACPI_PARSER  SratX2ApciAffinityParser[] = {
-  { L"Type",             1, 0,  L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Length",           1, 1,  L"0x%x", NULL, NULL, NULL, NULL },
+  { L"Type",             1,             0,              L"0x%x",
+    NULL,              NULL,              NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+  { L"Length",           1,             1,              L"0x%x",
+    NULL,               NULL,              NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
 
-  { L"Reserved",         2, 2,  L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Proximity Domain", 4, 4,  L"0x%x", NULL, NULL, NULL, NULL },
-  { L"X2APIC ID",        4, 8,  L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Flags",            4, 12, L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Clock Domain",     4, 16, L"0x%x", NULL, NULL, NULL, NULL },
-  { L"Reserved",         4, 20, L"0x%x", NULL, NULL, NULL, NULL }
+  { L"Reserved",         2,             2,              L"0x%x",
+    NULL,              NULL,               NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              },
+  { L"Proximity Domain", 4,             4,              L"0x%x",
+    NULL,              NULL,              NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+  { L"X2APIC ID",        4,             8,              L"0x%x",
+    NULL,              NULL,              NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+  { L"Flags",            4,             12,             L"0x%x",
+    NULL,              NULL,              NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+  { L"Clock Domain",     4,             16,             L"0x%x",
+    NULL,              NULL,              NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+  { L"Reserved",         4,             20,             L"0x%x",
+    NULL, NULL,              NULL,
+    NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
 };
 
 /**

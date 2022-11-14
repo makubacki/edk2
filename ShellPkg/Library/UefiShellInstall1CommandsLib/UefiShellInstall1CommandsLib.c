@@ -33,7 +33,11 @@ ShellInstall1CommandsLibConstructor (
     return (EFI_SUCCESS);
   }
 
-  return (BcfgLibraryRegisterBcfgCommand (ImageHandle, SystemTable, L"Install1"));
+  return (BcfgLibraryRegisterBcfgCommand (
+            ImageHandle,
+            SystemTable,
+            L"Install1"
+            ));
 }
 
 /**

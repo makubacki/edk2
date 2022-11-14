@@ -10,8 +10,8 @@
 #include "UefiShellLevel3CommandsLib.h"
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-q", TypeFlag },
-  { NULL,  TypeMax  }
+  { L"-q", TypeFlag  },
+  { NULL,  TypeMax   }
 };
 
 /**
@@ -47,7 +47,14 @@ ShellCommandRunPause (
   ASSERT_EFI_ERROR (Status);
 
   if (!gEfiShellProtocol->BatchIsActive ()) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_NO_SCRIPT), gShellLevel3HiiHandle, L"pause");
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_NO_SCRIPT),
+      gShellLevel3HiiHandle,
+      L"pause"
+      );
     return (SHELL_UNSUPPORTED);
   }
 
@@ -57,7 +64,15 @@ ShellCommandRunPause (
   Status = ShellCommandLineParse (ParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel3HiiHandle, L"pause", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel3HiiHandle,
+        L"pause",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -70,16 +85,34 @@ ShellCommandRunPause (
     if (ShellCommandLineGetFlag (Package, L"-?")) {
       ASSERT (FALSE);
     } else if (ShellCommandLineGetRawValue (Package, 1) != NULL) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel3HiiHandle, L"pause");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellLevel3HiiHandle,
+        L"pause"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       if (!ShellCommandLineGetFlag (Package, L"-q")) {
-        Status = ShellPromptForResponseHii (ShellPromptResponseTypeQuitContinue, STRING_TOKEN (STR_PAUSE_PROMPT), gShellLevel3HiiHandle, (VOID **)&Resp);
+        Status = ShellPromptForResponseHii (
+                   ShellPromptResponseTypeQuitContinue,
+                   STRING_TOKEN (STR_PAUSE_PROMPT),
+                   gShellLevel3HiiHandle,
+                   (VOID **)&Resp
+                   );
       } else {
-        Status = ShellPromptForResponse (ShellPromptResponseTypeQuitContinue, NULL, (VOID **)&Resp);
+        Status = ShellPromptForResponse (
+                   ShellPromptResponseTypeQuitContinue,
+                   NULL,
+                   (VOID **)&Resp
+                   );
       }
 
-      if (EFI_ERROR (Status) || (Resp == NULL) || (*Resp == ShellPromptResponseQuit)) {
+      if (EFI_ERROR (Status) || (Resp == NULL) || (*Resp ==
+                                                   ShellPromptResponseQuit))
+      {
         ShellCommandRegisterExit (TRUE, 0);
         ShellStatus = SHELL_ABORTED;
       }

@@ -139,7 +139,15 @@ SmbiosPrintEPSInfo (
   UINT8  InAnchor[6];
 
   if (SmbiosTable == NULL) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SMBIOSTABLE_NULL), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_SMBIOSTABLE_NULL
+        ),
+      gShellDebug1HiiHandle
+      );
     return;
   }
 
@@ -148,9 +156,26 @@ SmbiosPrintEPSInfo (
   }
 
   if (Option >= SHOW_NORMAL) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ENTRY_POINT_SIGN), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_ENTRY_POINT_SIGN
+        ),
+      gShellDebug1HiiHandle
+      );
     MemToString (Anchor, SmbiosTable->AnchorString, 4);
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ANCHOR_STR), gShellDebug1HiiHandle, Anchor);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_ANCHOR_STR
+        ),
+      gShellDebug1HiiHandle,
+      Anchor
+      );
     ShellPrintHiiEx (
       -1,
       -1,
@@ -159,7 +184,16 @@ SmbiosPrintEPSInfo (
       gShellDebug1HiiHandle,
       SmbiosTable->EntryPointStructureChecksum
       );
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ENTRY_POINT_LEN), gShellDebug1HiiHandle, SmbiosTable->EntryPointLength);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_ENTRY_POINT_LEN
+        ),
+      gShellDebug1HiiHandle,
+      SmbiosTable->EntryPointLength
+      );
     ShellPrintHiiEx (
       -1,
       -1,
@@ -177,9 +211,36 @@ SmbiosPrintEPSInfo (
       gShellDebug1HiiHandle,
       SmbiosTable->NumberOfSmbiosStructures
       );
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MAX_STRUCT_SIZE), gShellDebug1HiiHandle, SmbiosTable->MaxStructureSize);
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_TABLE_ADDR), gShellDebug1HiiHandle, SmbiosTable->TableAddress);
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_TABLE_LENGTH), gShellDebug1HiiHandle, SmbiosTable->TableLength);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_MAX_STRUCT_SIZE
+        ),
+      gShellDebug1HiiHandle,
+      SmbiosTable->MaxStructureSize
+      );
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_TABLE_ADDR
+        ),
+      gShellDebug1HiiHandle,
+      SmbiosTable->TableAddress
+      );
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_TABLE_LENGTH
+        ),
+      gShellDebug1HiiHandle,
+      SmbiosTable->TableLength
+      );
   }
 
   //
@@ -194,14 +255,49 @@ SmbiosPrintEPSInfo (
       gShellDebug1HiiHandle,
       SmbiosTable->EntryPointRevision
       );
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BCD_REVISION), gShellDebug1HiiHandle, SmbiosTable->SmbiosBcdRevision);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BCD_REVISION
+        ),
+      gShellDebug1HiiHandle,
+      SmbiosTable->SmbiosBcdRevision
+      );
     //
     // Since raw data is not string, add a NULL terminater.
     //
     MemToString (InAnchor, SmbiosTable->IntermediateAnchorString, 5);
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTER_ACHOR), gShellDebug1HiiHandle, InAnchor);
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTER_CHECKSUM), gShellDebug1HiiHandle, SmbiosTable->IntermediateChecksum);
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_FORMATTED_AREA), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_INTER_ACHOR
+        ),
+      gShellDebug1HiiHandle,
+      InAnchor
+      );
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_INTER_CHECKSUM
+        ),
+      gShellDebug1HiiHandle,
+      SmbiosTable->IntermediateChecksum
+      );
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_FORMATTED_AREA
+        ),
+      gShellDebug1HiiHandle
+      );
     DumpHex (2, 0, 5, SmbiosTable->FormattedArea);
   }
 
@@ -223,7 +319,15 @@ Smbios64BitPrintEPSInfo (
   UINT8  Anchor[5];
 
   if (SmbiosTable == NULL) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SMBIOSTABLE_NULL), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_SMBIOSTABLE_NULL
+        ),
+      gShellDebug1HiiHandle
+      );
     return;
   }
 
@@ -232,10 +336,27 @@ Smbios64BitPrintEPSInfo (
   }
 
   if (Option >= SHOW_NORMAL) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_64_BIT_ENTRY_POINT_SIGN), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_64_BIT_ENTRY_POINT_SIGN
+        ),
+      gShellDebug1HiiHandle
+      );
 
     MemToString (Anchor, SmbiosTable->AnchorString, 5);
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ANCHOR_STR), gShellDebug1HiiHandle, Anchor);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_ANCHOR_STR
+        ),
+      gShellDebug1HiiHandle,
+      Anchor
+      );
 
     ShellPrintHiiEx (
       -1,
@@ -246,7 +367,16 @@ Smbios64BitPrintEPSInfo (
       SmbiosTable->EntryPointStructureChecksum
       );
 
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ENTRY_POINT_LEN), gShellDebug1HiiHandle, SmbiosTable->EntryPointLength);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_ENTRY_POINT_LEN
+        ),
+      gShellDebug1HiiHandle,
+      SmbiosTable->EntryPointLength
+      );
 
     ShellPrintHiiEx (
       -1,
@@ -267,9 +397,27 @@ Smbios64BitPrintEPSInfo (
       SmbiosTable->DocRev
       );
 
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_TABLE_MAX_SIZE), gShellDebug1HiiHandle, SmbiosTable->TableMaximumSize);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_TABLE_MAX_SIZE
+        ),
+      gShellDebug1HiiHandle,
+      SmbiosTable->TableMaximumSize
+      );
 
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_TABLE_ADDR), gShellDebug1HiiHandle, SmbiosTable->TableAddress);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_TABLE_ADDR
+        ),
+      gShellDebug1HiiHandle,
+      SmbiosTable->TableAddress
+      );
   }
 
   //
@@ -323,8 +471,26 @@ SmbiosPrintStructure (
   // Display structure header
   //
   DisplayStructureTypeInfo (Struct->Hdr->Type, SHOW_DETAIL);
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_FORMAT_PART_LEN), gShellDebug1HiiHandle, Struct->Hdr->Length);
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_STRUCT_HANDLE), gShellDebug1HiiHandle, Struct->Hdr->Handle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_FORMAT_PART_LEN
+      ),
+    gShellDebug1HiiHandle,
+    Struct->Hdr->Length
+    );
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_STRUCT_HANDLE
+      ),
+    gShellDebug1HiiHandle,
+    Struct->Hdr->Handle
+    );
 
   if (Option == SHOW_OUTLINE) {
     return EFI_SUCCESS;
@@ -339,23 +505,52 @@ SmbiosPrintStructure (
       PRINT_PENDING_STRING (Struct, Type0, BiosVersion);
       PRINT_STRUCT_VALUE_H (Struct, Type0, BiosSegment);
       PRINT_PENDING_STRING (Struct, Type0, BiosReleaseDate);
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIOS_SIZE), gShellDebug1HiiHandle, 64 * (Struct->Type0->BiosSize + 1));
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_BIOS_SIZE
+          ),
+        gShellDebug1HiiHandle,
+        64 *
+        (Struct->Type0->BiosSize + 1)
+        );
 
-      DisplayBiosCharacteristics (ReadUnaligned64 ((UINT64 *)(UINTN)&(Struct->Type0->BiosCharacteristics)), Option);
+      DisplayBiosCharacteristics (
+        ReadUnaligned64 (
+          (UINT64 *)(UINTN)&(Struct->Type0->BiosCharacteristics)
+          ),
+        Option
+        );
 
       if (Struct->Hdr->Length > 0x12) {
-        DisplayBiosCharacteristicsExt1 (Struct->Type0->BIOSCharacteristicsExtensionBytes[0], Option);
+        DisplayBiosCharacteristicsExt1 (
+          Struct->Type0->BIOSCharacteristicsExtensionBytes[0],
+          Option
+          );
       }
 
       if (Struct->Hdr->Length > 0x13) {
-        DisplayBiosCharacteristicsExt2 (Struct->Type0->BIOSCharacteristicsExtensionBytes[1], Option);
+        DisplayBiosCharacteristicsExt2 (
+          Struct->Type0->BIOSCharacteristicsExtensionBytes[1],
+          Option
+          );
       }
 
       if (AE_SMBIOS_VERSION (0x2, 0x4) && (Struct->Hdr->Length > 0x14)) {
         PRINT_STRUCT_VALUE (Struct, Type0, SystemBiosMajorRelease);
         PRINT_STRUCT_VALUE (Struct, Type0, SystemBiosMinorRelease);
-        PRINT_STRUCT_VALUE (Struct, Type0, EmbeddedControllerFirmwareMajorRelease);
-        PRINT_STRUCT_VALUE (Struct, Type0, EmbeddedControllerFirmwareMinorRelease);
+        PRINT_STRUCT_VALUE (
+          Struct,
+          Type0,
+          EmbeddedControllerFirmwareMajorRelease
+          );
+        PRINT_STRUCT_VALUE (
+          Struct,
+          Type0,
+          EmbeddedControllerFirmwareMinorRelease
+          );
       }
 
       if (AE_SMBIOS_VERSION (0x3, 0x1) && (Struct->Hdr->Length > 0x18)) {
@@ -399,7 +594,10 @@ SmbiosPrintStructure (
       PRINT_PENDING_STRING (Struct, Type2, SerialNumber);
       if (Struct->Hdr->Length > 0x8) {
         PRINT_PENDING_STRING (Struct, Type2, AssetTag);
-        DisplayBaseBoardFeatureFlags (*(UINT8 *)&Struct->Type2->FeatureFlag, Option);
+        DisplayBaseBoardFeatureFlags (
+          *(UINT8 *)&Struct->Type2->FeatureFlag,
+          Option
+          );
         PRINT_PENDING_STRING (Struct, Type2, LocationInChassis);
         PRINT_STRUCT_VALUE_H (Struct, Type2, ChassisHandle);
         DisplayBaseBoardBoardType (Struct->Type2->BoardType, Option);
@@ -417,13 +615,45 @@ SmbiosPrintStructure (
       PRINT_PENDING_STRING (Struct, Type3, Version);
       PRINT_PENDING_STRING (Struct, Type3, SerialNumber);
       PRINT_PENDING_STRING (Struct, Type3, AssetTag);
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BOOTUP_STATE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_BOOTUP_STATE
+          ),
+        gShellDebug1HiiHandle
+        );
       DisplaySystemEnclosureStatus (Struct->Type3->BootupState, Option);
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_STATE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_STATE
+          ),
+        gShellDebug1HiiHandle
+        );
       DisplaySystemEnclosureStatus (Struct->Type3->PowerSupplyState, Option);
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_THERMAL_STATE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_THERMAL_STATE
+          ),
+        gShellDebug1HiiHandle
+        );
       DisplaySystemEnclosureStatus (Struct->Type3->ThermalState, Option);
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SECURITY_STATUS), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_SECURITY_STATUS
+          ),
+        gShellDebug1HiiHandle
+        );
       DisplaySESecurityStatus (Struct->Type3->SecurityStatus, Option);
       if (AE_SMBIOS_VERSION (0x2, 0x3)) {
         if (Struct->Hdr->Length > 0xD) {
@@ -447,10 +677,28 @@ SmbiosPrintStructure (
         }
 
         if (Struct->Hdr->Length > 0x15) {
-          for (Index = 0; Index < Struct->Type3->ContainedElementCount; Index++) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CONTAINED_ELEMENT), gShellDebug1HiiHandle, Index+1);
-            for (Index2 = 0; Index2 < Struct->Type3->ContainedElementRecordLength; Index2++) {
-              Print (L"%02X ", Buffer[0x15 + (Index * Struct->Type3->ContainedElementRecordLength) + Index2]);
+          for (Index = 0; Index < Struct->Type3->ContainedElementCount;
+               Index++)
+          {
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (
+                STR_SMBIOSVIEW_PRINTINFO_CONTAINED_ELEMENT
+                ),
+              gShellDebug1HiiHandle,
+              Index+1
+              );
+            for (Index2 = 0; Index2 <
+                 Struct->Type3->ContainedElementRecordLength; Index2++)
+            {
+              Print (
+                L"%02X ",
+                Buffer[0x15 + (Index *
+                               Struct->Type3->ContainedElementRecordLength) +
+                       Index2]
+                );
             }
 
             Print (L"\n");
@@ -459,8 +707,17 @@ SmbiosPrintStructure (
       }
 
       if (AE_SMBIOS_VERSION (0x2, 0x7) && (Struct->Hdr->Length > 0x13)) {
-        if (Struct->Hdr->Length > (0x15 + (Struct->Type3->ContainedElementCount * Struct->Type3->ContainedElementRecordLength))) {
-          PRINT_SMBIOS_STRING (Struct, Buffer[0x15 + (Struct->Type3->ContainedElementCount * Struct->Type3->ContainedElementRecordLength)], SKUNumber);
+        if (Struct->Hdr->Length > (0x15 +
+                                   (Struct->Type3->ContainedElementCount *
+                                    Struct->Type3->ContainedElementRecordLength)))
+        {
+          PRINT_SMBIOS_STRING (
+            Struct,
+            Buffer[0x15 +
+                   (Struct->Type3->ContainedElementCount *
+                    Struct->Type3->ContainedElementRecordLength)],
+            SKUNumber
+            );
         }
       }
 
@@ -505,7 +762,10 @@ SmbiosPrintStructure (
         PRINT_STRUCT_VALUE (Struct, Type4, CoreCount);
         PRINT_STRUCT_VALUE (Struct, Type4, EnabledCoreCount);
         PRINT_STRUCT_VALUE (Struct, Type4, ThreadCount);
-        DisplayProcessorCharacteristics (Struct->Type4->ProcessorCharacteristics, Option);
+        DisplayProcessorCharacteristics (
+          Struct->Type4->ProcessorCharacteristics,
+          Option
+          );
       }
 
       if ((SmbiosMajorVersion >= 0x3) && (Struct->Hdr->Length > 0x2A)) {
@@ -525,12 +785,35 @@ SmbiosPrintStructure (
       SlotNum = Struct->Type5->AssociatedMemorySlotNum;
 
       DisplayMcErrorDetectMethod (Struct->Type5->ErrDetectMethod, Option);
-      DisplayMcErrorCorrectCapability (*(UINT8 *)&(Struct->Type5->ErrCorrectCapability), Option);
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SUPOPRT), gShellDebug1HiiHandle);
+      DisplayMcErrorCorrectCapability (
+        *(UINT8 *)&(Struct->Type5->ErrCorrectCapability),
+        Option
+        );
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_SUPOPRT
+          ),
+        gShellDebug1HiiHandle
+        );
       DisplayMcInterleaveSupport (Struct->Type5->SupportInterleave, Option);
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CURRENT), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_CURRENT
+          ),
+        gShellDebug1HiiHandle
+        );
       DisplayMcInterleaveSupport (Struct->Type5->CurrentInterleave, Option);
-      DisplayMaxMemoryModuleSize (Struct->Type5->MaxMemoryModuleSize, SlotNum, Option);
+      DisplayMaxMemoryModuleSize (
+        Struct->Type5->MaxMemoryModuleSize,
+        SlotNum,
+        Option
+        );
       DisplayMcMemorySpeeds (*(UINT16 *)&(Struct->Type5->SupportSpeed), Option);
       DisplayMmMemoryType (Struct->Type5->SupportMemoryType, Option);
       DisplayMemoryModuleVoltage (Struct->Type5->MemoryModuleVoltage, Option);
@@ -538,7 +821,11 @@ SmbiosPrintStructure (
       //
       // According to SMBIOS Specification, offset 0x0F
       //
-      DisplayMemoryModuleConfigHandles ((UINT16 *)(&Buffer[0x0F]), SlotNum, Option);
+      DisplayMemoryModuleConfigHandles (
+        (UINT16 *)(&Buffer[0x0F]),
+        SlotNum,
+        Option
+        );
       DisplayMcErrorCorrectCapability (Buffer[0x0F + 2 * SlotNum], Option);
       break;
     }
@@ -550,10 +837,29 @@ SmbiosPrintStructure (
       PRINT_PENDING_STRING (Struct, Type6, SocketDesignation);
       DisplayMmBankConnections (Struct->Type6->BankConnections, Option);
       PRINT_STRUCT_VALUE (Struct, Type6, CurrentSpeed);
-      DisplayMmMemoryType (*(UINT16 *)&(Struct->Type6->CurrentMemoryType), Option);
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INSTALLED), gShellDebug1HiiHandle);
+      DisplayMmMemoryType (
+        *(UINT16 *)&(Struct->Type6->CurrentMemoryType),
+        Option
+        );
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INSTALLED
+          ),
+        gShellDebug1HiiHandle
+        );
       DisplayMmMemorySize (*(UINT8 *)&(Struct->Type6->InstalledSize), Option);
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ENABLED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_ENABLED
+          ),
+        gShellDebug1HiiHandle
+        );
       DisplayMmMemorySize (*(UINT8 *)&(Struct->Type6->EnabledSize), Option);
       DisplayMmErrorStatus (Struct->Type6->ErrorStatus, Option);
       break;
@@ -568,9 +874,17 @@ SmbiosPrintStructure (
       PRINT_STRUCT_VALUE_H (Struct, Type7, InstalledSize);
       PRINT_STRUCT_VALUE_H (Struct, Type7, SupportedSRAMType);
       PRINT_STRUCT_VALUE_H (Struct, Type7, CurrentSRAMType);
-      DisplayCacheSRAMType (ReadUnaligned16 ((UINT16 *)(UINTN)&(Struct->Type7->CurrentSRAMType)), Option);
+      DisplayCacheSRAMType (
+        ReadUnaligned16 (
+          (UINT16 *)(UINTN)&(Struct->Type7->CurrentSRAMType)
+          ),
+        Option
+        );
       PRINT_STRUCT_VALUE_H (Struct, Type7, CacheSpeed);
-      DisplayCacheErrCorrectingType (Struct->Type7->ErrorCorrectionType, Option);
+      DisplayCacheErrCorrectingType (
+        Struct->Type7->ErrorCorrectionType,
+        Option
+        );
       DisplayCacheSystemCacheType (Struct->Type7->SystemCacheType, Option);
       DisplayCacheAssociativity (Struct->Type7->Associativity, Option);
       if (AE_SMBIOS_VERSION (0x3, 0x1) && (Struct->Hdr->Length > 0x13)) {
@@ -588,7 +902,15 @@ SmbiosPrintStructure (
       Print (L"Internal ");
       DisplayPortConnectorType (Struct->Type8->InternalConnectorType, Option);
       PRINT_PENDING_STRING (Struct, Type8, ExternalReferenceDesignator);
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_EXTERNAL), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_EXTERNAL
+          ),
+        gShellDebug1HiiHandle
+        );
       DisplayPortConnectorType (Struct->Type8->ExternalConnectorType, Option);
       DisplayPortType (Struct->Type8->PortType, Option);
       break;
@@ -612,8 +934,14 @@ SmbiosPrintStructure (
         Struct->Type9->SlotType,
         Option
         );
-      DisplaySlotCharacteristics1 (*(UINT8 *)&(Struct->Type9->SlotCharacteristics1), Option);
-      DisplaySlotCharacteristics2 (*(UINT8 *)&(Struct->Type9->SlotCharacteristics2), Option);
+      DisplaySlotCharacteristics1 (
+        *(UINT8 *)&(Struct->Type9->SlotCharacteristics1),
+        Option
+        );
+      DisplaySlotCharacteristics2 (
+        *(UINT8 *)&(Struct->Type9->SlotCharacteristics2),
+        Option
+        );
       if (AE_SMBIOS_VERSION (0x2, 0x6) && (Struct->Hdr->Length > 0xD)) {
         PRINT_STRUCT_VALUE_H (Struct, Type9, SegmentGroupNum);
         PRINT_STRUCT_VALUE_H (Struct, Type9, BusNum);
@@ -631,20 +959,83 @@ SmbiosPrintStructure (
           PeerGroupCount = Struct->Type9->PeerGroupingCount;
           PeerGroupPtr   = Struct->Type9->PeerGroups;
           for (Index = 0; Index < PeerGroupCount; Index++) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SLOT_PEER_GROUPS), gShellDebug1HiiHandle, Index + 1);
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SEGMENT_GROUP_NUM), gShellDebug1HiiHandle, PeerGroupPtr[Index].SegmentGroupNum);
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BUS_NUM), gShellDebug1HiiHandle, PeerGroupPtr[Index].BusNum);
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_DEV_FUNC_NUM), gShellDebug1HiiHandle, PeerGroupPtr[Index].DevFuncNum);
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_DATA_BUS_WIDTH), gShellDebug1HiiHandle, PeerGroupPtr[Index].DataBusWidth);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (
+                STR_SMBIOSVIEW_PRINTINFO_SLOT_PEER_GROUPS
+                ),
+              gShellDebug1HiiHandle,
+              Index + 1
+              );
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (
+                STR_SMBIOSVIEW_PRINTINFO_SEGMENT_GROUP_NUM
+                ),
+              gShellDebug1HiiHandle,
+              PeerGroupPtr[Index].SegmentGroupNum
+              );
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (
+                STR_SMBIOSVIEW_PRINTINFO_BUS_NUM
+                ),
+              gShellDebug1HiiHandle,
+              PeerGroupPtr[Index].BusNum
+              );
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (
+                STR_SMBIOSVIEW_PRINTINFO_DEV_FUNC_NUM
+                ),
+              gShellDebug1HiiHandle,
+              PeerGroupPtr[Index].DevFuncNum
+              );
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (
+                STR_SMBIOSVIEW_PRINTINFO_DATA_BUS_WIDTH
+                ),
+              gShellDebug1HiiHandle,
+              PeerGroupPtr[Index].DataBusWidth
+              );
           }
 
           if (AE_SMBIOS_VERSION (0x3, 0x4)) {
             // Since PeerGroups has a variable number of entries, new fields added after PeerGroups are defined in
             // a extended structure. Those fields can be referenced using SMBIOS_TABLE_TYPE9_EXTENDED structure.
-            Type9ExtendedStruct = (SMBIOS_TABLE_TYPE9_EXTENDED *)((UINT8 *)PeerGroupPtr + (PeerGroupCount * sizeof (MISC_SLOT_PEER_GROUP)));
-            DisplaySystemSlotInformation (Type9ExtendedStruct->SlotInformation, Option);
-            DisplaySystemSlotPhysicalWidth (Type9ExtendedStruct->SlotPhysicalWidth, Option);
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_QUERYTABLE_SYSTEM_SLOT_PITCH), gShellDebug1HiiHandle, Type9ExtendedStruct->SlotPitch);
+            Type9ExtendedStruct =
+              (SMBIOS_TABLE_TYPE9_EXTENDED *)((UINT8 *)PeerGroupPtr +
+                                              (PeerGroupCount *
+                                               sizeof (MISC_SLOT_PEER_GROUP)));
+            DisplaySystemSlotInformation (
+              Type9ExtendedStruct->SlotInformation,
+              Option
+              );
+            DisplaySystemSlotPhysicalWidth (
+              Type9ExtendedStruct->SlotPhysicalWidth,
+              Option
+              );
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (
+                STR_SMBIOSVIEW_QUERYTABLE_SYSTEM_SLOT_PITCH
+                ),
+              gShellDebug1HiiHandle,
+              Type9ExtendedStruct->SlotPitch
+              );
             if (AE_SMBIOS_VERSION (0x3, 0x5)) {
               DisplaySystemSlotHeight (Type9ExtendedStruct->SlotHeight, Option);
             }
@@ -661,12 +1052,38 @@ SmbiosPrintStructure (
     case 10:
     {
       UINTN  NumOfDevice;
-      NumOfDevice = (Struct->Type10->Hdr.Length - sizeof (SMBIOS_STRUCTURE)) / (2 * sizeof (UINT8));
+      NumOfDevice = (Struct->Type10->Hdr.Length - sizeof (SMBIOS_STRUCTURE)) /
+                    (2 * sizeof (UINT8));
       for (Index = 0; Index < NumOfDevice; Index++) {
-        ShellPrintEx (-1, -1, (((Struct->Type10->Device[Index].DeviceType) & 0x80) != 0) ? L"Device Enabled\n" : L"Device Disabled\n");
-        DisplayOnboardDeviceTypes ((Struct->Type10->Device[Index].DeviceType) & 0x7F, Option);
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_DESC_STRING), gShellDebug1HiiHandle);
-        ShellPrintEx (-1, -1, L"%a\n", LibGetSmbiosString (Struct, Struct->Type10->Device[Index].DescriptionString));
+        ShellPrintEx (
+          -1,
+          -1,
+          (((Struct->Type10->Device[Index].DeviceType) &
+            0x80) != 0) ? L"Device Enabled\n" : L"Device Disabled\n"
+          );
+        DisplayOnboardDeviceTypes (
+          (Struct->Type10->Device[Index].DeviceType) &
+          0x7F,
+          Option
+          );
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_PRINTINFO_DESC_STRING
+            ),
+          gShellDebug1HiiHandle
+          );
+        ShellPrintEx (
+          -1,
+          -1,
+          L"%a\n",
+          LibGetSmbiosString (
+            Struct,
+            Struct->Type10->Device[Index].DescriptionString
+            )
+          );
       }
 
       break;
@@ -713,8 +1130,20 @@ SmbiosPrintStructure (
       NumOfItem = (Struct->Type14->Hdr.Length - 5) / 3;
       PRINT_PENDING_STRING (Struct, Type14, GroupName);
       for (Index = 0; Index < NumOfItem; Index++) {
-        ShellPrintEx (-1, -1, L"ItemType %u: %u\n", Index + 1, Struct->Type14->Group[Index].ItemType);
-        ShellPrintEx (-1, -1, L"ItemHandle %u: %u\n", Index + 1, Struct->Type14->Group[Index].ItemHandle);
+        ShellPrintEx (
+          -1,
+          -1,
+          L"ItemType %u: %u\n",
+          Index + 1,
+          Struct->Type14->Group[Index].ItemType
+          );
+        ShellPrintEx (
+          -1,
+          -1,
+          L"ItemHandle %u: %u\n",
+          Index + 1,
+          Struct->Type14->Group[Index].ItemHandle
+          );
       }
 
       break;
@@ -737,7 +1166,11 @@ SmbiosPrintStructure (
       DisplaySELLogStatus (Struct->Type15->LogStatus, Option);
       PRINT_STRUCT_VALUE_H (Struct, Type15, LogChangeToken);
       DisplaySysEventLogHeaderFormat (Struct->Type15->LogHeaderFormat, Option);
-      PRINT_STRUCT_VALUE_H (Struct, Type15, NumberOfSupportedLogTypeDescriptors);
+      PRINT_STRUCT_VALUE_H (
+        Struct,
+        Type15,
+        NumberOfSupportedLogTypeDescriptors
+        );
       PRINT_STRUCT_VALUE_H (Struct, Type15, LengthOfLogTypeDescriptor);
 
       Count = Struct->Type15->NumberOfSupportedLogTypeDescriptors;
@@ -748,7 +1181,16 @@ SmbiosPrintStructure (
         // Display all Event Log type descriptors supported by system
         //
         for (Index = 0; Index < Count; Index++, Ptr++) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SUPOPRTED_EVENT), gShellDebug1HiiHandle, Index + 1);
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (
+              STR_SMBIOSVIEW_PRINTINFO_SUPOPRTED_EVENT
+              ),
+            gShellDebug1HiiHandle,
+            Index + 1
+            );
           DisplaySELTypes (Ptr->LogType, Option);
           DisplaySELVarDataFormatType (Ptr->DataFormatType, Option);
         }
@@ -756,7 +1198,8 @@ SmbiosPrintStructure (
         if (Option >= SHOW_DETAIL) {
           switch (Struct->Type15->AccessMethod) {
             case 03:
-              AccessMethodAddress = (UINT8 *)(UINTN)(Struct->Type15->AccessMethodAddress);
+              AccessMethodAddress =
+                (UINT8 *)(UINTN)(Struct->Type15->AccessMethodAddress);
               break;
 
             case 00:
@@ -768,7 +1211,9 @@ SmbiosPrintStructure (
                 -1,
                 -1,
                 NULL,
-                STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ACCESS_METHOD_NOT_SUPOPRTED),
+                STRING_TOKEN (
+                  STR_SMBIOSVIEW_PRINTINFO_ACCESS_METHOD_NOT_SUPOPRTED
+                  ),
                 gShellDebug1HiiHandle,
                 Struct->Type15->AccessMethod
                 );
@@ -797,7 +1242,8 @@ SmbiosPrintStructure (
             (UINT16)
             (
              Struct->Type15->LogAreaLength -
-             (Struct->Type15->LogDataStartOffset - Struct->Type15->LogHeaderStartOffset)
+             (Struct->Type15->LogDataStartOffset -
+              Struct->Type15->LogHeaderStartOffset)
             )
             );
         }
@@ -839,7 +1285,12 @@ SmbiosPrintStructure (
       PRINT_PENDING_STRING (Struct, Type17, DeviceLocator);
       PRINT_PENDING_STRING (Struct, Type17, BankLocator);
       DisplayMemoryDeviceType (Struct->Type17->MemoryType, Option);
-      DisplayMemoryDeviceTypeDetail (ReadUnaligned16 ((UINT16 *)(UINTN)&(Struct->Type17->TypeDetail)), Option);
+      DisplayMemoryDeviceTypeDetail (
+        ReadUnaligned16 (
+          (UINT16 *)(UINTN)&(Struct->Type17->TypeDetail)
+          ),
+        Option
+        );
       PRINT_STRUCT_VALUE_H (Struct, Type17, Speed);
       PRINT_PENDING_STRING (Struct, Type17, Manufacturer);
       PRINT_PENDING_STRING (Struct, Type17, SerialNumber);
@@ -862,13 +1313,27 @@ SmbiosPrintStructure (
 
       if (AE_SMBIOS_VERSION (0x3, 0x2)) {
         if (Struct->Hdr->Length > 0x28) {
-          DisplayMemoryDeviceMemoryTechnology (Struct->Type17->MemoryTechnology, Option);
-          DisplayMemoryDeviceMemoryOperatingModeCapability (Struct->Type17->MemoryOperatingModeCapability.Uint16, Option);
+          DisplayMemoryDeviceMemoryTechnology (
+            Struct->Type17->MemoryTechnology,
+            Option
+            );
+          DisplayMemoryDeviceMemoryOperatingModeCapability (
+            Struct->Type17->MemoryOperatingModeCapability.Uint16,
+            Option
+            );
           PRINT_PENDING_STRING (Struct, Type17, FirmwareVersion);
           PRINT_STRUCT_VALUE_H (Struct, Type17, ModuleManufacturerID);
           PRINT_STRUCT_VALUE_H (Struct, Type17, ModuleProductID);
-          PRINT_STRUCT_VALUE_H (Struct, Type17, MemorySubsystemControllerManufacturerID);
-          PRINT_STRUCT_VALUE_H (Struct, Type17, MemorySubsystemControllerProductID);
+          PRINT_STRUCT_VALUE_H (
+            Struct,
+            Type17,
+            MemorySubsystemControllerManufacturerID
+            );
+          PRINT_STRUCT_VALUE_H (
+            Struct,
+            Type17,
+            MemorySubsystemControllerProductID
+            );
         }
 
         if (Struct->Hdr->Length > 0x34) {
@@ -1020,7 +1485,10 @@ SmbiosPrintStructure (
     //
     case 26:
       PRINT_PENDING_STRING (Struct, Type26, Description);
-      DisplayVPLocation (*(UINT8 *)&(Struct->Type26->LocationAndStatus), Option);
+      DisplayVPLocation (
+        *(UINT8 *)&(Struct->Type26->LocationAndStatus),
+        Option
+        );
       DisplayVPStatus (*(UINT8 *)&(Struct->Type26->LocationAndStatus), Option);
       PRINT_STRUCT_VALUE_H (Struct, Type26, MaximumValue);
       PRINT_STRUCT_VALUE_H (Struct, Type26, MinimumValue);
@@ -1036,8 +1504,14 @@ SmbiosPrintStructure (
     //
     case 27:
       PRINT_STRUCT_VALUE_H (Struct, Type27, TemperatureProbeHandle);
-      DisplayCoolingDeviceStatus (*(UINT8 *)&(Struct->Type27->DeviceTypeAndStatus), Option);
-      DisplayCoolingDeviceType (*(UINT8 *)&(Struct->Type27->DeviceTypeAndStatus), Option);
+      DisplayCoolingDeviceStatus (
+        *(UINT8 *)&(Struct->Type27->DeviceTypeAndStatus),
+        Option
+        );
+      DisplayCoolingDeviceType (
+        *(UINT8 *)&(Struct->Type27->DeviceTypeAndStatus),
+        Option
+        );
       PRINT_STRUCT_VALUE_H (Struct, Type27, CoolingUnitGroup);
       PRINT_STRUCT_VALUE_H (Struct, Type27, OEMDefined);
       PRINT_STRUCT_VALUE_H (Struct, Type27, NominalSpeed);
@@ -1052,8 +1526,14 @@ SmbiosPrintStructure (
     //
     case 28:
       PRINT_PENDING_STRING (Struct, Type28, Description);
-      DisplayTemperatureProbeStatus (*(UINT8 *)&(Struct->Type28->LocationAndStatus), Option);
-      DisplayTemperatureProbeLoc (*(UINT8 *)&(Struct->Type28->LocationAndStatus), Option);
+      DisplayTemperatureProbeStatus (
+        *(UINT8 *)&(Struct->Type28->LocationAndStatus),
+        Option
+        );
+      DisplayTemperatureProbeLoc (
+        *(UINT8 *)&(Struct->Type28->LocationAndStatus),
+        Option
+        );
       PRINT_STRUCT_VALUE_H (Struct, Type28, MaximumValue);
       PRINT_STRUCT_VALUE_H (Struct, Type28, MinimumValue);
       PRINT_STRUCT_VALUE_H (Struct, Type28, Resolution);
@@ -1091,7 +1571,15 @@ SmbiosPrintStructure (
     // Boot Integrity Services (BIS) Entry Point (Type 31)
     //
     case 31:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_STRUCT_TYPE31), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_STRUCT_TYPE31
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     //
@@ -1164,9 +1652,36 @@ SmbiosPrintStructure (
       Count = Struct->Type37->MemoryDeviceCount;
       Ptr   = Struct->Type37->MemoryDevice;
       for (Index = 0; Index < Count; Index++) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MEM_DEVICE), gShellDebug1HiiHandle, Index + 1);
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_DEV_LOAD), gShellDebug1HiiHandle, Ptr[Index].DeviceLoad);
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_DEV_HANDLE), gShellDebug1HiiHandle, Ptr[Index].DeviceHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_PRINTINFO_MEM_DEVICE
+            ),
+          gShellDebug1HiiHandle,
+          Index + 1
+          );
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_PRINTINFO_DEV_LOAD
+            ),
+          gShellDebug1HiiHandle,
+          Ptr[Index].DeviceLoad
+          );
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_PRINTINFO_DEV_HANDLE
+            ),
+          gShellDebug1HiiHandle,
+          Ptr[Index].DeviceHandle
+          );
       }
 
       break;
@@ -1218,16 +1733,48 @@ SmbiosPrintStructure (
       Entries         = Struct->Type40->AdditionalInfoEntries;
       NumberOfEntries = Struct->Type40->NumberOfAdditionalInformationEntries;
 
-      PRINT_STRUCT_VALUE_H (Struct, Type40, NumberOfAdditionalInformationEntries);
+      PRINT_STRUCT_VALUE_H (
+        Struct,
+        Type40,
+        NumberOfAdditionalInformationEntries
+        );
 
       for (Index = 0; Index < NumberOfEntries; Index++) {
         EntryLength = Entries->EntryLength;
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_SMBIOSVIEW_ENTRYLEN), gShellDebug1HiiHandle, EntryLength);
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_SMBIOSVIEW_REFERENCEDHANDLE), gShellDebug1HiiHandle, Entries->ReferencedHandle);
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_SMBIOSVIEW_REFERENCEDOFFSET), gShellDebug1HiiHandle, Entries->ReferencedOffset);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_SMBIOSVIEW_ENTRYLEN
+            ),
+          gShellDebug1HiiHandle,
+          EntryLength
+          );
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_SMBIOSVIEW_REFERENCEDHANDLE
+            ),
+          gShellDebug1HiiHandle,
+          Entries->ReferencedHandle
+          );
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_SMBIOSVIEW_REFERENCEDOFFSET
+            ),
+          gShellDebug1HiiHandle,
+          Entries->ReferencedOffset
+          );
         PRINT_SMBIOS_STRING (Struct, Entries->EntryString, String);
         PRINT_SMBIOS_BIT_FIELD (Struct, Entries->Value, Value, EntryLength - 5);
-        Entries = (ADDITIONAL_INFORMATION_ENTRY *)((UINT8 *)Entries + EntryLength);
+        Entries = (ADDITIONAL_INFORMATION_ENTRY *)((UINT8 *)Entries +
+                                                   EntryLength);
       }
 
       break;
@@ -1238,7 +1785,12 @@ SmbiosPrintStructure (
     //
     case 41:
       PRINT_PENDING_STRING (Struct, Type41, ReferenceDesignation);
-      ShellPrintEx (-1, -1, (((Struct->Type41->DeviceType) & 0x80) != 0) ? L"Device Enabled\n" : L"Device Disabled\n");
+      ShellPrintEx (
+        -1,
+        -1,
+        (((Struct->Type41->DeviceType) & 0x80) != 0) ?
+        L"Device Enabled\n" : L"Device Disabled\n"
+        );
       DisplayOnboardDeviceTypes ((Struct->Type41->DeviceType) & 0x7F, Option);
       PRINT_STRUCT_VALUE_H (Struct, Type41, DeviceTypeInstance);
       PRINT_STRUCT_VALUE_H (Struct, Type41, SegmentGroupNum);
@@ -1253,7 +1805,12 @@ SmbiosPrintStructure (
       DisplayMCHostInterfaceType (Struct->Type42->InterfaceType, Option);
       if (AE_SMBIOS_VERSION (0x3, 0x2)) {
         PRINT_STRUCT_VALUE_H (Struct, Type42, InterfaceTypeSpecificDataLength);
-        PRINT_BIT_FIELD (Struct, Type42, InterfaceTypeSpecificData, Struct->Type42->InterfaceTypeSpecificDataLength);
+        PRINT_BIT_FIELD (
+          Struct,
+          Type42,
+          InterfaceTypeSpecificData,
+          Struct->Type42->InterfaceTypeSpecificDataLength
+          );
       }
 
       break;
@@ -1268,7 +1825,12 @@ SmbiosPrintStructure (
       PRINT_STRUCT_VALUE_H (Struct, Type43, FirmwareVersion1);
       PRINT_STRUCT_VALUE_H (Struct, Type43, FirmwareVersion2);
       PRINT_PENDING_STRING (Struct, Type43, Description);
-      DisplayTpmDeviceCharacteristics (ReadUnaligned64 ((UINT64 *)(UINTN)&(Struct->Type43->Characteristics)), Option);
+      DisplayTpmDeviceCharacteristics (
+        ReadUnaligned64 (
+          (UINT64 *)(UINTN)&(Struct->Type43->Characteristics)
+          ),
+        Option
+        );
       PRINT_STRUCT_VALUE_H (Struct, Type43, OemDefined);
       break;
 
@@ -1276,25 +1838,52 @@ SmbiosPrintStructure (
     // Processor Additional Information (Type 44)
     //
     case 44:
-      DisplayProcessorArchitectureType (Struct->Type44->ProcessorSpecificBlock.ProcessorArchType, Option);
+      DisplayProcessorArchitectureType (
+        Struct->Type44->ProcessorSpecificBlock.ProcessorArchType,
+        Option
+        );
       break;
 
     //
     // Inactive (Type 126)
     //
     case 126:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INACTIVE_STRUCT), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INACTIVE_STRUCT
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     //
     // End-of-Table (Type 127)
     //
     case 127:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_THIS_STRUCT_END_TABLE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_THIS_STRUCT_END_TABLE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     default:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_STRUCT_TYPE_UNDEFINED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_STRUCT_TYPE_UNDEFINED
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
   }
 
@@ -1316,7 +1905,15 @@ DisplayBiosCharacteristics (
   //
   // Print header
   //
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIOS_CHAR), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_BIOS_CHAR
+      ),
+    gShellDebug1HiiHandle
+    );
   //
   // print option
   //
@@ -1328,138 +1925,410 @@ DisplayBiosCharacteristics (
   //   are designed not to deal with UINT64
   //
   if (BIT (Chara, 0) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_RESERVED_BIT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_RESERVED_BIT
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 1) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_RESERVED_BIT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_RESERVED_BIT
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 2) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNKNOWN_BIT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_UNKNOWN_BIT
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 3) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIOS_CHAR_NOT_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIOS_CHAR_NOT_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 4) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ISA_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_ISA_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 5) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MSA_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_MSA_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 6) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_EISA_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_EISA_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 7) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PCI_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_PCI_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 8) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PC_CARD_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_PC_CARD_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 9) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PLUG_PLAY_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_PLUG_PLAY_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 10) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_APM_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_APM_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 11) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIOS_UPGRADEABLE), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIOS_UPGRADEABLE
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 12) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIOS_SHADOWING), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIOS_SHADOWING
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 13) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_VESA_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_VESA_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 14) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ECSD_SUPPORT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_ECSD_SUPPORT
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 15) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BOOT_FROM_CD_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BOOT_FROM_CD_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 16) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SELECTED_BOOT_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_SELECTED_BOOT_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 17) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIOS_ROM_SOCKETED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIOS_ROM_SOCKETED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 18) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BOOT_FROM_PC_CARD), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BOOT_FROM_PC_CARD
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 19) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_EDD_ENHANCED_DRIVER), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_EDD_ENHANCED_DRIVER
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 20) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_JAPANESE_FLOPPY_NEC), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_JAPANESE_FLOPPY_NEC
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 21) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_JAPANESE_FLOPPY_TOSHIBA), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_JAPANESE_FLOPPY_TOSHIBA
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 22) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_FLOPPY_SERVICES_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_FLOPPY_SERVICES_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 23) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ONE_POINT_TWO_MB), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_ONE_POINT_TWO_MB
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 24) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_720_KB), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_720_KB
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 25) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_TWO_POINT_EIGHT_EIGHT_MB), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_TWO_POINT_EIGHT_EIGHT_MB
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 26) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PRINT_SCREEN_SUPPORT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_PRINT_SCREEN_SUPPORT
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 27) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_KEYBOARD_SERV_SUPPORT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_KEYBOARD_SERV_SUPPORT
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 28) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SERIAL_SERVICES_SUPPORT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_SERIAL_SERVICES_SUPPORT
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 29) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PRINTER_SERVICES_SUPPORT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_PRINTER_SERVICES_SUPPORT
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 30) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MONO_VIDEO_SUPPORT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_MONO_VIDEO_SUPPORT
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 31) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_NEC_PC_98), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_NEC_PC_98
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
   // Just print the Reserved
   //
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BITS_32_47), gShellDebug1HiiHandle);
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BITS_48_64), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_BITS_32_47
+      ),
+    gShellDebug1HiiHandle
+    );
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_BITS_48_64
+      ),
+    gShellDebug1HiiHandle
+    );
 }
 
 /**
@@ -1474,7 +2343,15 @@ DisplayBiosCharacteristicsExt1 (
   IN UINT8  Option
   )
 {
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIOS_CHAR_EXTENSION), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_BIOS_CHAR_EXTENSION
+      ),
+    gShellDebug1HiiHandle
+    );
   //
   // Print option
   //
@@ -1484,35 +2361,99 @@ DisplayBiosCharacteristicsExt1 (
   // check bit and print
   //
   if (BIT (Byte1, 0) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ACPI_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_ACPI_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Byte1, 1) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_USB_LEGACY_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_USB_LEGACY_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Byte1, 2) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AGP_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_AGP_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Byte1, 3) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_I2O_BOOT_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_I2O_BOOT_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Byte1, 4) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_LS_120_BOOT_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_LS_120_BOOT_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Byte1, 5) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ATAPI_ZIP_DRIVE), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_ATAPI_ZIP_DRIVE
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Byte1, 6) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_1394_BOOT_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_1394_BOOT_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Byte1, 7) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SMART_BATTERY_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_SMART_BATTERY_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 }
 
@@ -1528,48 +2469,139 @@ DisplayBiosCharacteristicsExt2 (
   IN UINT8  Option
   )
 {
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIOS_CHAR_EXTENSION_2), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_BIOS_CHAR_EXTENSION_2
+      ),
+    gShellDebug1HiiHandle
+    );
   //
   // Print option
   //
   PRINT_INFO_OPTION (byte2, Option);
 
   if (BIT (byte2, 0) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIOS_BOOT_SPEC_SUPP), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIOS_BOOT_SPEC_SUPP
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (byte2, 1) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_FUNCTION_KEY_INIT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_FUNCTION_KEY_INIT
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (AE_SMBIOS_VERSION (0x2, 0x4)) {
     if (BIT (byte2, 2) != 0) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ENABLE_TAR_CONT_DIST), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_ENABLE_TAR_CONT_DIST
+          ),
+        gShellDebug1HiiHandle
+        );
     }
 
     if (AE_SMBIOS_VERSION (0x2, 0x7)) {
       if (BIT (byte2, 3) != 0) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UEFI_SPEC_SUPPORT), gShellDebug1HiiHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_PRINTINFO_UEFI_SPEC_SUPPORT
+            ),
+          gShellDebug1HiiHandle
+          );
       }
 
       if (BIT (byte2, 4) != 0) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_VIRTUAL_MACHINE), gShellDebug1HiiHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_PRINTINFO_VIRTUAL_MACHINE
+            ),
+          gShellDebug1HiiHandle
+          );
       }
 
       if (BIT (byte2, 5) != 0) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MCFG_SUPPORTED), gShellDebug1HiiHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_PRINTINFO_MCFG_SUPPORTED
+            ),
+          gShellDebug1HiiHandle
+          );
       }
 
       if (BIT (byte2, 6) != 0) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MCFG_ENABLED), gShellDebug1HiiHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_PRINTINFO_MCFG_ENABLED
+            ),
+          gShellDebug1HiiHandle
+          );
       }
 
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BITS_RSVD_FOR_FUTURE), gShellDebug1HiiHandle, 5);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_BITS_RSVD_FOR_FUTURE
+          ),
+        gShellDebug1HiiHandle,
+        5
+        );
     } else {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BITS_RSVD_FOR_FUTURE), gShellDebug1HiiHandle, 3);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_BITS_RSVD_FOR_FUTURE
+          ),
+        gShellDebug1HiiHandle,
+        3
+        );
     }
   } else {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BITS_RSVD_FOR_FUTURE), gShellDebug1HiiHandle, 2);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BITS_RSVD_FOR_FUTURE
+        ),
+      gShellDebug1HiiHandle,
+      2
+      );
   }
 }
 
@@ -1588,7 +2620,15 @@ DisplayProcessorFamily (
   //
   // Print prompt message
   //
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PROCESSOR_FAMILY), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_PROCESSOR_FAMILY
+      ),
+    gShellDebug1HiiHandle
+    );
   //
   // Print option
   //
@@ -1599,11 +2639,27 @@ DisplayProcessorFamily (
   //
   switch (Family) {
     case 0x01:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_OTHER), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_OTHER
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x02:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNKNOWN), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UNKNOWN
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x03:
@@ -1615,11 +2671,27 @@ DisplayProcessorFamily (
       break;
 
     case 0x05:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL386_PROCESSOR), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL386_PROCESSOR
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x06:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL486_PROCESSOR), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL486_PROCESSOR
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x07:
@@ -1639,35 +2711,99 @@ DisplayProcessorFamily (
       break;
 
     case 0x0B:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PENTIUM_PROC_FAMILY), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_PENTIUM_PROC_FAMILY
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x0C:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PENTIUM_PRO_PROC), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_PENTIUM_PRO_PROC
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x0D:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PENTIUM_II_PROC), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_PENTIUM_II_PROC
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x0E:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PENTIUM_PROC_MMX), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_PENTIUM_PROC_MMX
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x0F:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CELERON_PROC), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_CELERON_PROC
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x10:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PENTIUM_XEON_PROC), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_PENTIUM_XEON_PROC
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x11:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PENTIUM_III_PROC), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_PENTIUM_III_PROC
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x12:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_M1_FAMILY), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_M1_FAMILY
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x13:
@@ -1687,7 +2823,15 @@ DisplayProcessorFamily (
       break;
 
     case 0x19:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_K5_FAMILY), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_K5_FAMILY
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x1A:
@@ -1715,23 +2859,63 @@ DisplayProcessorFamily (
       break;
 
     case 0x20:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_POWER_PC_FAMILY), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_POWER_PC_FAMILY
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x21:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_POWER_PC_601), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_POWER_PC_601
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x22:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_POWER_PC_603), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_POWER_PC_603
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x23:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_POWER_PC_603_PLUS), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_POWER_PC_603_PLUS
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x24:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_POWER_PC_604), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_POWER_PC_604
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x25:
@@ -1747,19 +2931,51 @@ DisplayProcessorFamily (
       break;
 
     case 0x28:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE_DUO), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE_DUO
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x29:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE_DUO_MOBILE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE_DUO_MOBILE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x2A:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE_SOLO_MOBILE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE_SOLO_MOBILE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x2B:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_ATOM), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_ATOM
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x2C:
@@ -1779,7 +2995,15 @@ DisplayProcessorFamily (
       break;
 
     case 0x30:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ALPHA_FAMILY_2), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_ALPHA_FAMILY_2
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x31:
@@ -1839,11 +3063,27 @@ DisplayProcessorFamily (
       break;
 
     case 0x3F:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_FX_SERIES), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_FX_SERIES
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x40:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MIPS_FAMILY), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_MIPS_FAMILY
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x41:
@@ -1883,31 +3123,87 @@ DisplayProcessorFamily (
       break;
 
     case 0x4A:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_Z_SERIES), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_Z_SERIES
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x4B:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_R_SERIES), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_R_SERIES
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x4C:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_OPTERON_4300_SERIES), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_OPTERON_4300_SERIES
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x4D:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_OPTERON_6300_SERIES), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_OPTERON_6300_SERIES
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x4E:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_OPTERON_3300_SERIES), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_OPTERON_3300_SERIES
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x4F:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_OPTERON_FIREPRO_SERIES), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_OPTERON_FIREPRO_SERIES
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x50:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SPARC_FAMILY), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_SPARC_FAMILY
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x51:
@@ -1943,7 +3239,15 @@ DisplayProcessorFamily (
       break;
 
     case 0x60:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_68040_FAMILY), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_68040_FAMILY
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x61:
@@ -1991,7 +3295,15 @@ DisplayProcessorFamily (
       break;
 
     case 0x70:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_HOBBIT_FAMILY), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_HOBBIT_FAMILY
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x78:
@@ -2007,7 +3319,15 @@ DisplayProcessorFamily (
       break;
 
     case 0x80:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_WEITEK), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_WEITEK
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x82:
@@ -2043,31 +3363,87 @@ DisplayProcessorFamily (
       break;
 
     case 0x8A:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_OPTERON_QUAD_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_OPTERON_QUAD_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x8B:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_OPTERON_THIRD_GENERATION), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_OPTERON_THIRD_GENERATION
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x8C:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_PHENOM_FX_QUAD_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_PHENOM_FX_QUAD_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x8D:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_PHENOM_X4_QUAD_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_PHENOM_X4_QUAD_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x8E:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_PHENOM_X2_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_PHENOM_X2_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x8F:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_ATHLON_X2_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_ATHLON_X2_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x90:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PA_RISC_FAMILY), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_PA_RISC_FAMILY
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0x91:
@@ -2095,71 +3471,207 @@ DisplayProcessorFamily (
       break;
 
     case 0xA0:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_V30_FAMILY), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_V30_FAMILY
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xA1:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_3200_SERIES_QUAD_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_3200_SERIES_QUAD_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xA2:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_3000_SERIES_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_3000_SERIES_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xA3:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_5300_SERIES_QUAD_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_5300_SERIES_QUAD_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xA4:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_5100_SERIES_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_5100_SERIES_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xA5:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_5000_SERIES_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_5000_SERIES_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xA6:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_LV_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_LV_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xA7:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_ULV_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_ULV_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xA8:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7100_SERIES_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7100_SERIES_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xA9:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_5400_SERIES_QUAD_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_5400_SERIES_QUAD_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xAA:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_QUAD_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_QUAD_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xAB:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_5200_SERIES_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_5200_SERIES_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xAC:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7200_SERIES_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7200_SERIES_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xAD:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7300_SERIES_QUAD_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7300_SERIES_QUAD_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xAE:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7400_SERIES_QUAD_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7400_SERIES_QUAD_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xAF:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7400_SERIES_MULTI_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7400_SERIES_MULTI_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xB0:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PENTIUM_III_XEON), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_PENTIUM_III_XEON
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xB1:
@@ -2219,35 +3731,99 @@ DisplayProcessorFamily (
       break;
 
     case 0xC0:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE2_SOLO), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE2_SOLO
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xC1:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE2_EXTREME), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE2_EXTREME
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xC2:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE2_QUAD), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE2_QUAD
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xC3:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE2_EXTREME), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE2_EXTREME
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xC4:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE2_DUO_MOBILE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE2_DUO_MOBILE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xC5:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE2_SOLO_MOBILE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE2_SOLO_MOBILE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xC6:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE_I7), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_CORE_I7
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xC7:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_CELERON_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_CELERON_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xC8:
@@ -2299,35 +3875,99 @@ DisplayProcessorFamily (
       break;
 
     case 0xD6:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_MULTI_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_MULTI_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xD7:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_3_SERIES_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_3_SERIES_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xD8:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_3_SERIES_QUAD_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_3_SERIES_QUAD_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xDA:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_5_SERIES_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_5_SERIES_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xDB:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_5_SERIES_QUAD_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_5_SERIES_QUAD_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xDD:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7_SERIES_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7_SERIES_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xDE:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7_SERIES_QUAD_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7_SERIES_QUAD_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xDF:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7_SERIES_MULTI_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_INTEL_XEON_7_SERIES_MULTI_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xE0:
@@ -2335,35 +3975,99 @@ DisplayProcessorFamily (
       break;
 
     case 0xE4:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_OPTERON_3000_SERIES), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_OPTERON_3000_SERIES
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xE5:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_SEMPRON_II), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_SEMPRON_II
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xE6:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_EMBEDDED_OPTERON_QUAD_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_EMBEDDED_OPTERON_QUAD_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xE7:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_PHENOM_TRIPLE_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_PHENOM_TRIPLE_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xE8:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_TURION_ULTRA_DUAL_CORE_MOBILE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_TURION_ULTRA_DUAL_CORE_MOBILE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xE9:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_TURION_DUAL_CORE_MOBILE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_TURION_DUAL_CORE_MOBILE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xEA:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_ATHLON_DUAL_CORE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_ATHLON_DUAL_CORE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xEB:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AMD_SEMPRON_SI), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AMD_SEMPRON_SI
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 0xEC:
@@ -2391,7 +4095,15 @@ DisplayProcessorFamily (
       break;
 
     default:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNDEFINED_PROC_FAMILY), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UNDEFINED_PROC_FAMILY
+          ),
+        gShellDebug1HiiHandle
+        );
   }
 
   //
@@ -2414,7 +4126,15 @@ DisplayProcessorFamily2 (
   //
   // Print prompt message
   //
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PROCESSOR_FAMILY), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_PROCESSOR_FAMILY
+      ),
+    gShellDebug1HiiHandle
+    );
 
   //
   // Print option
@@ -2486,7 +4206,15 @@ DisplayProcessorFamily2 (
       break;
 
     default:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNDEFINED_PROC_FAMILY), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UNDEFINED_PROC_FAMILY
+          ),
+        gShellDebug1HiiHandle
+        );
   }
 }
 
@@ -2518,44 +4246,117 @@ DisplayProcessorVoltage (
   IN UINT8  Option
   )
 {
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PROC_INFO), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_PROC_INFO
+      ),
+    gShellDebug1HiiHandle
+    );
   //
   // Print option
   //
   PRINT_INFO_OPTION (Voltage, Option);
 
   if (BIT (Voltage, 7) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PROC_CURRENT_VOLTAGE), gShellDebug1HiiHandle, (Voltage - 0x80));
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_PROC_CURRENT_VOLTAGE
+        ),
+      gShellDebug1HiiHandle,
+      (Voltage - 0x80)
+      );
   } else {
     if (BIT (Voltage, 0) != 0) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_5V_SUPOPRTED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_5V_SUPOPRTED
+          ),
+        gShellDebug1HiiHandle
+        );
     }
 
     if (BIT (Voltage, 1) != 0) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_33V_SUPPORTED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_33V_SUPPORTED
+          ),
+        gShellDebug1HiiHandle
+        );
     }
 
     if (BIT (Voltage, 2) != 0) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_29V_SUPPORTED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_29V_SUPPORTED
+          ),
+        gShellDebug1HiiHandle
+        );
     }
 
     //
     // check the reserved zero bits:
     //
     if (BIT (Voltage, 3) != 0) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT3_NOT_ZERO), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_BIT3_NOT_ZERO
+          ),
+        gShellDebug1HiiHandle
+        );
     }
 
     if (BIT (Voltage, 4) != 0) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT4_NOT_ZERO), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_BIT4_NOT_ZERO
+          ),
+        gShellDebug1HiiHandle
+        );
     }
 
     if (BIT (Voltage, 5) != 0) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT5_NOT_ZERO), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_BIT5_NOT_ZERO
+          ),
+        gShellDebug1HiiHandle
+        );
     }
 
     if (BIT (Voltage, 6) != 0) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT6_NOT_ZERO), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_BIT6_NOT_ZERO
+          ),
+        gShellDebug1HiiHandle
+        );
     }
   }
 }
@@ -2586,26 +4387,82 @@ DisplayProcessorStatus (
   IN UINT8  Option
   )
 {
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PROC_STATUS), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_PROC_STATUS
+      ),
+    gShellDebug1HiiHandle
+    );
   PRINT_INFO_OPTION (Status, Option);
 
   if (BIT (Status, 7) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT7_NOT_ZERO), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIT7_NOT_ZERO
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (BIT (Status, 5) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT5_NOT_ZERO), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIT5_NOT_ZERO
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (BIT (Status, 4) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT4_NOT_ZERO), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIT4_NOT_ZERO
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (BIT (Status, 3) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT3_NOT_ZERO), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIT3_NOT_ZERO
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
   // Check BIT 6
   //
   if (BIT (Status, 6) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CPU_SOCKET_POPULATED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_CPU_SOCKET_POPULATED
+        ),
+      gShellDebug1HiiHandle
+      );
   } else {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CPU_SOCKET_UNPOPULATED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_CPU_SOCKET_UNPOPULATED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
@@ -2613,31 +4470,87 @@ DisplayProcessorStatus (
   //
   switch (Status & 0x07) {
     case 0:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNKNOWN), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UNKNOWN
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 1:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CPU_ENABLED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_CPU_ENABLED
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 2:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CPU_DISABLED_BY_USER), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_CPU_DISABLED_BY_USER
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 3:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CPU_DIABLED_BY_BIOS), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_CPU_DIABLED_BY_BIOS
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 4:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CPU_IDLE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_CPU_IDLE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 7:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_OTHERS), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_OTHERS
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     default:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_RESERVED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_RESERVED
+          ),
+        gShellDebug1HiiHandle
+        );
   }
 }
 
@@ -2657,16 +4570,52 @@ DisplayMaxMemoryModuleSize (
 {
   UINTN  MaxSize;
 
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SIZE_LARGEST_MEM), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_SIZE_LARGEST_MEM
+      ),
+    gShellDebug1HiiHandle
+    );
   //
   // MaxSize is determined by follow formula
   //
   MaxSize = (UINTN)1 << Size;
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ONE_VAR_MB), gShellDebug1HiiHandle, MaxSize);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_ONE_VAR_MB
+      ),
+    gShellDebug1HiiHandle,
+    MaxSize
+    );
 
   if (Option >= SHOW_DETAIL) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MAX_AMOUNT_MEM), gShellDebug1HiiHandle);
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ONE_VAR_MB), gShellDebug1HiiHandle, MaxSize, SlotNum, MaxSize * SlotNum);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_MAX_AMOUNT_MEM
+        ),
+      gShellDebug1HiiHandle
+      );
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_ONE_VAR_MB
+        ),
+      gShellDebug1HiiHandle,
+      MaxSize,
+      SlotNum,
+      MaxSize * SlotNum
+      );
   }
 }
 
@@ -2686,7 +4635,16 @@ DisplayMemoryModuleConfigHandles (
 {
   UINT8  Index;
 
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_HANDLES_CONTROLLED), gShellDebug1HiiHandle, SlotNum);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_HANDLES_CONTROLLED
+      ),
+    gShellDebug1HiiHandle,
+    SlotNum
+    );
 
   if (Option >= SHOW_DETAIL) {
     //
@@ -2696,9 +4654,27 @@ DisplayMemoryModuleConfigHandles (
       return;
     }
 
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_HANDLES_LIST_CONTROLLED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_HANDLES_LIST_CONTROLLED
+        ),
+      gShellDebug1HiiHandle
+      );
     for (Index = 0; Index < SlotNum; Index++) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_HANDLE), gShellDebug1HiiHandle, Index + 1, Handles[Index]);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_HANDLE
+          ),
+        gShellDebug1HiiHandle,
+        Index + 1,
+        Handles[Index]
+        );
     }
   }
 }
@@ -2718,7 +4694,15 @@ DisplayMmBankConnections (
   UINT8  High;
   UINT8  Low;
 
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BANK_CONNECTIONS), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_BANK_CONNECTIONS
+      ),
+    gShellDebug1HiiHandle
+    );
   //
   // Print option
   //
@@ -2731,15 +4715,55 @@ DisplayMmBankConnections (
   Low  = (UINT8)(BankConnections & 0x0F);
   if (High != 0xF) {
     if (Low != 0xF) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BANK_RAS), gShellDebug1HiiHandle, High, Low, High, Low);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_BANK_RAS
+          ),
+        gShellDebug1HiiHandle,
+        High,
+        Low,
+        High,
+        Low
+        );
     } else {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BANK_RAS_2), gShellDebug1HiiHandle, High, High);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_BANK_RAS_2
+          ),
+        gShellDebug1HiiHandle,
+        High,
+        High
+        );
     }
   } else {
     if (Low != 0xF) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BANK_RAS_2), gShellDebug1HiiHandle, Low, Low);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_BANK_RAS_2
+          ),
+        gShellDebug1HiiHandle,
+        Low,
+        Low
+        );
     } else {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_NO_BANKS_CONNECTED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_NO_BANKS_CONNECTED
+          ),
+        gShellDebug1HiiHandle
+        );
     }
   }
 }
@@ -2766,7 +4790,15 @@ DisplayMmMemorySize (
 {
   UINT8  Value;
 
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MEMORY_SIZE), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_MEMORY_SIZE
+      ),
+    gShellDebug1HiiHandle
+    );
   //
   // Print option
   //
@@ -2777,19 +4809,68 @@ DisplayMmMemorySize (
   //
   Value = (UINT8)(Size & 0x7F);
   if (Value == 0x7D) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MEM_SIZE_NOT_DETERMINABLE), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_MEM_SIZE_NOT_DETERMINABLE
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (Value == 0x7E) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MODULE_INSTALLED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_MODULE_INSTALLED
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (Value == 0x7F) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_NOT_INSTALLED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_NOT_INSTALLED
+        ),
+      gShellDebug1HiiHandle
+      );
   } else {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MEM_SIZE), gShellDebug1HiiHandle, 1 << Value);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_MEM_SIZE
+        ),
+      gShellDebug1HiiHandle,
+      1 << Value
+      );
   }
 
   if (BIT (Size, 7) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MEM_MODULE_DOUBLE_BANK), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_MEM_MODULE_DOUBLE_BANK
+        ),
+      gShellDebug1HiiHandle
+      );
   } else {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MEM_MODULE_SINGLE_BANK), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_MEM_MODULE_SINGLE_BANK
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 }
 
@@ -2827,23 +4908,87 @@ DisplayCacheConfiguration (
   IN UINT8   Option
   )
 {
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CACHE_CONFIGURATION), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_CACHE_CONFIGURATION
+      ),
+    gShellDebug1HiiHandle
+    );
   PRINT_INFO_OPTION (CacheConfiguration, Option);
 
   if (BIT (CacheConfiguration, 15) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT15_NOT_ZERO), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIT15_NOT_ZERO
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (BIT (CacheConfiguration, 14) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT14_NOT_ZERO), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIT14_NOT_ZERO
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (BIT (CacheConfiguration, 13) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT13_NOT_ZERO), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIT13_NOT_ZERO
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (BIT (CacheConfiguration, 12) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT12_NOT_ZERO), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIT12_NOT_ZERO
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (BIT (CacheConfiguration, 11) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT11_NOT_ZERO), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIT11_NOT_ZERO
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (BIT (CacheConfiguration, 10) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT10_NOT_ZERO), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIT10_NOT_ZERO
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (BIT (CacheConfiguration, 4) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BIT4_NOT_ZERO), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BIT4_NOT_ZERO
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
@@ -2851,19 +4996,51 @@ DisplayCacheConfiguration (
   //
   switch ((CacheConfiguration & 0x300) >> 8) {
     case 0:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CACHE_WRITE_THROUGH), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_CACHE_WRITE_THROUGH
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 1:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CACHE_WRITE_BACK), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_CACHE_WRITE_BACK
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 2:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CACHE_VARIES_WITH_MEM_ADDR), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_CACHE_VARIES_WITH_MEM_ADDR
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 3:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNKNOWN), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UNKNOWN
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
   }
 
@@ -2871,9 +5048,25 @@ DisplayCacheConfiguration (
   // Check BIT 7
   //
   if (BIT (CacheConfiguration, 7) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ENABLED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_ENABLED
+        ),
+      gShellDebug1HiiHandle
+      );
   } else {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_DISABLED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_DISABLED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
@@ -2881,19 +5074,51 @@ DisplayCacheConfiguration (
   //
   switch ((CacheConfiguration & 0x60) >> 5) {
     case 0:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CACHE_INTERNAL), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_CACHE_INTERNAL
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 1:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CACHE_EXTERNAL), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_CACHE_EXTERNAL
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 2:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_RESERVED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_RESERVED
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 3:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNKNOWN), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UNKNOWN
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
   }
 
@@ -2901,12 +5126,37 @@ DisplayCacheConfiguration (
   // Check BIT 3
   //
   if (BIT (CacheConfiguration, 3) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CACHE_SOCKETED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_CACHE_SOCKETED
+        ),
+      gShellDebug1HiiHandle
+      );
   } else {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CACHE_NOT_SOCKETED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_CACHE_NOT_SOCKETED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CACHE_LEVEL), gShellDebug1HiiHandle, (CacheConfiguration & 0x07) + 1);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_CACHE_LEVEL
+      ),
+    gShellDebug1HiiHandle,
+    (CacheConfiguration & 0x07) + 1
+    );
 }
 
 /**
@@ -2925,7 +5175,15 @@ DisplaySystemSlotId (
   IN UINT8   Option
   )
 {
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SLOT_ID), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_SLOT_ID
+      ),
+    gShellDebug1HiiHandle
+    );
   //
   // print option
   //
@@ -2936,11 +5194,36 @@ DisplaySystemSlotId (
     // Slot Type: MCA
     //
     case 0x04:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_LOGICAL_MICRO_CHAN), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_LOGICAL_MICRO_CHAN
+          ),
+        gShellDebug1HiiHandle
+        );
       if ((SlotId > 0) && (SlotId < 15)) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ONE_VAR_D), gShellDebug1HiiHandle, SlotId);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_PRINTINFO_ONE_VAR_D
+            ),
+          gShellDebug1HiiHandle,
+          SlotId
+          );
       } else {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ERROR_NOT_1_15), gShellDebug1HiiHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_PRINTINFO_ERROR_NOT_1_15
+            ),
+          gShellDebug1HiiHandle
+          );
       }
 
       break;
@@ -2949,11 +5232,36 @@ DisplaySystemSlotId (
     // EISA
     //
     case 0x05:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_LOGICAL_EISA_NUM), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_LOGICAL_EISA_NUM
+          ),
+        gShellDebug1HiiHandle
+        );
       if ((SlotId > 0) && (SlotId < 15)) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ONE_VAR_D), gShellDebug1HiiHandle, SlotId);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_PRINTINFO_ONE_VAR_D
+            ),
+          gShellDebug1HiiHandle,
+          SlotId
+          );
       } else {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ERROR_NOT_1_15), gShellDebug1HiiHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_PRINTINFO_ERROR_NOT_1_15
+            ),
+          gShellDebug1HiiHandle
+          );
       }
 
       break;
@@ -2962,28 +5270,74 @@ DisplaySystemSlotId (
     // Slot Type: PCI
     //
     case 0x06:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_VALUE_PRESENT), gShellDebug1HiiHandle, SlotId);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_VALUE_PRESENT
+          ),
+        gShellDebug1HiiHandle,
+        SlotId
+        );
       break;
 
     //
     // PCMCIA
     //
     case 0x07:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_IDENTIFIES_ADAPTER_NUM), gShellDebug1HiiHandle, SlotId);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_IDENTIFIES_ADAPTER_NUM
+          ),
+        gShellDebug1HiiHandle,
+        SlotId
+        );
       break;
 
     //
     // Slot Type: PCI-E
     //
     case 0xA5:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_VALUE_PRESENT), gShellDebug1HiiHandle, SlotId);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_VALUE_PRESENT
+          ),
+        gShellDebug1HiiHandle,
+        SlotId
+        );
       break;
 
     default:
-      if (((SlotType >= 0x0E) && (SlotType <= 0x12)) || ((SlotType >= 0xA6) && (SlotType <= 0xB6))) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_VALUE_PRESENT), gShellDebug1HiiHandle, SlotId);
+      if (((SlotType >= 0x0E) && (SlotType <= 0x12)) || ((SlotType >= 0xA6) &&
+                                                         (SlotType <= 0xB6)))
+      {
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_PRINTINFO_VALUE_PRESENT
+            ),
+          gShellDebug1HiiHandle,
+          SlotId
+          );
       } else {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNDEFINED_SLOT_ID), gShellDebug1HiiHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (
+            STR_SMBIOSVIEW_PRINTINFO_UNDEFINED_SLOT_ID
+            ),
+          gShellDebug1HiiHandle
+          );
       }
   }
 }
@@ -3000,7 +5354,15 @@ DisplaySystemBootStatus (
   IN UINT8  Option
   )
 {
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SYSTEM_BOOT_STATUS), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_SYSTEM_BOOT_STATUS
+      ),
+    gShellDebug1HiiHandle
+    );
   //
   // Print option
   //
@@ -3010,31 +5372,135 @@ DisplaySystemBootStatus (
   // Check value and print
   //
   if (Parameter == 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_NO_ERRORS_DETECTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_NO_ERRORS_DETECTED
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (Parameter == 1) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_NO_BOOTABLE_MEDIA), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_NO_BOOTABLE_MEDIA
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (Parameter == 2) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_NORMAL_OP_SYSTEM), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_NORMAL_OP_SYSTEM
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (Parameter == 3) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_FIRMWARE_DETECTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_FIRMWARE_DETECTED
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (Parameter == 4) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_OP_SYSTEM), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_OP_SYSTEM
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (Parameter == 5) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_USER_REQUESTED_BOOT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_USER_REQUESTED_BOOT
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (Parameter == 6) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SYSTEM_SECURITY_VIOLATION), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_SYSTEM_SECURITY_VIOLATION
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (Parameter == 7) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PREV_REQ_IMAGE), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_PREV_REQ_IMAGE
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (Parameter == 8) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_WATCHDOG_TIMER), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_WATCHDOG_TIMER
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if ((Parameter >= 9) && (Parameter <= 127)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_RSVD_FUTURE_ASSIGNMENT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_RSVD_FUTURE_ASSIGNMENT
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if ((Parameter >= 128) && (Parameter <= 191)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_VENDOR_OEM_SPECIFIC), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_VENDOR_OEM_SPECIFIC
+        ),
+      gShellDebug1HiiHandle
+      );
   } else if (Parameter >= 192) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_PRODUCT_SPEC_IMPLMENTATION), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_PRODUCT_SPEC_IMPLMENTATION
+        ),
+      gShellDebug1HiiHandle
+      );
   } else {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ERROR_VALUE), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_ERROR_VALUE
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 }
 
@@ -3061,7 +5527,15 @@ DisplaySBDSManufactureDate (
   UINTN  Month;
   UINTN  Year;
 
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SBDS_MANUFACTURE_DATE), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_SBDS_MANUFACTURE_DATE
+      ),
+    gShellDebug1HiiHandle
+    );
   PRINT_INFO_OPTION (Date, Option);
   //
   // Print date
@@ -3069,7 +5543,18 @@ DisplaySBDSManufactureDate (
   Day   = Date & 0x001F;
   Month = (Date & 0x01E0) >> 5;
   Year  = ((Date & 0xFE00) >> 9) + 1980;
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MONTH_DAY_YEAR), gShellDebug1HiiHandle, Day, Month, Year);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_MONTH_DAY_YEAR
+      ),
+    gShellDebug1HiiHandle,
+    Day,
+    Month,
+    Year
+    );
 }
 
 /**
@@ -3105,45 +5590,117 @@ DisplaySystemResetCapabilities (
 {
   UINTN  Temp;
 
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SYSTEM_RESET_CAPABILITIES), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_SYSTEM_RESET_CAPABILITIES
+      ),
+    gShellDebug1HiiHandle
+    );
   PRINT_INFO_OPTION (Reset, Option);
 
   //
   // Check reserved bits 7:6
   //
   if ((Reset & 0xC0) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BITS_RESERVED_ZERO), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BITS_RESERVED_ZERO
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
   // Watch dog
   //
   if (BIT (Reset, 5) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_WATCHDOG_TIMER_2), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_WATCHDOG_TIMER_2
+        ),
+      gShellDebug1HiiHandle
+      );
   } else {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SYSTEM_NOT_CONTAIN_TIMER), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_SYSTEM_NOT_CONTAIN_TIMER
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
   // Boot Option on Limit
   //
   Temp = (Reset & 0x18) >> 3;
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BOOT_OPTION_LIMIT), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_BOOT_OPTION_LIMIT
+      ),
+    gShellDebug1HiiHandle
+    );
   switch (Temp) {
     case 0:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_RESERVED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_RESERVED
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 1:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_OP_SYSTEM_2), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_OP_SYSTEM_2
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 2:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SYSTEM_UTIL), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_SYSTEM_UTIL
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 3:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_DO_NOT_REBOOT), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_DO_NOT_REBOOT
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
   }
 
@@ -3151,22 +5708,62 @@ DisplaySystemResetCapabilities (
   // Boot Option
   //
   Temp = (Reset & 0x06) >> 1;
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BOOT_OPTION), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_BOOT_OPTION
+      ),
+    gShellDebug1HiiHandle
+    );
   switch (Temp) {
     case 0:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_RESERVED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_RESERVED
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 1:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_OP_SYSTEM_2), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_OP_SYSTEM_2
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 2:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SYSTEM_UTIL), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_SYSTEM_UTIL
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 3:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_DO_NOT_REBOOT), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_DO_NOT_REBOOT
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
   }
 
@@ -3218,29 +5815,77 @@ DisplayHardwareSecuritySettings (
 {
   UINTN  Temp;
 
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_HARDWARE_SECURITY_SET), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_HARDWARE_SECURITY_SET
+      ),
+    gShellDebug1HiiHandle
+    );
   PRINT_INFO_OPTION (Settings, Option);
 
   //
   // Power-on Password Status
   //
   Temp = (Settings & 0xC0) >> 6;
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_POWER_ON_PASSWORD), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_POWER_ON_PASSWORD
+      ),
+    gShellDebug1HiiHandle
+    );
   switch (Temp) {
     case 0:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_DISABLED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_DISABLED
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 1:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ENABLED_NEWLINE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_ENABLED_NEWLINE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 2:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_NOT_IMPLEMENTED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_NOT_IMPLEMENTED
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 3:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNKNOWN), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UNKNOWN
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
   }
 
@@ -3248,22 +5893,62 @@ DisplayHardwareSecuritySettings (
   // Keyboard Password Status
   //
   Temp = (Settings & 0x30) >> 4;
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_KEYBOARD_PASSWORD), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_KEYBOARD_PASSWORD
+      ),
+    gShellDebug1HiiHandle
+    );
   switch (Temp) {
     case 0:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_DISABLED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_DISABLED
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 1:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ENABLED_NEWLINE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_ENABLED_NEWLINE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 2:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_NOT_IMPLEMENTED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_NOT_IMPLEMENTED
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 3:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNKNOWN), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UNKNOWN
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
   }
 
@@ -3271,22 +5956,62 @@ DisplayHardwareSecuritySettings (
   // Administrator Password Status
   //
   Temp = (Settings & 0x0C) >> 2;
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ADMIN_PASSWORD_STATUS), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_ADMIN_PASSWORD_STATUS
+      ),
+    gShellDebug1HiiHandle
+    );
   switch (Temp) {
     case 0:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_DISABLED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_DISABLED
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 1:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ENABLED_NEWLINE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_ENABLED_NEWLINE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 2:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_NOT_IMPLEMENTED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_NOT_IMPLEMENTED
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 3:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNKNOWN), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UNKNOWN
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
   }
 
@@ -3294,22 +6019,62 @@ DisplayHardwareSecuritySettings (
   // Front Panel Reset Status
   //
   Temp = Settings & 0x3;
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_FRONT_PANEL_RESET), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_FRONT_PANEL_RESET
+      ),
+    gShellDebug1HiiHandle
+    );
   switch (Temp) {
     case 0:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_DISABLED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_DISABLED
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 1:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_ENABLED_NEWLINE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_ENABLED_NEWLINE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 2:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_NOT_IMPLEMENTED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_NOT_IMPLEMENTED
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 3:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNKNOWN), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UNKNOWN
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
   }
 }
@@ -3326,32 +6091,80 @@ DisplayOBRAConnections (
   IN UINT8  Option
   )
 {
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CONNECTIONS), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_CONNECTIONS
+      ),
+    gShellDebug1HiiHandle
+    );
   PRINT_INFO_OPTION (Connections, Option);
 
   //
   // Check reserved bits 7:2
   //
   if ((Connections & 0xFC) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BITS_RESERVED_ZERO_2), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BITS_RESERVED_ZERO_2
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
   // Outbound Connection
   //
   if (BIT (Connections, 1) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_OUTBOUND_CONN_ENABLED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_OUTBOUND_CONN_ENABLED
+        ),
+      gShellDebug1HiiHandle
+      );
   } else {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_OTUBOUND_CONN_DISABLED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_OTUBOUND_CONN_DISABLED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
   // Inbound Connection
   //
   if (BIT (Connections, 0) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INBOIUND_CONN_ENABLED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_INBOIUND_CONN_ENABLED
+        ),
+      gShellDebug1HiiHandle
+      );
   } else {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INBOUND_CONN_DISABLED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_INBOUND_CONN_DISABLED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 }
 
@@ -3369,120 +6182,332 @@ DisplaySPSCharacteristics (
 {
   UINTN  Temp;
 
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_CHAR), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_CHAR
+      ),
+    gShellDebug1HiiHandle
+    );
   PRINT_INFO_OPTION (Characteristics, Option);
 
   //
   // Check reserved bits 15:14
   //
   if ((Characteristics & 0xC000) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BITS_15_14_RSVD), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_BITS_15_14_RSVD
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
   // Bits 13:10 - DMTF Power Supply Type
   //
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_TYPE), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_TYPE),
+    gShellDebug1HiiHandle
+    );
   Temp = (Characteristics & 0x1C00) >> 10;
   switch (Temp) {
     case 1:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_OTHER_SPACE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_OTHER_SPACE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 2:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNKNOWN), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UNKNOWN
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 3:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_LINEAR), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_LINEAR
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 4:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_SWITCHING), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_SWITCHING
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 5:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BATTERY), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_BATTERY
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 6:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UPS), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UPS
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 7:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CONVERTER), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_CONVERTER
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 8:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_REGULATOR), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_REGULATOR
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     default:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_RESERVED_2), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_RESERVED_2
+          ),
+        gShellDebug1HiiHandle
+        );
   }
 
   //
   // Bits 9:7 - Status
   //
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_STATUS_DASH), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_STATUS_DASH
+      ),
+    gShellDebug1HiiHandle
+    );
   Temp = (Characteristics & 0x380) >> 7;
   switch (Temp) {
     case 1:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_OTHER_SPACE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_OTHER_SPACE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 2:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNKNOWN), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UNKNOWN
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 3:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_OK), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_OK),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 4:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_NON_CRITICAL), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_NON_CRITICAL
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 5:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_CRITICAL_POWER_SUPPLY), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_CRITICAL_POWER_SUPPLY
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     default:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNDEFINED), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UNDEFINED
+          ),
+        gShellDebug1HiiHandle
+        );
   }
 
   //
   // Bits 6:3 - DMTF Input Voltage Range Switching
   //
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_INPUT_VOLTAGE_RANGE), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_INPUT_VOLTAGE_RANGE
+      ),
+    gShellDebug1HiiHandle
+    );
   Temp = (Characteristics & 0x78) >> 3;
   switch (Temp) {
     case 1:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_OTHER_SPACE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_OTHER_SPACE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 2:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_UNKNOWN), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_UNKNOWN
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 3:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_MANUAL), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_MANUAL
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 4:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_AUTO_SWITCH), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_AUTO_SWITCH
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 5:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_WIDE_RANGE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_WIDE_RANGE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     case 6:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_NOT_APPLICABLE), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_NOT_APPLICABLE
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
 
     default:
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_RESERVED_3), gShellDebug1HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (
+          STR_SMBIOSVIEW_PRINTINFO_RESERVED_3
+          ),
+        gShellDebug1HiiHandle
+        );
       break;
   }
 
@@ -3490,27 +6515,75 @@ DisplaySPSCharacteristics (
   // Power supply is unplugged from the wall
   //
   if (BIT (Characteristics, 2) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_UNPLUGGED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_UNPLUGGED
+        ),
+      gShellDebug1HiiHandle
+      );
   } else {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_PLUGGED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_PLUGGED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
   // Power supply is present
   //
   if (BIT (Characteristics, 1) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_PRESENT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_PRESENT
+        ),
+      gShellDebug1HiiHandle
+      );
   } else {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_NOT_PRESENT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_NOT_PRESENT
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
   // hot replaceable
   //
   if (BIT (Characteristics, 0) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_REPLACE), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_REPLACE
+        ),
+      gShellDebug1HiiHandle
+      );
   } else {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_NOT_REPLACE), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_NOT_REPLACE
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 }
 
@@ -3529,7 +6602,15 @@ DisplayTpmDeviceCharacteristics (
   //
   // Print header
   //
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_TPM_DEVICE_CHAR), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_TPM_DEVICE_CHAR
+      ),
+    gShellDebug1HiiHandle
+    );
   //
   // print option
   //
@@ -3541,31 +6622,87 @@ DisplayTpmDeviceCharacteristics (
   //   are designed not to deal with UINT64
   //
   if (BIT (Chara, 0) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_RESERVED_BIT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_RESERVED_BIT
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 1) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_RESERVED_BIT), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_RESERVED_BIT
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 2) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_TPM_DEVICE_CHAR_NOT_SUPPORTED), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_TPM_DEVICE_CHAR_NOT_SUPPORTED
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 3) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_TPM_DEVICE_CONFIG_FWU), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_TPM_DEVICE_CONFIG_FWU
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 4) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_TPM_DEVICE_CONFIG_PLAT_SW), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_TPM_DEVICE_CONFIG_PLAT_SW
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   if (BIT (Chara, 5) != 0) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_TPM_DEVICE_CONFIG_OEM), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_PRINTINFO_TPM_DEVICE_CONFIG_OEM
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
   // Just print the Reserved
   //
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_PRINTINFO_BITS_06_63), gShellDebug1HiiHandle);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_SMBIOSVIEW_PRINTINFO_BITS_06_63
+      ),
+    gShellDebug1HiiHandle
+    );
 }

@@ -19,21 +19,25 @@ EFI_HII_HANDLE  mTftpHiiHandle;
 */
 
 // Frame for the progression slider
-STATIC CONST CHAR16  mTftpProgressFrame[] = L"[                                        ]";
+STATIC CONST CHAR16  mTftpProgressFrame[] =
+  L"[                                        ]";
 
 // Number of steps in the progression slider
-#define TFTP_PROGRESS_SLIDER_STEPS  ((sizeof (mTftpProgressFrame) / sizeof (CHAR16)) - 3)
+#define TFTP_PROGRESS_SLIDER_STEPS  \
+  ((sizeof (mTftpProgressFrame) / sizeof (CHAR16)) - 3)
 
 // Size in number of characters plus one (final zero) of the message to
 // indicate the progress of a TFTP download. The format is "[(progress slider:
 // 40 characters)] (nb of KBytes downloaded so far: 7 characters) Kb". There
 // are thus the number of characters in mTftpProgressFrame[] plus 11 characters
 // (2 // spaces, "Kb" and seven characters for the number of KBytes).
-#define TFTP_PROGRESS_MESSAGE_SIZE  ((sizeof (mTftpProgressFrame) / sizeof (CHAR16)) + 12)
+#define TFTP_PROGRESS_MESSAGE_SIZE  \
+  ((sizeof (mTftpProgressFrame) / sizeof (CHAR16)) + 12)
 
 // String to delete the TFTP progress message to be able to update it :
 // (TFTP_PROGRESS_MESSAGE_SIZE-1) '\b'
-STATIC CONST CHAR16  mTftpProgressDelete[] = L"\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b";
+STATIC CONST CHAR16  mTftpProgressDelete[] =
+  L"\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b";
 
 // Local File Handle
 SHELL_FILE_HANDLE  mFileHandle;
@@ -227,14 +231,14 @@ EFI_MTFTP4_CONFIG_DATA  DefaultMtftp4ConfigData = {
 };
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-i", TypeValue },
-  { L"-l", TypeValue },
-  { L"-r", TypeValue },
-  { L"-c", TypeValue },
-  { L"-t", TypeValue },
-  { L"-s", TypeValue },
-  { L"-w", TypeValue },
-  { NULL,  TypeMax   }
+  { L"-i", TypeValue  },
+  { L"-l", TypeValue  },
+  { L"-r", TypeValue  },
+  { L"-c", TypeValue  },
+  { L"-t", TypeValue  },
+  { L"-s", TypeValue  },
+  { L"-w", TypeValue  },
+  { NULL,  TypeMax    }
 };
 
 ///
@@ -324,7 +328,12 @@ RunTftp (
   //
   // Parse the command line.
   //
-  Status = ShellCommandLineParse (ParamList, &CheckPackage, &ProblemParam, TRUE);
+  Status = ShellCommandLineParse (
+             ParamList,
+             &CheckPackage,
+             &ProblemParam,
+             TRUE
+             );
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) &&
         (ProblemParam != NULL))
@@ -374,7 +383,11 @@ RunTftp (
     goto Error;
   }
 
-  CopyMem (&Mtftp4ConfigData, &DefaultMtftp4ConfigData, sizeof (EFI_MTFTP4_CONFIG_DATA));
+  CopyMem (
+    &Mtftp4ConfigData,
+    &DefaultMtftp4ConfigData,
+    sizeof (EFI_MTFTP4_CONFIG_DATA)
+    );
 
   //
   // Check the host IPv4 address
@@ -496,7 +509,9 @@ RunTftp (
       goto Error;
     }
 
-    if ((WindowSize < MTFTP_MIN_WINDOWSIZE) || (WindowSize > MTFTP_MAX_WINDOWSIZE)) {
+    if ((WindowSize < MTFTP_MIN_WINDOWSIZE) || (WindowSize >
+                                                MTFTP_MAX_WINDOWSIZE))
+    {
       ShellPrintHiiEx (
         -1,
         -1,
@@ -609,7 +624,14 @@ RunTftp (
       goto NextHandle;
     }
 
-    Status = DownloadFile (Mtftp4, RemoteFilePath, AsciiRemoteFilePath, FileSize, BlockSize, WindowSize);
+    Status = DownloadFile (
+               Mtftp4,
+               RemoteFilePath,
+               AsciiRemoteFilePath,
+               FileSize,
+               BlockSize,
+               WindowSize
+               );
     if (EFI_ERROR (Status)) {
       ShellPrintHiiEx (
         -1,
@@ -1012,15 +1034,22 @@ DownloadFile (
   }
 
   if (BlockSize != MTFTP_DEFAULT_BLKSIZE) {
-    Mtftp4Token.OptionList[Mtftp4Token.OptionCount].OptionStr = (UINT8 *)"blksize";
+    Mtftp4Token.OptionList[Mtftp4Token.OptionCount].OptionStr =
+      (UINT8 *)"blksize";
     AsciiSPrint ((CHAR8 *)BlksizeBuf, sizeof (BlksizeBuf), "%d", BlockSize);
     Mtftp4Token.OptionList[Mtftp4Token.OptionCount].ValueStr = BlksizeBuf;
     Mtftp4Token.OptionCount++;
   }
 
   if (WindowSize != MTFTP_DEFAULT_WINDOWSIZE) {
-    Mtftp4Token.OptionList[Mtftp4Token.OptionCount].OptionStr = (UINT8 *)"windowsize";
-    AsciiSPrint ((CHAR8 *)WindowsizeBuf, sizeof (WindowsizeBuf), "%d", WindowSize);
+    Mtftp4Token.OptionList[Mtftp4Token.OptionCount].OptionStr =
+      (UINT8 *)"windowsize";
+    AsciiSPrint (
+      (CHAR8 *)WindowsizeBuf,
+      sizeof (WindowsizeBuf),
+      "%d",
+      WindowSize
+      );
     Mtftp4Token.OptionList[Mtftp4Token.OptionCount].ValueStr = WindowsizeBuf;
     Mtftp4Token.OptionCount++;
   }
@@ -1130,7 +1159,8 @@ CheckPacket (
   // . OpCode = EFI_MTFTP4_OPCODE_DATA
   // . Block  = the number of this block of data
   //
-  DownloadLen = (UINTN)PacketLen - sizeof (Packet->OpCode) - sizeof (Packet->Data.Block);
+  DownloadLen = (UINTN)PacketLen - sizeof (Packet->OpCode) -
+                sizeof (Packet->Data.Block);
 
   ShellSetFilePosition (mFileHandle, Context->DownloadedNbOfBytes);
   Status = ShellWriteFile (mFileHandle, &DownloadLen, Packet->Data.Data);
@@ -1165,8 +1195,10 @@ CheckPacket (
   NbOfKb                        = Context->DownloadedNbOfBytes / 1024;
 
   Progress[0] = L'\0';
-  LastStep    = (Context->LastReportedNbOfBytes * TFTP_PROGRESS_SLIDER_STEPS) / Context->FileSize;
-  Step        = (Context->DownloadedNbOfBytes * TFTP_PROGRESS_SLIDER_STEPS) / Context->FileSize;
+  LastStep    = (Context->LastReportedNbOfBytes * TFTP_PROGRESS_SLIDER_STEPS) /
+                Context->FileSize;
+  Step = (Context->DownloadedNbOfBytes * TFTP_PROGRESS_SLIDER_STEPS) /
+         Context->FileSize;
 
   if (Step <= LastStep) {
     return EFI_SUCCESS;

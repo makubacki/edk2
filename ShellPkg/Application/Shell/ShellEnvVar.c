@@ -82,7 +82,8 @@ IsVolatileEnv (
   //
   // check for the Non Volatile bit
   //
-  *Volatile = !(BOOLEAN)((Attribs & EFI_VARIABLE_NON_VOLATILE) == EFI_VARIABLE_NON_VOLATILE);
+  *Volatile = !(BOOLEAN)((Attribs & EFI_VARIABLE_NON_VOLATILE) ==
+                         EFI_VARIABLE_NON_VOLATILE);
   return EFI_SUCCESS;
 }
 
@@ -166,7 +167,8 @@ GetEnvironmentVariableList (
       Status = EFI_SUCCESS;
       break;
     } else if (Status == EFI_BUFFER_TOO_SMALL) {
-      NameBufferSize = NameSize > NameBufferSize * 2 ? NameSize : NameBufferSize * 2;
+      NameBufferSize = NameSize > NameBufferSize * 2 ? NameSize :
+                       NameBufferSize * 2;
       SHELL_FREE_NON_NULL (VariableName);
       VariableName = AllocateZeroPool (NameBufferSize);
       if (VariableName == NULL) {
@@ -194,9 +196,15 @@ GetEnvironmentVariableList (
           break;
         }
 
-        Status = SHELL_GET_ENVIRONMENT_VARIABLE_AND_ATTRIBUTES (VariableName, &VarList->Atts, &ValSize, VarList->Val);
+        Status = SHELL_GET_ENVIRONMENT_VARIABLE_AND_ATTRIBUTES (
+                   VariableName,
+                   &VarList->Atts,
+                   &ValSize,
+                   VarList->Val
+                   );
         if (Status == EFI_BUFFER_TOO_SMALL) {
-          ValBufferSize = ValSize > ValBufferSize * 2 ? ValSize : ValBufferSize * 2;
+          ValBufferSize = ValSize > ValBufferSize * 2 ? ValSize :
+                          ValBufferSize * 2;
           SHELL_FREE_NON_NULL (VarList->Val);
           //
           // We need another CHAR16 to save '\0' in VarList->Val.
@@ -209,11 +217,19 @@ GetEnvironmentVariableList (
           }
 
           ValSize = ValBufferSize;
-          Status  = SHELL_GET_ENVIRONMENT_VARIABLE_AND_ATTRIBUTES (VariableName, &VarList->Atts, &ValSize, VarList->Val);
+          Status  = SHELL_GET_ENVIRONMENT_VARIABLE_AND_ATTRIBUTES (
+                      VariableName,
+                      &VarList->Atts,
+                      &ValSize,
+                      VarList->Val
+                      );
         }
 
         if (!EFI_ERROR (Status)) {
-          VarList->Key = AllocateCopyPool (StrSize (VariableName), VariableName);
+          VarList->Key = AllocateCopyPool (
+                           StrSize (VariableName),
+                           VariableName
+                           );
           if (VarList->Key == NULL) {
             SHELL_FREE_NON_NULL (VarList->Val);
             SHELL_FREE_NON_NULL (VarList);
@@ -354,7 +370,10 @@ SetEnvironmentVariables (
       return (EFI_OUT_OF_RESOURCES);
     }
 
-    Node->Key = AllocateZeroPool ((StrStr (CurrentString, L"=") - CurrentString + 1) * sizeof (CHAR16));
+    Node->Key = AllocateZeroPool (
+                  (StrStr (CurrentString, L"=") -
+                   CurrentString + 1) * sizeof (CHAR16)
+                  );
     if (Node->Key == NULL) {
       SHELL_FREE_NON_NULL (Node);
       SetEnvironmentVariableList (&VarList->Link);
@@ -374,7 +393,10 @@ SetEnvironmentVariables (
     //
     // ValueSize = TotalSize - already removed size - size for '=' + size for terminator (the last 2 items cancel each other)
     //
-    Node->Val = AllocateCopyPool (StrSize (CurrentString) - StrSize (Node->Key), CurrentString + StrLen (Node->Key) + 1);
+    Node->Val = AllocateCopyPool (
+                  StrSize (CurrentString) - StrSize (Node->Key),
+                  CurrentString + StrLen (Node->Key) + 1
+                  );
     if (Node->Val == NULL) {
       SHELL_FREE_NON_NULL (Node->Key);
       SHELL_FREE_NON_NULL (Node);
@@ -438,7 +460,10 @@ ShellFindEnvVarInList (
 
   for ( Node = (ENV_VAR_LIST *)GetFirstNode (&gShellEnvVarList.Link)
         ; !IsNull (&gShellEnvVarList.Link, &Node->Link)
-        ; Node = (ENV_VAR_LIST *)GetNextNode (&gShellEnvVarList.Link, &Node->Link)
+        ; Node = (ENV_VAR_LIST *)GetNextNode (
+                                   &gShellEnvVarList.Link,
+                                   &Node->Link
+                                   )
         )
   {
     if ((Node->Key != NULL) && (StrCmp (Key, Node->Key) == 0)) {
@@ -494,7 +519,10 @@ ShellAddEnvVarToList (
   //
   for ( Node = (ENV_VAR_LIST *)GetFirstNode (&gShellEnvVarList.Link)
         ; !IsNull (&gShellEnvVarList.Link, &Node->Link)
-        ; Node = (ENV_VAR_LIST *)GetNextNode (&gShellEnvVarList.Link, &Node->Link)
+        ; Node = (ENV_VAR_LIST *)GetNextNode (
+                                   &gShellEnvVarList.Link,
+                                   &Node->Link
+                                   )
         )
   {
     if ((Node->Key != NULL) && (StrCmp (Key, Node->Key) == 0)) {
@@ -552,7 +580,10 @@ ShellRemvoeEnvVarFromList (
 
   for ( Node = (ENV_VAR_LIST *)GetFirstNode (&gShellEnvVarList.Link)
         ; !IsNull (&gShellEnvVarList.Link, &Node->Link)
-        ; Node = (ENV_VAR_LIST *)GetNextNode (&gShellEnvVarList.Link, &Node->Link)
+        ; Node = (ENV_VAR_LIST *)GetNextNode (
+                                   &gShellEnvVarList.Link,
+                                   &Node->Link
+                                   )
         )
   {
     if ((Node->Key != NULL) && (StrCmp (Key, Node->Key) == 0)) {

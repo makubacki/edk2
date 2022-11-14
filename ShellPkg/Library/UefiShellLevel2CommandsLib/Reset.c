@@ -10,11 +10,11 @@
 #include "UefiShellLevel2CommandsLib.h"
 
 STATIC CONST SHELL_PARAM_ITEM  ResetParamList[] = {
-  { L"-w",    TypeValue },
-  { L"-s",    TypeValue },
-  { L"-c",    TypeValue },
-  { L"-fwui", TypeFlag  },
-  { NULL,     TypeMax   }
+  { L"-w",    TypeValue         },
+  { L"-s",    TypeValue         },
+  { L"-c",    TypeValue         },
+  { L"-fwui", TypeFlag          },
+  { NULL,     TypeMax           }
 };
 
 /**
@@ -51,10 +51,23 @@ ShellCommandRunReset (
   //
   // parse the command line
   //
-  Status = ShellCommandLineParse (ResetParamList, &Package, &ProblemParam, TRUE);
+  Status = ShellCommandLineParse (
+             ResetParamList,
+             &Package,
+             &ProblemParam,
+             TRUE
+             );
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel2HiiHandle, L"reset", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel2HiiHandle,
+        L"reset",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       return (SHELL_INVALID_PARAMETER);
     } else {
@@ -67,7 +80,14 @@ ShellCommandRunReset (
     if (ShellCommandLineGetFlag (Package, L"-?")) {
       ASSERT (FALSE);
     } else if (ShellCommandLineGetRawValue (Package, 1) != NULL) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel2HiiHandle, L"reset");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellLevel2HiiHandle,
+        L"reset"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       if (ShellCommandLineGetFlag (Package, L"-fwui")) {
@@ -98,7 +118,9 @@ ShellCommandRunReset (
             Status = gRT->SetVariable (
                             EFI_OS_INDICATIONS_VARIABLE_NAME,
                             &gEfiGlobalVariableGuid,
-                            EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            EFI_VARIABLE_NON_VOLATILE |
+                            EFI_VARIABLE_BOOTSERVICE_ACCESS |
+                            EFI_VARIABLE_RUNTIME_ACCESS,
                             sizeof (OsIndications),
                             &OsIndications
                             );
@@ -115,28 +137,61 @@ ShellCommandRunReset (
       // check for warm reset flag, then shutdown reset flag, then cold (default) reset flag
       //
       if (ShellCommandLineGetFlag (Package, L"-w")) {
-        if (ShellCommandLineGetFlag (Package, L"-s") || ShellCommandLineGetFlag (Package, L"-c")) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel2HiiHandle, L"reset");
+        if (ShellCommandLineGetFlag (Package, L"-s") ||
+            ShellCommandLineGetFlag (Package, L"-c"))
+        {
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_TOO_MANY),
+            gShellLevel2HiiHandle,
+            L"reset"
+            );
           ShellStatus = SHELL_INVALID_PARAMETER;
         } else {
           String = ShellCommandLineGetValue (Package, L"-w");
           if (String != NULL) {
-            gRT->ResetSystem (EfiResetWarm, EFI_SUCCESS, StrSize (String), (VOID *)String);
+            gRT->ResetSystem (
+                   EfiResetWarm,
+                   EFI_SUCCESS,
+                   StrSize (String),
+                   (VOID *)String
+                   );
           } else {
             gRT->ResetSystem (EfiResetWarm, EFI_SUCCESS, 0, NULL);
           }
         }
       } else if (ShellCommandLineGetFlag (Package, L"-s")) {
         if (ShellCommandLineGetFlag (Package, L"-c")) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel2HiiHandle, L"reset");
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_TOO_MANY),
+            gShellLevel2HiiHandle,
+            L"reset"
+            );
           ShellStatus = SHELL_INVALID_PARAMETER;
         } else {
           String = ShellCommandLineGetValue (Package, L"-s");
           DEBUG_CODE (
-            ShellPrintEx (-1, -1, L"Reset with %s (%d bytes)", String, String != NULL ? StrSize (String) : 0);
+            ShellPrintEx (
+              -1,
+              -1,
+              L"Reset with %s (%d bytes)",
+              String,
+              String !=
+              NULL ? StrSize (String) : 0
+              );
             );
           if (String != NULL) {
-            gRT->ResetSystem (EfiResetShutdown, EFI_SUCCESS, StrSize (String), (VOID *)String);
+            gRT->ResetSystem (
+                   EfiResetShutdown,
+                   EFI_SUCCESS,
+                   StrSize (String),
+                   (VOID *)String
+                   );
           } else {
             gRT->ResetSystem (EfiResetShutdown, EFI_SUCCESS, 0, NULL);
           }
@@ -147,7 +202,12 @@ ShellCommandRunReset (
         //
         String = ShellCommandLineGetValue (Package, L"-c");
         if (String != NULL) {
-          gRT->ResetSystem (EfiResetCold, EFI_SUCCESS, StrSize (String), (VOID *)String);
+          gRT->ResetSystem (
+                 EfiResetCold,
+                 EFI_SUCCESS,
+                 StrSize (String),
+                 (VOID *)String
+                 );
         } else {
           gRT->ResetSystem (EfiResetCold, EFI_SUCCESS, 0, NULL);
         }

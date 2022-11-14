@@ -35,9 +35,12 @@ typedef INT16 NODE;
 #define CODE_BIT      16
 #define NIL           0
 #define MAX_HASH_VAL  (3 * WNDSIZ + (WNDSIZ / 512 + 1) * UINT8_MAX)
-#define HASH(LoopVar7, LoopVar5)  ((LoopVar7) + ((LoopVar5) << (WNDBIT - 9)) + WNDSIZ * 2)
+#define HASH(LoopVar7, \
+             LoopVar5)  ((LoopVar7) + ((LoopVar5) << (WNDBIT - 9)) + WNDSIZ * 2)
 #define CRCPOLY  0xA001
-#define UPDATE_CRC(LoopVar5)  mCrc = mCrcTable[(mCrc ^ (LoopVar5)) & 0xFF] ^ (mCrc >> UINT8_BIT)
+#define UPDATE_CRC( \
+                  LoopVar5)  \
+  mCrc = mCrcTable[(mCrc ^ (LoopVar5)) & 0xFF] ^ (mCrc >> UINT8_BIT)
 
 //
 // C: the Char&Len Set; P: the Position Set; T: the exTra Set
@@ -186,11 +189,17 @@ AllocateMemory (
 {
   mText       = AllocateZeroPool (WNDSIZ * 2 + MAXMATCH);
   mLevel      = AllocateZeroPool ((WNDSIZ + UINT8_MAX + 1) * sizeof (*mLevel));
-  mChildCount = AllocateZeroPool ((WNDSIZ + UINT8_MAX + 1) * sizeof (*mChildCount));
-  mPosition   = AllocateZeroPool ((WNDSIZ + UINT8_MAX + 1) * sizeof (*mPosition));
-  mParent     = AllocateZeroPool (WNDSIZ * 2 * sizeof (*mParent));
-  mPrev       = AllocateZeroPool (WNDSIZ * 2 * sizeof (*mPrev));
-  mNext       = AllocateZeroPool ((MAX_HASH_VAL + 1) * sizeof (*mNext));
+  mChildCount = AllocateZeroPool (
+                  (WNDSIZ + UINT8_MAX + 1) *
+                  sizeof (*mChildCount)
+                  );
+  mPosition = AllocateZeroPool (
+                (WNDSIZ + UINT8_MAX + 1) *
+                sizeof (*mPosition)
+                );
+  mParent = AllocateZeroPool (WNDSIZ * 2 * sizeof (*mParent));
+  mPrev   = AllocateZeroPool (WNDSIZ * 2 * sizeof (*mPrev));
+  mNext   = AllocateZeroPool ((MAX_HASH_VAL + 1) * sizeof (*mNext));
 
   mBufSiz = BLKSIZ;
   mBuf    = AllocateZeroPool (mBufSiz);
@@ -248,7 +257,11 @@ InitSlide (
   }
 
   mNext[WNDSIZ - 1] = NIL;
-  SetMem (mNext + WNDSIZ * 2, (MAX_HASH_VAL - WNDSIZ * 2 + 1) * sizeof (NODE), 0);
+  SetMem (
+    mNext + WNDSIZ * 2,
+    (MAX_HASH_VAL - WNDSIZ * 2 + 1) * sizeof (NODE),
+    0
+    );
 }
 
 /**
@@ -644,7 +657,9 @@ DownHeap (
   LoopVar2 = mHeap[i];
   LoopVar1 = 2 * i;
   while (LoopVar1 <= mHeapSize) {
-    if ((LoopVar1 < mHeapSize) && (mFreq[mHeap[LoopVar1]] > mFreq[mHeap[LoopVar1 + 1]])) {
+    if ((LoopVar1 < mHeapSize) && (mFreq[mHeap[LoopVar1]] >
+                                   mFreq[mHeap[LoopVar1 + 1]]))
+    {
       LoopVar1++;
     }
 

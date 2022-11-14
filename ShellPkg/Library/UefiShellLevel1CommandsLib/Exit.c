@@ -10,8 +10,8 @@
 #include "UefiShellLevel1CommandsLib.h"
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"/b", TypeFlag },
-  { NULL,  TypeMax  }
+  { L"/b", TypeFlag  },
+  { NULL,  TypeMax   }
 };
 
 /**
@@ -51,7 +51,15 @@ ShellCommandRunExit (
   Status = ShellCommandLineParse (ParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel1HiiHandle, L"exit", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel1HiiHandle,
+        L"exit",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -65,20 +73,36 @@ ShellCommandRunExit (
     if (Return != NULL) {
       Status = ShellConvertStringToUint64 (Return, &RetVal, FALSE, FALSE);
       if (EFI_ERROR (Status)) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel1HiiHandle, L"exit", Return);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_GEN_PARAM_INV),
+          gShellLevel1HiiHandle,
+          L"exit",
+          Return
+          );
         ShellStatus = SHELL_INVALID_PARAMETER;
       } else {
         //
         // If we are in a batch file and /b then pass TRUE otherwise false...
         //
-        ShellCommandRegisterExit ((BOOLEAN)(gEfiShellProtocol->BatchIsActive () && ShellCommandLineGetFlag (Package, L"/b")), RetVal);
+        ShellCommandRegisterExit (
+          (BOOLEAN)(gEfiShellProtocol->BatchIsActive () &&
+                    ShellCommandLineGetFlag (Package, L"/b")),
+          RetVal
+          );
 
         ShellStatus = SHELL_SUCCESS;
       }
     } else {
       // If we are in a batch file and /b then pass TRUE otherwise false...
       //
-      ShellCommandRegisterExit ((BOOLEAN)(gEfiShellProtocol->BatchIsActive () && ShellCommandLineGetFlag (Package, L"/b")), 0);
+      ShellCommandRegisterExit (
+        (BOOLEAN)(gEfiShellProtocol->BatchIsActive () &&
+                  ShellCommandLineGetFlag (Package, L"/b")),
+        0
+        );
 
       ShellStatus = SHELL_SUCCESS;
     }

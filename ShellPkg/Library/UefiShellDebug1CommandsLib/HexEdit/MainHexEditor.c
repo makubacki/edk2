@@ -122,12 +122,19 @@ HMainCommandDisplayHelp (
   // scan for ctrl+w
   //
   while (TRUE) {
-    Status = gBS->WaitForEvent (1, &HMainEditor.TextInputEx->WaitForKeyEx, &EventIndex);
+    Status = gBS->WaitForEvent (
+                    1,
+                    &HMainEditor.TextInputEx->WaitForKeyEx,
+                    &EventIndex
+                    );
     if (EFI_ERROR (Status) || (EventIndex != 0)) {
       continue;
     }
 
-    Status = HMainEditor.TextInputEx->ReadKeyStrokeEx (HMainEditor.TextInputEx, &KeyData);
+    Status = HMainEditor.TextInputEx->ReadKeyStrokeEx (
+                                        HMainEditor.TextInputEx,
+                                        &KeyData
+                                        );
     if (EFI_ERROR (Status)) {
       continue;
     }
@@ -142,15 +149,23 @@ HMainCommandDisplayHelp (
       if (KeyData.Key.UnicodeChar == L'W' - L'A' + 1) {
         break;
       }
-    } else if (((KeyData.KeyState.KeyShiftState & EFI_SHIFT_STATE_VALID) != 0) &&
-               ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) != 0) &&
-               ((KeyData.KeyState.KeyShiftState & ~(EFI_SHIFT_STATE_VALID | EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) == 0))
+    } else if (((KeyData.KeyState.KeyShiftState & EFI_SHIFT_STATE_VALID) !=
+                0) &&
+               ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED |
+                                                   EFI_RIGHT_CONTROL_PRESSED))
+                != 0) &&
+               ((KeyData.KeyState.KeyShiftState & ~(EFI_SHIFT_STATE_VALID |
+                                                    EFI_LEFT_CONTROL_PRESSED |
+                                                    EFI_RIGHT_CONTROL_PRESSED))
+                == 0))
     {
       //
       // For consoles that supports/reports shift state,
       // make sure that only CONTROL shift key is pressed.
       //
-      if ((KeyData.Key.UnicodeChar == 'w') || (KeyData.Key.UnicodeChar == 'W')) {
+      if ((KeyData.Key.UnicodeChar == 'w') || (KeyData.Key.UnicodeChar ==
+                                               'W'))
+      {
         break;
       }
     }
@@ -202,7 +217,10 @@ HMainCommandGoToOffset (
   }
 
   while (1) {
-    Status = InputBarRefresh (HMainEditor.ScreenSize.Row, HMainEditor.ScreenSize.Column);
+    Status = InputBarRefresh (
+               HMainEditor.ScreenSize.Row,
+               HMainEditor.ScreenSize.Column
+               );
 
     //
     // ESC pressed
@@ -215,7 +233,12 @@ HMainCommandGoToOffset (
     // THE input string length should > 0
     //
     if (StrLen (InputBarGetString ()) > 0) {
-      Status = ShellConvertStringToUint64 (InputBarGetString (), &Offset, TRUE, FALSE);
+      Status = ShellConvertStringToUint64 (
+                 InputBarGetString (),
+                 &Offset,
+                 TRUE,
+                 FALSE
+                 );
       if (EFI_ERROR (Status)) {
         StatusBarSetStatusString (L"Invalid Offset");
         return EFI_SUCCESS;
@@ -270,7 +293,9 @@ HMainCommandSaveBuffer (
       return EFI_SUCCESS;
     }
 
-    Status = InputBarSetPrompt (L"Dangerous to save disk/mem buffer. Save (Yes/No/Cancel) ? ");
+    Status = InputBarSetPrompt (
+               L"Dangerous to save disk/mem buffer. Save (Yes/No/Cancel) ? "
+               );
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -288,7 +313,10 @@ HMainCommandSaveBuffer (
     // valid answer is just 'y' 'Y', 'n' 'N', 'c' 'C'
     //
     while (1) {
-      Status = InputBarRefresh (HMainEditor.ScreenSize.Row, HMainEditor.ScreenSize.Column);
+      Status = InputBarRefresh (
+                 HMainEditor.ScreenSize.Row,
+                 HMainEditor.ScreenSize.Column
+                 );
 
       //
       // ESC pressed
@@ -413,7 +441,10 @@ HMainCommandSaveBuffer (
   //
   // get new file name
   //
-  Status = InputBarRefresh (HMainEditor.ScreenSize.Row, HMainEditor.ScreenSize.Column);
+  Status = InputBarRefresh (
+             HMainEditor.ScreenSize.Row,
+             HMainEditor.ScreenSize.Column
+             );
 
   //
   // if user pressed ESC
@@ -471,7 +502,12 @@ HMainCommandSaveBuffer (
       return EFI_SUCCESS;
     }
   } else {
-    Status = ShellOpenFileByName (FileName, &ShellFileHandle, EFI_FILE_MODE_READ, 0);
+    Status = ShellOpenFileByName (
+               FileName,
+               &ShellFileHandle,
+               EFI_FILE_MODE_READ,
+               0
+               );
 
     if (!EFI_ERROR (Status)) {
       Info = ShellGetFileInfo (ShellFileHandle);
@@ -504,7 +540,10 @@ HMainCommandSaveBuffer (
 
       Done = FALSE;
       while (!Done) {
-        Status = InputBarRefresh (HMainEditor.ScreenSize.Row, HMainEditor.ScreenSize.Column);
+        Status = InputBarRefresh (
+                   HMainEditor.ScreenSize.Row,
+                   HMainEditor.ScreenSize.Column
+                   );
 
         if (Status == EFI_NOT_READY) {
           SHELL_FREE_NON_NULL (FileName);
@@ -564,13 +603,18 @@ HMainCommandSelectStart (
 {
   UINTN  Start;
 
-  Start = (HMainEditor.BufferImage->BufferPosition.Row - 1) * 0x10 + HMainEditor.BufferImage->BufferPosition.Column;
+  Start = (HMainEditor.BufferImage->BufferPosition.Row - 1) * 0x10 +
+          HMainEditor.BufferImage->BufferPosition.Column;
 
   //
   // last line
   //
-  if (HMainEditor.BufferImage->CurrentLine->Link.ForwardLink == HMainEditor.BufferImage->ListHead) {
-    if (HMainEditor.BufferImage->BufferPosition.Column > HMainEditor.BufferImage->CurrentLine->Size) {
+  if (HMainEditor.BufferImage->CurrentLine->Link.ForwardLink ==
+      HMainEditor.BufferImage->ListHead)
+  {
+    if (HMainEditor.BufferImage->BufferPosition.Column >
+        HMainEditor.BufferImage->CurrentLine->Size)
+    {
       StatusBarSetStatusString (L"Invalid Block Start");
       return EFI_LOAD_ERROR;
     }
@@ -602,13 +646,18 @@ HMainCommandSelectEnd (
 {
   UINTN  End;
 
-  End = (HMainEditor.BufferImage->BufferPosition.Row - 1) * 0x10 + HMainEditor.BufferImage->BufferPosition.Column;
+  End = (HMainEditor.BufferImage->BufferPosition.Row - 1) * 0x10 +
+        HMainEditor.BufferImage->BufferPosition.Column;
 
   //
   // last line
   //
-  if (HMainEditor.BufferImage->CurrentLine->Link.ForwardLink == HMainEditor.BufferImage->ListHead) {
-    if (HMainEditor.BufferImage->BufferPosition.Column > HMainEditor.BufferImage->CurrentLine->Size) {
+  if (HMainEditor.BufferImage->CurrentLine->Link.ForwardLink ==
+      HMainEditor.BufferImage->ListHead)
+  {
+    if (HMainEditor.BufferImage->BufferPosition.Column >
+        HMainEditor.BufferImage->CurrentLine->Size)
+    {
       StatusBarSetStatusString (L"Invalid Block End");
       return EFI_LOAD_ERROR;
     }
@@ -727,7 +776,9 @@ HMainCommandPaste (
   Line = HMainEditor.BufferImage->CurrentLine;
 
   OnlyLineRefresh = FALSE;
-  if ((Line->Link.ForwardLink == HMainEditor.BufferImage->ListHead) && (Line->Size + Count < 0x10)) {
+  if ((Line->Link.ForwardLink == HMainEditor.BufferImage->ListHead) &&
+      (Line->Size + Count < 0x10))
+  {
     //
     // is at last line, and after paste will not exceed
     // so only this line need to be refreshed
@@ -738,7 +789,8 @@ HMainCommandPaste (
     OnlyLineRefresh = TRUE;
   }
 
-  FPos = 0x10 * (HMainEditor.BufferImage->BufferPosition.Row - 1) + HMainEditor.BufferImage->BufferPosition.Column - 1;
+  FPos = 0x10 * (HMainEditor.BufferImage->BufferPosition.Row - 1) +
+         HMainEditor.BufferImage->BufferPosition.Column - 1;
 
   HBufferImageAddCharacterToBuffer (FPos, Count, Buffer);
 
@@ -801,7 +853,10 @@ HMainCommandExit (
     }
 
     while (1) {
-      Status = InputBarRefresh (HMainEditor.ScreenSize.Row, HMainEditor.ScreenSize.Column);
+      Status = InputBarRefresh (
+                 HMainEditor.ScreenSize.Row,
+                 HMainEditor.ScreenSize.Column
+                 );
 
       //
       // ESC pressed
@@ -915,7 +970,10 @@ HMainCommandOpenFile (
     //
     Done = FALSE;
     while (!Done) {
-      Status = InputBarRefresh (HMainEditor.ScreenSize.Row, HMainEditor.ScreenSize.Column);
+      Status = InputBarRefresh (
+                 HMainEditor.ScreenSize.Row,
+                 HMainEditor.ScreenSize.Column
+                 );
 
       //
       // ESC pressed
@@ -944,14 +1002,23 @@ HMainCommandOpenFile (
           }
 
           MainTitleBarRefresh (
-            HMainEditor.BufferImage->BufferType == FileTypeFileBuffer ? HMainEditor.BufferImage->FileImage->FileName : HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ? HMainEditor.BufferImage->DiskImage->Name : NULL,
+            HMainEditor.BufferImage->BufferType == FileTypeFileBuffer ?
+            HMainEditor.BufferImage->FileImage->FileName :
+            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ?
+            HMainEditor.BufferImage->DiskImage->Name : NULL,
             HMainEditor.BufferImage->BufferType,
             HMainEditor.BufferImage->FileImage->ReadOnly,
             FALSE,
             HMainEditor.ScreenSize.Column,
             HMainEditor.ScreenSize.Row,
-            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ? HMainEditor.BufferImage->DiskImage->Offset : HMainEditor.BufferImage->BufferType == FileTypeMemBuffer ? HMainEditor.BufferImage->MemImage->Offset : 0,
-            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ? HMainEditor.BufferImage->DiskImage->Size  : HMainEditor.BufferImage->BufferType == FileTypeMemBuffer ? HMainEditor.BufferImage->MemImage->Size  : 0
+            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ?
+            HMainEditor.BufferImage->DiskImage->Offset :
+            HMainEditor.BufferImage->BufferType == FileTypeMemBuffer ?
+            HMainEditor.BufferImage->MemImage->Offset : 0,
+            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ?
+            HMainEditor.BufferImage->DiskImage->Size  :
+            HMainEditor.BufferImage->BufferType == FileTypeMemBuffer ?
+            HMainEditor.BufferImage->MemImage->Size  : 0
             );
           Done = TRUE;
           break;
@@ -1005,7 +1072,10 @@ HMainCommandOpenFile (
   }
 
   while (1) {
-    Status = InputBarRefresh (HMainEditor.ScreenSize.Row, HMainEditor.ScreenSize.Column);
+    Status = InputBarRefresh (
+               HMainEditor.ScreenSize.Row,
+               HMainEditor.ScreenSize.Column
+               );
 
     //
     // ESC pressed
@@ -1136,7 +1206,10 @@ HMainCommandOpenDisk (
     //
     Done = FALSE;
     while (!Done) {
-      Status = InputBarRefresh (HMainEditor.ScreenSize.Row, HMainEditor.ScreenSize.Column);
+      Status = InputBarRefresh (
+                 HMainEditor.ScreenSize.Row,
+                 HMainEditor.ScreenSize.Column
+                 );
 
       //
       // ESC pressed
@@ -1165,14 +1238,23 @@ HMainCommandOpenDisk (
           }
 
           MainTitleBarRefresh (
-            HMainEditor.BufferImage->BufferType == FileTypeFileBuffer ? HMainEditor.BufferImage->FileImage->FileName : HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ? HMainEditor.BufferImage->DiskImage->Name : NULL,
+            HMainEditor.BufferImage->BufferType == FileTypeFileBuffer ?
+            HMainEditor.BufferImage->FileImage->FileName :
+            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ?
+            HMainEditor.BufferImage->DiskImage->Name : NULL,
             HMainEditor.BufferImage->BufferType,
             HMainEditor.BufferImage->FileImage->ReadOnly,
             FALSE,
             HMainEditor.ScreenSize.Column,
             HMainEditor.ScreenSize.Row,
-            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ? HMainEditor.BufferImage->DiskImage->Offset : HMainEditor.BufferImage->BufferType == FileTypeMemBuffer ? HMainEditor.BufferImage->MemImage->Offset : 0,
-            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ? HMainEditor.BufferImage->DiskImage->Size  : HMainEditor.BufferImage->BufferType == FileTypeMemBuffer ? HMainEditor.BufferImage->MemImage->Size  : 0
+            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ?
+            HMainEditor.BufferImage->DiskImage->Offset :
+            HMainEditor.BufferImage->BufferType == FileTypeMemBuffer ?
+            HMainEditor.BufferImage->MemImage->Offset : 0,
+            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ?
+            HMainEditor.BufferImage->DiskImage->Size  :
+            HMainEditor.BufferImage->BufferType == FileTypeMemBuffer ?
+            HMainEditor.BufferImage->MemImage->Size  : 0
             );
           Done = TRUE;
           break;
@@ -1206,7 +1288,10 @@ HMainCommandOpenDisk (
   }
 
   while (1) {
-    Status = InputBarRefresh (HMainEditor.ScreenSize.Row, HMainEditor.ScreenSize.Column);
+    Status = InputBarRefresh (
+               HMainEditor.ScreenSize.Row,
+               HMainEditor.ScreenSize.Column
+               );
 
     //
     // ESC pressed
@@ -1242,7 +1327,10 @@ HMainCommandOpenDisk (
   }
 
   while (1) {
-    Status = InputBarRefresh (HMainEditor.ScreenSize.Row, HMainEditor.ScreenSize.Column);
+    Status = InputBarRefresh (
+               HMainEditor.ScreenSize.Row,
+               HMainEditor.ScreenSize.Column
+               );
 
     //
     // ESC pressed
@@ -1255,7 +1343,12 @@ HMainCommandOpenDisk (
     // THE input string length should > 0
     //
     if (StrLen (InputBarGetString ()) > 0) {
-      Status = ShellConvertStringToUint64 (InputBarGetString (), &Offset, TRUE, FALSE);
+      Status = ShellConvertStringToUint64 (
+                 InputBarGetString (),
+                 &Offset,
+                 TRUE,
+                 FALSE
+                 );
       if (EFI_ERROR (Status)) {
         continue;
       }
@@ -1278,7 +1371,10 @@ HMainCommandOpenDisk (
   }
 
   while (1) {
-    Status = InputBarRefresh (HMainEditor.ScreenSize.Row, HMainEditor.ScreenSize.Column);
+    Status = InputBarRefresh (
+               HMainEditor.ScreenSize.Row,
+               HMainEditor.ScreenSize.Column
+               );
 
     //
     // ESC pressed
@@ -1291,7 +1387,12 @@ HMainCommandOpenDisk (
     // THE input string length should > 0
     //
     if (StrLen (InputBarGetString ()) > 0) {
-      Status = ShellConvertStringToUint64 (InputBarGetString (), &Size, TRUE, FALSE);
+      Status = ShellConvertStringToUint64 (
+                 InputBarGetString (),
+                 &Size,
+                 TRUE,
+                 FALSE
+                 );
       if (EFI_ERROR (Status)) {
         continue;
       }
@@ -1382,7 +1483,10 @@ HMainCommandOpenMemory (
     //
     Done = FALSE;
     while (!Done) {
-      Status = InputBarRefresh (HMainEditor.ScreenSize.Row, HMainEditor.ScreenSize.Column);
+      Status = InputBarRefresh (
+                 HMainEditor.ScreenSize.Row,
+                 HMainEditor.ScreenSize.Column
+                 );
 
       //
       // ESC pressed
@@ -1411,14 +1515,23 @@ HMainCommandOpenMemory (
           }
 
           MainTitleBarRefresh (
-            HMainEditor.BufferImage->BufferType == FileTypeFileBuffer ? HMainEditor.BufferImage->FileImage->FileName : HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ? HMainEditor.BufferImage->DiskImage->Name : NULL,
+            HMainEditor.BufferImage->BufferType == FileTypeFileBuffer ?
+            HMainEditor.BufferImage->FileImage->FileName :
+            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ?
+            HMainEditor.BufferImage->DiskImage->Name : NULL,
             HMainEditor.BufferImage->BufferType,
             HMainEditor.BufferImage->FileImage->ReadOnly,
             FALSE,
             HMainEditor.ScreenSize.Column,
             HMainEditor.ScreenSize.Row,
-            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ? HMainEditor.BufferImage->DiskImage->Offset : HMainEditor.BufferImage->BufferType == FileTypeMemBuffer ? HMainEditor.BufferImage->MemImage->Offset : 0,
-            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ? HMainEditor.BufferImage->DiskImage->Size  : HMainEditor.BufferImage->BufferType == FileTypeMemBuffer ? HMainEditor.BufferImage->MemImage->Size  : 0
+            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ?
+            HMainEditor.BufferImage->DiskImage->Offset :
+            HMainEditor.BufferImage->BufferType == FileTypeMemBuffer ?
+            HMainEditor.BufferImage->MemImage->Offset : 0,
+            HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer ?
+            HMainEditor.BufferImage->DiskImage->Size  :
+            HMainEditor.BufferImage->BufferType == FileTypeMemBuffer ?
+            HMainEditor.BufferImage->MemImage->Size  : 0
             );
           Done = TRUE;
           break;
@@ -1452,7 +1565,10 @@ HMainCommandOpenMemory (
   }
 
   while (1) {
-    Status = InputBarRefresh (HMainEditor.ScreenSize.Row, HMainEditor.ScreenSize.Column);
+    Status = InputBarRefresh (
+               HMainEditor.ScreenSize.Row,
+               HMainEditor.ScreenSize.Column
+               );
 
     //
     // ESC pressed
@@ -1465,7 +1581,12 @@ HMainCommandOpenMemory (
     // THE input string length should > 0
     //
     if (StrLen (InputBarGetString ()) > 0) {
-      Status = ShellConvertStringToUint64 (InputBarGetString (), &Offset, TRUE, FALSE);
+      Status = ShellConvertStringToUint64 (
+                 InputBarGetString (),
+                 &Offset,
+                 TRUE,
+                 FALSE
+                 );
       if (EFI_ERROR (Status)) {
         continue;
       }
@@ -1488,7 +1609,10 @@ HMainCommandOpenMemory (
   }
 
   while (1) {
-    Status = InputBarRefresh (HMainEditor.ScreenSize.Row, HMainEditor.ScreenSize.Column);
+    Status = InputBarRefresh (
+               HMainEditor.ScreenSize.Row,
+               HMainEditor.ScreenSize.Column
+               );
 
     //
     // ESC pressed
@@ -1501,7 +1625,12 @@ HMainCommandOpenMemory (
     // THE input string length should > 0
     //
     if (StrLen (InputBarGetString ()) > 0) {
-      Status = ShellConvertStringToUint64 (InputBarGetString (), &Size, TRUE, FALSE);
+      Status = ShellConvertStringToUint64 (
+                 InputBarGetString (),
+                 &Size,
+                 TRUE,
+                 FALSE
+                 );
       if (EFI_ERROR (Status)) {
         continue;
       }
@@ -1663,9 +1792,11 @@ HMainEditorInit (
   //
   // set screen attributes
   //
-  HMainEditor.ColorAttributes.Colors.Foreground = gST->ConOut->Mode->Attribute & 0x000000ff;
+  HMainEditor.ColorAttributes.Colors.Foreground = gST->ConOut->Mode->Attribute &
+                                                  0x000000ff;
 
-  HMainEditor.ColorAttributes.Colors.Background = (UINT8)(gST->ConOut->Mode->Attribute >> 4);
+  HMainEditor.ColorAttributes.Colors.Background =
+    (UINT8)(gST->ConOut->Mode->Attribute >> 4);
 
   HOriginalColors = HMainEditor.ColorAttributes.Colors;
 
@@ -1747,25 +1878,57 @@ HMainEditorInit (
   //
   Status = MainTitleBarInit (L"UEFI HEXEDIT");
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_HEXEDIT_LIBEDITOR_MAINEDITOR_TITLE), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_HEXEDIT_LIBEDITOR_MAINEDITOR_TITLE
+        ),
+      gShellDebug1HiiHandle
+      );
     return EFI_LOAD_ERROR;
   }
 
   Status = ControlHotKeyInit (HexMainControlBasedMenuFunctions);
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_HEXEDIT_LIBEDITOR_MAINEDITOR_MAINMENU), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_HEXEDIT_LIBEDITOR_MAINEDITOR_MAINMENU
+        ),
+      gShellDebug1HiiHandle
+      );
     return EFI_LOAD_ERROR;
   }
 
   Status = MenuBarInit (HexEditorMenuItems);
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_HEXEDIT_LIBEDITOR_MAINEDITOR_MAINMENU), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_HEXEDIT_LIBEDITOR_MAINEDITOR_MAINMENU
+        ),
+      gShellDebug1HiiHandle
+      );
     return EFI_LOAD_ERROR;
   }
 
   Status = StatusBarInit ();
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_HEXEDIT_LIBEDITOR_MAINEDITOR_STATUS), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_HEXEDIT_LIBEDITOR_MAINEDITOR_STATUS
+        ),
+      gShellDebug1HiiHandle
+      );
     return EFI_LOAD_ERROR;
   }
 
@@ -1773,13 +1936,29 @@ HMainEditorInit (
 
   Status = HBufferImageInit ();
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_HEXEDIT_LIBEDITOR_MAINEDITOR_BUFFERIMAGE), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_HEXEDIT_LIBEDITOR_MAINEDITOR_BUFFERIMAGE
+        ),
+      gShellDebug1HiiHandle
+      );
     return EFI_LOAD_ERROR;
   }
 
   Status = HClipBoardInit ();
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_HEXEDIT_LIBEDITOR_MAINEDITOR_CLIPBOARD), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_HEXEDIT_LIBEDITOR_MAINEDITOR_CLIPBOARD
+        ),
+      gShellDebug1HiiHandle
+      );
     return EFI_LOAD_ERROR;
   }
 
@@ -1825,12 +2004,28 @@ HMainEditorCleanup (
 
   Status = HBufferImageCleanup ();
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_HEXEDIT_LIBEDITOR_BUFFERIMAGE_CLEAN), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_HEXEDIT_LIBEDITOR_BUFFERIMAGE_CLEAN
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   Status = HClipBoardCleanup ();
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_HEXEDIT_LIBEDITOR_CLIPBOARD_CLEAN), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_HEXEDIT_LIBEDITOR_CLIPBOARD_CLEAN
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
@@ -1842,7 +2037,10 @@ HMainEditorCleanup (
 
   gST->ConOut->SetAttribute (
                  gST->ConOut,
-                 EFI_TEXT_ATTR (HOriginalColors.Foreground, HOriginalColors.Background)
+                 EFI_TEXT_ATTR (
+                   HOriginalColors.Foreground,
+                   HOriginalColors.Background
+                   )
                  );
   gST->ConOut->ClearScreen (gST->ConOut);
 
@@ -1868,16 +2066,20 @@ HMainEditorRefresh (
   if (HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer) {
     if ((HMainEditor.BufferImage->DiskImage != NULL) &&
         (HBufferImageBackupVar.DiskImage != NULL) &&
-        ((HMainEditor.BufferImage->DiskImage->Offset != HBufferImageBackupVar.DiskImage->Offset) ||
-         (HMainEditor.BufferImage->DiskImage->Size != HBufferImageBackupVar.DiskImage->Size)))
+        ((HMainEditor.BufferImage->DiskImage->Offset !=
+          HBufferImageBackupVar.DiskImage->Offset) ||
+         (HMainEditor.BufferImage->DiskImage->Size !=
+          HBufferImageBackupVar.DiskImage->Size)))
     {
       NameChange = TRUE;
     }
   } else if (HMainEditor.BufferImage->BufferType == FileTypeMemBuffer) {
     if ((HMainEditor.BufferImage->MemImage != NULL) &&
         (HBufferImageBackupVar.MemImage != NULL) &&
-        ((HMainEditor.BufferImage->MemImage->Offset != HBufferImageBackupVar.MemImage->Offset) ||
-         (HMainEditor.BufferImage->MemImage->Size != HBufferImageBackupVar.MemImage->Size)))
+        ((HMainEditor.BufferImage->MemImage->Offset !=
+          HBufferImageBackupVar.MemImage->Offset) ||
+         (HMainEditor.BufferImage->MemImage->Size !=
+          HBufferImageBackupVar.MemImage->Size)))
     {
       NameChange = TRUE;
     }
@@ -1886,7 +2088,10 @@ HMainEditorRefresh (
         (HMainEditor.BufferImage->FileImage->FileName != NULL) &&
         (HBufferImageBackupVar.FileImage != NULL) &&
         (HBufferImageBackupVar.FileImage->FileName != NULL) &&
-        (StrCmp (HMainEditor.BufferImage->FileImage->FileName, HBufferImageBackupVar.FileImage->FileName) != 0))
+        (StrCmp (
+           HMainEditor.BufferImage->FileImage->FileName,
+           HBufferImageBackupVar.FileImage->FileName
+           ) != 0))
     {
       NameChange = TRUE;
     }
@@ -1894,7 +2099,8 @@ HMainEditorRefresh (
 
   if ((HMainEditor.BufferImage->FileImage != NULL) &&
       (HBufferImageBackupVar.FileImage != NULL) &&
-      (HMainEditor.BufferImage->FileImage->ReadOnly != HBufferImageBackupVar.FileImage->ReadOnly))
+      (HMainEditor.BufferImage->FileImage->ReadOnly !=
+       HBufferImageBackupVar.FileImage->ReadOnly))
   {
     ReadChange = TRUE;
   }
@@ -1910,26 +2116,45 @@ HMainEditorRefresh (
   //
   if (  HEditorFirst
      || NameChange
-     || (HMainEditor.BufferImage->BufferType != HBufferImageBackupVar.BufferType)
+     || (HMainEditor.BufferImage->BufferType !=
+         HBufferImageBackupVar.BufferType)
      || (HBufferImageBackupVar.Modified != HMainEditor.BufferImage->Modified)
      || ReadChange )
   {
     MainTitleBarRefresh (
-      HMainEditor.BufferImage->BufferType == FileTypeFileBuffer && HMainEditor.BufferImage->FileImage != NULL ? HMainEditor.BufferImage->FileImage->FileName : HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer && HMainEditor.BufferImage->DiskImage != NULL ? HMainEditor.BufferImage->DiskImage->Name : NULL,
+      HMainEditor.BufferImage->BufferType == FileTypeFileBuffer &&
+      HMainEditor.BufferImage->FileImage != NULL ?
+      HMainEditor.BufferImage->FileImage->FileName :
+      HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer &&
+      HMainEditor.BufferImage->DiskImage != NULL ?
+      HMainEditor.BufferImage->DiskImage->Name : NULL,
       HMainEditor.BufferImage->BufferType,
-      (BOOLEAN)(HMainEditor.BufferImage->FileImage != NULL ? HMainEditor.BufferImage->FileImage->ReadOnly : FALSE),
+      (BOOLEAN)(HMainEditor.BufferImage->FileImage != NULL ?
+                HMainEditor.BufferImage->FileImage->ReadOnly : FALSE),
       HMainEditor.BufferImage->Modified,
       HMainEditor.ScreenSize.Column,
       HMainEditor.ScreenSize.Row,
-      HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer && HMainEditor.BufferImage->DiskImage != NULL ? HMainEditor.BufferImage->DiskImage->Offset : HMainEditor.BufferImage->BufferType == FileTypeMemBuffer && HMainEditor.BufferImage->MemImage != NULL ? HMainEditor.BufferImage->MemImage->Offset : 0,
-      HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer && HMainEditor.BufferImage->DiskImage != NULL ? HMainEditor.BufferImage->DiskImage->Size  : HMainEditor.BufferImage->BufferType == FileTypeMemBuffer && HMainEditor.BufferImage->MemImage != NULL ? HMainEditor.BufferImage->MemImage->Size  : 0
+      HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer &&
+      HMainEditor.BufferImage->DiskImage != NULL ?
+      HMainEditor.BufferImage->DiskImage->Offset :
+      HMainEditor.BufferImage->BufferType == FileTypeMemBuffer &&
+      HMainEditor.BufferImage->MemImage != NULL ?
+      HMainEditor.BufferImage->MemImage->Offset : 0,
+      HMainEditor.BufferImage->BufferType == FileTypeDiskBuffer &&
+      HMainEditor.BufferImage->DiskImage != NULL ?
+      HMainEditor.BufferImage->DiskImage->Size  :
+      HMainEditor.BufferImage->BufferType == FileTypeMemBuffer &&
+      HMainEditor.BufferImage->MemImage != NULL ?
+      HMainEditor.BufferImage->MemImage->Size  : 0
       );
     HBufferImageRefresh ();
   }
 
   if (  HEditorFirst
-     || (HBufferImageBackupVar.DisplayPosition.Row != HMainEditor.BufferImage->DisplayPosition.Row)
-     || (HBufferImageBackupVar.DisplayPosition.Column != HMainEditor.BufferImage->DisplayPosition.Column)
+     || (HBufferImageBackupVar.DisplayPosition.Row !=
+         HMainEditor.BufferImage->DisplayPosition.Row)
+     || (HBufferImageBackupVar.DisplayPosition.Column !=
+         HMainEditor.BufferImage->DisplayPosition.Column)
      || StatusBarGetRefresh ())
   {
     StatusBarRefresh (
@@ -2084,9 +2309,11 @@ HMainEditorHandleMouseInput (
 
     HBufferImageMovePosition (FRow, FCol, HighBits);
 
-    HMainEditor.BufferImage->MousePosition.Row = HMainEditor.BufferImage->DisplayPosition.Row;
+    HMainEditor.BufferImage->MousePosition.Row =
+      HMainEditor.BufferImage->DisplayPosition.Row;
 
-    HMainEditor.BufferImage->MousePosition.Column = HMainEditor.BufferImage->DisplayPosition.Column;
+    HMainEditor.BufferImage->MousePosition.Column =
+      HMainEditor.BufferImage->DisplayPosition.Column;
 
     *BeforeLeftButtonDown = TRUE;
 
@@ -2204,7 +2431,9 @@ HMainEditorKeyInput (
             //
             if (MouseIsDown) {
               if (FirstDown) {
-                if (MouseState.RelativeMovementX || MouseState.RelativeMovementY) {
+                if (MouseState.RelativeMovementX ||
+                    MouseState.RelativeMovementY)
+                {
                   HMainEditor.SelectStart = 0;
                   HMainEditor.SelectEnd   = 0;
                   HMainEditor.SelectStart = (FRow - 1) * 0x10 + FCol;
@@ -2220,7 +2449,8 @@ HMainEditorKeyInput (
                      ) >= HMainEditor.SelectStart
                     )
                 {
-                  HMainEditor.SelectEnd = (HBufferImage.BufferPosition.Row - 1) *
+                  HMainEditor.SelectEnd = (HBufferImage.BufferPosition.Row -
+                                           1) *
                                           0x10 +
                                           HBufferImage.BufferPosition.Column;
                 } else {
@@ -2250,7 +2480,8 @@ HMainEditorKeyInput (
                      ) >= HMainEditor.SelectStart
                     )
                 {
-                  HMainEditor.SelectEnd = (HBufferImage.BufferPosition.Row - 1) *
+                  HMainEditor.SelectEnd = (HBufferImage.BufferPosition.Row -
+                                           1) *
                                           0x10 +
                                           HBufferImage.BufferPosition.Column;
                 } else {
@@ -2266,11 +2497,17 @@ HMainEditorKeyInput (
               MouseDrag = FALSE;
             }
 
-            if ((SelectStartBackup != HMainEditor.SelectStart) || (SelectEndBackup != HMainEditor.SelectEnd)) {
-              if ((SelectStartBackup - 1) / 0x10 != (HMainEditor.SelectStart - 1) / 0x10) {
+            if ((SelectStartBackup != HMainEditor.SelectStart) ||
+                (SelectEndBackup != HMainEditor.SelectEnd))
+            {
+              if ((SelectStartBackup - 1) / 0x10 != (HMainEditor.SelectStart -
+                                                     1) / 0x10)
+              {
                 HBufferImageNeedRefresh = TRUE;
               } else {
-                if ((SelectEndBackup - 1) / 0x10 != (HMainEditor.SelectEnd - 1) / 0x10) {
+                if ((SelectEndBackup - 1) / 0x10 != (HMainEditor.SelectEnd -
+                                                     1) / 0x10)
+                {
                   HBufferImageNeedRefresh = TRUE;
                 } else {
                   HBufferImageOnlyLineNeedRefresh = TRUE;
@@ -2292,7 +2529,10 @@ HMainEditorKeyInput (
     //
     Status = gBS->CheckEvent (HMainEditor.TextInputEx->WaitForKeyEx);
     if (!EFI_ERROR (Status)) {
-      Status = HMainEditor.TextInputEx->ReadKeyStrokeEx (HMainEditor.TextInputEx, &KeyData);
+      Status = HMainEditor.TextInputEx->ReadKeyStrokeEx (
+                                          HMainEditor.TextInputEx,
+                                          &KeyData
+                                          );
       if (!EFI_ERROR (Status)) {
         //
         // dispatch to different components' key handling function
@@ -2307,7 +2547,10 @@ HMainEditorKeyInput (
         //
         // NoShiftState: TRUE when no shift key is pressed.
         //
-        NoShiftState = ((KeyData.KeyState.KeyShiftState & EFI_SHIFT_STATE_VALID) == 0) || (KeyData.KeyState.KeyShiftState == EFI_SHIFT_STATE_VALID);
+        NoShiftState = ((KeyData.KeyState.KeyShiftState &
+                         EFI_SHIFT_STATE_VALID) == 0) ||
+                       (KeyData.KeyState.KeyShiftState ==
+                        EFI_SHIFT_STATE_VALID);
         //
         // dispatch to different components' key handling function
         //
@@ -2315,9 +2558,13 @@ HMainEditorKeyInput (
           Status = EFI_SUCCESS;
         } else if (NoShiftState && (KeyData.Key.ScanCode == SCAN_NULL)) {
           Status = HBufferImageHandleInput (&KeyData.Key);
-        } else if (NoShiftState && ((KeyData.Key.ScanCode >= SCAN_UP) && (KeyData.Key.ScanCode <= SCAN_PAGE_DOWN))) {
+        } else if (NoShiftState && ((KeyData.Key.ScanCode >= SCAN_UP) &&
+                                    (KeyData.Key.ScanCode <= SCAN_PAGE_DOWN)))
+        {
           Status = HBufferImageHandleInput (&KeyData.Key);
-        } else if (NoShiftState && ((KeyData.Key.ScanCode >= SCAN_F1) && (KeyData.Key.ScanCode <= SCAN_F12))) {
+        } else if (NoShiftState && ((KeyData.Key.ScanCode >= SCAN_F1) &&
+                                    (KeyData.Key.ScanCode <= SCAN_F12)))
+        {
           Status = MenuBarDispatchFunctionKey (&KeyData.Key);
         } else {
           StatusBarSetStatusString (L"Unknown Command");
@@ -2349,7 +2596,8 @@ HMainEditorKeyInput (
 
           switch (HBufferImage.BufferType) {
             case FileTypeDiskBuffer:
-              OldSize = HBufferImage.DiskImage->Size * HBufferImage.DiskImage->BlockSize;
+              OldSize = HBufferImage.DiskImage->Size *
+                        HBufferImage.DiskImage->BlockSize;
               break;
 
             case FileTypeMemBuffer:
@@ -2363,7 +2611,9 @@ HMainEditorKeyInput (
 
           if (!LengthChange) {
             if (OldSize != Size) {
-              StatusBarSetStatusString (L"Disk/Mem Buffer Length should not be changed");
+              StatusBarSetStatusString (
+                L"Disk/Mem Buffer Length should not be changed"
+                );
             }
           }
 

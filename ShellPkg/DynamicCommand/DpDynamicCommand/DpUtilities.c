@@ -275,7 +275,12 @@ DpGetNameFromHandle (
     //
     // Firstly use platform language setting, secondly use driver's first supported language.
     //
-    GetVariable2 (L"PlatformLang", &gEfiGlobalVariableGuid, (VOID **)&PlatformLanguage, NULL);
+    GetVariable2 (
+      L"PlatformLang",
+      &gEfiGlobalVariableGuid,
+      (VOID **)&PlatformLanguage,
+      NULL
+      );
     BestLanguage = GetBestLanguage (
                      ComponentName2->SupportedLanguages,
                      FALSE,
@@ -292,7 +297,12 @@ DpGetNameFromHandle (
                                );
     if (!EFI_ERROR (Status)) {
       SHELL_FREE_NON_NULL (BestLanguage);
-      StrnCpyS (mGaugeString, DP_GAUGE_STRING_LENGTH + 1, StringPtr, DP_GAUGE_STRING_LENGTH);
+      StrnCpyS (
+        mGaugeString,
+        DP_GAUGE_STRING_LENGTH + 1,
+        StringPtr,
+        DP_GAUGE_STRING_LENGTH
+        );
       mGaugeString[DP_GAUGE_STRING_LENGTH] = 0;
       return;
     }
@@ -315,7 +325,9 @@ DpGetNameFromHandle (
     //
     NameGuid = NULL;
     while (!IsDevicePathEndType (DevicePath)) {
-      NameGuid = EfiGetNameGuidFromFwVolDevicePathNode ((MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)DevicePath);
+      NameGuid = EfiGetNameGuidFromFwVolDevicePathNode (
+                   (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)DevicePath
+                   );
       if (NameGuid != NULL) {
         break;
       }
@@ -341,7 +353,12 @@ DpGetNameFromHandle (
         //
         // Method 3. Get the name string from FFS UI section
         //
-        StrnCpyS (mGaugeString, DP_GAUGE_STRING_LENGTH + 1, NameString, DP_GAUGE_STRING_LENGTH);
+        StrnCpyS (
+          mGaugeString,
+          DP_GAUGE_STRING_LENGTH + 1,
+          NameString,
+          DP_GAUGE_STRING_LENGTH
+          );
         mGaugeString[DP_GAUGE_STRING_LENGTH] = 0;
         FreePool (NameString);
       } else {
@@ -358,7 +375,12 @@ DpGetNameFromHandle (
       //
       NameString = ConvertDevicePathToText (DevicePath, TRUE, FALSE);
       if (NameString != NULL) {
-        StrnCpyS (mGaugeString, DP_GAUGE_STRING_LENGTH + 1, NameString, DP_GAUGE_STRING_LENGTH);
+        StrnCpyS (
+          mGaugeString,
+          DP_GAUGE_STRING_LENGTH + 1,
+          NameString,
+          DP_GAUGE_STRING_LENGTH
+          );
         mGaugeString[DP_GAUGE_STRING_LENGTH] = 0;
         FreePool (NameString);
         return;
@@ -369,9 +391,18 @@ DpGetNameFromHandle (
   //
   // Method 6: Unknown Driver Name
   //
-  StringPtr = HiiGetString (mDpHiiHandle, STRING_TOKEN (STR_DP_ERROR_NAME), NULL);
+  StringPtr = HiiGetString (
+                mDpHiiHandle,
+                STRING_TOKEN (STR_DP_ERROR_NAME),
+                NULL
+                );
   ASSERT (StringPtr != NULL);
-  StrnCpyS (mGaugeString, DP_GAUGE_STRING_LENGTH + 1, StringPtr, DP_GAUGE_STRING_LENGTH);
+  StrnCpyS (
+    mGaugeString,
+    DP_GAUGE_STRING_LENGTH + 1,
+    StringPtr,
+    DP_GAUGE_STRING_LENGTH
+    );
   FreePool (StringPtr);
 }
 

@@ -35,7 +35,9 @@ IsNumberLetterOnly (
 {
   UINTN  Count;
 
-  for (Count = 0; Count < Len && String != NULL && *String != CHAR_NULL; String++, Count++) {
+  for (Count = 0; Count < Len && String != NULL && *String != CHAR_NULL;
+       String++, Count++)
+  {
     if (!(((*String >= L'a') && (*String <= L'z')) ||
           ((*String >= L'A') && (*String <= L'Z')) ||
           ((*String >= L'0') && (*String <= L'9')))
@@ -88,7 +90,11 @@ SearchList (
       *TempSpot = CHAR_NULL;
     }
 
-    while (SkipTrailingNumbers && (ShellIsDecimalDigitCharacter (TempList[StrLen (TempList)-1]) || TempList[StrLen (TempList)-1] == L':')) {
+    while (SkipTrailingNumbers && (ShellIsDecimalDigitCharacter (
+                                     TempList[StrLen (TempList)-1]
+                                     ) || TempList[StrLen (TempList)-1] ==
+                                   L':'))
+    {
       TempList[StrLen (TempList)-1] = CHAR_NULL;
     }
 
@@ -98,7 +104,11 @@ SearchList (
     }
 
     if (Meta) {
-      Result = gUnicodeCollation->MetaiMatch (gUnicodeCollation, (CHAR16 *)TempList, (CHAR16 *)MetaTarget);
+      Result = gUnicodeCollation->MetaiMatch (
+                                    gUnicodeCollation,
+                                    (CHAR16 *)TempList,
+                                    (CHAR16 *)MetaTarget
+                                    );
     } else {
       Result = (BOOLEAN)(StrCmp (TempList, MetaTarget) == 0);
     }
@@ -147,26 +157,59 @@ GetDeviceMediaType (
   //    Acpi.HID = 0X0604        ->       Floppy
   //
   if (NULL == DevicePath) {
-    return HiiGetString (gShellLevel2HiiHandle, STRING_TOKEN (STR_MAP_MEDIA_UNKNOWN), NULL);
+    return HiiGetString (
+             gShellLevel2HiiHandle,
+             STRING_TOKEN (
+               STR_MAP_MEDIA_UNKNOWN
+               ),
+             NULL
+             );
   }
 
-  for ( ; !IsDevicePathEndType (DevicePath); DevicePath = NextDevicePathNode (DevicePath)) {
+  for ( ; !IsDevicePathEndType (DevicePath); DevicePath = NextDevicePathNode (
+                                                            DevicePath
+                                                            ))
+  {
     if (DevicePathType (DevicePath) == MEDIA_DEVICE_PATH) {
       switch (DevicePathSubType (DevicePath)) {
         case MEDIA_HARDDRIVE_DP:
-          return HiiGetString (gShellLevel2HiiHandle, STRING_TOKEN (STR_MAP_MEDIA_HARDDISK), NULL);
+          return HiiGetString (
+                   gShellLevel2HiiHandle,
+                   STRING_TOKEN (
+                     STR_MAP_MEDIA_HARDDISK
+                     ),
+                   NULL
+                   );
         case MEDIA_CDROM_DP:
-          return HiiGetString (gShellLevel2HiiHandle, STRING_TOKEN (STR_MAP_MEDIA_CDROM), NULL);
+          return HiiGetString (
+                   gShellLevel2HiiHandle,
+                   STRING_TOKEN (
+                     STR_MAP_MEDIA_CDROM
+                     ),
+                   NULL
+                   );
       }
     } else if (DevicePathType (DevicePath) == ACPI_DEVICE_PATH) {
       Acpi = (ACPI_HID_DEVICE_PATH *)DevicePath;
       if (EISA_ID_TO_NUM (Acpi->HID) == 0x0604) {
-        return HiiGetString (gShellLevel2HiiHandle, STRING_TOKEN (STR_MAP_MEDIA_FLOPPY), NULL);
+        return HiiGetString (
+                 gShellLevel2HiiHandle,
+                 STRING_TOKEN (
+                   STR_MAP_MEDIA_FLOPPY
+                   ),
+                 NULL
+                 );
       }
     }
   }
 
-  return HiiGetString (gShellLevel2HiiHandle, STRING_TOKEN (STR_MAP_MEDIA_UNKNOWN), NULL);
+  return HiiGetString (
+           gShellLevel2HiiHandle,
+           STRING_TOKEN (
+             STR_MAP_MEDIA_UNKNOWN
+             ),
+           NULL
+           );
 }
 
 /**
@@ -276,7 +319,15 @@ MappingListHasType (
     return (TRUE);
   }
 
-  if ((TypeString != NULL) && SearchList (MapList, TypeString, NULL, TRUE, TRUE, L";")) {
+  if ((TypeString != NULL) && SearchList (
+                                MapList,
+                                TypeString,
+                                NULL,
+                                TRUE,
+                                TRUE,
+                                L";"
+                                ))
+  {
     return (TRUE);
   }
 
@@ -425,7 +476,8 @@ PerformSingleMappingDisplay (
       STRING_TOKEN (STR_MAP_ENTRY),
       gShellLevel2HiiHandle,
       CurrentName,
-      Alias != NULL ? Alias : (TempLen < StrLen (MapList) ? MapList + TempLen+1 : L""),
+      Alias != NULL ? Alias : (TempLen < StrLen (MapList) ? MapList + TempLen+
+                               1 : L""),
       DevPathString
       );
     if (Verbose) {
@@ -433,7 +485,12 @@ PerformSingleMappingDisplay (
       // also print handle, media type, removable (y/n), and current directory
       //
       MediaType = GetDeviceMediaType (DevPath);
-      if (((TypeString != NULL) && (MediaType != NULL) && (StrStr (TypeString, MediaType) != NULL)) || (TypeString == NULL)) {
+      if (((TypeString != NULL) && (MediaType != NULL) && (StrStr (
+                                                             TypeString,
+                                                             MediaType
+                                                             ) != NULL)) ||
+          (TypeString == NULL))
+      {
         Removable = IsRemoveableDevice (DevPath);
         TempSpot2 = ShellGetCurrentDir (CurrentName);
         ShellPrintHiiEx (
@@ -551,7 +608,14 @@ PerformMappingDisplay (
   BOOLEAN     Found;
 
   if (!Consist && !Normal && (Specific == NULL) && (TypeString == NULL)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_FEW), gShellLevel2HiiHandle, L"map");
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_GEN_TOO_FEW),
+      gShellLevel2HiiHandle,
+      L"map"
+      );
     return (SHELL_INVALID_PARAMETER);
   }
 
@@ -562,7 +626,15 @@ PerformMappingDisplay (
       if (StrnCmp (TypeString, Test, StrLen (Test)-1) != 0) {
         Test = (CHAR16 *)Fp;
         if (StrnCmp (TypeString, Test, StrLen (Test)-1) != 0) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel2HiiHandle, L"map", TypeString);
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_PARAM_INV),
+            gShellLevel2HiiHandle,
+            L"map",
+            TypeString
+            );
           return (SHELL_INVALID_PARAMETER);
         }
       } else if (Test == NULL) {
@@ -578,9 +650,22 @@ PerformMappingDisplay (
     // Print the header
     //
     if (!SFO) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_MAP_HEADER), gShellLevel2HiiHandle);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_MAP_HEADER),
+        gShellLevel2HiiHandle
+        );
     } else {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_SFO_HEADER), gShellLevel2HiiHandle, L"map");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_SFO_HEADER),
+        gShellLevel2HiiHandle,
+        L"map"
+        );
     }
   }
 
@@ -703,9 +788,24 @@ PerformMappingDisplay (
 
   if (!Found) {
     if (Specific != NULL) {
-      ShellPrintHiiEx (gST->ConOut->Mode->CursorColumn, gST->ConOut->Mode->CursorRow-1, NULL, STRING_TOKEN (STR_MAP_NF), gShellLevel2HiiHandle, L"map", Specific);
+      ShellPrintHiiEx (
+        gST->ConOut->Mode->CursorColumn,
+        gST->ConOut->Mode->CursorRow-1,
+        NULL,
+        STRING_TOKEN (STR_MAP_NF),
+        gShellLevel2HiiHandle,
+        L"map",
+        Specific
+        );
     } else {
-      ShellPrintHiiEx (gST->ConOut->Mode->CursorColumn, gST->ConOut->Mode->CursorRow-1, NULL, STRING_TOKEN (STR_CD_NF), gShellLevel2HiiHandle, L"map");
+      ShellPrintHiiEx (
+        gST->ConOut->Mode->CursorColumn,
+        gST->ConOut->Mode->CursorRow-1,
+        NULL,
+        STRING_TOKEN (STR_CD_NF),
+        gShellLevel2HiiHandle,
+        L"map"
+        );
     }
   }
 
@@ -741,26 +841,68 @@ PerformMappingDisplay2 (
   CHAR16        *Comma;
 
   if (TypeString == NULL) {
-    return (PerformMappingDisplay (Verbose, Consist, Normal, NULL, SFO, Specific, TRUE));
+    return (PerformMappingDisplay (
+              Verbose,
+              Consist,
+              Normal,
+              NULL,
+              SFO,
+              Specific,
+              TRUE
+              ));
   }
 
   ShellStatus = SHELL_SUCCESS;
-  for (TypeWalker = TypeString; TypeWalker != NULL && *TypeWalker != CHAR_NULL;) {
+  for (TypeWalker = TypeString; TypeWalker != NULL && *TypeWalker != CHAR_NULL;
+       )
+  {
     Comma = StrStr (TypeWalker, L",");
     if (Comma == NULL) {
       if (ShellStatus == SHELL_SUCCESS) {
-        ShellStatus = PerformMappingDisplay (Verbose, Consist, Normal, TypeWalker, SFO, Specific, (BOOLEAN)(TypeWalker == TypeString));
+        ShellStatus = PerformMappingDisplay (
+                        Verbose,
+                        Consist,
+                        Normal,
+                        TypeWalker,
+                        SFO,
+                        Specific,
+                        (BOOLEAN)(TypeWalker == TypeString)
+                        );
       } else {
-        PerformMappingDisplay (Verbose, Consist, Normal, TypeWalker, SFO, Specific, (BOOLEAN)(TypeWalker == TypeString));
+        PerformMappingDisplay (
+          Verbose,
+          Consist,
+          Normal,
+          TypeWalker,
+          SFO,
+          Specific,
+          (BOOLEAN)(TypeWalker == TypeString)
+          );
       }
 
       break;
     } else {
       *Comma = CHAR_NULL;
       if (ShellStatus == SHELL_SUCCESS) {
-        ShellStatus = PerformMappingDisplay (Verbose, Consist, Normal, TypeWalker, SFO, Specific, (BOOLEAN)(TypeWalker == TypeString));
+        ShellStatus = PerformMappingDisplay (
+                        Verbose,
+                        Consist,
+                        Normal,
+                        TypeWalker,
+                        SFO,
+                        Specific,
+                        (BOOLEAN)(TypeWalker == TypeString)
+                        );
       } else {
-        PerformMappingDisplay (Verbose, Consist, Normal, TypeWalker, SFO, Specific, (BOOLEAN)(TypeWalker == TypeString));
+        PerformMappingDisplay (
+          Verbose,
+          Consist,
+          Normal,
+          TypeWalker,
+          SFO,
+          Specific,
+          (BOOLEAN)(TypeWalker == TypeString)
+          );
       }
 
       *Comma     = L',';
@@ -838,7 +980,9 @@ PerformMappingDelete (
           ; LoopVar++
           )
     {
-      if (PerformSingleMappingDelete (Specific, HandleBuffer[LoopVar]) == SHELL_SUCCESS) {
+      if (PerformSingleMappingDelete (Specific, HandleBuffer[LoopVar]) ==
+          SHELL_SUCCESS)
+      {
         Deleted = TRUE;
       }
     }
@@ -899,7 +1043,9 @@ PerformMappingDelete (
         continue;
       }
 
-      if (PerformSingleMappingDelete (Specific, HandleBuffer[LoopVar]) == SHELL_SUCCESS) {
+      if (PerformSingleMappingDelete (Specific, HandleBuffer[LoopVar]) ==
+          SHELL_SUCCESS)
+      {
         Deleted = TRUE;
       }
     }
@@ -943,7 +1089,13 @@ AddMappingFromMapping (
   }
 
   if (NewSName[StrLen (NewSName)-1] != L':') {
-    StrRetStatus = StrnCatS (NewSName, (StrSize (SName) + sizeof (CHAR16))/sizeof (CHAR16), L":", StrLen (L":"));
+    StrRetStatus = StrnCatS (
+                     NewSName,
+                     (StrSize (SName) + sizeof (CHAR16))/
+                     sizeof (CHAR16),
+                     L":",
+                     StrLen (L":")
+                     );
     if (EFI_ERROR (StrRetStatus)) {
       FreePool (NewSName);
       return ((SHELL_STATUS)(StrRetStatus & (~MAX_BIT)));
@@ -1001,7 +1153,13 @@ AddMappingFromHandle (
   }
 
   if (NewSName[StrLen (NewSName)-1] != L':') {
-    StrRetStatus = StrnCatS (NewSName, (StrSize (SName) + sizeof (CHAR16))/sizeof (CHAR16), L":", StrLen (L":"));
+    StrRetStatus = StrnCatS (
+                     NewSName,
+                     (StrSize (SName) + sizeof (CHAR16))/
+                     sizeof (CHAR16),
+                     L":",
+                     StrLen (L":")
+                     );
     if (EFI_ERROR (StrRetStatus)) {
       FreePool (NewSName);
       return ((SHELL_STATUS)(StrRetStatus & (~MAX_BIT)));
@@ -1036,15 +1194,15 @@ AddMappingFromHandle (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  MapParamList[] = {
-  { L"-d",   TypeValue },
-  { L"-r",   TypeFlag  },
-  { L"-v",   TypeFlag  },
-  { L"-c",   TypeFlag  },
-  { L"-f",   TypeFlag  },
-  { L"-u",   TypeFlag  },
-  { L"-t",   TypeValue },
-  { L"-sfo", TypeValue },
-  { NULL,    TypeMax   }
+  { L"-d",   TypeValue       },
+  { L"-r",   TypeFlag        },
+  { L"-v",   TypeFlag        },
+  { L"-c",   TypeFlag        },
+  { L"-f",   TypeFlag        },
+  { L"-u",   TypeFlag        },
+  { L"-t",   TypeValue       },
+  { L"-sfo", TypeValue       },
+  { NULL,    TypeMax         }
 };
 
 /**
@@ -1146,7 +1304,15 @@ ShellCommandRunMap (
   Status = ShellCommandLineParse (MapParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel2HiiHandle, L"map", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel2HiiHandle,
+        L"map",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -1162,7 +1328,14 @@ ShellCommandRunMap (
     if (ShellCommandLineGetFlag (Package, L"-?")) {
       ASSERT (FALSE);
     } else if (ShellCommandLineGetRawValue (Package, 3) != NULL) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel2HiiHandle, L"map");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellLevel2HiiHandle,
+        L"map"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       //
@@ -1177,7 +1350,14 @@ ShellCommandRunMap (
            || ShellCommandLineGetFlag (Package, L"-t")
               )
         {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_CON), gShellLevel2HiiHandle, L"map");
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_PARAM_CON),
+            gShellLevel2HiiHandle,
+            L"map"
+            );
           ShellStatus = SHELL_INVALID_PARAMETER;
         } else {
           SName = ShellCommandLineGetValue (Package, L"-d");
@@ -1185,18 +1365,48 @@ ShellCommandRunMap (
             Status = PerformMappingDelete (SName);
             if (EFI_ERROR (Status)) {
               if (Status == EFI_ACCESS_DENIED) {
-                ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_ERR_AD), gShellLevel2HiiHandle, L"map");
+                ShellPrintHiiEx (
+                  -1,
+                  -1,
+                  NULL,
+                  STRING_TOKEN (STR_GEN_ERR_AD),
+                  gShellLevel2HiiHandle,
+                  L"map"
+                  );
                 ShellStatus = SHELL_ACCESS_DENIED;
               } else if (Status == EFI_NOT_FOUND) {
-                ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_MAP_NF), gShellLevel2HiiHandle, L"map", SName);
+                ShellPrintHiiEx (
+                  -1,
+                  -1,
+                  NULL,
+                  STRING_TOKEN (STR_MAP_NF),
+                  gShellLevel2HiiHandle,
+                  L"map",
+                  SName
+                  );
                 ShellStatus = SHELL_INVALID_PARAMETER;
               } else {
-                ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_ERR_UK), gShellLevel2HiiHandle, L"map", Status);
+                ShellPrintHiiEx (
+                  -1,
+                  -1,
+                  NULL,
+                  STRING_TOKEN (STR_GEN_ERR_UK),
+                  gShellLevel2HiiHandle,
+                  L"map",
+                  Status
+                  );
                 ShellStatus = SHELL_UNSUPPORTED;
               }
             }
           } else {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_FEW), gShellLevel2HiiHandle, L"map");
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_TOO_FEW),
+              gShellLevel2HiiHandle,
+              L"map"
+              );
             ShellStatus = SHELL_INVALID_PARAMETER;
           }
         }
@@ -1215,18 +1425,38 @@ ShellCommandRunMap (
           //
           Status = ShellCommandCreateInitialMappingsAndPaths ();
           if (EFI_ERROR (Status)) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_ERR_UK), gShellLevel2HiiHandle, L"map", Status);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_ERR_UK),
+              gShellLevel2HiiHandle,
+              L"map",
+              Status
+              );
             ShellStatus = SHELL_UNSUPPORTED;
           }
         }
 
-        if ((ShellStatus == SHELL_SUCCESS) && ShellCommandLineGetFlag (Package, L"-u")) {
+        if ((ShellStatus == SHELL_SUCCESS) && ShellCommandLineGetFlag (
+                                                Package,
+                                                L"-u"
+                                                ))
+        {
           //
           // Do the Update
           //
           Status = ShellCommandUpdateMapping ();
           if (EFI_ERROR (Status)) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_ERR_UK), gShellLevel2HiiHandle, L"map", Status);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_ERR_UK),
+              gShellLevel2HiiHandle,
+              L"map",
+              Status
+              );
             ShellStatus = SHELL_UNSUPPORTED;
           }
         }
@@ -1305,18 +1535,43 @@ ShellCommandRunMap (
                           );
         } else {
           if (ShellIsHexOrDecimalNumber (Mapping, TRUE, FALSE)) {
-            MapAsHandle = ConvertHandleIndexToHandle (ShellStrToUintn (Mapping));
+            MapAsHandle = ConvertHandleIndexToHandle (
+                            ShellStrToUintn (
+                              Mapping
+                              )
+                            );
           } else {
             MapAsHandle = NULL;
           }
 
           if ((MapAsHandle == NULL) && (Mapping[StrLen (Mapping)-1] != L':')) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel2HiiHandle, L"map", Mapping);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_PARAM_INV),
+              gShellLevel2HiiHandle,
+              L"map",
+              Mapping
+              );
             ShellStatus = SHELL_INVALID_PARAMETER;
           } else {
             TempStringLength = StrLen (SName);
-            if (!IsNumberLetterOnly (SName, TempStringLength-((SName[TempStringLength-1] == L':') ? 1 : 0))) {
-              ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel2HiiHandle, L"map", SName);
+            if (!IsNumberLetterOnly (
+                   SName,
+                   TempStringLength-
+                   ((SName[TempStringLength-1] == L':') ? 1 : 0)
+                   ))
+            {
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                STRING_TOKEN (STR_GEN_PARAM_INV),
+                gShellLevel2HiiHandle,
+                L"map",
+                SName
+                );
               ShellStatus = SHELL_INVALID_PARAMETER;
             }
 
@@ -1330,16 +1585,54 @@ ShellCommandRunMap (
               if (ShellStatus != SHELL_SUCCESS) {
                 switch (ShellStatus) {
                   case SHELL_ACCESS_DENIED:
-                    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_ERR_AD), gShellLevel2HiiHandle, L"map");
+                    ShellPrintHiiEx (
+                      -1,
+                      -1,
+                      NULL,
+                      STRING_TOKEN (
+                        STR_GEN_ERR_AD
+                        ),
+                      gShellLevel2HiiHandle,
+                      L"map"
+                      );
                     break;
                   case SHELL_INVALID_PARAMETER:
-                    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel2HiiHandle, L"map", Mapping);
+                    ShellPrintHiiEx (
+                      -1,
+                      -1,
+                      NULL,
+                      STRING_TOKEN (
+                        STR_GEN_PARAM_INV
+                        ),
+                      gShellLevel2HiiHandle,
+                      L"map",
+                      Mapping
+                      );
                     break;
                   case SHELL_DEVICE_ERROR:
-                    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_MAP_NOF), gShellLevel2HiiHandle, L"map", Mapping);
+                    ShellPrintHiiEx (
+                      -1,
+                      -1,
+                      NULL,
+                      STRING_TOKEN (STR_MAP_NOF),
+                      gShellLevel2HiiHandle,
+                      L"map",
+                      Mapping
+                      );
                     break;
                   default:
-                    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_ERR_UK), gShellLevel2HiiHandle, L"map", ShellStatus|MAX_BIT);
+                    ShellPrintHiiEx (
+                      -1,
+                      -1,
+                      NULL,
+                      STRING_TOKEN (
+                        STR_GEN_ERR_UK
+                        ),
+                      gShellLevel2HiiHandle,
+                      L"map",
+                      ShellStatus|
+                      MAX_BIT
+                      );
                 }
               } else {
                 //

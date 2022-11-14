@@ -154,7 +154,16 @@ InputBarRefresh (
   EditorClearLine (LastRow, LastColumn, LastRow);
 
   gST->ConOut->SetCursorPosition (gST->ConOut, 0, LastRow - 1);
-  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_EDIT_LIBINPUTBAR_MAININPUTBAR), gShellDebug1HiiHandle, mPrompt);
+  ShellPrintHiiEx (
+    -1,
+    -1,
+    NULL,
+    STRING_TOKEN (
+      STR_EDIT_LIBINPUTBAR_MAININPUTBAR
+      ),
+    gShellDebug1HiiHandle,
+    mPrompt
+    );
 
   //
   // this is a selection mPrompt, cursor will stay in edit area
@@ -203,7 +212,9 @@ InputBarRefresh (
     //
     // return pressed
     //
-    if ((KeyData.Key.UnicodeChar == CHAR_LINEFEED) || (KeyData.Key.UnicodeChar == CHAR_CARRIAGE_RETURN)) {
+    if ((KeyData.Key.UnicodeChar == CHAR_LINEFEED) ||
+        (KeyData.Key.UnicodeChar == CHAR_CARRIAGE_RETURN))
+    {
       break;
     } else if (KeyData.Key.UnicodeChar == CHAR_BACKSPACE) {
       //
@@ -216,7 +227,9 @@ InputBarRefresh (
           InputBarPrintInput (LastColumn, LastRow);
         }
       }
-    } else if ((KeyData.Key.UnicodeChar <= 127) && (KeyData.Key.UnicodeChar >= 32)) {
+    } else if ((KeyData.Key.UnicodeChar <= 127) && (KeyData.Key.UnicodeChar >=
+                                                    32))
+    {
       //
       // VALID ASCII char pressed
       //
@@ -300,7 +313,10 @@ InputBarSetStringSize (
   SHELL_FREE_NON_NULL (mReturnString);
 
   StringSize    = Size;
-  mReturnString = AllocateZeroPool ((StringSize + 1) * sizeof (mReturnString[0]));
+  mReturnString = AllocateZeroPool (
+                    (StringSize + 1) *
+                    sizeof (mReturnString[0])
+                    );
   if (mReturnString == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

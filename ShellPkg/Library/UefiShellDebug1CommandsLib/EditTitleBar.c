@@ -131,7 +131,9 @@ MainTitleBarRefresh (
   // First Extract the FileName from fullpath
   //
   FileNameTmp = FileName;
-  for (TempInteger = StrLen (FileNameTmp) - 1; TempInteger >= 0; TempInteger--) {
+  for (TempInteger = StrLen (FileNameTmp) - 1; TempInteger >= 0;
+       TempInteger--)
+  {
     if (FileNameTmp[TempInteger] == L'\\') {
       break;
     }

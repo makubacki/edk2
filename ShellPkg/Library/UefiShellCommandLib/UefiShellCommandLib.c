@@ -75,7 +75,11 @@ CommandInit (
   CHAR8                           *PlatformLang;
 
   if (gUnicodeCollation == NULL) {
-    GetEfiGlobalVariable2 (EFI_PLATFORM_LANG_VARIABLE_NAME, (VOID **)&PlatformLang, NULL);
+    GetEfiGlobalVariable2 (
+      EFI_PLATFORM_LANG_VARIABLE_NAME,
+      (VOID **)&PlatformLang,
+      NULL
+      );
 
     Status = gBS->LocateHandleBuffer (
                     ByProtocol,
@@ -212,7 +216,9 @@ FreeFileHandleList (
   {
     RemoveEntryList (&BufferListEntry->Link);
     ASSERT (BufferListEntry->Buffer != NULL);
-    SHELL_FREE_NON_NULL (((SHELL_COMMAND_FILE_HANDLE *)(BufferListEntry->Buffer))->Path);
+    SHELL_FREE_NON_NULL (
+      ((SHELL_COMMAND_FILE_HANDLE *)(BufferListEntry->Buffer))->Path
+      );
     SHELL_FREE_NON_NULL (BufferListEntry->Buffer);
     SHELL_FREE_NON_NULL (BufferListEntry);
   }
@@ -242,7 +248,9 @@ ShellCommandLibDestructor (
   // enumerate throught the list and free all the memory
   //
   while (!IsListEmpty (&mCommandList.Link)) {
-    Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetFirstNode (&mCommandList.Link);
+    Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetFirstNode (
+                                                  &mCommandList.Link
+                                                  );
     RemoveEntryList (&Node->Link);
     SHELL_FREE_NON_NULL (Node->CommandString);
     FreePool (Node);
@@ -325,7 +333,9 @@ ShellCommandFindDynamicCommand (
   EFI_HANDLE                          *NextCommand;
   EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL  *DynamicCommand;
 
-  CommandHandleList = GetHandleListByProtocol (&gEfiShellDynamicCommandProtocolGuid);
+  CommandHandleList = GetHandleListByProtocol (
+                        &gEfiShellDynamicCommandProtocolGuid
+                        );
   if (CommandHandleList == NULL) {
     //
     // not found or out of resources
@@ -393,9 +403,14 @@ ShellCommandIsCommandOnInternalList (
   //
   // check for the command
   //
-  for ( Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetFirstNode (&mCommandList.Link)
+  for ( Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetFirstNode (
+                                                      &mCommandList.Link
+                                                      )
         ; !IsNull (&mCommandList.Link, &Node->Link)
-        ; Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetNextNode (&mCommandList.Link, &Node->Link)
+        ; Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetNextNode (
+                                                        &mCommandList.Link,
+                                                        &Node->Link
+                                                        )
         )
   {
     ASSERT (Node->CommandString != NULL);
@@ -446,7 +461,10 @@ ShellCommandGetDynamicCommandHelp (
 {
   EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL  *DynamicCommand;
 
-  DynamicCommand = (EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL  *)ShellCommandFindDynamicCommand (CommandString);
+  DynamicCommand =
+    (EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL  *)ShellCommandFindDynamicCommand (
+                                             CommandString
+                                             );
   if (DynamicCommand == NULL) {
     return (NULL);
   }
@@ -480,9 +498,14 @@ ShellCommandGetInternalCommandHelp (
   //
   // check for the command
   //
-  for ( Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetFirstNode (&mCommandList.Link)
+  for ( Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetFirstNode (
+                                                      &mCommandList.Link
+                                                      )
         ; !IsNull (&mCommandList.Link, &Node->Link)
-        ; Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetNextNode (&mCommandList.Link, &Node->Link)
+        ; Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetNextNode (
+                                                        &mCommandList.Link,
+                                                        &Node->Link
+                                                        )
         )
   {
     ASSERT (Node->CommandString != NULL);
@@ -627,7 +650,10 @@ ShellCommandRegisterCommandName (
     return RETURN_OUT_OF_RESOURCES;
   }
 
-  Node->CommandString = AllocateCopyPool (StrSize (CommandString), CommandString);
+  Node->CommandString = AllocateCopyPool (
+                          StrSize (CommandString),
+                          CommandString
+                          );
   if (Node->CommandString == NULL) {
     FreePool (Node);
     return RETURN_OUT_OF_RESOURCES;
@@ -641,10 +667,14 @@ ShellCommandRegisterCommandName (
 
   if (  (StrLen (ProfileName) > 0)
      && ((  (mProfileList != NULL)
-         && (StrStr (mProfileList, ProfileName) == NULL)) || (mProfileList == NULL))
+         && (StrStr (mProfileList, ProfileName) == NULL)) || (mProfileList ==
+                                                              NULL))
         )
   {
-    ASSERT ((mProfileList == NULL && mProfileListSize == 0) || (mProfileList != NULL));
+    ASSERT (
+      (mProfileList == NULL && mProfileListSize == 0) || (mProfileList !=
+                                                          NULL)
+      );
     if (mProfileList == NULL) {
       //
       // If this is the first make a leading ';'
@@ -664,10 +694,17 @@ ShellCommandRegisterCommandName (
   //
   // Move a new registered command to its sorted ordered location in the list
   //
-  for (Command = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetFirstNode (&mCommandList.Link),
-       PrevCommand = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetFirstNode (&mCommandList.Link)
+  for (Command = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetFirstNode (
+                                                        &mCommandList.Link
+                                                        ),
+       PrevCommand = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetFirstNode (
+                                                            &mCommandList.Link
+                                                            )
        ; !IsNull (&mCommandList.Link, &Command->Link)
-       ; Command = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetNextNode (&mCommandList.Link, &Command->Link))
+       ; Command = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetNextNode (
+                                                          &mCommandList.Link,
+                                                          &Command->Link
+                                                          ))
   {
     //
     // Get Lexical Comparison Value between PrevCommand and Command list entry
@@ -683,7 +720,10 @@ ShellCommandRegisterCommandName (
     // is alphabetically greater than Command list entry
     //
     if (LexicalMatchValue > 0) {
-      Command = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)SwapListEntries (&PrevCommand->Link, &Command->Link);
+      Command = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)SwapListEntries (
+                                                       &PrevCommand->Link,
+                                                       &Command->Link
+                                                       );
     } else if (LexicalMatchValue < 0) {
       //
       // PrevCommand entry is lexically lower than Command entry
@@ -753,9 +793,14 @@ ShellCommandRunCommandHandler (
   //
   // check for the command
   //
-  for ( Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetFirstNode (&mCommandList.Link)
+  for ( Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetFirstNode (
+                                                      &mCommandList.Link
+                                                      )
         ; !IsNull (&mCommandList.Link, &Node->Link)
-        ; Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetNextNode (&mCommandList.Link, &Node->Link)
+        ; Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetNextNode (
+                                                        &mCommandList.Link,
+                                                        &Node->Link
+                                                        )
         )
   {
     ASSERT (Node->CommandString != NULL);
@@ -783,12 +828,25 @@ ShellCommandRunCommandHandler (
   //
   // An internal command was not found, try to find a dynamic command
   //
-  DynamicCommand = (EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL  *)ShellCommandFindDynamicCommand (CommandString);
+  DynamicCommand =
+    (EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL  *)ShellCommandFindDynamicCommand (
+                                             CommandString
+                                             );
   if (DynamicCommand != NULL) {
     if (RetVal != NULL) {
-      *RetVal = DynamicCommand->Handler (DynamicCommand, gST, gEfiShellParametersProtocol, gEfiShellProtocol);
+      *RetVal = DynamicCommand->Handler (
+                                  DynamicCommand,
+                                  gST,
+                                  gEfiShellParametersProtocol,
+                                  gEfiShellProtocol
+                                  );
     } else {
-      DynamicCommand->Handler (DynamicCommand, gST, gEfiShellParametersProtocol, gEfiShellProtocol);
+      DynamicCommand->Handler (
+                        DynamicCommand,
+                        gST,
+                        gEfiShellParametersProtocol,
+                        gEfiShellProtocol
+                        );
     }
 
     return (RETURN_SUCCESS);
@@ -826,9 +884,14 @@ ShellCommandGetManFileNameHandler (
   //
   // check for the command
   //
-  for ( Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetFirstNode (&mCommandList.Link)
+  for ( Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetFirstNode (
+                                                      &mCommandList.Link
+                                                      )
         ; !IsNull (&mCommandList.Link, &Node->Link)
-        ; Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetNextNode (&mCommandList.Link, &Node->Link)
+        ; Node = (SHELL_COMMAND_INTERNAL_LIST_ENTRY *)GetNextNode (
+                                                        &mCommandList.Link,
+                                                        &Node->Link
+                                                        )
         )
   {
     ASSERT (Node->CommandString != NULL);
@@ -927,7 +990,10 @@ ShellCommandRegisterAlias (
   for ( CommandAlias = (ALIAS_LIST *)GetFirstNode (&mAliasList.Link),
         PrevCommandAlias = (ALIAS_LIST *)GetFirstNode (&mAliasList.Link)
         ; !IsNull (&mAliasList.Link, &CommandAlias->Link)
-        ; CommandAlias = (ALIAS_LIST *)GetNextNode (&mAliasList.Link, &CommandAlias->Link))
+        ; CommandAlias = (ALIAS_LIST *)GetNextNode (
+                                         &mAliasList.Link,
+                                         &CommandAlias->Link
+                                         ))
   {
     //
     // Get Lexical comparison value between PrevCommandAlias and CommandAlias List Entry
@@ -943,7 +1009,10 @@ ShellCommandRegisterAlias (
     // is alphabetically greater than CommandAlias list entry
     //
     if (LexicalMatchValue > 0) {
-      CommandAlias = (ALIAS_LIST *)SwapListEntries (&PrevCommandAlias->Link, &CommandAlias->Link);
+      CommandAlias = (ALIAS_LIST *)SwapListEntries (
+                                     &PrevCommandAlias->Link,
+                                     &CommandAlias->Link
+                                     );
     } else if (LexicalMatchValue < 0) {
       //
       // PrevCommandAlias entry is lexically lower than CommandAlias entry
@@ -1158,7 +1227,9 @@ DeleteScriptFileStruct (
 
   Script->CurrentCommand = NULL;
   while (!IsListEmpty (&Script->CommandList)) {
-    Script->CurrentCommand = (SCRIPT_COMMAND_LIST *)GetFirstNode (&Script->CommandList);
+    Script->CurrentCommand = (SCRIPT_COMMAND_LIST *)GetFirstNode (
+                                                      &Script->CommandList
+                                                      );
     if (Script->CurrentCommand != NULL) {
       RemoveEntryList (&Script->CurrentCommand->Link);
       if (Script->CurrentCommand->Cl != NULL) {
@@ -1262,7 +1333,10 @@ ShellCommandCreateNewMappingName (
 
   String = NULL;
 
-  String = AllocateZeroPool (PcdGet8 (PcdShellMapNameLength) * sizeof (String[0]));
+  String = AllocateZeroPool (
+             PcdGet8 (PcdShellMapNameLength) *
+             sizeof (String[0])
+             );
   UnicodeSPrint (
     String,
     PcdGet8 (PcdShellMapNameLength) * sizeof (String[0]),
@@ -1443,7 +1517,10 @@ ShellCommandCreateInitialMappingsAndPaths (
     //
     // Get all Device Paths
     //
-    DevicePathList = AllocateZeroPool (sizeof (EFI_DEVICE_PATH_PROTOCOL *) * Count);
+    DevicePathList = AllocateZeroPool (
+                       sizeof (EFI_DEVICE_PATH_PROTOCOL *) *
+                       Count
+                       );
     if (DevicePathList == NULL) {
       SHELL_FREE_NON_NULL (HandleList);
       return EFI_OUT_OF_RESOURCES;
@@ -1456,7 +1533,12 @@ ShellCommandCreateInitialMappingsAndPaths (
     //
     // Sort all DevicePaths
     //
-    PerformQuickSort (DevicePathList, Count, sizeof (EFI_DEVICE_PATH_PROTOCOL *), DevicePathCompare);
+    PerformQuickSort (
+      DevicePathList,
+      Count,
+      sizeof (EFI_DEVICE_PATH_PROTOCOL *),
+      DevicePathCompare
+      );
 
     ShellCommandConsistMappingInitialize (&ConsistMappingTable);
     //
@@ -1468,16 +1550,29 @@ ShellCommandCreateInitialMappingsAndPaths (
       //
       NewDefaultName = ShellCommandCreateNewMappingName (MappingTypeFileSystem);
       ASSERT (NewDefaultName != NULL);
-      Status = ShellCommandAddMapItemAndUpdatePath (NewDefaultName, DevicePathList[Count], 0, TRUE);
+      Status = ShellCommandAddMapItemAndUpdatePath (
+                 NewDefaultName,
+                 DevicePathList[Count],
+                 0,
+                 TRUE
+                 );
       ASSERT_EFI_ERROR (Status);
       FreePool (NewDefaultName);
 
       //
       // Now do consistent name
       //
-      NewConsistName = ShellCommandConsistMappingGenMappingName (DevicePathList[Count], ConsistMappingTable);
+      NewConsistName = ShellCommandConsistMappingGenMappingName (
+                         DevicePathList[Count],
+                         ConsistMappingTable
+                         );
       if (NewConsistName != NULL) {
-        Status = ShellCommandAddMapItemAndUpdatePath (NewConsistName, DevicePathList[Count], 0, FALSE);
+        Status = ShellCommandAddMapItemAndUpdatePath (
+                   NewConsistName,
+                   DevicePathList[Count],
+                   0,
+                   FALSE
+                   );
         ASSERT_EFI_ERROR (Status);
         FreePool (NewConsistName);
       }
@@ -1534,7 +1629,10 @@ ShellCommandCreateInitialMappingsAndPaths (
     //
     // Get all Device Paths
     //
-    DevicePathList = AllocateZeroPool (sizeof (EFI_DEVICE_PATH_PROTOCOL *) * Count);
+    DevicePathList = AllocateZeroPool (
+                       sizeof (EFI_DEVICE_PATH_PROTOCOL *) *
+                       Count
+                       );
     if (DevicePathList == NULL) {
       SHELL_FREE_NON_NULL (HandleList);
       return EFI_OUT_OF_RESOURCES;
@@ -1547,7 +1645,12 @@ ShellCommandCreateInitialMappingsAndPaths (
     //
     // Sort all DevicePaths
     //
-    PerformQuickSort (DevicePathList, Count, sizeof (EFI_DEVICE_PATH_PROTOCOL *), DevicePathCompare);
+    PerformQuickSort (
+      DevicePathList,
+      Count,
+      sizeof (EFI_DEVICE_PATH_PROTOCOL *),
+      DevicePathCompare
+      );
 
     //
     // Assign new Mappings to all...
@@ -1558,7 +1661,12 @@ ShellCommandCreateInitialMappingsAndPaths (
       //
       NewDefaultName = ShellCommandCreateNewMappingName (MappingTypeBlockIo);
       ASSERT (NewDefaultName != NULL);
-      Status = ShellCommandAddMapItemAndUpdatePath (NewDefaultName, DevicePathList[Count], 0, FALSE);
+      Status = ShellCommandAddMapItemAndUpdatePath (
+                 NewDefaultName,
+                 DevicePathList[Count],
+                 0,
+                 FALSE
+                 );
       ASSERT_EFI_ERROR (Status);
       FreePool (NewDefaultName);
     }
@@ -1612,7 +1720,10 @@ ShellCommandUpdateMapping (
     //
     // Get all Device Paths
     //
-    DevicePathList = AllocateZeroPool (sizeof (EFI_DEVICE_PATH_PROTOCOL *) * Count);
+    DevicePathList = AllocateZeroPool (
+                       sizeof (EFI_DEVICE_PATH_PROTOCOL *) *
+                       Count
+                       );
     if (DevicePathList == NULL) {
       return (EFI_OUT_OF_RESOURCES);
     }
@@ -1624,18 +1735,27 @@ ShellCommandUpdateMapping (
     //
     // Sort all DevicePaths
     //
-    PerformQuickSort (DevicePathList, Count, sizeof (EFI_DEVICE_PATH_PROTOCOL *), DevicePathCompare);
+    PerformQuickSort (
+      DevicePathList,
+      Count,
+      sizeof (EFI_DEVICE_PATH_PROTOCOL *),
+      DevicePathCompare
+      );
 
     ShellCommandConsistMappingInitialize (&ConsistMappingTable);
 
     //
     // Assign new Mappings to remainders
     //
-    for (Count = 0; !EFI_ERROR (Status) && HandleList[Count] != NULL && !EFI_ERROR (Status); Count++) {
+    for (Count = 0; !EFI_ERROR (Status) && HandleList[Count] != NULL &&
+         !EFI_ERROR (Status); Count++)
+    {
       //
       // Skip ones that already have
       //
-      if (gEfiShellProtocol->GetMapFromDevicePath (&DevicePathList[Count]) != NULL) {
+      if (gEfiShellProtocol->GetMapFromDevicePath (&DevicePathList[Count]) !=
+          NULL)
+      {
         continue;
       }
 
@@ -1651,15 +1771,24 @@ ShellCommandUpdateMapping (
       //
       // Call shell protocol SetMap function now...
       //
-      Status = gEfiShellProtocol->SetMap (DevicePathList[Count], NewDefaultName);
+      Status = gEfiShellProtocol->SetMap (
+                                    DevicePathList[Count],
+                                    NewDefaultName
+                                    );
 
       if (!EFI_ERROR (Status)) {
         //
         // Now do consistent name
         //
-        NewConsistName = ShellCommandConsistMappingGenMappingName (DevicePathList[Count], ConsistMappingTable);
+        NewConsistName = ShellCommandConsistMappingGenMappingName (
+                           DevicePathList[Count],
+                           ConsistMappingTable
+                           );
         if (NewConsistName != NULL) {
-          Status = gEfiShellProtocol->SetMap (DevicePathList[Count], NewConsistName);
+          Status = gEfiShellProtocol->SetMap (
+                                        DevicePathList[Count],
+                                        NewConsistName
+                                        );
           FreePool (NewConsistName);
         }
       }
@@ -1766,7 +1895,9 @@ ShellFileHandleGetPath (
        ; Node = (BUFFER_LIST *)GetNextNode (&mFileHandleList.Link, &Node->Link)
        )
   {
-    if ((Node->Buffer) && (((SHELL_COMMAND_FILE_HANDLE *)Node->Buffer)->FileHandle == Handle)) {
+    if ((Node->Buffer) &&
+        (((SHELL_COMMAND_FILE_HANDLE *)Node->Buffer)->FileHandle == Handle))
+    {
       return (((SHELL_COMMAND_FILE_HANDLE *)Node->Buffer)->Path);
     }
   }
@@ -1795,7 +1926,9 @@ ShellFileHandleRemove (
        ; Node = (BUFFER_LIST *)GetNextNode (&mFileHandleList.Link, &Node->Link)
        )
   {
-    if ((Node->Buffer) && (((SHELL_COMMAND_FILE_HANDLE *)Node->Buffer)->FileHandle == Handle)) {
+    if ((Node->Buffer) &&
+        (((SHELL_COMMAND_FILE_HANDLE *)Node->Buffer)->FileHandle == Handle))
+    {
       RemoveEntryList (&Node->Link);
       SHELL_FREE_NON_NULL (((SHELL_COMMAND_FILE_HANDLE *)Node->Buffer)->Path);
       SHELL_FREE_NON_NULL (Node->Buffer);
@@ -1926,12 +2059,22 @@ DumpHex (
       Val[Index * 3 + 0] = Hex[TempByte >> 4];
       Val[Index * 3 + 1] = Hex[TempByte & 0xF];
       Val[Index * 3 + 2] = (CHAR8)((Index == 7) ? '-' : ' ');
-      Str[Index]         = (CHAR8)((TempByte < ' ' || TempByte > '~') ? '.' : TempByte);
+      Str[Index]         = (CHAR8)((TempByte < ' ' || TempByte > '~') ? '.' :
+                                   TempByte);
     }
 
     Val[Index * 3] = 0;
     Str[Index]     = 0;
-    ShellPrintEx (-1, -1, L"%*a%08X: %-48a *%a*\r\n", Indent, "", Offset, Val, Str);
+    ShellPrintEx (
+      -1,
+      -1,
+      L"%*a%08X: %-48a *%a*\r\n",
+      Indent,
+      "",
+      Offset,
+      Val,
+      Str
+      );
 
     Data     += Size;
     Offset   += Size;
@@ -1980,12 +2123,21 @@ CatSDumpHex (
       Val[Index * 3 + 0] = Hex[TempByte >> 4];
       Val[Index * 3 + 1] = Hex[TempByte & 0xF];
       Val[Index * 3 + 2] = (CHAR8)((Index == 7) ? '-' : ' ');
-      Str[Index]         = (CHAR8)((TempByte < ' ' || TempByte > 'z') ? '.' : TempByte);
+      Str[Index]         = (CHAR8)((TempByte < ' ' || TempByte > 'z') ? '.' :
+                                   TempByte);
     }
 
     Val[Index * 3] = 0;
     Str[Index]     = 0;
-    TempRetVal     = CatSPrint (RetVal, L"%*a%08X: %-48a *%a*\r\n", Indent, "", Offset, Val, Str);
+    TempRetVal     = CatSPrint (
+                       RetVal,
+                       L"%*a%08X: %-48a *%a*\r\n",
+                       Indent,
+                       "",
+                       Offset,
+                       Val,
+                       Str
+                       );
     SHELL_FREE_NON_NULL (RetVal);
     RetVal = TempRetVal;
 

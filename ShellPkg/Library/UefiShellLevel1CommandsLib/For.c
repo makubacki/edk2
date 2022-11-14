@@ -36,7 +36,10 @@ ShellIsValidForNumber (
   }
 
   if (StrLen (Number) >= 7) {
-    if ((StrStr (Number, L" ") == NULL) || (((StrStr (Number, L" ") != NULL) && ((StrStr (Number, L" ") - Number) >= 7)))) {
+    if ((StrStr (Number, L" ") == NULL) || (((StrStr (Number, L" ") != NULL) &&
+                                             ((StrStr (Number, L" ") -
+                                               Number) >= 7))))
+    {
       return (FALSE);
     }
   }
@@ -69,16 +72,39 @@ ShellCommandRunEndFor (
   ASSERT_EFI_ERROR (Status);
 
   if (!gEfiShellProtocol->BatchIsActive ()) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_NO_SCRIPT), gShellLevel1HiiHandle, L"endfor");
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_NO_SCRIPT),
+      gShellLevel1HiiHandle,
+      L"endfor"
+      );
     return (SHELL_UNSUPPORTED);
   }
 
   if (gEfiShellParametersProtocol->Argc > 1) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel1HiiHandle, L"endfor");
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_GEN_TOO_MANY),
+      gShellLevel1HiiHandle,
+      L"endfor"
+      );
     return (SHELL_INVALID_PARAMETER);
   }
 
-  Found = MoveToTag (GetPreviousNode, L"for", L"endfor", NULL, ShellCommandGetCurrentScriptFile (), FALSE, FALSE, FALSE);
+  Found = MoveToTag (
+            GetPreviousNode,
+            L"for",
+            L"endfor",
+            NULL,
+            ShellCommandGetCurrentScriptFile (),
+            FALSE,
+            FALSE,
+            FALSE
+            );
 
   if (!Found) {
     CurrentScriptFile = ShellCommandGetCurrentScriptFile ();
@@ -151,8 +177,13 @@ InternalUpdateAliasOnList (
     if (StrCmp (Node->Alias, Alias) == 0) {
       FreePool (Node->CommandString);
       Node->CommandString = NULL;
-      Node->CommandString = StrnCatGrow (&Node->CommandString, NULL, CommandString, 0);
-      Found               = TRUE;
+      Node->CommandString = StrnCatGrow (
+                              &Node->CommandString,
+                              NULL,
+                              CommandString,
+                              0
+                              );
+      Found = TRUE;
       break;
     }
   }
@@ -166,7 +197,12 @@ InternalUpdateAliasOnList (
     ASSERT (Node->Alias == NULL);
     Node->Alias = StrnCatGrow (&Node->Alias, NULL, Alias, 0);
     ASSERT (Node->CommandString == NULL);
-    Node->CommandString = StrnCatGrow (&Node->CommandString, NULL, CommandString, 0);
+    Node->CommandString = StrnCatGrow (
+                            &Node->CommandString,
+                            NULL,
+                            CommandString,
+                            0
+                            );
     InsertTailList (List, &Node->Link);
   }
 
@@ -324,25 +360,51 @@ ShellCommandRunFor (
   ASSERT_EFI_ERROR (Status);
 
   if (!gEfiShellProtocol->BatchIsActive ()) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_NO_SCRIPT), gShellLevel1HiiHandle, L"for");
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_NO_SCRIPT),
+      gShellLevel1HiiHandle,
+      L"for"
+      );
     return (SHELL_UNSUPPORTED);
   }
 
   if (gEfiShellParametersProtocol->Argc < 4) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_FEW), gShellLevel1HiiHandle, L"for");
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_GEN_TOO_FEW),
+      gShellLevel1HiiHandle,
+      L"for"
+      );
     return (SHELL_INVALID_PARAMETER);
   }
 
   CurrentScriptFile = ShellCommandGetCurrentScriptFile ();
   ASSERT (CurrentScriptFile != NULL);
 
-  if ((CurrentScriptFile->CurrentCommand != NULL) && (CurrentScriptFile->CurrentCommand->Data == NULL)) {
+  if ((CurrentScriptFile->CurrentCommand != NULL) &&
+      (CurrentScriptFile->CurrentCommand->Data == NULL))
+  {
     FirstPass = TRUE;
 
     //
     // Make sure that an End exists.
     //
-    if (!MoveToTag (GetNextNode, L"endfor", L"for", NULL, CurrentScriptFile, TRUE, TRUE, FALSE)) {
+    if (!MoveToTag (
+           GetNextNode,
+           L"endfor",
+           L"for",
+           NULL,
+           CurrentScriptFile,
+           TRUE,
+           TRUE,
+           FALSE
+           ))
+    {
       ShellPrintHiiEx (
         -1,
         -1,
@@ -359,12 +421,22 @@ ShellCommandRunFor (
     //
     // Process the line.
     //
-    if (  (gEfiShellParametersProtocol->Argv[1][0] != L'%') || (gEfiShellParametersProtocol->Argv[1][2] != CHAR_NULL)
-       || !(  ((gEfiShellParametersProtocol->Argv[1][1] >= L'a') && (gEfiShellParametersProtocol->Argv[1][1] <= L'z'))
-           || ((gEfiShellParametersProtocol->Argv[1][1] >= L'A') && (gEfiShellParametersProtocol->Argv[1][1] <= L'Z')))
+    if (  (gEfiShellParametersProtocol->Argv[1][0] != L'%') ||
+          (gEfiShellParametersProtocol->Argv[1][2] != CHAR_NULL)
+       || !(  ((gEfiShellParametersProtocol->Argv[1][1] >= L'a') &&
+               (gEfiShellParametersProtocol->Argv[1][1] <= L'z'))
+           || ((gEfiShellParametersProtocol->Argv[1][1] >= L'A') &&
+               (gEfiShellParametersProtocol->Argv[1][1] <= L'Z')))
           )
     {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_INV_VAR), gShellLevel1HiiHandle, gEfiShellParametersProtocol->Argv[1]);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_INV_VAR),
+        gShellLevel1HiiHandle,
+        gEfiShellParametersProtocol->Argv[1]
+        );
       return (SHELL_INVALID_PARAMETER);
     }
 
@@ -374,23 +446,44 @@ ShellCommandRunFor (
                              gEfiShellParametersProtocol->Argv[2]
                              ) == 0)
     {
-      for (LoopVar = 0x3; LoopVar < gEfiShellParametersProtocol->Argc; LoopVar++) {
+      for (LoopVar = 0x3; LoopVar < gEfiShellParametersProtocol->Argc;
+           LoopVar++)
+      {
         ASSERT ((ArgSet == NULL && ArgSize == 0) || (ArgSet != NULL));
-        if (  (StrStr (gEfiShellParametersProtocol->Argv[LoopVar], L"*") != NULL)
-           || (StrStr (gEfiShellParametersProtocol->Argv[LoopVar], L"?") != NULL)
-           || (StrStr (gEfiShellParametersProtocol->Argv[LoopVar], L"[") != NULL)
-           || (StrStr (gEfiShellParametersProtocol->Argv[LoopVar], L"]") != NULL))
+        if (  (StrStr (gEfiShellParametersProtocol->Argv[LoopVar], L"*") !=
+               NULL)
+           || (StrStr (gEfiShellParametersProtocol->Argv[LoopVar], L"?") !=
+               NULL)
+           || (StrStr (gEfiShellParametersProtocol->Argv[LoopVar], L"[") !=
+               NULL)
+           || (StrStr (gEfiShellParametersProtocol->Argv[LoopVar], L"]") !=
+               NULL))
         {
           FileList = NULL;
-          Status   = ShellOpenFileMetaArg ((CHAR16 *)gEfiShellParametersProtocol->Argv[LoopVar], EFI_FILE_MODE_READ, &FileList);
-          if (EFI_ERROR (Status) || (FileList == NULL) || IsListEmpty (&FileList->Link)) {
+          Status   = ShellOpenFileMetaArg (
+                       (CHAR16 *)gEfiShellParametersProtocol->Argv[LoopVar],
+                       EFI_FILE_MODE_READ,
+                       &FileList
+                       );
+          if (EFI_ERROR (Status) || (FileList == NULL) || IsListEmpty (
+                                                            &FileList->Link
+                                                            ))
+          {
             ArgSet = StrnCatGrow (&ArgSet, &ArgSize, L" \"", 0);
-            ArgSet = StrnCatGrow (&ArgSet, &ArgSize, gEfiShellParametersProtocol->Argv[LoopVar], 0);
+            ArgSet = StrnCatGrow (
+                       &ArgSet,
+                       &ArgSize,
+                       gEfiShellParametersProtocol->Argv[LoopVar],
+                       0
+                       );
             ArgSet = StrnCatGrow (&ArgSet, &ArgSize, L"\"", 0);
           } else {
             for (Node = (EFI_SHELL_FILE_INFO *)GetFirstNode (&FileList->Link)
                  ; !IsNull (&FileList->Link, &Node->Link)
-                 ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (&FileList->Link, &Node->Link)
+                 ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (
+                                                   &FileList->Link,
+                                                   &Node->Link
+                                                   )
                  )
             {
               ArgSet = StrnCatGrow (&ArgSet, &ArgSize, L" \"", 0);
@@ -402,7 +495,9 @@ ShellCommandRunFor (
           }
         } else {
           Parameter = gEfiShellParametersProtocol->Argv[LoopVar];
-          if ((Parameter[0] == L'\"') && (Parameter[StrLen (Parameter)-1] == L'\"')) {
+          if ((Parameter[0] == L'\"') && (Parameter[StrLen (Parameter)-1] ==
+                                          L'\"'))
+          {
             ArgSet = StrnCatGrow (&ArgSet, &ArgSize, L" ", 0);
             ArgSet = StrnCatGrow (&ArgSet, &ArgSize, Parameter, 0);
           } else {
@@ -420,8 +515,11 @@ ShellCommandRunFor (
         // set up for an 'in' for loop
         //
         NewSize  = StrSize (ArgSet);
-        NewSize += sizeof (SHELL_FOR_INFO)+StrSize (gEfiShellParametersProtocol->Argv[1]);
-        Info     = AllocateZeroPool (NewSize);
+        NewSize += sizeof (SHELL_FOR_INFO)+StrSize (
+                                             gEfiShellParametersProtocol->Argv[1
+                                             ]
+                                             );
+        Info = AllocateZeroPool (NewSize);
         if (Info == NULL) {
           FreePool (ArgSet);
           return SHELL_OUT_OF_RESOURCES;
@@ -430,14 +528,23 @@ ShellCommandRunFor (
         Info->Signature = SHELL_FOR_INFO_SIGNATURE;
         CopyMem (Info->Set, ArgSet, StrSize (ArgSet));
         NewSize = StrSize (gEfiShellParametersProtocol->Argv[1]);
-        CopyMem (Info->Set+(StrSize (ArgSet)/sizeof (Info->Set[0])), gEfiShellParametersProtocol->Argv[1], NewSize);
-        Info->ReplacementName = Info->Set+StrSize (ArgSet)/sizeof (Info->Set[0]);
-        Info->CurrentValue    = (CHAR16 *)Info->Set;
-        Info->Step            = 0;
-        Info->Current         = 0;
-        Info->End             = 0;
+        CopyMem (
+          Info->Set+(StrSize (ArgSet)/sizeof (Info->Set[0])),
+          gEfiShellParametersProtocol->Argv[1],
+          NewSize
+          );
+        Info->ReplacementName = Info->Set+StrSize (ArgSet)/
+                                sizeof (Info->Set[0]);
+        Info->CurrentValue = (CHAR16 *)Info->Set;
+        Info->Step         = 0;
+        Info->Current      = 0;
+        Info->End          = 0;
 
-        if (InternalIsAliasOnList (Info->ReplacementName, &CurrentScriptFile->SubstList)) {
+        if (InternalIsAliasOnList (
+              Info->ReplacementName,
+              &CurrentScriptFile->SubstList
+              ))
+        {
           Info->RemoveSubstAlias = FALSE;
         } else {
           Info->RemoveSubstAlias = TRUE;
@@ -451,9 +558,12 @@ ShellCommandRunFor (
                                     gEfiShellParametersProtocol->Argv[2]
                                     ) == 0)
     {
-      for (LoopVar = 0x3; LoopVar < gEfiShellParametersProtocol->Argc; LoopVar++) {
+      for (LoopVar = 0x3; LoopVar < gEfiShellParametersProtocol->Argc;
+           LoopVar++)
+      {
         ASSERT ((ArgSet == NULL && ArgSize == 0) || (ArgSet != NULL));
-        if ((StrStr (gEfiShellParametersProtocol->Argv[LoopVar], L")") != NULL) &&
+        if ((StrStr (gEfiShellParametersProtocol->Argv[LoopVar], L")") !=
+             NULL) &&
             ((LoopVar + 1) < gEfiShellParametersProtocol->Argc)
             )
         {
@@ -466,7 +576,12 @@ ShellCommandRunFor (
           ArgSet = StrnCatGrow (&ArgSet, &ArgSize, L" ", 0);
         }
 
-        ArgSet = StrnCatGrow (&ArgSet, &ArgSize, gEfiShellParametersProtocol->Argv[LoopVar], 0);
+        ArgSet = StrnCatGrow (
+                   &ArgSet,
+                   &ArgSize,
+                   gEfiShellParametersProtocol->Argv[LoopVar],
+                   0
+                   );
         //        ArgSet = StrnCatGrow(&ArgSet, &ArgSize, L" ", 0);
       }
 
@@ -476,14 +591,24 @@ ShellCommandRunFor (
         //
         // set up for a 'run' for loop
         //
-        Info = AllocateZeroPool (sizeof (SHELL_FOR_INFO)+StrSize (gEfiShellParametersProtocol->Argv[1]));
+        Info = AllocateZeroPool (
+                 sizeof (SHELL_FOR_INFO)+StrSize (
+                                           gEfiShellParametersProtocol->Argv[1]
+                                           )
+                 );
         if (Info == NULL) {
           FreePool (ArgSet);
           return SHELL_OUT_OF_RESOURCES;
         }
 
         Info->Signature = SHELL_FOR_INFO_SIGNATURE;
-        CopyMem (Info->Set, gEfiShellParametersProtocol->Argv[1], StrSize (gEfiShellParametersProtocol->Argv[1]));
+        CopyMem (
+          Info->Set,
+          gEfiShellParametersProtocol->Argv[1],
+          StrSize (
+            gEfiShellParametersProtocol->Argv[1]
+            )
+          );
         Info->ReplacementName = Info->Set;
         Info->CurrentValue    = NULL;
         ArgSetWalker          = ArgSet;
@@ -553,7 +678,9 @@ ShellCommandRunFor (
                 ArgSetWalker++;
               }
 
-              if ((ArgSetWalker == NULL) || (*ArgSetWalker == CHAR_NULL) || !ShellIsValidForNumber (ArgSetWalker)) {
+              if ((ArgSetWalker == NULL) || (*ArgSetWalker == CHAR_NULL) ||
+                  !ShellIsValidForNumber (ArgSetWalker))
+              {
                 ShellPrintHiiEx (
                   -1,
                   -1,
@@ -583,7 +710,9 @@ ShellCommandRunFor (
                 }
 
                 if ((ArgSetWalker != NULL) && (*ArgSetWalker != CHAR_NULL)) {
-                  if ((ArgSetWalker == NULL) || (*ArgSetWalker == CHAR_NULL) || !ShellIsValidForNumber (ArgSetWalker)) {
+                  if ((ArgSetWalker == NULL) || (*ArgSetWalker == CHAR_NULL) ||
+                      !ShellIsValidForNumber (ArgSetWalker))
+                  {
                     ShellPrintHiiEx (
                       -1,
                       -1,
@@ -625,7 +754,11 @@ ShellCommandRunFor (
         }
 
         if (ShellStatus == SHELL_SUCCESS) {
-          if (InternalIsAliasOnList (Info->ReplacementName, &CurrentScriptFile->SubstList)) {
+          if (InternalIsAliasOnList (
+                Info->ReplacementName,
+                &CurrentScriptFile->SubstList
+                ))
+          {
             Info->RemoveSubstAlias = FALSE;
           } else {
             Info->RemoveSubstAlias = TRUE;
@@ -658,7 +791,9 @@ ShellCommandRunFor (
     ASSERT (ArgSet       == NULL);
   }
 
-  if ((CurrentScriptFile != NULL) && (CurrentScriptFile->CurrentCommand != NULL)) {
+  if ((CurrentScriptFile != NULL) && (CurrentScriptFile->CurrentCommand !=
+                                      NULL))
+  {
     Info = (SHELL_FOR_INFO *)CurrentScriptFile->CurrentCommand->Data;
     if (CurrentScriptFile->CurrentCommand->Reset) {
       if (Info != NULL) {
@@ -688,15 +823,33 @@ ShellCommandRunFor (
 
       TempString = AllocateZeroPool (50*sizeof (CHAR16));
       UnicodeSPrint (TempString, 50*sizeof (CHAR16), L"%d", Info->Current);
-      InternalUpdateAliasOnList (Info->ReplacementName, TempString, &CurrentScriptFile->SubstList);
+      InternalUpdateAliasOnList (
+        Info->ReplacementName,
+        TempString,
+        &CurrentScriptFile->SubstList
+        );
       FreePool (TempString);
 
-      if (((Info->Step > 0) && (Info->Current > Info->End)) || ((Info->Step < 0) && (Info->Current < Info->End))) {
+      if (((Info->Step > 0) && (Info->Current > Info->End)) || ((Info->Step <
+                                                                 0) &&
+                                                                (Info->Current <
+                                                                 Info->End)))
+      {
         CurrentScriptFile->CurrentCommand->Data = NULL;
         //
         // find the matching endfor (we're done with the loop)
         //
-        if (!MoveToTag (GetNextNode, L"endfor", L"for", NULL, CurrentScriptFile, TRUE, FALSE, FALSE)) {
+        if (!MoveToTag (
+               GetNextNode,
+               L"endfor",
+               L"for",
+               NULL,
+               CurrentScriptFile,
+               TRUE,
+               FALSE,
+               FALSE
+               ))
+        {
           ShellPrintHiiEx (
             -1,
             -1,
@@ -716,7 +869,10 @@ ShellCommandRunFor (
           //
           // remove item from list
           //
-          InternalRemoveAliasFromList (Info->ReplacementName, &CurrentScriptFile->SubstList);
+          InternalRemoveAliasFromList (
+            Info->ReplacementName,
+            &CurrentScriptFile->SubstList
+            );
         }
 
         FreePool (Info);
@@ -752,7 +908,11 @@ ShellCommandRunFor (
             TempString[StrLen (TempString)-1] = CHAR_NULL;
           }
 
-          InternalUpdateAliasOnList (Info->ReplacementName, TempString, &CurrentScriptFile->SubstList);
+          InternalUpdateAliasOnList (
+            Info->ReplacementName,
+            TempString,
+            &CurrentScriptFile->SubstList
+            );
           Info->CurrentValue += StrLen (TempString);
 
           if (Info->CurrentValue[0] == L'\"') {
@@ -766,7 +926,17 @@ ShellCommandRunFor (
         //
         // find the matching endfor (we're done with the loop)
         //
-        if (!MoveToTag (GetNextNode, L"endfor", L"for", NULL, CurrentScriptFile, TRUE, FALSE, FALSE)) {
+        if (!MoveToTag (
+               GetNextNode,
+               L"endfor",
+               L"for",
+               NULL,
+               CurrentScriptFile,
+               TRUE,
+               FALSE,
+               FALSE
+               ))
+        {
           ShellPrintHiiEx (
             -1,
             -1,
@@ -786,7 +956,10 @@ ShellCommandRunFor (
           //
           // remove item from list
           //
-          InternalRemoveAliasFromList (Info->ReplacementName, &CurrentScriptFile->SubstList);
+          InternalRemoveAliasFromList (
+            Info->ReplacementName,
+            &CurrentScriptFile->SubstList
+            );
         }
 
         FreePool (Info);

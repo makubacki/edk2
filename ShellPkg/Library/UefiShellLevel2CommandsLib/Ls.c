@@ -35,13 +35,19 @@ PrintSfoVolumeInfoTableEntry (
   //
   for ( Node = (EFI_SHELL_FILE_INFO *)GetFirstNode (&TheList->Link)
         ; !IsNull (&TheList->Link, &Node->Link) && Node->Handle == NULL
-        ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (&TheList->Link, &Node->Link)
+        ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (
+                                          &TheList->Link,
+                                          &Node->Link
+                                          )
         )
   {
   }
 
   if (Node->Handle == NULL) {
-    DirectoryName = GetFullyQualifiedPath (((EFI_SHELL_FILE_INFO *)GetFirstNode (&TheList->Link))->FullName);
+    DirectoryName = GetFullyQualifiedPath (
+                      ((EFI_SHELL_FILE_INFO *)GetFirstNode (
+                                                &TheList->Link))->FullName
+                      );
 
     //
     // We need to open something up to get system information
@@ -228,8 +234,22 @@ PrintFileInformation (
     } else {
       (*Files)++;
       (*Size) += TheNode->Info->FileSize;
-      if (  (gUnicodeCollation->StriColl (gUnicodeCollation, (CHAR16 *)L".nsh", (CHAR16 *)&(TheNode->FileName[StrLen (TheNode->FileName) - 4])) == 0)
-         || (gUnicodeCollation->StriColl (gUnicodeCollation, (CHAR16 *)L".efi", (CHAR16 *)&(TheNode->FileName[StrLen (TheNode->FileName) - 4])) == 0)
+      if (  (gUnicodeCollation->StriColl (
+                                  gUnicodeCollation,
+                                  (CHAR16 *)L".nsh",
+                                  (CHAR16 *)&(TheNode->FileName[StrLen (
+                                                                  TheNode->
+                                                                    FileName) -
+                                                                4])
+                                  ) == 0)
+         || (gUnicodeCollation->StriColl (
+                                  gUnicodeCollation,
+                                  (CHAR16 *)L".efi",
+                                  (CHAR16 *)&(TheNode->FileName[StrLen (
+                                                                  TheNode->
+                                                                    FileName) -
+                                                                4])
+                                  ) == 0)
             )
       {
         ShellPrintHiiEx (
@@ -351,7 +371,9 @@ FileTimeToLocalTime (
     return;
   }
 
-  if (((Time->Year % 4 == 0) && (Time->Year / 100 != 0)) || (Time->Year % 400 == 0)) {
+  if (((Time->Year % 4 == 0) && (Time->Year / 100 != 0)) || (Time->Year % 400 ==
+                                                             0))
+  {
     //
     // Day in February of leap year is 29.
     //
@@ -397,7 +419,8 @@ FileTimeToLocalTime (
   }
 
   TempMonth = Time->Month + MonthNumberOfTempDay;
-  Time->Day = (UINT8)(TempDay - (INTN)mDayOfMonth[(MonthRecord - 1 + 12) % 12] * MonthNumberOfTempDay);
+  Time->Day = (UINT8)(TempDay - (INTN)mDayOfMonth[(MonthRecord - 1 + 12) % 12] *
+                      MonthNumberOfTempDay);
 
   //
   // Calculate Time->Month, Time->Year
@@ -488,7 +511,11 @@ PrintLsOutput (
 
   PathCleanUpDirectories (CorrectedPath);
 
-  Status = ShellOpenFileMetaArg ((CHAR16 *)CorrectedPath, EFI_FILE_MODE_READ, &ListHead);
+  Status = ShellOpenFileMetaArg (
+             (CHAR16 *)CorrectedPath,
+             EFI_FILE_MODE_READ,
+             &ListHead
+             );
   if (!EFI_ERROR (Status)) {
     if ((ListHead == NULL) || IsListEmpty (&ListHead->Link)) {
       SHELL_FREE_NON_NULL (CorrectedPath);
@@ -513,9 +540,13 @@ PrintLsOutput (
         );
     }
 
-    for ( Node = (EFI_SHELL_FILE_INFO *)GetFirstNode (&ListHead->Link), LongestPath = 0
+    for ( Node = (EFI_SHELL_FILE_INFO *)GetFirstNode (&ListHead->Link),
+          LongestPath = 0
           ; !IsNull (&ListHead->Link, &Node->Link)
-          ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (&ListHead->Link, &Node->Link)
+          ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (
+                                            &ListHead->Link,
+                                            &Node->Link
+                                            )
           )
     {
       if (ShellGetExecutionBreakFlag ()) {
@@ -529,9 +560,12 @@ PrintLsOutput (
       // Change the file time to local time.
       //
       Status = gRT->GetTime (&LocalTime, NULL);
-      if (!EFI_ERROR (Status) && (LocalTime.TimeZone != EFI_UNSPECIFIED_TIMEZONE)) {
+      if (!EFI_ERROR (Status) && (LocalTime.TimeZone !=
+                                  EFI_UNSPECIFIED_TIMEZONE))
+      {
         if ((Node->Info->CreateTime.TimeZone != EFI_UNSPECIFIED_TIMEZONE) &&
-            ((Node->Info->CreateTime.Month >= 1) && (Node->Info->CreateTime.Month <= 12)))
+            ((Node->Info->CreateTime.Month >= 1) &&
+             (Node->Info->CreateTime.Month <= 12)))
         {
           //
           // FileTimeToLocalTime () requires Month is in a valid range, other buffer out-of-band access happens.
@@ -540,15 +574,21 @@ PrintLsOutput (
         }
 
         if ((Node->Info->LastAccessTime.TimeZone != EFI_UNSPECIFIED_TIMEZONE) &&
-            ((Node->Info->LastAccessTime.Month >= 1) && (Node->Info->LastAccessTime.Month <= 12)))
+            ((Node->Info->LastAccessTime.Month >= 1) &&
+             (Node->Info->LastAccessTime.Month <= 12)))
         {
           FileTimeToLocalTime (&Node->Info->LastAccessTime, LocalTime.TimeZone);
         }
 
-        if ((Node->Info->ModificationTime.TimeZone != EFI_UNSPECIFIED_TIMEZONE) &&
-            ((Node->Info->ModificationTime.Month >= 1) && (Node->Info->ModificationTime.Month <= 12)))
+        if ((Node->Info->ModificationTime.TimeZone !=
+             EFI_UNSPECIFIED_TIMEZONE) &&
+            ((Node->Info->ModificationTime.Month >= 1) &&
+             (Node->Info->ModificationTime.Month <= 12)))
         {
-          FileTimeToLocalTime (&Node->Info->ModificationTime, LocalTime.TimeZone);
+          FileTimeToLocalTime (
+            &Node->Info->ModificationTime,
+            LocalTime.TimeZone
+            );
         }
       }
 
@@ -557,7 +597,10 @@ PrintLsOutput (
       }
 
       ASSERT (Node->Info != NULL);
-      ASSERT ((Node->Info->Attribute & EFI_FILE_VALID_ATTR) == Node->Info->Attribute);
+      ASSERT (
+        (Node->Info->Attribute & EFI_FILE_VALID_ATTR) ==
+        Node->Info->Attribute
+        );
       if (Attribs == 0) {
         //
         // NOT system & NOT hidden
@@ -616,12 +659,20 @@ PrintLsOutput (
     }
 
     CorrectedPath = StrnCatGrow (&CorrectedPath, &LongestPath, L"*", 0);
-    Status        = ShellOpenFileMetaArg ((CHAR16 *)CorrectedPath, EFI_FILE_MODE_READ, &ListHead);
+    Status        = ShellOpenFileMetaArg (
+                      (CHAR16 *)CorrectedPath,
+                      EFI_FILE_MODE_READ,
+                      &ListHead
+                      );
 
     if (!EFI_ERROR (Status)) {
       for ( Node = (EFI_SHELL_FILE_INFO *)GetFirstNode (&ListHead->Link)
-            ; !IsNull (&ListHead->Link, &Node->Link) && ShellStatus == SHELL_SUCCESS
-            ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (&ListHead->Link, &Node->Link)
+            ; !IsNull (&ListHead->Link, &Node->Link) && ShellStatus ==
+            SHELL_SUCCESS
+            ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (
+                                              &ListHead->Link,
+                                              &Node->Link
+                                              )
             )
       {
         if (ShellGetExecutionBreakFlag ()) {
@@ -632,7 +683,8 @@ PrintLsOutput (
         //
         // recurse on any directory except the traversing ones...
         //
-        if (  ((Node->Info->Attribute & EFI_FILE_DIRECTORY) == EFI_FILE_DIRECTORY)
+        if (  ((Node->Info->Attribute & EFI_FILE_DIRECTORY) ==
+               EFI_FILE_DIRECTORY)
            && (StrCmp (Node->FileName, L".") != 0)
            && (StrCmp (Node->FileName, L"..") != 0)
               )
@@ -689,10 +741,10 @@ PrintLsOutput (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  LsParamList[] = {
-  { L"-r",   TypeFlag  },
-  { L"-a",   TypeStart },
-  { L"-sfo", TypeFlag  },
-  { NULL,    TypeMax   }
+  { L"-r",   TypeFlag              },
+  { L"-a",   TypeStart             },
+  { L"-sfo", TypeFlag              },
+  { NULL,    TypeMax               }
 };
 
 /**
@@ -753,7 +805,15 @@ ShellCommandRunLs (
   Status = ShellCommandLineParse (LsParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel2HiiHandle, L"ls", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel2HiiHandle,
+        L"ls",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -768,7 +828,14 @@ ShellCommandRunLs (
     }
 
     if (ShellCommandLineGetCount (Package) > 2) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel2HiiHandle, L"ls");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellLevel2HiiHandle,
+        L"ls"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       //
@@ -776,7 +843,8 @@ ShellCommandRunLs (
       //
       if (ShellCommandLineGetFlag (Package, L"-a")) {
         for ( Attribs = ShellCommandLineGetValue (Package, L"-a")
-              ; Attribs != NULL && *Attribs != CHAR_NULL && ShellStatus == SHELL_SUCCESS
+              ; Attribs != NULL && *Attribs != CHAR_NULL && ShellStatus ==
+              SHELL_SUCCESS
               ; Attribs++
               )
         {
@@ -807,7 +875,18 @@ ShellCommandRunLs (
               Count++;
               continue;
             default:
-              ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_ATTRIBUTE), gShellLevel2HiiHandle, L"ls", ShellCommandLineGetValue (Package, L"-a"));
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                STRING_TOKEN (STR_GEN_ATTRIBUTE),
+                gShellLevel2HiiHandle,
+                L"ls",
+                ShellCommandLineGetValue (
+                  Package,
+                  L"-a"
+                  )
+                );
               ShellStatus = SHELL_INVALID_PARAMETER;
               break;
           } // switch
@@ -830,7 +909,14 @@ ShellCommandRunLs (
           CurDir = gEfiShellProtocol->GetCurDir (NULL);
           if (CurDir == NULL) {
             ShellStatus = SHELL_NOT_FOUND;
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_NO_CWD), gShellLevel2HiiHandle, L"ls");
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_NO_CWD),
+              gShellLevel2HiiHandle,
+              L"ls"
+              );
           }
 
           ListUnfiltered = TRUE;
@@ -844,19 +930,35 @@ ShellCommandRunLs (
           Size = FullPath != NULL ? StrSize (FullPath) : 0;
           StrnCatGrow (&FullPath, &Size, L"\\", 0);
         } else {
-          if ((StrStr (PathName, L":") == NULL) && (gEfiShellProtocol->GetCurDir (NULL) == NULL)) {
+          if ((StrStr (PathName, L":") == NULL) &&
+              (gEfiShellProtocol->GetCurDir (NULL) == NULL))
+          {
             //
             // If we got something and it doesnt have a fully qualified path, then we needed to have a CWD.
             //
             ShellStatus = SHELL_NOT_FOUND;
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_NO_CWD), gShellLevel2HiiHandle, L"ls");
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_NO_CWD),
+              gShellLevel2HiiHandle,
+              L"ls"
+              );
           } else {
             //
             // We got a valid fully qualified path or we have a CWD
             //
             ASSERT ((FullPath == NULL && Size == 0) || (FullPath != NULL));
             if (StrStr (PathName, L":") == NULL) {
-              StrnCatGrow (&FullPath, &Size, gEfiShellProtocol->GetCurDir (NULL), 0);
+              StrnCatGrow (
+                &FullPath,
+                &Size,
+                gEfiShellProtocol->GetCurDir (
+                                     NULL
+                                     ),
+                0
+                );
               if (FullPath == NULL) {
                 ShellCommandLineFreeVarList (Package);
                 return SHELL_OUT_OF_RESOURCES;
@@ -890,14 +992,29 @@ ShellCommandRunLs (
               }
 
               PathRemoveLastItem (FullPath);
-              CopyMem (SearchString, SearchString + StrLen (FullPath), StrSize (SearchString + StrLen (FullPath)));
+              CopyMem (
+                SearchString,
+                SearchString + StrLen (FullPath),
+                StrSize (
+                  SearchString + StrLen (FullPath)
+                  )
+                );
             }
           }
         }
 
         Status = gRT->GetTime (&TheTime, NULL);
         if (EFI_ERROR (Status)) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN), gShellLevel2HiiHandle, L"ls", L"gRT->GetTime", Status);
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_UEFI_FUNC_WARN),
+            gShellLevel2HiiHandle,
+            L"ls",
+            L"gRT->GetTime",
+            Status
+            );
           TheTime.TimeZone = EFI_UNSPECIFIED_TIMEZONE;
         }
 
@@ -914,15 +1031,39 @@ ShellCommandRunLs (
                           ListUnfiltered
                           );
           if (ShellStatus == SHELL_NOT_FOUND) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_LS_FILE_NOT_FOUND), gShellLevel2HiiHandle, L"ls", FullPath);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_LS_FILE_NOT_FOUND),
+              gShellLevel2HiiHandle,
+              L"ls",
+              FullPath
+              );
           } else if (ShellStatus == SHELL_INVALID_PARAMETER) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel2HiiHandle, L"ls", FullPath);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_PARAM_INV),
+              gShellLevel2HiiHandle,
+              L"ls",
+              FullPath
+              );
           } else if (ShellStatus == SHELL_ABORTED) {
             //
             // Ignore aborting.
             //
           } else if (ShellStatus != SHELL_SUCCESS) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellLevel2HiiHandle, L"ls", FullPath);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_PARAM_INV),
+              gShellLevel2HiiHandle,
+              L"ls",
+              FullPath
+              );
           }
         }
       }

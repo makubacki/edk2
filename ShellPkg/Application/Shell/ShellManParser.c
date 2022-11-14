@@ -64,26 +64,48 @@ GetExecuatableFileName (
   //
   // Fix the file name
   //
-  if (StrnCmp (NameString+StrLen (NameString)-StrLen (L".efi"), L".efi", StrLen (L".efi")) == 0) {
+  if (StrnCmp (
+        NameString+StrLen (NameString)-StrLen (L".efi"),
+        L".efi",
+        StrLen (L".efi")
+        ) == 0)
+  {
     Buffer = AllocateCopyPool (StrSize (NameString), NameString);
-  } else if (StrnCmp (NameString+StrLen (NameString)-StrLen (L".man"), L".man", StrLen (L".man")) == 0) {
+  } else if (StrnCmp (
+               NameString+StrLen (NameString)-StrLen (L".man"),
+               L".man",
+               StrLen (L".man")
+               ) == 0)
+  {
     Buffer = AllocateCopyPool (StrSize (NameString), NameString);
     if (Buffer != NULL) {
       SuffixStr = Buffer+StrLen (Buffer)-StrLen (L".man");
-      StrnCpyS (SuffixStr, StrSize (L".man")/sizeof (CHAR16), L".efi", StrLen (L".efi"));
+      StrnCpyS (
+        SuffixStr,
+        StrSize (L".man")/sizeof (CHAR16),
+        L".efi",
+        StrLen (
+          L".efi"
+          )
+        );
     }
   } else {
-    Buffer = AllocateZeroPool (StrSize (NameString) + StrLen (L".efi")*sizeof (CHAR16));
+    Buffer = AllocateZeroPool (
+               StrSize (NameString) + StrLen (L".efi")*
+               sizeof (CHAR16)
+               );
     if (Buffer != NULL) {
       StrnCpyS (
         Buffer,
-        (StrSize (NameString) + StrLen (L".efi")*sizeof (CHAR16))/sizeof (CHAR16),
+        (StrSize (NameString) + StrLen (L".efi")*sizeof (CHAR16))/
+        sizeof (CHAR16),
         NameString,
         StrLen (NameString)
         );
       StrnCatS (
         Buffer,
-        (StrSize (NameString) + StrLen (L".efi")*sizeof (CHAR16))/sizeof (CHAR16),
+        (StrSize (NameString) + StrLen (L".efi")*sizeof (CHAR16))/
+        sizeof (CHAR16),
         L".efi",
         StrLen (L".efi")
         );
@@ -290,7 +312,9 @@ ManFileFindSections (
         continue;
       }
 
-      if ((*(SectionName + SectionLen) == CHAR_NULL) || (*(SectionName + SectionLen) == L',')) {
+      if ((*(SectionName + SectionLen) == CHAR_NULL) || (*(SectionName +
+                                                           SectionLen) == L','))
+      {
         CurrentlyReading = TRUE;
       }
     } else if (CurrentlyReading) {
@@ -345,7 +369,8 @@ IsTitleHeader (
   // The states of a simple state machine used to recognize a title header line
   // and to extract the Short Description, if desired.
   typedef enum {
-    LookForThMacro, LookForCommandName, CompareCommands, GetBriefDescription, Final
+    LookForThMacro, LookForCommandName, CompareCommands, GetBriefDescription,
+    Final
   } STATEVALUES;
 
   STATEVALUES  State;
@@ -369,7 +394,9 @@ IsTitleHeader (
       // eat white space. If we see something other than white space, this is not a
       // title header line.
       case LookForThMacro:
-        if ((StrnCmp (L".TH ", Line, 4) == 0) || (StrnCmp (L".TH\t", Line, 4) == 0)) {
+        if ((StrnCmp (L".TH ", Line, 4) == 0) || (StrnCmp (L".TH\t", Line, 4) ==
+                                                  0))
+        {
           Line += 4;
           State = LookForCommandName;
         } else if ((*Line == L' ') || (*Line == L'\t')) {
@@ -404,7 +431,11 @@ IsTitleHeader (
         if ((*Line == L' ') || (*Line == L'\t')) {
           ReturnFound = TRUE;  // This is the desired command's title header line.
           State       = (BriefDesc == NULL) ? Final : GetBriefDescription;
-        } else if (CharToUpper (*Line) != CharToUpper (*(Command + CommandIndex++))) {
+        } else if (CharToUpper (*Line) != CharToUpper (
+                                            *(Command +
+                                              CommandIndex++)
+                                            ))
+        {
           State = Final;
         }
 
@@ -415,7 +446,9 @@ IsTitleHeader (
       // Skip whitespace, '0', and '1' characters, if any, prior to the brief description.
       // Return the description to the caller.
       case GetBriefDescription:
-        if ((*Line != L' ') && (*Line != L'\t') && (*Line != L'0') && (*Line != L'1')) {
+        if ((*Line != L' ') && (*Line != L'\t') && (*Line != L'0') && (*Line !=
+                                                                       L'1'))
+        {
           *BriefSize = StrSize (Line);
           *BriefDesc = AllocateZeroPool (*BriefSize);
           if (*BriefDesc != NULL) {
@@ -599,15 +632,32 @@ ProcessManFile (
   //
   TempString = ShellCommandGetCommandHelp (Command);
   if (TempString != NULL) {
-    FileHandle = ConvertEfiFileProtocolToShellHandle (CreateFileInterfaceMem (TRUE), NULL);
-    HelpSize   = StrLen (TempString) * sizeof (CHAR16);
+    FileHandle = ConvertEfiFileProtocolToShellHandle (
+                   CreateFileInterfaceMem (
+                     TRUE
+                     ),
+                   NULL
+                   );
+    HelpSize = StrLen (TempString) * sizeof (CHAR16);
     ShellWriteFile (FileHandle, &HelpSize, TempString);
     ShellSetFilePosition (FileHandle, 0);
     HelpSize  = 0;
     BriefSize = 0;
-    Status    = ManFileFindTitleSection (FileHandle, Command, BriefDesc, &BriefSize, &Ascii);
+    Status    = ManFileFindTitleSection (
+                  FileHandle,
+                  Command,
+                  BriefDesc,
+                  &BriefSize,
+                  &Ascii
+                  );
     if (!EFI_ERROR (Status) && (HelpText != NULL)) {
-      Status = ManFileFindSections (FileHandle, Sections, HelpText, &HelpSize, Ascii);
+      Status = ManFileFindSections (
+                 FileHandle,
+                 Sections,
+                 HelpText,
+                 &HelpSize,
+                 Ascii
+                 );
     }
 
     ShellCloseFile (&FileHandle);
@@ -624,8 +674,16 @@ ProcessManFile (
     Status = SearchPathForFile (TempString, &FileHandle);
     if (EFI_ERROR (Status)) {
       FileDevPath = FileDevicePath (NULL, TempString);
-      DevPath     = AppendDevicePath (ShellInfoObject.ImageDevPath, FileDevPath);
-      Status      = InternalOpenFileDevicePath (DevPath, &FileHandle, EFI_FILE_MODE_READ, 0);
+      DevPath     = AppendDevicePath (
+                      ShellInfoObject.ImageDevPath,
+                      FileDevPath
+                      );
+      Status = InternalOpenFileDevicePath (
+                 DevPath,
+                 &FileHandle,
+                 EFI_FILE_MODE_READ,
+                 0
+                 );
       SHELL_FREE_NON_NULL (FileDevPath);
       SHELL_FREE_NON_NULL (DevPath);
     }
@@ -633,9 +691,21 @@ ProcessManFile (
     if (!EFI_ERROR (Status)) {
       HelpSize  = 0;
       BriefSize = 0;
-      Status    = ManFileFindTitleSection (FileHandle, Command, BriefDesc, &BriefSize, &Ascii);
+      Status    = ManFileFindTitleSection (
+                    FileHandle,
+                    Command,
+                    BriefDesc,
+                    &BriefSize,
+                    &Ascii
+                    );
       if (!EFI_ERROR (Status) && (HelpText != NULL)) {
-        Status = ManFileFindSections (FileHandle, Sections, HelpText, &HelpSize, Ascii);
+        Status = ManFileFindSections (
+                   FileHandle,
+                   Sections,
+                   HelpText,
+                   &HelpSize,
+                   Ascii
+                   );
       }
 
       ShellInfoObject.NewEfiShellProtocol->CloseFile (FileHandle);
@@ -666,8 +736,17 @@ ProcessManFile (
       goto Done;
     }
 
-    DevPath = ShellInfoObject.NewEfiShellProtocol->GetDevicePathFromFilePath (CmdFilePathName);
-    Status  = gBS->LoadImage (FALSE, gImageHandle, DevPath, NULL, 0, &CmdFileImgHandle);
+    DevPath = ShellInfoObject.NewEfiShellProtocol->GetDevicePathFromFilePath (
+                                                     CmdFilePathName
+                                                     );
+    Status = gBS->LoadImage (
+                    FALSE,
+                    gImageHandle,
+                    DevPath,
+                    NULL,
+                    0,
+                    &CmdFileImgHandle
+                    );
     if (EFI_ERROR (Status)) {
       //
       // With EFI_SECURITY_VIOLATION retval, the Image was loaded and an ImageHandle was created
@@ -726,21 +805,42 @@ ProcessManFile (
         SHELL_FREE_NON_NULL (*BriefDesc);
       }
 
-      TempString = HiiGetString (mShellManHiiHandle, (EFI_STRING_ID)StringIdWalker, NULL);
+      TempString = HiiGetString (
+                     mShellManHiiHandle,
+                     (EFI_STRING_ID)StringIdWalker,
+                     NULL
+                     );
       if (TempString == NULL) {
         Status = EFI_NOT_FOUND;
         goto Done;
       }
 
-      FileHandle = ConvertEfiFileProtocolToShellHandle (CreateFileInterfaceMem (TRUE), NULL);
-      HelpSize   = StrLen (TempString) * sizeof (CHAR16);
+      FileHandle = ConvertEfiFileProtocolToShellHandle (
+                     CreateFileInterfaceMem (
+                       TRUE
+                       ),
+                     NULL
+                     );
+      HelpSize = StrLen (TempString) * sizeof (CHAR16);
       ShellWriteFile (FileHandle, &HelpSize, TempString);
       ShellSetFilePosition (FileHandle, 0);
       HelpSize  = 0;
       BriefSize = 0;
-      Status    = ManFileFindTitleSection (FileHandle, Command, BriefDesc, &BriefSize, &Ascii);
+      Status    = ManFileFindTitleSection (
+                    FileHandle,
+                    Command,
+                    BriefDesc,
+                    &BriefSize,
+                    &Ascii
+                    );
       if (!EFI_ERROR (Status) && (HelpText != NULL)) {
-        Status = ManFileFindSections (FileHandle, Sections, HelpText, &HelpSize, Ascii);
+        Status = ManFileFindSections (
+                   FileHandle,
+                   Sections,
+                   HelpText,
+                   &HelpSize,
+                   Ascii
+                   );
       }
 
       ShellCloseFile (&FileHandle);

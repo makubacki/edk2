@@ -54,7 +54,11 @@ TftpCommandGetHelp (
   IN CONST CHAR8                         *Language
   )
 {
-  return HiiGetString (mTftpHiiHandle, STRING_TOKEN (STR_GET_HELP_TFTP), Language);
+  return HiiGetString (
+           mTftpHiiHandle,
+           STRING_TOKEN (STR_GET_HELP_TFTP),
+           Language
+           );
 }
 
 EFI_SHELL_DYNAMIC_COMMAND_PROTOCOL  mTftpDynamicCommand = {

@@ -334,7 +334,10 @@ MainCommandOpenFile (
     //
     Done = FALSE;
     while (!Done) {
-      Status = InputBarRefresh (MainEditor.ScreenSize.Row, MainEditor.ScreenSize.Column);
+      Status = InputBarRefresh (
+                 MainEditor.ScreenSize.Row,
+                 MainEditor.ScreenSize.Column
+                 );
       StatusBarSetRefresh ();
 
       //
@@ -355,7 +358,16 @@ MainCommandOpenFile (
             return Status;
           }
 
-          MainTitleBarRefresh (MainEditor.FileBuffer->FileName, MainEditor.FileBuffer->FileType, MainEditor.FileBuffer->ReadOnly, MainEditor.FileBuffer->FileModified, MainEditor.ScreenSize.Column, MainEditor.ScreenSize.Row, 0, 0);
+          MainTitleBarRefresh (
+            MainEditor.FileBuffer->FileName,
+            MainEditor.FileBuffer->FileType,
+            MainEditor.FileBuffer->ReadOnly,
+            MainEditor.FileBuffer->FileModified,
+            MainEditor.ScreenSize.Column,
+            MainEditor.ScreenSize.Row,
+            0,
+            0
+            );
           FileBufferRestorePosition ();
           Done = TRUE;
           break;
@@ -391,7 +403,10 @@ MainCommandOpenFile (
   }
 
   while (1) {
-    Status = InputBarRefresh (MainEditor.ScreenSize.Row, MainEditor.ScreenSize.Column);
+    Status = InputBarRefresh (
+               MainEditor.ScreenSize.Row,
+               MainEditor.ScreenSize.Column
+               );
     StatusBarSetRefresh ();
 
     //
@@ -576,7 +591,10 @@ MainCommandSearch (
     return Status;
   }
 
-  Status = InputBarRefresh (MainEditor.ScreenSize.Row, MainEditor.ScreenSize.Column);
+  Status = InputBarRefresh (
+             MainEditor.ScreenSize.Row,
+             MainEditor.ScreenSize.Column
+             );
   StatusBarSetRefresh ();
 
   //
@@ -632,7 +650,10 @@ MainCommandSearch (
 
     Done = FALSE;
     while (!Done) {
-      Status = InputBarRefresh (MainEditor.ScreenSize.Row, MainEditor.ScreenSize.Column);
+      Status = InputBarRefresh (
+                 MainEditor.ScreenSize.Row,
+                 MainEditor.ScreenSize.Column
+                 );
       StatusBarSetRefresh ();
 
       //
@@ -740,7 +761,10 @@ MainCommandSearchReplace (
     return Status;
   }
 
-  Status = InputBarRefresh (MainEditor.ScreenSize.Row, MainEditor.ScreenSize.Column);
+  Status = InputBarRefresh (
+             MainEditor.ScreenSize.Row,
+             MainEditor.ScreenSize.Column
+             );
   StatusBarSetRefresh ();
 
   //
@@ -777,7 +801,10 @@ MainCommandSearchReplace (
     return Status;
   }
 
-  Status = InputBarRefresh (MainEditor.ScreenSize.Row, MainEditor.ScreenSize.Column);
+  Status = InputBarRefresh (
+             MainEditor.ScreenSize.Row,
+             MainEditor.ScreenSize.Column
+             );
   StatusBarSetRefresh ();
 
   //
@@ -842,7 +869,10 @@ MainCommandSearchReplace (
 
     Done = FALSE;
     while (!Done) {
-      Status = InputBarRefresh (MainEditor.ScreenSize.Row, MainEditor.ScreenSize.Column);
+      Status = InputBarRefresh (
+                 MainEditor.ScreenSize.Row,
+                 MainEditor.ScreenSize.Column
+                 );
       StatusBarSetRefresh ();
 
       //
@@ -939,7 +969,10 @@ MainCommandSearchReplace (
 
     Done = FALSE;
     while (!Done) {
-      Status = InputBarRefresh (MainEditor.ScreenSize.Row, MainEditor.ScreenSize.Column);
+      Status = InputBarRefresh (
+                 MainEditor.ScreenSize.Row,
+                 MainEditor.ScreenSize.Column
+                 );
       StatusBarSetRefresh ();
 
       //
@@ -1027,7 +1060,10 @@ MainCommandExit (
     }
 
     while (1) {
-      Status = InputBarRefresh (MainEditor.ScreenSize.Row, MainEditor.ScreenSize.Column);
+      Status = InputBarRefresh (
+                 MainEditor.ScreenSize.Row,
+                 MainEditor.ScreenSize.Column
+                 );
       StatusBarSetRefresh ();
 
       //
@@ -1104,7 +1140,10 @@ MainCommandGotoLine (
     return Status;
   }
 
-  Status = InputBarRefresh (MainEditor.ScreenSize.Row, MainEditor.ScreenSize.Column);
+  Status = InputBarRefresh (
+             MainEditor.ScreenSize.Row,
+             MainEditor.ScreenSize.Column
+             );
   StatusBarSetRefresh ();
 
   //
@@ -1195,7 +1234,11 @@ MainCommandSaveFile (
   // 7.  Update File Name field in Title Bar to B and remove the modified
   //       flag in Title Bar.
   //
-  Str = CatSPrint (NULL, L"File to Save: [%s]", MainEditor.FileBuffer->FileName);
+  Str = CatSPrint (
+          NULL,
+          L"File to Save: [%s]",
+          MainEditor.FileBuffer->FileName
+          );
   if (Str == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1226,7 +1269,10 @@ MainCommandSaveFile (
   //
   // get new file name
   //
-  Status = InputBarRefresh (MainEditor.ScreenSize.Row, MainEditor.ScreenSize.Column);
+  Status = InputBarRefresh (
+             MainEditor.ScreenSize.Row,
+             MainEditor.ScreenSize.Column
+             );
   StatusBarSetRefresh ();
 
   //
@@ -1281,7 +1327,12 @@ MainCommandSaveFile (
       //
       // check for read only
       //
-      Status = ShellOpenFileByName (FileName, &FileHandle, EFI_FILE_MODE_READ, 0);
+      Status = ShellOpenFileByName (
+                 FileName,
+                 &FileHandle,
+                 EFI_FILE_MODE_READ,
+                 0
+                 );
       if (EFI_ERROR (Status)) {
         StatusBarSetStatusString (L"Open Failed");
         FreePool (FileName);
@@ -1320,7 +1371,10 @@ MainCommandSaveFile (
       }
 
       while (TRUE) {
-        Status = InputBarRefresh (MainEditor.ScreenSize.Row, MainEditor.ScreenSize.Column);
+        Status = InputBarRefresh (
+                   MainEditor.ScreenSize.Row,
+                   MainEditor.ScreenSize.Column
+                   );
         StatusBarSetRefresh ();
 
         //
@@ -1377,7 +1431,11 @@ MainCommandDisplayHelp (
   // print helpInfo
   //
   for (CurrentLine = 0; 0 != MainMenuHelpInfo[CurrentLine]; CurrentLine++) {
-    InfoString = HiiGetString (gShellDebug1HiiHandle, MainMenuHelpInfo[CurrentLine], NULL);
+    InfoString = HiiGetString (
+                   gShellDebug1HiiHandle,
+                   MainMenuHelpInfo[CurrentLine],
+                   NULL
+                   );
     ShellPrintEx (0, CurrentLine+1, L"%E%s%N", InfoString);
   }
 
@@ -1385,12 +1443,19 @@ MainCommandDisplayHelp (
   // scan for ctrl+w
   //
   while (TRUE) {
-    Status = gBS->WaitForEvent (1, &MainEditor.TextInputEx->WaitForKeyEx, &EventIndex);
+    Status = gBS->WaitForEvent (
+                    1,
+                    &MainEditor.TextInputEx->WaitForKeyEx,
+                    &EventIndex
+                    );
     if (EFI_ERROR (Status) || (EventIndex != 0)) {
       continue;
     }
 
-    Status = MainEditor.TextInputEx->ReadKeyStrokeEx (MainEditor.TextInputEx, &KeyData);
+    Status = MainEditor.TextInputEx->ReadKeyStrokeEx (
+                                       MainEditor.TextInputEx,
+                                       &KeyData
+                                       );
     if (EFI_ERROR (Status)) {
       continue;
     }
@@ -1405,15 +1470,23 @@ MainCommandDisplayHelp (
       if (KeyData.Key.UnicodeChar == L'W' - L'A' + 1) {
         break;
       }
-    } else if (((KeyData.KeyState.KeyShiftState & EFI_SHIFT_STATE_VALID) != 0) &&
-               ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) != 0) &&
-               ((KeyData.KeyState.KeyShiftState & ~(EFI_SHIFT_STATE_VALID | EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) == 0))
+    } else if (((KeyData.KeyState.KeyShiftState & EFI_SHIFT_STATE_VALID) !=
+                0) &&
+               ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED |
+                                                   EFI_RIGHT_CONTROL_PRESSED))
+                != 0) &&
+               ((KeyData.KeyState.KeyShiftState & ~(EFI_SHIFT_STATE_VALID |
+                                                    EFI_LEFT_CONTROL_PRESSED |
+                                                    EFI_RIGHT_CONTROL_PRESSED))
+                == 0))
     {
       //
       // For consoles that supports/reports shift state,
       // make sure that only CONTROL shift key is pressed.
       //
-      if ((KeyData.Key.UnicodeChar == 'w') || (KeyData.Key.UnicodeChar == 'W')) {
+      if ((KeyData.Key.UnicodeChar == 'w') || (KeyData.Key.UnicodeChar ==
+                                               'W'))
+      {
         break;
       }
     }
@@ -1475,10 +1548,13 @@ MainEditorInit (
   //
   // set screen attributes
   //
-  MainEditor.ColorAttributes.Colors.Foreground = gST->ConOut->Mode->Attribute & 0x000000ff;
+  MainEditor.ColorAttributes.Colors.Foreground = gST->ConOut->Mode->Attribute &
+                                                 0x000000ff;
 
-  MainEditor.ColorAttributes.Colors.Background = (UINT8)(gST->ConOut->Mode->Attribute >> 4);
-  OriginalColors                               = MainEditor.ColorAttributes.Colors;
+  MainEditor.ColorAttributes.Colors.Background =
+    (UINT8)(gST->ConOut->Mode->Attribute >> 4);
+  OriginalColors =
+    MainEditor.ColorAttributes.Colors;
 
   OriginalMode = gST->ConOut->Mode->Mode;
 
@@ -1558,20 +1634,38 @@ MainEditorInit (
   //
   Status = MainTitleBarInit (L"UEFI EDIT");
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_EDIT_LIBEDITOR_TITLEBAR), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_EDIT_LIBEDITOR_TITLEBAR),
+      gShellDebug1HiiHandle
+      );
     return EFI_LOAD_ERROR;
   }
 
   Status = ControlHotKeyInit (MainControlBasedMenuFunctions);
   Status = MenuBarInit (MainMenuItems);
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_EDIT_LIBEDITOR_MAINMENU), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_EDIT_LIBEDITOR_MAINMENU),
+      gShellDebug1HiiHandle
+      );
     return EFI_LOAD_ERROR;
   }
 
   Status = StatusBarInit ();
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_EDIT_LIBEDITOR_STATUSBAR), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_EDIT_LIBEDITOR_STATUSBAR),
+      gShellDebug1HiiHandle
+      );
     return EFI_LOAD_ERROR;
   }
 
@@ -1579,7 +1673,13 @@ MainEditorInit (
 
   Status = FileBufferInit ();
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_EDIT_LIBEDITOR_FILEBUFFER), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_EDIT_LIBEDITOR_FILEBUFFER),
+      gShellDebug1HiiHandle
+      );
     return EFI_LOAD_ERROR;
   }
 
@@ -1624,7 +1724,15 @@ MainEditorCleanup (
 
   Status = FileBufferCleanup ();
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_EDIT_LIBEDITOR_FILEBUFFER_CLEANUP), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_EDIT_LIBEDITOR_FILEBUFFER_CLEANUP
+        ),
+      gShellDebug1HiiHandle
+      );
   }
 
   //
@@ -1639,7 +1747,10 @@ MainEditorCleanup (
   //
   gST->ConOut->SetAttribute (
                  gST->ConOut,
-                 EFI_TEXT_ATTR (OriginalColors.Foreground, OriginalColors.Background)
+                 EFI_TEXT_ATTR (
+                   OriginalColors.Foreground,
+                   OriginalColors.Background
+                   )
                  );
 
   gST->ConOut->ClearScreen (gST->ConOut);
@@ -1669,17 +1780,34 @@ MainEditorRefresh (
      || (FileBufferBackupVar.FileModified != FileBuffer.FileModified)
      || (FileBufferBackupVar.ReadOnly != FileBuffer.ReadOnly))
   {
-    MainTitleBarRefresh (MainEditor.FileBuffer->FileName, MainEditor.FileBuffer->FileType, MainEditor.FileBuffer->ReadOnly, MainEditor.FileBuffer->FileModified, MainEditor.ScreenSize.Column, MainEditor.ScreenSize.Row, 0, 0);
+    MainTitleBarRefresh (
+      MainEditor.FileBuffer->FileName,
+      MainEditor.FileBuffer->FileType,
+      MainEditor.FileBuffer->ReadOnly,
+      MainEditor.FileBuffer->FileModified,
+      MainEditor.ScreenSize.Column,
+      MainEditor.ScreenSize.Row,
+      0,
+      0
+      );
     FileBufferRestorePosition ();
   }
 
   if (  EditorFirst
      || (FileBufferBackupVar.FilePosition.Row != FileBuffer.FilePosition.Row)
-     || (FileBufferBackupVar.FilePosition.Column != FileBuffer.FilePosition.Column)
+     || (FileBufferBackupVar.FilePosition.Column !=
+         FileBuffer.FilePosition.Column)
      || (FileBufferBackupVar.ModeInsert != FileBuffer.ModeInsert)
      || StatusBarGetRefresh ())
   {
-    StatusBarRefresh (EditorFirst, MainEditor.ScreenSize.Row, MainEditor.ScreenSize.Column, MainEditor.FileBuffer->FilePosition.Row, MainEditor.FileBuffer->FilePosition.Column, MainEditor.FileBuffer->ModeInsert);
+    StatusBarRefresh (
+      EditorFirst,
+      MainEditor.ScreenSize.Row,
+      MainEditor.ScreenSize.Column,
+      MainEditor.FileBuffer->FilePosition.Row,
+      MainEditor.FileBuffer->FilePosition.Column,
+      MainEditor.FileBuffer->ModeInsert
+      );
     FileBufferRestorePosition ();
   }
 
@@ -1710,9 +1838,22 @@ GetTextX (
   INT32  Gap;
 
   MainEditor.MouseAccumulatorX += GuidX;
-  Gap                           = (MainEditor.MouseAccumulatorX * (INT32)MainEditor.ScreenSize.Column) / (INT32)(50 * (INT32)MainEditor.MouseInterface->Mode->ResolutionX);
-  MainEditor.MouseAccumulatorX  = (MainEditor.MouseAccumulatorX * (INT32)MainEditor.ScreenSize.Column) % (INT32)(50 * (INT32)MainEditor.MouseInterface->Mode->ResolutionX);
-  MainEditor.MouseAccumulatorX  = MainEditor.MouseAccumulatorX / (INT32)MainEditor.ScreenSize.Column;
+  Gap                           = (MainEditor.MouseAccumulatorX *
+                                   (INT32)MainEditor.ScreenSize.Column) /
+                                  (INT32)(50 *
+                                          (
+                                                                              INT32)
+                                          MainEditor.MouseInterface->Mode->
+                                            ResolutionX);
+  MainEditor.MouseAccumulatorX = (MainEditor.MouseAccumulatorX *
+                                  (INT32)MainEditor.ScreenSize.Column) %
+                                 (INT32)(50 *
+                                         (
+                                                                             INT32)
+                                         MainEditor.MouseInterface->Mode->
+                                           ResolutionX);
+  MainEditor.MouseAccumulatorX = MainEditor.MouseAccumulatorX /
+                                 (INT32)MainEditor.ScreenSize.Column;
   return Gap;
 }
 
@@ -1731,9 +1872,22 @@ GetTextY (
   INT32  Gap;
 
   MainEditor.MouseAccumulatorY += GuidY;
-  Gap                           = (MainEditor.MouseAccumulatorY * (INT32)MainEditor.ScreenSize.Row) / (INT32)(50 * (INT32)MainEditor.MouseInterface->Mode->ResolutionY);
-  MainEditor.MouseAccumulatorY  = (MainEditor.MouseAccumulatorY * (INT32)MainEditor.ScreenSize.Row) % (INT32)(50 * (INT32)MainEditor.MouseInterface->Mode->ResolutionY);
-  MainEditor.MouseAccumulatorY  = MainEditor.MouseAccumulatorY / (INT32)MainEditor.ScreenSize.Row;
+  Gap                           = (MainEditor.MouseAccumulatorY *
+                                   (INT32)MainEditor.ScreenSize.Row) /
+                                  (INT32)(50 *
+                                          (
+                                                                              INT32)
+                                          MainEditor.MouseInterface->Mode->
+                                            ResolutionY);
+  MainEditor.MouseAccumulatorY = (MainEditor.MouseAccumulatorY *
+                                  (INT32)MainEditor.ScreenSize.Row) %
+                                 (INT32)(50 *
+                                         (
+                                                                             INT32)
+                                         MainEditor.MouseInterface->Mode->
+                                           ResolutionY);
+  MainEditor.MouseAccumulatorY = MainEditor.MouseAccumulatorY /
+                                 (INT32)MainEditor.ScreenSize.Row;
 
   return Gap;
 }
@@ -1817,9 +1971,11 @@ MainEditorHandleMouseInput (
 
     FileBufferMovePosition (FRow, FCol);
 
-    MainEditor.FileBuffer->MousePosition.Row = MainEditor.FileBuffer->DisplayPosition.Row;
+    MainEditor.FileBuffer->MousePosition.Row =
+      MainEditor.FileBuffer->DisplayPosition.Row;
 
-    MainEditor.FileBuffer->MousePosition.Column = MainEditor.FileBuffer->DisplayPosition.Column;
+    MainEditor.FileBuffer->MousePosition.Column =
+      MainEditor.FileBuffer->DisplayPosition.Column;
 
     Action = TRUE;
   }
@@ -1890,7 +2046,10 @@ MainEditorKeyInput (
     //
     Status = gBS->CheckEvent (MainEditor.TextInputEx->WaitForKeyEx);
     if (!EFI_ERROR (Status)) {
-      Status = MainEditor.TextInputEx->ReadKeyStrokeEx (MainEditor.TextInputEx, &KeyData);
+      Status = MainEditor.TextInputEx->ReadKeyStrokeEx (
+                                         MainEditor.TextInputEx,
+                                         &KeyData
+                                         );
       if (!EFI_ERROR (Status)) {
         //
         // dispatch to different components' key handling function
@@ -1904,15 +2063,24 @@ MainEditorKeyInput (
         //
         // NoShiftState: TRUE when no shift key is pressed.
         //
-        NoShiftState = ((KeyData.KeyState.KeyShiftState & EFI_SHIFT_STATE_VALID) == 0) || (KeyData.KeyState.KeyShiftState == EFI_SHIFT_STATE_VALID);
+        NoShiftState = ((KeyData.KeyState.KeyShiftState &
+                         EFI_SHIFT_STATE_VALID) == 0) ||
+                       (KeyData.KeyState.KeyShiftState ==
+                        EFI_SHIFT_STATE_VALID);
         //
         // dispatch to different components' key handling function
         //
         if (EFI_NOT_FOUND != MenuBarDispatchControlHotKey (&KeyData)) {
           Status = EFI_SUCCESS;
-        } else if (NoShiftState && ((KeyData.Key.ScanCode == SCAN_NULL) || ((KeyData.Key.ScanCode >= SCAN_UP) && (KeyData.Key.ScanCode <= SCAN_PAGE_DOWN)))) {
+        } else if (NoShiftState && ((KeyData.Key.ScanCode == SCAN_NULL) ||
+                                    ((KeyData.Key.ScanCode >= SCAN_UP) &&
+                                     (KeyData.Key.ScanCode <=
+                                      SCAN_PAGE_DOWN))))
+        {
           Status = FileBufferHandleInput (&KeyData.Key);
-        } else if (NoShiftState && (KeyData.Key.ScanCode >= SCAN_F1) && (KeyData.Key.ScanCode <= SCAN_F12)) {
+        } else if (NoShiftState && (KeyData.Key.ScanCode >= SCAN_F1) &&
+                   (KeyData.Key.ScanCode <= SCAN_F12))
+        {
           Status = MenuBarDispatchFunctionKey (&KeyData.Key);
         } else {
           StatusBarSetStatusString (L"Unknown Command");
@@ -1923,7 +2091,11 @@ MainEditorKeyInput (
           //
           // not already has some error status
           //
-          if ((StatusBarGetString () != NULL) && (StrCmp (L"", StatusBarGetString ()) == 0)) {
+          if ((StatusBarGetString () != NULL) && (StrCmp (
+                                                    L"",
+                                                    StatusBarGetString ()
+                                                    ) == 0))
+          {
             StatusBarSetStatusString (L"Disk Error. Try Again");
           }
         }

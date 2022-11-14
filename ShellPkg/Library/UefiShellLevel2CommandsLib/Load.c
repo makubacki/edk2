@@ -124,12 +124,24 @@ LoadDriver (
       gBS->UnloadImage (LoadedDriverHandle);
     }
 
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_LOAD_NOT_IMAGE), gShellLevel2HiiHandle, FileName, Status);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_LOAD_NOT_IMAGE),
+      gShellLevel2HiiHandle,
+      FileName,
+      Status
+      );
   } else {
     //
     // Make sure it is a driver image
     //
-    Status = gBS->HandleProtocol (LoadedDriverHandle, &gEfiLoadedImageProtocolGuid, (VOID *)&LoadedDriverImage);
+    Status = gBS->HandleProtocol (
+                    LoadedDriverHandle,
+                    &gEfiLoadedImageProtocolGuid,
+                    (VOID *)&LoadedDriverImage
+                    );
 
     ASSERT (LoadedDriverImage != NULL);
 
@@ -138,7 +150,14 @@ LoadDriver (
           && (LoadedDriverImage->ImageCodeType != EfiRuntimeServicesCode))
           )
     {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_LOAD_NOT_DRIVER), gShellLevel2HiiHandle, FileName);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_LOAD_NOT_DRIVER),
+        gShellLevel2HiiHandle,
+        FileName
+        );
 
       //
       // Exit and unload the non-driver image
@@ -154,9 +173,26 @@ LoadDriver (
     //
     Status = gBS->StartImage (LoadedDriverHandle, NULL, NULL);
     if (EFI_ERROR (Status)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_LOAD_ERROR), gShellLevel2HiiHandle, FileName, Status);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_LOAD_ERROR),
+        gShellLevel2HiiHandle,
+        FileName,
+        Status
+        );
     } else {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_LOAD_LOADED), gShellLevel2HiiHandle, FileName, LoadedDriverImage->ImageBase, Status);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_LOAD_LOADED),
+        gShellLevel2HiiHandle,
+        FileName,
+        LoadedDriverImage->ImageBase,
+        Status
+        );
     }
   }
 
@@ -178,8 +214,8 @@ LoadDriver (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  LoadParamList[] = {
-  { L"-nc", TypeFlag },
-  { NULL,   TypeMax  }
+  { L"-nc", TypeFlag     },
+  { NULL,   TypeMax      }
 };
 
 /**
@@ -219,7 +255,15 @@ ShellCommandRunLoad (
   Status = ShellCommandLineParse (LoadParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel2HiiHandle, L"load", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel2HiiHandle,
+        L"load",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -235,7 +279,14 @@ ShellCommandRunLoad (
       //
       // we didnt get a single file to load parameter
       //
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_FEW), gShellLevel2HiiHandle, L"load");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_FEW),
+        gShellLevel2HiiHandle,
+        L"load"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       for ( ParamCount = 1
@@ -243,20 +294,40 @@ ShellCommandRunLoad (
             ; ParamCount++
             )
       {
-        Status = ShellOpenFileMetaArg ((CHAR16 *)ShellCommandLineGetRawValue (Package, ParamCount), EFI_FILE_MODE_READ, &ListHead);
+        Status = ShellOpenFileMetaArg (
+                   (CHAR16 *)ShellCommandLineGetRawValue (
+                               Package,
+                               ParamCount
+                               ),
+                   EFI_FILE_MODE_READ,
+                   &ListHead
+                   );
         if (!EFI_ERROR (Status)) {
           for ( Node = (EFI_SHELL_FILE_INFO *)GetFirstNode (&ListHead->Link)
                 ; !IsNull (&ListHead->Link, &Node->Link)
-                ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (&ListHead->Link, &Node->Link)
+                ; Node = (EFI_SHELL_FILE_INFO *)GetNextNode (
+                                                  &ListHead->Link,
+                                                  &Node->Link
+                                                  )
                 )
           {
             //
             // once we have an error preserve that value, but finish the loop.
             //
             if (EFI_ERROR (Status)) {
-              LoadDriver (Node->FullName, (BOOLEAN)(ShellCommandLineGetFlag (Package, L"-nc") == FALSE));
+              LoadDriver (
+                Node->FullName,
+                (BOOLEAN)(ShellCommandLineGetFlag (
+                            Package,
+                            L"-nc"
+                            ) == FALSE)
+                );
             } else {
-              Status = LoadDriver (Node->FullName, (BOOLEAN)(ShellCommandLineGetFlag (Package, L"-nc") == FALSE));
+              Status = LoadDriver (
+                         Node->FullName,
+                         (BOOLEAN)(ShellCommandLineGetFlag (Package, L"-nc") ==
+                                   FALSE)
+                         );
             }
           } // for loop for multi-open
 
@@ -269,7 +340,15 @@ ShellCommandRunLoad (
           //
           // no files found.
           //
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_NF), gShellLevel2HiiHandle, L"load", (CHAR16 *)ShellCommandLineGetRawValue (Package, ParamCount));
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_FILE_NF),
+            gShellLevel2HiiHandle,
+            L"load",
+            (CHAR16 *)ShellCommandLineGetRawValue (Package, ParamCount)
+            );
           ShellStatus = SHELL_NOT_FOUND;
         }
       } // for loop for params

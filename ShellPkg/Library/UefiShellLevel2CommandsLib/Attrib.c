@@ -12,15 +12,15 @@
 STATIC CONST CHAR16  AllFiles[] = L"*";
 
 STATIC CONST SHELL_PARAM_ITEM  AttribParamList[] = {
-  { L"-a", TypeFlag },
-  { L"+a", TypeFlag },
-  { L"-s", TypeFlag },
-  { L"+s", TypeFlag },
-  { L"-h", TypeFlag },
-  { L"+h", TypeFlag },
-  { L"-r", TypeFlag },
-  { L"+r", TypeFlag },
-  { NULL,  TypeMax  }
+  { L"-a", TypeFlag   },
+  { L"+a", TypeFlag   },
+  { L"-s", TypeFlag   },
+  { L"+s", TypeFlag   },
+  { L"-h", TypeFlag   },
+  { L"+h", TypeFlag   },
+  { L"-r", TypeFlag   },
+  { L"+r", TypeFlag   },
+  { NULL,  TypeMax    }
 };
 
 /**
@@ -61,10 +61,23 @@ ShellCommandRunAttrib (
   //
   // parse the command line
   //
-  Status = ShellCommandLineParse (AttribParamList, &Package, &ProblemParam, TRUE);
+  Status = ShellCommandLineParse (
+             AttribParamList,
+             &Package,
+             &ProblemParam,
+             TRUE
+             );
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel2HiiHandle, L"attrib", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel2HiiHandle,
+        L"attrib",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -133,14 +146,33 @@ ShellCommandRunAttrib (
           }
 
           ASSERT (ListOfFiles == NULL);
-          Status = ShellOpenFileMetaArg ((CHAR16 *)FileName, EFI_FILE_MODE_READ, &ListOfFiles);
+          Status = ShellOpenFileMetaArg (
+                     (CHAR16 *)FileName,
+                     EFI_FILE_MODE_READ,
+                     &ListOfFiles
+                     );
           if (EFI_ERROR (Status)) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_OPEN_FAIL), gShellLevel2HiiHandle, L"attrib", ShellCommandLineGetRawValue (Package, ParamNumberCount));
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (
+                STR_GEN_FILE_OPEN_FAIL
+                ),
+              gShellLevel2HiiHandle,
+              L"attrib",
+              ShellCommandLineGetRawValue (Package, ParamNumberCount)
+              );
             ShellStatus = SHELL_NOT_FOUND;
           } else {
-            for (FileNode = (EFI_SHELL_FILE_INFO *)GetFirstNode (&ListOfFiles->Link)
+            for (FileNode = (EFI_SHELL_FILE_INFO *)GetFirstNode (
+                                                     &ListOfFiles->Link
+                                                     )
                  ; !IsNull (&ListOfFiles->Link, &FileNode->Link)
-                 ; FileNode = (EFI_SHELL_FILE_INFO *)GetNextNode (&ListOfFiles->Link, &FileNode->Link)
+                 ; FileNode = (EFI_SHELL_FILE_INFO *)GetNextNode (
+                                                       &ListOfFiles->Link,
+                                                       &FileNode->Link
+                                                       )
                  )
             {
               ShellPrintHiiEx (
@@ -166,7 +198,17 @@ ShellCommandRunAttrib (
             Status      = ShellCloseFileMetaArg (&ListOfFiles);
             ListOfFiles = NULL;
             if (EFI_ERROR (Status)) {
-              ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_CLOSE_FAIL), gShellLevel2HiiHandle, L"attrib", ShellCommandLineGetRawValue (Package, ParamNumberCount));
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                STRING_TOKEN (
+                  STR_GEN_FILE_CLOSE_FAIL
+                  ),
+                gShellLevel2HiiHandle,
+                L"attrib",
+                ShellCommandLineGetRawValue (Package, ParamNumberCount)
+                );
               ShellStatus = SHELL_NOT_FOUND;
             }
           } // for loop for handling wildcard filenames
@@ -175,7 +217,14 @@ ShellCommandRunAttrib (
         //
         // fail as we have conflcting params.
         //
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_CON), gShellLevel2HiiHandle, L"attrib");
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_GEN_PARAM_CON),
+          gShellLevel2HiiHandle,
+          L"attrib"
+          );
         ShellStatus = SHELL_INVALID_PARAMETER;
       } else {
         //
@@ -193,7 +242,14 @@ ShellCommandRunAttrib (
             // make sure we are not failing on the first one we do... if yes that's an error...
             //
             if (ParamNumberCount == 1) {
-              ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_FEW), gShellLevel2HiiHandle, L"attrib");
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                STRING_TOKEN (STR_GEN_TOO_FEW),
+                gShellLevel2HiiHandle,
+                L"attrib"
+                );
               ShellStatus = SHELL_INVALID_PARAMETER;
             }
 
@@ -209,20 +265,44 @@ ShellCommandRunAttrib (
           // Open the file(s)
           //
           ASSERT (ListOfFiles == NULL);
-          Status = ShellOpenFileMetaArg ((CHAR16 *)FileName, EFI_FILE_MODE_READ, &ListOfFiles);
+          Status = ShellOpenFileMetaArg (
+                     (CHAR16 *)FileName,
+                     EFI_FILE_MODE_READ,
+                     &ListOfFiles
+                     );
           if (EFI_ERROR (Status)) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_OPEN_FAIL), gShellLevel2HiiHandle, L"attrib", ShellCommandLineGetRawValue (Package, ParamNumberCount));
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (
+                STR_GEN_FILE_OPEN_FAIL
+                ),
+              gShellLevel2HiiHandle,
+              L"attrib",
+              ShellCommandLineGetRawValue (Package, ParamNumberCount)
+              );
             ShellStatus = SHELL_NOT_FOUND;
           } else {
-            for (FileNode = (EFI_SHELL_FILE_INFO *)GetFirstNode (&ListOfFiles->Link)
+            for (FileNode = (EFI_SHELL_FILE_INFO *)GetFirstNode (
+                                                     &ListOfFiles->Link
+                                                     )
                  ; !IsNull (&ListOfFiles->Link, &FileNode->Link)
-                 ; FileNode = (EFI_SHELL_FILE_INFO *)GetNextNode (&ListOfFiles->Link, &FileNode->Link)
+                 ; FileNode = (EFI_SHELL_FILE_INFO *)GetNextNode (
+                                                       &ListOfFiles->Link,
+                                                       &FileNode->Link
+                                                       )
                  )
             {
               //
               // skip the directory traversing stuff...
               //
-              if ((StrCmp (FileNode->FileName, L".") == 0) || (StrCmp (FileNode->FileName, L"..") == 0)) {
+              if ((StrCmp (FileNode->FileName, L".") == 0) || (StrCmp (
+                                                                 FileNode->
+                                                                   FileName,
+                                                                 L".."
+                                                                 ) == 0))
+              {
                 continue;
               }
 
@@ -231,14 +311,24 @@ ShellCommandRunAttrib (
               //
               // if we are removing Read-Only we need to do that alone
               //
-              if ((FileAttributesToRemove & EFI_FILE_READ_ONLY) == EFI_FILE_READ_ONLY) {
+              if ((FileAttributesToRemove & EFI_FILE_READ_ONLY) ==
+                  EFI_FILE_READ_ONLY)
+              {
                 FileInfo->Attribute &= ~EFI_FILE_READ_ONLY;
                 //
                 // SetFileInfo
                 //
                 Status = ShellSetFileInfo (FileNode->Handle, FileInfo);
                 if (EFI_ERROR (Status)) {
-                  ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_AD), gShellLevel2HiiHandle, L"attrib", ShellCommandLineGetRawValue (Package, ParamNumberCount));
+                  ShellPrintHiiEx (
+                    -1,
+                    -1,
+                    NULL,
+                    STRING_TOKEN (STR_GEN_FILE_AD),
+                    gShellLevel2HiiHandle,
+                    L"attrib",
+                    ShellCommandLineGetRawValue (Package, ParamNumberCount)
+                    );
                   ShellStatus = SHELL_ACCESS_DENIED;
                 }
               }
@@ -254,7 +344,18 @@ ShellCommandRunAttrib (
               //
               Status = ShellSetFileInfo (FileNode->Handle, FileInfo);
               if (EFI_ERROR (Status)) {
-                ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_AD), gShellLevel2HiiHandle, L"attrib", ShellCommandLineGetRawValue (Package, ParamNumberCount));
+                ShellPrintHiiEx (
+                  -1,
+                  -1,
+                  NULL,
+                  STRING_TOKEN (STR_GEN_FILE_AD),
+                  gShellLevel2HiiHandle,
+                  L"attrib",
+                  ShellCommandLineGetRawValue (
+                    Package,
+                    ParamNumberCount
+                    )
+                  );
                 ShellStatus = SHELL_ACCESS_DENIED;
               }
 
@@ -264,7 +365,17 @@ ShellCommandRunAttrib (
             Status      = ShellCloseFileMetaArg (&ListOfFiles);
             ListOfFiles = NULL;
             if (EFI_ERROR (Status)) {
-              ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_FILE_CLOSE_FAIL), gShellLevel2HiiHandle, L"attrib", ShellCommandLineGetRawValue (Package, ParamNumberCount));
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                STRING_TOKEN (
+                  STR_GEN_FILE_CLOSE_FAIL
+                  ),
+                gShellLevel2HiiHandle,
+                L"attrib",
+                ShellCommandLineGetRawValue (Package, ParamNumberCount)
+                );
               ShellStatus = SHELL_NOT_FOUND;
             }
           } // for loop for handling wildcard filenames

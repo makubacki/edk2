@@ -12,9 +12,9 @@
 #define MAX_LEN_DRIVER_NAME  35
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-sfo", TypeFlag  },
-  { L"-l",   TypeValue },
-  { NULL,    TypeMax   }
+  { L"-sfo", TypeFlag     },
+  { L"-l",   TypeValue    },
+  { NULL,    TypeMax      }
 };
 
 /**
@@ -102,7 +102,14 @@ ReturnDriverConfig (
 {
   EFI_STATUS  Status;
 
-  Status = gBS->OpenProtocol ((EFI_HANDLE)TheHandle, &gEfiDriverConfigurationProtocolGuid, NULL, gImageHandle, NULL, EFI_OPEN_PROTOCOL_TEST_PROTOCOL);
+  Status = gBS->OpenProtocol (
+                  (EFI_HANDLE)TheHandle,
+                  &gEfiDriverConfigurationProtocolGuid,
+                  NULL,
+                  gImageHandle,
+                  NULL,
+                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                  );
   if (EFI_ERROR (Status)) {
     return (FALSE);
   }
@@ -125,9 +132,23 @@ ReturnDriverDiag (
 {
   EFI_STATUS  Status;
 
-  Status = gBS->OpenProtocol ((EFI_HANDLE)TheHandle, &gEfiDriverDiagnostics2ProtocolGuid, NULL, gImageHandle, NULL, EFI_OPEN_PROTOCOL_TEST_PROTOCOL);
+  Status = gBS->OpenProtocol (
+                  (EFI_HANDLE)TheHandle,
+                  &gEfiDriverDiagnostics2ProtocolGuid,
+                  NULL,
+                  gImageHandle,
+                  NULL,
+                  EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                  );
   if (EFI_ERROR (Status)) {
-    Status = gBS->OpenProtocol ((EFI_HANDLE)TheHandle, &gEfiDriverDiagnosticsProtocolGuid, NULL, gImageHandle, NULL, EFI_OPEN_PROTOCOL_TEST_PROTOCOL);
+    Status = gBS->OpenProtocol (
+                    (EFI_HANDLE)TheHandle,
+                    &gEfiDriverDiagnosticsProtocolGuid,
+                    NULL,
+                    gImageHandle,
+                    NULL,
+                    EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                    );
     if (EFI_ERROR (Status)) {
       return (FALSE);
     }
@@ -155,10 +176,22 @@ ReturnDriverVersion (
 
   RetVal = (UINT32)-1;
 
-  Status = gBS->OpenProtocol ((EFI_HANDLE)TheHandle, &gEfiDriverBindingProtocolGuid, (VOID **)&DriverBinding, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+  Status = gBS->OpenProtocol (
+                  (EFI_HANDLE)TheHandle,
+                  &gEfiDriverBindingProtocolGuid,
+                  (VOID **)&DriverBinding,
+                  gImageHandle,
+                  NULL,
+                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                  );
   if (!EFI_ERROR (Status)) {
     RetVal = DriverBinding->Version;
-    gBS->CloseProtocol (TheHandle, &gEfiDriverBindingProtocolGuid, gImageHandle, NULL);
+    gBS->CloseProtocol (
+           TheHandle,
+           &gEfiDriverBindingProtocolGuid,
+           gImageHandle,
+           NULL
+           );
   }
 
   return (RetVal);
@@ -217,7 +250,9 @@ GetImageNameFromHandle (
     }
 
     while (!IsDevicePathEnd (DevPathNode)) {
-      NameGuid = EfiGetNameGuidFromFwVolDevicePathNode ((MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)DevPathNode);
+      NameGuid = EfiGetNameGuidFromFwVolDevicePathNode (
+                   (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)DevPathNode
+                   );
       if (NameGuid != NULL) {
         Status = gBS->HandleProtocol (
                         LoadedImage->DeviceHandle,
@@ -312,7 +347,15 @@ ShellCommandRunDrivers (
   Status = ShellCommandLineParse (ParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellDriver1HiiHandle, L"drivers", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellDriver1HiiHandle,
+        L"drivers",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -320,7 +363,14 @@ ShellCommandRunDrivers (
     }
   } else {
     if (ShellCommandLineGetCount (Package) > 1) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellDriver1HiiHandle, L"drivers");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellDriver1HiiHandle,
+        L"drivers"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       if (ShellCommandLineGetFlag (Package, L"-l")) {
@@ -330,7 +380,15 @@ ShellCommandRunDrivers (
           AsciiSPrint (Language, StrSize (Lang), "%S", Lang);
         } else {
           ASSERT (Language == NULL);
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_NO_VALUE), gShellDriver1HiiHandle, L"drivers", L"-l");
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_NO_VALUE),
+            gShellDriver1HiiHandle,
+            L"drivers",
+            L"-l"
+            );
           ShellCommandLineFreeVarList (Package);
           return (SHELL_INVALID_PARAMETER);
         }
@@ -338,7 +396,13 @@ ShellCommandRunDrivers (
 
       if (ShellCommandLineGetFlag (Package, L"-sfo")) {
         SfoFlag      = TRUE;
-        FormatString = HiiGetString (gShellDriver1HiiHandle, STRING_TOKEN (STR_DRIVERS_ITEM_LINE_SFO), Language);
+        FormatString = HiiGetString (
+                         gShellDriver1HiiHandle,
+                         STRING_TOKEN (
+                           STR_DRIVERS_ITEM_LINE_SFO
+                           ),
+                         Language
+                         );
         //
         // print the SFO header
         //
@@ -351,7 +415,13 @@ ShellCommandRunDrivers (
           L"drivers"
           );
       } else {
-        FormatString = HiiGetString (gShellDriver1HiiHandle, STRING_TOKEN (STR_DRIVERS_ITEM_LINE), Language);
+        FormatString = HiiGetString (
+                         gShellDriver1HiiHandle,
+                         STRING_TOKEN (
+                           STR_DRIVERS_ITEM_LINE
+                           ),
+                         Language
+                         );
         //
         // print the header row
         //
@@ -365,11 +435,21 @@ ShellCommandRunDrivers (
       }
 
       HandleList = GetHandleListByProtocol (&gEfiDriverBindingProtocolGuid);
-      for (HandleWalker = HandleList; HandleWalker != NULL && *HandleWalker != NULL; HandleWalker++) {
-        ChildCount     = 0;
-        DeviceCount    = 0;
-        Status         = ParseHandleDatabaseForChildDevices (*HandleWalker, &ChildCount, NULL);
-        Status         = PARSE_HANDLE_DATABASE_DEVICES (*HandleWalker, &DeviceCount, NULL);
+      for (HandleWalker = HandleList; HandleWalker != NULL && *HandleWalker !=
+           NULL; HandleWalker++)
+      {
+        ChildCount  = 0;
+        DeviceCount = 0;
+        Status      = ParseHandleDatabaseForChildDevices (
+                        *HandleWalker,
+                        &ChildCount,
+                        NULL
+                        );
+        Status = PARSE_HANDLE_DATABASE_DEVICES (
+                   *HandleWalker,
+                   &DeviceCount,
+                   NULL
+                   );
         Temp2          = GetDevicePathTextForHandle (*HandleWalker);
         DriverVersion  = ReturnDriverVersion (*HandleWalker);
         DriverConfig   = ReturnDriverConfig (*HandleWalker);
@@ -377,12 +457,32 @@ ShellCommandRunDrivers (
         FullDriverName = GetStringNameFromHandle (*HandleWalker, Language);
         ImageName      = GetImageNameFromHandle (*HandleWalker);
 
-        UnicodeValueToStringS (ChildCountStr, sizeof (ChildCountStr), 0, ChildCount, 0);
-        UnicodeValueToStringS (DeviceCountStr, sizeof (DeviceCountStr), 0, DeviceCount, 0);
+        UnicodeValueToStringS (
+          ChildCountStr,
+          sizeof (ChildCountStr),
+          0,
+          ChildCount,
+          0
+          );
+        UnicodeValueToStringS (
+          DeviceCountStr,
+          sizeof (DeviceCountStr),
+          0,
+          DeviceCount,
+          0
+          );
         TruncatedDriverName = NULL;
         if (!SfoFlag && (FullDriverName != NULL)) {
-          TruncatedDriverName = AllocateZeroPool ((MAX_LEN_DRIVER_NAME + 1) * sizeof (CHAR16));
-          StrnCpyS (TruncatedDriverName, MAX_LEN_DRIVER_NAME + 1, FullDriverName, MAX_LEN_DRIVER_NAME);
+          TruncatedDriverName = AllocateZeroPool (
+                                  (MAX_LEN_DRIVER_NAME + 1) *
+                                  sizeof (CHAR16)
+                                  );
+          StrnCpyS (
+            TruncatedDriverName,
+            MAX_LEN_DRIVER_NAME + 1,
+            FullDriverName,
+            MAX_LEN_DRIVER_NAME
+            );
         }
 
         if (!SfoFlag) {

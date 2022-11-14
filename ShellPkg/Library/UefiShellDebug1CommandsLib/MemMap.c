@@ -24,9 +24,10 @@ STATIC CONST CHAR16  NameEfiUnusableMemory[]          = L"UnusableMemory";
 STATIC CONST CHAR16  NameEfiACPIReclaimMemory[]       = L"ACPIReclaimMemory";
 STATIC CONST CHAR16  NameEfiACPIMemoryNVS[]           = L"ACPIMemoryNVS";
 STATIC CONST CHAR16  NameEfiMemoryMappedIO[]          = L"MemoryMappedIO";
-STATIC CONST CHAR16  NameEfiMemoryMappedIOPortSpace[] = L"MemoryMappedIOPortSpace";
-STATIC CONST CHAR16  NameEfiPalCode[]                 = L"PalCode";
-STATIC CONST CHAR16  NameEfiUnacceptedMemoryType[]    = L"Unaccepted";
+STATIC CONST CHAR16  NameEfiMemoryMappedIOPortSpace[] =
+  L"MemoryMappedIOPortSpace";
+STATIC CONST CHAR16  NameEfiPalCode[]              = L"PalCode";
+STATIC CONST CHAR16  NameEfiUnacceptedMemoryType[] = L"Unaccepted";
 
 //
 // Need short names for some memory types
@@ -68,7 +69,11 @@ AddMemoryLength (
   LIST_ENTRY           *Link;
 
   Entry = NULL;
-  for (Link = GetFirstNode (List); !IsNull (List, Link); Link = GetNextNode (List, Link)) {
+  for (Link = GetFirstNode (List); !IsNull (List, Link); Link = GetNextNode (
+                                                                  List,
+                                                                  Link
+                                                                  ))
+  {
     Entry = BASE_CR (Link, MEMORY_LENGTH_ENTRY, Link);
     if (Entry->Type >= Type) {
       break;
@@ -199,7 +204,15 @@ ShellCommandRunMemMap (
   Status = ShellCommandLineParse (SfoParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellDebug1HiiHandle, L"memmap", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellDebug1HiiHandle,
+        L"memmap",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -207,108 +220,437 @@ ShellCommandRunMemMap (
     }
   } else {
     if (ShellCommandLineGetCount (Package) > 1) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellDebug1HiiHandle, L"memmap");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellDebug1HiiHandle,
+        L"memmap"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
-      Status = gBS->GetMemoryMap (&Size, Descriptors, &MapKey, &ItemSize, &Version);
+      Status = gBS->GetMemoryMap (
+                      &Size,
+                      Descriptors,
+                      &MapKey,
+                      &ItemSize,
+                      &Version
+                      );
       if (Status == EFI_BUFFER_TOO_SMALL) {
         Size       += SIZE_1KB;
         Descriptors = AllocateZeroPool (Size);
-        Status      = gBS->GetMemoryMap (&Size, Descriptors, &MapKey, &ItemSize, &Version);
+        Status      = gBS->GetMemoryMap (
+                             &Size,
+                             Descriptors,
+                             &MapKey,
+                             &ItemSize,
+                             &Version
+                             );
       }
 
       if (EFI_ERROR (Status)) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_MEMMAP_GET_FAILED), gShellDebug1HiiHandle, L"memmap");
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_MEMMAP_GET_FAILED),
+          gShellDebug1HiiHandle,
+          L"memmap"
+          );
         ShellStatus = SHELL_ACCESS_DENIED;
       } else {
         ASSERT (Version == EFI_MEMORY_DESCRIPTOR_VERSION);
 
         Sfo = ShellCommandLineGetFlag (Package, L"-sfo");
         if (!Sfo) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_MEMMAP_LIST_HEAD), gShellDebug1HiiHandle);
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_MEMMAP_LIST_HEAD),
+            gShellDebug1HiiHandle
+            );
         } else {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_SFO_HEADER), gShellDebug1HiiHandle, L"memmap");
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_SFO_HEADER),
+            gShellDebug1HiiHandle,
+            L"memmap"
+            );
         }
 
         for ( Walker = Descriptors
-              ; (Walker < (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)Descriptors + Size)) && (Walker != NULL)
+              ; (Walker < (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)Descriptors +
+                                                    Size)) && (Walker != NULL)
               ; Walker = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)Walker + ItemSize)
               )
         {
           switch (Walker->Type) {
             case EfiReservedMemoryType:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, NameEfiReservedMemoryType, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                NameEfiReservedMemoryType,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+MultU64x64 (SIZE_4KB,
+                                        Walker->NumberOfPages)-
+                1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               ReservedPages += Walker->NumberOfPages;
               break;
             case EfiLoaderCode:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, NameEfiLoaderCode, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                NameEfiLoaderCode,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+
+                MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               LoadCodePages += Walker->NumberOfPages;
               TotalPages    += Walker->NumberOfPages;
               break;
             case EfiLoaderData:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, NameEfiLoaderData, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                NameEfiLoaderData,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+
+                MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               LoadDataPages += Walker->NumberOfPages;
               TotalPages    += Walker->NumberOfPages;
               break;
             case EfiBootServicesCode:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, !Sfo ? NameEfiBootServicesCodeShort : NameEfiBootServicesCode, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                !Sfo ?
+                NameEfiBootServicesCodeShort : NameEfiBootServicesCode,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+MultU64x64 (
+                                        SIZE_4KB,
+                                        Walker->NumberOfPages
+                                        )-1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               BSCodePages += Walker->NumberOfPages;
               TotalPages  += Walker->NumberOfPages;
               break;
             case EfiBootServicesData:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, !Sfo ? NameEfiBootServicesDataShort : NameEfiBootServicesData, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                !Sfo ?
+                NameEfiBootServicesDataShort : NameEfiBootServicesData,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+MultU64x64 (
+                                        SIZE_4KB,
+                                        Walker->NumberOfPages
+                                        )-1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               BSDataPages += Walker->NumberOfPages;
               TotalPages  += Walker->NumberOfPages;
               break;
             case EfiRuntimeServicesCode:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, !Sfo ? NameEfiRuntimeServicesCodeShort : NameEfiRuntimeServicesCode, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                !Sfo ?
+                NameEfiRuntimeServicesCodeShort : NameEfiRuntimeServicesCode,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+MultU64x64 (
+                                        SIZE_4KB,
+                                        Walker->NumberOfPages
+                                        )-1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               RTCodePages += Walker->NumberOfPages;
               TotalPages  += Walker->NumberOfPages;
               break;
             case EfiRuntimeServicesData:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, !Sfo ? NameEfiRuntimeServicesDataShort : NameEfiRuntimeServicesData, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                !Sfo ?
+                NameEfiRuntimeServicesDataShort : NameEfiRuntimeServicesData,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+MultU64x64 (
+                                        SIZE_4KB,
+                                        Walker->NumberOfPages
+                                        )-1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               RTDataPages += Walker->NumberOfPages;
               TotalPages  += Walker->NumberOfPages;
               break;
             case EfiConventionalMemory:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, NameEfiConventionalMemory, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                NameEfiConventionalMemory,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+MultU64x64 (SIZE_4KB,
+                                        Walker->NumberOfPages)-
+                1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               AvailPages += Walker->NumberOfPages;
               TotalPages += Walker->NumberOfPages;
               break;
             case EfiPersistentMemory:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, NameEfiPersistentMemory, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                NameEfiPersistentMemory,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+MultU64x64 (SIZE_4KB,
+                                        Walker->NumberOfPages)-
+                1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               PersistentPages += Walker->NumberOfPages;
               TotalPages      += Walker->NumberOfPages;
               break;
             case EfiUnusableMemory:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, !Sfo ? NameEfiUnusableMemoryShort : NameEfiUnusableMemory, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                !Sfo ?
+                NameEfiUnusableMemoryShort : NameEfiUnusableMemory,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+MultU64x64 (
+                                        SIZE_4KB,
+                                        Walker->NumberOfPages
+                                        )-1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               UnusableMemoryPages += Walker->NumberOfPages;
               break;
             case EfiACPIReclaimMemory:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, !Sfo ? NameEfiACPIReclaimMemoryShort : NameEfiACPIReclaimMemory, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                !Sfo ?
+                NameEfiACPIReclaimMemoryShort : NameEfiACPIReclaimMemory,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+MultU64x64 (
+                                        SIZE_4KB,
+                                        Walker->NumberOfPages
+                                        )-1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               TotalPages       += Walker->NumberOfPages;
               AcpiReclaimPages += Walker->NumberOfPages;
               break;
             case EfiACPIMemoryNVS:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, !Sfo ? NameEfiACPIMemoryNVSShort : NameEfiACPIMemoryNVS, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                !Sfo ?
+                NameEfiACPIMemoryNVSShort : NameEfiACPIMemoryNVS,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+MultU64x64 (
+                                        SIZE_4KB,
+                                        Walker->NumberOfPages
+                                        )-1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               TotalPages   += Walker->NumberOfPages;
               AcpiNvsPages += Walker->NumberOfPages;
               break;
             case EfiMemoryMappedIO:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, !Sfo ? NameEfiMemoryMappedIOShort : NameEfiMemoryMappedIO, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                !Sfo ?
+                NameEfiMemoryMappedIOShort : NameEfiMemoryMappedIO,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+MultU64x64 (
+                                        SIZE_4KB,
+                                        Walker->NumberOfPages
+                                        )-1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               MmioSpacePages += Walker->NumberOfPages;
               break;
             case EfiMemoryMappedIOPortSpace:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, !Sfo ? NameEfiMemoryMappedIOPortSpaceShort : NameEfiMemoryMappedIOPortSpace, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                !Sfo ?
+                NameEfiMemoryMappedIOPortSpaceShort :
+                NameEfiMemoryMappedIOPortSpace,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+MultU64x64 (SIZE_4KB,
+                                        Walker->NumberOfPages)-
+                1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               MmioPortPages += Walker->NumberOfPages;
               break;
             case EfiPalCode:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, NameEfiPalCode, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                NameEfiPalCode,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+MultU64x64 (
+                                        SIZE_4KB,
+                                        Walker->NumberOfPages
+                                        )-1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               TotalPages   += Walker->NumberOfPages;
               PalCodePages += Walker->NumberOfPages;
               break;
             case EfiUnacceptedMemoryType:
-              ShellPrintHiiEx (-1, -1, NULL, (EFI_STRING_ID)(!Sfo ? STRING_TOKEN (STR_MEMMAP_LIST_ITEM) : STRING_TOKEN (STR_MEMMAP_LIST_ITEM_SFO)), gShellDebug1HiiHandle, NameEfiUnacceptedMemoryType, Walker->PhysicalStart, Walker->PhysicalStart+MultU64x64 (SIZE_4KB, Walker->NumberOfPages)-1, Walker->NumberOfPages, Walker->Attribute);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                (EFI_STRING_ID)(!Sfo ?
+                                STRING_TOKEN (STR_MEMMAP_LIST_ITEM) :
+                                STRING_TOKEN (
+                                  STR_MEMMAP_LIST_ITEM_SFO
+                                  )),
+                gShellDebug1HiiHandle,
+                NameEfiUnacceptedMemoryType,
+                Walker->PhysicalStart,
+                Walker->PhysicalStart+MultU64x64 (SIZE_4KB,
+                                        Walker->NumberOfPages)-
+                1,
+                Walker->NumberOfPages,
+                Walker->Attribute
+                );
               TotalPages      += Walker->NumberOfPages;
               UnacceptedPages += Walker->NumberOfPages;
               break;
@@ -318,11 +660,31 @@ ShellCommandRunMemMap (
               // Do not print the OEM/OS memory usage in the SFO format, to avoid conflict with Shell Spec.
               //
               if (!Sfo) {
-                ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_MEMMAP_LIST_ITEM_OTHER), gShellDebug1HiiHandle, Walker->Type, Walker->PhysicalStart, Walker->PhysicalStart + MultU64x64 (SIZE_4KB, Walker->NumberOfPages) - 1, Walker->NumberOfPages, Walker->Attribute);
+                ShellPrintHiiEx (
+                  -1,
+                  -1,
+                  NULL,
+                  STRING_TOKEN (
+                    STR_MEMMAP_LIST_ITEM_OTHER
+                    ),
+                  gShellDebug1HiiHandle,
+                  Walker->Type,
+                  Walker->PhysicalStart,
+                  Walker->PhysicalStart + MultU64x64 (
+                                            SIZE_4KB,
+                                            Walker->NumberOfPages
+                                            ) - 1,
+                  Walker->NumberOfPages,
+                  Walker->Attribute
+                  );
               }
 
               TotalPages += Walker->NumberOfPages;
-              AddMemoryLength (&MemoryList, Walker->Type, Walker->NumberOfPages);
+              AddMemoryLength (
+                &MemoryList,
+                Walker->Type,
+                Walker->NumberOfPages
+                );
               break;
           }
         }
@@ -389,7 +751,9 @@ ShellCommandRunMemMap (
           //
           // Print out the total memory usage for OEM/OS types in the order of type.
           //
-          for (Link = GetFirstNode (&MemoryList); !IsNull (&MemoryList, Link); Link = GetNextNode (&MemoryList, Link)) {
+          for (Link = GetFirstNode (&MemoryList); !IsNull (&MemoryList, Link);
+               Link = GetNextNode (&MemoryList, Link))
+          {
             Entry = BASE_CR (Link, MEMORY_LENGTH_ENTRY, Link);
             ShellPrintHiiEx (
               -1,

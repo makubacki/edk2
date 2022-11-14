@@ -85,15 +85,26 @@ STATIC CONST ACPI_SBBR_REQ  ArmSbbrReqs[ArmSbbrVersionMax] = {
   defined as 'mandatory' in any SBBR version.
 **/
 STATIC ACPI_TABLE_COUNTER  ArmSbbrTableCounts[] = {
-  { EFI_ACPI_6_3_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE,                                            0 },
-  { EFI_ACPI_6_3_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE,                                                 0 },
-  { EFI_ACPI_6_3_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE,                                      0 },
-  { EFI_ACPI_6_3_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE,                                              0 },
-  { EFI_ACPI_6_3_GENERIC_TIMER_DESCRIPTION_TABLE_SIGNATURE,                                              0 },
-  { EFI_ACPI_6_3_DEBUG_PORT_2_TABLE_SIGNATURE,                                                           0 },
-  { EFI_ACPI_6_3_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE,                                        0 },
-  { EFI_ACPI_6_3_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE, 0 },
-  { EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_STRUCTURE_SIGNATURE,                                0 }
+  { EFI_ACPI_6_3_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE,
+    0                                                           },
+  { EFI_ACPI_6_3_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE,
+    0                                                                                                                      },
+  { EFI_ACPI_6_3_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE,
+    0                                                                                                                                                                                },
+  { EFI_ACPI_6_3_MULTIPLE_APIC_DESCRIPTION_TABLE_SIGNATURE,
+    0                                                                                                                                                                                                                                          },
+  { EFI_ACPI_6_3_GENERIC_TIMER_DESCRIPTION_TABLE_SIGNATURE,
+    0                                                                                                                                                                                                                                                                                                    },
+  { EFI_ACPI_6_3_DEBUG_PORT_2_TABLE_SIGNATURE,
+    0                                                                                                                                                                                                                                                                                                                                           },
+  { EFI_ACPI_6_3_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE,
+    0                                                                                                                                                                                                                                                                                                                                                                                },
+  {
+    EFI_ACPI_6_3_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE,
+    0
+  },
+  { EFI_ACPI_6_3_PROCESSOR_PROPERTIES_TOPOLOGY_TABLE_STRUCTURE_SIGNATURE,
+    0                                                                                                                                                                                                                                                                                                                                                                                                                                              }
 };
 
 /**

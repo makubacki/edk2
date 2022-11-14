@@ -185,7 +185,12 @@ HMemImageRead (
   // has line
   //
   if (HBufferImage.Lines != NULL) {
-    HBufferImage.CurrentLine = CR (HBufferImage.ListHead->ForwardLink, HEFI_EDITOR_LINE, Link, EFI_EDITOR_LINE_LIST);
+    HBufferImage.CurrentLine = CR (
+                                 HBufferImage.ListHead->ForwardLink,
+                                 HEFI_EDITOR_LINE,
+                                 Link,
+                                 EFI_EDITOR_LINE_LIST
+                                 );
   } else {
     //
     // create a dummy line

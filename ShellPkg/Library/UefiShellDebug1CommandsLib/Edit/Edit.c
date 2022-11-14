@@ -51,10 +51,23 @@ ShellCommandRunEdit (
   //
   // parse the command line
   //
-  Status = ShellCommandLineParse (EmptyParamList, &Package, &ProblemParam, TRUE);
+  Status = ShellCommandLineParse (
+             EmptyParamList,
+             &Package,
+             &ProblemParam,
+             TRUE
+             );
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellDebug1HiiHandle, L"edit", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellDebug1HiiHandle,
+        L"edit",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -62,7 +75,14 @@ ShellCommandRunEdit (
     }
   } else {
     if (ShellCommandLineGetCount (Package) > 2) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellDebug1HiiHandle, L"edit");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellDebug1HiiHandle,
+        L"edit"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       Cwd = gEfiShellProtocol->GetCurDir (NULL);
@@ -92,7 +112,13 @@ ShellCommandRunEdit (
       if (EFI_ERROR (Status)) {
         gST->ConOut->ClearScreen (gST->ConOut);
         gST->ConOut->EnableCursor (gST->ConOut, TRUE);
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_EDIT_MAIN_INIT_FAILED), gShellDebug1HiiHandle);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_EDIT_MAIN_INIT_FAILED),
+          gShellDebug1HiiHandle
+          );
       } else {
         MainEditorBackup ();
 
@@ -132,19 +158,51 @@ ShellCommandRunEdit (
         //
         if (Status == EFI_SUCCESS) {
         } else if (Status == EFI_OUT_OF_RESOURCES) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_OUT_MEM), gShellDebug1HiiHandle, L"edit");
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_OUT_MEM),
+            gShellDebug1HiiHandle,
+            L"edit"
+            );
         } else {
           if (Buffer != NULL) {
             if (StrCmp (Buffer, L"") != 0) {
               //
               // print out the status string
               //
-              ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_EDIT_MAIN_BUFFER), gShellDebug1HiiHandle, Buffer);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                STRING_TOKEN (
+                  STR_EDIT_MAIN_BUFFER
+                  ),
+                gShellDebug1HiiHandle,
+                Buffer
+                );
             } else {
-              ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_EDIT_MAIN_UNKNOWN_EDITOR_ERR), gShellDebug1HiiHandle);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                STRING_TOKEN (
+                  STR_EDIT_MAIN_UNKNOWN_EDITOR_ERR
+                  ),
+                gShellDebug1HiiHandle
+                );
             }
           } else {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_EDIT_MAIN_UNKNOWN_EDITOR_ERR), gShellDebug1HiiHandle);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (
+                STR_EDIT_MAIN_UNKNOWN_EDITOR_ERR
+                ),
+              gShellDebug1HiiHandle
+              );
           }
         }
 

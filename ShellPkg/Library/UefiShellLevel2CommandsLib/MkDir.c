@@ -46,10 +46,23 @@ ShellCommandRunMkDir (
   //
   // parse the command line
   //
-  Status = ShellCommandLineParse (EmptyParamList, &Package, &ProblemParam, TRUE);
+  Status = ShellCommandLineParse (
+             EmptyParamList,
+             &Package,
+             &ProblemParam,
+             TRUE
+             );
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel2HiiHandle, L"mkdir", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel2HiiHandle,
+        L"mkdir",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -70,7 +83,14 @@ ShellCommandRunMkDir (
       //
       // we didnt get a single parameter
       //
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_FEW), gShellLevel2HiiHandle, L"mkdir");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_FEW),
+        gShellLevel2HiiHandle,
+        L"mkdir"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       for ( DirCreateCount = 1
@@ -99,7 +119,14 @@ ShellCommandRunMkDir (
                        );
         if (!EFI_ERROR (Status)) {
           ShellCloseFile (&FileHandle);
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_MKDIR_ALREADY), gShellLevel2HiiHandle, NewDirName);
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_MKDIR_ALREADY),
+            gShellLevel2HiiHandle,
+            NewDirName
+            );
           ShellStatus = SHELL_INVALID_PARAMETER;
         } else {
           ASSERT (FileHandle == NULL);
@@ -150,7 +177,14 @@ ShellCommandRunMkDir (
           }
 
           if (EFI_ERROR (Status)) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_MKDIR_CREATEFAIL), gShellLevel2HiiHandle, NewDirName);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_MKDIR_CREATEFAIL),
+              gShellLevel2HiiHandle,
+              NewDirName
+              );
             ShellStatus = SHELL_ACCESS_DENIED;
             break;
           }

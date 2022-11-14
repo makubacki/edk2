@@ -46,7 +46,9 @@ ReplaceDriveWithCwd (
   Splitter = StrStr (*FullPath, L":");
   ASSERT (Splitter != *FullPath);
 
-  if ((Splitter != NULL) && (*(Splitter + 1) != L'\\') && (*(Splitter + 1) != L'/')) {
+  if ((Splitter != NULL) && (*(Splitter + 1) != L'\\') && (*(Splitter + 1) !=
+                                                           L'/'))
+  {
     TotalSize  = StrSize (Cwd) + StrSize (Splitter + 1);
     TempBuffer = AllocateZeroPool (TotalSize);
     if (TempBuffer == NULL) {
@@ -97,7 +99,13 @@ IsCurrentFileSystem (
   if (((UINTN)Splitter1 - (UINTN)FullPath) != ((UINTN)Splitter2 - (UINTN)Cwd)) {
     return FALSE;
   } else {
-    if (StrniCmp (FullPath, Cwd, ((UINTN)Splitter1 - (UINTN)FullPath) / sizeof (CHAR16)) == 0) {
+    if (StrniCmp (
+          FullPath,
+          Cwd,
+          ((UINTN)Splitter1 - (UINTN)FullPath) /
+          sizeof (CHAR16)
+          ) == 0)
+    {
       return TRUE;
     } else {
       return FALSE;
@@ -144,7 +152,10 @@ ExtractDriveAndPath (
         return EFI_OUT_OF_RESOURCES;
       }
     } else {
-      *Drive = AllocateCopyPool ((Splitter - FullPath + 2) * sizeof (CHAR16), FullPath);
+      *Drive = AllocateCopyPool (
+                 (Splitter - FullPath + 2) * sizeof (CHAR16),
+                 FullPath
+                 );
       if (*Drive == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -210,10 +221,23 @@ ShellCommandRunCd (
   //
   // parse the command line
   //
-  Status = ShellCommandLineParse (EmptyParamList, &Package, &ProblemParam, TRUE);
+  Status = ShellCommandLineParse (
+             EmptyParamList,
+             &Package,
+             &ProblemParam,
+             TRUE
+             );
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellLevel2HiiHandle, L"cd", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellLevel2HiiHandle,
+        L"cd",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -227,7 +251,14 @@ ShellCommandRunCd (
   if (ShellCommandLineGetFlag (Package, L"-?")) {
     ASSERT (FALSE);
   } else if (ShellCommandLineGetRawValue (Package, 2) != NULL) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellLevel2HiiHandle, L"cd");
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_GEN_TOO_MANY),
+      gShellLevel2HiiHandle,
+      L"cd"
+      );
     ShellStatus = SHELL_INVALID_PARAMETER;
   } else {
     //
@@ -238,7 +269,14 @@ ShellCommandRunCd (
     //
     Cwd = ShellGetCurrentDir (NULL);
     if (Cwd == NULL) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_NO_CWD), gShellLevel2HiiHandle, L"cd");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_NO_CWD),
+        gShellLevel2HiiHandle,
+        L"cd"
+        );
       ShellStatus = SHELL_NOT_FOUND;
     } else {
       Param1 = ShellCommandLineGetRawValue (Package, 1);
@@ -246,10 +284,19 @@ ShellCommandRunCd (
         //
         // display the current directory
         //
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_CD_PRINT), gShellLevel2HiiHandle, Cwd);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_CD_PRINT),
+          gShellLevel2HiiHandle,
+          Cwd
+          );
       } else {
         Param1Copy = CatSPrint (NULL, L"%s", Param1, NULL);
-        for (Walker = Param1Copy; Walker != NULL && *Walker != CHAR_NULL; Walker++) {
+        for (Walker = Param1Copy; Walker != NULL && *Walker != CHAR_NULL;
+             Walker++)
+        {
           if (*Walker == L'\"') {
             CopyMem (Walker, Walker + 1, StrSize (Walker) - sizeof (Walker[0]));
           }
@@ -261,7 +308,14 @@ ShellCommandRunCd (
           //
           // Can't use cd command to change filesystem.
           //
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_CD_NF), gShellLevel2HiiHandle, L"cd");
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_CD_NF),
+            gShellLevel2HiiHandle,
+            L"cd"
+            );
           Status = EFI_NOT_FOUND;
         }
 
@@ -271,12 +325,19 @@ ShellCommandRunCd (
             //
             // Absolute Path on current drive letter.
             //
-            TotalSize  = ((Splitter - Cwd + 1) * sizeof (CHAR16)) + StrSize (Param1Copy);
+            TotalSize = ((Splitter - Cwd + 1) * sizeof (CHAR16)) + StrSize (
+                                                                     Param1Copy
+                                                                     );
             TempBuffer = AllocateZeroPool (TotalSize);
             if (TempBuffer == NULL) {
               Status = EFI_OUT_OF_RESOURCES;
             } else {
-              StrnCpyS (TempBuffer, TotalSize / sizeof (CHAR16), Cwd, (Splitter - Cwd + 1));
+              StrnCpyS (
+                TempBuffer,
+                TotalSize / sizeof (CHAR16),
+                Cwd,
+                (Splitter - Cwd + 1)
+                );
               StrCatS (TempBuffer, TotalSize / sizeof (CHAR16), Param1Copy);
 
               FreePool (Param1Copy);
@@ -309,12 +370,28 @@ ShellCommandRunCd (
 
         if (!EFI_ERROR (Status) && (Drive != NULL) && (Path != NULL)) {
           if (EFI_ERROR (ShellIsDirectory (Param1Copy))) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_NOT_DIR), gShellLevel2HiiHandle, L"cd", Param1Copy);
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_NOT_DIR),
+              gShellLevel2HiiHandle,
+              L"cd",
+              Param1Copy
+              );
             ShellStatus = SHELL_NOT_FOUND;
           } else {
             Status = gEfiShellProtocol->SetCurDir (Drive, Path + 1);
             if (EFI_ERROR (Status)) {
-              ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_DIR_NF), gShellLevel2HiiHandle, L"cd", Param1Copy);
+              ShellPrintHiiEx (
+                -1,
+                -1,
+                NULL,
+                STRING_TOKEN (STR_GEN_DIR_NF),
+                gShellLevel2HiiHandle,
+                L"cd",
+                Param1Copy
+                );
               ShellStatus = SHELL_NOT_FOUND;
             }
           }

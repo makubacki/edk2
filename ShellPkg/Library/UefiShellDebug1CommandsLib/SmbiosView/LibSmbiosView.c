@@ -42,14 +42,26 @@ LibSmbiosInit (
   //
   // Get SMBIOS table from System Configure table
   //
-  Status = GetSystemConfigurationTable (&gEfiSmbiosTableGuid, (VOID **)&mSmbiosTable);
+  Status = GetSystemConfigurationTable (
+             &gEfiSmbiosTableGuid,
+             (VOID **)&mSmbiosTable
+             );
 
   if (mSmbiosTable == NULL) {
     return EFI_NOT_FOUND;
   }
 
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_LIBSMBIOSVIEW_GET_TABLE_ERROR), gShellDebug1HiiHandle, Status);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_LIBSMBIOSVIEW_GET_TABLE_ERROR
+        ),
+      gShellDebug1HiiHandle,
+      Status
+      );
     return Status;
   }
 
@@ -84,14 +96,26 @@ LibSmbios64BitInit (
   //
   // Get SMBIOS table from System Configure table
   //
-  Status = GetSystemConfigurationTable (&gEfiSmbios3TableGuid, (VOID **)&mSmbios64BitTable);
+  Status = GetSystemConfigurationTable (
+             &gEfiSmbios3TableGuid,
+             (VOID **)&mSmbios64BitTable
+             );
 
   if (mSmbios64BitTable == NULL) {
     return EFI_NOT_FOUND;
   }
 
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_LIBSMBIOSVIEW_GET_TABLE_ERROR), gShellDebug1HiiHandle, Status);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_LIBSMBIOSVIEW_GET_TABLE_ERROR
+        ),
+      gShellDebug1HiiHandle,
+      Status
+      );
     return Status;
   }
 
@@ -260,7 +284,15 @@ LibGetSmbiosStructure (
   }
 
   if ((Buffer == NULL) || (Length == NULL)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_LIBSMBIOSVIEW_NO_BUFF_LEN_SPEC), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_LIBSMBIOSVIEW_NO_BUFF_LEN_SPEC
+        ),
+      gShellDebug1HiiHandle
+      );
     return DMI_INVALID_HANDLE;
   }
 
@@ -334,7 +366,15 @@ LibGetSmbios64BitStructure (
   }
 
   if ((Buffer == NULL) || (Length == NULL)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_SMBIOSVIEW_LIBSMBIOSVIEW_NO_BUFF_LEN_SPEC), gShellDebug1HiiHandle);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (
+        STR_SMBIOSVIEW_LIBSMBIOSVIEW_NO_BUFF_LEN_SPEC
+        ),
+      gShellDebug1HiiHandle
+      );
     return DMI_INVALID_HANDLE;
   }
 

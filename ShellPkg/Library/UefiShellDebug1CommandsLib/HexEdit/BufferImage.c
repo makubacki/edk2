@@ -319,9 +319,19 @@ HBufferImagePrintLine (
     }
 
     if (Index < 0x07) {
-      ShellPrintEx ((INT32)Pos - 1, (INT32)Row - 1, L"%x ", Line->Buffer[Index]);
+      ShellPrintEx (
+        (INT32)Pos - 1,
+        (INT32)Row - 1,
+        L"%x ",
+        Line->Buffer[Index]
+        );
     } else {
-      ShellPrintEx ((INT32)Pos - 1, (INT32)Row - 1, L"%x  ", Line->Buffer[Index]);
+      ShellPrintEx (
+        (INT32)Pos - 1,
+        (INT32)Row - 1,
+        L"%x  ",
+        Line->Buffer[Index]
+        );
     }
   }
 
@@ -380,7 +390,12 @@ HBufferImagePrintLine (
       // learned from shelle.h -- IsValidChar
       //
       if (Line->Buffer[Index] >= L' ') {
-        ShellPrintEx ((INT32)Pos - 1, (INT32)Row - 1, L"%c", (CHAR16)Line->Buffer[Index]);
+        ShellPrintEx (
+          (INT32)Pos - 1,
+          (INT32)Row - 1,
+          L"%c",
+          (CHAR16)Line->Buffer[Index]
+          );
       } else {
         ShellPrintEx ((INT32)Pos - 1, (INT32)Row - 1, L"%c", '.');
       }
@@ -557,8 +572,10 @@ HBufferImageRestoreMousePosition (
       // so do not need to refresh mouse position
       //
       if ((
-           (HBufferImage.MousePosition.Row == HBufferImageBackupVar.MousePosition.Row) &&
-           (HBufferImage.MousePosition.Column == HBufferImageBackupVar.MousePosition.Column)
+           (HBufferImage.MousePosition.Row ==
+            HBufferImageBackupVar.MousePosition.Row) &&
+           (HBufferImage.MousePosition.Column ==
+            HBufferImageBackupVar.MousePosition.Column)
            ) &&
           HEditorMouseAction
           )
@@ -591,7 +608,8 @@ HBufferImageRestoreMousePosition (
       //
       // clear the old mouse position
       //
-      FRow = HBufferImage.LowVisibleRow + HBufferImageBackupVar.MousePosition.Row - 2;
+      FRow = HBufferImage.LowVisibleRow +
+             HBufferImageBackupVar.MousePosition.Row - 2;
 
       HighBits = HBufferImageIsAtHighBits (
                    HBufferImageBackupVar.MousePosition.Column,
@@ -781,7 +799,9 @@ HBufferImageRefresh (
   //
   // only need to refresh current line
   //
-  if (HBufferImageOnlyLineNeedRefresh && (HBufferImageBackupVar.LowVisibleRow == HBufferImage.LowVisibleRow)) {
+  if (HBufferImageOnlyLineNeedRefresh && (HBufferImageBackupVar.LowVisibleRow ==
+                                          HBufferImage.LowVisibleRow))
+  {
     HBufferImagePrintLine (
       HBufferImage.CurrentLine,
       HBufferImage.DisplayPosition.Row,
@@ -793,9 +813,13 @@ HBufferImageRefresh (
     //
     // the whole edit area need refresh
     //
-    if (HEditorMouseAction && (HMainEditor.SelectStart != 0) && (HMainEditor.SelectEnd != 0)) {
+    if (HEditorMouseAction && (HMainEditor.SelectStart != 0) &&
+        (HMainEditor.SelectEnd != 0))
+    {
       if (HMainEditor.SelectStart != HMainEditorBackupVar.SelectStart) {
-        if ((HMainEditor.SelectStart >= HMainEditorBackupVar.SelectStart) && (HMainEditorBackupVar.SelectStart != 0)) {
+        if ((HMainEditor.SelectStart >= HMainEditorBackupVar.SelectStart) &&
+            (HMainEditorBackupVar.SelectStart != 0))
+        {
           StartRow = (HMainEditorBackupVar.SelectStart - 1) / 0x10 + 1;
         } else {
           StartRow = (HMainEditor.SelectStart - 1) / 0x10 + 1;
@@ -872,7 +896,11 @@ HBufferImageRefresh (
     } while (Link != HBufferImage.ListHead && Row <= EndRow);
 
     while (Row <= EndRow) {
-      EditorClearLine (Row, HMainEditor.ScreenSize.Column, HMainEditor.ScreenSize.Row);
+      EditorClearLine (
+        Row,
+        HMainEditor.ScreenSize.Column,
+        HMainEditor.ScreenSize.Row
+        );
       Row++;
     }
 
@@ -1281,11 +1309,14 @@ HBufferImageDoBackspace (
   //
   // already the first character
   //
-  if ((HBufferImage.BufferPosition.Row == 1) && (HBufferImage.BufferPosition.Column == 1)) {
+  if ((HBufferImage.BufferPosition.Row == 1) &&
+      (HBufferImage.BufferPosition.Column == 1))
+  {
     return EFI_SUCCESS;
   }
 
-  FPos = (HBufferImage.BufferPosition.Row - 1) * 0x10 + HBufferImage.BufferPosition.Column - 1;
+  FPos = (HBufferImage.BufferPosition.Row - 1) * 0x10 +
+         HBufferImage.BufferPosition.Column - 1;
 
   FileColumn = HBufferImage.BufferPosition.Column;
 
@@ -1401,7 +1432,9 @@ HUnderCurrentScreen (
   IN  UINTN  FileRow
   )
 {
-  if (FileRow > HBufferImage.LowVisibleRow + (HMainEditor.ScreenSize.Row - 2) - 1) {
+  if (FileRow > HBufferImage.LowVisibleRow + (HMainEditor.ScreenSize.Row - 2) -
+      1)
+  {
     return TRUE;
   }
 
@@ -1472,7 +1505,8 @@ HBufferImageMovePosition (
     }
   }
 
-  HBufferImage.LowVisibleRow = HBufferImage.BufferPosition.Row - (HBufferImage.DisplayPosition.Row - 2);
+  HBufferImage.LowVisibleRow = HBufferImage.BufferPosition.Row -
+                               (HBufferImage.DisplayPosition.Row - 2);
 
   //
   // always in current screen
@@ -1584,7 +1618,12 @@ HBufferImageScrollLeft (
     //
     if (Line->Link.BackLink != HBufferImage.ListHead) {
       FRow--;
-      Line = CR (Line->Link.BackLink, HEFI_EDITOR_LINE, Link, EFI_EDITOR_LINE_LIST);
+      Line = CR (
+               Line->Link.BackLink,
+               HEFI_EDITOR_LINE,
+               Link,
+               EFI_EDITOR_LINE_LIST
+               );
       FCol = Line->Size;
     } else {
       return EFI_SUCCESS;
@@ -1627,7 +1666,12 @@ HBufferImageScrollDown (
   //
   if (Line->Link.ForwardLink != HBufferImage.ListHead) {
     FRow++;
-    Line = CR (Line->Link.ForwardLink, HEFI_EDITOR_LINE, Link, EFI_EDITOR_LINE_LIST);
+    Line = CR (
+             Line->Link.ForwardLink,
+             HEFI_EDITOR_LINE,
+             Link,
+             EFI_EDITOR_LINE_LIST
+             );
 
     //
     // if the next line is not that long, so move to end of next line
@@ -1983,7 +2027,12 @@ HBufferImageDeleteCharacterFromBuffer (
     Link = Link->ForwardLink;
   }
 
-  Line                     = CR (Link, HEFI_EDITOR_LINE, Link, EFI_EDITOR_LINE_LIST);
+  Line = CR (
+           Link,
+           HEFI_EDITOR_LINE,
+           Link,
+           EFI_EDITOR_LINE_LIST
+           );
   HBufferImage.CurrentLine = Line;
 
   //
@@ -2093,7 +2142,12 @@ HBufferImageAddCharacterToBuffer (
     Link = Link->ForwardLink;
   }
 
-  Line                     = CR (Link, HEFI_EDITOR_LINE, Link, EFI_EDITOR_LINE_LIST);
+  Line = CR (
+           Link,
+           HEFI_EDITOR_LINE,
+           Link,
+           EFI_EDITOR_LINE_LIST
+           );
   HBufferImage.CurrentLine = Line;
 
   if (OldPos >= Pos) {
@@ -2123,7 +2177,8 @@ HBufferImageDoDelete (
   UINTN    FileColumn;
   UINTN    FPos;
 
-  FPos = (HBufferImage.BufferPosition.Row - 1) * 0x10 + HBufferImage.BufferPosition.Column - 1;
+  FPos = (HBufferImage.BufferPosition.Row - 1) * 0x10 +
+         HBufferImage.BufferPosition.Column - 1;
 
   FileColumn = HBufferImage.BufferPosition.Column;
 

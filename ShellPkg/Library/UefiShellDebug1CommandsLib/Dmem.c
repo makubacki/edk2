@@ -54,9 +54,20 @@ DisplayMmioMemory (
 
   ShellStatus = SHELL_SUCCESS;
 
-  Status = gBS->LocateProtocol (&gEfiPciRootBridgeIoProtocolGuid, NULL, (VOID **)&PciRbIo);
+  Status = gBS->LocateProtocol (
+                  &gEfiPciRootBridgeIoProtocolGuid,
+                  NULL,
+                  (VOID **)&PciRbIo
+                  );
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PCIRBIO_NF), gShellDebug1HiiHandle, L"dmem");
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_GEN_PCIRBIO_NF),
+      gShellDebug1HiiHandle,
+      L"dmem"
+      );
     return (SHELL_NOT_FOUND);
   }
 
@@ -65,12 +76,33 @@ DisplayMmioMemory (
     return SHELL_OUT_OF_RESOURCES;
   }
 
-  Status = PciRbIo->Mem.Read (PciRbIo, EfiPciWidthUint8, (UINT64)(UINTN)Address, Size, Buffer);
+  Status = PciRbIo->Mem.Read (
+                          PciRbIo,
+                          EfiPciWidthUint8,
+                          (UINT64)(UINTN)Address,
+                          Size,
+                          Buffer
+                          );
   if (EFI_ERROR (Status)) {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PCIRBIO_ER), gShellDebug1HiiHandle, L"dmem");
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_GEN_PCIRBIO_ER),
+      gShellDebug1HiiHandle,
+      L"dmem"
+      );
     ShellStatus = SHELL_NOT_FOUND;
   } else {
-    ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_DMEM_MMIO_HEADER_ROW), gShellDebug1HiiHandle, (UINT64)(UINTN)Address, Size);
+    ShellPrintHiiEx (
+      -1,
+      -1,
+      NULL,
+      STRING_TOKEN (STR_DMEM_MMIO_HEADER_ROW),
+      gShellDebug1HiiHandle,
+      (UINT64)(UINTN)Address,
+      Size
+      );
     DumpHex (2, (UINTN)Address, Size, Buffer);
   }
 
@@ -79,8 +111,8 @@ DisplayMmioMemory (
 }
 
 STATIC CONST SHELL_PARAM_ITEM  ParamList[] = {
-  { L"-mmio", TypeFlag },
-  { NULL,     TypeMax  }
+  { L"-mmio", TypeFlag                     },
+  { NULL,     TypeMax                      }
 };
 
 /**
@@ -130,7 +162,15 @@ ShellCommandRunDmem (
   Status = ShellCommandLineParse (ParamList, &Package, &ProblemParam, TRUE);
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_VOLUME_CORRUPTED) && (ProblemParam != NULL)) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PROBLEM), gShellDebug1HiiHandle, L"dmem", ProblemParam);
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_PROBLEM),
+        gShellDebug1HiiHandle,
+        L"dmem",
+        ProblemParam
+        );
       FreePool (ProblemParam);
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
@@ -138,7 +178,14 @@ ShellCommandRunDmem (
     }
   } else {
     if (ShellCommandLineGetCount (Package) > 3) {
-      ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_TOO_MANY), gShellDebug1HiiHandle, L"dmem");
+      ShellPrintHiiEx (
+        -1,
+        -1,
+        NULL,
+        STRING_TOKEN (STR_GEN_TOO_MANY),
+        gShellDebug1HiiHandle,
+        L"dmem"
+        );
       ShellStatus = SHELL_INVALID_PARAMETER;
     } else {
       Temp1 = ShellCommandLineGetRawValue (Package, 1);
@@ -146,8 +193,23 @@ ShellCommandRunDmem (
         Address = gST;
         Size    = sizeof (*gST);
       } else {
-        if (!ShellIsHexOrDecimalNumber (Temp1, TRUE, FALSE) || EFI_ERROR (ShellConvertStringToUint64 (Temp1, (UINT64 *)&Address, TRUE, FALSE))) {
-          ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellDebug1HiiHandle, L"dmem", Temp1);
+        if (!ShellIsHexOrDecimalNumber (Temp1, TRUE, FALSE) || EFI_ERROR (
+                                                                 ShellConvertStringToUint64 (
+                                                                   Temp1,
+                                                                   (UINT64 *)&
+                                                                   Address,
+                                                                   TRUE, FALSE)
+                                                                 ))
+        {
+          ShellPrintHiiEx (
+            -1,
+            -1,
+            NULL,
+            STRING_TOKEN (STR_GEN_PARAM_INV),
+            gShellDebug1HiiHandle,
+            L"dmem",
+            Temp1
+            );
           ShellStatus = SHELL_INVALID_PARAMETER;
         }
 
@@ -155,8 +217,23 @@ ShellCommandRunDmem (
         if (Temp1 == NULL) {
           Size = 512;
         } else {
-          if (!ShellIsHexOrDecimalNumber (Temp1, FALSE, FALSE) || EFI_ERROR (ShellConvertStringToUint64 (Temp1, &Size, TRUE, FALSE))) {
-            ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_GEN_PARAM_INV), gShellDebug1HiiHandle, L"dmem", Temp1);
+          if (!ShellIsHexOrDecimalNumber (Temp1, FALSE, FALSE) || EFI_ERROR (
+                                                                    ShellConvertStringToUint64 (
+                                                                      Temp1,
+                                                                      &Size,
+                                                                      TRUE,
+                                                                      FALSE)
+                                                                    ))
+          {
+            ShellPrintHiiEx (
+              -1,
+              -1,
+              NULL,
+              STRING_TOKEN (STR_GEN_PARAM_INV),
+              gShellDebug1HiiHandle,
+              L"dmem",
+              Temp1
+              );
             ShellStatus = SHELL_INVALID_PARAMETER;
           }
         }
@@ -165,7 +242,15 @@ ShellCommandRunDmem (
 
     if (ShellStatus == SHELL_SUCCESS) {
       if (!ShellCommandLineGetFlag (Package, L"-mmio")) {
-        ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_DMEM_HEADER_ROW), gShellDebug1HiiHandle, (UINT64)(UINTN)Address, Size);
+        ShellPrintHiiEx (
+          -1,
+          -1,
+          NULL,
+          STRING_TOKEN (STR_DMEM_HEADER_ROW),
+          gShellDebug1HiiHandle,
+          (UINT64)(UINTN)Address,
+          Size
+          );
         DumpHex (2, (UINTN)Address, (UINTN)Size, Address);
         if (Address == (VOID *)gST) {
           Acpi20TableAddress = 0;
@@ -173,29 +258,56 @@ ShellCommandRunDmem (
           SalTableAddress    = 0;
           SmbiosTableAddress = 0;
           MpsTableAddress    = 0;
-          for (TableWalker = 0; TableWalker < gST->NumberOfTableEntries; TableWalker++) {
-            if (CompareGuid (&gST->ConfigurationTable[TableWalker].VendorGuid, &gEfiAcpi20TableGuid)) {
-              Acpi20TableAddress = (UINT64)(UINTN)gST->ConfigurationTable[TableWalker].VendorTable;
+          for (TableWalker = 0; TableWalker < gST->NumberOfTableEntries;
+               TableWalker++)
+          {
+            if (CompareGuid (
+                  &gST->ConfigurationTable[TableWalker].VendorGuid,
+                  &gEfiAcpi20TableGuid
+                  ))
+            {
+              Acpi20TableAddress =
+                (UINT64)(UINTN)gST->ConfigurationTable[TableWalker].VendorTable;
               continue;
             }
 
-            if (CompareGuid (&gST->ConfigurationTable[TableWalker].VendorGuid, &gEfiAcpi10TableGuid)) {
-              AcpiTableAddress = (UINT64)(UINTN)gST->ConfigurationTable[TableWalker].VendorTable;
+            if (CompareGuid (
+                  &gST->ConfigurationTable[TableWalker].VendorGuid,
+                  &gEfiAcpi10TableGuid
+                  ))
+            {
+              AcpiTableAddress =
+                (UINT64)(UINTN)gST->ConfigurationTable[TableWalker].VendorTable;
               continue;
             }
 
-            if (CompareGuid (&gST->ConfigurationTable[TableWalker].VendorGuid, &gEfiSmbiosTableGuid)) {
-              SmbiosTableAddress = (UINT64)(UINTN)gST->ConfigurationTable[TableWalker].VendorTable;
+            if (CompareGuid (
+                  &gST->ConfigurationTable[TableWalker].VendorGuid,
+                  &gEfiSmbiosTableGuid
+                  ))
+            {
+              SmbiosTableAddress =
+                (UINT64)(UINTN)gST->ConfigurationTable[TableWalker].VendorTable;
               continue;
             }
 
-            if (CompareGuid (&gST->ConfigurationTable[TableWalker].VendorGuid, &gEfiSmbios3TableGuid)) {
-              SmbiosTableAddress = (UINT64)(UINTN)gST->ConfigurationTable[TableWalker].VendorTable;
+            if (CompareGuid (
+                  &gST->ConfigurationTable[TableWalker].VendorGuid,
+                  &gEfiSmbios3TableGuid
+                  ))
+            {
+              SmbiosTableAddress =
+                (UINT64)(UINTN)gST->ConfigurationTable[TableWalker].VendorTable;
               continue;
             }
 
-            if (CompareGuid (&gST->ConfigurationTable[TableWalker].VendorGuid, &gEfiMpsTableGuid)) {
-              MpsTableAddress = (UINT64)(UINTN)gST->ConfigurationTable[TableWalker].VendorTable;
+            if (CompareGuid (
+                  &gST->ConfigurationTable[TableWalker].VendorGuid,
+                  &gEfiMpsTableGuid
+                  ))
+            {
+              MpsTableAddress =
+                (UINT64)(UINTN)gST->ConfigurationTable[TableWalker].VendorTable;
               continue;
             }
           }

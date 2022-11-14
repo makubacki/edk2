@@ -36,7 +36,9 @@ typedef struct _CONSOLE_LOGGER_PRIVATE_DATA {
   UINTN                              RowCounter;      ///< Initial row of each print job.
 } CONSOLE_LOGGER_PRIVATE_DATA;
 
-#define CONSOLE_LOGGER_PRIVATE_DATA_FROM_THIS(a)  CR (a, CONSOLE_LOGGER_PRIVATE_DATA, OurConOut, CONSOLE_LOGGER_PRIVATE_DATA_SIGNATURE)
+#define CONSOLE_LOGGER_PRIVATE_DATA_FROM_THIS( \
+                                             a)  \
+  CR (a, CONSOLE_LOGGER_PRIVATE_DATA, OurConOut, CONSOLE_LOGGER_PRIVATE_DATA_SIGNATURE)
 
 /**
   Install our intermediate ConOut into the system table to
