@@ -2,6 +2,10 @@
 #
 # Results are uploaded to GitHub Code Scanning.
 #
+# Due to a known issue with the CodeQL extractor when building the edk2
+# codebase on Linux systems, only Windows agents are used for build with
+# the VS toolchain.
+#
 # Copyright (c) Microsoft Corporation.
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -10,54 +14,18 @@ name: "CodeQL"
 on:
   push:
     branches:
-      - master
+      - use_codeqlcli_test
   pull_request:
     branches:
-      - master
+      - use_codeqlcli_test
     paths-ignore:
       - '!**.c'
       - '!**.h'
 
 jobs:
-  gather_packages:
-    name: Gather Repo Packages
-    runs-on: ubuntu-latest
-    outputs:
-      packages: ${{ steps.generate_matrix.outputs.packages }}
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Install Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '>=3.11'
-
-    - name: Generate Package Matrix
-      id: generate_matrix
-      shell: python
-      run: |
-        import os
-        import json
-
-        packages = [d for d in os.listdir() if d.strip().lower().endswith('pkg')]
-
-        # Ensure the package can actually be built
-        for package in packages:
-            if not any(file.endswith('.dsc') for file in os.listdir(package)):
-                packages.remove(package)
-
-        packages.sort()
-
-        with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-            print(f'packages={json.dumps(packages)}', file=fh)
-
   analyze:
     name: Analyze
-    runs-on: windows-2022
-    needs:
-      - gather_packages
+    runs-on: windows-2019
     permissions:
       actions: read
       contents: read
@@ -66,10 +34,45 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: ${{ fromJson(needs.gather_packages.outputs.packages) }}
         include:
-          - archs: IA32,X64
-          - tool_chain_tag: VS2019
+          - Package: "ArmPkg"
+            ArchList: "IA32,X64"
+          - Package: "CryptoPkg"
+            ArchList: "IA32"
+          - Package: "CryptoPkg"
+            ArchList: "X64"
+          - Package: "DynamicTablesPkg"
+            ArchList: "IA32,X64"
+          - Package: "FatPkg"
+            ArchList: "IA32,X64"
+          - Package: "FmpDevicePkg"
+            ArchList: "IA32,X64"
+          - Package: "IntelFsp2Pkg"
+            ArchList: "IA32,X64"
+          - Package: "IntelFsp2WrapperPkg"
+            ArchList: "IA32,X64"
+          - Package: "MdeModulePkg"
+            ArchList: "IA32"
+          - Package: "MdeModulePkg"
+            ArchList: "X64"
+          - Package: "MdePkg"
+            ArchList: "IA32,X64"
+          - Package: "PcAtChipsetPkg"
+            ArchList: "IA32,X64"
+          - Package: "PrmPkg"
+            ArchList: "IA32,X64"
+          - Package: "SecurityPkg"
+            ArchList: "IA32,X64"
+          - Package: "ShellPkg"
+            ArchList: "IA32,X64"
+          - Package: "SourceLevelDebugPkg"
+            ArchList: "IA32,X64"
+          - Package: "StandaloneMmPkg"
+            ArchList: "IA32,X64"
+          - Package: "UefiCpuPkg"
+            ArchList: "IA32,X64"
+          - Package: "UnitTestFrameworkPkg"
+            ArchList: "IA32,X64"
 
     steps:
     - name: Checkout repository
@@ -135,13 +138,13 @@ jobs:
 
     - name: Setup
       if: steps.get_ci_file_operations.outputs.setup_supported == 'true'
-      run: stuart_setup -c .pytool/CISettings.py -t DEBUG -a ${{ matrix.archs }} TOOL_CHAIN_TAG=${{ matrix.tool_chain_tag }}
+      run: stuart_setup -c .pytool/CISettings.py -t DEBUG -a ${{ matrix.ArchList }} TOOL_CHAIN_TAG=VS2019
 
     - name: Upload Setup Log As An Artifact
       uses: actions/upload-artifact@v3
       if: (success() || failure()) && steps.get_ci_file_operations.outputs.setup_supported == 'true'
       with:
-        name: ${{ matrix.package }}-Logs
+        name: ${{ matrix.Package }}-Logs
         path: |
           **/SETUPLOG.txt
           retention-days: 7
@@ -149,30 +152,33 @@ jobs:
 
     - name: CI Setup
       if: steps.get_ci_file_operations.outputs.ci_setup_supported == 'true'
-      run: stuart_ci_setup -c .pytool/CISettings.py -t DEBUG -a ${{ matrix.archs }} TOOL_CHAIN_TAG=${{ matrix.tool_chain_tag }}
+      run: stuart_ci_setup -c .pytool/CISettings.py -t DEBUG -a ${{ matrix.ArchList }} TOOL_CHAIN_TAG=VS2019
 
     - name: Upload CI Setup Log As An Artifact
       uses: actions/upload-artifact@v3
       if: (success() || failure()) && steps.get_ci_file_operations.outputs.ci_setup_supported == 'true'
       with:
-        name: ${{ matrix.package }}-Logs
+        name: ${{ matrix.Package }}-Logs
         path: |
           **/CISETUP.txt
           retention-days: 7
         if-no-files-found: ignore
 
     - name: Update
-      run: stuart_update -c .pytool/CISettings.py -t DEBUG -a ${{ matrix.archs }} TOOL_CHAIN_TAG=${{ matrix.tool_chain_tag }}
+      run: stuart_update -c .pytool/CISettings.py -t DEBUG -a ${{ matrix.ArchList }} TOOL_CHAIN_TAG=VS2019
 
     - name: Upload Update Log As An Artifact
       uses: actions/upload-artifact@v3
       if: success() || failure()
       with:
-        name: ${{ matrix.package }}-Logs
+        name: ${{ matrix.Package }}-Logs
         path: |
           **/UPDATE_LOG.txt
         retention-days: 7
         if-no-files-found: ignore
+
+    - name: Build Tools From Source
+      run: python BaseTools/Edk2ToolsBuild.py -t VS2019
 
     - name: Find CodeQL Plugin Directory
       id: find_dir
@@ -229,7 +235,7 @@ jobs:
 
     - name: Download CodeQL CLI
       if: steps.codeqlcli_cache.outputs.cache-hit != 'true'
-      run: stuart_update -c .pytool/CISettings.py -t DEBUG -a ${{ matrix.archs }} TOOL_CHAIN_TAG=${{ matrix.tool_chain_tag }} --codeql
+      run: stuart_update -c .pytool/CISettings.py -t DEBUG -a ${{ matrix.ArchList }} TOOL_CHAIN_TAG=VS2019 --codeql
 
     - name: Remove CI Plugins Irrelevant to CodeQL
       shell: python
@@ -241,9 +247,9 @@ jobs:
         from pathlib import Path
 
         # Only these two plugins are needed for CodeQL
-        plugins_to_keep = ['CodeQL', 'CompilerPlugin']
+        plugins_to_keep = ['CompilerPlugin']
 
-        plugin_dir = Path(os.environ['CODEQL_PLUGIN_DIR']).parent.absolute()
+        plugin_dir = Path('.pytool/Plugin').absolute()
         if plugin_dir.is_dir():
             for dir in plugin_dir.iterdir():
                 if str(dir.stem) not in plugins_to_keep:
@@ -252,7 +258,7 @@ jobs:
     - name: CI Build
       env:
         STUART_CODEQL_PATH: ${{ steps.cache_key_gen.outputs.codeql_cli_ext_dep_dir }}
-      run: stuart_ci_build -c .pytool/CISettings.py -t DEBUG -p ${{ matrix.package }} -a ${{ matrix.archs }} TOOL_CHAIN_TAG=${{ matrix.tool_chain_tag }} --codeql
+      run: stuart_ci_build -c .pytool/CISettings.py -t DEBUG -p ${{ matrix.Package }} -a ${{ matrix.ArchList }} TOOL_CHAIN_TAG=VS2019 --codeql
 
     - name: Build Cleanup
       id: build_cleanup
@@ -281,7 +287,7 @@ jobs:
       uses: actions/upload-artifact@v3
       if: success() || failure()
       with:
-        name: ${{ matrix.package }}-Logs
+        name: ${{ matrix.Package }}-Logs
         path: |
           **/BUILD_REPORT.TXT
           **/OVERRIDELOG.TXT
@@ -295,7 +301,7 @@ jobs:
     - name: Prepare Env Data for CodeQL Upload
       id: env_data
       env:
-        PACKAGE_NAME: ${{ matrix.package }}
+        PACKAGE_NAME: ${{ matrix.Package }}
       shell: python
       run: |
         import os
@@ -316,7 +322,7 @@ jobs:
       uses: actions/upload-artifact@v3
       if: steps.env_data.outputs.upload_sarif_file == 'true'
       with:
-        name: ${{ matrix.package }}-CodeQL-SARIF
+        name: ${{ matrix.Package }}-CodeQL-SARIF
         path: ${{ steps.env_data.outputs.sarif_file_path }}
         retention-days: 14
         if-no-files-found: warn
@@ -329,4 +335,4 @@ jobs:
         sarif_file: ${{ steps.env_data.outputs.sarif_file_path }}
         # Optional category for the results. Used to differentiate multiple results for one commit.
         # Each package is a separate category.
-        category: ${{ matrix.package }}
+        category: ${{ matrix.Package }}
