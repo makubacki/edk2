@@ -114,6 +114,16 @@
           # Reason: Acknowledging use of two format specifiers in string with one argument
           #         Replace ternary operator in debug string with single specifier
           'Index == COLUME_SIZE/2 ? " | %02x" : " %02x"': "%d"
+      },
+      "FileSubstitutions": {
+          # Make this substitution in the file path relative to SecurityPkg
+          "HddPassword/HddPasswordDxe.c": {
+              "SOME_MACRO": "%r"
+          },
+          # Ignore any file named HddPasswordPei.c
+          "HddPasswordPei.c": {
+              None: None
+          }
       }
     }
 }

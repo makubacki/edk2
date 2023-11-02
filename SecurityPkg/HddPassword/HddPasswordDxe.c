@@ -685,7 +685,9 @@ SaveHddPasswordVariable (
         DEBUG ((DEBUG_INFO, "The variable node for the HDD password device is not found\n"));
       }
     } else {
+      #define SOME_MACRO  "%r"
       DEBUG ((DEBUG_INFO, "HddPassword variable get failed (%r)\n", Status));
+      DEBUG ((DEBUG_INFO, SOME_MACRO, Status));
     }
   } else {
     if (!EFI_ERROR (Status) && (Variable != NULL)) {

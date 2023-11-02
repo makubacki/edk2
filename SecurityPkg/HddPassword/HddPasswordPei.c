@@ -11,6 +11,9 @@
 
 EFI_GUID  mHddPasswordDeviceInfoGuid = HDD_PASSWORD_DEVICE_INFO_GUID;
 
+// Unbalanced debug macro in header file - Will test ignoring the whole file
+#define GET_DEBUG_MACRO "DEBUG((DEBUG_INFO, \"no specifier\", __func__));"
+
 /**
   Send unlock hdd password cmd through ATA PassThru PPI.
 
