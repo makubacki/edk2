@@ -20,6 +20,7 @@ import shutil
 import timeit
 import yaml
 
+from edk2toollib.gitignore_parser import parse_gitignore_lines
 from edk2toollib.utility_functions import RunCmd
 from io import StringIO
 from pathlib import Path, PurePath
@@ -371,7 +372,7 @@ def check_macros_in_directory(directory: PurePath,
                               ignore_git_submodules: Optional[bool] = True,
                               show_progress_bar: Optional[bool] = True,
                               show_utf8_decode_warning: bool = False,
-                              **macro_subs: str
+                              macro_subs: Dict[str, Dict[str, str]] = {}
                               ) -> int:
     """Checks files with the given extension in the given directory for debug
        macro formatting errors.
@@ -396,8 +397,16 @@ def check_macros_in_directory(directory: PurePath,
         show_utf8_decode_warning (bool, optional): Indicates whether to show
         warnings if UTF-8 files fail to decode. Defaults to False.
 
-        macro_subs (Dict[str,str]): Variable-length keyword and replacement
-        value string pairs to substitute during debug macro checks.
+        macro_subs (Dict[str,Dict[str,str])): Variable-length filenames
+        associated with keyword and replacement value string pairs to
+        substitute during debug macro checks.
+
+        - If a filename is None, then the substitutions present are applied to
+          all files. This is the global substitution list.
+        - If filename is present but its only dictionary value has a key of
+          "None", then the file is skipped.
+        - If the dictionary key and value are both None, the entry is ignored.
+        - If the dictionary is entirely empty, it is ignored.
 
     Returns:
         int: Count of debug macro errors in the directory.
@@ -523,12 +532,30 @@ def check_macros_in_directory(directory: PurePath,
     failure_cnt, file_cnt = 0, 0
     for file_cnt, file in enumerate(file_list):
         file_rel_path = str(file.relative_to(directory))
-        failure_cnt += check_macros_in_file(
-                            file, file_rel_path, show_utf8_decode_warning,
-                            **macro_subs)[0]
-        if show_progress_bar:
-            _show_progress(file_cnt, len(file_list),
-                           f" {failure_cnt} errors" if failure_cnt > 0 else "")
+
+        file_subs = {}
+        if None in macro_subs and macro_subs[None]:
+            file_subs |= macro_subs[None]
+
+        for file_pattern in macro_subs:
+            if file_pattern and parse_gitignore_lines([file_pattern],
+                                                      "Configuration",
+                                                      str(directory))(file):
+                if ("None" in macro_subs[file_pattern] and
+                   len(macro_subs[file_pattern]) == 1):
+                    logging.debug(f"Skipping debug macro checks in {file}")
+                    break
+
+                logging.debug(f"Adding a file scope substitution for {file}.")
+                file_subs |= macro_subs[file_pattern]
+        else:
+            failure_cnt += check_macros_in_file(
+                                file, file_rel_path, show_utf8_decode_warning,
+                                **file_subs)[0]
+            if show_progress_bar:
+                _show_progress(file_cnt, len(file_list),
+                               (f" {failure_cnt} errors"
+                                if failure_cnt > 0 else ""))
 
     if show_progress_bar:
         _show_progress(len(file_list), len(file_list),

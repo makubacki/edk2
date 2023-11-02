@@ -27,11 +27,42 @@ from edk2toolext import edk2_logging                               # noqa: E402
 from edk2toolext.environment.plugintypes.uefi_build_plugin import \
     IUefiBuildPlugin                                               # noqa: E402
 from edk2toolext.environment.uefi_build import UefiBuilder         # noqa: E402
-from edk2toollib.uefi.edk2.path_utilities import Edk2Path          # noqa: E402
 from pathlib import Path                                           # noqa: E402
+from typing import Any, Dict                                       # noqa: E402
 
 
 class DebugMacroCheckBuildPlugin(IUefiBuildPlugin):
+
+    def _get_substitutions(self, plugin_cfg: Any, file_name: str = None) -> Dict[str, Dict[str, str]]:
+        """Extracts substitutions from a given configuration.
+
+        Args:
+            plugin_cfg (Any): The object read from the configuration YAML file.
+            file_name (str, optional): A file name used for prints.
+
+        Returns:
+            Dict[str, Dict[str, str]]: A dictionary where the key is either a
+            string representing a file name or None representing all files. The
+            value is a list of string substitutions.
+        """
+        subs = {}
+
+        if ("StringSubstitutions" in
+           plugin_cfg["DebugMacroCheck"]):
+            if file_name:
+                logging.debug(f"Loading global substitution data in "
+                              f"{file_name}.")
+            subs[None] = {}
+            subs[None] |= plugin_cfg["DebugMacroCheck"]["StringSubstitutions"]
+
+        if ("FileSubstitutions" in
+           plugin_cfg["DebugMacroCheck"]):
+            if file_name:
+                logging.debug(f"Loading file scoped substitution data in "
+                              f"{file_name}.")
+            subs |= plugin_cfg["DebugMacroCheck"]["FileSubstitutions"]
+
+        return subs
 
     def do_pre_build(self, builder: UefiBuilder) -> int:
         """Debug Macro Check pre-build functionality.
@@ -50,6 +81,9 @@ class DebugMacroCheckBuildPlugin(IUefiBuildPlugin):
 
         # Check if disabled in the environment
         env_disable = builder.env.GetValue("DISABLE_DEBUG_MACRO_CHECK")
+        if not env_disable and "DISABLE_DEBUG_MACRO_CHECK" in os.environ:
+            env_disable = os.environ["DISABLE_DEBUG_MACRO_CHECK"]
+
         if env_disable:
             return 0
 
@@ -97,12 +131,8 @@ class DebugMacroCheckBuildPlugin(IUefiBuildPlugin):
         if package_config_file.is_file():
             with open(package_config_file, 'r') as cf:
                 package_config_file_data = yaml.safe_load(cf)
-                if "DebugMacroCheck" in package_config_file_data and \
-                   "StringSubstitutions" in \
-                   package_config_file_data["DebugMacroCheck"]:
-                    logging.info(f"Loading substitution data in "
-                                 f"{str(package_config_file)}")
-                    sub_data |= package_config_file_data["DebugMacroCheck"]["StringSubstitutions"] # noqa
+                sub_data |= self._get_substitutions(package_config_file_data,
+                                                    str(package_config_file))
 
         # 2. Allow a substitution file to be specified as an environment
         # variable. This is used to provide flexibility in how to specify a
@@ -110,16 +140,16 @@ class DebugMacroCheckBuildPlugin(IUefiBuildPlugin):
         # getting called such as pre-existing build script.
         sub_file = builder.env.GetValue("DEBUG_MACRO_CHECK_SUB_FILE")
         if sub_file:
-            logging.info(f"Loading substitution file {sub_file}")
             with open(sub_file, 'r') as sf:
-                sub_data |= yaml.safe_load(sf)
+                sub_file_data = yaml.safe_load(sf)
+                sub_data |= self._get_substitutions(sub_file_data, sub_file)
 
         try:
             error_count = DebugMacroCheck.check_macros_in_directory(
                                             package_path,
                                             ignore_git_submodules=False,
                                             show_progress_bar=False,
-                                            **sub_data)
+                                            macro_subs=sub_data)
         finally:
             for h, l in handler_level_context:
                 h.setLevel(l)

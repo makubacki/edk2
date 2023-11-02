@@ -34,7 +34,7 @@ The build plugin has the following attributes:
 
   4. Reports any errors in the build log and fails the build upon error making it easy to discover problems.
 
-  5. Supports two methods of configuration via "substitution strings":
+  5. Supports two input methods for providing configuration via "substitution strings":
 
      1. By setting a build variable called `DEBUG_MACRO_CHECK_SUB_FILE` with the name of a substitution YAML file to
         use.
@@ -51,28 +51,31 @@ The build plugin has the following attributes:
         **Substitution File Content Example:**
 
         ```yaml
-        ---
-        # OvmfPkg/CpuHotplugSmm/ApicId.h
-        # Reason: Substitute with macro value
-        FMT_APIC_ID: 0x%08x
+        "DebugMacroCheck": {
+          "StringSubstitutions": {
+            # OvmfPkg/CpuHotplugSmm/ApicId.h
+            # Reason: Substitute with macro value
+            "FMT_APIC_ID": "0x%08x",
 
-        # DynamicTablesPkg/Include/ConfigurationManagerObject.h
-        # Reason: Substitute with macro value
-        FMT_CM_OBJECT_ID: 0x%lx
+            # DynamicTablesPkg/Include/ConfigurationManagerObject.h
+            # Reason: Substitute with macro value
+            "FMT_CM_OBJECT_ID": "0x%lx",
 
-        # OvmfPkg/IntelTdx/TdTcg2Dxe/TdTcg2Dxe.c
-        # Reason: Acknowledging use of two format specifiers in string with one argument
-        #         Replace ternary operator in debug string with single specifier
-        'Index == COLUME_SIZE/2 ? " | %02x" : " %02x"': "%d"
+            # OvmfPkg/IntelTdx/TdTcg2Dxe/TdTcg2Dxe.c
+            # Reason: Acknowledging use of two format specifiers in string with one argument
+            #         Replace ternary operator in debug string with single specifier
+            'Index == COLUME_SIZE/2 ? " | %02x" : " %02x"': "%d",
 
-        # DynamicTablesPkg/Library/Common/TableHelperLib/ConfigurationManagerObjectParser.c
-        # ShellPkg/Library/UefiShellAcpiViewCommandLib/AcpiParser.c
-        # Reason: Acknowledge that string *should* expand to one specifier
-        #         Replace variable with expected number of specifiers (1)
-        Parser[Index].Format: "%d"
+            # DynamicTablesPkg/Library/Common/TableHelperLib/ConfigurationManagerObjectParser.c
+            # ShellPkg/Library/UefiShellAcpiViewCommandLib/AcpiParser.c
+            # Reason: Acknowledge that string *should* expand to one specifier
+            #         Replace variable with expected number of specifiers (1)
+            "Parser[Index].Format": "%d"
+          }
+        }
         ```
 
-     2. By entering the string substitutions directory into a dictionary called `StringSubstitutions` in a
+     2. By entering the string substitutions into a dictionary called `StringSubstitutions` in a
         `DebugMacroCheck` section of the package CI YAML file.
 
         **Example:**
@@ -81,6 +84,46 @@ The build plugin has the following attributes:
         "DebugMacroCheck": {
           "StringSubstitutions": {
             "SUB_A": "%Lx"
+          }
+        }
+        ```
+
+  6. Within a `"DebugMacroCheck"` configuration, the following options are available:
+      - Replace a string in any file with another string ("global substitution") in
+        a `"StringSubstitutions"` section.
+
+        ```yaml
+        # Make this substitution in all files
+        "DebugMacroCheck": {
+          "StringSubstitutions": {
+            "SUB_A": "%Lx"
+          }
+        }
+        ```
+
+      - Replace a string in a given file pattern. Note file paths are relative
+        to the root directory which is the package path in a package CI YAML file.
+
+        ```yaml
+        # Only make this substitution in HddPassword/HddPasswordDxe.c
+        "DebugMacroCheck": {
+          "FileSubstitutions": {
+            "HddPassword/HddPasswordDxe.c": {
+              "SOME_MACRO": "%r"
+            }
+          }
+        }
+        ```
+
+      - Ignore an entire file by providing `"None"`.
+
+        ```yaml
+        # Do not check debug macros in files named HddPasswordPei.c
+        "DebugMacroCheck": {
+          "FileSubstitutions": {
+            "HddPasswordPei.c": {
+                None: None
+            }
           }
         }
         ```
@@ -235,6 +278,22 @@ the string to the arguments. If usage is reasonable, a string substitution can b
 
 Since substitution files perform a straight textual substitution in macros discovered, it can be used to replace
 problematic text with text that passes allowing errors to be ignored.
+
+### Ignoring Files
+
+Entire files can be ignored by setting up a string substitution for the file with None given as the substitution.
+This means to ignore the file.
+
+```yaml
+# Do not check debug macros in files named HddPasswordPei.c
+"DebugMacroCheck": {
+  "FileSubstitutions": {
+    "HddPasswordPei.c": {
+        None: None
+    }
+  }
+}
+```
 
 ## Python Version Required (3.10)
 
