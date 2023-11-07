@@ -14,10 +14,10 @@ name: "CodeQL"
 on:
   push:
     branches:
-      - master
+      - use_codeqlcli_test
   pull_request:
     branches:
-      - master
+      - use_codeqlcli_test
     paths-ignore:
       - '!**.c'
       - '!**.h'
