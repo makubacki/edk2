@@ -19,6 +19,8 @@ BOOLEAN  *mDepexEvaluationStack        = NULL;
 BOOLEAN  *mDepexEvaluationStackEnd     = NULL;
 BOOLEAN  *mDepexEvaluationStackPointer = NULL;
 
+// Temp chagne to test CodeQL workflow
+
 //
 // Worker functions
 //
