@@ -10,6 +10,8 @@
 #
 ##
 
+# Test change
+
 [Defines]
   PLATFORM_NAME                  = MdeModule
   PLATFORM_GUID                  = 587CE499-6CBE-43cd-94E2-186218569478
