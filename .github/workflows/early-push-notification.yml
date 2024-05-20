@@ -1,0 +1,70 @@
+# This workflow leaves a comment on a pull request if the pull request has the 'push' label
+# set and the pull request is less than 24 hours old. In most cases, a pull request should
+# remain open for at least 24 hours to allow time for reviewers in different time zones to
+# review the changes.
+#
+# Copyright (c) Microsoft Corporation.
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+
+name: Check PR Age
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  check-pr-age:
+    if: github.event.label.name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Authenticate GitHub CLI
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+
+      - name: Get PR details
+        id: pr-details
+        run: |
+          PR_NUMBER=$(jq --raw-output .issue.number "$GITHUB_EVENT_PATH")
+          echo "PR_NUMBER=${PR_NUMBER}" >> $GITHUB_ENV
+
+          PR_DATA=$(gh pr view $PR_NUMBER --json createdAt)
+          PR_CREATED_AT=$(echo "$PR_DATA" | jq -r .createdAt)
+          echo "PR_CREATED_AT=${PR_CREATED_AT}" >> $GITHUB_ENV
+
+      - name: Check if 24 hours have passed since PR creation
+        id: check-time
+        run: |
+          CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          PR_CREATED_AT=${{ env.PR_CREATED_AT }}
+
+          CURRENT_TIME_EPOCH=$(date -d "$CURRENT_TIME" +"%s")
+          PR_CREATED_AT_EPOCH=$(date -d "$PR_CREATED_AT" +"%s")
+
+          TIME_DIFF=$(( CURRENT_TIME_EPOCH - PR_CREATED_AT_EPOCH ))
+          HOURS_DIFF=$(( TIME_DIFF / 3600 ))
+
+          if [ $HOURS_DIFF -ge 24 ]; then
+            echo "24 hours have passed since PR creation"
+            echo "::set-output name=passed::true"
+          else
+            echo "24 hours have not passed since PR creation"
+            echo "::set-output name=passed::false"
+          fi
+
+      - name: Post comment on PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ steps.check-time.outputs.passed }}" == "false" ]; then
+            gh pr comment ${{ env.PR_NUMBER }} --body "This PR has the 'push' label set, but it has not been open " \
+                                                      "for 24 hours. Please allow at least 24 hours for reviewers to " \
+                                                      review the changes.\n\nIf this PR is urgent, please reply " \
+                                                      "with the urgency reason so a maintainer can provide feedback " \
+                                                      "to determine if the PR should be merged early."
+          fi
