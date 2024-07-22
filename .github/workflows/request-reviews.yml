@@ -1,0 +1,47 @@
+name: Add Pull Request Reviewers
+
+on:
+  pull_request:
+    branches:
+      - master
+    types: [opened, ready_for_review, reopened]
+
+env:
+  GET_MAINTAINER_REL_PATH: "BaseTools/Scripts/GetMaintainer.py"
+
+jobs:
+  auto-request-review:
+    name: Add Pull Request Reviewers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install requests library
+        run: pip install requests
+
+      - name: Add Reviewers to Pull Request
+        shell: python
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          ORG_NAME: ${{ github.repository_owner }}
+          PR_NUMBER: ${{ github.event.number}}
+          REPO_NAME: ${{ github.repository }}
+          WORKSPACE_PATH: ${{ github.workspace }}
+        run: |
+            import os
+            import sys
+            sys.path.append(os.environ['WORKSPACE_PATH'])
+            from BaseTools.Scripts import GitHub
+
+            reviewers = GitHub.get_reviewers_for_current_branch(WORKSPACE_PATH, GET_MAINTAINER_LOCAL_PATH)
+            if not reviewers:
+                print("::notice title=No Reviewers Found!::No reviewers found for this PR.")
+                sys.exit(1)
+
+            print(f"::notice title=Reviewer List::Reviewers found for PR {os.environ['GITHUB_OUTPUT']}:\n{', '.join(reviewers)}")
