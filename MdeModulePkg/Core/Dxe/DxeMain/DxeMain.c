@@ -13,6 +13,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 EFI_HANDLE  mDecompressHandle = NULL;
 
+// Made a change to DxeMain
+
 //
 // DXE Core globals for Architecture Protocols
 //
