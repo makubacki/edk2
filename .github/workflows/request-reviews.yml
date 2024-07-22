@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -23,7 +25,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install requests library
-        run: pip install requests
+        run: pip install edk2-pytool-library edk2-pytool-extensions requests
 
       - name: Add Reviewers to Pull Request
         shell: python
@@ -38,6 +40,9 @@ jobs:
             import sys
             sys.path.append(os.environ['WORKSPACE_PATH'])
             from BaseTools.Scripts import GitHub
+
+            WORKSPACE_PATH = os.environ['WORKSPACE_PATH']
+            GET_MAINTAINER_LOCAL_PATH = os.path.join(os.environ['WORKSPACE_PATH'], os.environ['GET_MAINTAINER_REL_PATH'])
 
             reviewers = GitHub.get_reviewers_for_current_branch(WORKSPACE_PATH, GET_MAINTAINER_LOCAL_PATH)
             if not reviewers:
