@@ -25,6 +25,8 @@
   PACKAGE_GUID                   = 3D22F66E-9090-46CE-B260-1836070AFA5E
   PACKAGE_VERSION                = 0.1
 
+# Test change in PrmPkg
+
 [Includes]
   Include
 
