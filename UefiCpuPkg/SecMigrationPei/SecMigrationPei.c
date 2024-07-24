@@ -18,6 +18,8 @@
 
 #include "SecMigrationPei.h"
 
+// Change in UefiCpuPkg
+
 STATIC REPUBLISH_SEC_PPI_PPI  mEdkiiRepublishSecPpiPpi = {
   RepublishSecPpis
 };
