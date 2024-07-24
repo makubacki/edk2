@@ -32,12 +32,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
@@ -62,7 +62,7 @@ jobs:
             WORKSPACE_PATH = os.environ['WORKSPACE_PATH']
             GET_MAINTAINER_LOCAL_PATH = os.path.join(WORKSPACE_PATH, os.environ['GET_MAINTAINER_REL_PATH'])
 
-            reviewers = GitHub.get_reviewers_for_current_branch(WORKSPACE_PATH, GET_MAINTAINER_LOCAL_PATH, os.environ['TARGET_BRANCH'])
+            reviewers = GitHub.get_reviewers_for_current_branch(WORKSPACE_PATH, GET_MAINTAINER_LOCAL_PATH, f"origin/{os.environ['TARGET_BRANCH']}")
             if not reviewers:
                 print("::notice title=No Reviewers Found!::No reviewers found for this PR.")
                 sys.exit(1)
