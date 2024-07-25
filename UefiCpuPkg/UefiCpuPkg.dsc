@@ -18,6 +18,8 @@
   BUILD_TARGETS                  = DEBUG|RELEASE|NOOPT
   SKUID_IDENTIFIER               = DEFAULT
 
+# Test UefiCpuPkg change
+
 #
 # External libraries to build package
 #
