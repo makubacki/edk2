@@ -23,7 +23,7 @@ jobs:
   auto-request-review:
     name: Add Pull Request Reviewers
     # Do not run on draft PRs and only run on PRs in the tianocore organization
-    if: ${{ '!github.event.pull_request.draft' && github.repository_owner == 'tianocore' }}
+    if: ${{ github.event.pull_request.draft == false && github.repository_owner == 'makubacki' }}
     runs-on: ubuntu-latest
 
     permissions:
