@@ -23,6 +23,8 @@
   BUILD_TARGETS                  = DEBUG|RELEASE|NOOPT
   SKUID_IDENTIFIER               = DEFAULT
 
+  # CryptoPkg change
+
   #
   # Flavor of PEI, DXE, SMM modules to build.
   # Must be one of ALL, NONE, MIN_PEI, MIN_DXE_MIN_SMM, TARGET_UINT_TESTS.
