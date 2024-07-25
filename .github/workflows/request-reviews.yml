@@ -63,7 +63,11 @@ jobs:
             WORKSPACE_PATH = os.environ['WORKSPACE_PATH']
             GET_MAINTAINER_LOCAL_PATH = os.path.join(WORKSPACE_PATH, os.environ['GET_MAINTAINER_REL_PATH'])
 
-            reviewers = GitHub.get_reviewers_for_current_branch(WORKSPACE_PATH, GET_MAINTAINER_LOCAL_PATH, f"origin/{os.environ['TARGET_BRANCH']}")
+            pr_branch_commit = GitHub.get_pr_head_sha(os.environ['GH_TOKEN'], os.environ['ORG_NAME'], os.environ['REPO_NAME'], os.environ['PR_NUMBER'])
+            if not pr_branch_commit:
+                sys.exit(1)
+
+            reviewers = GitHub.get_reviewers_for_current_branch(WORKSPACE_PATH, GET_MAINTAINER_LOCAL_PATH, f"origin/{os.environ['TARGET_BRANCH']}", pr_branch_commit)
             if not reviewers:
                 print("::notice title=No Reviewers Found!::No reviewers found for this PR.")
                 sys.exit(1)

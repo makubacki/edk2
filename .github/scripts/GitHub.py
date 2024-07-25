@@ -40,15 +40,18 @@ def leave_pr_comment(
 
 
 def get_reviewers_for_current_branch(
-    workspace_path: str, maintainer_file_path: str, target_branch: str = "master"
+    workspace_path: str,
+    maintainer_file_path: str,
+    range_start="master",
+    range_end: str = "HEAD",
 ) -> List[str]:
     """Get the reviewers for the current branch.
 
     Args:
         workspace_path (str): The workspace path.
         maintainer_file_path (str): The maintainer file path.
-        target_branch (str, optional): The name of the target branch that the
-          current HEAD will merge to. Defaults to "master".
+        range_start (str, optional): The range start ref. Defaults to "master".
+        range_end (str, optional): The range end ref. Defaults to "HEAD".
 
     Returns:
         List[str]: A list of GitHub usernames.
@@ -57,7 +60,7 @@ def get_reviewers_for_current_branch(
     commit_stream_buffer = StringIO()
     cmd_ret = RunCmd(
         "git",
-        f"log --format=format:%H {target_branch}..HEAD",
+        f"log --format=format:%H {range_start}..{range_end}",
         workingdir=workspace_path,
         outstream=commit_stream_buffer,
         logging_level=logging.INFO,
@@ -102,6 +105,40 @@ def get_reviewers_for_current_branch(
     print(f"::debug title=Total Reviewer Set::{', '.join(reviewers)}")
 
     return reviewers
+
+
+def get_pr_head_sha(token: str, owner: str, repo: str, pr_number: str) -> str:
+    """Returns the commit SHA of given PR branch HEAD.
+
+    Args:
+        token (str): The GitHub token to use for authentication.
+        owner (str): The GitHub owner (organization) name.
+        repo (str): The GitHub repository name (e.g. 'edk2').
+        pr_number (str): The pull request number.
+
+    Returns:
+        str: The commit SHA of the PR branch HEAD. An empty string is returned
+             if the request fails.
+    """
+    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github.v3+json",
+    }
+    response = requests.get(url, headers=headers)
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        print(
+            f"::error title=HTTP Error!::Error getting PR Commit Info: {response.reason}"
+        )
+        return ""
+
+    commit_sha = response.json()["head"]["sha"]
+
+    print(f"::debug title=PR {pr_number} Commit SHA::{commit_sha}")
+
+    return commit_sha
 
 
 def download_gh_file(github_url: str, local_path: str, token=None):
