@@ -70,6 +70,8 @@ jobs:
             if not pr_commit_sha:
                 sys.exit(1)
 
+            print(f"::notice title=PR Commit SHA::Looking at files in consolidated PR commit: {pr_commit_sha}")
+
             out_stream_buffer = StringIO()
             cmd_ret = RunCmd(
                 "git",
