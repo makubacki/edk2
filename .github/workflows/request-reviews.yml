@@ -74,7 +74,7 @@ jobs:
             cmd_ret = RunCmd(
                 "git",
                 f"fetch {pr_commit_sha}",
-                workingdir=workspace_path,
+                workingdir=WORKSPACE_PATH,
                 outstream=out_stream_buffer,
                 logging_level=logging.INFO,
             )
