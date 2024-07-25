@@ -134,7 +134,7 @@ def get_pr_head_sha(token: str, owner: str, repo: str, pr_number: str) -> str:
         )
         return ""
 
-    commit_sha = response.json()["head"]["sha"]
+    commit_sha = response.json()["merge_commit_sha"]
 
     print(f"::debug title=PR {pr_number} Commit SHA::{commit_sha}")
 
