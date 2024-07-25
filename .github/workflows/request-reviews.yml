@@ -73,7 +73,7 @@ jobs:
             out_stream_buffer = StringIO()
             cmd_ret = RunCmd(
                 "git",
-                f"fetch {pr_commit_sha}",
+                f"fetch origin {pr_commit_sha}",
                 workingdir=WORKSPACE_PATH,
                 outstream=out_stream_buffer,
                 logging_level=logging.INFO,
