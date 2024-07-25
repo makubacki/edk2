@@ -155,3 +155,4 @@ F: UefiCpuPkg/
 W: https://github.com/tianocore/tianocore.github.io/wiki/UefiCpuPkg
 M: Project Mu UEFI Bot <uefibot@microsoft.com> [uefibot]
 R: Project Mu Bot <mubot@microsoft.com> [ProjectMuBot]
+R: Sean Brogan <sean.brogan@microsoft.com> [spbrogan]
