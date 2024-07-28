@@ -209,6 +209,11 @@ def add_reviewers_to_pr(
                    reviewers to the PR. This list will exclude any reviewers
                    from the list provided if they are not relevant to the PR.
     """
+    if not user_names:
+        print("::debug title=No PR Reviewers Requested!::"
+              "The list of PR reviewers is empty so not adding any reviewers.")
+        return []
+
     try:
         g = _authenticate(token)
         repo_gh = g.get_repo(f"{owner}/{repo}")
@@ -222,7 +227,7 @@ def add_reviewers_to_pr(
     pr_author = pr.user.login.strip()
 
     # The current reviewers of the PR do not need to be requested again.
-    current_pr_reviewers = pr.get_review_requests()[0]
+    current_pr_reviewers = [r for r in pr.get_review_requests()[0]]
 
     # A user can only be added if they are a collaborator of the repository.
     repo_collaborators = [c.login.strip() for c in repo_gh.get_collaborators()]
