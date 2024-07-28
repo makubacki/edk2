@@ -35,14 +35,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
+          sparse-checkout: |
+            .github
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Install Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
@@ -74,6 +71,7 @@ jobs:
             WORKSPACE_PATH = os.environ["WORKSPACE_PATH"]
             GET_MAINTAINER_LOCAL_PATH = os.path.join(WORKSPACE_PATH, os.environ["GET_MAINTAINER_REL_PATH"])
 
+            # Step 1: Get the GitHub created PR commit SHA (contains all changes in a single commit)
             pr_commit_sha = GitHub.get_pr_sha(
                 os.environ["GH_TOKEN"],
                 os.environ["ORG_NAME"],
@@ -85,10 +83,11 @@ jobs:
 
             print(f"::notice title=PR Commit SHA::Looking at files in consolidated PR commit: {pr_commit_sha}")
 
+            # Step 2: Fetch only the PR commit to get the files changed in the PR
             out_stream_buffer = StringIO()
             cmd_ret = RunCmd(
                 "git",
-                f"fetch origin {pr_commit_sha}",
+                f"fetch origin --depth=1 {pr_commit_sha}",
                 workingdir=WORKSPACE_PATH,
                 outstream=out_stream_buffer,
                 logging_level=logging.INFO,
