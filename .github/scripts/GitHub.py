@@ -32,14 +32,14 @@ def _authenticate(token: str):
     return Github(auth=auth)
 
 
-def _get_pr(token: str, owner: str, repo: str, pr_number: str):
+def _get_pr(token: str, owner: str, repo: str, pr_number: int):
     """Get the PR object from GitHub.
 
     Args:
         token (str): The GitHub token to use for authentication.
         owner (str): The GitHub owner (organization) name.
         repo (str): The GitHub repository name (e.g. 'edk2').
-        pr_number (str): The pull request number.
+        pr_number (int): The pull request number.
 
     Returns:
         PullRequest: The PullRequest object.
@@ -54,7 +54,7 @@ def _get_pr(token: str, owner: str, repo: str, pr_number: str):
 
 
 def leave_pr_comment(
-    token: str, owner: str, repo: str, pr_number: str, comment_body: str
+    token: str, owner: str, repo: str, pr_number: int, comment_body: str
 ):
     """Leaves a comment on a PR.
 
@@ -62,7 +62,7 @@ def leave_pr_comment(
         token (str): The GitHub token to use for authentication.
         owner (str): The GitHub owner (organization) name.
         repo (str): The GitHub repository name (e.g. 'edk2').
-        pr_number (str): The pull request number.
+        pr_number (int): The pull request number.
         comment_body (str): The comment text. Markdown is supported.
     """
     if pr := _get_pr(token, owner, repo, pr_number):
@@ -149,7 +149,7 @@ def get_reviewers_for_range(
     return reviewers
 
 
-def get_pr_sha(token: str, owner: str, repo: str, pr_number: str) -> str:
+def get_pr_sha(token: str, owner: str, repo: str, pr_number: int) -> str:
     """Returns the commit SHA of given PR branch.
 
        This returns the SHA of the merge commit that GitHub creates from a
@@ -160,7 +160,7 @@ def get_pr_sha(token: str, owner: str, repo: str, pr_number: str) -> str:
         token (str): The GitHub token to use for authentication.
         owner (str): The GitHub owner (organization) name.
         repo (str): The GitHub repository name (e.g. 'edk2').
-        pr_number (str): The pull request number.
+        pr_number (int): The pull request number.
 
     Returns:
         str: The commit SHA of the PR branch. An empty string is returned
@@ -193,7 +193,7 @@ def get_pr_sha(token: str, owner: str, repo: str, pr_number: str) -> str:
 
 
 def add_reviewers_to_pr(
-    token: str, owner: str, repo: str, pr_number: str, user_names: List[str]
+    token: str, owner: str, repo: str, pr_number: int, user_names: List[str]
 ) -> List[str]:
     """Adds the set of GitHub usernames as reviewers to the PR.
 
@@ -209,13 +209,7 @@ def add_reviewers_to_pr(
                    reviewers to the PR. This list will exclude any reviewers
                    from the list provided if they are not relevant to the PR.
     """
-    try:
-        g = _authenticate(token)
-        pr = g.get_repo(f"{owner}/{repo}").get_pull(pr_number)
-    except GithubException as ge:
-        print(f"::error title=Error Getting PR {pr_number} Info!::"
-              f"{ge.data['message']}")
-        return
+    pr = _get_pr(token, owner, repo, pr_number)
 
     # The pull request author cannot be a reviewer.
     pr_author = pr.user.login.strip()
