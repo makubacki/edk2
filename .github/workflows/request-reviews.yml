@@ -39,6 +39,7 @@ jobs:
           sparse-checkout: |
             .github
             BaseTools/Scripts
+            Maintainers.txt
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -60,13 +61,11 @@ jobs:
           TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
           WORKSPACE_PATH: ${{ github.workspace }}
         run: |
-            import logging
+            import git
             import os
             import sys
 
             sys.path.append(os.path.join(os.environ["WORKSPACE_PATH"], ".github"))
-            from edk2toollib.utility_functions import RunCmd
-            from io import StringIO
             from scripts import GitHub
 
             WORKSPACE_PATH = os.environ["WORKSPACE_PATH"]
@@ -85,21 +84,9 @@ jobs:
             print(f"::notice title=PR Commit SHA::Looking at files in consolidated PR commit: {pr_commit_sha}")
 
             # Step 2: Fetch only the PR commit to get the files changed in the PR
-            out_stream_buffer = StringIO()
-            cmd_ret = RunCmd(
-                "git",
-                f"fetch origin --depth=1 {pr_commit_sha}",
-                workingdir=WORKSPACE_PATH,
-                outstream=out_stream_buffer,
-                logging_level=logging.INFO,
-            )
-            if cmd_ret != 0:
-                print(
-                    f"::error title=Commit Fetch Error!::Error fetching PR commit: "
-                    f"[{cmd_ret}]: {out_stream_buffer.getvalue()}"
-                )
-                sys.exit(1)
+            git.Repo(WORKSPACE_PATH).remotes.origin.fetch(pr_commit_sha, depth=1)
 
+            # Step 3: Get the list of reviewers for the PR
             reviewers = GitHub.get_reviewers_for_range(
                 WORKSPACE_PATH, GET_MAINTAINER_LOCAL_PATH, pr_commit_sha, pr_commit_sha
             )
@@ -112,6 +99,8 @@ jobs:
                 f"PR {os.environ['PR_NUMBER']}: {', '.join(reviewers)}"
             )
 
+            # Step 4: Add the reviewers to the PR
+            #         Note the final requested reviewer list in the workflow run for reference
             new_reviewers = GitHub.add_reviewers_to_pr(
                 os.environ["GH_TOKEN"],
                 os.environ["ORG_NAME"],
@@ -129,4 +118,3 @@ jobs:
                     "::notice title=No New Reviewers Added::No reviewers were found that "
                     "should be newly requested."
                 )
-

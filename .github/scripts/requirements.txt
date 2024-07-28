@@ -10,5 +10,6 @@
 
 edk2-pytool-library==0.*
 edk2-pytool-extensions==0.*
+GitPython==3.*
 PyGithub==2.*
 requests==2.*
