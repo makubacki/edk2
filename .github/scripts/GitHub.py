@@ -226,7 +226,7 @@ def add_reviewers_to_pr(
             f"the repository so they can be requested in the future.\n\n"
             f"Non-collaborators requested:\n{', '.join(non_collaborators)}"
             f"\n\nAttn Admins:\n\n"
-            f"{'\n'.join([f"- @{a.login}" for a in repo_admins])}")
+            f"{'\n'.join([f'- @{a}' for a in repo_admins])}")
 
     # Add any new reviewers to the PR if needed.
     if new_pr_reviewers:
