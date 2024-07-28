@@ -209,7 +209,14 @@ def add_reviewers_to_pr(
                    reviewers to the PR. This list will exclude any reviewers
                    from the list provided if they are not relevant to the PR.
     """
-    pr = _get_pr(token, owner, repo, pr_number)
+    try:
+        g = _authenticate(token)
+        repo_gh = g.get_repo(f"{owner}/{repo}")
+        pr = repo_gh.get_pull(pr_number)
+    except GithubException as ge:
+        print(f"::error title=Error Getting PR {pr_number} Info!::"
+              f"{ge.data['message']}")
+        return None
 
     # The pull request author cannot be a reviewer.
     pr_author = pr.user.login.strip()
@@ -218,7 +225,7 @@ def add_reviewers_to_pr(
     current_pr_reviewers = pr.get_review_requests()[0]
 
     # A user can only be added if they are a collaborator of the repository.
-    repo_collaborators = [c.login.strip() for c in repo.get_collaborators()]
+    repo_collaborators = [c.login.strip() for c in repo_gh.get_collaborators()]
     non_collaborators = [u for u in user_names if u not in repo_collaborators]
 
     excluded_pr_reviewers = [pr_author] + current_pr_reviewers + non_collaborators
@@ -226,7 +233,7 @@ def add_reviewers_to_pr(
 
     # Notify the admins of the repository if non-collaborators are requested.
     if non_collaborators:
-        repo_admins = repo.get_collaborators(permission='admin')
+        repo_admins = repo_gh.get_collaborators(permission='admin')
 
         print(
             f"::warning title=Non-Collaborator Reviewers Found!::"
