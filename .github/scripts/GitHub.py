@@ -166,30 +166,12 @@ def get_pr_sha(token: str, owner: str, repo: str, pr_number: int) -> str:
         str: The commit SHA of the PR branch. An empty string is returned
              if the request fails.
     """
-    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}"
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/vnd.github.v3+json",
-    }
-    response = requests.get(url, headers=headers)
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError:
-        print(
-            f"::error title=HTTP Error!::Error getting PR Commit Info: "
-            f"{response.reason}")
-        return ""
-
-    commit_sha = response.json()["merge_commit_sha"]
-
-    print(f"::notice title=PR {pr_number} Old Merge Commit SHA::{commit_sha}")
-
-    pr = _get_pr(token, owner, repo, pr_number)
-    if pr:
+    if pr := _get_pr(token, owner, repo, pr_number):
         merge_commit_sha = pr.merge_commit_sha
-        print(f"::notice title=PR {pr_number} New Merge Commit SHA::{merge_commit_sha}")
+        print(f"::debug title=PR {pr_number} Merge Commit SHA::{merge_commit_sha}")
+        return merge_commit_sha
 
-    return commit_sha
+    return ""
 
 
 def add_reviewers_to_pr(
