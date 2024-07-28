@@ -224,7 +224,7 @@ def add_reviewers_to_pr(
             f"specified as a reviewer for this PR is not a collaborator "
             f"of the edk2 repository. Please add them as a collaborator to "
             f"the repository so they can be requested in the future.\n\n"
-            f"Non-collaborators requested:\n{', '.join(non_collaborators)}"
+            f"Non-collaborators requested:\n  {', '.join(non_collaborators)}"
             f"\n\nAttn Admins:\n\n"
             f"{'\n'.join([f'- @{a}' for a in repo_admins])}")
 
