@@ -22,6 +22,8 @@
 
 !include MdePkg/MdeLibs.dsc.inc
 
+# Another test change
+
 [LibraryClasses]
   #
   # Entry point
