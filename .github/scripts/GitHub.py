@@ -209,7 +209,7 @@ def add_reviewers_to_pr(
     pr_author = pr.user.login.strip()
 
     # The current reviewers of the PR do not need to be requested again.
-    current_pr_reviewers = [r for r in pr.get_review_requests()[0]]
+    current_pr_reviewers = [r.login.strip() for r in pr.get_review_requests()[0]]
 
     # A user can only be added if they are a collaborator of the repository.
     repo_collaborators = [c.login.strip() for c in repo_gh.get_collaborators()]
@@ -220,7 +220,7 @@ def add_reviewers_to_pr(
 
     # Notify the admins of the repository if non-collaborators are requested.
     if non_collaborators:
-        repo_admins = repo_gh.get_collaborators(permission='admin')
+        repo_admins = [a.login for a in repo_gh.get_collaborators(permission='admin')]
 
         print(
             f"::warning title=Non-Collaborator Reviewers Found!::"
