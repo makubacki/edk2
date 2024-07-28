@@ -5,12 +5,12 @@
 #  SPDX-License-Identifier: BSD-2-Clause-Patent
 #
 
+import git
 import logging
 import re
-import requests
 
 from collections import OrderedDict
-from edk2toollib.utility_functions import RunCmd, RunPythonScript
+from edk2toollib.utility_functions import RunPythonScript
 from github import Auth, Github, GithubException
 from io import StringIO
 from typing import List
@@ -76,7 +76,7 @@ def leave_pr_comment(
 def get_reviewers_for_range(
     workspace_path: str,
     maintainer_file_path: str,
-    range_start="master",
+    range_start: str = "master",
     range_end: str = "HEAD",
 ) -> List[str]:
     """Get the reviewers for the current branch.
@@ -99,19 +99,8 @@ def get_reviewers_for_range(
     if range_start == range_end:
         commits = [range_start]
     else:
-        commit_stream_buffer = StringIO()
-        cmd_ret = RunCmd(
-            "git",
-            f"log --format=format:%H {range_start}..{range_end}",
-            workingdir=workspace_path,
-            outstream=commit_stream_buffer,
-            logging_level=logging.INFO,)
-        if cmd_ret != 0:
-            print(
-                f"::error title=Commit Lookup Error!::Error getting branch "
-                f"commits: [{cmd_ret}]: {commit_stream_buffer.getvalue()}")
-            return []
-        commits = commit_stream_buffer.getvalue().splitlines()
+        commits = [c.hexsha for c in git.Repo(workspace_path)
+                   .iter_commits(f"{range_start}..{range_end}")]
 
     raw_reviewers = []
     for commit_sha in commits:
