@@ -11,10 +11,46 @@ import requests
 
 from collections import OrderedDict
 from edk2toollib.utility_functions import RunCmd, RunPythonScript
+from github import Auth, Github, GithubException
 from io import StringIO
 from typing import List
 
+
 """GitHub API helper functions."""
+
+
+def _authenticate(token: str):
+    """Authenticate to GitHub using a token.
+
+    Args:
+        token (str): The GitHub token to use for authentication.
+
+    Returns:
+        Github: A GitHub instance.
+    """
+    auth = Auth.Token(token)
+    return Github(auth=auth)
+
+
+def _get_pr(token: str, owner: str, repo: str, pr_number: str):
+    """Get the PR object from GitHub.
+
+    Args:
+        token (str): The GitHub token to use for authentication.
+        owner (str): The GitHub owner (organization) name.
+        repo (str): The GitHub repository name (e.g. 'edk2').
+        pr_number (str): The pull request number.
+
+    Returns:
+        PullRequest: The PullRequest object.
+    """
+    try:
+        g = _authenticate(token)
+        return g.get_repo(f"{owner}/{repo}").get_pull(pr_number)
+    except GithubException as ge:
+        print(f"::error title=Error Getting PR {pr_number} Info!::"
+              f"{ge.data['message']}")
+        return None
 
 
 def leave_pr_comment(
@@ -29,14 +65,12 @@ def leave_pr_comment(
         pr_number (str): The pull request number.
         comment_body (str): The comment text. Markdown is supported.
     """
-    url = f"https://api.github.com/repos/{owner}/{repo}/issues/{pr_number}/comments"
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/vnd.github.v3+json",
-    }
-    data = {"body": comment_body}
-    response = requests.post(url, json=data, headers=headers)
-    response.raise_for_status()
+    if pr := _get_pr(token, owner, repo, pr_number):
+        try:
+            pr.create_issue_comment(comment_body)
+        except GithubException as ge:
+            print(f"::error title=Error Commenting on PR {pr_number}!::"
+                  f"{ge.data['message']}")
 
 
 def get_reviewers_for_range(
@@ -47,8 +81,11 @@ def get_reviewers_for_range(
 ) -> List[str]:
     """Get the reviewers for the current branch.
 
-       To get the reviewers for a single commit, set `range_start` and
-       `range_end` to the commit SHA.
+       !!! note
+           This function accepts a range of commits and returns the reviewers
+           for that set of commits as a single list of GitHub usernames. To get
+           the reviewers for a single commit, set `range_start` and `range_end`
+           to the commit SHA.
 
     Args:
         workspace_path (str): The workspace path.
@@ -59,7 +96,6 @@ def get_reviewers_for_range(
     Returns:
         List[str]: A list of GitHub usernames.
     """
-
     if range_start == range_end:
         commits = [range_start]
     else:
@@ -69,12 +105,11 @@ def get_reviewers_for_range(
             f"log --format=format:%H {range_start}..{range_end}",
             workingdir=workspace_path,
             outstream=commit_stream_buffer,
-            logging_level=logging.INFO,
-        )
+            logging_level=logging.INFO,)
         if cmd_ret != 0:
             print(
-                f"::error title=Commit Lookup Error!::Error getting branch commits: [{cmd_ret}]: {commit_stream_buffer.getvalue()}"
-            )
+                f"::error title=Commit Lookup Error!::Error getting branch "
+                f"commits: [{cmd_ret}]: {commit_stream_buffer.getvalue()}")
             return []
         commits = commit_stream_buffer.getvalue().splitlines()
 
@@ -86,12 +121,12 @@ def get_reviewers_for_range(
             f"-g {commit_sha}",
             workingdir=workspace_path,
             outstream=reviewer_stream_buffer,
-            logging_level=logging.INFO,
-        )
+            logging_level=logging.INFO)
         if cmd_ret != 0:
             print(
-                f"::error title=Reviewer Lookup Error!::Error calling GetMaintainer.py: [{cmd_ret}]: {reviewer_stream_buffer.getvalue()}"
-            )
+                f"::error title=Reviewer Lookup Error!::Error calling "
+                f"GetMaintainer.py: [{cmd_ret}]: "
+                f"{reviewer_stream_buffer.getvalue()}")
             return []
 
         commit_reviewers = reviewer_stream_buffer.getvalue()
@@ -102,8 +137,8 @@ def get_reviewers_for_range(
             return []
 
         print(
-            f"::debug title=Commit {commit_sha[:7]} Reviewer(s)::{', '.join(matches)}"
-        )
+            f"::debug title=Commit {commit_sha[:7]} "
+            f"Reviewer(s)::{', '.join(matches)}")
 
         raw_reviewers.extend(matches)
 
@@ -141,46 +176,25 @@ def get_pr_sha(token: str, owner: str, repo: str, pr_number: str) -> str:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
         print(
-            f"::error title=HTTP Error!::Error getting PR Commit Info: {response.reason}"
-        )
+            f"::error title=HTTP Error!::Error getting PR Commit Info: "
+            f"{response.reason}")
         return ""
 
     commit_sha = response.json()["merge_commit_sha"]
 
-    print(f"::debug title=PR {pr_number} Commit SHA::{commit_sha}")
+    print(f"::notice title=PR {pr_number} Old Merge Commit SHA::{commit_sha}")
+
+    pr = _get_pr(token, owner, repo, pr_number)
+    if pr:
+        merge_commit_sha = pr.merge_commit_sha
+        print(f"::notice title=PR {pr_number} New Merge Commit SHA::{merge_commit_sha}")
 
     return commit_sha
 
 
-def download_gh_file(github_url: str, local_path: str, token=None):
-    """Downloads a file from GitHub.
-
-    Args:
-        github_url (str): The GitHub raw file URL.
-        local_path (str): A local path to write the file contents to.
-        token (_type_, optional): A GitHub authentication token.
-            Only needed for a private repo. Defaults to None.
-    """
-    headers = {}
-    if token:
-        headers["Authorization"] = f"Bearer {token}"
-
-    try:
-        response = requests.get(github_url, headers=headers)
-        response.raise_for_status()
-    except requests.exceptions.HTTPError:
-        print(
-            f"::error title=HTTP Error!::Error downloading {github_url}: {response.reason}"
-        )
-        return
-
-    with open(local_path, "w", encoding="utf-8") as file:
-        file.write(response.text)
-
-
 def add_reviewers_to_pr(
     token: str, owner: str, repo: str, pr_number: str, user_names: List[str]
-):
+) -> List[str]:
     """Adds the set of GitHub usernames as reviewers to the PR.
 
     Args:
@@ -189,47 +203,59 @@ def add_reviewers_to_pr(
         repo (str): The GitHub repository name (e.g. 'edk2').
         pr_number (str): The pull request number.
         user_names (List[str]): List of GitHub usernames to add as reviewers.
-    """
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/vnd.github.v3+json",
-    }
-    pr_author_url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}"
-    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/requested_reviewers"
 
-    response = requests.get(pr_author_url, headers=headers)
-    if response.status_code != 200:
-        print(f"::error title=HTTP Error!::Error getting PR author: {response.reason}")
-        return
-    pr_author = response.json().get("user").get("login").strip()
-    while pr_author in user_names:
-        user_names.remove(pr_author)
-    data = {"reviewers": user_names}
-    response = requests.post(url, json=data, headers=headers)
+    Returns:
+        List[str]: A list of GitHub usernames that were successfully added as
+                   reviewers to the PR. This list will exclude any reviewers
+                   from the list provided if they are not relevant to the PR.
+    """
     try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError:
-        if (
-            response.status_code == 422
-            and "Reviews may only be requested from collaborators"
-            in response.json().get("message")
-        ):
-            print(
-                f"::error title=User is not a Collaborator!::{response.json().get('message')}"
-            )
-            leave_pr_comment(
-                token,
-                owner,
-                repo,
-                pr_number,
-                f"&#9888; **WARNING: Cannot add reviewers**: A user specified as a "
-                f"reviewer for this PR is not a collaborator "
-                f"of the edk2 repository. Please add them as a collaborator to the "
-                f"repository and re-request the review.\n\n"
-                f"Users requested:\n{', '.join(user_names)}",
-            )
-        elif response.status_code == 422:
-            print(
-                "::error title=Invalid Request!::The request is invalid. "
-                "Verify the API request string."
-            )
+        g = _authenticate(token)
+        pr = g.get_repo(f"{owner}/{repo}").get_pull(pr_number)
+    except GithubException as ge:
+        print(f"::error title=Error Getting PR {pr_number} Info!::"
+              f"{ge.data['message']}")
+        return
+
+    # The pull request author cannot be a reviewer.
+    pr_author = pr.user.login.strip()
+
+    # The current reviewers of the PR do not need to be requested again.
+    current_pr_reviewers = pr.get_review_requests()[0]
+
+    # A user can only be added if they are a collaborator of the repository.
+    repo_collaborators = [c.login.strip() for c in repo.get_collaborators()]
+    non_collaborators = [u for u in user_names if u not in repo_collaborators]
+
+    excluded_pr_reviewers = [pr_author] + current_pr_reviewers + non_collaborators
+    new_pr_reviewers = [u for u in user_names if u not in excluded_pr_reviewers]
+
+    # Notify the admins of the repository if non-collaborators are requested.
+    if non_collaborators:
+        repo_admins = repo.get_collaborators(permission='admin')
+
+        print(
+            f"::warning title=Non-Collaborator Reviewers Found!::"
+            f"{', '.join(non_collaborators)}")
+
+        leave_pr_comment(
+            token,
+            owner,
+            repo,
+            pr_number,
+            f"&#9888; **WARNING: Cannot add some reviewers**: A user  "
+            f"specified as a reviewer for this PR is not a collaborator "
+            f"of the edk2 repository. Please add them as a collaborator to "
+            f"the repository so they can be requested in the future.\n\n"
+            f"Non-collaborators requested:\n{', '.join(non_collaborators)}"
+            f"\n\nAttn Admins:\n\n"
+            f"{'\n'.join([f"- @{a.login}" for a in repo_admins])}")
+
+    # Add any new reviewers to the PR if needed.
+    if new_pr_reviewers:
+        print(f"::debug title=Adding New PR Reviewers::"
+              f"{', '.join(new_pr_reviewers)}")
+
+        pr.create_review_request(reviewers=new_pr_reviewers)
+
+    return new_pr_reviewers
