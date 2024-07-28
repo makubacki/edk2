@@ -48,8 +48,10 @@ def _get_pr(token: str, owner: str, repo: str, pr_number: int):
         g = _authenticate(token)
         return g.get_repo(f"{owner}/{repo}").get_pull(pr_number)
     except GithubException as ge:
-        print(f"::error title=Error Getting PR {pr_number} Info!::"
-              f"{ge.data['message']}")
+        print(
+            f"::error title=Error Getting PR {pr_number} Info!::"
+            f"{ge.data['message']}"
+        )
         return None
 
 
@@ -69,8 +71,10 @@ def leave_pr_comment(
         try:
             pr.create_issue_comment(comment_body)
         except GithubException as ge:
-            print(f"::error title=Error Commenting on PR {pr_number}!::"
-                  f"{ge.data['message']}")
+            print(
+                f"::error title=Error Commenting on PR {pr_number}!::"
+                f"{ge.data['message']}"
+            )
 
 
 def get_reviewers_for_range(
@@ -99,8 +103,12 @@ def get_reviewers_for_range(
     if range_start == range_end:
         commits = [range_start]
     else:
-        commits = [c.hexsha for c in git.Repo(workspace_path)
-                   .iter_commits(f"{range_start}..{range_end}")]
+        commits = [
+            c.hexsha
+            for c in git.Repo(workspace_path).iter_commits(
+                f"{range_start}..{range_end}"
+            )
+        ]
 
     raw_reviewers = []
     for commit_sha in commits:
@@ -110,12 +118,14 @@ def get_reviewers_for_range(
             f"-g {commit_sha}",
             workingdir=workspace_path,
             outstream=reviewer_stream_buffer,
-            logging_level=logging.INFO)
+            logging_level=logging.INFO,
+        )
         if cmd_ret != 0:
             print(
                 f"::error title=Reviewer Lookup Error!::Error calling "
                 f"GetMaintainer.py: [{cmd_ret}]: "
-                f"{reviewer_stream_buffer.getvalue()}")
+                f"{reviewer_stream_buffer.getvalue()}"
+            )
             return []
 
         commit_reviewers = reviewer_stream_buffer.getvalue()
@@ -127,7 +137,8 @@ def get_reviewers_for_range(
 
         print(
             f"::debug title=Commit {commit_sha[:7]} "
-            f"Reviewer(s)::{', '.join(matches)}")
+            f"Reviewer(s)::{', '.join(matches)}"
+        )
 
         raw_reviewers.extend(matches)
 
@@ -181,8 +192,10 @@ def add_reviewers_to_pr(
                    from the list provided if they are not relevant to the PR.
     """
     if not user_names:
-        print("::debug title=No PR Reviewers Requested!::"
-              "The list of PR reviewers is empty so not adding any reviewers.")
+        print(
+            "::debug title=No PR Reviewers Requested!::"
+            "The list of PR reviewers is empty so not adding any reviewers."
+        )
         return []
 
     try:
@@ -190,8 +203,10 @@ def add_reviewers_to_pr(
         repo_gh = g.get_repo(f"{owner}/{repo}")
         pr = repo_gh.get_pull(pr_number)
     except GithubException as ge:
-        print(f"::error title=Error Getting PR {pr_number} Info!::"
-              f"{ge.data['message']}")
+        print(
+            f"::error title=Error Getting PR {pr_number} Info!::"
+            f"{ge.data['message']}"
+        )
         return None
 
     # The pull request author cannot be a reviewer.
@@ -209,29 +224,44 @@ def add_reviewers_to_pr(
 
     # Notify the admins of the repository if non-collaborators are requested.
     if non_collaborators:
-        repo_admins = [a.login for a in repo_gh.get_collaborators(permission='admin')]
+        for comment in pr.get_issue_comments():
+            # If a comment has already been made for these non-collaborators,
+            # do not make another comment.
+            if (
+                comment.user.login == "github-actions[bot]"
+                and "WARNING: Cannot add some reviewers" in comment.body
+                and all(u in comment.body for u in non_collaborators)
+            ):
+                break
+        else:
+            repo_admins = [
+                a.login for a in repo_gh.get_collaborators(permission="admin")
+            ]
 
-        print(
-            f"::warning title=Non-Collaborator Reviewers Found!::"
-            f"{', '.join(non_collaborators)}")
+            print(
+                f"::warning title=Non-Collaborator Reviewers Found!::"
+                f"{', '.join(non_collaborators)}"
+            )
 
-        leave_pr_comment(
-            token,
-            owner,
-            repo,
-            pr_number,
-            f"&#9888; **WARNING: Cannot add some reviewers**: A user  "
-            f"specified as a reviewer for this PR is not a collaborator "
-            f"of the edk2 repository. Please add them as a collaborator to "
-            f"the repository so they can be requested in the future.\n\n"
-            f"Non-collaborators requested:\n  {', '.join(non_collaborators)}"
-            f"\n\nAttn Admins:\n\n"
-            f"{'\n'.join([f'- @{a}' for a in repo_admins])}")
+            leave_pr_comment(
+                token,
+                owner,
+                repo,
+                pr_number,
+                f"&#9888; **WARNING: Cannot add some reviewers**: A user  "
+                f"specified as a reviewer for this PR is not a collaborator "
+                f"of the repository. Please add them as a collaborator to "
+                f"the repository so they can be requested in the future.\n\n"
+                f"Non-collaborators requested:\n"
+                f"  {', '.join(non_collaborators)}\n\nAttn Admins:\n\n"
+                f"{'\n'.join([f'- @{a}' for a in repo_admins])}",
+            )
 
     # Add any new reviewers to the PR if needed.
     if new_pr_reviewers:
-        print(f"::debug title=Adding New PR Reviewers::"
-              f"{', '.join(new_pr_reviewers)}")
+        print(
+            f"::debug title=Adding New PR Reviewers::" f"{', '.join(new_pr_reviewers)}"
+        )
 
         pr.create_review_request(reviewers=new_pr_reviewers)
 
