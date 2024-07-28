@@ -212,8 +212,14 @@ def add_reviewers_to_pr(
     # The pull request author cannot be a reviewer.
     pr_author = pr.user.login.strip()
 
-    # The current reviewers of the PR do not need to be requested again.
-    current_pr_reviewers = [r.login.strip() for r in pr.get_review_requests()[0]]
+    # The current PR reviewers do not need to be requested again.
+    current_pr_requested_reviewers = [
+        r.login.strip() for r in pr.get_review_requests()[0]
+    ]
+    current_pr_reviewed_reviewers = [r.user.login.strip() for r in pr.get_reviews()]
+    current_pr_reviewers = list(
+        set(current_pr_requested_reviewers + current_pr_reviewed_reviewers)
+    )
 
     # A user can only be added if they are a collaborator of the repository.
     repo_collaborators = [c.login.strip() for c in repo_gh.get_collaborators()]
