@@ -224,6 +224,11 @@ def add_reviewers_to_pr(
 
     # Notify the admins of the repository if non-collaborators are requested.
     if non_collaborators:
+        print(
+            f"::warning title=Non-Collaborator Reviewers Found!::"
+            f"{', '.join(non_collaborators)}"
+        )
+
         for comment in pr.get_issue_comments():
             # If a comment has already been made for these non-collaborators,
             # do not make another comment.
@@ -237,11 +242,6 @@ def add_reviewers_to_pr(
             repo_admins = [
                 a.login for a in repo_gh.get_collaborators(permission="admin")
             ]
-
-            print(
-                f"::warning title=Non-Collaborator Reviewers Found!::"
-                f"{', '.join(non_collaborators)}"
-            )
 
             leave_pr_comment(
                 token,
