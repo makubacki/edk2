@@ -126,7 +126,7 @@ jobs:
                 )
             else:
                 print(
-                    "::notice title=No New Reviewers Added!::No reviewers were found that "
+                    "::notice title=No New Reviewers Added::No reviewers were found that "
                     "should be newly requested."
                 )
 
