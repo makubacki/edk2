@@ -259,7 +259,7 @@ def add_reviewers_to_pr(
                 f"of the repository. Please add them as a collaborator to "
                 f"the repository so they can be requested in the future.\n\n"
                 f"Non-collaborators requested:\n"
-                f"{'\n'.join([f'- @{a}' for c in non_collaborators])}"
+                f"{'\n'.join([f'- @{c}' for c in non_collaborators])}"
                 f"\n\nAttn Admins:\n"
                 f"{'\n'.join([f'- @{a}' for a in repo_admins])}\n---\n"
                 f"Admin Instructions:\n"
