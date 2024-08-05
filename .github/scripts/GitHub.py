@@ -262,6 +262,7 @@ def add_reviewers_to_pr(
                 f"{'\n'.join([f'- @{a}' for c in non_collaborators])}"
                 f"\n\nAttn Admins:\n"
                 f"{'\n'.join([f'- @{a}' for a in repo_admins])}\n---\n"
+                f"Admin Instructions:\n"
                 f"- Add the non-collaborators as collaborators to the "
                 f"appropriate team(s) listed in "
                 f"[teams](https://github.com/orgs/tianocore/teams)\n"
