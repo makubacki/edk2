@@ -8,6 +8,8 @@
 #
 ##
 
+# Test change
+
 [Defines]
   PLATFORM_NAME                  = UefiCpu
   PLATFORM_GUID                  = a1b7be22-78b3-4260-9569-8649e8c17d49
