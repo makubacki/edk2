@@ -30,10 +30,11 @@ body:
     attributes:
       label: Bug Type
       description: |
-        Is this a bug in firmware code or non-firmware (e.g. tool) code?
+        What type of code does this bug affect?
       options:
-        - label: Firmware Code
-        - label: Non-Firmware Code
+        - label: Firmware
+        - label: Tool
+        - label: Unit Test
 
   - type: dropdown
     id: packages_impacted
