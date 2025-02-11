@@ -307,7 +307,7 @@ typedef union {
 #define EFI_IMAGE_MACHINE_CROSS_TYPE_SUPPORTED(Machine)  (FALSE)
 
   #else
-    #error Unknown Processor Type
+    // #error Unknown Processor Type
   #endif
 #else
   #if defined (EFI_IMAGE_MACHINE_TYPE_VALUE)

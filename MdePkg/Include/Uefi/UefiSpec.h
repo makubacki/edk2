@@ -2287,7 +2287,7 @@ typedef struct {
   #elif defined (MDE_CPU_LOONGARCH64)
 #define EFI_REMOVABLE_MEDIA_FILE_NAME  EFI_REMOVABLE_MEDIA_FILE_NAME_LOONGARCH64
   #else
-    #error Unknown Processor Type
+    // #error Unknown Processor Type
   #endif
 #endif
 
