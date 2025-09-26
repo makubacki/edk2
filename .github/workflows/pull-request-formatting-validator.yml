@@ -29,83 +29,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Reduce checkout time with sparse-checkout
+      #   - .github: Contains the scripts to interact with Github and add reviewers
+      #   - BaseTools/Scripts: Contains the GetMaintainer.py script
+      #   - Maintainers.txt: Contains the list of maintainers for the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/scripts/
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          cache: 'pip'
+          cache-dependency-path: '.github/scripts/requirements.txt'
+
+      - name: Install PIP Modules
+        run: pip install -r .github/scripts/requirements.txt
+
       - name: Validate PR Format
         id: validate
-        run: |
-          # Constants
-          readonly VALIDATION_HEADER="Pull Request Formatting Issues"
-
-          # Fetch PR data
-          prData="$(gh api graphql -F owner=$OWNER -F name=$REPO -F pr_number=$PR_NUMBER -f query='
-          query($name: String!, $owner: String!, $pr_number: Int!) {
-            repository(owner: $owner, name: $name) {
-              pullRequest(number: $pr_number) {
-                title
-                body
-              }
-            }
-          }')"
-
-          prTitle=$(echo "$prData" | jq -r '.data.repository.pullRequest.title // ""')
-          prBody=$(echo "$prData" | jq -r '.data.repository.pullRequest.body // ""')
-
-          # Fetch template content (may not exist)
-          templateContent=""
-          if gh api repos/$GITHUB_REPOSITORY/contents/.github/pull_request_template.md > /dev/null 2>&1; then
-            templateContent="$(gh api repos/$GITHUB_REPOSITORY/contents/.github/pull_request_template.md --jq '.content' | base64 --decode)"
-          fi
-
-          validationError=false
-          validationMessages=""
-
-          # Validate PR title
-          if [[ -z "$prTitle" ]]; then
-            validationMessages+="⚠️ Pull request title cannot be empty."$'\n'
-            validationError=true
-          fi
-
-          # Validate PR body
-          if [[ -z "$prBody" || "$prBody" == "null" ]] || [[ -z "$(echo "$prBody" | xargs)" ]]; then
-            validationMessages+="⚠️ Add a meaningful pull request description using the [PR template](https://github.com/tianocore/edk2/blob/master/.github/pull_request_template.md)."$'\n'
-            validationError=true
-          elif [[ ${#prBody} -lt 147 ]]; then
-            validationMessages+="⚠️ Provide a more detailed pull request description using the [PR template](https://github.com/tianocore/edk2/blob/master/.github/pull_request_template.md) (current: ${#prBody} characters)."$'\n'
-            validationError=true
-          fi
-
-          # Check for template lines if template exists
-          if [[ -n "$templateContent" ]]; then
-            # Template lines are considered to be those that begin with '<_' and end with '_>'
-            templateLines=$(echo "$templateContent" | grep -E '^<_.*_>$' || true)
-
-            if [[ -n "$templateLines" ]]; then
-              templateLinesFound=""
-              while IFS= read -r line; do
-                # Use more precise matching - check for the line as a standalone line
-                if [[ -n "$line" ]] && echo "$prBody" | grep -Fxq "$line"; then
-                  if [[ -n "$templateLinesFound" ]]; then
-                    templateLinesFound="$templateLinesFound"$'\n'"\`$line\`"
-                  else
-                    templateLinesFound="\`$line\`"
-                  fi
-                fi
-              done <<< "$templateLines"
-
-              if [[ -n "$templateLinesFound" ]]; then
-                validationMessages+="⚠️ Remove the following template lines from your PR description:"$'\n'"$templateLinesFound"$'\n'
-                validationError=true
-              fi
-            fi
-          fi
-
-          # Output validation results
-          echo "validation_error=$validationError" >> $GITHUB_OUTPUT
-          if [[ "$validationError" == "true" ]]; then
-            echo "VALIDATION_MESSAGES<<EOF" >> $GITHUB_ENV
-            echo "$validationMessages" >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
-            echo "VALIDATION_HEADER=$VALIDATION_HEADER" >> $GITHUB_ENV
-          fi
+        run: python .github/scripts/validate_pr_formatting.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OWNER: ${{ github.repository_owner }}
@@ -114,33 +61,7 @@ jobs:
 
       - name: Post Validation Comment
         if: steps.validate.outputs.validation_error == 'true'
-        run: |
-          # Create comment body
-          commentBody="## $VALIDATION_HEADER"$'\n\n'"$VALIDATION_MESSAGES"$'\n'"Address these issues and the validation will automatically re-run when you update your pull request."
-
-          # Create validation hash for duplicate detection
-          validationHash=$(echo "$VALIDATION_MESSAGES" | sha256sum | cut -d' ' -f1)
-          commentBodyWithHash="$commentBody"$'\n\n'"<!-- validation-hash: $validationHash -->"
-
-          # Check if a comment with same validation hash already exists
-          existingComments=$(gh pr view $PR_NUMBER --repo $GITHUB_REPOSITORY --json comments --jq '.comments[] | select(.body | contains("Pull Request Formatting Issues")) | .body')
-
-          duplicateFound=false
-          if [[ -n "$existingComments" ]]; then
-            while IFS= read -r comment; do
-              if [[ "$comment" == *"validation-hash: $validationHash"* ]]; then
-                duplicateFound=true
-                break
-              fi
-            done <<< "$existingComments"
-          fi
-
-          if [[ "$duplicateFound" == "false" ]]; then
-            gh pr comment $PR_NUMBER --repo $GITHUB_REPOSITORY --body "$commentBodyWithHash"
-            echo "Posted validation comment (hash: $validationHash)"
-          else
-            echo "Skipped posting duplicate validation comment (hash: $validationHash)"
-          fi
+        run: python .github/scripts/validate_pr_formatting.py --post-comment
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.number }}
