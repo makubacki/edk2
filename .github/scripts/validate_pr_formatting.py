@@ -5,8 +5,33 @@
 # This script validates basic pull request formatting requirements and can
 # optionally post validation comments.
 #
-#  Copyright (c) Microsoft Corporation.
-#  SPDX-License-Identifier: BSD-2-Clause-Patent
+# Validation Checks Performed:
+#
+# 1. PR Title Validation:
+#    - Ensures the PR title is not empty or whitespace-only
+#    - Failure comment: "⚠️ Pull request title cannot be empty."
+#
+# 2. PR Body Validation:
+#    - Ensures the PR body is not empty, null, or whitespace-only
+#    - Ensures the PR body meets minimum length requirement (147 characters)
+#      - The minimum length is based on the PR template with empty sections
+#    - Empty body failure comment: "⚠️ Add a meaningful pull request
+#      description using the PR template."
+#    - Short body failure comment: "⚠️ Provide a more detailed pull request
+#      description using the PR template (current: X characters)."
+#
+# 3. PR Template Line Validation:
+#    - Checks that template placeholder lines are removed from the PR
+#      description
+#       - Based on present template lines in the PR template file
+#    - Failure comment: "⚠️ Remove the following template lines from your
+#      PR description:" followed by list of remaining template lines
+#
+# The same comment (based on a body content hash) will not be posted multiple
+# times to avoid spamming the PR with duplicate messages.
+#
+# Copyright (c) Microsoft Corporation.
+# SPDX-License-Identifier: BSD-2-Clause-Patent
 #
 
 import base64
@@ -25,6 +50,13 @@ class PRValidator:
     VALIDATION_HEADER = "Pull Request Formatting Issues"
     MIN_BODY_LENGTH = 147
     TEMPLATE_LINE_PATTERN = r'^<_.*_>$'
+    GITHUB_PR_TEMPLATE_PATH = ".github/pull_request_template.md"
+
+    @property
+    def GITHUB_PR_TEMPLATE_URL(self) -> str:
+        """The PR template URL path for the given PR validator instance."""
+        return (f"https://github.com/{self.owner}/{self.repo}/blob/master/"
+                f"{self.GITHUB_PR_TEMPLATE_PATH}")
 
     def __init__(self, github_token: str, owner: str, repo: str,
                  pr_number: int):
@@ -57,9 +89,7 @@ class PRValidator:
         try:
             gh = GitHub._authenticate(self.github_token)
             repo = gh.get_repo(f"{self.owner}/{self.repo}")
-            template_file = repo.get_contents(
-                ".github/pull_request_template.md"
-            )
+            template_file = repo.get_contents(self.GITHUB_PR_TEMPLATE_PATH)
 
             # Decode from base64
             if hasattr(template_file, 'content'):
@@ -87,15 +117,13 @@ class PRValidator:
         if not body or body == "null" or not body.strip():
             self.validation_messages.append(
                 "⚠️ Add a meaningful pull request description using the "
-                "[PR template](https://github.com/tianocore/edk2/blob/"
-                "master/.github/pull_request_template.md)."
+                f"[PR template]({self.GITHUB_PR_TEMPLATE_URL})."
             )
             is_valid = False
         elif len(body) < self.MIN_BODY_LENGTH:
             self.validation_messages.append(
-                f"⚠️ Provide a more detailed pull request description "
-                f"using the [PR template](https://github.com/tianocore/"
-                f"edk2/blob/master/.github/pull_request_template.md) "
+                "⚠️ Provide a more detailed pull request description "
+                f"using the [PR template]({self.GITHUB_PR_TEMPLATE_URL}) "
                 f"(current: {len(body)} characters)."
             )
             is_valid = False
