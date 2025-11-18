@@ -17,7 +17,7 @@ on:
 jobs:
   reset-push-label:
     name: Remove Push Label if Present
-    if: github.repository_owner == 'makubacki'
+    if: github.repository_owner == 'makubacki' && github.event.sender.login != 'mergify[bot]'
     runs-on: ubuntu-latest
 
     permissions:
