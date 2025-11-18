@@ -24,6 +24,13 @@ jobs:
       pull-requests: write
 
     steps:
+      - name: Debug - Show sender info
+        run: |
+          echo "Event sender login: ${{ github.event.sender.login }}"
+          echo "Event sender type: ${{ github.event.sender.type }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event name: ${{ github.event_name }}"
+
       - name: Reset push label
         uses: actions/github-script@v7
         with:
