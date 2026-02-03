@@ -96,6 +96,11 @@ VfrParserStart (
 #token "extern"   << skip (); mode (CPP_COMMENT); >>
 
 //
+// Skip over '#pragma once' left by the C preprocessor in .i files
+//
+#token PragmaOnce                               "\#[\  \t]*pragma[\  \t]+once[\  \t]*\n" << skip (); newline (); >>
+
+//
 // Tokens for the different keywords. Syntax is:
 // TokenName("ErrorMessageText")    "TokenString"
 //   where:
