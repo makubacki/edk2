@@ -193,7 +193,7 @@ PlatformMemMapInitialization (
   PlatformInfoHob->PcdPciMmio32Size = PciSize;
 
   PlatformAddIoMemoryBaseSizeHob (0xFEC00000, SIZE_4KB);
-  PlatformAddIoMemoryBaseSizeHob (0xFED00000, SIZE_1KB);
+  PlatformAddIoMemoryBaseSizeHob (0xFED00000, SIZE_4KB);
   if (PlatformInfoHob->HostBridgeDevId == INTEL_Q35_MCH_DEVICE_ID) {
     PlatformAddIoMemoryBaseSizeHob (ICH9_ROOT_COMPLEX_BASE, SIZE_16KB);
     //
@@ -214,15 +214,11 @@ PlatformMemMapInitialization (
     // Normally we add memory resource descriptor HOBs in
     // QemuInitializeRam(), and pre-allocate from those with memory
     // allocation HOBs in InitializeRamRegions(). However, the MMCONFIG area
-    // is most definitely not RAM; so, as an exception, cover it with
-    // uncacheable reserved memory right here.
+    // is most definitely not RAM; so, as an exception, report it as
+    // MMIO so environments that set MMIO access permissions can map
+    // it correctly.
     //
-    PlatformAddReservedMemoryBaseSizeHob (PciExBarBase, SIZE_256MB, FALSE);
-    BuildMemoryAllocationHob (
-      PciExBarBase,
-      SIZE_256MB,
-      EfiReservedMemoryType
-      );
+    PlatformAddIoMemoryBaseSizeHob (PciExBarBase, SIZE_256MB);
   }
 
   PlatformAddIoMemoryBaseSizeHob (PcdGet32 (PcdCpuLocalApicBaseAddress), SIZE_1MB);
@@ -236,6 +232,21 @@ PlatformMemMapInitialization (
     PciIoSize = 0xA000;
     ASSERT ((ICH9_PMBASE_VALUE & 0xF000) < PciIoBase);
   }
+
+  //
+  // Report the flash region as MMIO to support usage in Standalone MM.
+  //
+  DEBUG ((
+    DEBUG_INFO,
+    "%a: Flash region marked as MMIO. Base=0x%Lx Size=0x%Lx\n",
+    __func__,
+    FixedPcdGet32 (PcdOvmfFdBaseAddress),
+    FixedPcdGet32 (PcdOvmfFirmwareFdSize)
+    ));
+  PlatformAddIoMemoryBaseSizeHob (
+    FixedPcdGet32 (PcdOvmfFdBaseAddress),
+    FixedPcdGet32 (PcdOvmfFirmwareFdSize)
+    );
 
   //
   // Add PCI IO Port space available for PCI resource allocations.
