@@ -35,3 +35,6 @@
 [submodule "SecurityPkg/DeviceSecurity/SpdmLib/libspdm"]
 	path = SecurityPkg/DeviceSecurity/SpdmLib/libspdm
 	url = https://github.com/DMTF/libspdm.git
+[submodule "Patina"]
+	path = Patina
+	url = https://github.com/OpenDevicePartnership/patina-edk2.git

@@ -36,6 +36,10 @@
   DEFINE SOURCE_DEBUG_ENABLE     = FALSE
   DEFINE CC_MEASUREMENT_ENABLE   = TRUE
 
+!if $(PATINA_ENABLED) == TRUE
+  DEFINE STANDALONE_MM_ENABLE    = TRUE
+!endif
+
 !include OvmfPkg/Include/Dsc/OvmfTpmDefines.dsc.inc
 
   #
@@ -911,6 +915,8 @@
       MpInitLib|UefiCpuPkg/Library/MpInitLibUp/MpInitLibUp.inf
       NULL|OvmfPkg/Library/MpInitLibDepLib/DxeMpInitLibUpDepLib.inf
   }
+
+  PatinaPkg/MpDxe/MpDxe.inf
 
   OvmfPkg/LocalApicTimerDxe/LocalApicTimerDxe.inf
   OvmfPkg/IncompatiblePciDeviceSupportDxe/IncompatiblePciDeviceSupport.inf

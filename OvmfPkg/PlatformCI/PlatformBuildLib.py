@@ -45,6 +45,8 @@ class SettingsManager(UpdateSettingsManager, SetupSettingsManager, PrEvalSetting
         # intentionally declare this one with recursive false to avoid overhead
         rs.append(RequiredSubmodule(
             "CryptoPkg/Library/OpensslLib/openssl", False))
+        # OvmfPkg can optionally build with Patina
+        rs.append(RequiredSubmodule("Patina", False))
 
         # To avoid maintenance of this file for every new submodule
         # lets just parse the .gitmodules and add each if not already in list.
@@ -140,7 +142,7 @@ class PlatformBuilder( UefiBuilder, BuildSettingsManager):
 
     def GetPackagesPath(self):
         ''' Return a list of workspace relative paths that should be mapped as edk2 PackagesPath '''
-        return ()
+        return ([os.path.join(CommonPlatform.WorkspaceRoot, "Patina")])
 
     def GetActiveScopes(self):
         ''' return tuple containing scopes that should be active for this process '''
