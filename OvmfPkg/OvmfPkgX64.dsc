@@ -37,6 +37,10 @@
   DEFINE CC_MEASUREMENT_ENABLE   = TRUE
   DEFINE DEBUG_TO_MEM            = FALSE
 
+!if $(PATINA_ENABLED) == TRUE
+  DEFINE STANDALONE_MM_ENABLE    = TRUE
+!endif
+
 !include OvmfPkg/Include/Dsc/OvmfTpmDefines.dsc.inc
 
   #
