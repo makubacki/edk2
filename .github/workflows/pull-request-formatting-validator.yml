@@ -15,20 +15,23 @@ on:
       - opened
       - reopened
       - synchronize
+  merge_group:
 
 concurrency:
-  group: pr-validation-${{ github.event.number }}
+  group: pr-validation-${{ github.event.number || github.run_id }}
   cancel-in-progress: true
 
 jobs:
   validate_pr:
     name: Validate Pull Request Formatting
-    # Do not run on draft PRs and only run on PRs in the tianocore org
-    if: ${{ github.event.pull_request.draft == false && github.repository_owner == 'tianocore' }}
+    # Run real validation only for pull requests. Merge queue builds report
+    # success since formatting is validated at the pull request level.
+    if: ${{ github.event_name == 'merge_group' || (github.event.pull_request.draft == false && github.repository_owner == 'tianocore') }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Generate Token
+        if: ${{ github.event_name != 'merge_group' }}
         id: app-token
         uses: actions/create-github-app-token@v3
         with:
@@ -37,6 +40,7 @@ jobs:
 
       # Reduce checkout time with sparse-checkout
       - name: Checkout repository
+        if: ${{ github.event_name != 'merge_group' }}
         uses: actions/checkout@v7
         with:
           fetch-depth: 1
@@ -44,6 +48,7 @@ jobs:
             .github/scripts/
 
       - name: Setup Python
+        if: ${{ github.event_name != 'merge_group' }}
         uses: actions/setup-python@v6
         with:
           python-version: '3.x'
@@ -51,9 +56,11 @@ jobs:
           cache-dependency-path: '.github/scripts/requirements.txt'
 
       - name: Install PIP Modules
+        if: ${{ github.event_name != 'merge_group' }}
         run: pip install -r .github/scripts/requirements.txt
 
       - name: Validate PR Format
+        if: ${{ github.event_name != 'merge_group' }}
         id: validate
         run: python .github/scripts/validate_pr_formatting.py
         env:
