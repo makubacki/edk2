@@ -51,6 +51,10 @@ steps:
   displayName: fetch target branch
   condition: eq(variables['Build.Reason'], 'PullRequest')
 
+- script: git fetch origin master
+  displayName: fetch target branch (merge queue)
+  condition: eq(variables['Build.Reason'], 'IndividualCI')
+
 - ${{ parameters.extra_install_step }}
 
 # trim the package list if this is a PR
@@ -60,6 +64,14 @@ steps:
     script: |
       stuart_pr_eval -c .pytool/CISettings.py -p ${{ parameters.build_pkgs }} --pr-target origin/$(System.PullRequest.targetBranch) --output-csv-format-string "##vso[task.setvariable variable=pkgs_to_build;isOutpout=true]{pkgcsv}" --output-count-format-string "##vso[task.setvariable variable=pkg_count;isOutpout=true]{pkgcount}"
   condition: eq(variables['Build.Reason'], 'PullRequest')
+
+# trim the package list for merge queue builds
+- task: CmdLine@2
+  displayName: Check if ${{ parameters.build_pkgs }} need testing (merge queue)
+  inputs:
+    script: |
+      stuart_pr_eval -c .pytool/CISettings.py -p ${{ parameters.build_pkgs }} --pr-target origin/master --output-csv-format-string "##vso[task.setvariable variable=pkgs_to_build;isOutpout=true]{pkgcsv}" --output-count-format-string "##vso[task.setvariable variable=pkg_count;isOutpout=true]{pkgcount}"
+  condition: eq(variables['Build.Reason'], 'IndividualCI')
 
 # install spell check prereqs
 - template: spell-check-prereq-steps.yml
