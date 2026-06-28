@@ -8,7 +8,10 @@
 # Copyright (c) Microsoft Corporation.
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 ##
-trigger: none
+trigger:
+  branches:
+    include:
+    - gh-readonly-queue/master/*
 
 schedules:
 - cron: "0 5 * * *"
