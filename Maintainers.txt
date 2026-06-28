@@ -134,12 +134,6 @@ M: Sean Brogan <sean.brogan@microsoft.com> [spbrogan]
 M: Joey Vagedes <joey.vagedes@gmail.com> [javagedes]
 R: Michael D Kinney <michael.d.kinney@intel.com> [mdkinney]
 
-.mergify/
-F: .mergify/
-M: Michael D Kinney <michael.d.kinney@intel.com> [mdkinney]
-M: Liming Gao <gaoliming@byosoft.com.cn> [lgao4]
-R: Sean Brogan <sean.brogan@microsoft.com> [spbrogan]
-
 .pytool/
 F: .pytool/
 M: Sean Brogan <sean.brogan@microsoft.com> [spbrogan]
