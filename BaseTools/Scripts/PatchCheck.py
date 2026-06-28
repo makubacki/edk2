@@ -97,7 +97,7 @@ class EmailAddressCheck:
 class CommitMessageCheck:
     """Checks the contents of a git commit message."""
 
-    def __init__(self, subject, message, author_email, updated_packages):
+    def __init__(self, subject, message, updated_packages):
         self.ok = True
         self.ignore_multi_package = False
 
@@ -105,25 +105,19 @@ class CommitMessageCheck:
             self.error('Commit message is missing!')
             return
 
-        MergifyMerge = False
-        if "mergify[bot]@users.noreply.github.com" in author_email:
-            if "Merge branch" in subject:
-                MergifyMerge = True
-
         self.subject = subject
         self.msg = message
 
         print (subject)
 
         self.check_contributed_under()
-        if not MergifyMerge:
-            self.check_ci_options_format()
-            self.check_subject(updated_packages)
-            self.check_signed_off_by()
-            self.check_misc_signatures()
-            self.check_overall_format()
-            if not PatchCheckConf.ignore_change_id:
-                self.check_change_id_format()
+        self.check_ci_options_format()
+        self.check_subject(updated_packages)
+        self.check_signed_off_by()
+        self.check_misc_signatures()
+        self.check_overall_format()
+        if not PatchCheckConf.ignore_change_id:
+            self.check_change_id_format()
         self.report_message_result()
 
     url = 'https://www.tianocore.org/tianocore-wiki.github.io/development/contribution-guides/commit_message_format.html'
@@ -590,7 +584,7 @@ class CheckOnePatch:
         email_check = EmailAddressCheck(self.author_email, 'Author')
         email_ok = email_check.ok
 
-        msg_check = CommitMessageCheck(self.commit_subject, self.commit_msg, self.author_email, updated_packages)
+        msg_check = CommitMessageCheck(self.commit_subject, self.commit_msg, updated_packages)
         msg_ok = msg_check.ok
         self.ignore_multi_package = msg_check.ignore_multi_package
 
