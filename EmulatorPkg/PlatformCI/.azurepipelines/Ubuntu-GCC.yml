@@ -9,7 +9,10 @@
 # Copyright (c) 2020, Intel Corporation. All rights reserved.
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 ##
-trigger: none
+trigger:
+  branches:
+    include:
+    - gh-readonly-queue/master/*
 
 schedules:
 - cron: "0 2 * * *"
